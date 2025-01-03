@@ -3,14 +3,14 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>KotlinModifiers<!> {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>KotlinModifiers<!> {
     operator fun plus(i: Int)
     inline fun foo()
     suspend fun bar()
     infix fun qux(i: Int)
 }
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>JavaModifiers<!> {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>JavaModifiers<!> {
     fun foo()
     fun bar()
     fun qux()

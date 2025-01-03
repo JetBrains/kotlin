@@ -1,18 +1,16 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR JVM
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-66436
 
 // MODULE: common
 // FILE: common.kt
 package pkg
 
-expect open class Foo {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     protected fun foo()
 }
 
-fun common(foo: Foo) {
+<!CONFLICTING_OVERLOADS!>fun common(foo: Foo)<!> {
     foo.<!INVISIBLE_MEMBER!>foo<!>()
 }
 

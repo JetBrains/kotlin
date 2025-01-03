@@ -4,14 +4,14 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect val foo: Any
+expect val <!REDECLARATION!>foo<!>: Any
 
-expect class Bar() {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!>() {
     val bus: Any
 }
 
-fun common() {
-    if (foo is String) foo.length
+<!CONFLICTING_OVERLOADS!>fun common()<!> {
+    if (<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> is String) <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
 
     val bar = Bar()
     if (bar.bus is String) <!SMARTCAST_IMPOSSIBLE{JVM}!>bar.bus<!>.length

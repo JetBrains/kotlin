@@ -6,16 +6,16 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Retention(AnnotationRetention.SOURCE)
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
 @Ann
-expect class SourceAvailable {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SourceAvailable<!> {
     @Ann
     fun foo()
 }
 
 @Ann
-expect annotation class FromLib
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>FromLib<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

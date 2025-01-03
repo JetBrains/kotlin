@@ -1,30 +1,29 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ENABLE_EXPECT_ACTUAL_CLASSES_WARNING
 // LANGUAGE: +ExpectActualClasses
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Clazz {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Clazz<!> {
     class Nested
 
     fun memberFun()
     val memberProp: Clazz
 }
 
-expect interface Interface
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Interface<!>
 
-expect object Object
+expect object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Object<!>
 
-expect annotation class Annotation
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Annotation<!>
 
-expect enum class Enum
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Enum<!>
 
-expect class ActualTypealias
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ActualTypealias<!>
 
-expect fun function()
+<!CONFLICTING_OVERLOADS!>expect fun function()<!>
 
-expect val property: Clazz
+expect val <!REDECLARATION!>property<!>: Clazz
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

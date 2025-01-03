@@ -3,18 +3,18 @@
 // False-positive reports in K1, because fixed only in K2
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     class Inner<T>
 }
 
-expect fun substituted<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><Any>)<!>
-expect fun substitutedIncorrect<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><Any>)<!>
+<!CONFLICTING_OVERLOADS!>expect fun substituted<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><Any>)<!><!>
+<!CONFLICTING_OVERLOADS!>expect fun substitutedIncorrect<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><Any>)<!><!>
 
-expect fun <T> withTypeParam<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><T>)<!>
-expect fun <T, R> withTypeParamIncorrect<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><R>)<!>
+<!CONFLICTING_OVERLOADS!>expect fun <T> withTypeParam<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><T>)<!><!>
+<!CONFLICTING_OVERLOADS!>expect fun <T, R> withTypeParamIncorrect<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><R>)<!><!>
 
-expect fun star<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><*>)<!>
-expect fun starVsNonStar<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><*>)<!>
+<!CONFLICTING_OVERLOADS!>expect fun star<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><*>)<!><!>
+<!CONFLICTING_OVERLOADS!>expect fun starVsNonStar<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><*>)<!><!>
 
 
 // MODULE: m2-jvm()()(m1-common)

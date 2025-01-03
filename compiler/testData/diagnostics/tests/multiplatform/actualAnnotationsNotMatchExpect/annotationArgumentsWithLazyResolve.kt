@@ -4,20 +4,20 @@
 
 // MODULE: common
 @Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
-annotation class Ann(val s: String = "default")
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val s: String = "default")
 
-expect fun onType_negative(): @Ann("") Any
-expect fun onType_positive(): @Ann("") Any
+<!CONFLICTING_OVERLOADS!>expect fun onType_negative(): @Ann("") Any<!>
+<!CONFLICTING_OVERLOADS!>expect fun onType_positive(): @Ann("") Any<!>
 
-@Ann("")
-expect fun onFunction_negative()
-@Ann("")
-expect fun onFunction_positive()
+<!CONFLICTING_OVERLOADS!>@Ann("")
+expect fun onFunction_negative()<!>
+<!CONFLICTING_OVERLOADS!>@Ann("")
+expect fun onFunction_positive()<!>
 
-@Ann
-expect fun withEmptyArguments_negative()
-@Ann
-expect fun withEmptyArguments_positive()
+<!CONFLICTING_OVERLOADS!>@Ann
+expect fun withEmptyArguments_negative()<!>
+<!CONFLICTING_OVERLOADS!>@Ann
+expect fun withEmptyArguments_positive()<!>
 
 // MODULE: main()()(common)
 actual fun onType_negative(): @Ann("") Any = Any()

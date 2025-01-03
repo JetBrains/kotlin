@@ -1,8 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo(p: Int = 1)
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>(p: Int = 1)
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

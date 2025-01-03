@@ -4,20 +4,20 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-expect annotation class Ann
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
-annotation class Ann2(val s: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann2<!>(val s: String)
 
-@Ann2("1" + "2")
-expect fun stringConcat()
+<!CONFLICTING_OVERLOADS!>@Ann2("1" + "2")
+expect fun stringConcat()<!>
 
-expect fun onType(): @Ann2("") Any?
+<!CONFLICTING_OVERLOADS!>expect fun onType(): @Ann2("") Any?<!>
 
-annotation class Ann3(val kclass: kotlin.reflect.KClass<*>)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann3<!>(val kclass: kotlin.reflect.KClass<*>)
 
-@Ann3(String::class)
-expect fun kclassArg()
+<!CONFLICTING_OVERLOADS!>@Ann3(String::class)
+expect fun kclassArg()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

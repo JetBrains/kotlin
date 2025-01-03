@@ -4,19 +4,19 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class A {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     fun foo()
 }
 
-expect abstract class B
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
-expect class C : B
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> : B
 
-expect abstract class D() {
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>D<!>() {
     fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
 }
 
-class E : D()
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E<!> : D()
 
 // MODULE: jvm()()(common)
 // FILE: main.kt

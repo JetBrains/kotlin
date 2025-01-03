@@ -1,14 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
 @Ann
-expect class AnnotationOnExpectOnly
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationOnExpectOnly<!>
 
-expect class AnnotationInside {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationInside<!> {
     @Ann
     fun onlyOnExpect()
 }

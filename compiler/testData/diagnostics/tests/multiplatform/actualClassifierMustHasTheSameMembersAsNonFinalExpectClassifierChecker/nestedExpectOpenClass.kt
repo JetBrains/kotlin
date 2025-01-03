@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
 // Rules for expect actual matching are ad-hoc for nested classes. That's why this test exist
-expect class Outer {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Outer<!> {
     open class Foo {
         fun existingMethod()
         val existingParam: Int

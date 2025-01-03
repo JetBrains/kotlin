@@ -3,13 +3,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-open class A {}
-expect class B : A
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {}
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : A
 
-expect open class A2() {}
-expect open class B2 : <!CYCLIC_INHERITANCE_HIERARCHY{JVM}!>A2<!> {}
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A2<!>() {}
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B2<!> : <!CYCLIC_INHERITANCE_HIERARCHY{JVM}!>A2<!> {}
 
-expect open class A3
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A3<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

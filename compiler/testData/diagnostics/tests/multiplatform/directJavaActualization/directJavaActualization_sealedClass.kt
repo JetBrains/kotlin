@@ -4,7 +4,7 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect sealed class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+expect sealed class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Bar<!> : <!CLASS_INHERITS_JAVA_SEALED_CLASS{JVM}!>Foo<!>
     class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Baz<!> : <!CLASS_INHERITS_JAVA_SEALED_CLASS{JVM}!>Foo<!>
 }

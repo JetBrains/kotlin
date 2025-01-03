@@ -71,3 +71,5 @@ sealed class BaseEImpl() : BaseE {
     override fun foo()
 }
 class DerivedG1 : BaseGImpl()
+
+// MODULE: m1-jvm()()(m1-common)

@@ -3,13 +3,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-expect fun inMethod(@Ann arg: String)
+<!CONFLICTING_OVERLOADS!>expect fun inMethod(@Ann arg: String)<!>
 
-expect class InConstructor(@Ann arg: String)
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>InConstructor<!>(@Ann arg: String)
 
-expect fun withIncopatibility<!NO_ACTUAL_FOR_EXPECT{JVM}!>(@Ann p1: String, @Ann p2: String)<!>
+<!CONFLICTING_OVERLOADS!>expect fun withIncopatibility<!NO_ACTUAL_FOR_EXPECT{JVM}!>(@Ann p1: String, @Ann p2: String)<!><!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

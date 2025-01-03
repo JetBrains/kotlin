@@ -3,7 +3,6 @@
 // thus can check SOURCE-retention annotations.
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: common
 expect annotation class Ann() // No @Retention SOURCE set

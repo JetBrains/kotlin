@@ -4,16 +4,16 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class C1
-expect interface C2<A>
-expect interface C3<B>
-expect interface C4<D, E>
-expect interface C5<F, G>
-expect interface C6<H>
-expect interface C7<I>
-expect interface C8<J>
-expect interface C9<K>
-expect interface C10<L>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C1<!>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C2<!><A>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C3<!><B>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C4<!><D, E>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C5<!><F, G>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C6<!><H>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C7<!><I>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C8<!><J>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C9<!><K>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C10<!><L>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

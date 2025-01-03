@@ -1,24 +1,23 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
 import kotlin.reflect.KClass
 
-annotation class Ann(val clazz: KClass<*>)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val clazz: KClass<*>)
 
 @Ann(LinkToExpectInnerClass.Inner::class)
-expect class LinkToExpectInnerClass {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>LinkToExpectInnerClass<!> {
     object Inner
 }
 
-expect class WillBeTypealiased
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>WillBeTypealiased<!>
 
-@Ann(WillBeTypealiased::class)
-expect fun linkToExpectClassWhichWillBeTypealiased()
+<!CONFLICTING_OVERLOADS!>@Ann(WillBeTypealiased::class)
+expect fun linkToExpectClassWhichWillBeTypealiased()<!>
 
-@Ann(WillBeTypealiased::class)
-expect fun linkToExpectClassWhichWillBeTypealiased2()
+<!CONFLICTING_OVERLOADS!>@Ann(WillBeTypealiased::class)
+expect fun linkToExpectClassWhichWillBeTypealiased2()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

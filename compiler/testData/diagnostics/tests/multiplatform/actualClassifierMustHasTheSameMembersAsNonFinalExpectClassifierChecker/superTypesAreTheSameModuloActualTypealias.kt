@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Supertype()
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Supertype<!>()
 
-expect open class Foo : Supertype {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : Supertype {
     fun existingMethod()
     val existingParam: Int
 }

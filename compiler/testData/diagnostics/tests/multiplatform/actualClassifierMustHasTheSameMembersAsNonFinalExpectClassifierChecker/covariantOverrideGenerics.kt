@@ -1,13 +1,13 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-open class Base<R> {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!><R> {
     open fun foo(): R = null!!
 }
 
-expect open class Foo<R, T : R> : Base<R> {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!><R, T : R> : Base<R> {
 }
 
 // MODULE: m2-jvm()()(m1-common)

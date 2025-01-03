@@ -5,10 +5,10 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> : Base {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : Base {
 }
 
-open class Base {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     fun foo(a: Int = 1) {}
 }
 

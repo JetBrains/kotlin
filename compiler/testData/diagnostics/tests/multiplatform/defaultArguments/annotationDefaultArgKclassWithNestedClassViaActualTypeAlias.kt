@@ -4,11 +4,11 @@
 
 import kotlin.reflect.KClass
 
-expect annotation class Ann(
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(
     val p: KClass<*> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT{JVM}!>Foo.<!UNRESOLVED_REFERENCE{JVM}!>Nested<!>::class<!>
 )
 
-expect class Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     class Nested
 }
 

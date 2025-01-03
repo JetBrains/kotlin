@@ -2,20 +2,20 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-abstract class A {
+abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     @Ann
     open fun noAnnotationOnActual() {}
 }
 
-expect class FakeOverrideExpect : A
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>FakeOverrideExpect<!> : A
 
-interface I {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I<!> {
     fun noAnnotationOnActual()
 }
 
-expect class FakeOverrideActual : I {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>FakeOverrideActual<!> : I {
     @Ann
     override fun noAnnotationOnActual()
 }

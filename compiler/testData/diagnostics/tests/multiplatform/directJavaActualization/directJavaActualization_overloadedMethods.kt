@@ -3,7 +3,7 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>(name: String, age: Int) {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>(name: String, age: Int) {
     constructor(name: String)
     fun foo(a: Int, b: Int): Int
     fun foo(a: Double, b: Double): Double

@@ -3,12 +3,14 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class <!NO_ACTUAL_FOR_EXPECT!>Foo<!> { // also, it's important that Foo doesn't override equals
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> { // also, it's important that Foo doesn't override equals
     fun foo()
 }
 
-fun check(x1: Foo, x: Any) {
+<!CONFLICTING_OVERLOADS!>fun check(x1: Foo, x: Any)<!> {
     if (x1 == x) {
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE{JVM}!>foo<!>()
     }
 }
+
+// MODULE: m1-jvm()()(m1-common)

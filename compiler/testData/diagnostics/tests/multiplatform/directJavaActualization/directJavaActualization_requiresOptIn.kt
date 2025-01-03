@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect annotation class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>
+expect annotation class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

@@ -1,20 +1,20 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-interface Base {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     fun foo(a: Int): String
     val a : String
 }
 
-interface ExtensionBase {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ExtensionBase<!> {
     fun Int.foo(): String
     val Int.a : String
 }
 
-expect class A : Base
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> : Base
 
-expect class B : ExtensionBase
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : ExtensionBase
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

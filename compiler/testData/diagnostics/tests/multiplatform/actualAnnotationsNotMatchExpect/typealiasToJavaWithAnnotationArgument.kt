@@ -2,10 +2,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 // This test is for the case when expect annotation is FirAnnotationCall and actual annotation is not FirAnnotationCall
 // MODULE: common
-expect annotation class Ann(val p: Int)
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val p: Int)
 
 @Ann(p = 1)
-expect class Foo
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
 
 // MODULE: main()()(common)
 // FILE: Foo.kt

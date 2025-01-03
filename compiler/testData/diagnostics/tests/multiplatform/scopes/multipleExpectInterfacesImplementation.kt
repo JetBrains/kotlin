@@ -1,19 +1,18 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-57833
 
 // MODULE: m1-common
 // FILE: common.kt
 
-interface ByteChannel : ByteReadChannel, ByteWriteChannel
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ByteChannel<!> : ByteReadChannel, ByteWriteChannel
 
-expect interface ByteReadChannel {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ByteReadChannel<!> {
     val isClosedForWrite: Boolean
 
     fun f()
 }
 
-expect interface ByteWriteChannel {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ByteWriteChannel<!> {
     val isClosedForWrite: Boolean
 
     fun f()

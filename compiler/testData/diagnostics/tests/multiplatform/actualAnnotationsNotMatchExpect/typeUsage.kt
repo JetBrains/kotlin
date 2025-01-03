@@ -4,62 +4,62 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Target(AnnotationTarget.TYPE)
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-expect fun valueParameterType(arg: @Ann String)
+<!CONFLICTING_OVERLOADS!>expect fun valueParameterType(arg: @Ann String)<!>
 
-expect fun returnType(): @Ann String
+<!CONFLICTING_OVERLOADS!>expect fun returnType(): @Ann String<!>
 
-expect fun <T : @Ann Any> methodTypeParamBound()
+<!CONFLICTING_OVERLOADS!>expect fun <T : @Ann Any> methodTypeParamBound()<!>
 
-expect class OnClassTypeParamBound<T : @Ann Any>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OnClassTypeParamBound<!><T : @Ann Any>
 
-expect fun <T> typeParamBoundInWhere() where T : @Ann Any
+<!CONFLICTING_OVERLOADS!>expect fun <T> typeParamBoundInWhere()<!> where T : @Ann Any
 
-interface I1
-interface I2
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I1<!>
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I2<!>
 
-expect fun <T> severalBounds() where T : I1, T : @Ann I2
+<!CONFLICTING_OVERLOADS!>expect fun <T> severalBounds()<!> where T : I1, T : @Ann I2
 
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><T><!> severalBoundsDifferentOrder() where T : I2, T : @Ann I1
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><T><!> severalBoundsDifferentOrder()<!> where T : I2, T : @Ann I1
 
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><T><!> lessTypeParamBoundsOnActual() where T : I1, T : @Ann I2
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><T><!> lessTypeParamBoundsOnActual()<!> where T : I1, T : @Ann I2
 
-expect fun @Ann Any.onReceiver()
+<!CONFLICTING_OVERLOADS!>expect fun @Ann Any.onReceiver()<!>
 
-expect class OnClassSuper : @Ann I1
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OnClassSuper<!> : @Ann I1
 
-expect class OnClassSuperDifferentOrder : I1, @Ann I2
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OnClassSuperDifferentOrder<!> : I1, @Ann I2
 
-expect class OnClassSuperMoreOnActual : @Ann I2
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OnClassSuperMoreOnActual<!> : @Ann I2
 
-interface I3<T>
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I3<!><T>
 
-expect class OnClassSuperTypeParams<T> : I3<@Ann T>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OnClassSuperTypeParams<!><T> : I3<@Ann T>
 
-expect fun deepInParamsTypes(arg: I3<I3<@Ann Any>>)
+<!CONFLICTING_OVERLOADS!>expect fun deepInParamsTypes(arg: I3<I3<@Ann Any>>)<!>
 
-interface I4<T, U>
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I4<!><T, U>
 
-expect fun starProjection(arg: I4<*, @Ann Any>)
+<!CONFLICTING_OVERLOADS!>expect fun starProjection(arg: I4<*, @Ann Any>)<!>
 
-expect fun <T> typeArgWithVariance(t: I3<out @Ann T>)
+<!CONFLICTING_OVERLOADS!>expect fun <T> typeArgWithVariance(t: I3<out @Ann T>)<!>
 
-class WithNested<T> {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>WithNested<!><T> {
     inner class Nested<U>
 }
 
-expect fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>)
+<!CONFLICTING_OVERLOADS!>expect fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>)<!>
 
-expect fun qualifierPartsNonMatching(arg: WithNested<String>.Nested<@Ann String>)
+<!CONFLICTING_OVERLOADS!>expect fun qualifierPartsNonMatching(arg: WithNested<String>.Nested<@Ann String>)<!>
 
-expect fun funTypeVsUserType<!NO_ACTUAL_FOR_EXPECT{JVM}!>(arg: () -> @Ann String)<!>
+<!CONFLICTING_OVERLOADS!>expect fun funTypeVsUserType<!NO_ACTUAL_FOR_EXPECT{JVM}!>(arg: () -> @Ann String)<!><!>
 
-expect fun funcTypeReturnType(arg: () -> @Ann Any)
+<!CONFLICTING_OVERLOADS!>expect fun funcTypeReturnType(arg: () -> @Ann Any)<!>
 
-expect fun funcTypeReceiverType(arg: @Ann Any.() -> Unit)
+<!CONFLICTING_OVERLOADS!>expect fun funcTypeReceiverType(arg: @Ann Any.() -> Unit)<!>
 
-expect fun funcTypeArgType(arg: (arg: @Ann Any) -> Unit)
+<!CONFLICTING_OVERLOADS!>expect fun funcTypeArgType(arg: (arg: @Ann Any) -> Unit)<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

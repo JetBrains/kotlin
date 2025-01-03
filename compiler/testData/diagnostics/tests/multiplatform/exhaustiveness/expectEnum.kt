@@ -1,15 +1,15 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-20306
 
 // MODULE: m1-common
 // FILE: common.kt
-expect enum class Base {
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     A, B
 }
 
-fun testCommon(base: Base) {
+<!CONFLICTING_OVERLOADS!>fun testCommon(base: Base)<!> {
     val x = <!EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE("enum"), NO_ELSE_IN_WHEN("'else' branch"), NO_ELSE_IN_WHEN{JVM}("'C' branch or 'else' branch instead")!>when<!> (base) { // must be an error
         Base.A -> 1
         Base.B -> 2

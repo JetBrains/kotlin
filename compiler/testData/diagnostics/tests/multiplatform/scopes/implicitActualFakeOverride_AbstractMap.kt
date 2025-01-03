@@ -1,10 +1,10 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
 
-public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
+public expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AbstractMutableMap<!><K, V> : MutableMap<K, V> {
     override val values: MutableCollection<V>
 }
 

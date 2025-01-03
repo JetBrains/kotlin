@@ -1,12 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-61572
 
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class A {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     open fun foo(x: Int = 20, y: Int = 3): Int
 }
 

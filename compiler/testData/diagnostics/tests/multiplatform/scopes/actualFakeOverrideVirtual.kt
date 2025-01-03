@@ -1,17 +1,16 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-interface Map {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Map<!> {
     val size: Int
 }
 
-expect class HashMap : Map {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>HashMap<!> : Map {
     override val size: Int
 }
 
-expect abstract class AbstractMap : Map {
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AbstractMap<!> : Map {
     override val size: Int
 }
 

@@ -23,3 +23,5 @@ expect class Foo {
         return x + 1
     }
 }
+
+// MODULE: m1-jvm()()(m1-common)

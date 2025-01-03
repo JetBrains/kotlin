@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // SKIP_TXT
 // ALLOW_KOTLIN_PACKAGE
 
@@ -8,9 +7,9 @@
 
 package kotlin.jvm
 
-annotation class JvmInline
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>JvmInline<!>
 
-expect value class VC(val a: Any)
+expect value class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>VC<!>(val a: Any)
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

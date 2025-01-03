@@ -1,19 +1,19 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-expect abstract class Base {
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     abstract fun foo()
 }
 
-expect class DerivedImplicit : Base
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>DerivedImplicit<!> : Base
 
-expect class DerivedExplicit : Base {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>DerivedExplicit<!> : Base {
     override fun foo()
 }
 
-expect class DerivedExplicitCheck : Base {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>DerivedExplicitCheck<!> : Base {
     override fun foo()
 }
 

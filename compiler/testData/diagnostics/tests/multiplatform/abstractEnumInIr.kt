@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 // ISSUE: KT-68734
-expect enum class MMKVMode {
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MMKVMode<!> {
     SINGLE_PROCESS,
     MULTI_PROCESS,
 }

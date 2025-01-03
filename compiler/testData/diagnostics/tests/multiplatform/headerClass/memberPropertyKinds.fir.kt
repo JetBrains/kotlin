@@ -30,3 +30,5 @@
 }
 
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
+
+// MODULE: m1-jvm()()(m1-common)

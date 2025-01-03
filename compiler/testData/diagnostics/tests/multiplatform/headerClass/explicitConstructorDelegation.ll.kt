@@ -13,3 +13,5 @@ expect class B : A {
 
     constructor() : <!EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL!>super<!>("B")
 }
+
+// MODULE: m1-jvm()()(m1-common)

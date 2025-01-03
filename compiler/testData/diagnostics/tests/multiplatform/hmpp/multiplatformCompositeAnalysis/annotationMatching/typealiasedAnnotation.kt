@@ -1,22 +1,21 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: common
-expect annotation class Test()
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test<!>()
 
-@Test
-expect fun unexpandedOnActual()
+<!CONFLICTING_OVERLOADS!>@Test
+expect fun unexpandedOnActual()<!>
 
-@Test
-expect fun expandedOnActual()
+<!CONFLICTING_OVERLOADS!>@Test
+expect fun expandedOnActual()<!>
 
 // MODULE: main()()(common)
 annotation class JunitTestInLib
 
-actual typealias Test = JunitTestInLib
+actual typealias <!AMBIGUOUS_EXPECTS!>Test<!> = JunitTestInLib
 
 @Test
-actual fun unexpandedOnActual() {}
+actual fun <!AMBIGUOUS_EXPECTS!>unexpandedOnActual<!>() {}
 
 @JunitTestInLib
-actual fun expandedOnActual() {}
+actual fun <!AMBIGUOUS_EXPECTS!>expandedOnActual<!>() {}
 

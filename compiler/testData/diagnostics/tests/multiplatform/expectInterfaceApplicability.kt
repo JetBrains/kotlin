@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 // TODO: .fir.kt version is just a stub.
-expect interface My {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>My<!> {
     open fun openFunPositive()
     open fun openFunNegative()
     abstract fun abstractFun()

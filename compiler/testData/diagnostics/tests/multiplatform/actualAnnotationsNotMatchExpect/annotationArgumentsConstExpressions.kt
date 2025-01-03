@@ -7,62 +7,62 @@ package test
 
 import kotlin.reflect.KClass
 
-annotation class ClassArgAnn(val clazz: KClass<*>)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ClassArgAnn<!>(val clazz: KClass<*>)
 
-class ClassForReference {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ClassForReference<!> {
     class ClassForReference
 }
 
-@ClassArgAnn(ClassForReference::class)
-expect fun getClassExpression()
+<!CONFLICTING_OVERLOADS!>@ClassArgAnn(ClassForReference::class)
+expect fun getClassExpression()<!>
 
-@ClassArgAnn(ClassForReference.ClassForReference::class)
-expect fun differentClassesWithSameName()
+<!CONFLICTING_OVERLOADS!>@ClassArgAnn(ClassForReference.ClassForReference::class)
+expect fun differentClassesWithSameName()<!>
 
-annotation class StringArgAnn(val s: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>StringArgAnn<!>(val s: String)
 
-@StringArgAnn("1.9")
-expect fun stringConstant()
+<!CONFLICTING_OVERLOADS!>@StringArgAnn("1.9")
+expect fun stringConstant()<!>
 
-@StringArgAnn("1" + ".9")
-expect fun stringConcatentation()
+<!CONFLICTING_OVERLOADS!>@StringArgAnn("1" + ".9")
+expect fun stringConcatentation()<!>
 
-object Constants {
+object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Constants<!> {
     const val STR = "1"
 }
 
-@StringArgAnn(Constants.STR)
-expect fun constantFromInsideObject()
+<!CONFLICTING_OVERLOADS!>@StringArgAnn(Constants.STR)
+expect fun constantFromInsideObject()<!>
 
-@StringArgAnn(Constants.STR + ".9")
-expect fun stringConcatentationWithProperty()
+<!CONFLICTING_OVERLOADS!>@StringArgAnn(Constants.STR + ".9")
+expect fun stringConcatentationWithProperty()<!>
 
-enum class MyEnum { FOO, BAR }
+enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyEnum<!> { FOO, BAR }
 
-annotation class EnumArgAnn(val e: MyEnum)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>EnumArgAnn<!>(val e: MyEnum)
 
-@EnumArgAnn(MyEnum.FOO)
-expect fun enumArg()
+<!CONFLICTING_OVERLOADS!>@EnumArgAnn(MyEnum.FOO)
+expect fun enumArg()<!>
 
-annotation class VarargAnn(vararg val strings: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>VarargAnn<!>(vararg val strings: String)
 
-@VarargAnn("foo", "bar")
-expect fun varargInAnnotation()
+<!CONFLICTING_OVERLOADS!>@VarargAnn("foo", "bar")
+expect fun varargInAnnotation()<!>
 
-@VarargAnn(*["foo", "bar"])
-expect fun varargInAnnotationWithArraySpread()
+<!CONFLICTING_OVERLOADS!>@VarargAnn(*["foo", "bar"])
+expect fun varargInAnnotationWithArraySpread()<!>
 
-annotation class ArrayArgAnn(val strings: Array<String>)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ArrayArgAnn<!>(val strings: Array<String>)
 
-@ArrayArgAnn(["foo", "bar"])
-expect fun arrayInAnnotation()
+<!CONFLICTING_OVERLOADS!>@ArrayArgAnn(["foo", "bar"])
+expect fun arrayInAnnotation()<!>
 
-@ArrayArgAnn(["foo", "bar"])
-expect fun arrayInAnnotationNotMatch()
+<!CONFLICTING_OVERLOADS!>@ArrayArgAnn(["foo", "bar"])
+expect fun arrayInAnnotationNotMatch()<!>
 
-annotation class NestedAnnArg(val text: String, vararg val children: NestedAnnArg)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NestedAnnArg<!>(val text: String, vararg val children: NestedAnnArg)
 
-@NestedAnnArg(
+<!CONFLICTING_OVERLOADS!>@NestedAnnArg(
     text = "root",
     NestedAnnArg("1"),
     NestedAnnArg("2",
@@ -70,9 +70,9 @@ annotation class NestedAnnArg(val text: String, vararg val children: NestedAnnAr
                  NestedAnnArg("2.2")
     )
 )
-expect fun complexNestedAnnotations()
+expect fun complexNestedAnnotations()<!>
 
-@NestedAnnArg(
+<!CONFLICTING_OVERLOADS!>@NestedAnnArg(
     text = "root",
     NestedAnnArg("1"),
     NestedAnnArg("2",
@@ -80,7 +80,7 @@ expect fun complexNestedAnnotations()
                  NestedAnnArg("2.2")
     )
 )
-expect fun complexNestedAnnotationsNotMatch()
+expect fun complexNestedAnnotationsNotMatch()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

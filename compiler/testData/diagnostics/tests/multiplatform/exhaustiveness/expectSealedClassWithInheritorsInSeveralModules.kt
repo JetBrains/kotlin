@@ -1,16 +1,16 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-66960
 
 // MODULE: common
 // FILE: common.kt
-expect sealed class Base()
+expect sealed class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!>()
 
-class CommonDerived : Base()
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>CommonDerived<!> : Base()
 
 // should be an error
-fun commonTest(x: Base) = <!EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE, NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{JVM}!>when<!> (x) {
+<!CONFLICTING_OVERLOADS!>fun commonTest(x: Base)<!> = <!EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE, NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{JVM}!>when<!> (x) {
     is CommonDerived -> 1
 }
 

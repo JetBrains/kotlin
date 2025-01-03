@@ -1,13 +1,13 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>A<!> {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>A<!> {
     open fun foo(): String = "Fail"
 }
-expect class C1() : A
-expect class C2() : A
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C1<!>() : A
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C2<!>() : A
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: A_J.java

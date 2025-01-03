@@ -12,34 +12,34 @@
     AnnotationTarget.PROPERTY_SETTER,
     AnnotationTarget.CONSTRUCTOR,
 )
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
 @Ann
-expect class KtTypealiasNotMatch
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>KtTypealiasNotMatch<!>
 
 @Ann
-expect class AnnotationsNotConsideredOnTypealias
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationsNotConsideredOnTypealias<!>
 
-annotation class ComplexAnn(val s: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ComplexAnn<!>(val s: String)
 
-expect class MethodsInsideTypealias {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MethodsInsideTypealias<!> {
     @Ann
     fun foo()
 }
 
-expect class ValueInsideTypealias {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ValueInsideTypealias<!> {
     @Ann
     val value: String
 }
 
-expect class ConstructorInsideTypealias @Ann constructor()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ConstructorInsideTypealias<!> @Ann constructor()
 
-expect class MethodWithComplexAnnInsideTypealias {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MethodWithComplexAnnInsideTypealias<!> {
     @ComplexAnn("1" + "2")
     fun withComplexAnn()
 }
 
-expect class InnerClassInsideTypealias {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>InnerClassInsideTypealias<!> {
     class Foo {
         @Ann
         fun foo()

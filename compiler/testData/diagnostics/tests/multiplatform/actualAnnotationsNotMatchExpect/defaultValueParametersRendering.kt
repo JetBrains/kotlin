@@ -2,10 +2,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-@Ann
-expect fun foo(p: Array<Int> = arrayOf())
+<!CONFLICTING_OVERLOADS!>@Ann
+expect fun foo(p: Array<Int> = arrayOf())<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

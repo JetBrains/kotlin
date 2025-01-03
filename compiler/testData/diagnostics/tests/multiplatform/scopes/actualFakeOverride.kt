@@ -1,13 +1,12 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class HashMap {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>HashMap<!> {
     val size: Int
 }
 
-expect abstract class AbstractMap {
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AbstractMap<!> {
     val size: Int
 }
 

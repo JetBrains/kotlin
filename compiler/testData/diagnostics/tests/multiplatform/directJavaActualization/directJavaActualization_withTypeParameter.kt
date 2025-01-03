@@ -3,23 +3,23 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Case1<!><T> {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Case1<!><T> {
     fun <T> foo(a: T)
 }
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Case2<!><T: Number>{
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Case2<!><T: Number>{
     fun foo(a: T)
 }
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Case3<!><T> where T: Number , T: Comparable<T>{
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Case3<!><T> where T: Number , T: Comparable<T>{
     fun foo(a: T)
 }
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Case4<!><out T>
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Case4<!><out T>
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Case5<!><in T>
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Case5<!><in T>
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Case6<!> {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Case6<!> {
     fun <T> foo(): T
     fun <T : Any> bar(): List<T>
     fun <S : Comparable<S>> baz(): List<S>

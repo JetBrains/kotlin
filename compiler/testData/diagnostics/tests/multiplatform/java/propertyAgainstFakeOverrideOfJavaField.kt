@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 // MODULE: m1-common
 
 // FILE: common.kt
-expect class MyHashMap<K, V> {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyHashMap<!><K, V> {
     val values: Collection<V>
 }
 

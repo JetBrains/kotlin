@@ -1,13 +1,13 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect enum class E {
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E<!> {
     FOO, BAR
 }
 
-expect annotation class Matching(val e: E = E.FOO)
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Matching<!>(val e: E = E.FOO)
 
-expect annotation class NonMatching(val e: E = E.BAR)
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NonMatching<!>(val e: E = E.BAR)
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

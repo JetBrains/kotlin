@@ -3,23 +3,23 @@
 // DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
 // MODULE: m1-common
 // FILE: common.kt
-expect class A {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     fun foo(p1: String = "common", p2: String = "common", p3: String)
 }
 
-expect class B {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> {
     fun foo(s: String)
 }
 
-interface I {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I<!> {
     fun methodWithDefaultArg(s: String = "common")
 }
 
-expect class WithDefaultArgFromSuper : I {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>WithDefaultArgFromSuper<!> : I {
     override fun methodWithDefaultArg(s: String)
 }
 
-expect open class WithIncompatibility {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>WithIncompatibility<!> {
     fun foo(p: String = "common")
 }
 

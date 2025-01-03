@@ -1,16 +1,15 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Base<T>() {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!><T>() {
     fun existingMethodInBase(param: T)
 }
 
-open class Transitive : Base<String>()
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Transitive<!> : Base<String>()
 
-expect open class Foo : Transitive {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : Transitive {
     fun existingMethod()
     val existingParam: Int
 }

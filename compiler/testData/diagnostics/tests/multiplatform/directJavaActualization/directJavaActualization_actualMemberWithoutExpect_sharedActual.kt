@@ -5,9 +5,9 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
 
-expect class Bar {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!> {
     fun typealiasOnly()
 }
 

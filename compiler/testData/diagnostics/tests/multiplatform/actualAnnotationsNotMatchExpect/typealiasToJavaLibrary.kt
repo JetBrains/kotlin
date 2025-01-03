@@ -4,10 +4,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Retention(AnnotationRetention.SOURCE)
-expect annotation class MyDeprecatedNotMatch
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyDeprecatedNotMatch<!>
 
 @Retention(AnnotationRetention.RUNTIME)
-expect annotation class MyDeprecatedMatch
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyDeprecatedMatch<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-expect class A {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     class B {
         class C {
             @Ann

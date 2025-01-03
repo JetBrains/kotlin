@@ -1,16 +1,15 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo(x: Int, y: String) {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>(x: Int, y: String) {
     val x: Int
     val y: String
 }
 
-expect class Bar(z: Double)
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!>(z: Double)
 
-expect class Baz(w: List<String>) {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Baz<!>(w: List<String>) {
     val w: List<String>
 
     operator fun component1(): List<String>

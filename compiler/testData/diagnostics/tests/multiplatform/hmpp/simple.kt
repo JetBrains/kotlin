@@ -1,15 +1,14 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 // MODULE: common
-expect open class A()
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>()
 
 // MODULE: intermediate()()(common)
-class B : A() {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : A() {
     fun foo(): String = "O"
 }
 
-fun getB(): B = B()
+<!CONFLICTING_OVERLOADS!>fun getB(): B<!> = B()
 
 // MODULE: main()()(intermediate)
 actual open class A actual constructor() {

@@ -1,13 +1,12 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-expect class E {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E<!> {
     fun f(x: Int): Int
 }
 
-expect class E2 {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E2<!> {
     fun f(x: Int): Int
 }
 

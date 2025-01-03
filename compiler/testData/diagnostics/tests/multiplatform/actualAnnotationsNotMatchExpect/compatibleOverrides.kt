@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-expect class CompatibleOverrides {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>CompatibleOverrides<!> {
     fun foo()
 
     @Ann

@@ -2,17 +2,17 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
 @Ann
-expect class AnnotationMatching
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationMatching<!>
 
 @Ann
-expect class AnnotationOnExpectOnly
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationOnExpectOnly<!>
 
-expect class AnnotationOnActualOnly
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationOnActualOnly<!>
 
-expect class AnnotationInside {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationInside<!> {
     @Ann
     fun matches()
 

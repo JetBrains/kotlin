@@ -1,19 +1,18 @@
-// FIR_IDENTICAL
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_DEXING
 // MODULE: common
 // FILE: common.kt
-expect interface Base1<T>{
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base1<!><T>{
     fun foo(a: T): T
 }
 
-expect interface Base2<T>{
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base2<!><T>{
     fun foo(a: T): T
 }
 
-class Test(val x: Base1<Int>) : Base2<Int>, Base1<Int> by x
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test<!>(val x: Base1<Int>) : Base2<Int>, Base1<Int> by x
 
-class Test2(val x: Base1<String>) : Base2<Int>, Base1<String> by x {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test2<!>(val x: Base1<String>) : Base2<Int>, Base1<String> by x {
     override fun foo(a: Int): Int {
         return a
     }

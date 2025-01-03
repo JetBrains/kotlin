@@ -1,28 +1,28 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class C1()
-expect interface I1
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C1<!>()
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I1<!>
 
-open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Common1_1<!> : C1(), I1
-open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Common1_2<!> : I1, C1()
+open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Common1_1<!><!> : C1(), I1
+open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Common1_2<!><!> : I1, C1()
 
-expect open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Expect1_1<!> : C1, I1
-expect open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Expect1_2<!> : I1, C1
+expect open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Expect1_1<!><!> : C1, I1
+expect open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Expect1_2<!><!> : I1, C1
 
 
-expect abstract class C2()
-expect interface I2
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C2<!>()
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I2<!>
 
-open class Common2_1 : C2(), I2
-open class Common2_2 : I2, C2()
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Common2_1<!> : C2(), I2
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Common2_2<!> : I2, C2()
 
-expect open class Expect2_1 : C2, I2
-expect open class Expect2_2 : I2, C2
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Expect2_1<!> : C2, I2
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Expect2_2<!> : I2, C2
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: main.kt

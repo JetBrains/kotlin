@@ -3,24 +3,24 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class B {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> {
     class N {
         <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{JVM}!>fun body()<!> {}
         <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{JVM}!>expect<!> fun extraHeader()
     }
 }
 
-expect class C {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
     <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{JVM}!>expect<!> class N
     <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{JVM}!>expect<!> enum class E
     <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{JVM}!>expect<!> inner class I
 }
 
-expect class D {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>D<!> {
     class N
 }
 
-expect class E {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E<!> {
     class N
 }
 

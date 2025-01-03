@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Container {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Container<!> {
     internal fun internalFun()
 }
 

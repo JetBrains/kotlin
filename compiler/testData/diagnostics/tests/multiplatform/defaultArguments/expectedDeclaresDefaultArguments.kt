@@ -1,16 +1,15 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun ok(x: Int, y: String = "")
+<!CONFLICTING_OVERLOADS!>expect fun ok(x: Int, y: String = "")<!>
 
-expect fun failX(x: Int, y: String = "")
+<!CONFLICTING_OVERLOADS!>expect fun failX(x: Int, y: String = "")<!>
 
-expect fun failY(x: Int, y: String = "")
+<!CONFLICTING_OVERLOADS!>expect fun failY(x: Int, y: String = "")<!>
 
-expect open class Foo {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun ok(x: Int, y: String = "")
 
     fun failX(x: Int, y: String = "")
@@ -18,9 +17,9 @@ expect open class Foo {
     fun failY(x: Int, y: String = "")
 }
 
-fun test(foo: Foo) {
-    ok(42)
-    ok(42, "OK")
+<!CONFLICTING_OVERLOADS!>fun test(foo: Foo)<!> {
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>ok<!>(42)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>ok<!>(42, "OK")
     foo.ok(42)
     foo.ok(42, "OK")
 }

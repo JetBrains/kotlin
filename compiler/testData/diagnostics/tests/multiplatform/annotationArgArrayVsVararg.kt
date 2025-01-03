@@ -3,10 +3,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect annotation class A(vararg val x: String)
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>(vararg val x: String)
 
-@A(<!TYPE_MISMATCH{JVM}!>"abc"<!>, <!TOO_MANY_ARGUMENTS{JVM}!>"foo"<!>, <!TOO_MANY_ARGUMENTS{JVM}!>"bar"<!>)
-fun test() {}
+<!CONFLICTING_OVERLOADS!>@A(<!TYPE_MISMATCH{JVM}!>"abc"<!>, <!TOO_MANY_ARGUMENTS{JVM}!>"foo"<!>, <!TOO_MANY_ARGUMENTS{JVM}!>"bar"<!>)
+fun test()<!> {}
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -1,16 +1,15 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
-interface I {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I<!> {
     fun f(x: Int = 5) = x
 }
 
-expect class E : I {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E<!> : I {
     override fun f(x: Int): Int
 }
 
-expect class E2 : I {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E2<!> : I {
     override fun f(x: Int): Int
 }
 

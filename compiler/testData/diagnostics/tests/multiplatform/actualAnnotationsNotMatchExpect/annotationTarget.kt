@@ -3,19 +3,19 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-expect annotation class ExpectIsSubsetOfActual
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ExpectIsSubsetOfActual<!>
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-expect annotation class ExpectIsSubsetOfActualDifferentOrder
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ExpectIsSubsetOfActualDifferentOrder<!>
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-expect annotation class MoreTargetsOnExpect
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MoreTargetsOnExpect<!>
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-expect annotation class RepeatedTargetsInExpect
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>RepeatedTargetsInExpect<!>
 
 @Target(allowedTargets = [])
-expect annotation class EmptyTargetsActual
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>EmptyTargetsActual<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

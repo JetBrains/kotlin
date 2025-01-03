@@ -5,9 +5,9 @@
 // MODULE: common
 
 // FILE: StringValue.kt
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>StringValue<!>
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>StringValue<!>
 
-expect fun StringValue.<!NO_ACTUAL_FOR_EXPECT{JVM}!>plus<!>(other: String): StringValue
+<!CONFLICTING_OVERLOADS!>expect fun StringValue.<!NO_ACTUAL_FOR_EXPECT{JVM}!>plus<!>(other: String): StringValue<!>
 
 // MODULE: commonJS()()(common)
 
@@ -19,13 +19,13 @@ actual fun StringValue.plus(other: String) = StringValue(this.value + other)
 // MODULE: intermediate()()(common)
 
 // FILE: StringDemoInterface.kt
-expect interface StringDemoInterface
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>StringDemoInterface<!>
 
-interface KotlinXStringDemoInterface {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>KotlinXStringDemoInterface<!> {
     val value: String
 }
 
-expect fun StringDemoInterface.plusK(): <!NO_ACTUAL_FOR_EXPECT{JVM}!>String<!>
+<!CONFLICTING_OVERLOADS!>expect fun StringDemoInterface.plusK(): <!NO_ACTUAL_FOR_EXPECT{JVM}!>String<!><!>
 
 // MODULE: js()()(common, intermediate)
 

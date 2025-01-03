@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect sealed class Presence
-expect object Online: Presence
-expect object Offline: Presence
+expect sealed class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Presence<!>
+expect object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Online<!>: Presence
+expect object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Offline<!>: Presence
 
 
 // MODULE: m2-jvm()()(m1-common)

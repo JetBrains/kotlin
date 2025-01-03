@@ -1,9 +1,9 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-59355
 
 // MODULE: common
-internal expect open class Some {
+internal expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Some<!> {
     protected class ProtectedNested
     internal class InternalNested
 
@@ -12,7 +12,7 @@ internal expect open class Some {
     protected fun protectedFun()
 }
 
-internal expect open class Other {
+internal expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Other<!> {
     protected class ProtectedNested
     internal class InternalNested
 }

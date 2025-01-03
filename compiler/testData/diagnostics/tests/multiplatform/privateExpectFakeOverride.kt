@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 // ISSUE: KT-68648
-abstract class BaseClass(private val x: Int)
+abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>BaseClass<!>(private val x: Int)
 
-expect class ExpectClass : BaseClass {}
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ExpectClass<!> : BaseClass {}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -2,22 +2,22 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann1
-annotation class Ann2
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann1<!>
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann2<!>
 
 @Ann1
 @Ann2
-expect class AnnotationOrder
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnotationOrder<!>
 
-annotation class Ann3(vararg val numbers: Int)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann3<!>(vararg val numbers: Int)
 
 @Ann3(1, 2)
-expect class ValuesOrderInsideAnnotationArgument
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ValuesOrderInsideAnnotationArgument<!>
 
-annotation class Ann4(val arg1: String, val arg2: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann4<!>(val arg1: String, val arg2: String)
 
-@Ann4(arg1 = "1", arg2 = "2")
-expect fun differentArgumentsOrder()
+<!CONFLICTING_OVERLOADS!>@Ann4(arg1 = "1", arg2 = "2")
+expect fun differentArgumentsOrder()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

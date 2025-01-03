@@ -2,17 +2,17 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>String<!>.a : String
+expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>String<!>.<!REDECLARATION!>a<!> : String
 
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>b<!> : String
+expect val <!NO_ACTUAL_FOR_EXPECT{JVM}, REDECLARATION!>b<!> : String
 
-expect val c : String.() -> String
+expect val <!REDECLARATION!>c<!> : String.() -> String
 
-expect val d : (String) -> String
+expect val <!REDECLARATION!>d<!> : (String) -> String
 
-expect val <T> T.e : String
+expect val <T> T.<!REDECLARATION!>e<!> : String
 
-expect val <T> <!NO_ACTUAL_FOR_EXPECT{JVM}!>T<!>.f : String
+expect val <T> <!NO_ACTUAL_FOR_EXPECT{JVM}!>T<!>.<!REDECLARATION!>f<!> : String
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

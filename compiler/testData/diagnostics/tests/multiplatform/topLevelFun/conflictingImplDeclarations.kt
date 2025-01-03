@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
+<!CONFLICTING_OVERLOADS!>expect fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

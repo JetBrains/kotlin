@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
 import kotlin.reflect.KClass
 
-expect annotation class Primitives(
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Primitives<!>(
     val z: Boolean = true,
     val c: Char = 'c',
     val b: Byte = 42.toByte(),
@@ -16,7 +15,7 @@ expect annotation class Primitives(
     val d: Double = 3.14159265358979
 )
 
-expect annotation class PrimitiveArrays(
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>PrimitiveArrays<!>(
     val z: BooleanArray = [true],
     val c: CharArray = ['c'],
     val b: ByteArray = [42.toByte()],
@@ -27,11 +26,11 @@ expect annotation class PrimitiveArrays(
     val d: DoubleArray = [3.14159265358979]
 )
 
-enum class En { A, B }
+enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>En<!> { A, B }
 
-annotation class Anno(val value: String = "Anno")
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Anno<!>(val value: String = "Anno")
 
-expect annotation class Classes(
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Classes<!>(
     val s: String = "OK",
     val e: En = En.B,
     // TODO: this does not work at the moment because AnnotationDescriptor subclasses do not implement equals correctly
@@ -39,7 +38,7 @@ expect annotation class Classes(
     val k: KClass<*> = List::class
 )
 
-expect annotation class ClassArrays(
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ClassArrays<!>(
     val s: Array<String> = ["OK"],
     val e: Array<En> = [En.B],
     // val a: Array<Anno> = [Anno()],

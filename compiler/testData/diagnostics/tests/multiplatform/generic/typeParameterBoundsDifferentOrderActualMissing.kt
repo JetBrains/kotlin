@@ -2,10 +2,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-interface A
-interface B
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><T><!> List<T>.foo() where T : A, T : B
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><T><!> List<T>.foo()<!> where T : A, T : B
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -1,12 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-60523
 
 // MODULE: m1-common
 // FILE: common.kt
-expect fun warn()
-expect fun error()
+<!CONFLICTING_OVERLOADS!>expect fun warn()<!>
+<!CONFLICTING_OVERLOADS!>expect fun error()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

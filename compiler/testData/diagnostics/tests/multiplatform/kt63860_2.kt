@@ -1,18 +1,17 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect interface SdkBufferedSink {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SdkBufferedSink<!> {
     public fun write(arg: String = "default")
 }
 
-abstract class AbstractBufferedSinkAdapter() {
+abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AbstractBufferedSinkAdapter<!>() {
     fun write(arg: String) {
     }
 }
 
-expect class BufferedSinkAdapter() : SdkBufferedSink {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>BufferedSinkAdapter<!>() : SdkBufferedSink {
     override fun write(arg: String)
 }
 

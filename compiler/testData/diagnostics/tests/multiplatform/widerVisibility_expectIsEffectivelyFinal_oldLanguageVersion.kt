@@ -4,10 +4,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-open class Base {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     internal open fun foo() {}
 }
-expect class Foo : Base {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : Base {
     override fun foo()
 }
 

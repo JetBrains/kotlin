@@ -1,14 +1,13 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect enum class Foo {
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     ENTRY
 }
 
-expect enum class _TimeUnit
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>_TimeUnit<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

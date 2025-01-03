@@ -2,9 +2,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Base
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!>
 
-expect open class Foo : Base {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : Base {
     fun foo(param: Int)
 }
 

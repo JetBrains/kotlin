@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-62024
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun foo(): Int
 }
 

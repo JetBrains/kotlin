@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-45796
 // SKIP_TXT
 
 // MODULE: m1-common
-expect sealed class SealedClass()
+expect sealed class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SealedClass<!>()
 
-class Derived1 : SealedClass()
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Derived1<!> : SealedClass()
 
 // MODULE: m1-jvm()()(m1-common)
 actual typealias SealedClass = MySealedClass

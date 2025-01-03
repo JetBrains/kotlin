@@ -2,10 +2,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann(val p: Double)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val p: Double)
 
-@Ann(0.3)
-expect fun floatNumbersComparison()
+<!CONFLICTING_OVERLOADS!>@Ann(0.3)
+expect fun floatNumbersComparison()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

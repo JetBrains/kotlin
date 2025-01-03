@@ -3,8 +3,8 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect annotation class Measurement(val iterations: Int = -1)
-expect value class Inline(val value: String = "")
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Measurement<!>(val iterations: Int = -1)
+expect value class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Inline<!>(val value: String = "")
 
 
 // MODULE: m2-jvm()()(m1-common)

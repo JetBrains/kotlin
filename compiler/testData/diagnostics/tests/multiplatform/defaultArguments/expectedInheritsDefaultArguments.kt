@@ -1,10 +1,9 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-interface Foo {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun ok(x: Int, y: String = "")
 
     fun failX(x: Int, y: String = "")
@@ -12,7 +11,7 @@ interface Foo {
     fun failY(x: Int, y: String = "")
 }
 
-expect class Bar : Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!> : Foo {
     override fun ok(x: Int, y: String)
 
     override fun failX(x: Int, y: String)
@@ -20,7 +19,7 @@ expect class Bar : Foo {
     override fun failY(x: Int, y: String)
 }
 
-fun test(foo: Foo, bar: Bar) {
+<!CONFLICTING_OVERLOADS!>fun test(foo: Foo, bar: Bar)<!> {
     foo.ok(42)
     foo.ok(42, "OK")
     bar.ok(42)

@@ -2,21 +2,21 @@
 // ISSUE: KT-57369
 
 // MODULE: common
-interface CompletionHandler {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>CompletionHandler<!> {
     fun foo()
 }
 
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class CompletionHandlerBase<!>()
+expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>CompletionHandlerBase<!><!>()
 
-fun invokeOnCompletion(handler: CompletionHandler) {}
+<!CONFLICTING_OVERLOADS!>fun invokeOnCompletion(handler: CompletionHandler)<!> {}
 
 // MODULE: intermediate()()(common)
 // actual has an additional super type
-actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class CompletionHandlerBase<!> : CompletionHandler {
+actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>CompletionHandlerBase<!><!> : CompletionHandler {
     override fun foo() {}
 }
 
-fun cancelFutureOnCompletionAlt(handlerBase: CompletionHandlerBase) {
+<!CONFLICTING_OVERLOADS!>fun cancelFutureOnCompletionAlt(handlerBase: CompletionHandlerBase)<!> {
     invokeOnCompletion(handlerBase)
     handlerBase.foo()
 }

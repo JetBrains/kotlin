@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: common
 // FILE: common.kt
-expect interface I
-expect interface J
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class X<!>(a: I, b : J): I by a, J by b
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I<!>
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>J<!>
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>X<!><!>(a: I, b : J): I by a, J by b
 
 // MODULE: platform()()(common)
 // FILE: platform.kt

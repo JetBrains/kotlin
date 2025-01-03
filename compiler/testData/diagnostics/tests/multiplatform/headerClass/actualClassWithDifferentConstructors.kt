@@ -3,17 +3,17 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo1
-expect class Foo2
-expect class Foo3
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo1<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo2<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
 
-expect class Bar1()
-expect class Bar2()
-expect class Bar3()
-expect class Bar4()
-expect class Bar5()
-expect class Bar6()
-expect class Bar7(s: String)
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar1<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar2<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar3<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar4<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar5<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar6<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar7<!>(s: String)
 
 // MODULE: m2-jvm()()(m1-common)
 

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 
 // MODULE: m1-common
@@ -7,10 +6,10 @@
 // FILE: common.kt
 
 @Retention(AnnotationRetention.RUNTIME)
-expect annotation class JavaTypealiasAnnotationAnalogue
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>JavaTypealiasAnnotationAnalogue<!>
 
 @Retention(AnnotationRetention.RUNTIME)
-expect annotation class JavaTypealiasKotlinAnnotation
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>JavaTypealiasKotlinAnnotation<!>
 
 // MODULE: m1-jvm()()(m1-common)
 

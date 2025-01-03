@@ -4,14 +4,14 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo1
-expect class Foo2
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo1<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo2<!>
 
-expect fun foo2(): Int
+<!CONFLICTING_OVERLOADS!>expect fun foo2(): Int<!>
 
-expect val s: String
+expect val <!REDECLARATION!>s<!>: String
 
-expect open class <!AMBIGUOUS_ACTUALS{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo3<!>
+expect open class <!AMBIGUOUS_ACTUALS{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo3<!>
 
 // MODULE: m2-jvm()()(m1-common)
 

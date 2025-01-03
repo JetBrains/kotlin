@@ -4,7 +4,7 @@
 // FILE: common.kt
 package common
 
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

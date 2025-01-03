@@ -3,19 +3,19 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect annotation class Foo1
-expect annotation class Foo2
-expect annotation class Foo3
-expect annotation class Foo4
-expect annotation class Foo5()
-expect annotation class Foo6()
-expect annotation class Foo7()
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo1<!>
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo2<!>
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo4<!>
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo5<!>()
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo6<!>()
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo7<!>()
 
-@<!NO_CONSTRUCTOR!>Foo1<!>
-fun foo() {}
+<!CONFLICTING_OVERLOADS!>@<!NO_CONSTRUCTOR!>Foo1<!>
+fun foo()<!> {}
 
-@Foo5
-fun bar() {}
+<!CONFLICTING_OVERLOADS!>@Foo5
+fun bar()<!> {}
 
 // MODULE: m2-jvm()()(m1-common)
 

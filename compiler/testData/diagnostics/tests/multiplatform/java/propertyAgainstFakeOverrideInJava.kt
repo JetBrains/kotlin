@@ -1,9 +1,8 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     val foo: Int
 }
 

@@ -1,11 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-70179
 
 // MODULE: m1-common
 // FILE: common.kt
 
-expect annotation class Ann()
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>()
 
 // MODULE: m2-jvm
 // FILE: some/my/Ann.java

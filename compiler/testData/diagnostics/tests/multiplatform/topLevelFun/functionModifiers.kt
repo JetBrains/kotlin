@@ -1,14 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun external()
-expect fun tailrec()
-expect fun inline()
-expect fun String.unaryMinus(): String
-expect fun String.and(other: String): String
+<!CONFLICTING_OVERLOADS!>expect fun external()<!>
+<!CONFLICTING_OVERLOADS!>expect fun tailrec()<!>
+<!CONFLICTING_OVERLOADS!>expect fun inline()<!>
+<!CONFLICTING_OVERLOADS!>expect fun String.unaryMinus(): String<!>
+<!CONFLICTING_OVERLOADS!>expect fun String.and(other: String): String<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -3,11 +3,11 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>Foo<!> { // "direct actual" in different compilation unit is not permitted
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> { // "direct actual" in different compilation unit is not permitted
     fun foo()
 }
 
-expect class A
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
 
 // MODULE: m2-jvm
 // FILE: Foo.java

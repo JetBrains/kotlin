@@ -3,13 +3,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-interface B {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> {
     override fun toString(): String
 }
 
-expect value class C(val s: String) : B
+expect value class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!>(val s: String) : B
 
-expect value class D(val s: String) : B
+expect value class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>D<!>(val s: String) : B
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

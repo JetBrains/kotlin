@@ -3,19 +3,19 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Target(AnnotationTarget.TYPE_PARAMETER)
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-expect fun <@Ann A> inMethod()
+<!CONFLICTING_OVERLOADS!>expect fun <@Ann A> inMethod()<!>
 
-expect fun <A, @Ann B> inMethodTwoParams()
+<!CONFLICTING_OVERLOADS!>expect fun <A, @Ann B> inMethodTwoParams()<!>
 
-expect class InClass<@Ann A>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>InClass<!><@Ann A>
 
-expect class ViaTypealias<@Ann A>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ViaTypealias<!><@Ann A>
 
-expect class TypealiasParamNotAccepted<@Ann A>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TypealiasParamNotAccepted<!><@Ann A>
 
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><@Ann A, @Ann B><!> withIncompatibility()
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><@Ann A, @Ann B><!> withIncompatibility()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

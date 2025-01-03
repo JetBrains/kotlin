@@ -1,14 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-64187
 
 // MODULE: common
 // FILE: common.kt
-expect abstract class Base
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!>
 
-expect class Derived : Base
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Derived<!> : Base
 
 // MODULE: jvm()()(common)
 // FILE: main.kt

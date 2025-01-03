@@ -4,13 +4,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun foo1(x: Int)
-expect fun foo2<!NO_ACTUAL_FOR_EXPECT{JVM}!>(x: Int)<!>
+<!CONFLICTING_OVERLOADS!>expect fun foo1(x: Int)<!>
+<!CONFLICTING_OVERLOADS!>expect fun foo2<!NO_ACTUAL_FOR_EXPECT{JVM}!>(x: Int)<!><!>
 
-expect class NoArgConstructor()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NoArgConstructor<!>()
 
-expect fun foo3(): <!NO_ACTUAL_FOR_EXPECT{JVM}!>Int<!>
-expect fun foo4<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>: Int
+<!CONFLICTING_OVERLOADS!>expect fun foo3(): <!NO_ACTUAL_FOR_EXPECT{JVM}!>Int<!><!>
+<!CONFLICTING_OVERLOADS!>expect fun foo4<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>: Int<!>
 
 // MODULE: m2-jvm()()(m1-common)
 

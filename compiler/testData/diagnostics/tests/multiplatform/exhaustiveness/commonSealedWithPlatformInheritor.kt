@@ -1,13 +1,13 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-45848
 // MODULE: m1-common
 
-sealed class Base
+sealed class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!>
 
-class Derived : Base()
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Derived<!> : Base()
 
-fun test_1(b: Base) = <!NO_ELSE_IN_WHEN{JVM}!>when<!> (b) {
+<!CONFLICTING_OVERLOADS!>fun test_1(b: Base)<!> = <!NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{JVM}!>when<!> (b) {
     is Derived -> 1
 }
 

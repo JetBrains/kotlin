@@ -1,21 +1,21 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-<!CONFLICTING_OVERLOADS{JVM}!>fun foo()<!> {}
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
+<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!>fun foo()<!> {}
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
-open class Base {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     open fun foo() {}
 }
-expect class Bar : Base {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!> : Base {
 }
 
-expect open class ExpectBase {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ExpectBase<!> {
     open fun foo()
 }
-expect class Baz : ExpectBase
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Baz<!> : ExpectBase
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

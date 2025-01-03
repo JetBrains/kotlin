@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
-expect enum class Foo { A, B }
-expect enum class Bar { X, Y, Z }
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> { A, B }
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!> { X, Y, Z }
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

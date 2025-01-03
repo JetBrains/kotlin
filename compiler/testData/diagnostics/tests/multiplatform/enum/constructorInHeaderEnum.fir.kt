@@ -14,3 +14,5 @@
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> enum class En2 {
     E1<!SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS!>()<!>
 }
+
+// MODULE: m1-jvm()()(m1-common)

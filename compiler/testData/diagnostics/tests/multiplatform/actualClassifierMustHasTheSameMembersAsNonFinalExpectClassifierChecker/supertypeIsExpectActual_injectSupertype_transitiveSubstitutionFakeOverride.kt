@@ -1,14 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Base<T> {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!><T> {
     fun injected(param: T)
 }
 
-expect open class Foo {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun existingMethod()
     val existingParam: Int
 }

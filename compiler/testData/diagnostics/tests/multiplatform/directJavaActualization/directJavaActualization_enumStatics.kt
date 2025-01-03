@@ -3,17 +3,17 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Ok<!> {
+expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ok<!> {
     ENTRY;
     fun values() // Not to be confused with static values
 }
 
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>NoAnnotation<!> {
+expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>NoAnnotation<!> {
     ENTRY;
     fun values() // Not to be confused with static values
 }
 
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>ExcessiveAnnotation<!> {
+expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>ExcessiveAnnotation<!> {
     ENTRY;
 }
 

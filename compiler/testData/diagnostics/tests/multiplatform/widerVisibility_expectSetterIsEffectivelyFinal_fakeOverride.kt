@@ -1,13 +1,12 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-open class Base {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     open var foo: Int = 2
         protected set
 }
-expect class Foo : Base
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : Base
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

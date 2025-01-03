@@ -5,14 +5,14 @@
 // FILE: common.kt
 <!OPT_IN_WITHOUT_ARGUMENTS!>@file:OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
 
-expect annotation class ActualOnly
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ActualOnly<!>
 
 @RequiresOptIn
-<!EXPECT_ACTUAL_OPT_IN_ANNOTATION{JVM}!>expect<!> annotation class Both
+<!EXPECT_ACTUAL_OPT_IN_ANNOTATION{JVM}!>expect<!> annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Both<!>
 
 @RequiresOptIn
 @<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
-expect annotation class MyOptIn
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyOptIn<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

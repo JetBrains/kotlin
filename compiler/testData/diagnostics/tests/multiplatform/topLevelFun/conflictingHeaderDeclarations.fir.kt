@@ -7,3 +7,5 @@
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> <!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{METADATA}!>fun foo()<!>
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> fun foo(x: Int)
+
+// MODULE: m1-jvm()()(m1-common)

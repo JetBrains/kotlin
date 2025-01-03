@@ -1,6 +1,5 @@
 // LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
-// RENDER_DIAGNOSTICS_FULL_TEXT
 // RENDER_IR_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1-common
 // FILE: common.kt
@@ -13,37 +12,37 @@
     AnnotationTarget.PROPERTY_SETTER,
     AnnotationTarget.TYPE,
 )
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
 @Ann
-expect class OnClass
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OnClass<!>
 
-expect class OnMember {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OnMember<!> {
     @Ann
     fun onMember()
 }
 
 @Ann
-expect class ViaTypealias
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ViaTypealias<!>
 
-expect class MemberScopeViaTypealias {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MemberScopeViaTypealias<!> {
     @Ann
     fun foo()
 }
 
-annotation class WithArg(val s: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>WithArg<!>(val s: String)
 
-@WithArg("str")
-expect fun withDifferentArg()
+<!CONFLICTING_OVERLOADS!>@WithArg("str")
+expect fun withDifferentArg()<!>
 
-expect fun inValueParam(@Ann arg: String)
+<!CONFLICTING_OVERLOADS!>expect fun inValueParam(@Ann arg: String)<!>
 
-expect fun <@Ann T> inTypeParam()
+<!CONFLICTING_OVERLOADS!>expect fun <@Ann T> inTypeParam()<!>
 
 @get:Ann
-expect val onGetter: String
+expect val <!REDECLARATION!>onGetter<!>: String
 
-expect fun onType(param: @Ann Any)
+<!CONFLICTING_OVERLOADS!>expect fun onType(param: @Ann Any)<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

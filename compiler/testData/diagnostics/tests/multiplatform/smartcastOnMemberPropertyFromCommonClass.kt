@@ -1,10 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-class Some {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Some<!> {
     val e: SomeEnum? = null
 }
 
-enum class SomeEnum {
+enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SomeEnum<!> {
     A, B
 }
 

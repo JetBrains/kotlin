@@ -1,13 +1,12 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
 
-expect fun getFoo(): Foo
+<!CONFLICTING_OVERLOADS!>expect fun getFoo(): Foo<!>
 
-fun <T : Foo> bar() {} // no "Foo is final" warning should be here
+<!CONFLICTING_OVERLOADS!>fun <T : Foo> bar()<!> {} // no "Foo is final" warning should be here
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -1,17 +1,16 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
 @Repeatable
-annotation class AnnNoArg
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnNoArg<!>
 
+<!CONFLICTING_OVERLOADS!>@AnnNoArg
 @AnnNoArg
-@AnnNoArg
-expect fun oneMoreOnExpect()
+expect fun oneMoreOnExpect()<!>
 
-@AnnNoArg
-expect fun oneMoreOnActual()
+<!CONFLICTING_OVERLOADS!>@AnnNoArg
+expect fun oneMoreOnActual()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

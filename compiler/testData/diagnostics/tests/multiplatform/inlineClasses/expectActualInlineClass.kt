@@ -5,17 +5,17 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect inline class Foo1(val x: Int) {
+expect inline class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo1<!>(val x: Int) {
     fun bar(): String
 }
 
-expect inline class Foo2(val x: Int)
+expect inline class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo2<!>(val x: Int)
 
-expect <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS{JVM}!>inline<!> class Foo3
+expect <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS{JVM}!>inline<!> class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
 
-expect class NonInlineExpect
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NonInlineExpect<!>
 
-expect inline class NonInlineActual(val x: Int)
+expect inline class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NonInlineActual<!>(val x: Int)
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

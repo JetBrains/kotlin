@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// FIR_IDENTICAL
 // MODULE: m1-common
 // ISSUE: KT-66723
 // FILE: common.kt
 
-expect class Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun <!AMBIGUOUS_ACTUALS{JVM}!>push<!>(value: Int)
 }
 

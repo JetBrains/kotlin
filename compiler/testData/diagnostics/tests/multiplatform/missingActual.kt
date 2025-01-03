@@ -4,13 +4,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-open expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>A<!>() {
+open expect class <!NO_ACTUAL_FOR_EXPECT{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>() {
     open fun foo(): String
 }
 
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>B<!>() : A
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>() : A
 
-fun test() = B().foo()
+<!CONFLICTING_OVERLOADS!>fun test()<!> = B().foo()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

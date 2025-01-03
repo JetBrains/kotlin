@@ -1,26 +1,25 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 // FILE: common.kt
-expect interface Base1 {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base1<!> {
     fun foo(a: String): String
 }
 
-expect interface Base2 {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base2<!> {
     fun foo(a: Any): Any
 }
 
-expect interface Base3 {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base3<!> {
     fun foo(a: String): String
 }
 
-class Test1(val a : Base2): Base1, Base2 by a {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test1<!>(val a : Base2): Base1, Base2 by a {
     override fun foo(a: String): String {
         return a
     }
 }
 
-class Test2(val a: Base1): Base3, Base1 by a
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test2<!>(val a: Base1): Base3, Base1 by a
 
 // MODULE: platform()()(common)
 // FILE: platform.kt

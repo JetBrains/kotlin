@@ -1,14 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 // MODULE: common
-expect class A
-expect class B
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
 // MODULE: intermediate()()(common)
-actual class B
-expect class C
+actual class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!>
 
 // MODULE: main()()(intermediate)
-actual class A
-actual class C
+actual class <!AMBIGUOUS_EXPECTS!>A<!>
+actual class <!AMBIGUOUS_EXPECTS!>C<!>

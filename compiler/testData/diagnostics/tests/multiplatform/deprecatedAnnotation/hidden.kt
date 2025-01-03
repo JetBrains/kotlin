@@ -3,16 +3,16 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class A()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>()
 
-expect class B()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>()
 
-expect fun foo(test: String)
+<!CONFLICTING_OVERLOADS!>expect fun foo(test: String)<!>
 
-fun test() {
+<!CONFLICTING_OVERLOADS!>fun test()<!> {
     <!DEPRECATION_ERROR{JVM}!>A<!>()
     <!UNRESOLVED_REFERENCE{JVM}!>B<!>()
-    foo("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>("")
 }
 
 // MODULE: m2-jvm()()(m1-common)

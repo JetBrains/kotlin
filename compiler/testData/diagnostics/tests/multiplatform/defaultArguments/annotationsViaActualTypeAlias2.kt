@@ -6,7 +6,7 @@
 
 import kotlin.reflect.KClass
 
-expect annotation class Anno(
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Anno<!>(
     val b: Byte = 1.toByte(),
     val c: Char = 'x',
     val d: Double = 3.14,
@@ -38,12 +38,12 @@ expect annotation class Anno(
     val aa: Array<A> = [A("2"), A("3")],
 )
 
-enum class E { E1, E2, E3 }
+enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E<!> { E1, E2, E3 }
 
-annotation class A(val value: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>(val value: String)
 
-@Anno
-fun test() {}
+<!CONFLICTING_OVERLOADS!>@Anno
+fun test()<!> {}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

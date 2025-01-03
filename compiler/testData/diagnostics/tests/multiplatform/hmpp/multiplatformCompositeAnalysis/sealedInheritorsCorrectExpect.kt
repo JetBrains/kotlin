@@ -1,31 +1,30 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: common
 
 package test
 
-expect sealed class Sealed
-expect class Sealed1 : Sealed
+expect sealed class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Sealed<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Sealed1<!> : Sealed
 
-expect sealed interface SealedIface
-expect class SealedImpl1 : SealedIface
+expect sealed interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SealedIface<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SealedImpl1<!> : SealedIface
 
 // MODULE: intermediate()()(common)
 
 package test
 
-expect class Sealed2 : Sealed
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Sealed2<!> : Sealed
 
-expect class SealedImpl2 : SealedIface
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SealedImpl2<!> : SealedIface
 
 // MODULE: main()()(intermediate)
 
 package test
 
-actual sealed class Sealed(val v: Int)
-actual class Sealed1() : Sealed(1)
-actual class Sealed2() : Sealed(2)
+actual sealed class <!AMBIGUOUS_EXPECTS!>Sealed<!>(val v: Int)
+actual class <!AMBIGUOUS_EXPECTS!>Sealed1<!>() : Sealed(1)
+actual class <!AMBIGUOUS_EXPECTS!>Sealed2<!>() : Sealed(2)
 
-actual sealed interface SealedIface
-actual class SealedImpl1() : SealedIface
-actual class SealedImpl2() : SealedIface
+actual sealed interface <!AMBIGUOUS_EXPECTS!>SealedIface<!>
+actual class <!AMBIGUOUS_EXPECTS!>SealedImpl1<!>() : SealedIface
+actual class <!AMBIGUOUS_EXPECTS!>SealedImpl2<!>() : SealedIface

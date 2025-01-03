@@ -4,7 +4,7 @@
 // ISSUES: KT-71809
 // MODULE: m1-common
 // FILE: common.kt
-open class Base {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     val valOverriddenGetter: Int = 0
     val valOverriddenGetter_missingAnootation: Int = 0
     val valFakeOverrideGetter: Int = 0
@@ -21,7 +21,7 @@ open class Base {
     var varFakeOverrideGetterAndSetter: Int = 0
 }
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     val valOverriddenGetter: Int
     val valOverriddenGetter_missingAnootation: Int
     val valFakeOverrideGetter: Int

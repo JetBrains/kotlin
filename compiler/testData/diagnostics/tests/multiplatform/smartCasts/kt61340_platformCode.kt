@@ -1,13 +1,12 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 // MODULE: m1-common
 // FILE: common.kt
 
-expect val foo: Any
+expect val <!REDECLARATION!>foo<!>: Any
 
-expect class Bar() {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!>() {
     val bus: Any
 }
 

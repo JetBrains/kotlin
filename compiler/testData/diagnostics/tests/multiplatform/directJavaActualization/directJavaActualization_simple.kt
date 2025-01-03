@@ -3,11 +3,11 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-open class Base() {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!>() {
     open fun fakeOverrideInExpect() {}
 }
 
-expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() : Base {
+expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>() : Base {
     fun foo()
     open fun fakeOverrideInActual()
 

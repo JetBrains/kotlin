@@ -1,17 +1,16 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect interface Interface
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Interface<!>
 
-expect annotation class Anno(val prop: String)
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Anno<!>(val prop: String)
 
-expect object Object
+expect object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Object<!>
 
-expect class Class
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Class<!>
 
-expect enum class En { ENTRY }
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>En<!> { ENTRY }
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

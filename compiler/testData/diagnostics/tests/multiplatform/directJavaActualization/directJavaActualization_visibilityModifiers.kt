@@ -3,18 +3,18 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     internal fun bar()
     protected fun foo()
     fun baz()
     public fun qux()
 }
 
-internal expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Bar<!>
+internal expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!>
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Baz<!>
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Baz<!>
 
-public expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Qux<!>
+public expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Qux<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

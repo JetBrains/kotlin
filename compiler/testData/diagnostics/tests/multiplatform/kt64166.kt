@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-interface I {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I<!> {
     fun foo() {}
 }
-expect class Foo : I
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : I
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

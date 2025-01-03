@@ -1,11 +1,10 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 // FILE: common.kt
-expect interface Base<T> {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!><T> {
     fun foo():T
 }
-class DelegatedImpl<T : Base<T>>(val a: T) : Base<T> by a
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>DelegatedImpl<!><T : Base<T>>(val a: T) : Base<T> by a
 
 // MODULE: platform()()(common)
 // FILE: platform.kt

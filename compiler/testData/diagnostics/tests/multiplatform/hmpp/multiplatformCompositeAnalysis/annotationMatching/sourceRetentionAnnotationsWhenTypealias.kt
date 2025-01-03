@@ -1,14 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: common
-expect annotation class Ann() // No @Retention SOURCE set
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>() // No @Retention SOURCE set
 
 @Ann
-expect annotation class CommonVolatile
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>CommonVolatile<!>
 
 // MODULE: main()()(common)
 @Retention(AnnotationRetention.SOURCE)
-actual annotation class Ann
+actual annotation class <!AMBIGUOUS_EXPECTS!>Ann<!>
 
-actual typealias CommonVolatile = kotlin.jvm.Volatile
+actual typealias <!AMBIGUOUS_EXPECTS!>CommonVolatile<!> = kotlin.jvm.Volatile

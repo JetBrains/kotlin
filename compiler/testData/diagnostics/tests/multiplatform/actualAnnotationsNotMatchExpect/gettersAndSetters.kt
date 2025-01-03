@@ -3,24 +3,24 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-expect val onGetter: String
+expect val <!REDECLARATION!>onGetter<!>: String
     @Ann get
 
-expect val onGetterImplicit: String
+expect val <!REDECLARATION!>onGetterImplicit<!>: String
     @Ann get
 
 @get:Ann
-expect val onGetterWithExplicitTarget: String
+expect val <!REDECLARATION!>onGetterWithExplicitTarget<!>: String
 
 @get:Ann
-expect val explicitTargetMatchesWithoutTarget: String
+expect val <!REDECLARATION!>explicitTargetMatchesWithoutTarget<!>: String
 
 @get:Ann
-expect val setOnPropertyWithoutTargetNotMatch: String
+expect val <!REDECLARATION!>setOnPropertyWithoutTargetNotMatch<!>: String
 
-expect var onSetter: String
+expect var <!REDECLARATION!>onSetter<!>: String
     @Ann set
 
 // MODULE: m1-jvm()()(m1-common)

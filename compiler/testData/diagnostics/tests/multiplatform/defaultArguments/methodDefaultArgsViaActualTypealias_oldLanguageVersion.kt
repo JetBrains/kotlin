@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common
 // FILE: common.kt
-expect class A {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     fun foo(p: String = "common")
 }
 

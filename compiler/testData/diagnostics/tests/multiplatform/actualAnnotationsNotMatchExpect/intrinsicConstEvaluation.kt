@@ -3,17 +3,17 @@
 // LANGUAGE: +IntrinsicConstEvaluation
 // MODULE: m1-common
 // FILE: common.kt
-enum class MyEnum {
+enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyEnum<!> {
     FOO
 }
 
-annotation class Ann(val p: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val p: String)
 
-@Ann("FOO")
-expect fun matching()
+<!CONFLICTING_OVERLOADS!>@Ann("FOO")
+expect fun matching()<!>
 
-@Ann("not FOO")
-expect fun nonMatching()
+<!CONFLICTING_OVERLOADS!>@Ann("not FOO")
+expect fun nonMatching()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

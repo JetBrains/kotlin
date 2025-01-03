@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
-// FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
 // MODULE: m1-common
 // FILE: common.kt
 
-open class Base<T> {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!><T> {
     open fun returnType(): T = null!!
     open fun parameterType(t: T) {}
     context(T)
@@ -13,7 +12,7 @@ open class Base<T> {
     open fun T.extensionReceiverType() {}
 }
 
-expect open class Foo<E> : Base<E>
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!><E> : Base<E>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

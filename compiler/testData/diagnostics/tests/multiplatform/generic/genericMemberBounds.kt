@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class A {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     fun <T : Any> foo(): Unit
 
     fun <S : Comparable<S>> bar(): List<S>

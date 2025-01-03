@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-open class Supertype()
-typealias SupertypeAlias = Supertype
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Supertype<!>()
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SupertypeAlias<!> = Supertype
 
-expect open class Foo : SupertypeAlias {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : SupertypeAlias {
     fun existingMethod()
     val existingParam: Int
 }

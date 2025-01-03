@@ -1,15 +1,15 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-open class Base {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     open fun foo(param: Int) {}
 }
 
-expect open class Foo1 : Base
-expect open class Foo2 : Base
-expect open class Foo3 {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo1<!> : Base
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo2<!> : Base
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!> {
     open fun foo(param: Int)
 }
 

@@ -1,9 +1,9 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class A private constructor() {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> private constructor() {
     <!EXPECTED_PRIVATE_DECLARATION, EXPECTED_PRIVATE_DECLARATION{JVM}!>private<!> fun foo()
     <!EXPECTED_PRIVATE_DECLARATION, EXPECTED_PRIVATE_DECLARATION{JVM}!>private<!> val bar: String
     <!EXPECTED_PRIVATE_DECLARATION, EXPECTED_PRIVATE_DECLARATION{JVM}!>private<!> fun Int.memExt(): Any

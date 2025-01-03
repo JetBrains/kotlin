@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect interface A<T> {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!><T> {
     val x: T
     var y: List<T>
     fun f(p: Collection<T>): Map<T, A<T?>>

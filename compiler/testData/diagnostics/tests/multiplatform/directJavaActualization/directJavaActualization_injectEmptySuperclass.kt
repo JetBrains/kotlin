@@ -3,8 +3,8 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-open class InjectedEmptySuperClass()
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>InjectedEmptySuperClass<!>()
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun foo()
 }
 

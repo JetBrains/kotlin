@@ -1,16 +1,16 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_DEXING
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 
-interface A {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     open fun foo() {}
 }
 
-expect interface B
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
-class C : A, <!SUPERTYPE_APPEARS_TWICE{JVM}!>B<!> {}
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> : A, <!SUPERTYPE_APPEARS_TWICE{JVM}!>B<!> {}
 
 // MODULE: jvm()()(common)
 

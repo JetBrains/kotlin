@@ -1,18 +1,17 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo1 {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo1<!> {
     val x: String
 }
 
-expect class Foo2 {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo2<!> {
     val x: String
 }
 
-expect class Foo3 {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!> {
     val x: String
 }
 

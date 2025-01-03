@@ -2,11 +2,11 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-open class Base {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!> {
     open var foo: Int = 2
         internal set
 }
-expect class Foo : Base {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : Base {
     override var foo: Int
         internal set
 }

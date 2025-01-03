@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann(val p: String = "")
-@Ann("")
-expect fun explicitDefaultArgument()
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val p: String = "")
+<!CONFLICTING_OVERLOADS!>@Ann("")
+expect fun explicitDefaultArgument()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

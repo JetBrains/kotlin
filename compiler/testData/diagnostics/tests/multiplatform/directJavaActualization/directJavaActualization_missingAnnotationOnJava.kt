@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() {
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>() {
     fun foo()
     override fun equals(other: Any?): Boolean
     class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Nested<!>

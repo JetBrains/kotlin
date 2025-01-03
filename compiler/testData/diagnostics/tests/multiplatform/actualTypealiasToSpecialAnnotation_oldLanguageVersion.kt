@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -MultiplatformRestrictions
-// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
-expect annotation class TypealiasToKotlinPkg
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TypealiasToKotlinPkg<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

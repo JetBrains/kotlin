@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun foo(x: Int): Int
+<!CONFLICTING_OVERLOADS!>expect fun foo(x: Int): Int<!>
 
-fun callFromCommonCode(x: Int) = foo(x)
+<!CONFLICTING_OVERLOADS!>fun callFromCommonCode(x: Int)<!> = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(x)
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

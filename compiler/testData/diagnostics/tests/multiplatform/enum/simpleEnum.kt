@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect enum class Foo {
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     ENTRY1,
     ENTRY2,
     ENTRY3;

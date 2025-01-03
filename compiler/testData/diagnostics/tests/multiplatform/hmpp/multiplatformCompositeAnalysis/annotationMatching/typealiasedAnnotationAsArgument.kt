@@ -1,19 +1,18 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -TYPE_MISMATCH
 // MODULE: common
-expect annotation class Typealiased()
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Typealiased<!>()
 
-annotation class Ann(val p: Typealiased)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val p: Typealiased)
 
-@Ann(Typealiased())
-expect fun test()
+<!CONFLICTING_OVERLOADS!>@Ann(Typealiased())
+expect fun test()<!>
 
 // MODULE: main()()(common)
 annotation class TypealiasedImpl
 
-actual typealias Typealiased = TypealiasedImpl
+actual typealias <!AMBIGUOUS_EXPECTS!>Typealiased<!> = TypealiasedImpl
 
 @Ann(Typealiased())
-actual fun test() {}
+actual fun <!AMBIGUOUS_EXPECTS!>test<!>() {}
 

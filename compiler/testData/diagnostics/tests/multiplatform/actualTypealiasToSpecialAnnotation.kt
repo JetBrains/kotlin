@@ -1,17 +1,17 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: FIR2IR
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
-expect annotation class TypealiasToKotlinPkg
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TypealiasToKotlinPkg<!>
 
-internal expect annotation class TypealiasToInternalPkg
+internal expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TypealiasToInternalPkg<!>
 
-expect annotation class TypealiasToAnnotationPkg
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TypealiasToAnnotationPkg<!>
 
-expect annotation class TypealiasToPlatformPkg
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TypealiasToPlatformPkg<!>
 
-expect enum class TypealiasNotToAnnotation
+expect enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TypealiasNotToAnnotation<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

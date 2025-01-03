@@ -2,62 +2,62 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann<T>
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!><T>
 
-class A
-class B
-private object FakeA {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
+private object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>FakeA<!> {
     class A
 }
 
-@Ann<A>
-expect fun sameTypeParam()
+<!CONFLICTING_OVERLOADS!>@Ann<A>
+expect fun sameTypeParam()<!>
 
-@Ann<B>
-expect fun differentTypeParam()
+<!CONFLICTING_OVERLOADS!>@Ann<B>
+expect fun differentTypeParam()<!>
 
-@Ann<FakeA.A>
-expect fun differentWithSameName()
+<!CONFLICTING_OVERLOADS!>@Ann<<!INVISIBLE_REFERENCE!>FakeA<!>.<!INVISIBLE_REFERENCE!>A<!>>
+expect fun differentWithSameName()<!>
 
-@Ann<A?>
-expect fun nonNullvsNull()
+<!CONFLICTING_OVERLOADS!>@Ann<A?>
+expect fun nonNullvsNull()<!>
 
-@Ann<Ann<in A>>
-expect fun differentVariance()
+<!CONFLICTING_OVERLOADS!>@Ann<Ann<in A>>
+expect fun differentVariance()<!>
 
-@Ann<Ann<in A>>
-expect fun varianceVsNoVariance()
+<!CONFLICTING_OVERLOADS!>@Ann<Ann<in A>>
+expect fun varianceVsNoVariance()<!>
 
-@Ann<Ann<in A>>
-expect fun sameVariance()
+<!CONFLICTING_OVERLOADS!>@Ann<Ann<in A>>
+expect fun sameVariance()<!>
 
-@Ann<Ann<*>>
-expect fun startProjection()
+<!CONFLICTING_OVERLOADS!>@Ann<Ann<*>>
+expect fun startProjection()<!>
 
-annotation class ComplexNested<T>(
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ComplexNested<!><T>(
     vararg val anns: ComplexNested<*>,
 )
 
-@ComplexNested<A>(
+<!CONFLICTING_OVERLOADS!>@ComplexNested<A>(
     ComplexNested<A>(),
     ComplexNested<A>(),
 )
-expect fun complexSame()
+expect fun complexSame()<!>
 
-@ComplexNested<A>(
+<!CONFLICTING_OVERLOADS!>@ComplexNested<A>(
     ComplexNested<A>(),
     ComplexNested<B>(),
 )
-expect fun complexDiffer()
+expect fun complexDiffer()<!>
 
-annotation class NestedWithSameTypeArgument<T>(
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NestedWithSameTypeArgument<!><T>(
     vararg val anns: NestedWithSameTypeArgument<T>
 )
 
-@NestedWithSameTypeArgument<A>(
+<!CONFLICTING_OVERLOADS!>@NestedWithSameTypeArgument<A>(
     NestedWithSameTypeArgument()
 )
-expect fun explicitVsInfered()
+expect fun explicitVsInfered()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

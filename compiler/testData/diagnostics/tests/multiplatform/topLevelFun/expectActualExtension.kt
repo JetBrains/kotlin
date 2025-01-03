@@ -2,17 +2,17 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>Int<!>.test1()
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>Int<!>.test1()<!>
 
-expect fun test2<!NO_ACTUAL_FOR_EXPECT{JVM}!>(a: Int)<!>
+<!CONFLICTING_OVERLOADS!>expect fun test2<!NO_ACTUAL_FOR_EXPECT{JVM}!>(a: Int)<!><!>
 
-expect fun test3(x: (String) -> Unit)
+<!CONFLICTING_OVERLOADS!>expect fun test3(x: (String) -> Unit)<!>
 
-expect fun test4(x: String.() -> Unit)
+<!CONFLICTING_OVERLOADS!>expect fun test4(x: String.() -> Unit)<!>
 
-expect fun ((String) -> Unit).test5()
+<!CONFLICTING_OVERLOADS!>expect fun ((String) -> Unit).test5()<!>
 
-expect fun (String.() -> Unit).test6()
+<!CONFLICTING_OVERLOADS!>expect fun (String.() -> Unit).test6()<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

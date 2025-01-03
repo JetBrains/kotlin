@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-interface MutableListEx<E> : MutableList<E> {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MutableListEx<!><E> : MutableList<E> {
     fun removeRange(fromIndex: Int, toIndex: Int)
     fun addAll(elements: FastArrayList<E>): Boolean = addAll(elements as Collection<E>)
     fun setAddAll(index: Int, elements: FastArrayList<E>, offset: Int = 0, size: Int = elements.size - offset) {}
@@ -13,7 +13,7 @@ interface MutableListEx<E> : MutableList<E> {
     fun removeToSize(size: Int) {}
 }
 
-expect class FastArrayList<E> : MutableListEx<E>, <!UNRESOLVED_REFERENCE!>RandomAccess<!> {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>FastArrayList<!><E> : MutableListEx<E>, <!UNRESOLVED_REFERENCE!>RandomAccess<!> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(elements: Collection<E>)

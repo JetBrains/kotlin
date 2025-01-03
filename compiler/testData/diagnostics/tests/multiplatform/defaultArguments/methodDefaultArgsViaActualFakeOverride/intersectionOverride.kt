@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect interface Foo {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun foo(p: Int = 1)
 }
 

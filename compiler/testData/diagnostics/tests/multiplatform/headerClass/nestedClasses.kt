@@ -1,24 +1,24 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1-common
 // FILE: common.kt
 import kotlin.reflect.KProperty
 
-fun <T> lazy(initializer: () -> T): Lazy<T> = TODO()
+<!CONFLICTING_OVERLOADS!>fun <T> lazy(initializer: () -> T): Lazy<T><!> = <!OVERLOAD_RESOLUTION_AMBIGUITY!>TODO<!>()
 
-interface Lazy<out T> {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = TODO()
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Lazy<!><out T> {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = <!OVERLOAD_RESOLUTION_AMBIGUITY!>TODO<!>()
 }
 
-expect class OuterClass {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OuterClass<!> {
     class NestedClass {
         class DeepNested {
             class Another {
                 fun f(s: String)
                 val p: Int
                 val c: Int = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{JVM}!>1<!>
-                val a: Int <!EXPECTED_DELEGATED_PROPERTY, EXPECTED_DELEGATED_PROPERTY{JVM}!>by lazy { 1 }<!>
+                val a: Int <!EXPECTED_DELEGATED_PROPERTY, EXPECTED_DELEGATED_PROPERTY{JVM}!>by <!OVERLOAD_RESOLUTION_AMBIGUITY!>lazy<!> { 1 }<!>
             }
         }
     }
@@ -31,15 +31,15 @@ expect class OuterClass {
     companion object
 }
 
-expect class OuterClassWithNamedCompanion {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OuterClassWithNamedCompanion<!> {
     companion object Factory
 }
 
-expect object OuterObject {
+expect object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>OuterObject<!> {
     object NestedObject
 }
 
-fun TODO(): Nothing = null!!
+<!CONFLICTING_OVERLOADS!>fun TODO(): Nothing<!> = null!!
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

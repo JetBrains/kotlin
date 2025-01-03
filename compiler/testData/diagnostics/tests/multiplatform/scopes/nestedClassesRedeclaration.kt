@@ -4,19 +4,19 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class A {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     class N
 }
 
-expect class B {}
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> {}
 
-expect class C {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
     class N
 }
 
-expect abstract class D()
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>D<!>()
 
-class E : D() {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E<!> : D() {
     class N
 }
 

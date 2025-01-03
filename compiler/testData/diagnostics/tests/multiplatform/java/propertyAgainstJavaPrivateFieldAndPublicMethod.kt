@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-interface I {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I<!> {
     val foo: Int
 }
 
-expect class Foo : I {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> : I {
     // AMBIGUOUS_ACTUALS in K1, green code in K2.
     // Reason: expect-actual matcher doesn't match fields in K2 KT-63667
     override val <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>: Int

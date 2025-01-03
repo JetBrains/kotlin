@@ -8,22 +8,22 @@
 // FILE: common.kt
 
 @<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
-expect annotation class A()
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>()
 
-fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>) = a.toString()
+<!CONFLICTING_OVERLOADS!>fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>)<!> = a.toString()
 
 <!WRONG_ANNOTATION_TARGET{JVM}!>@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!><!>
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>NotAnAnnotationClass<!>
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION!>NotAnAnnotationClass<!>
 
 <!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED{JVM}!>@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!><!>
-annotation class NotAnExpectedClass
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NotAnExpectedClass<!>
 
-annotation class InOtherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>InOtherAnnotation<!>(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>)
 
-@InOtherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>())
-fun useInOtherAnnotation() {}
+<!CONFLICTING_OVERLOADS!>@InOtherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>())
+fun useInOtherAnnotation()<!> {}
 
-expect class C {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
     @<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
     annotation class Nested
 }

@@ -3,9 +3,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class A
-expect class B : A
-open class C : <!SUPERTYPE_NOT_INITIALIZED, SUPERTYPE_NOT_INITIALIZED{JVM}!>A<!>
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : A
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> : <!SUPERTYPE_NOT_INITIALIZED, SUPERTYPE_NOT_INITIALIZED{JVM}!>A<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

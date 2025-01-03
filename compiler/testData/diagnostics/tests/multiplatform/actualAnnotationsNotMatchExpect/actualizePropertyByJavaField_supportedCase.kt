@@ -7,7 +7,7 @@
 // FILE: common.kt
 package kotlin.collections
 
-public expect abstract class AbstractMutableList() {
+public expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AbstractMutableList<!>() {
     protected var modCount: Int
 }
 

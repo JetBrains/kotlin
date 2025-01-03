@@ -2,19 +2,19 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect var v1: Boolean
+expect var <!REDECLARATION!>v1<!>: Boolean
 
-expect var v2: Boolean
+expect var <!REDECLARATION!>v2<!>: Boolean
     internal set
 
-expect var v3: Boolean
+expect var <!REDECLARATION!>v3<!>: Boolean
     internal set
 
-expect open class C {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
     var foo: Boolean
 }
 
-expect open class C2 {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C2<!> {
     var foo: Boolean
 }
 

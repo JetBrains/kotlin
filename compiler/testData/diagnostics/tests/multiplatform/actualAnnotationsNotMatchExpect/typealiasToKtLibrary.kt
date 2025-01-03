@@ -16,7 +16,7 @@
     AnnotationTarget.TYPEALIAS,
     AnnotationTarget.TYPE, // added target
 )
-expect annotation class MyDeprecatedNotMatch
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyDeprecatedNotMatch<!>
 
 @Target(
     AnnotationTarget.CLASS,
@@ -28,11 +28,11 @@ expect annotation class MyDeprecatedNotMatch
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.TYPEALIAS
 )
-expect annotation class MyDeprecatedMatch
+expect annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyDeprecatedMatch<!>
 
-annotation class Ann(val s: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>(val s: String)
 
-expect abstract class MyAbstractIterator<T> {
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>MyAbstractIterator<!><T> {
     @Ann("something" + "complex")
     fun hasNext(): Boolean
 }

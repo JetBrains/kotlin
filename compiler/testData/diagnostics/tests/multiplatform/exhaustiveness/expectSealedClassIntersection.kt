@@ -1,18 +1,18 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-69476
 
 // MODULE: m1-common
 // FILE: common.kt
-expect sealed class Base()
+expect sealed class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base<!>()
 
-class A : Base()
-object B : Base()
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> : Base()
+object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : Base()
 
-interface I
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>I<!>
 
-fun testCommon(base: Base) {
+<!CONFLICTING_OVERLOADS!>fun testCommon(base: Base)<!> {
     if (base is I) {
         val x = <!EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE("sealed class"), NO_ELSE_IN_WHEN("'else' branch"), NO_ELSE_IN_WHEN{JVM}("'is C' branch or 'else' branch instead")!>when<!> (base) { // must be an error
             is A -> 1

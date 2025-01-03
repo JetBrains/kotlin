@@ -9,7 +9,7 @@ import kotlin.<!UNRESOLVED_REFERENCE!>jvm<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DE
 
 <!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
 @<!DEPRECATION_ERROR{JVM}, UNRESOLVED_REFERENCE!>ImplicitlyActualizedByJvmDeclaration<!>
-expect class Foo() {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>() {
     fun foo()
 }
 

@@ -3,31 +3,31 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun interface F1 {
+expect fun interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F1<!> {
     fun run()
 }
 
-expect fun interface F2 {
+expect fun interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F2<!> {
     fun run()
 }
 
-expect fun interface F3 {
+expect fun interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F3<!> {
     fun run()
 }
 
-expect interface F4 {
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F4<!> {
     fun run()
 }
 
-expect fun interface F5 {
+expect fun interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F5<!> {
     fun run()
 }
 
-expect fun interface F6 {
+expect fun interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F6<!> {
     fun run()
 }
 
-expect fun interface F7 {
+expect fun interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F7<!> {
     fun run()
 }
 

@@ -1,11 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // LANGUAGE: +ContextReceivers
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Foo {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
 }
 

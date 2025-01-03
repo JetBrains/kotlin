@@ -1,12 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -MultiplatformRestrictions
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class E01
-expect class E02
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E01<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>E02<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -1,14 +1,13 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo()
-expect class Foo2()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo2<!>()
 
-expect class Bar
-expect class Bar2
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar2<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

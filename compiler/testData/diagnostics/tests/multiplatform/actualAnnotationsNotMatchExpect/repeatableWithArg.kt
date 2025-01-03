@@ -4,24 +4,24 @@
 // MODULE: m1-common
 // FILE: common.kt
 @Repeatable
-annotation class AnnWithArg(val s: String)
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>AnnWithArg<!>(val s: String)
 
-@AnnWithArg(s = "1")
+<!CONFLICTING_OVERLOADS!>@AnnWithArg(s = "1")
 @AnnWithArg(s = "2")
-expect fun diffentOrder()
+expect fun diffentOrder()<!>
 
-@AnnWithArg(s = "1")
+<!CONFLICTING_OVERLOADS!>@AnnWithArg(s = "1")
 @AnnWithArg(s = "2")
 @AnnWithArg(s = "3")
-expect fun withDifferentArgLessOnActual()
+expect fun withDifferentArgLessOnActual()<!>
 
-@AnnWithArg(s = "1")
+<!CONFLICTING_OVERLOADS!>@AnnWithArg(s = "1")
 @AnnWithArg(s = "3")
-expect fun withDifferentArgLessOnExpect()
+expect fun withDifferentArgLessOnExpect()<!>
 
+<!CONFLICTING_OVERLOADS!>@AnnWithArg(s = "1")
 @AnnWithArg(s = "1")
-@AnnWithArg(s = "1")
-expect fun withSameArgLessOnActual()
+expect fun withSameArgLessOnActual()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

@@ -7,7 +7,7 @@
 
 // MODULE: common
 // FILE: Common.kt
-expect abstract class B() {
+expect abstract class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>() {
     fun get(index: Int): Char
 }
 

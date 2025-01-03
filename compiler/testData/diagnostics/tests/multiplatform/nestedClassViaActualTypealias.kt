@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     class Inner()
 }
 
-expect class SeveralInner {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>SeveralInner<!> {
     class Inner1 {
         class Inner2 {
             class Inner3()

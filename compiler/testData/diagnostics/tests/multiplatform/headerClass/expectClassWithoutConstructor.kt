@@ -3,14 +3,14 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo
-expect class Bar()
-expect class Baz constructor()
-expect class FooBar {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!>()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Baz<!> constructor()
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>FooBar<!> {
     constructor()
 }
 
-fun test() {
+<!CONFLICTING_OVERLOADS!>fun test()<!> {
     <!RESOLUTION_TO_CLASSIFIER!>Foo<!>()
     Bar()
     Baz()

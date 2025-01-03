@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: -ProhibitDefaultArgumentsInExpectActualizedByFakeOverride
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun foo(param: Int = 1)
 }
 

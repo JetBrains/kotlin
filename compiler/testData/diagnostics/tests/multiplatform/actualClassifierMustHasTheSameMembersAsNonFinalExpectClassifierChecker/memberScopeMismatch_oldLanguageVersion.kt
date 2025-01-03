@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Foo {
+expect open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun existingMethod()
     val existingParam: Int
 }

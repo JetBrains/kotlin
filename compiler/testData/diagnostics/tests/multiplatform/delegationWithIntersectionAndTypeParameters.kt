@@ -1,24 +1,24 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_DEXING
 // MODULE: common
 // FILE: common.kt
-expect interface Base1<T>{
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base1<!><T>{
     fun foo(t: T): T
     val a : T
 }
 
-expect interface Base2<T>{
+expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Base2<!><T>{
     fun foo(t: T): T
     val a : T
 }
 
-class Test<T>(val x : Base1<T>, val y : Base2<T>) : Base1<T> by x, Base2<T> by y {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test<!><T>(val x : Base1<T>, val y : Base2<T>) : Base1<T> by x, Base2<T> by y {
     override fun foo(t: T): T { return t }
     override val a : T
         get() = 1 <!UNCHECKED_CAST, UNCHECKED_CAST{JVM}!>as T<!>
 }
 
-class Test2(val x : Base1<Int>, val y : Base2<Int>): Base1<Int> by x, Base2<Int> by y {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test2<!>(val x : Base1<Int>, val y : Base2<Int>): Base1<Int> by x, Base2<Int> by y {
     override fun foo(t: Int): Int {
         return t
     }
@@ -27,7 +27,7 @@ class Test2(val x : Base1<Int>, val y : Base2<Int>): Base1<Int> by x, Base2<Int>
         get() = 1
 }
 
-class Test3(val x : Base1<Int>, val y : Base2<Number>): Base1<Int> by x, Base2<Number> by y {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test3<!>(val x : Base1<Int>, val y : Base2<Number>): Base1<Int> by x, Base2<Number> by y {
     override val a: Int
         get() = 1
 

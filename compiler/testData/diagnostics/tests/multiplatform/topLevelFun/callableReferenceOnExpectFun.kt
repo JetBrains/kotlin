@@ -4,12 +4,12 @@
 
 package test
 
-expect fun foo(): String
+<!CONFLICTING_OVERLOADS!>expect fun foo(): String<!>
 
-fun g(f: () -> String): String = f()
+<!CONFLICTING_OVERLOADS!>fun g(f: () -> String): String<!> = f()
 
-fun test() {
-    g(::<!DEPRECATION{JVM}!>foo<!>)
+<!CONFLICTING_OVERLOADS!>fun test()<!> {
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>g<!>(::<!DEBUG_INFO_MISSING_UNRESOLVED, DEPRECATION{JVM}!>foo<!>)
 }
 
 // MODULE: m2-jvm()()(m1-common)

@@ -6,11 +6,11 @@
 
 package pack
 
-expect class Bar {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!> {
     fun foo(): String
 }
 
-fun testCommon() {
+<!CONFLICTING_OVERLOADS!>fun testCommon()<!> {
     <!RESOLUTION_TO_CLASSIFIER!>Bar<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
 }
 

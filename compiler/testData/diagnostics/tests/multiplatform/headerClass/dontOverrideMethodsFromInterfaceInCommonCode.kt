@@ -1,19 +1,19 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
-interface Foo {
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     fun foo()
 }
 
-expect class ImplicitFoo : Foo
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ImplicitFoo<!> : Foo
 
-expect class ExplicitFoo : Foo {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ExplicitFoo<!> : Foo {
     override fun foo()
 }
 
-expect class ImplicitFooCheck : Foo
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>ImplicitFooCheck<!> : Foo
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

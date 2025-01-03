@@ -5,9 +5,9 @@
 // MODULE: common
 // FILE: common.kt
 
-expect fun String.foo(prefix: String, ignoreCase: Boolean = false): Boolean
+<!CONFLICTING_OVERLOADS!>expect fun String.foo(prefix: String, ignoreCase: Boolean = false): Boolean<!>
 
-expect fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean
+<!CONFLICTING_OVERLOADS!>expect fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean<!>
 
 // MODULE: jvm()()(common)
 // FILE: jvm.kt

@@ -1,10 +1,10 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 
 <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
-class <!CLASSIFIER_REDECLARATION!>Foo<!>
+<!DUPLICATE_CLASS_NAMES!>class <!CLASSIFIER_REDECLARATION!>Foo<!><!>
 
 open class Base {
     open fun foo() {}
@@ -21,7 +21,7 @@ expect class Baz : ExpectBase
 // FILE: jvm.kt
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
-actual class <!ACTUAL_WITHOUT_EXPECT!>Foo<!>
+<!DUPLICATE_CLASS_NAMES!>actual class <!ACTUAL_WITHOUT_EXPECT!>Foo<!><!>
 
 actual class Bar : Base() {
     actual override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}

@@ -2,14 +2,14 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-annotation class Ann
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Ann<!>
 
-expect class WeakIncompatibility {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>WeakIncompatibility<!> {
     @Ann
     fun foo(p: String)
 }
 
-expect class StrongIncompatibility {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>StrongIncompatibility<!> {
     @Ann
     fun foo(p: Int)
 }
