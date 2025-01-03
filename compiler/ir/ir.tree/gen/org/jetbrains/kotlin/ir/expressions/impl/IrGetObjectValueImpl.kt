@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -22,6 +21,4 @@ class IrGetObjectValueImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var symbol: IrClassSymbol,
-) : IrGetObjectValue() {
-    override var attributeOwnerId: IrElement = this
-}
+) : IrGetObjectValue()

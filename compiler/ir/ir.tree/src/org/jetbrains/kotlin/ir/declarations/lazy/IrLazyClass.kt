@@ -112,8 +112,6 @@ class IrLazyClass(
         }
     }
 
-    override var attributeOwnerId: IrElement = this
-
     val classProto: ProtoBuf.Class? get() = (descriptor as? DeserializedClassDescriptor)?.classProto
     val nameResolver: NameResolver? get() = (descriptor as? DeserializedClassDescriptor)?.c?.nameResolver
     override val source: SourceElement get() = descriptor.source

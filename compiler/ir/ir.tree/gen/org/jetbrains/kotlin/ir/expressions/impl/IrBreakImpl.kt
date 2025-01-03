@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.IrType
@@ -23,7 +22,5 @@ class IrBreakImpl internal constructor(
     override var type: IrType,
     override var loop: IrLoop,
 ) : IrBreak() {
-    override var attributeOwnerId: IrElement = this
-
     override var label: String? = null
 }

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
@@ -21,6 +20,4 @@ class IrErrorExpressionImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var description: String,
-) : IrErrorExpression() {
-    override var attributeOwnerId: IrElement = this
-}
+) : IrErrorExpression()

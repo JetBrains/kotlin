@@ -13,7 +13,6 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -39,8 +38,6 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
 ) : IrPropertyWithLateBinding() {
-    override var attributeOwnerId: IrElement = this
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var metadata: MetadataSource? = null

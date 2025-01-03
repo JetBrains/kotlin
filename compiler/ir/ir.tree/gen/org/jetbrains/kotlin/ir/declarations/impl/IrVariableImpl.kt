@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -35,8 +34,6 @@ class IrVariableImpl internal constructor(
     override var isConst: Boolean,
     override var isLateinit: Boolean,
 ) : IrVariable() {
-    override var attributeOwnerId: IrElement = this
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override val factory: IrFactory

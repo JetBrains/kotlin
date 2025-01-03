@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -34,8 +33,6 @@ class IrTypeParameterImpl @IrImplementationDetail constructor(
     override var index: Int,
     override var isReified: Boolean,
 ) : IrTypeParameter() {
-    override var attributeOwnerId: IrElement = this
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI

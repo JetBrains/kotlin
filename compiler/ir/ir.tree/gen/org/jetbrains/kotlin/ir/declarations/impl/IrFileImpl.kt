@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -31,8 +30,6 @@ class IrFileImpl(
 
     override val endOffset: Int
         get() = fileEntry.maxOffset
-
-    override var attributeOwnerId: IrElement = this
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> = ArrayList()

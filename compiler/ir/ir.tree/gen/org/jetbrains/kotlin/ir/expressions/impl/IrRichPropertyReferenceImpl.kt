@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
@@ -29,7 +28,5 @@ class IrRichPropertyReferenceImpl internal constructor(
     override var setterFunction: IrSimpleFunction?,
     override var origin: IrStatementOrigin?,
 ) : IrRichPropertyReference() {
-    override var attributeOwnerId: IrElement = this
-
     override val boundValues: MutableList<IrExpression> = ArrayList()
 }

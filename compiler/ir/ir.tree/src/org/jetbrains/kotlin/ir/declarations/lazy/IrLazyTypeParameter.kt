@@ -42,6 +42,4 @@ class IrLazyTypeParameter(
             descriptor.upperBounds.mapTo(arrayListOf()) { it.toIrType() }
         }
     }
-
-    override var attributeOwnerId: IrElement = this
 }

@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -26,8 +25,6 @@ class IrErrorDeclarationImpl @IrImplementationDetail constructor(
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
 ) : IrErrorDeclaration() {
-    override var attributeOwnerId: IrElement = this
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI

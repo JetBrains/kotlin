@@ -96,8 +96,6 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
-    override var attributeOwnerId: IrElement = this
-
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")

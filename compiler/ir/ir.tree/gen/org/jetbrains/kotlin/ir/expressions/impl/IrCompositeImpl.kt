@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -24,8 +23,6 @@ class IrCompositeImpl internal constructor(
     override var type: IrType,
     override var origin: IrStatementOrigin?,
 ) : IrComposite() {
-    override var attributeOwnerId: IrElement = this
-
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     // A temporary API for compatibility with Flysto user project, see KQA-1254

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -22,6 +21,4 @@ class IrRawFunctionReferenceImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var symbol: IrFunctionSymbol,
-) : IrRawFunctionReference() {
-    override var attributeOwnerId: IrElement = this
-}
+) : IrRawFunctionReference()

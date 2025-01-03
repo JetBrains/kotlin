@@ -28,6 +28,7 @@ abstract class IrElementBase : IrElement {
      */
     private var attributeMap: Array<Any?>? = null
 
+    final override var attributeOwnerId: IrElement = this
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data)

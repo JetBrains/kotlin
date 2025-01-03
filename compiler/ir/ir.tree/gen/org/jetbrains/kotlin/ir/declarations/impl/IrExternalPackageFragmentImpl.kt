@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -28,8 +27,6 @@ class IrExternalPackageFragmentImpl(
 
     override val endOffset: Int
         get() = UNDEFINED_OFFSET
-
-    override var attributeOwnerId: IrElement = this
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> = ArrayList()

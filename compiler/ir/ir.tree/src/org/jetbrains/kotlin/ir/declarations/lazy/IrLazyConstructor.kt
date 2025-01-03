@@ -65,8 +65,6 @@ class IrLazyConstructor(
         }
     }
 
-    override var attributeOwnerId: IrElement = this
-
     override val containerSource: DeserializedContainerSource?
         get() = (descriptor as? DescriptorWithContainerSource)?.containerSource
 

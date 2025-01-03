@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrVarargElement
 import org.jetbrains.kotlin.ir.types.IrType
@@ -24,7 +23,5 @@ class IrVarargImpl internal constructor(
     override var type: IrType,
     override var varargElementType: IrType,
 ) : IrVararg() {
-    override var attributeOwnerId: IrElement = this
-
     override val elements: MutableList<IrVarargElement> = SmartList()
 }

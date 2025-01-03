@@ -49,8 +49,6 @@ class IrLazyValueParameter(
         varargElementKotlinType?.toIrType()
     }
 
-    override var attributeOwnerId: IrElement = this
-
     init {
         symbol.bind(this)
     }

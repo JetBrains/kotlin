@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
@@ -30,7 +29,5 @@ class IrInlinedFunctionBlockImpl internal constructor(
     override var inlineFunctionSymbol: IrFunctionSymbol?,
     override var fileEntry: IrFileEntry,
 ) : IrInlinedFunctionBlock() {
-    override var attributeOwnerId: IrElement = this
-
     override val statements: MutableList<IrStatement> = ArrayList(2)
 }

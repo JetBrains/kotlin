@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -22,6 +21,4 @@ class IrGetEnumValueImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var symbol: IrEnumEntrySymbol,
-) : IrGetEnumValue() {
-    override var attributeOwnerId: IrElement = this
-}
+) : IrGetEnumValue()

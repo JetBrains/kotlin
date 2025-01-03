@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -29,8 +28,6 @@ class IrScriptImpl(
     override val startOffset: Int,
     override val endOffset: Int,
 ) : IrScript() {
-    override var attributeOwnerId: IrElement = this
-
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN

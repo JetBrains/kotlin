@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
@@ -20,6 +19,4 @@ class IrSpreadElementImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var expression: IrExpression,
-) : IrSpreadElement() {
-    override var attributeOwnerId: IrElement = this
-}
+) : IrSpreadElement()
