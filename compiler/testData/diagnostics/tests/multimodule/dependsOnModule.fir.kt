@@ -7,24 +7,24 @@
 
 package p
 
-public class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
+public class A {
     internal val a = A()
     internal var v = A()
     internal fun a() = A()
     internal inner class B
 }
 
-internal val <!REDECLARATION!>a<!> = A()
-internal var <!REDECLARATION!>v<!> = A()
-<!CONFLICTING_OVERLOADS!>internal fun a()<!> = A()
-internal class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
+internal val a = A()
+internal var v = A()
+internal fun a() = A()
+internal class B
 
 // MODULE: m2()()(m1)
 // FILE: b.kt
 
 import p.*
 
-<!CONFLICTING_OVERLOADS!>fun test2()<!> {
+fun test2() {
     val _a = a
     val _v = v
     a()

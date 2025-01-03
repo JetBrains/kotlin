@@ -1,2 +1,0 @@
-cFILE: binaryOpIntStackOverflow.kt
-    public final fun stackOverflow(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing errorg: Ignoring an implementation of the method `void C.foo()` because it has multiple definitions
+// IGNORE_DEXING
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common

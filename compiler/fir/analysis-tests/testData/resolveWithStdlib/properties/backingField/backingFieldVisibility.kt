@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// MODULE: lib
 // FILE: A.kt
 
 class A {
@@ -28,14 +27,4 @@ fun test() {
     val bA = A().b + 20
     val cA = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
     val dA = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
-}
-
-// MODULE: main(lib)
-// FILE: B.kt
-
-fun main() {
-    val aB = A().a <!UNRESOLVED_REFERENCE!>+<!> 10
-    val bB = A().b <!UNRESOLVED_REFERENCE!>+<!> 20
-    val cB = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
-    val dB = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
 }

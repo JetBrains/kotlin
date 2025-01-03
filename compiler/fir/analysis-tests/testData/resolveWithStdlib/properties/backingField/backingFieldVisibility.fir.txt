@@ -1,4 +1,3 @@
-Module: lib
 FILE: A.kt
     public final class A : R|kotlin/Any| {
         public constructor(): R|A| {
@@ -34,12 +33,4 @@ FILE: A.kt
         lval bA: R|kotlin/Int| = R|/A.A|().R|/A.b|.R|kotlin/Int.plus|(Int(20))
         lval cA: <ERROR TYPE REF: Unresolved name: plus (+)> = R|/A.A|().R|/A.c|.<Unresolved name: plus (+)>#(Int(30))
         lval dA: <ERROR TYPE REF: Unresolved name: plus (+)> = R|/A.A|().R|/A.d|.<Unresolved name: plus (+)>#(Int(40))
-    }
-Module: main
-FILE: B.kt
-    public final fun main(): R|kotlin/Unit| {
-        lval aB: <ERROR TYPE REF: Unresolved name: plus (+)> = R|/A.A|().R|/A.a|.<Unresolved name: plus (+)>#(Int(10))
-        lval bB: <ERROR TYPE REF: Unresolved name: plus (+)> = R|/A.A|().R|/A.b|.<Unresolved name: plus (+)>#(Int(20))
-        lval cB: <ERROR TYPE REF: Unresolved name: plus (+)> = R|/A.A|().R|/A.c|.<Unresolved name: plus (+)>#(Int(30))
-        lval dB: <ERROR TYPE REF: Unresolved name: plus (+)> = R|/A.A|().R|/A.d|.<Unresolved name: plus (+)>#(Int(40))
     }

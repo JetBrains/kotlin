@@ -2,7 +2,6 @@
 // LANGUAGE: +ValueClasses
 // ISSUE: KT-66976
 // WITH_STDLIB
-// MODULE: lib
 
 interface Lib {
     fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true
@@ -21,7 +20,6 @@ interface Lib3 {
     fun box(): Boolean = true
 }
 
-// MODULE: main(lib)
 interface I1 {
     fun <T> equals(other: A1): Boolean = true
     fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true

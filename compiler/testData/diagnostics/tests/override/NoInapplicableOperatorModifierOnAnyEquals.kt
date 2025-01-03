@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: com.android.tools.r8.errors.b: Class java.lang.Object cannot extend itself
+// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_DEXING
 // FIR_IDENTICAL
 // ALLOW_KOTLIN_PACKAGE
 

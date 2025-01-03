@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// DISABLE_NEXT_TIER_SUGGESTION: exception from frontend
 // ISSUE: KT-71754
 
 fun testRegularNavigation() {
