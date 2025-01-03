@@ -14,7 +14,7 @@ fun ConstraintStorage.buildCurrentSubstitutor(
     context: TypeSystemInferenceExtensionContext,
     additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>
 ): TypeSubstitutorMarker {
-    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings)
+    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables + additionalBindings)
 }
 
 fun ConstraintStorage.buildAbstractResultingSubstitutor(
@@ -23,9 +23,6 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(
 ): TypeSubstitutorMarker = with(context) {
     if (allTypeVariables.isEmpty()) return createEmptySubstitutor()
 
-    val currentSubstitutorMap = fixedTypeVariables.entries.associate {
-        it.key to it.value
-    }
     val uninferredSubstitutorMap = if (transformTypeVariablesToErrorTypes) {
         notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
             freshTypeConstructor to context.createUninferredType(
@@ -37,7 +34,7 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(
             freshTypeConstructor to typeVariable.typeVariable.defaultType(this)
         }
     }
-    return context.typeSubstitutorByTypeConstructor(currentSubstitutorMap + uninferredSubstitutorMap)
+    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables + uninferredSubstitutorMap)
 }
 
 fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
