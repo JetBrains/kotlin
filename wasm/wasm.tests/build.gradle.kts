@@ -68,6 +68,7 @@ val jsShellVersion = "2024-05-07-09-13-07-mozilla-central"
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
+    OsType(OsName.LINUX, OsArch.ARM64) -> "linux-aarch64"
     OsType(OsName.MAC, OsArch.X86_64),
     OsType(OsName.MAC, OsArch.ARM64) -> "mac"
     OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
@@ -83,6 +84,7 @@ val jsShell by configurations.creating {
 val wasmEdgeVersion = libs.versions.wasmedge
 val wasmEdgeSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_64) -> "manylinux_2_28_x86_64@tar.gz"
+    OsType(OsName.LINUX, OsArch.ARM64) -> "manylinux_2_28_aarch64@tar.gz"
     OsType(OsName.MAC, OsArch.X86_64) -> "darwin_x86_64@tar.gz"
     OsType(OsName.MAC, OsArch.ARM64) -> "darwin_arm64@tar.gz"
     OsType(OsName.WINDOWS, OsArch.X86_32),
