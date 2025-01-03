@@ -55,6 +55,6 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
     }
 }
 
-fun TestServices.registerDependencyProvider(artifactsProvider: ArtifactsProvider) {
+fun TestServices.registerArtifactsProvider(artifactsProvider: ArtifactsProvider) {
     register(ArtifactsProvider::class, artifactsProvider)
 }
