@@ -135,7 +135,7 @@ class TestConfigurationImpl(
         afterAnalysisCheckerConstructors.addAll(afterAnalysisCheckers)
         this.afterAnalysisCheckers = afterAnalysisCheckerConstructors.map { constructor ->
             constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
-        }
+        }.sortedBy { it.order }
     }
 
     // ---------------------------------- utils ----------------------------------
