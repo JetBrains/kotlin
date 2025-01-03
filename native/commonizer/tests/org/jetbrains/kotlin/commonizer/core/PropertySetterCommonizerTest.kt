@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class PropertySetterCommonizerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `missing only`() {

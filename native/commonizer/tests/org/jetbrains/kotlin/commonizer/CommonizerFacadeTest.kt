@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
 import org.jetbrains.kotlin.commonizer.utils.MockNativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
@@ -18,6 +20,7 @@ import kotlin.test.assertTrue
 
 @ExperimentalContracts
 class CommonizerFacadeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun nothingToCommonize0() = doTestNothingToCommonize(
