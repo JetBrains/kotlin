@@ -2395,6 +2395,50 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 }
 
 /**
+ * Splits the original char sequence into pair of char sequences,
+ * where *first* char sequence contains characters for which [predicate] yielded `true`,
+ * while *second* char sequence contains characters for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of a character and the character itself
+ * and returns the result of predicate evaluation on the character.
+ * 
+ * @sample samples.text.Strings.partitionIndexed
+ */
+public inline fun CharSequence.partitionIndexed(predicate: (index: Int, Char) -> Boolean): Pair<CharSequence, CharSequence> {
+    val first = StringBuilder()
+    val second = StringBuilder()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.append(element)
+        } else {
+            second.append(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original string into pair of strings,
+ * where *first* string contains characters for which [predicate] yielded `true`,
+ * while *second* string contains characters for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of a character and the character itself
+ * and returns the result of predicate evaluation on the character.
+ * 
+ * @sample samples.text.Strings.partitionIndexed
+ */
+public inline fun String.partitionIndexed(predicate: (index: Int, Char) -> Boolean): Pair<String, String> {
+    val first = StringBuilder()
+    val second = StringBuilder()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.append(element)
+        } else {
+            second.append(element)
+        }
+    }
+    return Pair(first.toString(), second.toString())
+}
+
+/**
  * Returns a list of snapshots of the window of the given [size]
  * sliding along this char sequence with the given [step], where each
  * snapshot is a string.

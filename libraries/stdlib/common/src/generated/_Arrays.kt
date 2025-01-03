@@ -23833,6 +23833,204 @@ public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<C
 }
 
 /**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun <T> Array<out T>.partitionIndexed(predicate: (index: Int, T) -> Boolean): Pair<List<T>, List<T>> {
+    val first = ArrayList<T>()
+    val second = ArrayList<T>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun ByteArray.partitionIndexed(predicate: (index: Int, Byte) -> Boolean): Pair<List<Byte>, List<Byte>> {
+    val first = ArrayList<Byte>()
+    val second = ArrayList<Byte>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun ShortArray.partitionIndexed(predicate: (index: Int, Short) -> Boolean): Pair<List<Short>, List<Short>> {
+    val first = ArrayList<Short>()
+    val second = ArrayList<Short>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun IntArray.partitionIndexed(predicate: (index: Int, Int) -> Boolean): Pair<List<Int>, List<Int>> {
+    val first = ArrayList<Int>()
+    val second = ArrayList<Int>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun LongArray.partitionIndexed(predicate: (index: Int, Long) -> Boolean): Pair<List<Long>, List<Long>> {
+    val first = ArrayList<Long>()
+    val second = ArrayList<Long>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun FloatArray.partitionIndexed(predicate: (index: Int, Float) -> Boolean): Pair<List<Float>, List<Float>> {
+    val first = ArrayList<Float>()
+    val second = ArrayList<Float>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun DoubleArray.partitionIndexed(predicate: (index: Int, Double) -> Boolean): Pair<List<Double>, List<Double>> {
+    val first = ArrayList<Double>()
+    val second = ArrayList<Double>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun BooleanArray.partitionIndexed(predicate: (index: Int, Boolean) -> Boolean): Pair<List<Boolean>, List<Boolean>> {
+    val first = ArrayList<Boolean>()
+    val second = ArrayList<Boolean>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Splits the original array into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives
+ */
+public inline fun CharArray.partitionIndexed(predicate: (index: Int, Char) -> Boolean): Pair<List<Char>, List<Char>> {
+    val first = ArrayList<Char>()
+    val second = ArrayList<Char>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
  * Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
  * The returned list has length of the shortest collection.
  * 
