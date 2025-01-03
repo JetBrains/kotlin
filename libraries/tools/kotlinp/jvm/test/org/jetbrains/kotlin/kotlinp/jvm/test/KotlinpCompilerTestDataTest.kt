@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.kotlinp.jvm.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -15,6 +17,8 @@ import java.io.File
 
 @RunWith(Parameterized::class)
 class KotlinpCompilerTestDataTest(private val file: File) {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private class TestDisposable : Disposable {
         override fun dispose() {}
     }
