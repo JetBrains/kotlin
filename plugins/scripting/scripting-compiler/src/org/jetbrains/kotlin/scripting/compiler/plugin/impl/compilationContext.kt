@@ -165,7 +165,7 @@ internal fun createInitialConfigurations(
     return Pair(initialScriptCompilationConfiguration, kotlinCompilerConfiguration)
 }
 
-private fun CompilerConfiguration.updateWithCompilerOptions(
+internal fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     messageCollector: ScriptDiagnosticsMessageCollector,
     ignoredOptionsReportingState: IgnoredOptionsReportingState,
