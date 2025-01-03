@@ -306,10 +306,8 @@ private fun processCLib(
 
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
-    val plugin = Plugins.plugin(def.config.pluginName)
-
     // when this tool does not compile native library, make the generated source consumable by external compiler (i.e. do not strip includes)
-    val (nativeIndex, compilation) = plugin.buildNativeIndex(library, verbose, allowPrecompiledHeaders = nativeLibsDir != null)
+    val (nativeIndex, compilation) = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders = nativeLibsDir != null)
 
     val target = tool.target
 
@@ -346,7 +344,7 @@ private fun processCLib(
         KotlinPlatform.NATIVE -> GenerationMode.METADATA
     }
     // when this tool does not compile native library, make the generated source consumable by external compiler (i.e. do not strip includes)
-    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName, plugin, allowPrecompiledHeaders = nativeLibsDir != null)
+    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName, allowPrecompiledHeaders = nativeLibsDir != null)
     val stubIrOutput = run {
         val outKtFileCreator = {
             val outKtFileName = fqParts.last() + ".kt"

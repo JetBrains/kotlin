@@ -44,8 +44,6 @@ object InteropFqNames {
     const val objCClassOfName = "ObjCClassOf"
     const val objCProtocolName = "ObjCProtocol"
     const val nativeMemUtilsName = "nativeMemUtils"
-    const val cPlusPlusClassName = "CPlusPlusClass"
-    const val skiaRefCntName = "SkiaRefCnt"
     const val TypeName = "Type"
 
     const val cstrPropertyName = "cstr"

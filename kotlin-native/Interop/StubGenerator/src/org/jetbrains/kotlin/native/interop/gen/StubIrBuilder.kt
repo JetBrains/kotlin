@@ -322,7 +322,7 @@ class StubIrBuilder(private val context: StubIrContext) {
     private val excludedMacros: Set<String>
         get() = configuration.excludedMacros
 
-    private val buildingContext = context.plugin.stubsBuildingContext(context)
+    private val buildingContext = StubsBuildingContextImpl(context)
 
     fun build(): StubIrBuilderResult {
         nativeIndex.objCProtocols.filter { !it.isForwardDeclaration }.forEach { generateStubsForObjCProtocol(it) }
