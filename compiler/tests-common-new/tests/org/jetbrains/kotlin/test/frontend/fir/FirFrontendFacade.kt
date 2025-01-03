@@ -79,7 +79,7 @@ open class FirFrontendFacade(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return shouldRunFirFrontendFacade(module, testServices)
     }
 

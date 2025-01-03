@@ -53,7 +53,7 @@ internal class Kapt4Facade(private val testServices: TestServices) :
         return testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(this)
     }
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return true
     }
 }

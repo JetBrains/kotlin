@@ -63,7 +63,7 @@ class JvmCompilerWithKaptFacade(
         return KaptContextBinaryArtifact(kaptContext)
     }
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return true // TODO
     }
 }

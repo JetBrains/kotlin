@@ -27,7 +27,7 @@ class K1AndK2JvmIrBackendFacade(testServices: TestServices) :
         return BinaryArtifacts.JvmFromK1AndK2(fromClassicFrontend, fromFir)
     }
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return with(testServices.defaultsProvider) {
             backendKind == BackendKinds.IrBackendForK1AndK2 && artifactKind == ArtifactKinds.JvmFromK1AndK2
         }

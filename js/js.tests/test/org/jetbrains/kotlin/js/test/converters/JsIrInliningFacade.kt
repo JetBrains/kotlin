@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 class JsIrInliningFacade(
     testServices: TestServices,
 ) : IrInliningFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
     }
 

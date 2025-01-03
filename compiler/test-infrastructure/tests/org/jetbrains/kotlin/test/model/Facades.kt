@@ -25,7 +25,7 @@ abstract class AbstractTestFacade<InputArtifact, OutputArtifact> : ServicesAndDi
     abstract val outputKind: TestArtifactKind<OutputArtifact>
 
     abstract fun transform(module: TestModule, inputArtifact: InputArtifact): OutputArtifact?
-    abstract fun shouldRunAnalysis(module: TestModule): Boolean
+    abstract fun shouldTransform(module: TestModule): Boolean
 }
 
 abstract class FrontendFacade<FrontendOutputArtifact>(
@@ -36,7 +36,7 @@ abstract class FrontendFacade<FrontendOutputArtifact>(
     final override val inputKind: TestArtifactKind<ResultingArtifact.Source>
         get() = SourcesKind
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.frontendKind == outputKind
     }
 
@@ -55,7 +55,7 @@ abstract class Frontend2BackendConverter<FrontendOutputArtifact, BackendInputArt
 ) : AbstractTestFacade<FrontendOutputArtifact, BackendInputArtifact>()
         where FrontendOutputArtifact : ResultingArtifact.FrontendOutput<FrontendOutputArtifact>,
               BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact> {
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == outputKind
     }
 }
@@ -74,7 +74,7 @@ abstract class BackendFacade<BackendInputArtifact, BinaryOutputArtifact>(
 ) : AbstractTestFacade<BackendInputArtifact, BinaryOutputArtifact>()
         where BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>,
               BinaryOutputArtifact : ResultingArtifact.Binary<BinaryOutputArtifact> {
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return with(testServices.defaultsProvider) {
             backendKind == inputKind && artifactKind == outputKind
         }
@@ -89,7 +89,7 @@ abstract class DeserializerFacade<BinaryArtifact, BackendInputArtifact>(
         where BinaryArtifact : ResultingArtifact.Binary<BinaryArtifact>,
               BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact> {
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == outputKind
     }
 }
