@@ -67,7 +67,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<T (of fun <T> MutableCollection<in T>.plusAssign)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<kotlin.Int>' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
@@ -103,7 +103,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<T (of fun <T> MutableCollection<in T>.plusAssign)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<kotlin.Int>' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
@@ -139,5 +139,5 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<T (of fun <T> MutableCollection<in T>.plusAssign)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<kotlin.Int>' was expected.>
     isInBestCandidates = false

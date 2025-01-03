@@ -1,3 +1,3 @@
-/unclearTypeMismatchWithCapturedTypes.fir.kt:(339,350): error: Argument type mismatch: actual type is 'Box<CapturedType(in kotlin.Number)>', but 'Box<T (of fun <T : Number> numberBoxHandler)>' was expected.
+/unclearTypeMismatchWithCapturedTypes.fir.kt:(339,350): error: Argument type mismatch: actual type is 'Box<CapturedType(in kotlin.Number)>', but 'Box<kotlin.Number>' was expected.
 
-/unclearTypeMismatchWithCapturedTypes.fir.kt:(384,395): error: Argument type mismatch: actual type is 'Box<CapturedType(in kotlin.Number)>', but 'Box<out T (of fun <T : Number> outNumberBoxHandler)>' was expected.
+/unclearTypeMismatchWithCapturedTypes.fir.kt:(384,395): error: Argument type mismatch: actual type is 'Box<CapturedType(in kotlin.Number)>', but 'Box<out kotlin.Number>' was expected.

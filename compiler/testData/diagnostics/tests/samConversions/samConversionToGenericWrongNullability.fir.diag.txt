@@ -20,7 +20,7 @@
 
 /test.kt:(1300,1322): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected.
 
-/test.kt:(1414,1513): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<ERROR CLASS: Unknown return lambda parameter type>' was expected.
+/test.kt:(1414,1513): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String>' was expected.
 
 /test.kt:(1414,1513): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String>' was expected.
 
@@ -28,7 +28,7 @@
 
 /test.kt:(1597,1619): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(1711,1811): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<ERROR CLASS: Unknown return lambda parameter type>' was expected.
+/test.kt:(1711,1811): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String?>' was expected.
 
 /test.kt:(1711,1811): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String?>' was expected.
 
