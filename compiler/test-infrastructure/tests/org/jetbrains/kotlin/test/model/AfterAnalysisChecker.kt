@@ -14,4 +14,15 @@ abstract class AfterAnalysisChecker(protected val testServices: TestServices) : 
     open fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> = failedAssertions
 
     protected fun Throwable.wrap(): WrappedException = WrappedException.FromAfterAnalysisChecker(this)
+
+    open val order: Order
+        get() = Order.P3
+
+    /**
+     * Defines the order in which [AfterAnalysisChecker]s will be executed.
+     * Checkers with [Order.P1] will be executed first, with [Order.P5] last.
+     */
+    enum class Order {
+        P1, P2, P3, P4, P5
+    }
 }
