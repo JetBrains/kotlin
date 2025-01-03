@@ -47,7 +47,7 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
     override val outputKind: TestArtifactKind<CliArtifact>
         get() = CliArtifact.Kind
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean = true
+    override fun shouldTransform(module: TestModule): Boolean = true
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CliDirectives)

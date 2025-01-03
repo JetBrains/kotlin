@@ -39,7 +39,7 @@ class WasmDeserializerFacade(
     testServices: TestServices,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         require(testServices.defaultsProvider.backendKind == outputKind)
         return WasmEnvironmentConfigurator.isMainModule(module, testServices)
     }

@@ -18,7 +18,7 @@ class NativeInliningFacade(
     testServices: TestServices,
     private val preSerializationLoweringPhasesProvider: PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>?,
 ) : IrInliningFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
     }
 

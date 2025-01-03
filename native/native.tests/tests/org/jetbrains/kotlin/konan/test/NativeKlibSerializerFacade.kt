@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.util.metadataVersion
 abstract class AbstractNativeKlibSerializerFacade(
     testServices: TestServices
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
-    final override fun shouldRunAnalysis(module: TestModule): Boolean {
+    final override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
     }
 

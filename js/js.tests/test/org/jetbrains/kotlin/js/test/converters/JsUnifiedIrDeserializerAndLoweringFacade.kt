@@ -36,8 +36,8 @@ class JsUnifiedIrDeserializerAndLoweringFacade(
 
     private val loweringFacade = JsIrLoweringFacade(testServices, firstTimeCompilation)
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return deserializerFacade.shouldRunAnalysis(module) && loweringFacade.shouldRunAnalysis(module)
+    override fun shouldTransform(module: TestModule): Boolean {
+        return deserializerFacade.shouldTransform(module) && loweringFacade.shouldTransform(module)
     }
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js? {

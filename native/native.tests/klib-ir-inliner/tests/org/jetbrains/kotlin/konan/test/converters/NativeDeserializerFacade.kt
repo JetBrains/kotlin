@@ -15,7 +15,7 @@ class NativeDeserializerFacade(
     testServices: TestServices,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == outputKind
     }
 

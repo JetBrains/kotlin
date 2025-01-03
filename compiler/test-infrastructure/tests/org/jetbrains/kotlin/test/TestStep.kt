@@ -35,7 +35,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             get() = facade.outputKind
 
         override fun shouldProcessModule(module: TestModule, inputArtifact: ResultingArtifact<*>): Boolean {
-            return super.shouldProcessModule(module, inputArtifact) && facade.shouldRunAnalysis(module)
+            return super.shouldProcessModule(module, inputArtifact) && facade.shouldTransform(module)
         }
 
         override fun processModule(

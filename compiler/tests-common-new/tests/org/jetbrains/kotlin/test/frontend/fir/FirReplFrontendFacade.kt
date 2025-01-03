@@ -72,8 +72,8 @@ open class FirReplFrontendFacade(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        if (!super.shouldRunAnalysis(module)) return false
+    override fun shouldTransform(module: TestModule): Boolean {
+        if (!super.shouldTransform(module)) return false
 
         return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
             module.isLeafModuleInMppGraph(testServices)
