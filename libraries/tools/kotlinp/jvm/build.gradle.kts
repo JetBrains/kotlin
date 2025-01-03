@@ -39,6 +39,7 @@ sourceSets {
 
 projectTest {
     workingDir = rootDir
+    muteWithDatabase()
 }
 
 val generateTests by generator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt")

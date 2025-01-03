@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.kotlinp.jvm.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.MuteableTestRule;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -21,6 +23,8 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
+  @Rule MuteableTestRule muteableTestRule = new MuteableTestRule();
+
   private void runTest(String testDataFilePath) {
     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
   }
@@ -163,6 +167,8 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class JvmDefault extends AbstractK1KotlinpTest {
+    @Rule MuteableTestRule muteableTestRule = new MuteableTestRule();
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
