@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.JvmBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForTest
 import org.jetbrains.kotlin.test.configuration.configureCommonDiagnosticTestPaths
 import org.jetbrains.kotlin.test.configuration.setupHandlersForDiagnosticTest
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestTierDirectives.LATEST_EXPECTED_TIER
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
@@ -29,6 +33,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             LATEST_EXPECTED_TIER with TestTierLabel.BACKEND
+            LANGUAGE + "+EnableDfaWarningsInK2"
         }
 
         commonConfigurationForTest(
@@ -50,8 +55,14 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
                 ::NoFir2IrCompilationErrorsHandler,
             )
         }
+
+        configureJvmArtifactsHandlersStep {
+            commonBackendHandlersForCodegenTest()
+        }
+
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
         useAfterAnalysisCheckers(::PhasedPipelineChecker)
+        enableMetaInfoHandler()
     }
 }
 

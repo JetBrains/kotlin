@@ -4571,12 +4571,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
-      @TestMetadata("ea81649_errorPropertyLHS.kt")
-      public void testEa81649_errorPropertyLHS() {
-        runTest("compiler/testData/diagnostics/tests/callableReference/ea81649_errorPropertyLHS.kt");
-      }
-
-      @Test
       @TestMetadata("emptyLhs.kt")
       public void testEmptyLhs() {
         runTest("compiler/testData/diagnostics/tests/callableReference/emptyLhs.kt");
@@ -27407,12 +27401,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @TestMetadata("duplicateSuperClass.kt")
         public void testDuplicateSuperClass() {
           runTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/duplicateSuperClass.kt");
-        }
-
-        @Test
-        @TestMetadata("genericArgumentNumberMismatch.kt")
-        public void testGenericArgumentNumberMismatch() {
-          runTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/genericArgumentNumberMismatch.kt");
         }
 
         @Test

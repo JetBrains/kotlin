@@ -17,6 +17,13 @@ import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.utils.firTestDataFile
+import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
+import org.jetbrains.kotlin.test.utils.llFirTestDataFile
+import org.jetbrains.kotlin.test.utils.originalTestDataFile
+import org.jetbrains.kotlin.test.utils.reversedTestDataFile
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import java.io.File
 
 class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val order: Order
@@ -26,88 +33,104 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
         get() = listOf(TestTierDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val sortedFailures = sortFailures(failedAssertions)
-        if (sortedFailures.criticalFailures.isEmpty()) {
-            return sortedFailures.nonCriticalFailures + listOfNotNull(checkTierConsistency())
+        val (suppressibleFailures, nonSuppressibleFailures, hasFailuresInNonLeafModule) = sortFailures(failedAssertions)
+
+        return nonSuppressibleFailures + when {
+            suppressibleFailures.isEmpty() && !hasFailuresInNonLeafModule -> checkTierConsistency()
+            else -> emptyList()
         }
-        return filterCriticalFailures(sortedFailures) ?: failedAssertions
     }
 
-    private fun filterCriticalFailures(sortedFailures: SortedFailures): List<WrappedException>? {
-        if (!sortedFailures.suppressibleByPhase) return null
-        val (failedModule, stepKind, exceptionToFilter) = sortedFailures.criticalFailureInfo!!
-        // TODO: add proper error message
-        if (!failedModule.isLeafModule(testServices)) return null
-        // TODO: properly handle case without directive
-        val targetedTier = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].first()
-        val actualTier = when (stepKind) {
-            is FrontendKind -> TestTierLabel.FRONTEND
-            is BackendKind -> TestTierLabel.FIR2IR
-            is ArtifactKind -> TestTierLabel.BACKEND
-            else -> return null
-        }
-        // TODO: add proper error message
-        if (actualTier >= targetedTier) return sortedFailures.nonCriticalFailures
-        return null
+    private fun TestArtifactKind<*>.toTier(): TestTierLabel? = when (this) {
+        is FrontendKind -> TestTierLabel.FRONTEND
+        is BackendKind -> TestTierLabel.FIR2IR
+        is ArtifactKind -> TestTierLabel.BACKEND
+        else -> null
     }
 
-    private fun checkTierConsistency(): WrappedException? {
+    private fun checkTierConsistency(): List<WrappedException> {
         val directives = testServices.moduleStructure.allDirectives
-        if (DISABLE_NEXT_TIER_SUGGESTION in directives) return null
+        if (DISABLE_NEXT_TIER_SUGGESTION in directives) return emptyList()
         val expectedLastTier = directives[LATEST_EXPECTED_TIER].first()
         val targetedTier = directives[RUN_PIPELINE_TILL].first()
-        if (targetedTier < expectedLastTier) {
-            val exception = RuntimeException("Tier $targetedTier could be promoted to $expectedLastTier")
-            return WrappedException.FromAfterAnalysisChecker(exception)
+        if (targetedTier >= expectedLastTier) return emptyList()
+
+        val message = "Tier $targetedTier could be promoted to $expectedLastTier"
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        if (testDataFile.extension == "nkt") {
+            return listOf(WrappedException.FromAfterAnalysisChecker(AssertionError(message)))
         }
-        return null
+
+        val originalFile = testDataFile.originalTestDataFile
+        return listOf(
+            originalFile,
+            originalFile.firTestDataFile,
+            originalFile.llFirTestDataFile,
+            originalFile.latestLVTestDataFile,
+            originalFile.reversedTestDataFile,
+        ).filter { it.exists() }.mapNotNull { file ->
+            val contentWithNewDirective = file
+                .readText()
+                .replace("// RUN_PIPELINE_TILL: $targetedTier", "// RUN_PIPELINE_TILL: $expectedLastTier")
+            try {
+                testServices.assertions.assertEqualsToFile(
+                    file,
+                    contentWithNewDirective,
+                    message = { message }
+                )
+                null
+            } catch (e: AssertionError) {
+                WrappedException.FromAfterAnalysisChecker(e)
+            }
+        }
     }
 
-    private class SortedFailures(
-        val criticalFailureInfo: CriticalFailureInfo?,
-        val criticalFailures: List<WrappedException>,
-        val nonCriticalFailures: List<WrappedException>
-    ) {
-        val suppressibleByPhase: Boolean
-            get() = criticalFailures.size == 1 && criticalFailureInfo != null
-    }
-
-    private data class CriticalFailureInfo(
-        val failedModule: TestModule,
-        val stepKind: TestArtifactKind<*>,
-        val exceptionToFilter: WrappedException
+    private data class SortedFailures(
+        val suppressibleFailures: List<WrappedException>,
+        val nonSuppressibleFailures: List<WrappedException>,
+        val hasFailuresInNonLeafModule: Boolean,
     )
 
     private fun sortFailures(failedAssertions: List<WrappedException>): SortedFailures {
-        val criticalFailures = mutableListOf<WrappedException>()
-        val nonCriticalFailures = mutableListOf<WrappedException>()
-        var criticalFailureInfo: CriticalFailureInfo? = null
-        for (exception in failedAssertions) {
-            when (exception) {
-                is WrappedException.FromMetaInfoHandler,
-                is WrappedException.FromFacade -> nonCriticalFailures += exception
-                is WrappedException.WrappedExceptionWithoutModule -> criticalFailures += exception
-                is WrappedException.FromHandler -> {
-                    if (exception.failureDisablesNextSteps) {
-                        criticalFailures += exception
-                        val failedModule = exception.failedModule
-                        if (criticalFailureInfo == null && failedModule != null) {
-                            criticalFailureInfo = CriticalFailureInfo(
-                                failedModule,
-                                exception.handler.artifactKind,
-                                exception
-                            )
-                        }
-                    } else {
-                        nonCriticalFailures += exception
-                    }
+        val suppressibleFailures = mutableListOf<WrappedException>()
+        val nonSuppressibleFailures = mutableListOf<WrappedException>()
+        val targetedTier = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].first()
+        var hasFailuresInNonLeafModule = false
+
+        fun processFailure(module: TestModule?, kind: TestArtifactKind<*>, exception: WrappedException): MutableList<WrappedException> {
+            val actualTier = kind.toTier()
+            return when {
+                module != null && !module.isLeafModule(testServices) -> {
+                    hasFailuresInNonLeafModule = true
+                    nonSuppressibleFailures
                 }
+                actualTier == null -> nonSuppressibleFailures
+                actualTier == targetedTier -> when {
+                    exception is WrappedException.FromHandler && exception.failureDisablesNextSteps -> suppressibleFailures
+                    else -> nonSuppressibleFailures
+                }
+                actualTier > targetedTier -> suppressibleFailures
+                actualTier < targetedTier -> nonSuppressibleFailures
+                else -> shouldNotBeCalled()
             }
         }
+
+
+        for (exception in failedAssertions) {
+            val targetStorage = when (exception) {
+                is WrappedException.FromMetaInfoHandler -> nonSuppressibleFailures
+                is WrappedException.FromFacade ->
+                    processFailure(exception.failedModule, exception.facade.outputKind, exception)
+                is WrappedException.WrappedExceptionWithoutModule -> nonSuppressibleFailures
+                is WrappedException.FromHandler ->
+                    processFailure(exception.failedModule, exception.handler.artifactKind, exception)
+            }
+            targetStorage += exception
+        }
         return SortedFailures(
-            criticalFailureInfo,
-            criticalFailures,
-            nonCriticalFailures
+            suppressibleFailures = suppressibleFailures,
+            nonSuppressibleFailures = nonSuppressibleFailures,
+            hasFailuresInNonLeafModule
         )
     }
 }
