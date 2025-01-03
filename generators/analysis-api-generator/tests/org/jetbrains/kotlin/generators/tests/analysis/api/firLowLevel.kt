@@ -338,6 +338,18 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             modelInit()
         }
     }
+    testGroup(
+        "analysis/low-level-api-fir/tests",
+        "analysis/low-level-api-fir/testData",
+    ) {
+        testClass<AbstractDiagnosticCompilerTestDataTest>(suiteTestClassName = "DiagnosticCompilerTestAATestdataTestGenerated") {
+            model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+        testClass<AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest>(suiteTestClassName = "LLFirPreresolvedReversedDiagnosticCompilerAATestDataTestGenerated") {
+            model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+    }
 
     testGroup(
         "analysis/low-level-api-fir/tests",
