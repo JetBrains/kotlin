@@ -190,26 +190,32 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     session: FirSession,
     scopeSession: ScopeSession,
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
-    // todo causes `NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER` for non List-literals arguments
-    val declarationOwnTypeParams = declaration.typeParameters.map { it.symbol }
+    // todo it probably shouldn't be here. Dirty prototype hack?
+    //   Alternatives:
+    //   - Create innerCS in ArgumentCheckingProcessor
+    //   - Probably, moving contents of ArgumentCheckingProcessor.resolveArgumentExpression to "completion" might help?
     val incorporatedCollectionOperatorOfTypeParams = (declaration as? FirFunction)?.valueParameters.orEmpty()
         .mapNotNull { resolveVarargOfMemberFunction(it.returnTypeRef.coneType, session, scopeSession) }
         .flatMap { it.typeParameterSymbols }
-    val typeParameters = declarationOwnTypeParams + incorporatedCollectionOperatorOfTypeParams
+    val declarationOwnTypeParams = declaration.typeParameters.map { it.symbol }
+    val typeParameters = declarationOwnTypeParams
 
-    val freshTypeVariables = typeParameters.map { ConeTypeParameterBasedTypeVariable(it) }
+    val freshTypeVariables = typeParameters.map(::ConeTypeParameterBasedTypeVariable)
+    val freshIncorporatedTypeVariables = incorporatedCollectionOperatorOfTypeParams.map(::ConeTypeParameterBasedTypeVariable)
 
-    val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, session)
-        .let {
-            val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorSubstitutor
-            if (typeAliasConstructorSubstitutor != null) {
-                ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
-            } else {
-                it
-            }
+    val toFreshVariables = substitutorByMap(
+        (freshTypeVariables + freshIncorporatedTypeVariables).associate { it.typeParameterSymbol to it.defaultType },
+        session
+    ).let {
+        val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorSubstitutor
+        if (typeAliasConstructorSubstitutor != null) {
+            ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
+        } else {
+            it
         }
+    }
 
-    for (freshVariable in freshTypeVariables) {
+    for (freshVariable in freshTypeVariables + freshIncorporatedTypeVariables) {
         csBuilder.registerVariable(freshVariable)
     }
 

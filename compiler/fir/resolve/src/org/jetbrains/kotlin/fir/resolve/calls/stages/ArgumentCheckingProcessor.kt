@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
+import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaParameterType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
@@ -115,6 +116,7 @@ internal object ArgumentCheckingProcessor {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
             }
+            // todo probably, this should be moved somewhere to "completion", but IDK how, and IDK why, it's just my intuition
             is ConeCollectionLiteralResolutionAtom -> {
                 val collectionLiteralArgumentContext = this@resolveArgumentExpression
                 if (collectionLiteralArgumentContext.expectedType == null) {
@@ -133,15 +135,12 @@ internal object ArgumentCheckingProcessor {
                     reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
                     return
                 }
-                val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
-                if (ofFunction != null) {
-                    val s = candidate.substitutor.substituteOrSelf(ofFunction.resolvedReturnType)
-                    resolvePlainExpressionArgument(atom.expression, argumentType = s)
-                } else { // if ofFunction is null, then the type is hardcoded List/Set/MutableList/etc.
-                    resolvePlainExpressionArgument(atom.expression, argumentType = expectedType)
-                }
-                val collectionLiteralElementContext =
-                    collectionLiteralArgumentContext.copy(expectedType = candidate.substitutor.substituteOrSelf(collectionLiteralElementType))
+                val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)!!
+                val s = candidate.substitutor.substituteOrSelf(ofFunction.resolvedReturnType)
+                resolvePlainExpressionArgument(atom.expression, argumentType = s)
+                val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(
+                    expectedType = candidate.substitutor.substituteOrSelf(collectionLiteralElementType),
+                )
                 for (atom in atom.subAtoms) {
                     collectionLiteralElementContext.resolveArgumentExpression(atom)
                 }
