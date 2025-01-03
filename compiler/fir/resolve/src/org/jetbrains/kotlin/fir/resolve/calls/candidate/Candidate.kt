@@ -70,7 +70,7 @@ class Candidate(
     val usedOuterCs: Boolean get() = system.usesOuterCs
 
     private var systemInitialized: Boolean = false
-    val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
+    override val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
 
         val baseCSFromInferenceSession =
