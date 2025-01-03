@@ -10,5 +10,5 @@ class Foo(val a: Int, b: Int) {
     val e: Int
         get() = <!UNRESOLVED_REFERENCE!>b<!>
 
-    val map: Map<String, Int> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH("kotlin.String; kotlin.Int"), TYPE_MISMATCH("kotlin.String; kotlin.Int"), TYPE_MISMATCH("kotlin.Int; kotlin.String")!>mapOf(1 to "hello")<!>
+    val map: Map<String, Int> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH("String; Int"), TYPE_MISMATCH("String; Int"), TYPE_MISMATCH("Int; String")!>mapOf(1 to "hello")<!>
 }

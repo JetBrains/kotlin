@@ -1,0 +1,3 @@
+/b.kt:(74,79): error: Argument type mismatch: actual type is 'b.Foo', but 'a.Foo' was expected.
+
+/b.kt:(126,127): error: Argument type mismatch: actual type is 'Foo#1 (of fun <Foo> test2)', but 'a.Foo' was expected.

@@ -40,7 +40,7 @@ fun usage(y: Int) {
     <!TYPE_MISMATCH!>test1<!>(1, "312")
     1.<!TYPE_MISMATCH!>test2<!>("")
     <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test3<!>("")
-    <!TYPE_MISMATCH("kotlin.String; kotlin.Int")!>test4<!>(1, listOf("a"))
+    <!TYPE_MISMATCH("String; Int")!>test4<!>(1, listOf("a"))
     val x: In<String> = <!INITIALIZER_TYPE_MISMATCH!><!TYPE_MISMATCH!>id<!>(y)<!>
     <!TYPE_MISMATCH!>test5<!>(id(y))
     id(y).<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>test6<!>()

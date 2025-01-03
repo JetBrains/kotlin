@@ -1,10 +1,10 @@
 /main.kt:(71,79): error: This function accidentally overrides both 'fun contains(x: String!): Boolean' defined in '/A' and a function with erased parameters 'fun contains(x: Any!): Boolean' defined in '/A' from JVM point of view because of mixed Java/Kotlin hierarchy.
 This situation provokes a JVM clash and is forbidden. To fix it, delete either this or one of the overridden functions.
 
-/main.kt:(160,161): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String!' was expected.
+/main.kt:(160,161): error: Argument type mismatch: actual type is 'Int', but 'String!' was expected.
 
-/main.kt:(179,180): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String!' was expected.
+/main.kt:(179,180): error: Argument type mismatch: actual type is 'Int', but 'String!' was expected.
 
-/main.kt:(223,224): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.
+/main.kt:(223,224): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/main.kt:(243,244): error: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.
+/main.kt:(243,244): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
