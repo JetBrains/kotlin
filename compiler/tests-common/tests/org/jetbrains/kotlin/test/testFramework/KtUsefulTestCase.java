@@ -288,7 +288,10 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected void invokeTestRunnable(@NotNull Runnable runnable) throws Exception {
-        runnable.run();
+        org.jetbrains.kotlin.test.MuteWithDatabaseJunit4Kt.runTest(this, () -> {
+            runnable.run();
+            return null;
+        });
     }
 
     protected void defaultRunBare() throws Throwable {
