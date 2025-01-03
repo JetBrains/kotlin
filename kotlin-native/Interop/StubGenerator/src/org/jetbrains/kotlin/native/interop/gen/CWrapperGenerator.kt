@@ -51,7 +51,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
             *bindSymbolToFunction(symbolName, wrapperName).toTypedArray()
     )
 
-    private val Type.stringRepresentation get() = this.getStringRepresentation(context.plugin)
+    private val Type.stringRepresentation get() = this.getStringRepresentation()
 
     private fun createCCalleeWrapper(function: FunctionDecl, symbolName: String): List<String> {
         assert(context.configuration.library.language != Language.CPP)
