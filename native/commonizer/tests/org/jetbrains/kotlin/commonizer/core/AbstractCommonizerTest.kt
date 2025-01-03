@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
 abstract class AbstractCommonizerTest<T, R> {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     class ObjectsNotEqual(message: String) : Throwable(message)
 

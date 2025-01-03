@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformIntWidth
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformWidthIndex
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class PlatformBitWidthTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private fun createPlatformBitWidthIndex(): PlatformWidthIndex = PlatformWidthIndex
 
     @Test
