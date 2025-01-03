@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.originalBeforeInline
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
 
 fun IrElement.copyAttributes(other: IrElement) {
+    (this as IrElementBase).copyAttributesFrom(other as IrElementBase, false)
     attributeOwnerId = other.attributeOwnerId
     originalBeforeInline = other.originalBeforeInline
 }
