@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
 
 class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+    override val order: Order
+        get() = Order.Last
+
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(TestTierDirectives)
 
@@ -81,14 +84,9 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
         var criticalFailureInfo: CriticalFailureInfo? = null
         for (exception in failedAssertions) {
             when (exception) {
-                is WrappedException.FromMetaInfoHandler -> nonCriticalFailures += exception
+                is WrappedException.FromMetaInfoHandler,
+                is WrappedException.FromFacade -> nonCriticalFailures += exception
                 is WrappedException.WrappedExceptionWithoutModule -> criticalFailures += exception
-                is WrappedException.FromFacade -> {
-                    criticalFailures += exception
-                    if (criticalFailureInfo == null) {
-                        criticalFailureInfo = CriticalFailureInfo(exception.failedModule, exception.facade.outputKind, exception)
-                    }
-                }
                 is WrappedException.FromHandler -> {
                     if (exception.failureDisablesNextSteps) {
                         criticalFailures += exception
