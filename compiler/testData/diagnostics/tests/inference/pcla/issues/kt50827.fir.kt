@@ -11,7 +11,7 @@ fun test() {
     val buildee = box.buildee
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<TargetType>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<TargetType>; Buildee<kotlin.Any>")!>buildee<!>)
+    checkExactType<Buildee<TargetType>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<kotlin.Any>; Buildee<TargetType>")!>buildee<!>)
 }
 
 

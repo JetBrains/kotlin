@@ -32,25 +32,25 @@ fun <K: Any> getArrayOfNotNullK() = null as Array<K>
 fun <K> getArrayOfNullableK() = null as Array<K?>
 
 fun <R> main(vp: ValueParameter<R>) {
-    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R? (of fun <R> main)>!; ValueParameter.A<kotlin.String, K? (of fun <K> getNotNullStringAndKNullable)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String, K? (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R? (of fun <R> main)>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
     vp.foo1(getNullableStringAndKNullable())
-    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R? (of fun <R> main)>!; ValueParameter.A<kotlin.String, K (of fun <K : Any> getNotNullStringAndNotNullK)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
-    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R? (of fun <R> main)>!; ValueParameter.A<kotlin.String?, K (of fun <K : Any> getNullableStringAndNotNullK)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String, K (of fun <K : Any> getNotNullStringAndNotNullK)>; ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R? (of fun <R> main)>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String?, K (of fun <K : Any> getNullableStringAndNotNullK)>; ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R? (of fun <R> main)>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
-    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R (of fun <R> main) & Any>!; ValueParameter.A<kotlin.String, K? (of fun <K> getNotNullStringAndKNullable)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
-    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R (of fun <R> main) & Any>!; ValueParameter.A<kotlin.String?, K? (of fun <K> getNullableStringAndKNullable)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
-    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R (of fun <R> main) & Any>!; ValueParameter.A<kotlin.String, K (of fun <K : Any> getNotNullStringAndNotNullK)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String, K? (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String?, K? (of fun <K> getNullableStringAndKNullable)>; ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String, K (of fun <K : Any> getNotNullStringAndNotNullK)>; ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
     vp.foo2(getNullableStringAndNotNullK())
 
-    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@NotNull() kotlin.String, @NotNull() R (of fun <R> main) & Any>!; ValueParameter.A<kotlin.String, K? (of fun <K> getNotNullStringAndKNullable)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
-    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@NotNull() kotlin.String, @NotNull() R (of fun <R> main) & Any>!; ValueParameter.A<kotlin.String?, K? (of fun <K> getNullableStringAndKNullable)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String, K? (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<@NotNull() kotlin.String, @NotNull() R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String?, K? (of fun <K> getNullableStringAndKNullable)>; ValueParameter.A<@NotNull() kotlin.String, @NotNull() R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
     vp.foo3(getNotNullStringAndNotNullK())
-    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@NotNull() kotlin.String, @NotNull() R (of fun <R> main) & Any>!; ValueParameter.A<kotlin.String?, K (of fun <K : Any> getNullableStringAndNotNullK)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<kotlin.String?, K (of fun <K : Any> getNullableStringAndNotNullK)>; ValueParameter.A<@NotNull() kotlin.String, @NotNull() R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
-    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<(out) @NotNull() R (of fun <R> main) & Any>!; kotlin.Array<kotlin.String>")!>getArrayOfNotNullString()<!>)
-    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<(out) @NotNull() R (of fun <R> main) & Any>!; kotlin.Array<kotlin.String?>")!>getArrayOfNullableString()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<kotlin.String>; kotlin.Array<(out) @NotNull() R (of fun <R> main) & Any>!")!>getArrayOfNotNullString()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<kotlin.String?>; kotlin.Array<(out) @NotNull() R (of fun <R> main) & Any>!")!>getArrayOfNullableString()<!>)
     vp.foo4(getArrayOfNotNullK())
-    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<(out) @NotNull() R (of fun <R> main) & Any>!; kotlin.Array<K? (of fun <K> getArrayOfNullableK)>")!><!CANNOT_INFER_PARAMETER_TYPE!>getArrayOfNullableK<!>()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<K? (of fun <K> getArrayOfNullableK)>; kotlin.Array<(out) @NotNull() R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getArrayOfNullableK<!>()<!>)
 
     vp.foo5(getArrayOfNotNullString())
     vp.foo5(getArrayOfNullableString())
@@ -58,5 +58,5 @@ fun <R> main(vp: ValueParameter<R>) {
     vp.foo5(getArrayOfNullableK())
 
     vp.foo41(getNotNullString())
-    vp.foo411(<!ARGUMENT_TYPE_MISMATCH("R! (of fun <R> main); kotlin.String")!>getNotNullString()<!>)
+    vp.foo411(<!ARGUMENT_TYPE_MISMATCH("kotlin.String; R! (of fun <R> main)")!>getNotNullString()<!>)
 }

@@ -132,7 +132,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
-            "Argument type mismatch: actual type is ''{1}'', but ''{0}'' was expected. This will become an error in ${
+            "Argument type mismatch: actual type is ''{0}'', but ''{1}'' was expected. This will become an error in ${
                 LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces.formatKotlinWithVersion()
             }.",
             RENDER_TYPE,

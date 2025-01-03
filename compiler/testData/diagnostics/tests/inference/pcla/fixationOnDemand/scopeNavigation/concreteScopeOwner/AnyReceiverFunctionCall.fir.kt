@@ -7,7 +7,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide().toString() // member
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
@@ -17,7 +17,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide().toString() // extension
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultB<!>
@@ -27,7 +27,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide().hashCode() // member
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultC<!>
@@ -37,7 +37,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide().hashCode() // extension
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultD<!>
@@ -47,7 +47,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide().equals(ScopeOwner())
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultE<!>
@@ -57,7 +57,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide().fix()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultF<!>
@@ -69,7 +69,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide()?.toString()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultA<!>
@@ -79,7 +79,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide()?.hashCode()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultB<!>
@@ -89,7 +89,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide()?.equals(ScopeOwner())
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultC<!>
@@ -99,7 +99,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner? for scope navigation
         otvOwner.provide()?.fix()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultD<!>

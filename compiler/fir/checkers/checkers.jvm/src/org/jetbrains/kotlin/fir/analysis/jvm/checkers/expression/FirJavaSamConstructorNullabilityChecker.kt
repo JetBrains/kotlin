@@ -55,8 +55,8 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
                     reporter.reportOn(
                         returnedExpression.source,
                         FirErrors.ARGUMENT_TYPE_MISMATCH,
-                        expectedReturnType,
                         returnedExpressionType,
+                        expectedReturnType,
                         true,
                         context,
                     )
@@ -64,8 +64,8 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
                     reporter.reportOn(
                         returnedExpression.source,
                         FirJvmErrors.TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
-                        expectedReturnType,
                         returnedExpressionType,
+                        expectedReturnType,
                         context,
                     )
                 }

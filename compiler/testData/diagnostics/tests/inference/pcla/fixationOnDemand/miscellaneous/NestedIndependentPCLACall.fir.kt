@@ -6,13 +6,13 @@ fun test() {
             // should fix OTv1 := ScopeOwnerA for scope navigation
             otv1Owner.provide().functionA()
             // expected: Interloper </: ScopeOwnerA
-            otv1Owner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwnerA; Interloper")!>Interloper<!>)
+            otv1Owner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwnerA")!>Interloper<!>)
 
             otv2Owner.constrain(ScopeOwnerB())
             // should fix OTv2 := ScopeOwnerB for scope navigation
             otv2Owner.provide().functionB()
             // expected: Interloper </: ScopeOwnerA
-            otv2Owner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwnerB; Interloper")!>Interloper<!>)
+            otv2Owner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwnerB")!>Interloper<!>)
         }
         // expected: ScopeOwnerB
         <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwnerB")!>nestedResultA<!>

@@ -85,8 +85,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES by warning<PsiElement> {
-            parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("expectedType")
         }
 
         val JAVA_CLASS_ON_COMPANION by warning<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
