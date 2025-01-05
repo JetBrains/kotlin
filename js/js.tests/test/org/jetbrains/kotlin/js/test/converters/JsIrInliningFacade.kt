@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
+import org.jetbrains.kotlin.ir.inline.runIrLevelCheckers
 import org.jetbrains.kotlin.js.test.utils.createTestPhaseConfig
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -42,6 +47,14 @@ class JsIrInliningFacade(
         ).runPreSerializationLoweringPhases(
             inputArtifact.irModuleFragment,
             JsPreSerializationLoweringPhasesProvider,
+        )
+
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(inputArtifact.diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+
+        inputArtifact.irModuleFragment.runIrLevelCheckers(
+            irDiagnosticReporter,
+            ::IrInlineDeclarationChecker,
         )
 
         // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
