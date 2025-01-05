@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsSerializedKlibPipelineArtifact>(
@@ -37,11 +41,19 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
         val transformedResult = if (configuration.wasmCompilation) {
             fir2IrResult
         } else {
-            PhaseEngine(
+            val result = PhaseEngine(
                 configuration.phaseConfig!!,
                 PhaserState(),
                 JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration),
-            ).runPreSerializationLoweringPhases(fir2IrResult, JsPreSerializationLoweringPhasesProvider)
+            ).runPreSerializationLoweringPhases(fir2IrResult, JsPreSerializationLoweringPhasesProvider, diagnosticCollector)
+
+            val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            diagnosticCollector.reportToMessageCollector(messageCollector, renderDiagnosticNames)
+            if (diagnosticCollector.hasErrors) {
+                throw CompilationErrorException("Compilation failed: there were errors during pre-serialization lowerings")
+            }
+            result
         }
 
         val outputKlibPath = configuration.computeOutputKlibPath()

@@ -59,6 +59,11 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     runTest("native/native.tests/cli-tests/testData/cli/kt68673_wrong_output_kind.args");
   }
 
+  @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.args")
+  public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
+    runTest("native/native.tests/cli-tests/testData/cli/leakingPrivateClassFromLocalObjectInsideInternalInline.args");
+  }
+
   @TestMetadata("llvmIrDumpDirectoryDoesntExist.args")
   public void testLlvmIrDumpDirectoryDoesntExist() {
     runTest("native/native.tests/cli-tests/testData/cli/llvmIrDumpDirectoryDoesntExist.args");

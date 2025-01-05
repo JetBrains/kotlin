@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
@@ -21,9 +22,13 @@ import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -94,12 +99,21 @@ private object NativePreSerializationLoweringPhasesProvider : PreSerializationLo
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
     val loweringContext = NativePreSerializationLoweringContext(fir2IrOutput.fir2irActualizedResult.irBuiltIns, environment.configuration)
+    val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
     return fir2IrOutput.copy(
             fir2irActualizedResult = newEngine(loweringContext) { engine ->
-                engine.runPreSerializationLoweringPhases(
+                val actualizedResult = engine.runPreSerializationLoweringPhases(
                         fir2IrOutput.fir2irActualizedResult,
                         NativePreSerializationLoweringPhasesProvider,
+                        diagnosticReporter,
                 )
+                val renderDiagnosticNames = environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+                diagnosticReporter.reportToMessageCollector(messageCollector, renderDiagnosticNames)
+                if (diagnosticReporter.hasErrors) {
+                    throw KonanCompilationException("Compilation failed: there were errors during module serialization")
+                }
+                actualizedResult
             }
     )
 }

@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/leakingPrivateClassFromLocalObjectInsideInternalInline.kt
+-XXLanguage\:+IrInlinerBeforeKlibSerialization
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

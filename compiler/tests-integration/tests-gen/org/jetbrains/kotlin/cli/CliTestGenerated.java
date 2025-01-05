@@ -1911,6 +1911,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/languageVersion.args");
     }
 
+    @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.args")
+    public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
+      runTest("compiler/testData/cli/js/leakingPrivateClassFromLocalObjectInsideInternalInline.args");
+    }
+
     @TestMetadata("libraryDirNotFound.args")
     public void testLibraryDirNotFound() {
       runTest("compiler/testData/cli/js/libraryDirNotFound.args");

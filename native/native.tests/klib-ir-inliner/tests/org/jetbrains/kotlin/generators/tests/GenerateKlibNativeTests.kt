@@ -90,6 +90,10 @@ fun main() {
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
                 model("nativeTests/specialBackendChecks")
             }
+
+            // KT-73862: TODO Currently, IR Inliner cannot be invoked from Compiler Core testinfra for Native backend,
+            // hence the native diagnostics testrunner for IR Inliner cannot be done in the same way as AbstractFirJsDiagnosticWithIrInlinerTest
+            // After KT-73862, please add AbstractFirNativeDiagnosticWithIrInlinerTest and generate testrunner with testdata `compiler/testData/diagnostics/irInliner`
         }
 
         // New frontend test infrastructure tests
