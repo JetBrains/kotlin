@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
@@ -71,6 +70,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import kotlin.collections.plus
 
 /**
@@ -197,15 +197,12 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
         }
         val superClass = getSuperClassType(functionReference)
         val superInterfaceType = functionReference.type.removeProjections()
-        functionReferenceClass.superTypes = mutableListOf(superClass, superInterfaceType)
+        functionReferenceClass.superTypes =
+            listOf(superClass, superInterfaceType) memoryOptimizedPlus getAdditionalInterfaces(functionReference)
         val constructor = functionReferenceClass.addConstructor {
             origin = getConstructorOrigin(functionReference)
             isPrimary = true
         }.apply {
-            body = context.createIrBuilder(symbol, this.startOffset, this.endOffset).irBlockBody {
-                +generateSuperClassConstructorCall(superClass, functionReference)
-                +IrInstanceInitializerCallImpl(this.startOffset, this.endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
-            }
             parameters = functionReference.boundValues.mapIndexed { index, value ->
                 buildValueParameter(this) {
                     name = Name.identifier("p${index}")
@@ -215,6 +212,10 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
                     kind = IrParameterKind.Regular
                 }
             } + getExtraConstructorParameters(this, functionReference)
+            body = context.createIrBuilder(symbol, this.startOffset, this.endOffset).irBlockBody {
+                +generateSuperClassConstructorCall(this@apply, superClass, functionReference)
+                +IrInstanceInitializerCallImpl(this.startOffset, this.endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
+            }
         }
 
         val fields = functionReference.boundValues.mapIndexed { index, captured ->
@@ -336,10 +337,11 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
     protected open fun generateExtraMethods(functionReferenceClass: IrClass, reference: IrRichFunctionReference) {}
     protected open fun getExtraConstructorParameters(constructor: IrConstructor, reference: IrRichFunctionReference): List<IrValueParameter> = emptyList()
     protected open fun IrBuilderWithScope.getExtraConstructorArgument(parameter: IrValueParameter, reference: IrRichFunctionReference): IrExpression? = null
-    protected abstract fun IrBuilderWithScope.generateSuperClassConstructorCall(superClassType: IrType, functionReference: IrRichFunctionReference) : IrDelegatingConstructorCall
+    protected abstract fun IrBuilderWithScope.generateSuperClassConstructorCall(constructor: IrConstructor, superClassType: IrType, functionReference: IrRichFunctionReference) : IrDelegatingConstructorCall
 
     protected abstract fun getReferenceClassName(reference: IrRichFunctionReference): Name
     protected abstract fun getSuperClassType(reference: IrRichFunctionReference) : IrType
+    protected open fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> = emptyList()
     protected abstract fun getClassOrigin(reference: IrRichFunctionReference) : IrDeclarationOrigin
     protected abstract fun getConstructorOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin
     protected abstract fun getInvokeMethodOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin

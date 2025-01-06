@@ -144,7 +144,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         private val startOffset = function.startOffset
         private val endOffset = function.endOffset
         private val isSuspendLambda = function.isOperator && function.name.asString() == "invoke" && function.parentClassOrNull
-            ?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
+            ?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
         private val functionParameters = if (isSuspendLambda) function.valueParameters else function.parameters
 
         private val coroutineClass: IrClass = getCoroutineClass(function)
@@ -529,7 +529,7 @@ fun getSuspendFunctionKind(
 ): SuspendFunctionKind {
 
     fun IrSimpleFunction.isSuspendLambda() =
-        name.asString() == "invoke" && parentClassOrNull?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
+        name.asString() == "invoke" && parentClassOrNull?.let { it.origin === CallableReferenceLowering.LAMBDA_IMPL } == true
 
     if (function.isSuspendLambda() && includeSuspendLambda)
         return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.

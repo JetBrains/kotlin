@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
@@ -277,6 +278,18 @@ private val enumEntryRemovalLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(enumUsageLoweringPhase)
 )
 
+private val upgradeCallableReferences = makeIrModulePhase(
+    { ctx: JsCommonBackendContext ->
+        UpgradeCallableReferences(
+            ctx,
+            upgradeFunctionReferencesAndLambdas = true,
+            upgradePropertyReferences = false,
+            upgradeLocalDelegatedPropertyReferences = false,
+            upgradeSamConversions = false,
+        )
+    },
+    name = "UpgradeCallableReferences"
+)
 
 private val propertyReferenceLowering = makeIrModulePhase(
     ::WasmPropertyReferenceLowering,
@@ -636,6 +649,7 @@ fun getWasmLowerings(
         enumSyntheticFunsLoweringPhase,
 
         propertyReferenceLowering,
+        upgradeCallableReferences,
         callableReferencePhase,
         singleAbstractMethodPhase,
         localDelegatedPropertiesLoweringPhase,
