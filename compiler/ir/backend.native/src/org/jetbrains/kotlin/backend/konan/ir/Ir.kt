@@ -479,12 +479,12 @@ class KonanSymbols(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : SymbolLookupUtils {
     override fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType? {
-        return function.descriptor.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()
+        return function.descriptor.valueParameters[index].type.computePrimitiveBinaryTypeOrNull()
     }
 }
 
 class SymbolOverIrLookupUtils() : SymbolLookupUtils {
     override fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType? {
-        return function.owner.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()
+        return function.owner.valueParameters[index].type.computePrimitiveBinaryTypeOrNull()
     }
 }
