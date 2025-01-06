@@ -284,7 +284,7 @@ private val propertyReferenceLowering = makeIrModulePhase(
 )
 
 private val callableReferencePhase = makeIrModulePhase(
-    ::CallableReferenceLowering,
+    ::WasmCallableReferenceLowering,
     name = "WasmCallableReferenceLowering",
 )
 

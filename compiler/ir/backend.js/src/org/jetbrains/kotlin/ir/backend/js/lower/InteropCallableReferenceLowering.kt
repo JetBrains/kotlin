@@ -470,8 +470,8 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             )
         return statements
             .asSequence()
+            .flatMap { if (it is IrBlock) it.statements.asSequence() else sequenceOf(it) }
             .filterIsInstance<IrSetField>()
-            .filter { it.origin == IrStatementOrigin.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
             .mapNotNull { irSetField ->
                 remapVP(irSetField.value.cast<IrGetValue>().symbol.cast())?.let {
                     irSetField.symbol to it
