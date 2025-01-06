@@ -59,7 +59,7 @@ internal interface LLLibrarySymbolProviderFactory {
             val platformSettings = KotlinPlatformSettings.getInstance(project)
             return when (platformSettings.deserializedDeclarationsOrigin) {
                 KotlinDeserializedDeclarationsOrigin.BINARIES -> LLBinaryOriginLibrarySymbolProviderFactory
-                KotlinDeserializedDeclarationsOrigin.STUBS -> LLStubBasedLibrarySymbolProviderFactory
+                KotlinDeserializedDeclarationsOrigin.STUBS -> LLStubOriginLibrarySymbolProviderFactory
             }
         }
     }

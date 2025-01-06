@@ -78,7 +78,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
         classLikeDeclaration: KtClassLikeDeclaration,
     ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
         when (provider) {
-            is StubBasedFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
+            is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
             is AbstractFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
             else -> null
         }
@@ -99,7 +99,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
     ) {
         providers.forEach { provider ->
             when (provider) {
-                is StubBasedFirDeserializedSymbolProvider ->
+                is LLKotlinStubBasedLibrarySymbolProvider ->
                     destination.addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
 
                 is AbstractFirDeserializedSymbolProvider ->

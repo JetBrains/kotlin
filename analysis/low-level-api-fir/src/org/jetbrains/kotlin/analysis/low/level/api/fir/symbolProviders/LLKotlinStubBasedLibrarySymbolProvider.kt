@@ -44,18 +44,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
 /**
- * [StubBasedFirDeserializedSymbolProvider] works over existing stubs,
- * retrieving them by classId/callableId from [KotlinDeclarationProvider].
+ * [LLKotlinStubBasedLibrarySymbolProvider] deserializes FIR symbols from existing stubs, retrieving them by [ClassId]/[CallableId] from a
+ * [KotlinDeclarationProvider][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider].
  *
- * It works in IDE only, in standalone mode works [JvmClassFileBasedSymbolProvider].
+ * The symbol provider is currently only enabled in IDE mode. The Standalone mode uses
+ * [JvmClassFileBasedSymbolProvider][org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider], which is also used by
+ * the compiler.
  *
- * Because it works over existing stubs, there is no need to keep huge protobuf in memory.
- * At the same time, there is no need to guess sources for fir elements anymore,
- * they are set during deserialization.
+ * Because the symbol provider uses existing stubs, there is no need to keep a huge protobuf in memory, which would be the case for
+ * metadata-based deserialization ([JvmClassFileBasedSymbolProvider][org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider]).
+ * At the same time, there is no need to guess sources for FIR elements anymore, as they are set during deserialization.
  *
- * Same as [JvmClassFileBasedSymbolProvider], resulting fir elements are already resolved.
+ * Like with [JvmClassFileBasedSymbolProvider][org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider], the resulting
+ * deserialized FIR elements are already fully resolved.
  */
-internal open class StubBasedFirDeserializedSymbolProvider(
+internal open class LLKotlinStubBasedLibrarySymbolProvider(
     session: LLFirSession,
     private val deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
     scope: GlobalSearchScope,
