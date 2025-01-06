@@ -13,7 +13,7 @@ FILE: lambdaWithAnonymousObject.kt
                 super<R|kotlin/Any|>()
             }
 
-            public open override val action: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            public open override val action: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 ^ Unit
             }
 

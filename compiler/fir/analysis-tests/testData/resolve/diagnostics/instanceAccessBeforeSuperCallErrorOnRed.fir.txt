@@ -5,7 +5,7 @@ FILE: instanceAccessBeforeSuperCallErrorOnRed.kt
         }
 
         public constructor(): R|Foo| {
-            this<R|Foo|>(fun <anonymous>(data: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            this<R|Foo|>(fun <anonymous>(data: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
                 ^ Unit
             }
             .R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|(R|Foo|this@R|/Foo|))

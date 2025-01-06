@@ -16,7 +16,7 @@ FILE: lambdas.kt
     public final fun test_2(x: R|kotlin/Any?|): R|kotlin/Unit| {
         when () {
             (R|<local>/x| is R|kotlin/Int|) ->  {
-                lval lambda: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                lval lambda: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
                     ^ R|<local>/x|.R|kotlin/Int.inc|()
                 }
 
