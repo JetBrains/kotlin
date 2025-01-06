@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
-import org.jetbrains.kotlin.fir.scopes.impl.outerTypeIfTypeAlias
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -791,8 +790,3 @@ val FirThisReference.referencedMemberSymbol: FirBasedSymbol<*>?
             withFirEntry("FIR", fir = boundSymbol.fir)
         }
     }
-
-internal fun FirBasedSymbol<*>.getExpectedReceiverType(): ConeKotlinType? {
-    val callableSymbol = this as? FirCallableSymbol<*> ?: return null
-    return callableSymbol.fir.let { it.receiverParameter?.typeRef?.coneType ?: (it as? FirConstructor)?.outerTypeIfTypeAlias }
-}

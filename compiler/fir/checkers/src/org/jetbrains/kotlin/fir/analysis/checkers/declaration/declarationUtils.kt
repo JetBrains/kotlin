@@ -115,7 +115,8 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
     }
 
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
-    get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
+    // Nested type aliases with inner RHS are also not extension members: they are treated as regular extension functions.
+    get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null && origin != FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
 @OptIn(SymbolInternals::class)
 fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstructorSymbol? {
