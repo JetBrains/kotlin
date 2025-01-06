@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplateScr
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideLambdaCallInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun str(): R|kotlin/String| {
                         ^str Int(42)
                     }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideLambdaCallInsideStringTempla
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideLambdaCallInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun str(): R|kotlin/String| {
                         ^str Int(42)
                     }
@@ -52,4 +52,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideLambdaCallInsideStringTempla
             }
 
         }
-

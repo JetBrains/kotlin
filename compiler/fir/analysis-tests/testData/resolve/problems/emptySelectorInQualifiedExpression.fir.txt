@@ -1,5 +1,5 @@
 FILE: emptySelectorInQualifiedExpression.kt
-    public final fun foo(action: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final fun foo(action: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         ^ Unit
     }
     ): R|kotlin/Int| {

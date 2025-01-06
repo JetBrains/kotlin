@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplateScript.kts
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                     ^ String()
                 }
                 .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
@@ -37,11 +37,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideStringTemplateScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideStringTemplateScript.kts>] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                     ^ String()
                 }
                 .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
             }
 
         }
-
