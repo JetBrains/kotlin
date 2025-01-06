@@ -8,5 +8,5 @@ class A {
 
 fun f() {
     val a = A()
-    a.<!FUNCTION_CALL_EXPECTED!>BAlias<!>
+    a.<!UNRESOLVED_REFERENCE!>BAlias<!>
 }

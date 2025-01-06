@@ -58,24 +58,24 @@ FILE: main.kt
 FILE: import.kt
     public final val nestedTAtoInner: R|{Outer.TAtoInner=} Outer.Inner| = R|/Outer.Outer|().R|/Outer.Inner.Inner|()
         public get(): R|{Outer.TAtoInner=} Outer.Inner|
-    public final val nestedTAtoInnerCallable: R|kotlin/reflect/KFunction1<Outer, {Outer.TAtoInner=} Outer.Inner>| = Q|Outer|::R|/Outer.Inner.Inner|
-        public get(): R|kotlin/reflect/KFunction1<Outer, {Outer.TAtoInner=} Outer.Inner>|
+    public final val nestedTAtoInnerCallable: R|@ExtensionFunctionType kotlin/reflect/KFunction1<Outer, {Outer.TAtoInner=} Outer.Inner>| = Q|Outer|::R|/Outer.Inner.Inner|
+        public get(): R|@ExtensionFunctionType kotlin/reflect/KFunction1<Outer, {Outer.TAtoInner=} Outer.Inner>|
     public final val nestedTAtoInnerInnerError: R|{Outer.TAtoInnerInner=} Outer.Inner.InnerInner| = R|/Outer.Outer|().R|/Outer.Inner.InnerInner.InnerInner<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.InnerInner.InnerInner]>#|()
         public get(): R|{Outer.TAtoInnerInner=} Outer.Inner.InnerInner|
     public final val nestedTAtoInnerInnerCallableError: <ERROR TYPE REF: None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.InnerInner.InnerInner]> = Q|Outer|::<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.InnerInner.InnerInner]>#
         public get(): <ERROR TYPE REF: None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.InnerInner.InnerInner]>
     public final val nestedTAtoInnerInner: R|{Outer.TAtoInnerInner=} Outer.Inner.InnerInner| = R|/Outer.Outer|().R|/Outer.Inner.Inner|().R|/Outer.Inner.InnerInner.InnerInner|()
         public get(): R|{Outer.TAtoInnerInner=} Outer.Inner.InnerInner|
-    public final val nestedTAtoInnerInnerCallable: R|kotlin/reflect/KFunction1<Outer.Inner, {Outer.TAtoInnerInner=} Outer.Inner.InnerInner>| = Q|Outer.Inner|::R|/Outer.Inner.InnerInner.InnerInner|
-        public get(): R|kotlin/reflect/KFunction1<Outer.Inner, {Outer.TAtoInnerInner=} Outer.Inner.InnerInner>|
+    public final val nestedTAtoInnerInnerCallable: R|@ExtensionFunctionType kotlin/reflect/KFunction1<Outer.Inner, {Outer.TAtoInnerInner=} Outer.Inner.InnerInner>| = Q|Outer.Inner|::R|/Outer.Inner.InnerInner.InnerInner|
+        public get(): R|@ExtensionFunctionType kotlin/reflect/KFunction1<Outer.Inner, {Outer.TAtoInnerInner=} Outer.Inner.InnerInner>|
     public final val nestedTAtoNested: R|{Outer.TAtoNested=} Outer.Nested| = Q|Outer|.R|/Outer.Nested.Nested|()
         public get(): R|{Outer.TAtoNested=} Outer.Nested|
     public final val nestedTAtoNestedCallable: R|kotlin/reflect/KFunction0<{Outer.TAtoNested=} Outer.Nested>| = Q|Outer|::R|/Outer.Nested.Nested|
         public get(): R|kotlin/reflect/KFunction0<{Outer.TAtoNested=} Outer.Nested>|
     public final val nestedTAtoNestedInner: R|{Outer.TAtoNestedInner=} Outer.Nested.NestedInner| = Q|Outer|.R|/Outer.Nested.Nested|().R|/Outer.Nested.NestedInner.NestedInner|()
         public get(): R|{Outer.TAtoNestedInner=} Outer.Nested.NestedInner|
-    public final val nestedTAtoNestedInnerCallable: R|kotlin/reflect/KFunction1<Outer.Nested, {Outer.TAtoNestedInner=} Outer.Nested.NestedInner>| = Q|Outer.Nested|::R|/Outer.Nested.NestedInner.NestedInner|
-        public get(): R|kotlin/reflect/KFunction1<Outer.Nested, {Outer.TAtoNestedInner=} Outer.Nested.NestedInner>|
+    public final val nestedTAtoNestedInnerCallable: R|@ExtensionFunctionType kotlin/reflect/KFunction1<Outer.Nested, {Outer.TAtoNestedInner=} Outer.Nested.NestedInner>| = Q|Outer.Nested|::R|/Outer.Nested.NestedInner.NestedInner|
+        public get(): R|@ExtensionFunctionType kotlin/reflect/KFunction1<Outer.Nested, {Outer.TAtoNestedInner=} Outer.Nested.NestedInner>|
     public final val nestedTAtoNestedInnerError: <ERROR TYPE REF: Resolution to classifier> = Q|Outer|.<Resolution to classifier>#()
         public get(): <ERROR TYPE REF: Resolution to classifier>
     public final val nestedTAtoNestedInnerCallableError: <ERROR TYPE REF: None of the following candidates is applicable because of receiver type mismatch: [/Outer.Nested.NestedInner.NestedInner]> = Q|Outer|::<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Nested.NestedInner.NestedInner]>#
