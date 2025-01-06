@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
-import org.jetbrains.kotlin.fir.resolve.outerType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -47,8 +45,7 @@ fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
                 requiredMembersPhase = FirResolvePhase.STATUS,
             ) ?: return null
 
-            val outerType = outerType(expandedType, session) { it.getContainingDeclaration(session) }
-            expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType)
+            expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, session)
         }
         else -> null
     }
