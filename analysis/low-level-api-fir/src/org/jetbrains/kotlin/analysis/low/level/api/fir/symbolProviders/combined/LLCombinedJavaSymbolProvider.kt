@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * [LLFirCombinedJavaSymbolProvider] combines multiple [JavaSymbolProvider]s with the following advantages:
+ * [LLCombinedJavaSymbolProvider] combines multiple [JavaSymbolProvider]s with the following advantages:
  *
  * - For a given class ID, indices can be accessed once to get relevant PSI classes. Then the correct symbol provider(s) to call can be
  *   found out via the PSI element's [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s. This avoids the need to call
@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.name.Name
  *
  * [javaClassFinder] must have a scope which combines the scopes of the individual [providers].
  */
-internal class LLFirCombinedJavaSymbolProvider private constructor(
+internal class LLCombinedJavaSymbolProvider private constructor(
     session: FirSession,
     project: Project,
     providers: List<JavaSymbolProvider>,
     private val javaClassFinder: JavaClassFinder,
-) : LLFirSelectingCombinedSymbolProvider<JavaSymbolProvider>(session, project, providers) {
+) : LLSelectingCombinedSymbolProvider<JavaSymbolProvider>(session, project, providers) {
     /**
      * The purpose of this cache is to avoid index access for frequently accessed `ClassId`s, including failures. Because Java symbol
      * providers currently cannot benefit from a "name in package" check (see KTIJ-24642), the cache should also store negative results.
@@ -104,7 +104,7 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
             if (providers.size > 1) {
                 val combinedScope = KotlinGlobalSearchScopeMerger.getInstance(project).union(providers.map { it.searchScope })
                 val javaClassFinder = project.createJavaClassFinder(combinedScope)
-                LLFirCombinedJavaSymbolProvider(session, project, providers, javaClassFinder)
+                LLCombinedJavaSymbolProvider(session, project, providers, javaClassFinder)
             } else providers.singleOrNull()
     }
 }

@@ -42,19 +42,19 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class LLFirModuleWithDependenciesSymbolProvider(
+internal class LLModuleWithDependenciesSymbolProvider(
     session: FirSession,
     val providers: List<FirSymbolProvider>,
-    val dependencyProvider: LLFirDependenciesSymbolProvider,
+    val dependencyProvider: LLDependenciesSymbolProvider,
 ) : FirSymbolProvider(session) {
     /**
-     * This symbol names provider is not used directly by [LLFirModuleWithDependenciesSymbolProvider], because in the IDE, Java symbol
+     * This symbol names provider is not used directly by [LLModuleWithDependenciesSymbolProvider], because in the IDE, Java symbol
      * providers currently cannot provide name sets (see KTIJ-24642). So in most cases, name sets would be `null` anyway.
      *
      * However, in Standalone mode, we rely on the symbol names provider to compute classifier/callable name sets for package scopes (see
      * `DeclarationsInPackageProvider`). The fallback declaration provider doesn't work for symbols from binary libraries.
      *
-     * [symbolNamesProvider] needs to be lazy to avoid eager initialization of [LLFirDependenciesSymbolProvider.providers].
+     * [symbolNamesProvider] needs to be lazy to avoid eager initialization of [LLDependenciesSymbolProvider.providers].
      */
     override val symbolNamesProvider: FirSymbolNamesProvider by lazy {
         FirCompositeCachedSymbolNamesProvider(
@@ -145,7 +145,7 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         providers.any { it.hasPackage(fqName) }
 }
 
-internal class LLFirDependenciesSymbolProvider(
+internal class LLDependenciesSymbolProvider(
     session: FirSession,
     val computeProviders: () -> List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
@@ -156,8 +156,8 @@ internal class LLFirDependenciesSymbolProvider(
      */
     val providers: List<FirSymbolProvider> by lazy {
         computeProviders().also { providers ->
-            require(providers.all { it !is LLFirModuleWithDependenciesSymbolProvider }) {
-                "${LLFirDependenciesSymbolProvider::class.simpleName} may not contain ${LLFirModuleWithDependenciesSymbolProvider::class.simpleName}:" +
+            require(providers.all { it !is LLModuleWithDependenciesSymbolProvider }) {
+                "${LLDependenciesSymbolProvider::class.simpleName} may not contain ${LLModuleWithDependenciesSymbolProvider::class.simpleName}:" +
                         " dependency providers must be flattened during session creation."
             }
         }
@@ -321,7 +321,7 @@ private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirS
 }
 
 /**
- * Every [LLFirSession] has [LLFirModuleWithDependenciesSymbolProvider] as a symbol provider
+ * Every [LLFirSession] has [LLModuleWithDependenciesSymbolProvider] as a symbol provider
  */
-internal val LLFirSession.symbolProvider: LLFirModuleWithDependenciesSymbolProvider
-    get() = (this as FirSession).symbolProvider as LLFirModuleWithDependenciesSymbolProvider
+internal val LLFirSession.symbolProvider: LLModuleWithDependenciesSymbolProvider
+    get() = (this as FirSession).symbolProvider as LLModuleWithDependenciesSymbolProvider

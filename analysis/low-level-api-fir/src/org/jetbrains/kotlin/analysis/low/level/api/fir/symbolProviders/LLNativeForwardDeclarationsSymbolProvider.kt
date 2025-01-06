@@ -37,11 +37,11 @@ import org.jetbrains.kotlin.psi.KtProperty
  * The major difference is that [declarationProvider] should be able to find a source declaration, otherwise, the symbol won't be created.
  * The declaration found by the [declarationProvider] is written as the symbol's source.
  */
-internal class LLFirNativeForwardDeclarationsSymbolProvider(
+internal class LLNativeForwardDeclarationsSymbolProvider(
     session: LLFirSession,
     override val declarationProvider: KotlinDeclarationProvider,
     override val packageProvider: KotlinPackageProvider,
-) : LLFirKotlinSymbolProvider(session) {
+) : LLKotlinSymbolProvider(session) {
     private val moduleData: LLFirModuleData get() = session.llFirModuleData
 
     /**
@@ -137,7 +137,7 @@ fun createNativeForwardDeclarationsSymbolProvider(session: LLFirSession): FirSym
     }
     if (packageProvider == null || declarationProvider == null) return null
 
-    return LLFirNativeForwardDeclarationsSymbolProvider(
+    return LLNativeForwardDeclarationsSymbolProvider(
         session, declarationProvider, packageProvider,
     )
 }

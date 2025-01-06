@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptySymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -120,7 +120,7 @@ internal class LLFirProvider(
     }
 
     @NoMutableState
-    internal inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {
+    internal inner class SymbolProvider : LLKotlinSymbolProvider(session) {
         override val declarationProvider: KotlinDeclarationProvider get() = providerHelper.declarationProvider
 
         override val packageProvider: KotlinPackageProvider get() = providerHelper.packageProvider

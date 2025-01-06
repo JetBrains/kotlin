@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedSymbolProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.utils.mapToIndex
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.utils.mapToIndex
  *
  * Classpath order must be preserved with [selectFirstElementInClasspathOrder] in case a single result is required.
  */
-internal abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider>(
+internal abstract class LLSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider>(
     session: FirSession,
     project: Project,
     override val providers: List<PROVIDER>,

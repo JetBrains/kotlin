@@ -24,15 +24,15 @@ import org.jetbrains.kotlin.psi.KtProperty
 /**
  * A [FirSymbolProvider] which provides symbols from Kotlin sources via [KotlinDeclarationProvider].
  *
- * @see org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLFirCombinedKotlinSymbolProvider
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider
  */
-internal abstract class LLFirKotlinSymbolProvider(session: FirSession) : FirSymbolProvider(session) {
+internal abstract class LLKotlinSymbolProvider(session: FirSession) : FirSymbolProvider(session) {
     abstract val declarationProvider: KotlinDeclarationProvider
 
     abstract val packageProvider: KotlinPackageProvider
 
     /**
-     * Whether the [LLFirKotlinSymbolProvider] should be able to find symbols defined in `kotlin` packages. This is usually not the case for
+     * Whether the [LLKotlinSymbolProvider] should be able to find symbols defined in `kotlin` packages. This is usually not the case for
      * source sessions, unless the `allowKotlinPackage` flag is enabled in the session's `languageVersionSettings`.
      */
     abstract val allowKotlinPackage: Boolean

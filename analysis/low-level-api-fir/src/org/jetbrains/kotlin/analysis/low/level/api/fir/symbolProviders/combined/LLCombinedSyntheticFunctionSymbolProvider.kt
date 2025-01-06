@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * [LLFirCombinedSyntheticFunctionSymbolProvider] combines multiple synthetic function symbol providers with the advantage that [ClassId]
+ * [LLCombinedSyntheticFunctionSymbolProvider] combines multiple synthetic function symbol providers with the advantage that [ClassId]
  * heuristics are checked only once.
  */
 @OptIn(FirSymbolProviderInternals::class)
-internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
+internal class LLCombinedSyntheticFunctionSymbolProvider private constructor(
     session: FirSession,
     override val providers: List<FirSyntheticFunctionInterfaceProviderBase>,
 ) : LLCombinedSymbolProvider<FirSyntheticFunctionInterfaceProviderBase>(session) {
@@ -69,7 +69,7 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
 
     companion object {
         fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider? =
-            if (providers.size > 1) LLFirCombinedSyntheticFunctionSymbolProvider(session, providers)
+            if (providers.size > 1) LLCombinedSyntheticFunctionSymbolProvider(session, providers)
             else providers.singleOrNull()
     }
 }

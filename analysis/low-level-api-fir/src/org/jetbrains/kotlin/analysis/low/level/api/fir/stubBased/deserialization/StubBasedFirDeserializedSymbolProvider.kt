@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -56,7 +56,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     scope: GlobalSearchScope,
     // A workaround for KT-63718. It should be removed with KT-64236.
     isFallbackDependenciesProvider: Boolean,
-) : LLFirKotlinSymbolProvider(session) {
+) : LLKotlinSymbolProvider(session) {
     private val kotlinScopeProvider: FirKotlinScopeProvider get() = session.kotlinScopeProvider
     private val moduleData: LLFirModuleData get() = session.llFirModuleData
 

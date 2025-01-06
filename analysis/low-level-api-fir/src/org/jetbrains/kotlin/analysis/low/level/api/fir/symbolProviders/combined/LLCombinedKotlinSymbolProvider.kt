@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageProviders
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.withStatsCounter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
 /**
- * [LLFirCombinedKotlinSymbolProvider] combines multiple [LLFirKotlinSymbolProvider]s with the following advantages:
+ * [LLCombinedKotlinSymbolProvider] combines multiple [LLKotlinSymbolProvider]s with the following advantages:
  *
  * - The combined symbol provider can combine the "names in package" sets built by individual providers. The name set can then be checked
  *   once instead of for each subordinate symbol provider. Because Kotlin symbol providers are ordered first in
- *   [LLFirDependenciesSymbolProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirDependenciesSymbolProvider],
+ *   [LLDependenciesSymbolProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLDependenciesSymbolProvider],
  *   this check is especially fruitful.
  * - For a given class or callable ID, indices can be accessed once to get relevant PSI elements. Then the correct symbol provider(s) to
  *   call can be found out via the PSI element's [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s. This avoids the
@@ -50,14 +50,14 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  * [LLFirProvider.SymbolProvider.allowKotlinPackage][org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider.SymbolProvider.allowKotlinPackage]).
  * It may be `null` if no such provider exists. See [hasPackage] for a use case.
  */
-internal class LLFirCombinedKotlinSymbolProvider private constructor(
+internal class LLCombinedKotlinSymbolProvider private constructor(
     session: FirSession,
     project: Project,
-    providers: List<LLFirKotlinSymbolProvider>,
+    providers: List<LLKotlinSymbolProvider>,
     private val declarationProvider: KotlinDeclarationProvider,
     private val packageProvider: KotlinPackageProvider,
     private val packageProviderForKotlinPackages: KotlinPackageProvider?,
-) : LLFirSelectingCombinedSymbolProvider<LLFirKotlinSymbolProvider>(session, project, providers) {
+) : LLSelectingCombinedSymbolProvider<LLKotlinSymbolProvider>(session, project, providers) {
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
@@ -111,7 +111,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
         packageFqName: FqName,
         name: Name,
         getCallables: (CallableId) -> Collection<A>,
-        provide: LLFirKotlinSymbolProvider.(CallableId, Collection<A>) -> Unit,
+        provide: LLKotlinSymbolProvider.(CallableId, Collection<A>) -> Unit,
     ) {
         if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return
 
@@ -148,7 +148,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     override fun estimateSymbolCacheSize(): Long = classifierCache.estimatedSize
 
     companion object {
-        fun merge(session: LLFirSession, project: Project, providers: List<LLFirKotlinSymbolProvider>): FirSymbolProvider? =
+        fun merge(session: LLFirSession, project: Project, providers: List<LLKotlinSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {
                 val declarationProvider = project.mergeDeclarationProviders(providers.map { it.declarationProvider })
 
@@ -160,7 +160,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
                     ?.map { it.packageProvider }
                     ?.let(project::mergePackageProviders)
 
-                LLFirCombinedKotlinSymbolProvider(
+                LLCombinedKotlinSymbolProvider(
                     session,
                     project,
                     providers,
