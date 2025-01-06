@@ -5,8 +5,7 @@
 
 package samples.lazy
 
-import samples.Sample
-import samples.assertPrints
+import samples.*
 import kotlin.concurrent.thread
 
 @Suppress("unused")
