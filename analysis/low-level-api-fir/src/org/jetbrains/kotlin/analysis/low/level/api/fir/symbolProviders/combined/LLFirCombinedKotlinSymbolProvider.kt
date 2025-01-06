@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
+package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageProviders
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.withStatsCounter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -35,7 +36,8 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  *
  * - The combined symbol provider can combine the "names in package" sets built by individual providers. The name set can then be checked
  *   once instead of for each subordinate symbol provider. Because Kotlin symbol providers are ordered first in
- *   [LLFirDependenciesSymbolProvider], this check is especially fruitful.
+ *   [LLFirDependenciesSymbolProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirDependenciesSymbolProvider],
+ *   this check is especially fruitful.
  * - For a given class or callable ID, indices can be accessed once to get relevant PSI elements. Then the correct symbol provider(s) to
  *   call can be found out via the PSI element's [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s. This avoids the
  *   need to call every single subordinate symbol provider.
@@ -45,7 +47,8 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  * [declarationProvider] must have a scope which combines the scopes of the individual [providers].
  *
  * [packageProviderForKotlinPackages] should be the package provider combined from all [providers] which allow `kotlin` packages (see
- * [LLFirProvider.SymbolProvider.allowKotlinPackage]). It may be `null` if no such provider exists. See [getPackage] for a use case.
+ * [LLFirProvider.SymbolProvider.allowKotlinPackage][org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider.SymbolProvider.allowKotlinPackage]).
+ * It may be `null` if no such provider exists. See [hasPackage] for a use case.
  */
 internal class LLFirCombinedKotlinSymbolProvider private constructor(
     session: FirSession,
