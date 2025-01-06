@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -84,32 +82,6 @@ interface FirCodeFragmentContext {
 private object CodeFragmentContextDataKey : FirDeclarationDataKey()
 
 var FirCodeFragment.codeFragmentContext: FirCodeFragmentContext? by FirDeclarationDataRegistry.data(CodeFragmentContextDataKey)
-
-/**
- * If `classLikeType` is an inner class,
- * then this function returns a type representing
- * only the "outer" part of `classLikeType`:
- * the part with the outer classes and their
- * type arguments. Returns `null` otherwise.
- */
-inline fun outerType(
-    classLikeType: ConeClassLikeType,
-    session: FirSession,
-    outerClass: (FirClassLikeSymbol<*>) -> FirClassLikeSymbol<*>?,
-): ConeClassLikeType? {
-    val fullyExpandedType = classLikeType.fullyExpandedType(session)
-
-    val symbol = fullyExpandedType.lookupTag.toSymbol(session) ?: return null
-
-    if (symbol is FirRegularClassSymbol && !symbol.fir.isInner) return null
-
-    val containingSymbol = outerClass(symbol) ?: return null
-    val currentTypeArgumentsNumber = (symbol as? FirRegularClassSymbol)?.fir?.typeParameters?.count { it is FirTypeParameter } ?: 0
-
-    return containingSymbol.constructType(
-        fullyExpandedType.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray(),
-    )
-}
 
 fun FirBasedSymbol<*>.isContextParameter(): Boolean {
     return this is FirValueParameterSymbol && this.fir.valueParameterKind == FirValueParameterKind.ContextParameter

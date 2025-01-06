@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
@@ -23,8 +24,11 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -917,4 +921,30 @@ fun ConeClassLikeLookupTag.isLocalClass(): Boolean {
 
 fun ConeClassLikeLookupTag.isAnonymousClass(): Boolean {
     return name == SpecialNames.ANONYMOUS
+}
+
+/**
+ * If `classLikeType` is an inner class,
+ * then this function returns a type representing
+ * only the "outer" part of `classLikeType`:
+ * the part with the outer classes and their
+ * type arguments. Returns `null` otherwise.
+ */
+inline fun outerType(
+    classLikeType: ConeClassLikeType,
+    session: FirSession,
+    outerClass: (FirClassLikeSymbol<*>) -> FirClassLikeSymbol<*>?,
+): ConeClassLikeType? {
+    val fullyExpandedType = classLikeType.fullyExpandedType(session)
+
+    val symbol = fullyExpandedType.lookupTag.toSymbol(session) ?: return null
+
+    if (symbol is FirRegularClassSymbol && !symbol.fir.isInner) return null
+
+    val containingSymbol = outerClass(symbol) ?: return null
+    val currentTypeArgumentsNumber = (symbol as? FirRegularClassSymbol)?.fir?.typeParameters?.count { it is FirTypeParameter } ?: 0
+
+    return containingSymbol.constructType(
+        fullyExpandedType.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray(),
+    )
 }

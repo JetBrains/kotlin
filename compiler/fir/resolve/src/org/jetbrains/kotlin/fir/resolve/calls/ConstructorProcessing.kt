@@ -143,13 +143,11 @@ private fun processConstructors(
                     requiredMembersPhase = FirResolvePhase.STATUS,
                 )
 
-                val outerType = bodyResolveComponents.outerClassManager.outerType(type)
-
                 if (basicScope != null) {
                     TypeAliasConstructorsSubstitutingScope(
                         matchedSymbol,
                         basicScope,
-                        outerType,
+                        session,
                     )
                 } else {
                     null

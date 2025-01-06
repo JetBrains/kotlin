@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -46,11 +47,9 @@ var FirConstructor.outerTypeIfTypeAlias: ConeClassLikeType? by FirDeclarationDat
 class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
-    private val outerType: ConeClassLikeType?,
+    private val session: FirSession,
 ) : FirScope() {
-    private val aliasedTypeExpansionGloballyEnabled: Boolean = typeAliasSymbol
-        .moduleData
-        .session
+    private val aliasedTypeExpansionGloballyEnabled: Boolean = session
         .languageVersionSettings
         .getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)
 
@@ -107,7 +106,10 @@ class TypeAliasConstructorsSubstitutingScope(
                     if (delegatingScope is FirClassSubstitutionScope) {
                         typeAliasConstructorSubstitutor = delegatingScope.substitutor
                     }
-                    outerTypeIfTypeAlias = outerType
+                    val expandedClassType = typeAliasSymbol.resolvedExpandedTypeRef.coneType as? ConeClassLikeType
+                    if (expandedClassType != null) {
+                        outerTypeIfTypeAlias = outerType(expandedClassType, session) { session.firProvider.getContainingClass(it) }
+                    }
                 }.symbol
             )
         }
@@ -116,7 +118,7 @@ class TypeAliasConstructorsSubstitutingScope(
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): TypeAliasConstructorsSubstitutingScope? {
         return delegatingScope.withReplacedSessionOrNull(newSession, newScopeSession)?.let {
-            TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, it, outerType)
+            TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, it, session)
         }
     }
 }
