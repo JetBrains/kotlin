@@ -46,11 +46,11 @@ internal class NativeInlineFunctionResolver(
 
         LateinitLowering(context).lower(body)
 
+        UpgradeCallableReferences(context).lower(function)
+
         SharedVariablesLowering(context).lower(body, function)
 
         OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
-
-        UpgradeCallableReferences(context).lower(function)
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
         // Do not extract local classes off of inline functions from cached libraries.
