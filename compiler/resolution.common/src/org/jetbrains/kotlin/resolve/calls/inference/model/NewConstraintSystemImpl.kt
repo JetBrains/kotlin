@@ -330,7 +330,10 @@ class NewConstraintSystemImpl(
         @OptIn(AssertionsOnly::class)
         storage.outerCS = outerSystem
 
-        addOtherSystem(outerSystem, isAddingOuter = true)
+        @OptIn(AssertionsOnly::class)
+        runOuterCSRelatedAssertions(outerSystem, isAddingOuter = true)
+
+        addOtherSystem(outerSystem, replacingContent = false)
     }
 
     @K2Only
@@ -350,22 +353,20 @@ class NewConstraintSystemImpl(
     }
 
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
-        addOtherSystem(otherSystem, isAddingOuter = false)
+        @OptIn(AssertionsOnly::class)
+        runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)
+
+        addOtherSystem(otherSystem, replacingContent = false)
     }
 
     fun replaceContentWith(otherSystem: ConstraintStorage) {
-        addOtherSystem(otherSystem, isAddingOuter = false, replacingContent = true)
+        @OptIn(AssertionsOnly::class)
+        runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)
+
+        addOtherSystem(otherSystem, replacingContent = true)
     }
 
-    private fun addOtherSystem(
-        otherSystem: ConstraintStorage,
-        // Used only for assertions
-        isAddingOuter: Boolean,
-        replacingContent: Boolean = false,
-    ) {
-        @OptIn(AssertionsOnly::class)
-        runOuterCSRelatedAssertions(otherSystem, isAddingOuter)
-
+    private fun addOtherSystem(otherSystem: ConstraintStorage, replacingContent: Boolean) {
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
                 transactionRegisterVariable(it.value)
