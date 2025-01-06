@@ -48,7 +48,7 @@ inline fun <R> IrType.unwrapToPrimitiveOrReference(
         ifReference: (type: IrType) -> R
 ): R = IrTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
+@OptIn(UnsafeDuringIrConstructionAPI::class, InternalKotlinNativeApi::class)
 internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
     override fun isNullable(type: IrType): Boolean = type.isNullable()
