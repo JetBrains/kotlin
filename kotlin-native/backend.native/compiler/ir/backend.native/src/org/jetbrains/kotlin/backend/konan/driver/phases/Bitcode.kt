@@ -144,7 +144,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     useContext(OptimizationState(context.config, optimizationConfig)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
         it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
-        it.runPhase(ModuleBitcodeOptimizationPhase, module)
+//        it.runPhase(ModuleBitcodeOptimizationPhase, module)
         it.runPhase(LTOBitcodeOptimizationPhase, module)
         when (context.config.sanitizer) {
             SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase, module)
