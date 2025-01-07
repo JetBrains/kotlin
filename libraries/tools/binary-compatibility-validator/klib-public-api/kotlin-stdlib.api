@@ -2048,6 +2048,7 @@ final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.uuid/Uuid.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // kotlin.uuid/Uuid.hashCode|hashCode(){}[0]
     final fun toByteArray(): kotlin/ByteArray // kotlin.uuid/Uuid.toByteArray|toByteArray(){}[0]
+    final fun toHexDashString(): kotlin/String // kotlin.uuid/Uuid.toHexDashString|toHexDashString(){}[0]
     final fun toHexString(): kotlin/String // kotlin.uuid/Uuid.toHexString|toHexString(){}[0]
     final fun toString(): kotlin/String // kotlin.uuid/Uuid.toString|toString(){}[0]
     final fun toUByteArray(): kotlin/UByteArray // kotlin.uuid/Uuid.toUByteArray|toUByteArray(){}[0]
@@ -2071,6 +2072,7 @@ final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.
         final fun fromULongs(kotlin/ULong, kotlin/ULong): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromULongs|fromULongs(kotlin.ULong;kotlin.ULong){}[0]
         final fun parse(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parse|parse(kotlin.String){}[0]
         final fun parseHex(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHex|parseHex(kotlin.String){}[0]
+        final fun parseHexDash(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHexDash|parseHexDash(kotlin.String){}[0]
         final fun random(): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.random|random(){}[0]
     }
 }

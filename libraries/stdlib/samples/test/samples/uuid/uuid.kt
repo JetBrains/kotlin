@@ -91,6 +91,12 @@ class Uuids {
     }
 
     @Sample
+    fun toHexDashString() {
+        val uuid = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
+        assertPrints(uuid.toHexDashString(), "550e8400-e29b-41d4-a716-446655440000")
+    }
+
+    @Sample
     fun toHexString() {
         val uuid = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
         assertPrints(uuid.toHexString(), "550e8400e29b41d4a716446655440000")
@@ -159,6 +165,12 @@ class Uuids {
     @Sample
     fun parse() {
         val uuid = Uuid.parse("550E8400-e29b-41d4-A716-446655440000") // case insensitive
+        assertPrints(uuid, "550e8400-e29b-41d4-a716-446655440000")
+    }
+
+    @Sample
+    fun parseHexDash() {
+        val uuid = Uuid.parseHexDash("550E8400-e29b-41d4-A716-446655440000") // case insensitive
         assertPrints(uuid, "550e8400-e29b-41d4-a716-446655440000")
     }
 

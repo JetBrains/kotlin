@@ -194,6 +194,61 @@ class UuidTest {
     }
 
     @Test
+    fun parseHexDash() {
+        // lower case
+        assertEquals(uuidString, Uuid.parseHexDash(uuidString).toString())
+        assertSame(Uuid.NIL, Uuid.parseHexDash(uuidStringNil))
+        assertEquals(uuidStringMax, Uuid.parseHexDash(uuidStringMax).toString())
+
+        // upper case
+        assertEquals(uuidString, Uuid.parseHexDash(uuidString.uppercase()).toString())
+        assertEquals(uuidStringMax, Uuid.parseHexDash(uuidStringMax.uppercase()).toString())
+
+        // mixed case
+        assertEquals(uuidString, Uuid.parseHexDash(uuidString.mixedcase()).toString())
+        assertEquals(uuidStringMax, Uuid.parseHexDash(uuidStringMax.mixedcase()).toString())
+
+        // Illegal String format
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidHexString) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("$uuidString-") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("-$uuidString") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("${uuidString}0") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("0${uuidString}") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidString.replace("d", "g")) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidString.drop(1)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidString.dropLast(1)) }
+
+        for (i in uuidString.indices) {
+            if (uuidString[i] == '-') {
+                assertFailsWith<IllegalArgumentException> {
+                    Uuid.parseHexDash(uuidString.substring(0..<i) + "+" + uuidString.substring(i + 1))
+                }.also { exception ->
+                    assertEquals("Expected '-' (hyphen) at index $i, but was '+'", exception.message)
+                }
+
+                assertFailsWith<IllegalArgumentException> {
+                    Uuid.parseHexDash(uuidString.substring(0..<i) + "0" + uuidString.substring(i + 1))
+                }.also { exception ->
+                    assertEquals("Expected '-' (hyphen) at index $i, but was '0'", exception.message)
+                }
+            }
+        }
+
+        // Truncating the illegal String
+        val longString = uuidString.repeat(2).take(64)
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.parseHexDash(longString)
+        }.also { exception ->
+            assertContains(exception.message!!, "but was \"$longString\" of length 64")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.parseHexDash(longString + "0")
+        }.also { exception ->
+            assertContains(exception.message!!, "but was \"$longString...\" of length 65")
+        }
+    }
+
+    @Test
     fun parseHex() {
         // lower case
         assertEquals(uuidString, Uuid.parseHex(uuidHexString).toString())
@@ -221,12 +276,12 @@ class UuidTest {
         // Truncating the illegal String
         val longString = uuidHexString.repeat(2) // length = 64
         assertFailsWith<IllegalArgumentException> {
-            Uuid.parse(longString)
+            Uuid.parseHex(longString)
         }.also { exception ->
             assertContains(exception.message!!, "but was \"$longString\" of length 64")
         }
         assertFailsWith<IllegalArgumentException> {
-            Uuid.parse(longString + "0")
+            Uuid.parseHex(longString + "0")
         }.also { exception ->
             assertContains(exception.message!!, "but was \"$longString...\" of length 65")
         }
@@ -317,6 +372,13 @@ class UuidTest {
         assertEquals(uuidString, uuid.toString())
         assertEquals(uuidStringNil, Uuid.NIL.toString())
         assertEquals(uuidStringMax, Uuid.parse(uuidStringMax).toString())
+    }
+
+    @Test
+    fun toHexDashString() {
+        assertEquals(uuidString, uuid.toHexDashString())
+        assertEquals(uuidStringNil, Uuid.NIL.toHexDashString())
+        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax).toHexDashString())
     }
 
     @Test
