@@ -28,12 +28,21 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 object JsKlibJsCodeCallChecker : JsKlibCallChecker {
     private val jsCodeFqName = JsStandardClassIds.Callables.JsCode.asSingleFqName()
 
+    private fun IrCall.isJsFunCall(): Boolean {
+        return if (this.symbol.isBound) {
+            symbol.owner.fqNameWhenAvailable == jsCodeFqName
+        } else {
+            symbol.signature?.asPublic()?.declarationFqName == jsCodeFqName.asString()
+        }
+    }
+
     override fun check(expression: IrCall, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
         // Do not check IR from K1, because there are corresponding K1 FE checks in JsCallChecker
         if (!context.compilerConfiguration.languageVersionSettings.languageVersion.usesK2) {
             return
         }
-        if (expression.symbol.owner.fqNameWhenAvailable != jsCodeFqName) {
+
+        if (!expression.isJsFunCall()) {
             return
         }
 
