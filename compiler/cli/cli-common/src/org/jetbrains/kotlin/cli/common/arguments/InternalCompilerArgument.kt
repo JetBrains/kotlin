@@ -80,6 +80,13 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
                 severity = CompilerMessageSeverity.ERROR
             )
         }
+        val replaceWithFeature = languageFeature.replaceWith
+        if (replaceWithFeature != null) {
+            reportAndReturnNull(
+                "Language feature '$languageFeatureName' should be replaced with '${replaceWithFeature.name}'",
+                severity = CompilerMessageSeverity.ERROR
+            )
+        }
 
         return ManualLanguageFeatureSetting(languageFeature, languageFeatureState, wholeArgument)
     }

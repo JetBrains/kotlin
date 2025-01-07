@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -159,6 +160,10 @@ class LanguageVersionSettingsBuilder {
         }
         val name = matcher.group(2)
         val feature = LanguageFeature.fromString(name) ?: error("Language feature with name \"$name\" not found")
+        val replaceWithFeature = feature.replaceWith
+        if (replaceWithFeature != null) {
+            error("Feature $name should be replaced with ${replaceWithFeature.name}")
+        }
         specificFeatures[feature] = mode
     }
 
