@@ -92,7 +92,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 val shortCut = if (expression.isReturnIfSuspendedCall())
-                    expression.getValueArgument(0)!!
+                    expression.arguments[0]!!
                 else expression
 
                 shortCut.transformChildrenVoid(this)
@@ -122,16 +122,14 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                                        }).apply {
                                            val functionParameters = irFunction.parameters
                                            functionParameters.forEachIndexed { index, argument ->
-                                               putValueArgument(index, irGet(argument))
+                                               arguments[index] = irGet(argument)
                                            }
-                                           putValueArgument(
-                                               functionParameters.size,
+                                           arguments[functionParameters.size] =
                                                irCall(
                                                    getContinuationSymbol,
                                                    getContinuationSymbol.owner.returnType,
                                                    listOf(irFunction.returnType)
                                                )
-                                           )
                                        })
             }
         }
@@ -164,7 +162,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         private val argumentToPropertiesMap = functionParameters.associateWith { coroutineClass.addField(it.name, it.type, false) }
 
         private val coroutineBaseClass = getCoroutineBaseClass(irFunction)
-        private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.valueParameters.size == 1 }
+        private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.hasShape(regularParameters = 1) }
 
         private val coroutineConstructors = mutableListOf<IrConstructor>()
 
@@ -196,20 +194,20 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
                 coroutineConstructors += this
 
-                valueParameters = functionParameters.memoryOptimizedMap { parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
+                parameters = functionParameters.memoryOptimizedMap { parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, kind = IrParameterKind.Regular)
                 }
-                val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
-                valueParameters = valueParameters memoryOptimizedPlus continuationParameter.copyTo(
+                val continuationParameter = coroutineBaseClassConstructor.parameters[0]
+                parameters = parameters memoryOptimizedPlus continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
                     type = continuationType
                 )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody {
-                    val completionParameter = valueParameters.last()
+                    val completionParameter = parameters.last()
                     +irDelegatingConstructorCall(coroutineBaseClassConstructor).apply {
-                        putValueArgument(0, irGet(completionParameter))
+                        arguments[0] = irGet(completionParameter)
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol, context.irBuiltIns.unitType)
 
@@ -217,7 +215,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         +irSetField(
                             irGet(coroutineClassThis),
                             argumentToPropertiesMap.getValue(parameter),
-                            irGet(valueParameters[index])
+                            irGet(parameters[index])
                         )
                     }
                 }
