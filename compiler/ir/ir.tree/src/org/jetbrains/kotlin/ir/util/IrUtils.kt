@@ -1373,7 +1373,7 @@ fun IrFunction.hasShape(
     var actuallyHasExtensionReceiver = false
     var actualContextParameters = 0
     var actualRegularParameters = 0
-    for (param in target.parameters) {
+    for (param in parameters) {
         when (param.kind) {
             IrParameterKind.DispatchReceiver -> actuallyHasDispatchReceiver = true
             IrParameterKind.ExtensionReceiver -> actuallyHasExtensionReceiver = true
