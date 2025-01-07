@@ -60,9 +60,10 @@ abstract class InlineFunctionResolver(val inlineMode: InlineMode) {
     open val allowExternalInlining: Boolean
         get() = false
 
-    open fun needsInlining(function: IrFunction) = function.isInline && (allowExternalInlining || !function.isExternal)
+    open fun needsInlining(symbol: IrFunctionSymbol) =
+        symbol.isBound && symbol.owner.isInline && (allowExternalInlining || !symbol.owner.isExternal)
 
-    open fun needsInlining(expression: IrFunctionAccessExpression) = needsInlining(expression.symbol.owner)
+    open fun needsInlining(expression: IrFunctionAccessExpression) = needsInlining(expression.symbol)
 
     open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (shouldExcludeFunctionFromInlining(symbol)) return null
@@ -72,7 +73,7 @@ abstract class InlineFunctionResolver(val inlineMode: InlineMode) {
     }
 
     protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return !needsInlining(symbol.owner) || Symbols.isTypeOfIntrinsic(symbol)
+        return !needsInlining(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
 }
 
