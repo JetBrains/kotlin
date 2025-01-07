@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -462,14 +463,20 @@ open class FunctionInlining(
         }
 
         private fun isLambdaCall(irCall: IrCall): Boolean {
-            val callee = irCall.symbol.owner
-            val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
-            // Uncomment or delete depending on KT-57249 status
-//            assert(!dispatchReceiver.type.isKFunction())
-
-            return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
-                    && callee.name == OperatorNameConventions.INVOKE
+            val signature = irCall.symbol.signature?.asPublic() ?: return false
+            return signature.packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString() && signature.declarationFqName.endsWith(".invoke") &&
+                    (signature.declarationFqName.startsWith("Function") || signature.declarationFqName.startsWith("SuspendFunction")
+                            || signature.declarationFqName.startsWith("KFunction") || signature.declarationFqName.startsWith("KSuspendFunction"))
                     && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+
+//            val callee = irCall.symbol.owner
+//            val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
+//            // Uncomment or delete depending on KT-57249 status
+////            assert(!dispatchReceiver.type.isKFunction())
+//
+//            return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
+//                    && callee.name == OperatorNameConventions.INVOKE
+//                    && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
         }
 
         private inner class ParameterToArgument(
