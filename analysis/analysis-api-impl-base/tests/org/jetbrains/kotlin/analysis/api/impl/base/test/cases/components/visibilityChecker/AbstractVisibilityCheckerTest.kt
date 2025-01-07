@@ -42,11 +42,20 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
 
             val useSiteFileSymbol = mainFile.symbol
 
-            val visible = isVisible(declarationSymbol, useSiteFileSymbol, null, useSiteElement)
+            val visibleByUseSiteVisibilityChecker =
+                createUseSiteVisibilityChecker(useSiteFileSymbol, null, useSiteElement).isVisible(declarationSymbol)
+
+            @Suppress("DEPRECATION")
+            val isVisibleByDeprecatedVisibilityFunction =
+                isVisible(declarationSymbol, useSiteFileSymbol, null, useSiteElement)
+
+            testServices.assertions.assertEquals(isVisibleByDeprecatedVisibilityFunction, visibleByUseSiteVisibilityChecker) {
+                "createUseSiteVisibilityChecker(..).isVisible(..) returning $visibleByUseSiteVisibilityChecker is inconsistent with isVisible(...) returning $isVisibleByDeprecatedVisibilityFunction"
+            }
             """
                 Declaration: ${declarationSymbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}
                 At usage site: ${useSiteElement.text}
-                Is visible: $visible
+                Is visible: $visibleByUseSiteVisibilityChecker
             """.trimIndent()
         }
 
