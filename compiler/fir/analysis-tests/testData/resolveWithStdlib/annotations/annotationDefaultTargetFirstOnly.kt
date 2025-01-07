@@ -1,9 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -AnnotationDefaultTargetMigrationWarning
-// LANGUAGE: -PropertyParamAnnotationDefaultTargetMode
-// LATEST_LV_DIFFERENCE
-// Reason: KT-73831 ^^
-// ISSUE: KT-73255
+// LANGUAGE: -AnnotationDefaultTargetMigrationWarning -PropertyParamAnnotationDefaultTargetMode -ForbidFieldAnnotationsOnAnnotationParameters
+// ISSUE: KT-73255 KT-73831
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class ParamOnly

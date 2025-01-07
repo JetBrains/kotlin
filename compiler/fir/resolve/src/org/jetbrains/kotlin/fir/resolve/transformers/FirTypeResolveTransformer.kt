@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
@@ -588,8 +589,10 @@ open class FirTypeResolveTransformer(
                                 // we should apply annotation also to the property (or to the field) if it's allowed
                                 PROPERTY in allowedTargets -> true
                                 backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
-                                    backingFieldAnnotations += annotation
-                                    replaceBackingFieldAnnotations = true
+                                    if (classDeclarationsStack.lastOrNull()?.classKind != ClassKind.ANNOTATION_CLASS) {
+                                        backingFieldAnnotations += annotation
+                                        replaceBackingFieldAnnotations = true
+                                    }
                                     false
                                 }
                                 else -> false

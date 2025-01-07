@@ -69,7 +69,7 @@ FILE: annotationDefaultTargetParamProperty.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|PropertyOnly|() @R|ParamProperty|() @R|PropertyField|() @R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() @R|ParamField|() public final val s: R|kotlin/String| = R|<local>/s|
+        @R|PropertyOnly|() @R|ParamProperty|() @R|PropertyField|() @R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() public final val s: R|kotlin/String| = R|<local>/s|
             public get(): R|kotlin/String|
 
     }
