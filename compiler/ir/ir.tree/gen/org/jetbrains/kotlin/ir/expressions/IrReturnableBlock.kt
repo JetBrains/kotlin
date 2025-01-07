@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.returnableBlock]
@@ -19,6 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrReturnableBlock : IrBlock(), IrSymbolOwner, IrReturnTarget {
     abstract override val symbol: IrReturnableBlockSymbol
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitReturnableBlock(this, data)
 }
