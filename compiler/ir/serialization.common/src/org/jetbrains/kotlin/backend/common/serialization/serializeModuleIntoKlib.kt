@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -135,12 +134,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         it.runIrLevelCheckers(
             irDiagnosticReporter,
             *platformKlibCheckers.toTypedArray(),
-        )
-
-        // TODO(KT-71416): Move this after the first phase of KLIB inlining.
-        it.runIrLevelCheckers(
-            irDiagnosticReporter,
-            ::IrInlineDeclarationChecker,
         )
 
         createModuleSerializer(

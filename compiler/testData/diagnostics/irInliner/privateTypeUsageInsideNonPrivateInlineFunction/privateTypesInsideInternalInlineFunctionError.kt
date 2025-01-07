@@ -18,7 +18,7 @@ private fun makeNested(): A.Nested = A.Nested()
 
 private fun makeWithContext(): WithContext = with(42) { WithContext() }
 
-private inline fun privateInline(): Any = makeA()
+private inline fun privateInline(): Any = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION!>makeA()<!>
 
 private fun makeEffectivelyPrivateLocal() = object {
     public inner class Inner()

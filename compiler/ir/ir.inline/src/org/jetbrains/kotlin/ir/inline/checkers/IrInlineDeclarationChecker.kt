@@ -1,16 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.checkers
+package org.jetbrains.kotlin.ir.inline.checkers
 
-import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker.InlineFunctionInfo
-import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.inline.checkers.IrInlineDeclarationChecker.InlineFunctionInfo
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.types.IrType
@@ -49,7 +48,8 @@ class IrInlineDeclarationChecker(
             klass.parents.none { it == inlineFunction } // local/private classed declared in the current inline function are legal.
         ) {
             diagnosticReporter.at(container, data.file).report(
-                SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
+                IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
+                inlineFunction,
                 inlineFunction,
                 klass,
             )

@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(intellijCore())
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.serialization.common"))

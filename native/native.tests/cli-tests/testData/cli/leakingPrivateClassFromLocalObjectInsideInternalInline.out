@@ -8,7 +8,7 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 warning: following manually enabled features will force generation of pre-release binaries: IrInlinerBeforeKlibSerialization
-native/native.tests/cli-tests/testData/cli/leakingPrivateClassFromLocalObjectInsideInternalInline.kt:5:39: error: inline function accesses a declaration with narrower visibility: private final class Nested defined in A
+native/native.tests/cli-tests/testData/cli/leakingPrivateClassFromLocalObjectInsideInternalInline.kt:5:39: error: inline function `internalInlineFun` accesses, possibly transitively, a declaration with narrower visibility: private final class Nested defined in A
     private inline fun privateFun() = Nested().foo()
                                       ^^^^^^^^
 COMPILATION_ERROR

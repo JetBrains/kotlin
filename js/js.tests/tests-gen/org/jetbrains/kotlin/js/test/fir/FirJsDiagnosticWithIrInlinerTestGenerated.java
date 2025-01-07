@@ -26,6 +26,90 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction")
+  @TestDataPath("$PROJECT_ROOT")
+  public class PrivateTypeUsageInsideNonPrivateInlineFunction {
+    @Test
+    public void testAllFilesPresentInPrivateTypeUsageInsideNonPrivateInlineFunction() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("privateClassMembersAsArgumentsError.kt")
+    public void testPrivateClassMembersAsArgumentsError() {
+      runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/privateClassMembersAsArgumentsError.kt");
+    }
+
+    @Test
+    @TestMetadata("privateTypesInsideInternalInlineFunctionError.kt")
+    public void testPrivateTypesInsideInternalInlineFunctionError() {
+      runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionError.kt");
+    }
+
+    @Test
+    @TestMetadata("publicClassAsPrivateSuperClassError.kt")
+    public void testPublicClassAsPrivateSuperClassError() {
+      runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/publicClassAsPrivateSuperClassError.kt");
+    }
+
+    @Test
+    @TestMetadata("twoLevelNestedClassError.kt")
+    public void testTwoLevelNestedClassError() {
+      runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/twoLevelNestedClassError.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/privateMember")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PrivateMember {
+      @Test
+      public void testAllFilesPresentInPrivateMember() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/privateMember"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassConstructorError.kt")
+      public void testLeakingPrivateClassConstructorError() {
+        runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/privateMember/leakingPrivateClassConstructorError.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateFunInterfaceFromInlineFunError.kt")
+      public void testUsePrivateFunInterfaceFromInlineFunError() {
+        runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/privateMember/usePrivateFunInterfaceFromInlineFunError.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TopLevelPrivate {
+      @Test
+      public void testAllFilesPresentInTopLevelPrivate() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtKlassError.kt")
+      public void testLeakingPrivateClassThroughtKlassError() {
+        runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtKlassError.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunError.kt")
+      public void testLeakingPrivateClassThroughtPrivateTopLevelFunError() {
+        runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunError.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassThroughtTypecheckError.kt")
+      public void testLeakingPrivateClassThroughtTypecheckError() {
+        runTest("compiler/testData/diagnostics/irInliner/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtTypecheckError.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/irInliner/syntheticAccessors")
   @TestDataPath("$PROJECT_ROOT")
   public class SyntheticAccessors {

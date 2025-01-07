@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -47,89 +46,5 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
   @TestMetadata("signatureClash_MPP.kt")
   public void testSignatureClash_MPP() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash_MPP.kt");
-  }
-
-  @Nested
-  @TestMetadata("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction")
-  @TestDataPath("$PROJECT_ROOT")
-  public class PrivateTypeUsageInsideNonPrivateInlineFunction {
-    @Test
-    public void testAllFilesPresentInPrivateTypeUsageInsideNonPrivateInlineFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-    }
-
-    @Test
-    @TestMetadata("privateClassMembersAsArgumentsError.kt")
-    public void testPrivateClassMembersAsArgumentsError() {
-      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateClassMembersAsArgumentsError.kt");
-    }
-
-    @Test
-    @TestMetadata("privateTypesInsideInternalInlineFunctionError.kt")
-    public void testPrivateTypesInsideInternalInlineFunctionError() {
-      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionError.kt");
-    }
-
-    @Test
-    @TestMetadata("publicClassAsPrivateSuperClassError.kt")
-    public void testPublicClassAsPrivateSuperClassError() {
-      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/publicClassAsPrivateSuperClassError.kt");
-    }
-
-    @Test
-    @TestMetadata("twoLevelNestedClassError.kt")
-    public void testTwoLevelNestedClassError() {
-      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/twoLevelNestedClassError.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateMember")
-    @TestDataPath("$PROJECT_ROOT")
-    public class PrivateMember {
-      @Test
-      public void testAllFilesPresentInPrivateMember() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateMember"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassConstructorError.kt")
-      public void testLeakingPrivateClassConstructorError() {
-        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateMember/leakingPrivateClassConstructorError.kt");
-      }
-
-      @Test
-      @TestMetadata("usePrivateFunInterfaceFromInlineFunError.kt")
-      public void testUsePrivateFunInterfaceFromInlineFunError() {
-        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateMember/usePrivateFunInterfaceFromInlineFunError.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TopLevelPrivate {
-      @Test
-      public void testAllFilesPresentInTopLevelPrivate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassThroughtKlassError.kt")
-      public void testLeakingPrivateClassThroughtKlassError() {
-        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtKlassError.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunError.kt")
-      public void testLeakingPrivateClassThroughtPrivateTopLevelFunError() {
-        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunError.kt");
-      }
-
-      @Test
-      @TestMetadata("leakingPrivateClassThroughtTypecheckError.kt")
-      public void testLeakingPrivateClassThroughtTypecheckError() {
-        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtTypecheckError.kt");
-      }
-    }
   }
 }

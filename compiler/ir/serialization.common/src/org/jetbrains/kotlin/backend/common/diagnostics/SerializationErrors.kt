@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.backend.common.diagnostics.SerializationDiagnosticRe
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.error1
-import org.jetbrains.kotlin.diagnostics.error2
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
-import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -28,8 +26,6 @@ import org.jetbrains.kotlin.resolve.MemberComparator
 internal object SerializationErrors {
     val CONFLICTING_KLIB_SIGNATURES_ERROR by error1<PsiElement, ConflictingKlibSignaturesData>()
 
-    val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by error2<PsiElement, IrDeclaration, IrDeclaration>()
-
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultSerializationErrorMessages)
     }
@@ -41,14 +37,6 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
             SerializationErrors.CONFLICTING_KLIB_SIGNATURES_ERROR,
             "Platform declaration clash: {0}",
             CONFLICTING_KLIB_SIGNATURES_DATA,
-        )
-        map.put(
-            SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
-            "Inline {0} accesses a declaration with narrower visibility: {1}",
-            IrDiagnosticRenderers.DECLARATION_KIND,
-            Renderer<IrDeclaration> { declaration ->
-                DescriptorRenderer.FQ_NAMES_IN_TYPES.render(declaration.toIrBasedDescriptor())
-            }
         )
     }
 }
