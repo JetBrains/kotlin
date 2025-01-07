@@ -5,24 +5,20 @@
 
 package org.jetbrains.kotlin.ir.visitors
 
-import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.ir.IrElement
-
-@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
-fun IrElement.acceptVoid(@Suppress("DEPRECATED_COMPILER_API") visitor: IrElementVisitorVoid) {
-    accept(visitor, null)
-}
-
-@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
-fun IrElement.acceptChildrenVoid(@Suppress("DEPRECATED_COMPILER_API") visitor: IrElementVisitorVoid) {
-    acceptChildren(visitor, null)
-}
 
 fun IrElement.acceptVoid(visitor: IrVisitorVoid) {
     accept(visitor, null)
 }
 
+fun IrElement.acceptVoid(visitor: IrTypeVisitorVoid) {
+    accept(visitor, null)
+}
+
 fun IrElement.acceptChildrenVoid(visitor: IrVisitorVoid) {
+    acceptChildren(visitor, null)
+}
+
+fun IrElement.acceptChildrenVoid(visitor: IrTypeVisitorVoid) {
     acceptChildren(visitor, null)
 }

@@ -8,6 +8,13 @@
 package org.jetbrains.kotlin.ir.visitors
 
 @Deprecated(
+    "Use the IrVisitorVoid abstract class instead",
+    ReplaceWith("IrVisitorVoid", "org.jetbrains.kotlin.ir.visitors.IrVisitorVoid"),
+    DeprecationLevel.ERROR,
+)
+typealias IrElementVisitorVoid = IrVisitorVoid
+
+@Deprecated(
     "Use the IrTransformer abstract class instead",
     ReplaceWith("IrTransformer<D>", "org.jetbrains.kotlin.ir.visitors.IrTransformer"),
     DeprecationLevel.ERROR,
