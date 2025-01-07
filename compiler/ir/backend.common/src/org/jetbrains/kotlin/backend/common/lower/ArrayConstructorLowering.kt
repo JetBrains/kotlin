@@ -40,11 +40,10 @@ private class ArrayConstructorTransformer(
         internal fun arrayInlineToSizeConstructor(context: LoweringContext, irConstructor: IrConstructor): IrFunctionSymbol? {
             val clazz = irConstructor.constructedClass.symbol
             return when {
-                irConstructor.valueParameters.size != 2 -> null
+                irConstructor.parameters.size != 2 -> null
                 clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
                 context.irBuiltIns.primitiveArraysToPrimitiveTypes.contains(clazz) -> clazz.constructors.single {
-                    val valueParameters = it.owner.valueParameters
-                    valueParameters.size == 1 && valueParameters.first().type.isInt()
+                    it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.intType))
                 }
                 else -> null
             }
@@ -62,8 +61,8 @@ private class ArrayConstructorTransformer(
         //     return result as Array<T>
         // }
         // (and similar for primitive arrays)
-        val size = expression.getValueArgument(0)!!.transform(this, null)
-        val invokable = expression.getValueArgument(1)!!.transform(this, null)
+        val size = expression.arguments[0]!!.transform(this, null)
+        val invokable = expression.arguments[1]!!.transform(this, null)
         if (invokable.type.isNothing()) {
             // Expressions of type 'Nothing' don't terminate.
             return invokable
@@ -74,22 +73,21 @@ private class ArrayConstructorTransformer(
             val sizeVar = createTmpVariable(size)
             val result = createTmpVariable(irCall(sizeConstructor, expression.type).apply {
                 copyTypeArgumentsFrom(expression)
-                putValueArgument(0, irGet(sizeVar))
+                arguments[0] = irGet(sizeVar)
             })
 
             val generator = invokable.asInlinable(this)
             +irWhile().apply {
                 condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.classifierOrFail]!!).apply {
-                    putValueArgument(0, irGet(index))
-                    putValueArgument(1, irGet(sizeVar))
+                    arguments[0] = irGet(index)
+                    arguments[1] = irGet(sizeVar)
                 }
                 body = irBlock {
                     val tempIndex = createTmpVariable(irGet(index))
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
-                        dispatchReceiver = irGet(result)
-                        putValueArgument(0, irGet(tempIndex))
-                        val inlined = generator.inline(parent, listOf(tempIndex))
-                        putValueArgument(1, inlined)
+                        arguments[0] = irGet(result)
+                        arguments[1] = irGet(tempIndex)
+                        arguments[2] = generator.inline(parent, listOf(tempIndex))
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
                     +irSet(
