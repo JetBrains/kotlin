@@ -643,7 +643,7 @@ Caused by: java.lang.AssertionError: assert
             expectedExitCode = 1,
             expectedStdout = "",
             expectedStderr = """
-                ${"\$TMP_DIR\$"}/test.kt:1:22: [1;31merror: [0;1minitializer type mismatch: expected 'kotlin.String', actual 'kotlin.Int'.[m
+                ${"\$TMP_DIR\$"}/test.kt:1:22: [1;31merror: [0;1minitializer type mismatch: expected 'String', actual 'Int'.[m
                 val result: String = 42
                                      ^^
                 

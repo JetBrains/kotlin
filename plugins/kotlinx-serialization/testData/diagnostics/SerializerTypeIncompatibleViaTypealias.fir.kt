@@ -47,8 +47,8 @@ data class Session(
     @Serializable(MyDateSerializer::class) val date: MyDate,
     @Serializable(MyDateSerializer::class) val alsoDate: java.util.Date,
     // The only difference with FIR is how RENDER_TYPE works:
-    @Serializable(MyDateSerializer::class) val s: <!SERIALIZER_TYPE_INCOMPATIBLE("kotlin.String; MyDateSerializer; java.util.Date")!>String<!>,
-    val sl: List<<!SERIALIZER_TYPE_INCOMPATIBLE("@Serializable(...) kotlin.String; MyDateSerializer; java.util.Date")!>@Serializable(MyDateSerializer::class) String<!>>
+    @Serializable(MyDateSerializer::class) val s: <!SERIALIZER_TYPE_INCOMPATIBLE("String; MyDateSerializer; Date")!>String<!>,
+    val sl: List<<!SERIALIZER_TYPE_INCOMPATIBLE("@Serializable(...) String; MyDateSerializer; Date")!>@Serializable(MyDateSerializer::class) String<!>>
 )
 
 @Serializer(forClass = SessionKept::class)
@@ -60,6 +60,6 @@ data class SessionKept(
     @Serializable(MyDateSerializer::class) val date: MyDate,
     @Serializable(MyDateSerializer::class) val alsoDate: java.util.Date,
     // The only difference with FIR is how RENDER_TYPE works:
-    @Serializable(MyDateSerializer::class) val s: <!SERIALIZER_TYPE_INCOMPATIBLE("kotlin.String; MyDateSerializer; java.util.Date")!>String<!>,
-val sl: List<<!SERIALIZER_TYPE_INCOMPATIBLE("@Serializable(...) kotlin.String; MyDateSerializer; java.util.Date")!>@Serializable(MyDateSerializer::class) String<!>>
+    @Serializable(MyDateSerializer::class) val s: <!SERIALIZER_TYPE_INCOMPATIBLE("String; MyDateSerializer; Date")!>String<!>,
+val sl: List<<!SERIALIZER_TYPE_INCOMPATIBLE("@Serializable(...) String; MyDateSerializer; Date")!>@Serializable(MyDateSerializer::class) String<!>>
 )

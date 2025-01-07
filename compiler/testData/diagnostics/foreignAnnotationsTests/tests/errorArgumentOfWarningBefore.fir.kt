@@ -38,34 +38,34 @@ public class A1 {
 // FILE: main.kt
 fun main1() {
     val list = A1.warningError()
-    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("kotlin.collections.(Mutable)List<@Nullable() kotlin.String?>?")!>list<!>.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() kotlin.String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element<!>.length
+    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(Mutable)List<@Nullable() String?>?")!>list<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element<!>.length
 }
 
 fun main2() {
     val list = A1.warningErrorError()
-    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("kotlin.collections.(Mutable)List<(@Nullable() kotlin.collections.MutableList<@Nullable() kotlin.String?>?..@Nullable() kotlin.collections.List<@Nullable() kotlin.String?>?)>?")!>list<!>.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(@Nullable() kotlin.collections.MutableList<@Nullable() kotlin.String?>?..@Nullable() kotlin.collections.List<@Nullable() kotlin.String?>?);  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element<!>.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() kotlin.String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element!!.get(0)<!>.length
+    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(Mutable)List<(@Nullable() MutableList<@Nullable() String?>?..@Nullable() List<@Nullable() String?>?)>?")!>list<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(@Nullable() MutableList<@Nullable() String?>?..@Nullable() List<@Nullable() String?>?);  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element!!.get(0)<!>.length
 }
 
 fun main3() {
     val list = A1.warningWarningError()
-    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("kotlin.collections.(Mutable)List<(@Nullable() kotlin.collections.MutableList<@Nullable() kotlin.String?>?..@Nullable() kotlin.collections.List<@Nullable() kotlin.String?>?)>?")!>list<!>.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(@Nullable() kotlin.collections.MutableList<@Nullable() kotlin.String?>?..@Nullable() kotlin.collections.List<@Nullable() kotlin.String?>?)")!>element<!>.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() kotlin.String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element!!.get(0)<!>.length
+    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(Mutable)List<(@Nullable() MutableList<@Nullable() String?>?..@Nullable() List<@Nullable() String?>?)>?")!>list<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(@Nullable() MutableList<@Nullable() String?>?..@Nullable() List<@Nullable() String?>?)")!>element<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element!!.get(0)<!>.length
 }
 
 fun main4() {
     val list = A1.warningErrorWarning()
-    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("kotlin.collections.(Mutable)List<(@Nullable() kotlin.collections.MutableList<@Nullable() kotlin.String?>?..@Nullable() kotlin.collections.List<@Nullable() kotlin.String?>?)>?")!>list<!>.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(@Nullable() kotlin.collections.MutableList<@Nullable() kotlin.String?>?..@Nullable() kotlin.collections.List<@Nullable() kotlin.String?>?);  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element<!>.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() kotlin.String?")!>element!!.get(0)<!>.length
+    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(Mutable)List<(@Nullable() MutableList<@Nullable() String?>?..@Nullable() List<@Nullable() String?>?)>?")!>list<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(@Nullable() MutableList<@Nullable() String?>?..@Nullable() List<@Nullable() String?>?);  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() String?")!>element!!.get(0)<!>.length
 }
 
 fun main5() {
     val list = A1.warningPlatformError()
-    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<@Nullable() kotlin.String?>!>?")!>list<!>.get(0)
+    val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(Mutable)List<(Mutable)List<@Nullable() String?>!>?")!>list<!>.get(0)
     element.get(0)
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() kotlin.String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element!!.get(0)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("@Nullable() String?;  This will become an error in Kotlin 2.1. See https://youtrack.jetbrains.com/issue/KT-63209.")!>element!!.get(0)<!>.length
 }

@@ -1,60 +1,60 @@
-/test.kt:(195,217): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(195,217): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(261,283): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(261,283): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(322,359): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(322,359): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(417,454): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(417,454): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(511,593): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(511,593): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(658,680): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(658,680): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(711,733): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(711,733): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(788,810): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(788,810): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(1195,1217): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(1195,1217): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(1300,1322): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
+/test.kt:(1300,1322): error: Return type mismatch: expected 'String', actual 'String?'.
 
-/test.kt:(1300,1322): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected.
+/test.kt:(1300,1322): error: Argument type mismatch: actual type is 'String?', but 'String' was expected.
 
-/test.kt:(1414,1513): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String>' was expected.
+/test.kt:(1414,1513): error: Argument type mismatch: actual type is 'String!', but 'Function0<String>' was expected.
 
-/test.kt:(1414,1513): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String>' was expected.
+/test.kt:(1414,1513): error: Argument type mismatch: actual type is 'String!', but 'Function0<String>' was expected.
 
-/test.kt:(1459,1481): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
+/test.kt:(1459,1481): error: Return type mismatch: expected 'String', actual 'String?'.
 
-/test.kt:(1597,1619): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(1597,1619): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
-/test.kt:(1711,1811): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String?>' was expected.
+/test.kt:(1711,1811): error: Argument type mismatch: actual type is 'String!', but 'Function0<String?>' was expected.
 
-/test.kt:(1711,1811): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String?>' was expected.
+/test.kt:(1711,1811): error: Argument type mismatch: actual type is 'String!', but 'Function0<String?>' was expected.
 
-/test.kt:(1876,1898): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/test.kt:(1876,1898): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.
 
 /test.kt:(1977,1984): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '/<anonymous>'.
 
 /test.kt:(2070,2073): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '/<anonymous>'.
-/edge-cases.kt:(269,319): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String!' was expected.
+/edge-cases.kt:(269,319): error: Argument type mismatch: actual type is 'Unit', but 'String!' was expected.
 
-/edge-cases.kt:(358,419): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String!' was expected.
+/edge-cases.kt:(358,419): error: Argument type mismatch: actual type is 'Unit', but 'String!' was expected.
 
-/edge-cases.kt:(387,409): error: Return type mismatch: expected 'kotlin.Unit', actual 'kotlin.String?'.
+/edge-cases.kt:(387,409): error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(387,409): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.Unit' was expected.
+/edge-cases.kt:(387,409): error: Argument type mismatch: actual type is 'String?', but 'Unit' was expected.
 
-/edge-cases.kt:(458,524): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String!' was expected.
+/edge-cases.kt:(458,524): error: Argument type mismatch: actual type is 'Unit', but 'String!' was expected.
 
-/edge-cases.kt:(492,514): error: Return type mismatch: expected 'kotlin.Unit', actual 'kotlin.String?'.
+/edge-cases.kt:(492,514): error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(492,514): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.Unit' was expected.
+/edge-cases.kt:(492,514): error: Argument type mismatch: actual type is 'String?', but 'Unit' was expected.
 
-/edge-cases.kt:(571,635): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String!' was expected.
+/edge-cases.kt:(571,635): error: Argument type mismatch: actual type is 'Unit', but 'String!' was expected.
 
 /edge-cases.kt:(701,708): warning: Argument type mismatch: actual type is 'T? (of fun <T : Number> test1)', but 'T (of fun <T : Number> test1)' was expected. This will become an error in Kotlin 2.1.
 
 /edge-cases.kt:(798,805): warning: Argument type mismatch: actual type is 'T? (of fun <T : Comparable<T>> test2)', but 'T (of fun <T : Comparable<T>> test2)' was expected. This will become an error in Kotlin 2.1.
 
-/edge-cases.kt:(921,950): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in Kotlin 2.1.
+/edge-cases.kt:(921,950): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in Kotlin 2.1.

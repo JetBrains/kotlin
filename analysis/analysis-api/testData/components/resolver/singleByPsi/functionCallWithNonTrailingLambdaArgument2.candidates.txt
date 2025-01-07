@@ -55,7 +55,7 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
         O1 -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -111,5 +111,5 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
         T3 -> (kotlin.String),
         O3 -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Function1<kotlin.Int, kotlin.Boolean>', but 'kotlin.String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<Int, Boolean>', but 'String' was expected.>
     isInBestCandidates = false

@@ -112,7 +112,7 @@ KtBinaryExpression(40,49): 'list += 1'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<kotlin.Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
@@ -148,7 +148,7 @@ KtBinaryExpression(40,49): 'list += 1'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<kotlin.Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
@@ -184,7 +184,7 @@ KtBinaryExpression(40,49): 'list += 1'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<kotlin.Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Sequence<Int>' was expected.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(40,44): 'list'
@@ -272,7 +272,7 @@ KtOperationReferenceExpression(45,47): '+='
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<kotlin.Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
@@ -308,7 +308,7 @@ KtOperationReferenceExpression(45,47): '+='
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<kotlin.Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
     isInBestCandidates = false
   
   KaInapplicableCallCandidateInfo:
@@ -344,7 +344,7 @@ KtOperationReferenceExpression(45,47): '+='
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<kotlin.Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Sequence<Int>' was expected.>
     isInBestCandidates = false
 
 KtConstantExpression(48,49): '1'

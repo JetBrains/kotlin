@@ -29,4 +29,4 @@ KtConstructorDelegationCall(108,116): 'super(s)'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>

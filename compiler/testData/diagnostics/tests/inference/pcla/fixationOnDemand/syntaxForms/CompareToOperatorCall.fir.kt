@@ -45,7 +45,7 @@ fun test() {
         // should fix OTv := Double for scope navigation
         otvOwner.provide() < 0.0
         // expected: kotlin.Int </: kotlin.Double
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Int; kotlin.Double")!>42<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Int; Double")!>42<!>)
     }
     // expected: kotlin.Double
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>resultE<!>
@@ -55,7 +55,7 @@ fun test() {
         // should fix OTv := Float for scope navigation
         otvOwner.provide() < 0.0
         // expected: kotlin.Int </: kotlin.Float
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Int; kotlin.Float")!>42<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Int; Float")!>42<!>)
     }
     // expected: kotlin.Float
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>resultF<!>

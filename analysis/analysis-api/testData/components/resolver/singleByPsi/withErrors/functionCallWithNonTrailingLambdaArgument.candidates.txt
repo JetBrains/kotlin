@@ -159,5 +159,5 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           ]
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Function1<ERROR CLASS: Cannot infer type for parameter s, ERROR CLASS: Cannot infer type variable TypeVariable(_L)>', but 'kotlin.String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Cannot infer type for parameter s, ERROR CLASS: Cannot infer type variable TypeVariable(_L)>', but 'String' was expected.>
     isInBestCandidates = false

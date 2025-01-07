@@ -6,7 +6,7 @@
 fun <T> foo(it: @kotlin.internal.Exact T) {}
 
 fun main() {
-    foo<Any>(<!ARGUMENT_TYPE_MISMATCH("kotlin.String; kotlin.Any")!>""<!>)
+    foo<Any>(<!ARGUMENT_TYPE_MISMATCH("String; Any")!>""<!>)
 }
 
 interface I
