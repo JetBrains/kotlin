@@ -49,7 +49,7 @@ private val validateIrAfterInliningOnlyPrivateFunctionsPhase = makeIrModulePhase
                     inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
 
                     // Call sites of only non-private functions are allowed at this stage.
-                    else -> !inlineFunction.isConsideredAsPrivateForInlining()
+                    else -> !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
                 }
             }
         )

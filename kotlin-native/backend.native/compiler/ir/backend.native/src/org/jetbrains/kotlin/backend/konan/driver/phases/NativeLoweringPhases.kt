@@ -74,7 +74,7 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
                             inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
 
                             // Call sites of non-private functions are allowed at this stage.
-                            else -> !inlineFunction.isConsideredAsPrivateForInlining()
+                            else -> !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
                         }
                     }
             ).lower(module)

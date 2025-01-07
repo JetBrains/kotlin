@@ -159,7 +159,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext) : FileLowe
         val generatedAccessors = currentFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
-            val newData = data ?: runIf(declaration.isInline && !declaration.isConsideredAsPrivateForInlining()) {
+            val newData = data ?: runIf(declaration.isInline && !declaration.symbol.isConsideredAsPrivateForInlining()) {
                 // By the time this lowering is executed, there must be no private inline functions; however,
                 // there are exceptions, for example, `suspendCoroutineUninterceptedOrReturn` which are somewhat magical.
                 // If we encounter one, ignore it.
