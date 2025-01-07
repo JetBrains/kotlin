@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 class InlineDeclarationCheckerLowering<Context : PreSerializationLoweringContext>(val context: Context) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
@@ -28,7 +28,7 @@ class InlineDeclarationCheckerLowering<Context : PreSerializationLoweringContext
 
 fun IrModuleFragment.runIrLevelCheckers(
     diagnosticReporter: IrDiagnosticReporter,
-    vararg checkers: (IrDiagnosticReporter) -> IrElementVisitor<*, Nothing?>,
+    vararg checkers: (IrDiagnosticReporter) -> IrVisitor<*, Nothing?>,
 ) {
     for (checker in checkers) {
         accept(checker(diagnosticReporter), null)

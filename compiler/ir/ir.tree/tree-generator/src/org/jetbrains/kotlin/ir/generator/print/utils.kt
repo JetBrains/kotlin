@@ -19,10 +19,3 @@ internal fun Element.getTransformExplicitType(): Element {
             }
         } ?: this
 }
-
-internal fun ImportCollecting.deprecatedVisitorInterface(newAbstractClass: ClassRef<*>) =
-    """
-    ## DEPRECATED
-    This interface is deprecated and will be removed soon.
-    Please use the [${newAbstractClass.render()}] abstract class instead.
-    """.trimIndent()
