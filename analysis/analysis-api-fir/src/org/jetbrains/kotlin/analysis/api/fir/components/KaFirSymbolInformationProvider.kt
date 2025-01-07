@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -22,19 +22,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
 internal class KaFirSymbolInformationProvider(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaSymbolInformationProvider, KaFirSessionComponent {
     override val KaSymbol.deprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
             if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null
             require(this is KaFirSymbol<*>) { "${this::class}" }
 
-            // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
-            if (this is KaFirPsiJavaClassSymbol && !mayHaveDeprecation()) {
+            // Optimization: Avoid building `firSymbol` and resolve if definitely not deprecated
+            if (deprecationsAreDefinitelyEmpty()) {
                 return null
             }
 
@@ -62,15 +64,20 @@ internal class KaFirSymbolInformationProvider(
         }
 
 
-    private fun KaFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
-        if (!hasAnnotations) return false
-
-        // Check the simple names of the Java annotations. While presence of such an annotation name does not prove deprecation, it is a
-        // necessary condition for it. Type aliases are not a problem here: Java code cannot access Kotlin type aliases. (Currently,
-        // deprecation annotation type aliases do not work in Kotlin, either, but this might change in the future.)
-        val deprecationAnnotationSimpleNames = analysisSession.firSession.annotationPlatformSupport.deprecationAnnotationsSimpleNames
-        return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
+    private fun KaSymbol.deprecationsAreDefinitelyEmpty(): Boolean {
+        return when (val psi = psi) {
+            is PsiMember -> psi.annotations.none { it.nameReferenceElement?.referenceName in deprecationAnnotationSimpleNames }
+            is KtProperty -> psi.deprecatedAnnotationsListIsEmpty() && psi.accessors.all { it.deprecatedAnnotationsListIsEmpty() }
+            is KtDeclaration -> psi.deprecatedAnnotationsListIsEmpty()
+            else -> return false
+        }
     }
+
+    private fun KtDeclaration.deprecatedAnnotationsListIsEmpty() =
+        annotationEntries.none { it.shortName?.identifier in deprecationAnnotationSimpleNames }
+
+    private val deprecationAnnotationSimpleNames: Set<String>
+        get() = analysisSession.firSession.annotationPlatformSupport.deprecationAnnotationsSimpleNames
 
     override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) return null
