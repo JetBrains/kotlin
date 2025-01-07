@@ -539,7 +539,7 @@ class AdapterGenerator(
             return this
         }
         val argumentMapping = elements.zip(argument.arguments).toMap()
-        // [IrElementTransformer] is not preferred, since it's hard to visit vararg elements only.
+        // [IrTransformer] is not preferred, since it's hard to visit vararg elements only.
         elements.replaceAll { irVarargElement ->
             if (irVarargElement is IrExpression) {
                 val firVarargArgument =

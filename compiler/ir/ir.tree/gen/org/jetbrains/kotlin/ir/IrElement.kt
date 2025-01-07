@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * The root interface of the IR tree. Each IR node implements this interface.
@@ -59,7 +59,7 @@ interface IrElement {
      * @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
      * @return The transformed node.
      */
-    fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement
+    fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement
 
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.
@@ -83,5 +83,5 @@ interface IrElement {
      * @param transformer The transformer to use for transforming the children.
      * @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
      */
-    fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D)
+    fun <D> transformChildren(transformer: IrTransformer<D>, data: D)
 }
