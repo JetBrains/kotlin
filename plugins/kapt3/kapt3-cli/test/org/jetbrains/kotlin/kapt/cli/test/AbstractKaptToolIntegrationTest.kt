@@ -61,6 +61,7 @@ abstract class AbstractKaptToolIntegrationTest {
                         }
                     }
                     "after" -> {}
+                    "check-file-is-absent" -> checkFileIsAbsent(section.args)
                     else -> error("Unknown section name ${section.name}")
                 }
             } catch (e: GotResult) {
@@ -71,6 +72,11 @@ abstract class AbstractKaptToolIntegrationTest {
                 throw RuntimeException("Section ${section.name} failed:\n${section.content}", e)
             }
         }
+    }
+
+    private fun checkFileIsAbsent(args: List<String>) {
+        assert(args.size == 1)
+        assert(!File(tmpdir, args[0]).exists()) { "File ${args[0]} should not exist" }
     }
 
     private fun copyFile(testDir: File, args: List<String>) {

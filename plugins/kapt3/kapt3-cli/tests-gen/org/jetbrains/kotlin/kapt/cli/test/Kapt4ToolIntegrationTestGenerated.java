@@ -114,6 +114,12 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
   }
 
   @Test
+  @TestMetadata("noOutput")
+  public void testNoOutput() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/noOutput/");
+  }
+
+  @Test
   @TestMetadata("separateStubAptCompilation")
   public void testSeparateStubAptCompilation() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/separateStubAptCompilation/");
