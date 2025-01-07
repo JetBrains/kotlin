@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -39,7 +40,10 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class KaFirVisibilityChecker(
@@ -114,6 +118,7 @@ private class KaFirUseSiteVisibilityChecker(
         if (candidateSymbol is KaFirPsiJavaClassSymbol) {
             candidateSymbol.isVisibleByPsi(useSiteFile)?.let { return it }
         }
+        (candidateSymbol.psi as? KtDeclaration)?.isVisibleByPsi()?.let { return it }
 
         val candidateDeclaration = candidateSymbol.firSymbol.fir as? FirMemberDeclaration ?: return true
 
@@ -137,6 +142,32 @@ private class KaFirUseSiteVisibilityChecker(
             effectiveContainers,
             explicitDispatchReceiver
         )
+    }
+
+    private fun KtDeclaration.isVisibleByPsi(): Boolean? {
+        val isToplevel = when (this) {
+            is KtNamedFunction -> isTopLevel
+            is KtProperty -> isTopLevel
+            is KtClassOrObject -> isTopLevel()
+            is KtTypeAlias -> isTopLevel()
+            else -> false
+        }
+        if (isToplevel) {
+            when (modifierList?.visibilityModifierType()) {
+                KtTokens.PUBLIC_KEYWORD -> return true
+                KtTokens.INTERNAL_KEYWORD -> {
+                    val declarationModule = KaModuleProvider.getInstance(project).getModule(containingKtFile, positionModule)
+                    return when (positionModule) {
+                        is KaDanglingFileModule -> positionModule.contextModule == declarationModule
+                        else -> positionModule == declarationModule
+                    }
+                }
+                KtTokens.PRIVATE_KEYWORD -> {
+                    return this.containingKtFile == useSiteFile.psi
+                }
+            }
+        }
+        return null
     }
 
     /**
