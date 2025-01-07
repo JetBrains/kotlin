@@ -271,7 +271,7 @@ open class FunctionInlining(
 
             override fun visitCall(expression: IrCall): IrExpression {
                 // TODO extract to common utils OR reuse ContractDSLRemoverLowering
-                if (expression.symbol.owner.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)) {
+                if (expression.symbol.isBound && expression.symbol.owner.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)) {
                     return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
                 }
 
