@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -257,7 +258,7 @@ private class CallInlining(
 
         override fun visitCall(expression: IrCall): IrExpression {
             // TODO extract to common utils OR reuse ContractDSLRemoverLowering
-            if (expression.symbol.owner.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)) {
+            if (expression.isContractCall()) {
                 return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
             }
 
@@ -272,7 +273,7 @@ private class CallInlining(
                 return IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, function.symbol).also {
                     it.type = expression.type
                     val arguments = boundArguments.map { it.deepCopyWithSymbols() } +
-                                expression.arguments.drop(1) // dropping dispatch receiver - it's lambda itself
+                            expression.arguments.drop(1) // dropping dispatch receiver - it's lambda itself
                     for ((index, argument) in arguments.withIndex()) {
                         it.arguments[index] = argument
                     }
@@ -431,6 +432,13 @@ private class CallInlining(
         override fun visitElement(element: IrElement) = element.accept(this, null)
     }
 
+    // Contracts can appear only in K1 mode. In K2, they are dropped on the FIR2IR phase.
+    private fun IrCall.isContractCall(): Boolean {
+        return symbol.isBound && symbol.owner.annotations.any {
+            it.symbol.isBound && it.symbol.owner.parentAsClass.hasEqualFqName(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)
+        }
+    }
+
     private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
         return when {
             !insertAdditionalImplicitCasts -> this
@@ -450,14 +458,46 @@ private class CallInlining(
     }
 
     private fun isLambdaCall(irCall: IrCall): Boolean {
-        val callee = irCall.symbol.owner
-        val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
-        // Uncomment or delete depending on KT-57249 status
-//            assert(!dispatchReceiver.type.isKFunction())
+        val symbol = irCall.symbol
+        if (symbol.isBound) {
+            val callee = symbol.owner
+            val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
+            // Uncomment or delete depending on KT-57249 status
+            // assert(!dispatchReceiver.type.isKFunction())
 
-        return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
-                && callee.name == OperatorNameConventions.INVOKE
-                && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+            return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
+                    && callee.name == OperatorNameConventions.INVOKE
+                    && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+        }
+
+        fun hasDispatchGetValueReceiver(): Boolean {
+            for (argument in irCall.arguments) {
+                val unwrapped = argument?.unwrapAdditionalImplicitCastsIfNeeded() as? IrGetValue ?: continue
+                val valueParameter = unwrapped.symbol.owner as? IrValueParameter ?: continue
+                if (valueParameter.kind == IrParameterKind.DispatchReceiver) return true
+            }
+
+            return false
+        }
+
+        fun IdSignature.isFunctionOrKFunction(): Boolean {
+            return with(this as? IdSignature.CommonSignature ?: return false) {
+                packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString() && shortName.startsWith("Function") ||
+                        packageFqName == StandardNames.KOTLIN_REFLECT_FQ_NAME.asString() && shortName.startsWith("KFunction")
+            }
+        }
+
+        fun IdSignature.isSuspendFunctionOrKFunction(): Boolean {
+            return with(this as? IdSignature.CommonSignature ?: return false) {
+                packageFqName == StandardNames.COROUTINES_PACKAGE_FQ_NAME.asString() && shortName.startsWith("SuspendFunction") ||
+                        packageFqName == StandardNames.KOTLIN_REFLECT_FQ_NAME.asString() && shortName.startsWith("KSuspendFunction")
+            }
+        }
+
+        val signature = symbol.signature?.asPublic() ?: return false
+        return signature.shortName == OperatorNameConventions.INVOKE.asString() &&
+                with(signature.topLevelSignature()) { isFunctionOrKFunction() || isSuspendFunctionOrKFunction() } &&
+                hasDispatchGetValueReceiver()
     }
 
     private inner class ParameterToArgument(
