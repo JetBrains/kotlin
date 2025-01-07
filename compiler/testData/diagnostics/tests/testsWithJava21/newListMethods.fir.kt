@@ -3,6 +3,7 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // DIAGNOSTICS: -SUPER_CANT_BE_EXTENSION_RECEIVER
 // ^Otherwise only K1 errors are written to .diag file.
+// MUTE_LL_FIR: different parameter names for Java methods in AA modes
 
 import java.util.function.IntFunction
 
