@@ -126,7 +126,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
             { (_, value) -> value }
         )
 
-        destination.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
+        destination.symbol.owner.parameters.forEach { parameter ->
             val valueArg = argumentsByName[parameter.name]
 
             if (parameter.defaultValue == null && valueArg == null) {
@@ -141,15 +141,12 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
                             IrCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayFunction)
                         } else {
                             val arrayConstructor = arrayType.classOrNull!!.constructors.single {
-                                it.owner.valueParameters.size == 1 && it.owner.valueParameters.single().type == context.irBuiltIns.intType
+                                it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.intType))
                             }
                             IrConstructorCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayConstructor)
                         }
-                    arrayConstructorCall.putValueArgument(
-                        0,
-                        IrConstImpl.int(source.startOffset, source.endOffset, context.irBuiltIns.intType, 0)
-                    )
-                    destination.putValueArgument(index, arrayConstructorCall)
+                    arrayConstructorCall.arguments[0] = IrConstImpl.int(source.startOffset, source.endOffset, context.irBuiltIns.intType, 0)
+                    destination.arguments[parameter.indexInParameters] = arrayConstructorCall
                     return
                 } else {
                     error(
@@ -158,7 +155,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
                     )
                 }
             }
-            destination.putValueArgument(index, valueArg)
+            destination.arguments[parameter.indexInParameters] = valueArg
         }
     }
 
@@ -223,13 +220,8 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
             irBuilder.irCall(
                 requiredSymbol
             ).apply {
-                if (requiredSymbol.owner.extensionReceiverParameter != null) {
-                    extensionReceiver = lhs
-                    putValueArgument(0, rhs)
-                } else {
-                    putValueArgument(0, lhs)
-                    putValueArgument(1, rhs)
-                }
+                arguments[0] = lhs
+                arguments[1] = rhs
             }
         } else
             irBuilder.irEquals(arg1, arg2)
@@ -309,8 +301,8 @@ class AnnotationImplementationMemberGenerator(
     fun generateEqualsUsingGetters(equalsFun: IrSimpleFunction, typeForEquals: IrType, properties: List<IrProperty>) = equalsFun.apply {
         body = loweringContext.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
             val irType = typeForEquals
-            fun irOther() = irGet(valueParameters[0])
-            fun irThis() = irGet(dispatchReceiverParameter!!)
+            fun irOther() = irGet(parameters[1])
+            fun irThis() = irGet(parameters[0])
             fun IrProperty.get(receiver: IrExpression) = irCall(getter!!).apply {
                 dispatchReceiver = receiver
             }
