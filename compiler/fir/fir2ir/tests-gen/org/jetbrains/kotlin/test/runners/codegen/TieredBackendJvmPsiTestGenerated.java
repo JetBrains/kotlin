@@ -12186,12 +12186,6 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       }
 
       @Test
-      @TestMetadata("kt72704.kt")
-      public void testKt72704() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/kt72704.kt");
-      }
-
-      @Test
       @TestMetadata("namedArguments.kt")
       public void testNamedArguments() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/namedArguments.kt");
