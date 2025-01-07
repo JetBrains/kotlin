@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFromKGPSourceSetsDependenciesChecker
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import java.io.File
 
@@ -124,6 +125,10 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
          */
     } else {
         project.ensureSourceSetStructureIsUklibCompliant(allPublishedCompilations)
+        project.ensureDependenciesAreDeclaredConsistentlyAcrossAllSourceSets(
+            uklibPublishedPlatformCompilations = uklibPublishedPlatformCompilations,
+            publishedMetadataCompilations = publishedMetadataCompilations,
+        )
     }
 
     return fragments
@@ -136,6 +141,23 @@ internal suspend fun KotlinMultiplatformExtension.uklibPublishedPlatformCompilat
         it is KotlinMetadataTarget || it.uklibFragmentPlatformAttribute is UklibFragmentPlatformAttribute.PublishAndConsumeInMetadataCompilations
     }.map { target ->
         target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    }
+}
+
+private fun Project.ensureDependenciesAreDeclaredConsistentlyAcrossAllSourceSets(
+    uklibPublishedPlatformCompilations: List<KotlinCompilation<*>>,
+    publishedMetadataCompilations: List<KotlinCompilation<*>>,
+) {
+    val violations = UklibFromKGPSourceSetsDependenciesChecker.findInconsistentDependencyDeclarations(
+        uklibPublishedPlatformCompilations = uklibPublishedPlatformCompilations,
+        publishedMetadataCompilations = publishedMetadataCompilations,
+    )
+    if (violations.isNotEmpty()) {
+        project.reportDiagnostic(
+            KotlinToolingDiagnostics.UklibInconsistentDependencyDeclarationViolation(
+                violations.toList()
+            )
+        )
     }
 }
 
