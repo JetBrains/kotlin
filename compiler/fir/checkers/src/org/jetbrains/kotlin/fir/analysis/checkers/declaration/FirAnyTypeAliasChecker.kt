@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
 import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -22,8 +23,12 @@ import org.jetbrains.kotlin.fir.types.*
 
 object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!context.isTopLevel && !context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
-            reporter.reportOn(declaration.source, FirErrors.TOPLEVEL_TYPEALIASES_ONLY, context)
+        if (!context.isTopLevel) {
+            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
+                reporter.reportOn(declaration.source, FirErrors.TOPLEVEL_TYPEALIASES_ONLY, context)
+            } else if (declaration.isLocal) {
+                reporter.reportOn(declaration.source, FirErrors.UNSUPPORTED, "Local type aliases", context)
+            }
         }
 
         val expandedTypeRef = declaration.expandedTypeRef
