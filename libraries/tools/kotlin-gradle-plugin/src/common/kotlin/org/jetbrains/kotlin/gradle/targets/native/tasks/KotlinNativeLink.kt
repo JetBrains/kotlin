@@ -209,11 +209,13 @@ constructor(
     @get:Internal
     internal val externalDependenciesBuildCompilerArgs: ListProperty<String> = objectFactory.listProperty<String>().empty()
 
+    private val konanCacheDir = project.getKonanCacheKind(konanTarget)
+    private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
     private val cacheBuilderSettings
         get() = CacheBuilder.Settings(
             konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory.asFile },
-            konanCacheKind = project.getKonanCacheKind(konanTarget),
-            gradleUserHomeDir = project.gradle.gradleUserHomeDir,
+            konanCacheKind = konanCacheDir,
+            gradleUserHomeDir = gradleUserHomeDir,
             konanTarget = konanTarget,
             toolOptions = toolOptions,
             externalDependenciesArgs = externalDependenciesBuildCompilerArgs.get(),
