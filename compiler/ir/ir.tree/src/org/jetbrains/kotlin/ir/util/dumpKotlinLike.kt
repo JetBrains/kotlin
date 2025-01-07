@@ -198,11 +198,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             }
         }
 
-    private val IrFunctionSymbol.safeValueParameters
+    private val IrFunctionSymbol.safeParameters
         get() = if (!isBound) {
-            emptyList()
+            null
         } else {
-            owner.valueParameters
+            owner.parameters
         }
 
     private val IrSymbol.safeParentClassName
@@ -650,6 +650,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO return type?
 
         declaration.printlnAnnotations()
+        declaration.printContextParameters()
         p.printIndent()
 
         declaration.run {
@@ -666,7 +667,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p.printWithNoIndent("constructor")
         declaration.printTypeParametersWithNoIndent()
-        declaration.printValueParametersWithNoIndent()
+        declaration.printRegularParametersWithNoIndent()
         declaration.printWhereClauseIfNeededWithNoIndent()
         if (declaration.isPrimary) {
             p.printWithNoIndent(" ", customModifier("primary"))
@@ -704,6 +705,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         wrap(this, data) {
             printlnAnnotations()
+
+            if (printSignatureAndBody) {
+                printContextParameters()
+            }
+
             p.print("")
 
             printModifiersWithNoIndent(
@@ -728,13 +734,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             if (printTypeParametersAndExtensionReceiver) printTypeParametersWithNoIndent(postfix = " ")
 
             if (printTypeParametersAndExtensionReceiver) {
-                extensionReceiverParameter?.printExtensionReceiverParameter()
+                parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.printExtensionReceiverParameter()
             }
 
             p.printWithNoIndent(name)
 
             if (printSignatureAndBody) {
-                printValueParametersWithNoIndent()
+                printRegularParametersWithNoIndent()
 
                 if (options.printUnitReturnType || !returnType.isUnit()) {
                     p.printWithNoIndent(": ")
@@ -767,14 +773,25 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent(".")
     }
 
-    private fun IrFunction.printValueParametersWithNoIndent() {
+    private fun IrFunction.printRegularParametersWithNoIndent() {
         p.printWithNoIndent("(")
-        valueParameters.forEachIndexed { i, param ->
+        parameters.filter { it.kind == IrParameterKind.Regular }.forEachIndexed { i, param ->
             p(i > 0, ",")
-
             param.printAValueParameterWithNoIndent(this)
         }
         p.printWithNoIndent(")")
+    }
+
+    private fun IrFunction.printContextParameters() {
+        val contextParameters = parameters.filter { it.kind == IrParameterKind.Context }
+        if (contextParameters.isNotEmpty()) {
+            p.print("context(")
+            contextParameters.forEachIndexed { i, param ->
+                p(i > 0, ",")
+                param.printAValueParameterWithNoIndent(this)
+            }
+            p.printlnWithNoIndent(")")
+        }
     }
 
     private fun IrValueParameter.printAValueParameterWithNoIndent(data: IrDeclaration?) {
@@ -853,7 +870,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         declaration.getter?.printTypeParametersWithNoIndent(postfix = " ")
 
-        declaration.getter?.extensionReceiverParameter?.printExtensionReceiverParameter()
+        declaration.getter?.parameters?.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.printExtensionReceiverParameter()
 
         p.printWithNoIndent(declaration.name.asString())
 
@@ -1104,7 +1121,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO process specially builtin symbols
         expression.printMemberAccessExpressionWithNoIndent(
             expression.symbol.safeName,
-            expression.symbol.safeValueParameters,
+            expression.symbol.safeParameters,
             expression.superQualifierSymbol,
             omitAllBracketsIfNoArguments = false,
             data = data,
@@ -1114,7 +1131,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) = wrap(expression, data) {
         expression.printMemberAccessExpressionWithNoIndent(
             expression.symbol.safeParentClassName,
-            expression.symbol.safeValueParameters,
+            expression.symbol.safeParameters,
             superQualifierSymbol = null,
             omitAllBracketsIfNoArguments = expression.symbol.safeParentClassOrNull?.isAnnotationClass == true,
             data = data,
@@ -1123,7 +1140,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun IrMemberAccessExpression<*>.printMemberAccessExpressionWithNoIndent(
         name: String,
-        valueParameters: List<IrValueParameter>,
+        valueParameters: List<IrValueParameter>?,
         superQualifierSymbol: IrClassSymbol?,
         omitAllBracketsIfNoArguments: Boolean,
         data: IrDeclaration?,
@@ -1133,85 +1150,84 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     ) {
         // TODO origin
 
-        val twoReceivers =
-            (dispatchReceiver != null || superQualifierSymbol != null) && extensionReceiver != null
-
-        if (twoReceivers) {
-            p.printWithNoIndent("(")
+        if (superQualifierSymbol != null) {
+            // TODO which super? smart mode?
+            p.printWithNoIndent("super<${superQualifierSymbol.safeName}>")
+        } else {
+            dispatchReceiver?.accept(this@KotlinLikeDumper, data)
         }
 
-        superQualifierSymbol?.let {
-            // TODO which supper? smart mode?
-            p.printWithNoIndent("super<${it.safeName}>")
-        }
-
-        dispatchReceiver?.let {
-            if (superQualifierSymbol == null) it.accept(this@KotlinLikeDumper, data)
-            // else assert dispatchReceiver === this
-        }
-        // it's not valid kotlin
-        p(twoReceivers, ",")
-        extensionReceiver?.accept(this@KotlinLikeDumper, data)
-        if (twoReceivers) {
-            p.printWithNoIndent(")")
-        }
-
-
-        if (!omitAccessOperatorIfNoReceivers ||
-            (dispatchReceiver != null || extensionReceiver != null || superQualifierSymbol != null)
-        ) {
+        if (!omitAccessOperatorIfNoReceivers || (dispatchReceiver != null || superQualifierSymbol != null)) {
             p.printWithNoIndent(accessOperator)
         }
 
         p.printWithNoIndent(name)
 
-        fun allValueArgumentsAreNull(): Boolean {
-            for (i in 0 until valueArgumentsCount) {
-                if (getValueArgument(i) != null) return false
-            }
-            return true
+        if (omitAllBracketsIfNoArguments &&
+            typeArguments.isEmpty() &&
+            (valueParameters.orEmpty() zip this.arguments)
+                .filter { it.first.kind != IrParameterKind.DispatchReceiver }
+                .all { it.second == null }
+        ) {
+            return
         }
-
-        if (omitAllBracketsIfNoArguments && typeArguments.isEmpty() && (valueArgumentsCount == 0 || allValueArgumentsAreNull())) return
 
         if (wrapArguments) p.printWithNoIndent("/*")
 
         if (typeArguments.isNotEmpty()) {
             p.printWithNoIndent("<")
-            repeat(typeArguments.size) {
-                p(it > 0, ",")
+            for ((i, param) in typeArguments.withIndex()) {
+                p(i > 0, ",")
                 // TODO flag to print type param name?
-                this.typeArguments[it]?.printTypeWithNoIndent() ?: p.printWithNoIndent(commentBlock("null"))
+                param?.printTypeWithNoIndent() ?: p.printWithNoIndent(commentBlock("null"))
             }
             p.printWithNoIndent(">")
         }
 
         p.printWithNoIndent("(")
+        var isCommentOpen = false
+        var printComma = false
+        for ((i, arg) in arguments.withIndex()) {
+            // If the symbol is unbound then valueArgumentsCount disagrees with
+            // valueParameters.
+            val param = valueParameters?.getOrNull(i)
+            if (param?.kind == IrParameterKind.DispatchReceiver) {
+                continue
+            }
 
-// TODO introduce a flag to print receiver this way?
-//        // it's not valid kotlin
-//        expression.extensionReceiver?.let {
-//            p.printWithNoIndent("\$receiver = ")
-//            it.acceptVoid(this)
-//            if (expression.valueArgumentsCount > 0) p.printWithNoIndent(", ")
-//        }
-
-        repeat(valueArgumentsCount) { i ->
             // TODO should we print something for omitted arguments (== null)?
-            getValueArgument(i)?.let {
-                p(i > 0, ",")
-                // TODO flag to print param name
-                // If the symbol is unbound then valueArgumentsCount disagrees with
-                // valueParameters.
-                if (i < valueParameters.size) {
-                    p.printWithNoIndent(valueParameters[i].name.asString() + " = ")
+            if (arg != null) {
+                if (printComma) p.printWithNoIndent(",")
+                when (param?.kind) {
+                    IrParameterKind.DispatchReceiver -> {}
+                    IrParameterKind.Context, IrParameterKind.ExtensionReceiver -> {
+                        if (!wrapArguments && !isCommentOpen) {
+                            p.printWithNoIndent("/* ")
+                            isCommentOpen = true
+                        }
+                    }
+                    IrParameterKind.Regular, null -> {
+                        if (!wrapArguments && isCommentOpen) {
+                            p.printWithNoIndent(" */")
+                            isCommentOpen = false
+                        }
+                    }
                 }
-                it.accept(this@KotlinLikeDumper, data)
+                if (printComma) p.printWithNoIndent(' ')
+
+                when {
+                    param != null -> p.printWithNoIndent(param.name.asString() + " = ")
+                    valueParameters != null -> p.printWithNoIndent("\$EXCESSIVE\$ = ")
+                    else -> {}
+                }
+                arg.accept(this@KotlinLikeDumper, data)
+                printComma = true
             }
         }
-
+        if (!wrapArguments && isCommentOpen) p.printWithNoIndent(" */")
         p.printWithNoIndent(")")
-        if (wrapArguments) p.printWithNoIndent("*/")
+
+        if (wrapArguments) p.printWithNoIndent(" */")
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclaration?) = wrap(expression, data) {
@@ -1245,7 +1261,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         printMemberAccessExpressionWithNoIndent(
             name,
-            symbol.safeValueParameters,
+            symbol.safeParameters,
             superQualifierSymbol = null,
             omitAllBracketsIfNoArguments = false,
             data = data,
@@ -1585,7 +1601,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) = wrap(expression, data) {
         // TODO reflectionTarget
-        expression.printCallableReferenceWithNoIndent(expression.symbol.safeValueParameters, data)
+        expression.printCallableReferenceWithNoIndent(expression.symbol.safeParameters, data)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclaration?) = wrap(expression, data) {
@@ -1599,10 +1615,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             expression.printCallableReferenceWithNoIndent(emptyList(), data)
         }
 
-    private fun IrCallableReference<*>.printCallableReferenceWithNoIndent(valueParameters: List<IrValueParameter>, data: IrDeclaration?) {
+    private fun IrCallableReference<*>.printCallableReferenceWithNoIndent(valueParameters: List<IrValueParameter>?, data: IrDeclaration?) {
         // TODO where from to get type arguments for a class?
         // TODO rendering for references to constructors
-        if (dispatchReceiver == null && extensionReceiver == null) {
+        if (valueParameters.orEmpty().all { it.kind == IrParameterKind.Regular }) {
             symbol.safeParentClassOrNull?.let {
                 p.printWithNoIndent(it.name.asString())
             }
