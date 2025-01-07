@@ -106,6 +106,15 @@ class Uuids {
     }
 
     @Sample
+    fun toUByteArray() {
+        val uuid = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
+        assertPrints(
+            uuid.toUByteArray().joinToString { it.toHexString() },
+            "55, 0e, 84, 00, e2, 9b, 41, d4, a7, 16, 44, 66, 55, 44, 00, 00"
+        )
+    }
+
+    @Sample
     fun uuidEquals() {
         val uuid1 = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
         val uuid2 = Uuid.parse("550e8400-e29b-41d4-a716-446655440000")
@@ -134,6 +143,16 @@ class Uuids {
             0xa7.toByte(), 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00
         )
         val uuid = Uuid.fromByteArray(byteArray)
+        assertPrints(uuid, "550e8400-e29b-41d4-a716-446655440000")
+    }
+
+    @Sample
+    fun fromUByteArray() {
+        val ubyteArray = ubyteArrayOf(
+            0x55u, 0x0Eu, 0x84u, 0x00u, 0xE2u, 0x9Bu, 0x41u, 0xD4u,
+            0xA7u, 0x16u, 0x44u, 0x66u, 0x55u, 0x44u, 0x00u, 0x00u
+        )
+        val uuid = Uuid.fromUByteArray(ubyteArray)
         assertPrints(uuid, "550e8400-e29b-41d4-a716-446655440000")
     }
 

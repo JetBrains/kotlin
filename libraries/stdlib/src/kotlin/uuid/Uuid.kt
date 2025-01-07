@@ -180,6 +180,22 @@ public class Uuid private constructor(
     }
 
     /**
+     * Returns an unsigned byte array representation of this uuid.
+     *
+     * The returned array contains 16 unsigned bytes. Each byte in the array sequentially represents
+     * the next 8 bits of the uuid, starting from the most significant 8 bits
+     * in the first byte to the least significant 8 bits in the last byte.
+     *
+     * @see Uuid.fromUByteArray
+     * @sample samples.uuid.Uuids.toUByteArray
+     */
+    @SinceKotlin("2.1")
+    @ExperimentalUnsignedTypes
+    public fun toUByteArray(): UByteArray {
+        return UByteArray(storage = toByteArray())
+    }
+
+    /**
      * Checks whether this uuid is equal to the specified [other] object.
      *
      * @param other The object to compare with this uuid.
@@ -299,6 +315,26 @@ public class Uuid private constructor(
             }
 
             return fromLongs(byteArray.getLongAt(index = 0), byteArray.getLongAt(index = 8))
+        }
+
+        /**
+         * Creates a uuid from an array containing 128 bits split into 16 unsigned bytes.
+         *
+         * Each unsigned byte in the [ubyteArray] sequentially represents
+         * the next 8 bits of the uuid, starting from the most significant 8 bits
+         * in the first byte to the least significant 8 bits in the last byte.
+         *
+         * @param ubyteArray A 16-byte array containing the uuid bits.
+         * @throws IllegalArgumentException If the size of the [ubyteArray] is not exactly 16.
+         * @return A new uuid based on the specified bits.
+         *
+         * @see Uuid.toUByteArray
+         * @sample samples.uuid.Uuids.fromUByteArray
+         */
+        @SinceKotlin("2.1")
+        @ExperimentalUnsignedTypes
+        public fun fromUByteArray(ubyteArray: UByteArray): Uuid {
+            return fromByteArray(ubyteArray.storage)
         }
 
         /**

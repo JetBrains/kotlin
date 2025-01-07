@@ -2050,6 +2050,7 @@ final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.
     final fun toByteArray(): kotlin/ByteArray // kotlin.uuid/Uuid.toByteArray|toByteArray(){}[0]
     final fun toHexString(): kotlin/String // kotlin.uuid/Uuid.toHexString|toHexString(){}[0]
     final fun toString(): kotlin/String // kotlin.uuid/Uuid.toString|toString(){}[0]
+    final fun toUByteArray(): kotlin/UByteArray // kotlin.uuid/Uuid.toUByteArray|toUByteArray(){}[0]
     final inline fun <#A1: kotlin/Any?> toLongs(kotlin/Function2<kotlin/Long, kotlin/Long, #A1>): #A1 // kotlin.uuid/Uuid.toLongs|toLongs(kotlin.Function2<kotlin.Long,kotlin.Long,0:0>){0§<kotlin.Any?>}[0]
     final inline fun <#A1: kotlin/Any?> toULongs(kotlin/Function2<kotlin/ULong, kotlin/ULong, #A1>): #A1 // kotlin.uuid/Uuid.toULongs|toULongs(kotlin.Function2<kotlin.ULong,kotlin.ULong,0:0>){0§<kotlin.Any?>}[0]
 
@@ -2066,6 +2067,7 @@ final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.
 
         final fun fromByteArray(kotlin/ByteArray): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromByteArray|fromByteArray(kotlin.ByteArray){}[0]
         final fun fromLongs(kotlin/Long, kotlin/Long): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromLongs|fromLongs(kotlin.Long;kotlin.Long){}[0]
+        final fun fromUByteArray(kotlin/UByteArray): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromUByteArray|fromUByteArray(kotlin.UByteArray){}[0]
         final fun fromULongs(kotlin/ULong, kotlin/ULong): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromULongs|fromULongs(kotlin.ULong;kotlin.ULong){}[0]
         final fun parse(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parse|parse(kotlin.String){}[0]
         final fun parseHex(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHex|parseHex(kotlin.String){}[0]
