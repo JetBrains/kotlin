@@ -1485,7 +1485,7 @@ class ExpressionCodegen(
                     IrConstKind.String -> JAVA_STRING_TYPE
                     IrConstKind.Null -> OBJECT_TYPE
                 }
-                generator.putValueOrProcessConstant(StackValue.constant(arg.value, type, null))
+                generator.putValueOrProcessConstant(arg.value, type)
             } else {
                 val value = arg.accept(this, data)
                 val generatingType = if (value.type == Type.VOID_TYPE) AsmTypes.UNIT_TYPE else value.type

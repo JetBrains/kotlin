@@ -40,10 +40,6 @@ public abstract class StackValue {
     public final KotlinType kotlinType;
     private final boolean canHaveSideEffects;
 
-    protected StackValue(@NotNull Type type) {
-        this(type, null, true);
-    }
-
     protected StackValue(@NotNull Type type, boolean canHaveSideEffects) {
         this(type, null, canHaveSideEffects);
     }
@@ -119,18 +115,7 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue constant(@Nullable Object value, @NotNull Type type) {
-        return constant(value, type, null);
-    }
-
-    @NotNull
-    public static StackValue constant(@Nullable Object value, @NotNull Type type, @Nullable KotlinType kotlinType) {
-        if (type == Type.BOOLEAN_TYPE) {
-            assert value instanceof Boolean : "Value for boolean constant should have boolean type: " + value;
-            return BranchedValue.Companion.booleanConstant((Boolean) value);
-        }
-        else {
-            return new Constant(value, type, kotlinType);
-        }
+        return new Constant(value, type);
     }
 
     public static StackValue createDefaultValue(@NotNull Type type) {
@@ -530,9 +515,8 @@ public abstract class StackValue {
         @Nullable
         public final Object value;
 
-        public Constant(@Nullable Object value, Type type, KotlinType kotlinType) {
-            super(type, kotlinType, false);
-            assert !Type.BOOLEAN_TYPE.equals(type) : "Boolean constants should be created via 'StackValue.constant'";
+        public Constant(@Nullable Object value, Type type) {
+            super(type, null, false);
             this.value = value;
         }
 
