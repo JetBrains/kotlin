@@ -1,0 +1,10 @@
+/clash.kt:32:11: error: type parameter T0 of 'I1' has inconsistent values: I0, A3
+class A3: I2, I0, I1<A3> // If it's allowed, it causes a platform declaration clash
+          ^^^^^^^^^^^^^^
+/original.kt:12:11: error: type parameter T0 of 'I1' has inconsistent values: I0, A1
+class A1: I2, I0, I1<A1>
+          ^^^^^^^^^^^^^^
+/simple.kt:21:16: error: type parameter T of 'I1' has inconsistent values: Any, Int
+interface A2 : I1<Any>, I0, I2
+               ^^^^^^^^^^^^^^^
+

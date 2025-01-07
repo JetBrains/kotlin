@@ -29692,6 +29692,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("inconsistentTypeParameterValuesHandleAllSupertypes.kt")
+        public void testInconsistentTypeParameterValuesHandleAllSupertypes() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/inconsistentTypeParameterValuesHandleAllSupertypes.kt");
+        }
+
+        @Test
         @TestMetadata("intersectionReturnTypeMismatchSubsumed.kt")
         public void testIntersectionReturnTypeMismatchSubsumed() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/intersectionReturnTypeMismatchSubsumed.kt");

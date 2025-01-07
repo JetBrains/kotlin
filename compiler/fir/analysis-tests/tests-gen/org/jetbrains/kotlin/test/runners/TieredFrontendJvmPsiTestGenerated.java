@@ -17327,6 +17327,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
+        @TestMetadata("inconsistentTypeParameterValuesHandleAllSupertypes.kt")
+        public void testInconsistentTypeParameterValuesHandleAllSupertypes() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/inconsistentTypeParameterValuesHandleAllSupertypes.kt");
+        }
+
+        @Test
         @TestMetadata("kt13355.kt")
         public void testKt13355() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt13355.kt");
