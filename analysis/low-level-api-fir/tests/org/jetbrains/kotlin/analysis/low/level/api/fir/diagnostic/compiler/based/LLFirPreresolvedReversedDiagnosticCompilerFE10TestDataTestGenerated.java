@@ -1972,6 +1972,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("typeMismatchSameShortName.kt")
+    public void testTypeMismatchSameShortName() {
+      runTest("compiler/testData/diagnostics/tests/typeMismatchSameShortName.kt");
+    }
+
+    @Test
     @TestMetadata("typealiasAnnotationWithFixedTypeArgument.kt")
     public void testTypealiasAnnotationWithFixedTypeArgument() {
       runTest("compiler/testData/diagnostics/tests/typealiasAnnotationWithFixedTypeArgument.kt");

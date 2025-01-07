@@ -1313,6 +1313,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     }
 
     @Test
+    @TestMetadata("typeMismatchSameShortName.kt")
+    public void testTypeMismatchSameShortName() {
+      runTest("compiler/testData/diagnostics/tests/typeMismatchSameShortName.kt");
+    }
+
+    @Test
     @TestMetadata("Underscore.kt")
     public void testUnderscore() {
       runTest("compiler/testData/diagnostics/tests/Underscore.kt");

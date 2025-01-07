@@ -219,7 +219,7 @@ object FirDiagnosticRenderers {
                 }
 
                 val simpleRepresentationsByConstructor: Map<TypeConstructorMarker, String> = constructors.associateWith {
-                    buildString { ConeTypeRendererForReadability(this) { ConeIdRendererForDiagnostics() }.renderConstructor(it) }
+                    buildString { ConeTypeRendererForReadability(this) { ConeIdShortRenderer() }.renderConstructor(it) }
                 }
 
                 val constructorsByRepresentation: Map<String, List<TypeConstructorMarker>> =
@@ -229,17 +229,24 @@ object FirDiagnosticRenderers {
                     val representation = simpleRepresentationsByConstructor.getValue(it)
 
                     val typesWithSameRepresentation = constructorsByRepresentation.getValue(representation)
-                    if (typesWithSameRepresentation.size == 1 && typesWithSameRepresentation.single() !is ConeTypeParameterLookupTag) {
+                    val isAmbiguous = typesWithSameRepresentation.size > 1
+
+                    if (!isAmbiguous && typesWithSameRepresentation.single() !is ConeTypeParameterLookupTag) {
                         return@associateWith "$representation^"
                     }
 
-                    val index = typesWithSameRepresentation.indexOf(it) + 1
-
                     buildString {
-                        append(representation)
-                        if (typesWithSameRepresentation.size > 1) {
+                        val isClassLike = it is ConeClassLikeLookupTag
+
+                        if (isClassLike && isAmbiguous) {
+                            ConeTypeRendererForReadability(this) { ConeIdRendererForDiagnostics() }.renderConstructor(it)
+                        } else {
+                            append(representation)
+                        }
+
+                        if (!isClassLike && isAmbiguous) {
                             append('#')
-                            append(index)
+                            append(typesWithSameRepresentation.indexOf(it) + 1)
                         }
                         // Special symbol to be replaced with a nullability marker, like "", "?", "!", or maybe something else in future
                         append("^")
