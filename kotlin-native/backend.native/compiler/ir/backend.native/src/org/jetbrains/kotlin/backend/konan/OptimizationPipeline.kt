@@ -319,6 +319,42 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext
             }
 }
 
+class CombinedOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, logger) {
+    override val pipelineName: String = "New PM Combined LLVM optimizations"
+
+    override val passes = buildList {
+        if (config.objCPasses) {
+            // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
+            // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
+            // from cinterop "glue" bitcode.
+            // TODO: Consider adding other ObjC passes.
+            add("objc-arc-contract")
+        }
+        add(config.modulePasses ?: "default<$optimizationFlag>")
+        if (config.ltoPasses == null) {
+            if (config.internalize) {
+                add("internalize")
+            }
+
+            if (config.globalDce) {
+                add("globaldce")
+            }
+
+            // Pipeline that is similar to `llvm-lto`.
+            add("lto<$optimizationFlag>")
+        } else {
+            add(config.ltoPasses)
+        }
+    }
+
+    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
+        if (config.makeDeclarationsHidden) {
+            makeVisibilityHiddenLikeLlvmInternalizePass(module)
+        }
+    }
+}
+
 class ThreadSanitizerPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, logger) {
     override val pipelineName = "New PM thread sanitizer"

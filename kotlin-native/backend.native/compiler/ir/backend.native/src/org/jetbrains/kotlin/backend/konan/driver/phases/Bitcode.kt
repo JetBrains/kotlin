@@ -95,6 +95,11 @@ internal val ThreadSanitizerPhase = optimizationPipelinePass(
         pipeline = ::ThreadSanitizerPipeline
 )
 
+internal val CombinedLLVMOptimizationPhase = optimizationPipelinePass(
+        name = "LLVMOptimizationPhase",
+        pipeline = ::CombinedOptimizationPipeline
+)
+
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "RemoveRedundantSafepoints",
         postactions = getDefaultLlvmModuleActions(),
@@ -143,9 +148,10 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     )
     useContext(OptimizationState(context.config, optimizationConfig)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
-        it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
+        it.runPhase(CombinedLLVMOptimizationPhase, module)
+//        it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
 //        it.runPhase(ModuleBitcodeOptimizationPhase, module)
-        it.runPhase(LTOBitcodeOptimizationPhase, module)
+//        it.runPhase(LTOBitcodeOptimizationPhase, module)
         when (context.config.sanitizer) {
             SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase, module)
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
