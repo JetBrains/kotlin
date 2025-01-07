@@ -287,7 +287,7 @@ open class FunctionInlining(
                     return IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, function.symbol).also {
                         it.type = expression.type
                         val arguments = boundArguments.map { it.deepCopyWithSymbols() } +
-                                expression.getAllArgumentsWithIr().map { it.second }.drop(1) // dropping dispatch receiver - it's lambda itself
+                                expression.arguments.drop(1) // dropping dispatch receiver - it's lambda itself
                         for ((index, argument) in arguments.withIndex()) {
                             it.arguments[index] = argument
                         }
