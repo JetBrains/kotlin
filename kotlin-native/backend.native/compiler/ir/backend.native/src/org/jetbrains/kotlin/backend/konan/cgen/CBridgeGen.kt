@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
+import org.jetbrains.kotlin.backend.konan.lower.NativeFunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -261,7 +261,7 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
             val initializer = variable.initializer
             require(initializer is IrVararg) { stubs.renderCompilerError(initializer) }
             block(variable, initializer.elements)
-        } else if (variable is IrValueParameter && FunctionReferenceLowering.isLoweredFunctionReference(variable)) {
+        } else if (variable is IrValueParameter && NativeFunctionReferenceLowering.isLoweredFunctionReference(variable)) {
             val location = variable.parent // Parameter itself has incorrect location.
             val kind = if (this.isObjCMethod) "Objective-C methods" else "C functions"
             stubs.throwCompilerError(location, "callable references to variadic $kind are not supported")
