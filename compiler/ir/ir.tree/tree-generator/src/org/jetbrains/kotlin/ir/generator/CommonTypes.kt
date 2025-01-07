@@ -33,7 +33,6 @@ object Packages {
 val anyType = type<Any>()
 val elementBaseType = type(tree, "IrElementBase", TypeKind.Class)
 val statementOriginType = type(exprs, "IrStatementOrigin")
-val legacyVisitorType = type(visitors, "IrElementVisitor")
 val irVisitorType = type(visitors, "IrVisitor", TypeKind.Class)
 val irVisitorVoidType = type(visitors, "IrVisitorVoid", TypeKind.Class)
 val elementTransformerVoidType = type(visitors, "IrElementTransformerVoid", TypeKind.Class)
