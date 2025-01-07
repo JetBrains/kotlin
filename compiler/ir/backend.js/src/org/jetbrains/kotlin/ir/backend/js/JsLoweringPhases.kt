@@ -350,8 +350,8 @@ private val upgradeCallableReferences = makeIrModulePhase(
         UpgradeCallableReferences(
             ctx,
             upgradeFunctionReferencesAndLambdas = true,
-            upgradePropertyReferences = false,
-            upgradeLocalDelegatedPropertyReferences = false,
+            upgradePropertyReferences = true,
+            upgradeLocalDelegatedPropertyReferences = true,
             upgradeSamConversions = false,
         )
     },
@@ -784,9 +784,9 @@ fun getJsLowerings(
     createScriptFunctionsPhase,
     stringConcatenationLoweringPhase,
     upgradeCallableReferences,
+    propertyReferenceLoweringPhase,
     callableReferenceLowering,
     singleAbstractMethodPhase,
-    propertyReferenceLoweringPhase,
     tailrecLoweringPhase,
     enumClassConstructorLoweringPhase,
     enumClassConstructorBodyLoweringPhase,
