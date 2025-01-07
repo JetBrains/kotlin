@@ -245,10 +245,16 @@ abstract class Symbols(
                         function.parameters[0].type.classOrNull?.owner?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
             }
 
-        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
-            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME)
-                        && function.hasShape()
+        private val typeOfFqName = KOTLIN_REFLECT_FQ_NAME.child(Name.identifier("typeOf"))
+
+        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean {
+            return if (symbol.isBound) {
+                symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
+                    function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME) && function.hasShape()
+                }
+            } else {
+                symbol.hasEqualFqName(typeOfFqName)
             }
+        }
     }
 }

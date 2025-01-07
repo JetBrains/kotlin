@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -251,7 +252,7 @@ private class CallInlining(
 
         override fun visitCall(expression: IrCall): IrExpression {
             // TODO extract to common utils OR reuse ContractDSLRemoverLowering
-            if (expression.symbol.owner.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)) {
+                if (expression.isContractCall()) {
                 return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
             }
 
@@ -425,6 +426,13 @@ private class CallInlining(
         override fun visitElement(element: IrElement) = element.accept(this, null)
     }
 
+    // Contracts can appear only in K1 mode. In K2, they are dropped on the FIR2IR phase.
+    private fun IrCall.isContractCall(): Boolean {
+        return symbol.isBound && symbol.owner.annotations.any {
+            it.symbol.isBound && it.symbol.owner.parentAsClass.hasEqualFqName(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)
+        }
+    }
+
     private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
         return when {
             !insertAdditionalImplicitCasts -> this
@@ -444,14 +452,42 @@ private class CallInlining(
     }
 
     private fun isLambdaCall(irCall: IrCall): Boolean {
-        val callee = irCall.symbol.owner
-        val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
-        // Uncomment or delete depending on KT-57249 status
-//            assert(!dispatchReceiver.type.isKFunction())
+        val symbol = irCall.symbol
+        if (symbol.isBound) {
+            val callee = symbol.owner
+            val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
+            // Uncomment or delete depending on KT-57249 status
+            // assert(!dispatchReceiver.type.isKFunction())
 
-        return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
-                && callee.name == OperatorNameConventions.INVOKE
-                && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+            return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
+                    && callee.name == OperatorNameConventions.INVOKE
+                    && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+        }
+
+        fun hasDispatchGetValueReceiver(): Boolean {
+            for (argument in irCall.arguments) {
+                val unwrapped = argument?.unwrapAdditionalImplicitCastsIfNeeded() as? IrGetValue ?: continue
+                val valueParameter = unwrapped.symbol.owner as? IrValueParameter ?: continue
+                if (valueParameter.kind == IrParameterKind.DispatchReceiver) return true
+            }
+
+            return false
+        }
+
+        fun IrSymbol.isFunctionOrKFunction(): Boolean {
+            return hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "Function") ||
+                    hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "KFunction")
+        }
+
+        fun IrSymbol.isSuspendFunctionOrKFunction(): Boolean {
+            return hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "SuspendFunction") ||
+                    hasTopLevelEqualFqName(StandardNames.BUILT_INS_PACKAGE_NAME.asString(), "KSuspendFunction")
+        }
+
+        val signature = symbol.signature?.asPublic() ?: return false
+        return signature.shortName == OperatorNameConventions.INVOKE.asString() &&
+                (symbol.isFunctionOrKFunction() || symbol.isSuspendFunctionOrKFunction())
+                && hasDispatchGetValueReceiver()
     }
 
     private inner class ParameterToArgument(

@@ -72,7 +72,7 @@ private fun IrType.isClassType(signature: IdSignature.CommonSignature, nullable:
     if (this !is IrSimpleType || this is IrCapturedType) return false
     if (nullable != null && this.isMarkedNullable() != nullable) return false
     return signature == classifier.signature ||
-            classifier.owner.let { it is IrClass && it.hasFqNameEqualToSignature(signature) }
+            (classifier.isBound && classifier.owner.let { it is IrClass && it.hasFqNameEqualToSignature(signature) })
 }
 
 private fun IrClass.hasFqNameEqualToSignature(signature: IdSignature.CommonSignature): Boolean =
