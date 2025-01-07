@@ -52,7 +52,7 @@ class IrDispatchPoint(val target: SuspendState) : IrExpression() {
 
     override var attributeOwnerId: IrElement = this
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
+    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 }
 
 class DispatchPointTransformer(val action: (SuspendState) -> IrExpression) : IrElementTransformerVoid() {
