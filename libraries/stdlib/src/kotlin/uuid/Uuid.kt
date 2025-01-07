@@ -113,6 +113,8 @@ public class Uuid private constructor(
     /**
      * Returns the standard string representation of this uuid.
      *
+     * This function returns the same value as [toHexDashString].
+     *
      * The resulting string is in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
      * where 'x' represents a hexadecimal digit, also known as "hex-and-dash" format.
      * It is in lowercase and consists of 36 characters. Each hexadecimal digit
@@ -124,9 +126,31 @@ public class Uuid private constructor(
      * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
      *
      * @see Uuid.parse
+     * @see Uuid.toHexDashString
      * @sample samples.uuid.Uuids.toStringSample
      */
     override fun toString(): String {
+        return toHexDashString()
+    }
+
+    /**
+     * Returns the standard hex-and-dash string representation of this uuid.
+     *
+     * The resulting string is in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+     * where 'x' represents a hexadecimal digit, also known as "hex-and-dash" format.
+     * It is in lowercase and consists of 36 characters. Each hexadecimal digit
+     * in the string sequentially represents the next 4 bits of the uuid, starting from the most
+     * significant 4 bits in the first digit to the least significant 4 bits in the last digit.
+     *
+     * This format is the standard textual representation of uuids and is compatible with
+     * uuid parsing logic found in most software environments. It is specified by
+     * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
+     *
+     * @see Uuid.parseHexDash
+     * @sample samples.uuid.Uuids.toHexDashString
+     */
+    @SinceKotlin("2.1")
+    public fun toHexDashString(): String {
         val bytes = ByteArray(36)
         mostSignificantBits.formatBytesInto(bytes, 0, startIndex = 0, endIndex = 4)
         bytes[8] = '-'.code.toByte()
@@ -359,10 +383,37 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.parse
          */
         public fun parse(uuidString: String): Uuid {
-            require(uuidString.length == 36) {
-                "Expected a 36-char string in the standard hex-and-dash UUID format, but was \"${uuidString.truncateForErrorMessage(64)}\" of length ${uuidString.length}"
+            return parseHexDash(uuidString)
+        }
+
+        /**
+         * Parses a uuid from the standard hex-and-dash string representation as described in [Uuid.toHexDashString].
+         *
+         * This function is case-insensitive, and for a valid [hexDashString], the following property holds:
+         * ```kotlin
+         * val uuid = Uuid.parseHexDash(hexDashString)
+         * assertEquals(uuid.toHexDashString(), hexDashString.lowercase())
+         * ```
+         *
+         * The standard textual representation of uuids, also known as hex-and-dash format, is specified by
+         * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
+         *
+         * @param hexDashString A string in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+         *   where each 'x' is a hexadecimal digit, either lowercase or uppercase.
+         * @throws IllegalArgumentException If the [hexDashString] is not a 36-character string
+         *   in the standard uuid format.
+         * @return A uuid equivalent to the specified uuid string.
+         *
+         * @see Uuid.toHexDashString
+         * @sample samples.uuid.Uuids.parseHexDash
+         */
+        @SinceKotlin("2.1")
+        public fun parseHexDash(hexDashString: String): Uuid {
+            require(hexDashString.length == 36) {
+                "Expected a 36-char string in the standard hex-and-dash UUID format, " +
+                        "but was \"${hexDashString.truncateForErrorMessage(64)}\" of length ${hexDashString.length}"
             }
-            return uuidParseHexDash(uuidString)
+            return uuidParseHexDash(hexDashString)
         }
 
         /**
@@ -383,7 +434,8 @@ public class Uuid private constructor(
          */
         public fun parseHex(hexString: String): Uuid {
             require(hexString.length == 32) {
-                "Expected a 32-char hexadecimal string, but was \"${hexString.truncateForErrorMessage(64)}\" of length ${hexString.length}"
+                "Expected a 32-char hexadecimal string, " +
+                        "but was \"${hexString.truncateForErrorMessage(64)}\" of length ${hexString.length}"
             }
             return uuidParseHex(hexString)
         }

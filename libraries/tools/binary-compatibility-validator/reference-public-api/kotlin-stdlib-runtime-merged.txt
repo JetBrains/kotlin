@@ -6364,6 +6364,7 @@ public final class kotlin/uuid/Uuid : java/io/Serializable, java/lang/Comparable
 	public final fun getMostSignificantBits ()J
 	public fun hashCode ()I
 	public final fun toByteArray ()[B
+	public final fun toHexDashString ()Ljava/lang/String;
 	public final fun toHexString ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 	public final fun toUByteArray-TcUX1vc ()[B
@@ -6378,6 +6379,7 @@ public final class kotlin/uuid/Uuid$Companion {
 	public final fun getNIL ()Lkotlin/uuid/Uuid;
 	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun parseHex (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseHexDash (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun random ()Lkotlin/uuid/Uuid;
 }
 
