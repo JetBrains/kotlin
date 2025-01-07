@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -116,6 +119,13 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
                         irEmpty(context)
                     } else {
                         super.visitWhen(expression)
+                    }
+
+                override fun visitReturn(expression: IrReturn): IrExpression =
+                    if (expression.returnTargetSymbol == original.symbol) {
+                        IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, newReplacement.symbol, expression.value)
+                    } else {
+                        super.visitReturn(expression)
                     }
 
                 override fun visitCall(expression: IrCall): IrExpression {
