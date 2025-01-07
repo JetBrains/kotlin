@@ -18,20 +18,20 @@ public open class ModalityOfFakeOverrides : java.util.AbstractList<kotlin.String
     public open override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.MutableListIterator<kotlin.String!>
-    invisible_fake open override /*1*/ /*fake_override*/ fun outOfBoundsMsg(/*0*/ p0: kotlin.Int): kotlin.String!
-    invisible_fake open override /*1*/ /*fake_override*/ fun rangeCheckForAdd(/*0*/ p0: kotlin.Int): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun outOfBoundsMsg(/*0*/ index: kotlin.Int): kotlin.String!
+    invisible_fake open override /*1*/ /*fake_override*/ fun rangeCheckForAdd(/*0*/ index: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ p0: kotlin.Int): kotlin.String!
-    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.MutableList<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
 
     // Static members
     invisible_fake const final override /*1*/ /*fake_override*/ val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-    invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
-    invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
+    invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ r: kotlin.Array<(out) T!>!, /*1*/ it: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
+    invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ minCapacity: kotlin.Int): kotlin.Int
 }

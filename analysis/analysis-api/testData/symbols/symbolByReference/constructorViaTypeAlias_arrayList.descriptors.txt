@@ -62,7 +62,7 @@ KaConstructorSymbol:
       isVararg: false
       location: LOCAL
       modality: FINAL
-      name: p0
+      name: c
       origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:

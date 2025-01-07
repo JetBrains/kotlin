@@ -24,7 +24,7 @@ public/*package*/ open class MyMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    invisible_fake open override /*1*/ /*fake_override*/ fun eq(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
+    invisible_fake open override /*1*/ /*fake_override*/ fun eq(/*0*/ o1: kotlin.Any!, /*1*/ o2: kotlin.Any!): kotlin.Boolean
 }
 
 public interface ResolverForProject</*0*/ M1> {

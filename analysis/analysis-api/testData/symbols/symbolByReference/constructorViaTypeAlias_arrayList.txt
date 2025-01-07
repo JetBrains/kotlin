@@ -57,7 +57,7 @@ KaConstructorSymbol:
       isVararg: false
       location: LOCAL
       modality: FINAL
-      name: p0
+      name: c
       origin: TYPEALIASED_CONSTRUCTOR
       receiverParameter: null
       returnType: KaFlexibleType:

@@ -85,4 +85,4 @@ KtNameReferenceExpression(239,243): 'Math'
 
 KtNameReferenceExpression(244,247): 'sin'
   KtSimpleNameReference:
-    (in java.lang.Math) open fun sin(p0: kotlin.Double): kotlin.Double
+    (in java.lang.Math) open fun sin(a: kotlin.Double): kotlin.Double

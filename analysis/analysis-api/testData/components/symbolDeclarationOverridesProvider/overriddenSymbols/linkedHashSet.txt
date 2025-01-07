@@ -1,10 +1,10 @@
 ALL:
-  java/util/HashSet.add(p0: E): Boolean
-  java/util/AbstractCollection.add(p0: E!): Boolean
+  java/util/HashSet.add(e: E): Boolean
+  java/util/AbstractCollection.add(e: E!): Boolean
   kotlin/collections/MutableSet.add(element: E): Boolean
   kotlin/collections/MutableCollection.add(element: E): Boolean
 DIRECT:
-  java/util/HashSet.add(p0: E): Boolean
+  java/util/HashSet.add(e: E): Boolean
   kotlin/collections/MutableSet.add(element: E): Boolean
 INTERSECTION:
-  java/util/LinkedHashSet.add(p0: E!): Boolean
+  java/util/LinkedHashSet.add(e: E!): Boolean
