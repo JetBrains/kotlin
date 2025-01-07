@@ -51,10 +51,19 @@ val npmBuild by tasks.registering(NpxTask::class) {
 tasks {
     npmInstall {
         val nodeModulesDir = projectDir.resolve("node_modules")
+        val projectName = project.name
+        doFirst {
+            println("Executing ==npmInstall== in $projectName, node_modules dir: ${nodeModulesDir.exists()}")
+        }
+
         outputs.upToDateWhen {
             nodeModulesDir.isDirectory
         }
         args.add("--ignore-scripts")
+
+        doLast {
+            println("Executed ==npmInstall== in $projectName, node_modules dir: ${nodeModulesDir.exists()}")
+        }
     }
 
     clean {
