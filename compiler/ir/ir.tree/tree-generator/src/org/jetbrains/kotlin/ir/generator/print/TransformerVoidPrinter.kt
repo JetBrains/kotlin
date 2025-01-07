@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.legacyTransformerType
 import org.jetbrains.kotlin.ir.generator.irTransformerType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
@@ -24,14 +23,14 @@ internal class TransformerVoidPrinter(
 ) : AbstractTransformerVoidPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irTransformerType.withArgs(visitorDataType), legacyTransformerType.withArgs(visitorDataType))
+        get() = listOf(irTransformerType.withArgs(visitorDataType))
 
     // IrPackageFragment is treated as transformByChildren in IrElementTransformerVoid for historical reasons.
     private val Element.isPackageFragment: Boolean
         get() = this == IrTree.packageFragment
 
     // Despite IrFile and IrExternalPackageFragment being transformByChildren, we treat them differently in IrElementTransformerVoid
-    // than in IrElementTransformer for historical reasons. We want to preserve the historical semantics here.
+    // than in IrTransformer for historical reasons. We want to preserve the historical semantics here.
     private val Element.isPackageFragmentChild: Boolean
         get() = elementParents.any { it.element.isPackageFragment }
 

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Represents a REPL snippet entity that corresponds to the analogous FIR entity.
@@ -58,7 +58,7 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
         body.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiverParameters = receiverParameters.transformIfNeeded(transformer, data)
         variablesFromOtherSnippets.transformInPlace(transformer, data)
         declarationsFromOtherSnippets.transformInPlace(transformer, data)
