@@ -338,18 +338,23 @@ private val upgradeCallableReferences = makeIrModulePhase(
         UpgradeCallableReferences(
             ctx,
             upgradeFunctionReferencesAndLambdas = true,
-            upgradePropertyReferences = false,
-            upgradeLocalDelegatedPropertyReferences = false,
+            upgradePropertyReferences = true,
+            upgradeLocalDelegatedPropertyReferences = true,
             upgradeSamConversions = false,
         )
     },
     name = "UpgradeCallableReferences"
 )
 
+private val propertyReferenceLoweringPhase = makeIrModulePhase(
+    ::PropertyReferenceLowering,
+    name = "PropertyReferenceLowering",
+)
+
 private val callableReferenceLowering = makeIrModulePhase(
     ::CallableReferenceLowering,
     name = "CallableReferenceLowering",
-    prerequisite = setOf(inlineAllFunctionsPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering)
+    prerequisite = setOf(propertyReferenceLoweringPhase, inlineAllFunctionsPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering)
 )
 
 private val returnableBlockLoweringPhase = makeIrModulePhase(
@@ -470,11 +475,6 @@ private val privateMembersLoweringPhase = makeIrModulePhase(
 private val privateMemberUsagesLoweringPhase = makeIrModulePhase(
     ::PrivateMemberBodiesLowering,
     name = "PrivateMemberUsagesLowering",
-)
-
-private val propertyReferenceLoweringPhase = makeIrModulePhase(
-    ::PropertyReferenceLowering,
-    name = "PropertyReferenceLowering",
 )
 
 private val interopCallableReferenceLoweringPhase = makeIrModulePhase(
@@ -778,9 +778,9 @@ fun getJsLowerings(
     createScriptFunctionsPhase,
     stringConcatenationLoweringPhase,
     upgradeCallableReferences,
+    propertyReferenceLoweringPhase,
     callableReferenceLowering,
     singleAbstractMethodPhase,
-    propertyReferenceLoweringPhase,
     tailrecLoweringPhase,
     enumClassConstructorLoweringPhase,
     enumClassConstructorBodyLoweringPhase,
