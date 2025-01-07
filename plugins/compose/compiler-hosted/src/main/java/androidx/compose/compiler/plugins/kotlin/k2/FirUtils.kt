@@ -16,17 +16,17 @@
 
 package androidx.compose.compiler.plugins.kotlin.k2
 
+import androidx.compose.compiler.plugins.kotlin.COMPOSE_PLUGIN_ID
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
+import androidx.compose.compiler.plugins.kotlin.ComposeMetadata
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationStringParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
@@ -168,3 +168,6 @@ private val FirFunctionSymbol<*>.explicitParameterTypes: List<ConeKotlinType>
     get() = resolvedContextParameters.map { it.returnTypeRef.coneType } +
             listOfNotNull(receiverParameter?.typeRef?.coneType) +
             valueParameterSymbols.map { it.resolvedReturnType }
+
+internal val FirDeclaration.composeMetadata: ComposeMetadata?
+    get() = compilerPluginMetadata?.get(COMPOSE_PLUGIN_ID)?.let { ComposeMetadata(it) }

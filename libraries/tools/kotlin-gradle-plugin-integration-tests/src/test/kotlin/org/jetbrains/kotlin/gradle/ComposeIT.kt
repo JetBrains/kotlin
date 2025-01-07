@@ -346,8 +346,8 @@ class ComposeIT : KGPBaseTest() {
         agpVersion: String,
         providedJdk: JdkVersions.ProvidedJdk
     ) {
-        val composeSnapshotId = System.getProperty("composeSnapshotId")
-        val composeSnapshotVersion = System.getProperty("composeSnapshotVersion")
+        val composeSnapshotId = TestVersions.Compose.composeSnapshotId
+        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
         project(
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
@@ -391,10 +391,135 @@ class ComposeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Run test against older versions of open @Composable function")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @OtherGradlePluginTests
+    @TestMetadata("composeMultiModule")
+    fun testComposeDefaultParamsInOpenFunctionK1ToK2(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        val composeSnapshotId = TestVersions.Compose.composeSnapshotId
+        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        project(
+            projectName = "composeMultiModule/dep",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, kotlinVersion = "1.9.21")
+        ) {
+            val composeBase = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
+            composeBase.appendText(
+                """
+                |package com.example
+                |
+                |import androidx.compose.runtime.Composable
+                |
+                |open class TestComposable {
+                |    @Composable
+                |    open fun UnitFun(value: Int = 42) {
+                |    }
+                |
+                |    @Composable
+                |    open fun openFun(value: Int = 42): Int {
+                |       return value
+                |    }
+                |}
+                """.trimMargin()
+            )
+            build("publishToMavenLocal") {
+                assertTasksExecuted(":compileReleaseKotlin")
+            }
+        }
+        project(
+            projectName = "composeMultiModule",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+            )
+        ) {
+            buildGradleKts.appendComposePlugin()
+            buildGradleKts.appendText(
+                """
+                |
+                |dependencies {
+                |    implementation("androidx.compose.runtime:runtime:$composeSnapshotVersion")
+                |    implementation("androidx.compose.runtime:runtime-test-utils:$composeSnapshotVersion")
+                |}
+                """.trimMargin()
+            )
+
+            val testFile = projectPath.resolve("src/test/kotlin/com/example/ComposeTest.kt")
+            testFile.appendText(
+                """
+                |package com.example
+                |
+                |import androidx.compose.runtime.*
+                |import androidx.compose.runtime.mock.*
+                |import org.junit.Test
+                |
+                |class ComposeTest {
+                |    @Test
+                |    fun test() = compositionTest {
+                |       val testImpl = TestImpl()
+                |       compose {
+                |           testImpl.UnitFun(1)
+                |           testImpl.UnitFun()
+                |           Text("${'$'}{testImpl.openFun(1)}")
+                |           Text("${'$'}{testImpl.openFun()}")
+                |       }
+                |       
+                |       validate {
+                |           Text("1")
+                |           Text("0") // Expected bug behavior
+                |           Text("1")
+                |           Text("0") // Expected bug behavior
+                |       }
+                |    }
+                |}
+                |
+                |private class TestImpl : TestComposable() {
+                |    @Composable
+                |    override fun UnitFun(value: Int) {
+                |       Text("${'$'}value")
+                |    }
+                |
+                |    @Composable
+                |    override fun openFun(value: Int): Int {
+                |       return super.openFun(value)
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("testReleaseUnitTest") {
+                assertTasksExecuted(":compileReleaseUnitTestKotlin")
+                assertOutputContainsExactlyTimes(LEGACY_OPEN_FUNCTION_WARNING, 2)
+            }
+        }
+    }
+
+    private fun Path.appendComposePlugin() {
+        modify { originalBuildScript ->
+            """
+                |plugins {
+                |    id("org.jetbrains.kotlin.plugin.compose")
+                |${originalBuildScript.substringAfter("plugins {")}
+            """.trimMargin()
+        }
+    }
+
     companion object {
         private const val APPLY_COMPOSE_SUGGESTION =
             "The Compose compiler plugin is now a part of Kotlin.\n" +
                     "Please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable the Compose compiler plugin.\n" +
                     "Learn more about this at https://kotl.in/compose-plugin"
+
+        private const val LEGACY_OPEN_FUNCTION_WARNING =
+            "Detected a @Composable function that overrides an open function compiled with older compiler that is known to crash " +
+                    "at runtime."
     }
 }

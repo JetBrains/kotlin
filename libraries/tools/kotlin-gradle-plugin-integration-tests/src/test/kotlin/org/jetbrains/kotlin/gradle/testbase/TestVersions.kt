@@ -113,4 +113,8 @@ interface TestVersions {
         const val DOKKA_V2 = "2.0.20-dev-360"
     }
 
+    object Compose {
+        val composeSnapshotId = System.getProperty("composeSnapshotId")
+        val composeSnapshotVersion = System.getProperty("composeSnapshotVersion")
+    }
 }

@@ -629,9 +629,9 @@ class ComposableFunctionBodyTransformer(
         val scope = currentFunctionScope
         // if the function isn't composable, there's nothing to do
         if (!scope.isComposable) return super.visitFunction(declaration)
-        if (declaration.isDefaultValueStub) {
-            // this is a synthetic function stub, don't touch the body
-            return declaration
+        if (declaration.isDefaultParamStub) {
+            // don't transform the body of the stub normally
+            return visitComposableFunctionStub(declaration)
         }
 
         val restartable = declaration.shouldBeRestartable()
@@ -759,20 +759,8 @@ class ComposableFunctionBodyTransformer(
 
     private fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
         this is IrSimpleFunction &&
-                (context.irTrace[ComposeWritableSlices.IS_VIRTUAL_WITH_DEFAULT_PARAM, this] == true ||
+                (isVirtualFunctionWithDefaultParam != null ||
                         overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
-
-    private val IrFunction.hasNonRestartableAnnotation: Boolean
-        get() = hasAnnotation(ComposeFqNames.NonRestartableComposable)
-
-    private val IrFunction.hasReadOnlyAnnotation: Boolean
-        get() = hasAnnotation(ComposeFqNames.ReadOnlyComposable)
-
-    private val IrFunction.hasExplicitGroups: Boolean
-        get() = hasAnnotation(ComposeFqNames.ExplicitGroupsComposable)
-
-    private val IrFunction.hasNonSkippableAnnotation: Boolean
-        get() = hasAnnotation(ComposeFqNames.NonSkippableComposable)
 
     // At a high level, without useNonSkippingGroupOptimization, a non-restartable composable
     // function
@@ -1278,6 +1266,28 @@ class ComposableFunctionBodyTransformer(
         )
 
         scope.metrics.recordGroup()
+
+        return declaration
+    }
+
+    private fun visitComposableFunctionStub(declaration: IrFunction): IrStatement {
+        // remove default parameters as the transform below would
+        declaration.parameters.fastForEach { it.defaultValue = null }
+
+        // patch $changed and $default parameters to be the same as passed to the stub
+        // stub should always have the form of return Call(...), so we can just match this structure
+        val body = declaration.body ?: error("Expected body for composable function stub")
+        val call = (body.statements[0] as? IrReturn)?.value as? IrCall ?: error("Expected a single return statement with a call")
+        call.symbol.owner.parameters.fastForEach { param ->
+            val paramName = param.name.asString()
+            if (
+                paramName.startsWith(ComposeNames.CHANGED_PARAMETER.asString()) ||
+                paramName.startsWith(ComposeNames.DEFAULT_PARAMETER.asString())
+            ) {
+                val parameter = declaration.valueParameters.find { it.name == param.name } ?: error("Expected parameter for ${param.name}")
+                call.arguments[param.indexInParameters] = irGet(parameter)
+            }
+        }
 
         return declaration
     }

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -488,7 +487,7 @@ class ComposerParamTransformer(
                 }
             }
 
-            fn.makeStubForDefaultValuesIfNeeded()?.also {
+            fn.makeStubForDefaultValueClassIfNeeded()?.also {
                 when (val parent = fn.parent) {
                     is IrClass -> parent.addChild(it)
                     is IrFile -> parent.addChild(it)
@@ -574,12 +573,8 @@ class ComposerParamTransformer(
      * nullability changed the value class mangle on a function signature. This stub creates a
      * binary compatible function to support old compilers while redirecting to a new function.
      */
-    private fun IrSimpleFunction.makeStubForDefaultValuesIfNeeded(): IrSimpleFunction? {
-        if (!visibility.isPublicAPI && !hasAnnotation(PublishedApiFqName)) {
-            return null
-        }
-
-        if (!hasComposableAnnotation()) {
+    private fun IrSimpleFunction.makeStubForDefaultValueClassIfNeeded(): IrSimpleFunction? {
+        if (!isPublicComposableFunction()) {
             return null
         }
 
@@ -604,47 +599,33 @@ class ComposerParamTransformer(
         }
 
         val source = this
-        val copy = source.deepCopyWithSymbols(parent)
-        copy.attributeOwnerId = copy
-        copy.originalBeforeInline = null
-        copy.valueParameters.fastForEach {
-            it.defaultValue = null
-        }
-        copy.isDefaultValueStub = true
-        copy.annotations += IrConstructorCallImpl(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            type = jvmSyntheticIrClass.defaultType,
-            symbol = jvmSyntheticIrClass.primaryConstructor!!.symbol,
-            typeArgumentsCount = 0,
-            constructorTypeArgumentsCount = 0,
-        )
-        copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            statements.add(
-                IrReturnImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    copy.returnType,
-                    copy.symbol,
-                    irCall(source).apply {
-                        dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
-                        extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
-                        copy.typeParameters.fastForEachIndexed { index, param ->
-                            typeArguments[index] = param.defaultType
-                        }
-                        copy.valueParameters.fastForEachIndexed { index, param ->
-                            putValueArgument(index, irGet(param))
-                        }
-                    }
+        return makeStub().also { copy ->
+            transformedFunctions[copy] = copy
+            transformedFunctionSet += copy
+
+            copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements.add(
+                    irReturn(
+                        copy.symbol,
+                        irCall(source).apply {
+                            dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
+                            extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
+                            copy.typeParameters.fastForEachIndexed { index, param ->
+                                typeArguments[index] = param.defaultType
+                            }
+                            copy.valueParameters.fastForEachIndexed { index, param ->
+                                putValueArgument(index, irGet(param))
+                            }
+                        },
+                        copy.returnType
+                    )
                 )
-            )
+            }
         }
-
-        transformedFunctions[copy] = copy
-        transformedFunctionSet += copy
-
-        return copy
     }
 
-    private val PublishedApiFqName = StandardClassIds.Annotations.PublishedApi.asSingleFqName()
+    private fun IrSimpleFunction.isPublicComposableFunction(): Boolean =
+        hasComposableAnnotation() && (visibility.isPublicAPI || isPublishedApi())
 }
+
+private val PublishedApiFqName = StandardClassIds.Annotations.PublishedApi.asSingleFqName()

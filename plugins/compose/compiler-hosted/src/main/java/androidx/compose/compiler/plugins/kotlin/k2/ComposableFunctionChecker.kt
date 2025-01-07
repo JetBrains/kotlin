@@ -22,12 +22,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
@@ -38,8 +41,9 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     ) {
         val isComposable = declaration.hasComposableAnnotation(context.session)
 
+        val overrides = declaration.getDirectOverriddenFunctions(context)
         // Check overrides for mismatched composable annotations
-        for (override in declaration.getDirectOverriddenFunctions(context)) {
+        for (override in overrides) {
             if (override.isComposable(context.session) != isComposable) {
                 reporter.reportOn(
                     declaration.source,
@@ -72,11 +76,10 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         // Check that there are no default arguments in abstract composable functions
         if (declaration.isOpen) {
-            for (valueParameter in declaration.valueParameters) {
-                val defaultValue = valueParameter.defaultValue ?: continue
+            if (overrides.any { it.valueParameterSymbols.any { it.hasDefaultValue } && it.isMissingCompatMetadata() }) {
                 reporter.reportOn(
-                    defaultValue.source,
-                    ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+                    declaration.source,
+                    ComposeErrors.DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
                     context
                 )
             }
@@ -95,3 +98,7 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 }
+
+@OptIn(SymbolInternals::class)
+private fun FirFunctionSymbol<*>.isMissingCompatMetadata(): Boolean =
+    origin == FirDeclarationOrigin.Library && fir.composeMetadata?.supportsOpenFunctionsWithDefaultParams() != true

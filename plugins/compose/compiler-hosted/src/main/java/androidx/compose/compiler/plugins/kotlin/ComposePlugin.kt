@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import java.io.FileNotFoundException
 
+internal const val COMPOSE_PLUGIN_ID = "androidx.compose.compiler.plugins.kotlin"
+
 object ComposeConfiguration {
     val LIVE_LITERALS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable Live Literals code generation")
@@ -85,7 +87,9 @@ object ComposeConfiguration {
 @OptIn(ExperimentalCompilerApi::class)
 class ComposeCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val PLUGIN_ID = "androidx.compose.compiler.plugins.kotlin"
+        // NOTE: this property is public and is used by IDE plugins and other compiler plugins.
+        val PLUGIN_ID = COMPOSE_PLUGIN_ID
+
         val LIVE_LITERALS_ENABLED_OPTION = CliOption(
             "liveLiterals",
             "<true|false>",
@@ -520,7 +524,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
 }
 
 fun featureFlagName() =
-    "plugin:${ComposeCommandLineProcessor.PLUGIN_ID}:${
+    "plugin:${COMPOSE_PLUGIN_ID}:${
         ComposeCommandLineProcessor.FEATURE_FLAG_OPTION.optionName
     }"
 

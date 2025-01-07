@@ -284,29 +284,34 @@ abstract class Test {
   static val %stable: Int = 0
   @Composable
   @JvmSynthetic
+  @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
   fun PublicExample(data: Data, %composer: Composer?, %changed: Int, %default: Int) {
     return PublicExample(data, %composer, %changed, %default)
   }
   @Composable
   @PublishedApi
   @JvmSynthetic
+  @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
   internal fun PublishedExample(data: Data, %composer: Composer?, %changed: Int, %default: Int) {
     return PublishedExample(data, %composer, %changed, %default)
   }
   @Composable
   @JvmSynthetic
+  @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
   protected fun ProtectedExample(data: Data, %composer: Composer?, %changed: Int, %default: Int) {
     return ProtectedExample(data, %composer, %changed, %default)
   }
 }
 @Composable
 @JvmSynthetic
+@Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
 fun Example(data: Data, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   return Example(data, intData, %composer, %changed, %default)
 }
 @Composable
 @PublishedApi
 @JvmSynthetic
+@Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
 internal fun PublishedExample(data: Data, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   return PublishedExample(data, intData, %composer, %changed, %default)
 }
