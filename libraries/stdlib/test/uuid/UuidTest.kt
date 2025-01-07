@@ -99,6 +99,41 @@ class UuidTest {
         }
     }
 
+    @Test
+    fun fromUByteArray() {
+        assertEquals(
+            uuidString,
+            Uuid.fromUByteArray(uuidByteArray.asUByteArray()).toString()
+        )
+        assertSame(
+            Uuid.NIL,
+            Uuid.fromUByteArray(UByteArray(16))
+        )
+        assertEquals(
+            uuidStringMax,
+            Uuid.fromUByteArray(UByteArray(16) { 0xFFu }).toString()
+        )
+
+        // Illegal UByteArray size
+        assertFailsWith<IllegalArgumentException> { Uuid.fromUByteArray(UByteArray(0)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.fromUByteArray(UByteArray(15)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.fromUByteArray(UByteArray(17)) }
+
+        // Truncating the illegal UByteArray
+        val ubyteArray = UByteArray(32) { it.toUByte() }
+        val ubyteArrayContent = ubyteArray.joinToString()
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.fromUByteArray(ubyteArray)
+        }.also { exception ->
+            assertContains(exception.message!!, "but was [$ubyteArrayContent] of size 32")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Uuid.fromUByteArray(ubyteArray + 32.toUByte())
+        }.also { exception ->
+            assertContains(exception.message!!, "but was [$ubyteArrayContent, ...] of size 33")
+        }
+    }
+
     private fun String.mixedcase(): String = map {
         if (Random.nextBoolean()) it.uppercase() else it.lowercase()
     }.joinToString("")
@@ -296,6 +331,13 @@ class UuidTest {
         assertContentEquals(uuidByteArray, uuid.toByteArray())
         assertContentEquals(ByteArray(16), Uuid.NIL.toByteArray())
         assertContentEquals(ByteArray(16) { -1 }, Uuid.parse(uuidStringMax).toByteArray())
+    }
+
+    @Test
+    fun toUByteArray() {
+        assertContentEquals(uuidByteArray.asUByteArray(), uuid.toUByteArray())
+        assertContentEquals(UByteArray(16), Uuid.NIL.toUByteArray())
+        assertContentEquals(UByteArray(16) { 0xFFu }, Uuid.parse(uuidStringMax).toUByteArray())
     }
 
     @Test

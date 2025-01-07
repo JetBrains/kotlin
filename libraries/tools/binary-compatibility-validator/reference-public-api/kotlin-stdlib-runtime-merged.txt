@@ -6366,11 +6366,13 @@ public final class kotlin/uuid/Uuid : java/io/Serializable, java/lang/Comparable
 	public final fun toByteArray ()[B
 	public final fun toHexString ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
+	public final fun toUByteArray-TcUX1vc ()[B
 }
 
 public final class kotlin/uuid/Uuid$Companion {
 	public final fun fromByteArray ([B)Lkotlin/uuid/Uuid;
 	public final fun fromLongs (JJ)Lkotlin/uuid/Uuid;
+	public final fun fromUByteArray-GBYM_sE ([B)Lkotlin/uuid/Uuid;
 	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/uuid/Uuid;
 	public final fun getLEXICAL_ORDER ()Ljava/util/Comparator;
 	public final fun getNIL ()Lkotlin/uuid/Uuid;
