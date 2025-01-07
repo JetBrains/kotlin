@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 
 /**
  * Get the default null/0 value for the type.
@@ -104,3 +107,21 @@ val IrTypeParameter.representativeUpperBound: IrType
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
         } ?: superTypes.first()
     }
+
+@DeprecatedForRemovalCompilerApi(
+    CompilerVersionOfApiDeprecation._2_1_20,
+    "Moved to different package",
+    "org.jetbrains.kotlin.ir.util.erasedUpperBound"
+)
+// generic parameter to deprioritize in overload resolution against moved one if both are star-imported
+val <T : IrTypeParameter> T.erasedUpperBound
+    get() = /*org.jetbrains.kotlin.ir.util.*/erasedUpperBound
+
+@DeprecatedForRemovalCompilerApi(
+    CompilerVersionOfApiDeprecation._2_1_20,
+    "Moved to different package",
+    "org.jetbrains.kotlin.ir.util.erasedUpperBound"
+)
+// generic parameter to deprioritize in overload resolution against moved one if both are star-imported
+val <T : IrType> T.erasedUpperBound: IrClass
+    get() = /*org.jetbrains.kotlin.ir.util.*/erasedUpperBound
