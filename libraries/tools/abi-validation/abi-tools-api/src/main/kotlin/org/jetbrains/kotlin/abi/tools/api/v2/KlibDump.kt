@@ -130,19 +130,22 @@ public interface KlibDump {
     public fun print(file: File): File
 
     /**
-     * Merges [targetsFromOther] targets from [other] dump into this one.
+     * Tries to derive the ABI for the specified [target] from the actual this dump in and the previous dump in [previousDump].
      *
-     * There are several rules that work when merging:
-     * - If target in [targetsFromOther] exists in [other] dump but does not exist in this dump - declaration all declarations copied to this dump
-     * - If this dump is empty and target in [targetsFromOther] is present in it [other] dump - it is added to this dump as is.
-     * - If this dump is empty and target in [targetsFromOther] is not present in it [other] dump - nothing happen.
-     * - If this dump and [other] dump are empty - [IllegalStateException] is thrown.
+     * Calling this function makes sense only when the current dump does not contain some targets that
+     * are present in the [previousDump] due to the fact that compilation of these targets is not supported on the current host.
      *
-     * Additional merging rule:
-     * - If the targets from this dump have common declarations on some level ('all', 'native', 'linux', etc.) and target
-     * in [targetsFromOther] also belongs to this group - these common declarations also added to this target in this dump.
+     * Depending on the values passed, the function works differently:
+     * - if this dump contains any targets: common declarations for closest targets* present in them all merged with
+     * declarations from [previousDump] for [target] (if present) but which are not found in any of the other targets from the [previousDump]
+     * - if this dump is empty and [target] is present in [previousDump]: all declaration for [target] from [previousDump]
+     * - if this dump is empty and [target] is not present in not-empty [previousDump]: empty dump
+     * - if this dump and [previousDump] are empty: throw [IllegalStateException] because there is no source of information from
+     * where we can infer ABI for the [target].
      *
-     * @throws IllegalStateException if this dump and [other] have no targets
+     *
+     * *Closest targets is a related targets that have a common ancestor with [target].
+     * Because in the end, all goals have a common root ancestor, so the targets with the closest to [target] are returned.
      */
-    public fun partialMerge(other: KlibDump, targetsFromOther: List<KlibTarget>)
+    public fun inferAbiForUnsupportedTarget(previousDump: KlibDump, target: KlibTarget): KlibDump
 }
