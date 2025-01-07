@@ -23140,6 +23140,12 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters")
     @TestDataPath("$PROJECT_ROOT")
     public class ContextParameters {
+      @Test
+      @TestMetadata("expectActualMatch.kt")
+      public void testExpectActualMatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/expectActualMatch.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics")
       @TestDataPath("$PROJECT_ROOT")

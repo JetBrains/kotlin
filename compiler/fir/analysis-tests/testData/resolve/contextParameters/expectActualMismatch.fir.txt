@@ -1,0 +1,106 @@
+Module: m1-common
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final expect val expectWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|)
+    public final expect val actualWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|, c: R|C|)
+    public final expect val mismatchedContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|)
+    public final expect val wrongContextType: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|)
+    public final expect val wrongContextName: R|kotlin/String|
+        public get(): R|kotlin/String|
+FILE: jvm.kt
+    context(a: R|A|)
+    public final actual val expectWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final actual val actualWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(a: R|A|)
+    public final actual val mismatchedContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(a: R|C|)
+    public final actual val wrongContextType: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(c: R|A|)
+    public final actual val wrongContextName: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+Module: m2-jvm
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final expect val expectWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|)
+    public final expect val actualWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|, c: R|C|)
+    public final expect val mismatchedContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|)
+    public final expect val wrongContextType: R|kotlin/String|
+        public get(): R|kotlin/String|
+    context(a: R|A|)
+    public final expect val wrongContextName: R|kotlin/String|
+        public get(): R|kotlin/String|
+FILE: jvm.kt
+    context(a: R|A|)
+    public final actual val expectWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final actual val actualWithoutContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(a: R|A|)
+    public final actual val mismatchedContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(a: R|C|)
+    public final actual val wrongContextType: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(c: R|A|)
+    public final actual val wrongContextName: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }

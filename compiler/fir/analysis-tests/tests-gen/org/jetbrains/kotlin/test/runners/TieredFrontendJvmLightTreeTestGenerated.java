@@ -28471,6 +28471,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
+      @TestMetadata("expectActualMismatch.kt")
+      public void testExpectActualMismatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/expectActualMismatch.kt");
+      }
+
+      @Test
       @TestMetadata("smoke.kt")
       public void testSmoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");

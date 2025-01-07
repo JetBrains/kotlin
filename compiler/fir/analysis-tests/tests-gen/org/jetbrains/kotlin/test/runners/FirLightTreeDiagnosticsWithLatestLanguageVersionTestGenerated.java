@@ -1760,6 +1760,18 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("expectActualMatch.kt")
+      public void testExpectActualMatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/expectActualMatch.kt");
+      }
+
+      @Test
+      @TestMetadata("expectActualMismatch.kt")
+      public void testExpectActualMismatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/expectActualMismatch.kt");
+      }
+
+      @Test
       @TestMetadata("smoke.kt")
       public void testSmoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");
