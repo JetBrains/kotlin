@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
-import org.jetbrains.kotlin.ir.generator.legacyVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
 import org.jetbrains.kotlin.ir.generator.irTypeProjectionType
 import org.jetbrains.kotlin.ir.generator.model.Element
@@ -24,10 +23,7 @@ internal class TypeVisitorVoidPrinter(
         get() = StandardTypes.nothing.copy(nullable = true)
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(
-            typeVisitorType.withArgs(StandardTypes.unit, visitorDataType),
-            legacyVisitorVoidType
-        )
+        get() = listOf(typeVisitorType.withArgs(StandardTypes.unit, visitorDataType))
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = emptyList()
@@ -68,9 +64,8 @@ internal class TypeVisitorVoidPrinter(
     }
 
     override fun printMethodsForElement(element: Element) {
+        if (element.parentInVisitor == null && !element.isRootElement) return
         val irTypeFields = element.getFieldsWithIrTypeType()
-        if (irTypeFields.isEmpty()) return
-        if (element.parentInVisitor == null) return
         printer.run {
             println()
             printVisitMethodDeclaration(element, hasDataParameter = true, modality = Modality.FINAL, override = true)
@@ -78,14 +73,16 @@ internal class TypeVisitorVoidPrinter(
                 println(element.visitFunctionName, "(", element.visitorParameterName, ")")
             }
             println()
-            printVisitMethodDeclaration(element, hasDataParameter = false, override = true)
+            printVisitMethodDeclaration(element, hasDataParameter = false,  modality = Modality.OPEN, override = false)
             printBlock {
                 printTypeRemappings(
                     element,
                     irTypeFields,
                     hasDataParameter = false,
                 )
-                println("super<", legacyVisitorVoidType.render(), ">.", element.visitFunctionName, "(", element.visitorParameterName, ")")
+                element.parentInVisitor?.let {
+                    println(it.visitFunctionName, "(", element.visitorParameterName, ")")
+                }
             }
         }
     }
