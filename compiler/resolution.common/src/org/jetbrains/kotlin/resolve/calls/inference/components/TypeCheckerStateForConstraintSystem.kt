@@ -19,6 +19,7 @@ abstract class TypeCheckerStateForConstraintSystem(
 ) : TypeCheckerState(
     isErrorTypeEqualsToAnything = true,
     isStubTypeEqualsToAnything = true,
+    isDnnTypesEqualToFlexible = false,
     allowedTypeVariable = false,
     typeSystemContext = extensionTypeContext,
     kotlinTypePreparator,

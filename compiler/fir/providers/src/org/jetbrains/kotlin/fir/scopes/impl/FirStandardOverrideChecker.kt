@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -25,7 +27,10 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
         val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
         val substitutedBaseType = substitutor.substituteOrSelf(baseType)
-        return AbstractTypeChecker.equalTypes(context, substitutedCandidateType, substitutedBaseType)
+        return AbstractTypeChecker.equalTypes(
+            context, substitutedCandidateType, substitutedBaseType,
+            dnnTypesEqualToFlexible = session.languageVersionSettings.supportsFeature(LanguageFeature.AllowDnnTypeOverridingFlexibleType)
+        )
     }
 
     fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor): Boolean {

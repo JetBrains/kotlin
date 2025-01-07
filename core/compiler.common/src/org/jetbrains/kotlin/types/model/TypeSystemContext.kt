@@ -101,7 +101,8 @@ interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
 interface TypeCheckerProviderContext {
     fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
+        dnnTypesEqualToFlexible: Boolean = false,
     ): TypeCheckerState
 }
 

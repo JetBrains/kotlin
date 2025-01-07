@@ -376,6 +376,7 @@ enum class LanguageFeature(
     AvoidWrongOptimizationOfTypeOperatorsOnValueClasses(KOTLIN_2_2), // KT-67517, KT-67518, KT-67520
     ForbidSyntheticPropertiesWithoutBaseJavaGetter(KOTLIN_2_2, kind = BUG_FIX), // KT-72305, KT-64358
     AnnotationDefaultTargetMigrationWarning(KOTLIN_2_2, kind = BUG_FIX), // KT-73255, KT-73494
+    AllowDnnTypeOverridingFlexibleType(KOTLIN_2_2, kind = OTHER), // KT-74049
 
     // 2.3
 

@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +AllowDnnTypeOverridingFlexibleType
 // FILE: Super.java
 public interface Super {
     <A> A foo(Class<A> klass);

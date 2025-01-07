@@ -1,7 +1,7 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74049
-// LANGUAGE: +AllowDnnTypeOverridingFlexibleType
-// DUMP_IR
+// FIR_IDENTICAL
+// LANGUAGE: -AllowDnnTypeOverridingFlexibleType
 
 // FILE: Inv.java
 public class Inv<T> {
@@ -28,13 +28,11 @@ class FooImpl2<E1>(val e: E1) : Foo<E1> {
     override fun bar(): Inv<E1> = Inv(e)
 }
 
-open class FooImpl3<E1>(val e: E1) : Foo<E1> {
-    override fun foo(t: E1 & Any) {} // Should be OK
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl3<!><E1>(val e: E1) : Foo<E1> {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(t: E1 & Any) {} // Should be OK
 
-    override fun bar(): Inv<E1 & Any> = Inv(e!!)
+    override fun bar(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Inv<E1 & Any><!> = Inv(e!!)
 }
-
-class FooImpl<S>(s: S) : FooImpl3<S>(s)
 
 open class Aside<S>(val s: S) {
     fun foo(t: S & Any) {}
@@ -42,4 +40,4 @@ open class Aside<S>(val s: S) {
     fun bar(): Inv<S & Any> = Inv(s!!)
 }
 
-class Diamond<D>(d: D) : Foo<D>, Aside<D>(d)
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED, RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Diamond<!><D>(d: D) : Foo<D>, Aside<D>(d)

@@ -10495,6 +10495,12 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       }
 
       @Test
+      @TestMetadata("overrideWithTypeParameter.kt")
+      public void testOverrideWithTypeParameter() {
+        runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("overrideWithTypeParameterReverse.kt")
       public void testOverrideWithTypeParameterReverse() {
         runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameterReverse.kt");
@@ -13863,6 +13869,12 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       @TestMetadata("diamondWithDiagonal.kt")
       public void testDiamondWithDiagonal() {
         runTest("compiler/testData/diagnostics/tests/override/diamondWithDiagonal.kt");
+      }
+
+      @Test
+      @TestMetadata("dnnOverridesFlexible.kt")
+      public void testDnnOverridesFlexible() {
+        runTest("compiler/testData/diagnostics/tests/override/dnnOverridesFlexible.kt");
       }
 
       @Test

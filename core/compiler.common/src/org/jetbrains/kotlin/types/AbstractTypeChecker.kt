@@ -20,10 +20,18 @@ import java.util.*
  *
  * Once some type-checker operation is performed using a [TypeCheckerProviderContext], for example a [AbstractTypeChecker.isSubtypeOf],
  * new instance of particular [TypeCheckerState] should be created, with properly specified type system context
+ *
  */
 open class TypeCheckerState(
     val isErrorTypeEqualsToAnything: Boolean,
     val isStubTypeEqualsToAnything: Boolean,
+    /**
+     * Hacky flag related to overrides binding against Java [KT-74049](https://youtrack.jetbrains.com/issue/KT-74049).
+     * Normally should be false. Its true state makes true the predicate that is normally false: `T & Any = T .. T?`.
+     * This is required sometimes to avoid nullability warnings [KT-58933](https://youtrack.jetbrains.com/issue/KT-58933)
+     * or even to compile the code [KT-73760](https://youtrack.jetbrains.com/issue/KT-73760) when T! and T & Any from Java are intersected.
+     */
+    val isDnnTypesEqualToFlexible: Boolean,
     val allowedTypeVariable: Boolean,
     val typeSystemContext: TypeSystemContext,
     val kotlinTypePreparator: AbstractTypePreparator,
@@ -243,9 +251,13 @@ object AbstractTypeChecker {
         context: TypeCheckerProviderContext,
         a: KotlinTypeMarker,
         b: KotlinTypeMarker,
-        stubTypesEqualToAnything: Boolean = true
+        stubTypesEqualToAnything: Boolean = true,
+        dnnTypesEqualToFlexible: Boolean = false,
     ): Boolean {
-        return equalTypes(context.newTypeCheckerState(false, stubTypesEqualToAnything), a, b)
+        return equalTypes(
+            context.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything, dnnTypesEqualToFlexible),
+            a, b
+        )
     }
 
     @JvmOverloads
@@ -290,6 +302,17 @@ object AbstractTypeChecker {
     ): Boolean = with(state.typeSystemContext) {
         val preparedSubType = state.prepareType(state.refineType(subType))
         val preparedSuperType = state.prepareType(state.refineType(superType))
+
+        // With this flag (true for override matching), `T .. T? <: T & Any` is true (normally it's not so).
+        // Together with `T & Any <: T .. T?` being satisfied via regular subtyping, we get `T .. T? = T & Any` for override matching.
+        if (state.isDnnTypesEqualToFlexible && preparedSubType.isFlexible() && preparedSuperType.isDefinitelyNotNullType()) {
+            return completeIsSubTypeOf(
+                state,
+                preparedSubType.asFlexibleType()!!.lowerBound(),
+                preparedSuperType.asRigidType()!!.originalIfDefinitelyNotNullable(),
+                isFromNullabilityConstraint
+            )
+        }
 
         checkSubtypeForSpecialCases(state, preparedSubType.lowerBoundIfFlexible(), preparedSuperType.upperBoundIfFlexible())?.let {
             state.addSubtypeConstraint(preparedSubType, preparedSuperType, isFromNullabilityConstraint)

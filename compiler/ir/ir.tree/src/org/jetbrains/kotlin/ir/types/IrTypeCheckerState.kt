@@ -13,6 +13,7 @@ fun createIrTypeCheckerState(typeSystemContext: IrTypeSystemContext): TypeChecke
     return TypeCheckerState(
         isErrorTypeEqualsToAnything = false,
         isStubTypeEqualsToAnything = false,
+        isDnnTypesEqualToFlexible = false,
         allowedTypeVariable = false,
         typeSystemContext = typeSystemContext,
         kotlinTypePreparator = AbstractTypePreparator.Default,

@@ -32133,6 +32133,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("dnnOverridesFlexibleOff.kt")
+      public void testDnnOverridesFlexibleOff() {
+        runTest("compiler/testData/diagnostics/tests/override/dnnOverridesFlexibleOff.kt");
+      }
+
+      @Test
       @TestMetadata("DuplicateMethod.kt")
       public void testDuplicateMethod() {
         runTest("compiler/testData/diagnostics/tests/override/DuplicateMethod.kt");
@@ -32424,6 +32430,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("overridesWithFlexibleBase.kt")
       public void testOverridesWithFlexibleBase() {
         runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBase.kt");
+      }
+
+      @Test
+      @TestMetadata("overridesWithFlexibleBaseOff.kt")
+      public void testOverridesWithFlexibleBaseOff() {
+        runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBaseOff.kt");
       }
 
       @Test

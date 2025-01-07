@@ -1,0 +1,265 @@
+FILE fqName:<root> fileName:/main.kt
+  CLASS CLASS name:Aside modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Aside<S of <root>.Aside>
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:s visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:s type:S of <root>.Aside visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 's: S of <root>.Aside declared in <root>.Aside.<init>' type=S of <root>.Aside origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.Aside<S of <root>.Aside>) returnType:S of <root>.Aside
+        correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Aside<S of <root>.Aside>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-s> (): S of <root>.Aside declared in <root>.Aside'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:S of <root>.Aside visibility:private [final]' type=S of <root>.Aside origin=null
+              receiver: GET_VAR '<this>: <root>.Aside<S of <root>.Aside> declared in <root>.Aside.<get-s>' type=<root>.Aside<S of <root>.Aside> origin=null
+    CONSTRUCTOR visibility:public <> (s:S of <root>.Aside) returnType:<root>.Aside<S of <root>.Aside> [primary]
+      VALUE_PARAMETER name:s index:0 type:S of <root>.Aside
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Aside modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:FINAL <> ($this:<root>.Aside<S of <root>.Aside>) returnType:<root>.Inv<{S of <root>.Aside & Any}>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Aside<S of <root>.Aside>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun bar (): <root>.Inv<{S of <root>.Aside & Any}> declared in <root>.Aside'
+          CONSTRUCTOR_CALL 'public constructor <init> (t: @[FlexibleNullability] T of <root>.Inv?) declared in <root>.Inv' type=<root>.Inv<{S of <root>.Aside & Any}> origin=null
+            <class: T>: {S of <root>.Aside & Any}
+            t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={S of <root>.Aside & Any} origin=EXCLEXCL
+              <T0>: {S of <root>.Aside & Any}
+              arg0: CALL 'public final fun <get-s> (): S of <root>.Aside declared in <root>.Aside' type=S of <root>.Aside origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.Aside<S of <root>.Aside> declared in <root>.Aside.bar' type=<root>.Aside<S of <root>.Aside> origin=null
+    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Aside<S of <root>.Aside>, t:{S of <root>.Aside & Any}) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Aside<S of <root>.Aside>
+      VALUE_PARAMETER name:t index:0 type:{S of <root>.Aside & Any}
+      BLOCK_BODY
+  CLASS CLASS name:Diamond modality:FINAL visibility:public superTypes:[<root>.Foo<D of <root>.Diamond>; <root>.Aside<D of <root>.Diamond>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Diamond<D of <root>.Diamond>
+    TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> (d:D of <root>.Diamond) returnType:<root>.Diamond<D of <root>.Diamond> [primary]
+      VALUE_PARAMETER name:d index:0 type:D of <root>.Diamond
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: S of <root>.Aside) declared in <root>.Aside'
+          <S>: D of <root>.Diamond
+          s: GET_VAR 'd: D of <root>.Diamond declared in <root>.Diamond.<init>' type=D of <root>.Diamond origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Diamond modality:FINAL visibility:public superTypes:[<root>.Foo<D of <root>.Diamond>; <root>.Aside<D of <root>.Diamond>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:FINAL <> ($this:<root>.Aside<D of <root>.Diamond>) returnType:<root>.Inv<{D of <root>.Diamond & Any}> [fake_override]
+      overridden:
+        public abstract fun bar (): @[FlexibleNullability] <root>.Inv<@[FlexibleNullability] T of <root>.Foo?>? declared in <root>.Foo
+        public final fun bar (): <root>.Inv<{S of <root>.Aside & Any}> declared in <root>.Aside
+      $this: VALUE_PARAMETER name:<this> type:<root>.Aside<D of <root>.Diamond>
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Foo
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Aside
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Foo<D of <root>.Diamond>, t:@[FlexibleNullability] D of <root>.Diamond?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public abstract fun foo (t: @[FlexibleNullability] T of <root>.Foo?): kotlin.Unit declared in <root>.Foo
+        public final fun foo (t: {S of <root>.Aside & Any}): kotlin.Unit declared in <root>.Aside
+      $this: VALUE_PARAMETER name:<this> type:<root>.Foo<D of <root>.Diamond>
+      VALUE_PARAMETER name:t index:0 type:@[FlexibleNullability] D of <root>.Diamond?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Foo
+        public open fun hashCode (): kotlin.Int declared in <root>.Aside
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Foo
+        public open fun toString (): kotlin.String declared in <root>.Aside
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:s visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final s: S of <root>.Aside declared in <root>.Aside
+      FUN FAKE_OVERRIDE name:<get-s> visibility:public modality:FINAL <> ($this:<root>.Aside<D of <root>.Diamond>) returnType:D of <root>.Diamond [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:s visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-s> (): S of <root>.Aside declared in <root>.Aside
+        $this: VALUE_PARAMETER name:<this> type:<root>.Aside<D of <root>.Diamond>
+  CLASS CLASS name:FooImpl modality:FINAL visibility:public superTypes:[<root>.FooImpl3<S of <root>.FooImpl>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FooImpl<S of <root>.FooImpl>
+    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> (s:S of <root>.FooImpl) returnType:<root>.FooImpl<S of <root>.FooImpl> [primary]
+      VALUE_PARAMETER name:s index:0 type:S of <root>.FooImpl
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (e: E1 of <root>.FooImpl3) declared in <root>.FooImpl3'
+          <E1>: S of <root>.FooImpl
+          e: GET_VAR 's: S of <root>.FooImpl declared in <root>.FooImpl.<init>' type=S of <root>.FooImpl origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooImpl modality:FINAL visibility:public superTypes:[<root>.FooImpl3<S of <root>.FooImpl>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.FooImpl3<S of <root>.FooImpl>) returnType:<root>.Inv<{S of <root>.FooImpl & Any}> [fake_override]
+      overridden:
+        public open fun bar (): <root>.Inv<{E1 of <root>.FooImpl3 & Any}> declared in <root>.FooImpl3
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl3<S of <root>.FooImpl>
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FooImpl3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.FooImpl3<S of <root>.FooImpl>, t:{S of <root>.FooImpl & Any}) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (t: {E1 of <root>.FooImpl3 & Any}): kotlin.Unit declared in <root>.FooImpl3
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl3<S of <root>.FooImpl>
+      VALUE_PARAMETER name:t index:0 type:{S of <root>.FooImpl & Any}
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.FooImpl3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.FooImpl3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final e: E1 of <root>.FooImpl3 declared in <root>.FooImpl3
+      FUN FAKE_OVERRIDE name:<get-e> visibility:public modality:FINAL <> ($this:<root>.FooImpl3<S of <root>.FooImpl>) returnType:S of <root>.FooImpl [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-e> (): E1 of <root>.FooImpl3 declared in <root>.FooImpl3
+        $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl3<S of <root>.FooImpl>
+  CLASS CLASS name:FooImpl1 modality:FINAL visibility:public superTypes:[<root>.Foo<E1 of <root>.FooImpl1>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FooImpl1<E1 of <root>.FooImpl1>
+    TYPE_PARAMETER name:E1 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FooImpl1<E1 of <root>.FooImpl1> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooImpl1 modality:FINAL visibility:public superTypes:[<root>.Foo<E1 of <root>.FooImpl1>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:OPEN <> ($this:<root>.FooImpl1<E1 of <root>.FooImpl1>) returnType:<root>.Inv<E1 of <root>.FooImpl1?>
+      overridden:
+        public abstract fun bar (): @[FlexibleNullability] <root>.Inv<@[FlexibleNullability] T of <root>.Foo?>? declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl1<E1 of <root>.FooImpl1>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar (): <root>.Inv<E1 of <root>.FooImpl1?> declared in <root>.FooImpl1'
+          CONSTRUCTOR_CALL 'public constructor <init> (t: @[FlexibleNullability] T of <root>.Inv?) declared in <root>.Inv' type=<root>.Inv<E1 of <root>.FooImpl1?> origin=null
+            <class: T>: @[FlexibleNullability] E1 of <root>.FooImpl1?
+            t: CONST Null type=kotlin.Nothing? value=null
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.FooImpl1<E1 of <root>.FooImpl1>, t:E1 of <root>.FooImpl1?) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo (t: @[FlexibleNullability] T of <root>.Foo?): kotlin.Unit declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl1<E1 of <root>.FooImpl1>
+      VALUE_PARAMETER name:t index:0 type:E1 of <root>.FooImpl1?
+      BLOCK_BODY
+  CLASS CLASS name:FooImpl2 modality:FINAL visibility:public superTypes:[<root>.Foo<E1 of <root>.FooImpl2>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FooImpl2<E1 of <root>.FooImpl2>
+    TYPE_PARAMETER name:E1 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:e visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:e type:E1 of <root>.FooImpl2 visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'e: E1 of <root>.FooImpl2 declared in <root>.FooImpl2.<init>' type=E1 of <root>.FooImpl2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e> visibility:public modality:FINAL <> ($this:<root>.FooImpl2<E1 of <root>.FooImpl2>) returnType:E1 of <root>.FooImpl2
+        correspondingProperty: PROPERTY name:e visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl2<E1 of <root>.FooImpl2>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-e> (): E1 of <root>.FooImpl2 declared in <root>.FooImpl2'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e type:E1 of <root>.FooImpl2 visibility:private [final]' type=E1 of <root>.FooImpl2 origin=null
+              receiver: GET_VAR '<this>: <root>.FooImpl2<E1 of <root>.FooImpl2> declared in <root>.FooImpl2.<get-e>' type=<root>.FooImpl2<E1 of <root>.FooImpl2> origin=null
+    CONSTRUCTOR visibility:public <> (e:E1 of <root>.FooImpl2) returnType:<root>.FooImpl2<E1 of <root>.FooImpl2> [primary]
+      VALUE_PARAMETER name:e index:0 type:E1 of <root>.FooImpl2
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooImpl2 modality:FINAL visibility:public superTypes:[<root>.Foo<E1 of <root>.FooImpl2>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:OPEN <> ($this:<root>.FooImpl2<E1 of <root>.FooImpl2>) returnType:<root>.Inv<E1 of <root>.FooImpl2>
+      overridden:
+        public abstract fun bar (): @[FlexibleNullability] <root>.Inv<@[FlexibleNullability] T of <root>.Foo?>? declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl2<E1 of <root>.FooImpl2>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar (): <root>.Inv<E1 of <root>.FooImpl2> declared in <root>.FooImpl2'
+          CONSTRUCTOR_CALL 'public constructor <init> (t: @[FlexibleNullability] T of <root>.Inv?) declared in <root>.Inv' type=<root>.Inv<E1 of <root>.FooImpl2> origin=null
+            <class: T>: E1 of <root>.FooImpl2
+            t: CALL 'public final fun <get-e> (): E1 of <root>.FooImpl2 declared in <root>.FooImpl2' type=E1 of <root>.FooImpl2 origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.FooImpl2<E1 of <root>.FooImpl2> declared in <root>.FooImpl2.bar' type=<root>.FooImpl2<E1 of <root>.FooImpl2> origin=null
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.FooImpl2<E1 of <root>.FooImpl2>, t:E1 of <root>.FooImpl2) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo (t: @[FlexibleNullability] T of <root>.Foo?): kotlin.Unit declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl2<E1 of <root>.FooImpl2>
+      VALUE_PARAMETER name:t index:0 type:E1 of <root>.FooImpl2
+      BLOCK_BODY
+  CLASS CLASS name:FooImpl3 modality:OPEN visibility:public superTypes:[<root>.Foo<E1 of <root>.FooImpl3>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FooImpl3<E1 of <root>.FooImpl3>
+    TYPE_PARAMETER name:E1 index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:e visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:e type:E1 of <root>.FooImpl3 visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'e: E1 of <root>.FooImpl3 declared in <root>.FooImpl3.<init>' type=E1 of <root>.FooImpl3 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e> visibility:public modality:FINAL <> ($this:<root>.FooImpl3<E1 of <root>.FooImpl3>) returnType:E1 of <root>.FooImpl3
+        correspondingProperty: PROPERTY name:e visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl3<E1 of <root>.FooImpl3>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-e> (): E1 of <root>.FooImpl3 declared in <root>.FooImpl3'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e type:E1 of <root>.FooImpl3 visibility:private [final]' type=E1 of <root>.FooImpl3 origin=null
+              receiver: GET_VAR '<this>: <root>.FooImpl3<E1 of <root>.FooImpl3> declared in <root>.FooImpl3.<get-e>' type=<root>.FooImpl3<E1 of <root>.FooImpl3> origin=null
+    CONSTRUCTOR visibility:public <> (e:E1 of <root>.FooImpl3) returnType:<root>.FooImpl3<E1 of <root>.FooImpl3> [primary]
+      VALUE_PARAMETER name:e index:0 type:E1 of <root>.FooImpl3
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FooImpl3 modality:OPEN visibility:public superTypes:[<root>.Foo<E1 of <root>.FooImpl3>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:OPEN <> ($this:<root>.FooImpl3<E1 of <root>.FooImpl3>) returnType:<root>.Inv<{E1 of <root>.FooImpl3 & Any}>
+      overridden:
+        public abstract fun bar (): @[FlexibleNullability] <root>.Inv<@[FlexibleNullability] T of <root>.Foo?>? declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl3<E1 of <root>.FooImpl3>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar (): <root>.Inv<{E1 of <root>.FooImpl3 & Any}> declared in <root>.FooImpl3'
+          CONSTRUCTOR_CALL 'public constructor <init> (t: @[FlexibleNullability] T of <root>.Inv?) declared in <root>.Inv' type=<root>.Inv<{E1 of <root>.FooImpl3 & Any}> origin=null
+            <class: T>: {E1 of <root>.FooImpl3 & Any}
+            t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={E1 of <root>.FooImpl3 & Any} origin=EXCLEXCL
+              <T0>: {E1 of <root>.FooImpl3 & Any}
+              arg0: CALL 'public final fun <get-e> (): E1 of <root>.FooImpl3 declared in <root>.FooImpl3' type=E1 of <root>.FooImpl3 origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.FooImpl3<E1 of <root>.FooImpl3> declared in <root>.FooImpl3.bar' type=<root>.FooImpl3<E1 of <root>.FooImpl3> origin=null
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.FooImpl3<E1 of <root>.FooImpl3>, t:{E1 of <root>.FooImpl3 & Any}) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo (t: @[FlexibleNullability] T of <root>.Foo?): kotlin.Unit declared in <root>.Foo
+      $this: VALUE_PARAMETER name:<this> type:<root>.FooImpl3<E1 of <root>.FooImpl3>
+      VALUE_PARAMETER name:t index:0 type:{E1 of <root>.FooImpl3 & Any}
+      BLOCK_BODY
