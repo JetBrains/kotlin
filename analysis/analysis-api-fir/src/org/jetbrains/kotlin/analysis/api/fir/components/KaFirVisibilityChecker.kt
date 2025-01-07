@@ -6,26 +6,31 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
@@ -38,16 +43,73 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class KaFirVisibilityChecker(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaVisibilityChecker, KaFirSessionComponent {
-    override fun isVisible(
-        candidateSymbol: KaDeclarationSymbol,
+    override fun createUseSiteVisibilityChecker(
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression?,
-        position: PsiElement
-    ): Boolean = withValidityAssertion {
-        require(candidateSymbol is KaFirSymbol<*>)
+        position: PsiElement,
+    ): KaUseSiteVisibilityChecker = withValidityAssertion {
         require(useSiteFile is KaFirFileSymbol)
+
+        val dispatchReceiver = receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
+
+        val positionModule = firResolveSession.moduleProvider.getModule(position)
+        val effectiveContainers = collectUseSiteContainers(position, firResolveSession).orEmpty()
+
+        KaFirUseSiteVisibilityChecker(
+            positionModule,
+            effectiveContainers,
+            dispatchReceiver,
+            useSiteFile,
+            firResolveSession,
+            token,
+        )
+    }
+
+    override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean = withValidityAssertion {
+        if (this is KaReceiverParameterSymbol) {
+            // Receiver parameters are local
+            return false
+        }
+
+        require(this is KaFirSymbol<*>)
+        require(classSymbol is KaFirSymbol<*>)
+
+        val memberFir = firSymbol.fir as? FirCallableDeclaration ?: return false
+        val parentClassFir = classSymbol.firSymbol.fir as? FirClass ?: return false
+
+        // Inspecting visibility requires resolving to status
+        classSymbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+
+        return memberFir.symbol.isVisibleInClass(parentClassFir.symbol, memberFir.symbol.resolvedStatus)
+    }
+
+    override fun isPublicApi(symbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
+        if (symbol is KaReceiverParameterSymbol) {
+            return isPublicApi(symbol.owningCallableSymbol)
+        }
+
+        require(symbol is KaFirSymbol<*>)
+        val declaration = symbol.firSymbol.fir as? FirMemberDeclaration ?: return false
+
+        // Inspecting visibility requires resolving to status
+        declaration.lazyResolveToPhase(FirResolvePhase.STATUS)
+        return declaration.effectiveVisibility.publicApi || declaration.publishedApiEffectiveVisibility?.publicApi == true
+    }
+}
+
+
+private class KaFirUseSiteVisibilityChecker(
+    private val positionModule: KaModule,
+    private val effectiveContainers: List<FirDeclaration>,
+    private val dispatchReceiver: FirExpression?,
+    private val useSiteFile: KaFirFileSymbol,
+    private val firResolveSession: LLFirResolveSession,
+    override val token: KaLifetimeToken,
+) : KaUseSiteVisibilityChecker {
+    override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
+        require(candidateSymbol is KaFirSymbol<*>)
 
         if (candidateSymbol is KaFirPsiJavaClassSymbol) {
             candidateSymbol.isVisibleByPsi(useSiteFile)?.let { return it }
@@ -56,11 +118,8 @@ internal class KaFirVisibilityChecker(
         val candidateDeclaration = candidateSymbol.firSymbol.fir as? FirMemberDeclaration ?: return true
 
         val dispatchReceiverCanBeExplicit = candidateSymbol is KaCallableSymbol && !candidateSymbol.isExtension
-        val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) {
-            receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
-        }
+        val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) { dispatchReceiver }
 
-        val positionModule = firResolveSession.moduleProvider.getModule(position)
         val candidateModule = candidateDeclaration.llFirModuleData.ktModule
 
         val effectiveSession = if (positionModule is KaDanglingFileModule && candidateModule != positionModule) {
@@ -70,8 +129,6 @@ internal class KaFirVisibilityChecker(
         } else {
             firResolveSession.getSessionFor(positionModule)
         }
-
-        val effectiveContainers = collectUseSiteContainers(position, firResolveSession).orEmpty()
 
         return effectiveSession.visibilityChecker.isVisible(
             candidateDeclaration,
@@ -110,36 +167,5 @@ internal class KaFirVisibilityChecker(
         }
 
         else -> null
-    }
-
-    override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean = withValidityAssertion {
-        if (this is KaReceiverParameterSymbol) {
-            // Receiver parameters are local
-            return false
-        }
-
-        require(this is KaFirSymbol<*>)
-        require(classSymbol is KaFirSymbol<*>)
-
-        val memberFir = firSymbol.fir as? FirCallableDeclaration ?: return false
-        val parentClassFir = classSymbol.firSymbol.fir as? FirClass ?: return false
-
-        // Inspecting visibility requires resolving to status
-        classSymbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-
-        return memberFir.symbol.isVisibleInClass(parentClassFir.symbol, memberFir.symbol.resolvedStatus)
-    }
-
-    override fun isPublicApi(symbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
-        if (symbol is KaReceiverParameterSymbol) {
-            return isPublicApi(symbol.owningCallableSymbol)
-        }
-
-        require(symbol is KaFirSymbol<*>)
-        val declaration = symbol.firSymbol.fir as? FirMemberDeclaration ?: return false
-
-        // Inspecting visibility requires resolving to status
-        declaration.lazyResolveToPhase(FirResolvePhase.STATUS)
-        return declaration.effectiveVisibility.publicApi || declaration.publishedApiEffectiveVisibility?.publicApi == true
     }
 }
