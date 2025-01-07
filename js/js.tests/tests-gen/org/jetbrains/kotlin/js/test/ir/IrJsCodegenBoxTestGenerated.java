@@ -20385,6 +20385,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("kt67024.kt")
+    public void testKt67024() {
+      runTest("compiler/testData/codegen/box/inline/kt67024.kt");
+    }
+
+    @Test
     @TestMetadata("kt67866.kt")
     public void testKt67866() {
       runTest("compiler/testData/codegen/box/inline/kt67866.kt");
