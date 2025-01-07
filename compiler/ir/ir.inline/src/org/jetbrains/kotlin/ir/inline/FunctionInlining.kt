@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -251,7 +252,7 @@ private class CallInlining(
 
         override fun visitCall(expression: IrCall): IrExpression {
             // TODO extract to common utils OR reuse ContractDSLRemoverLowering
-            if (expression.symbol.owner.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)) {
+            if (expression.symbol.isBound && expression.symbol.owner.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)) {
                 return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
             }
 
@@ -444,15 +445,23 @@ private class CallInlining(
     }
 
     private fun isLambdaCall(irCall: IrCall): Boolean {
-        val callee = irCall.symbol.owner
-        val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
-        // Uncomment or delete depending on KT-57249 status
-//            assert(!dispatchReceiver.type.isKFunction())
+        if (irCall.symbol.isBound) {
+                val callee = irCall.symbol.owner
+                val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
+                // Uncomment or delete depending on KT-57249 status
+                // assert(!dispatchReceiver.type.isKFunction())
 
-        return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
-                && callee.name == OperatorNameConventions.INVOKE
-                && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
-    }
+                return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
+                        && callee.name == OperatorNameConventions.INVOKE
+                        && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+            }
+
+            val signature = irCall.symbol.signature?.asPublic() ?: return false
+            return signature.packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString() && signature.declarationFqName.endsWith(".invoke") &&
+                    (signature.declarationFqName.startsWith("Function") || signature.declarationFqName.startsWith("SuspendFunction")
+                            || signature.declarationFqName.startsWith("KFunction") || signature.declarationFqName.startsWith("KSuspendFunction"))
+                    && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+        }
 
     private inner class ParameterToArgument(
         val parameter: IrValueParameter,
