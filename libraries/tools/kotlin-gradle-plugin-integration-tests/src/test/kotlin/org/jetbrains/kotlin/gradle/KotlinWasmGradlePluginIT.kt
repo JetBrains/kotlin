@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
@@ -166,12 +167,8 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
             projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
                 it.replace(
-                    "fun main() {}",
-                    """
-                            fun main() {
-                                println("Hello from Wasi")
-                            }
-                            """
+                    "println(foo())",
+                    """println("Hello from Wasi")"""
                 )
             }
 
@@ -190,6 +187,26 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             buildGradleKts.modify {
                 it.replace("<JsEngine>", "browser")
             }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsBrowserDistribution")
+
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
+
+                assertTrue("Expected one wasm file") {
+                    projectPath.resolve("build/${Distribution.DIST}/wasmJs/productionExecutable").toFile().listFiles()!!
+                        .filter { it.extension == "wasm" }
+                        .size == 1
+                }
+            }
+
+            projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").replaceText(
+                "actual fun foo(): Int = 2",
+                "actual fun foo(): Int = 3",
+            )
 
             build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
