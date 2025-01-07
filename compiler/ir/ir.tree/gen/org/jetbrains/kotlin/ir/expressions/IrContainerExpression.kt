@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.containerExpression]
@@ -22,7 +22,7 @@ abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
         statements.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         statements.transformInPlace(transformer, data)
     }
 }

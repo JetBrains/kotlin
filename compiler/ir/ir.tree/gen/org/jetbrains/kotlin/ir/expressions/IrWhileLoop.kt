@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.whileLoop]
@@ -23,7 +23,7 @@ abstract class IrWhileLoop : IrLoop() {
         body?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         condition = condition.transform(transformer, data)
         body = body?.transform(transformer, data)
     }
