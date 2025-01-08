@@ -23,20 +23,20 @@ expect val wrongContextName : String
 // FILE: jvm.kt
 
 context(a: A)
-actual val expectWithoutContext: String
+actual val <!ACTUAL_WITHOUT_EXPECT!>expectWithoutContext<!>: String
     get() = ""
 
-actual val actualWithoutContext: String
+actual val <!ACTUAL_WITHOUT_EXPECT!>actualWithoutContext<!>: String
     get() = ""
 
 context(a: A)
-actual val mismatchedContext : String
+actual val <!ACTUAL_WITHOUT_EXPECT!>mismatchedContext<!> : String
     get() = ""
 
 context(a: C)
-actual val wrongContextType : String
+actual val <!ACTUAL_WITHOUT_EXPECT!>wrongContextType<!> : String
     get() = ""
 
 context(c: A)
-actual val wrongContextName : String
+actual val <!ACTUAL_WITHOUT_EXPECT!>wrongContextName<!> : String
     get() = ""

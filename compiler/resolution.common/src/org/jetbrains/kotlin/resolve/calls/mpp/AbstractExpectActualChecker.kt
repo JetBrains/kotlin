@@ -330,6 +330,8 @@ object AbstractExpectActualChecker {
         val actualTypeParameters = actualDeclaration.typeParameters
         val expectedValueParameters = expectDeclaration.valueParameters
         val actualValueParameters = actualDeclaration.valueParameters
+        val expectedContextParameters = expectDeclaration.contextParameters
+        val actualContextParameters = actualDeclaration.contextParameters
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
             (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
@@ -353,6 +355,15 @@ object AbstractExpectActualChecker {
             !equalsBy(expectedValueParameters, actualValueParameters) { nameOf(it) }
         ) {
             return ExpectActualCheckingCompatibility.ParameterNames
+        }
+
+        if (
+            languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters) &&
+            actualDeclaration.hasStableParameterNames &&
+            expectDeclaration.hasStableParameterNames &&
+            !equalsBy(expectedContextParameters, actualContextParameters) { nameOf(it) }
+        ) {
+            return ExpectActualCheckingCompatibility.ContextParameterNames
         }
 
         if (!equalsBy(expectedTypeParameters, actualTypeParameters) { nameOf(it) }) {

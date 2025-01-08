@@ -78,6 +78,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val PropertySymbolMarker.getter: FunctionSymbolMarker?
     val PropertySymbolMarker.setter: FunctionSymbolMarker?
+    val PropertySymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
 
     fun createExpectActualTypeParameterSubstitutor(
         expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
@@ -98,6 +99,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val CallableSymbolMarker.returnTypeRef: TypeRefMarker
     val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
     val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
+    val FunctionSymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
 
     /**
      * Returns all symbols that are overridden by [this] symbol, including self
@@ -106,6 +108,13 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val CallableSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = (this as? FunctionSymbolMarker)?.valueParameters ?: emptyList()
+
+    val CallableSymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
+        get() = when (this) {
+            is FunctionSymbolMarker -> contextParameters
+            is PropertySymbolMarker -> contextParameters
+            else -> emptyList()
+        }
 
     val ValueParameterSymbolMarker.isVararg: Boolean
     val ValueParameterSymbolMarker.isNoinline: Boolean

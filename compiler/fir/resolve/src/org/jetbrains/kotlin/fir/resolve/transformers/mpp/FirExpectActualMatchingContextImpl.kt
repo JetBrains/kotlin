@@ -137,6 +137,9 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asSymbol().setterSymbol
 
+    override val PropertySymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
+        get() = asSymbol().resolvedContextParameters.map { it.symbol }
+
     override fun createExpectActualTypeParameterSubstitutor(
         expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
         parentSubstitutor: TypeSubstitutorMarker?,
@@ -288,6 +291,9 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = asSymbol().valueParameterSymbols
+
+    override val FunctionSymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
+        get() = asSymbol().resolvedContextParameters.map { it.symbol }
 
     override val ValueParameterSymbolMarker.isVararg: Boolean
         get() = asSymbol().isVararg

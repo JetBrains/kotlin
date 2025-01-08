@@ -160,6 +160,12 @@ object AbstractExpectActualMatcher {
             return ExpectActualMatchingCompatibility.ParameterCount
         }
 
+        val expectedContextParameters = expectDeclaration.contextParameters
+        val actualContextParameters = actualDeclaration.contextParameters
+        if (expectedContextParameters.size != actualContextParameters.size) {
+            return ExpectActualMatchingCompatibility.ContextParameterCount
+        }
+
         val expectedTypeParameters = expectDeclaration.typeParameters
         val actualTypeParameters = actualDeclaration.typeParameters
         if (expectedTypeParameters.size != actualTypeParameters.size) {
@@ -184,6 +190,15 @@ object AbstractExpectActualMatcher {
             )
         ) {
             return ExpectActualMatchingCompatibility.ParameterTypes
+        }
+        if (
+            !areCompatibleTypeLists(
+                toTypeList(expectedContextParameters, substitutor),
+                toTypeList(actualContextParameters, createEmptySubstitutor()),
+                insideAnnotationClass
+            )
+        ) {
+            return ExpectActualMatchingCompatibility.ContextParameterTypes
         }
 
         if (!areCompatibleTypeParameterUpperBounds(expectedTypeParameters, actualTypeParameters, substitutor)) {

@@ -37,8 +37,10 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
     object ActualJavaField : Mismatch("actualization to Java field is prohibited")
     object ParameterShape : Mismatch("parameter shapes are different (extension vs non-extension)")
     object ParameterCount : Mismatch("number of value parameters is different")
+    object ContextParameterCount : Mismatch("number of context parameters is different")
     object FunctionTypeParameterCount : Mismatch(TYPE_PARAMETER_COUNT)
     object ParameterTypes : Mismatch("parameter types are different")
+    object ContextParameterTypes : Mismatch("context parameter types are different")
     object FunctionTypeParameterUpperBounds : Mismatch(TYPE_PARAMETER_UPPER_BOUNDS)
     object MatchedSuccessfully : ExpectActualMatchingCompatibility()
 }
@@ -57,6 +59,7 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     // Callables
     object ReturnType : Incompatible<Nothing>("return type is different")
     object ParameterNames : Incompatible<Nothing>("parameter names are different")
+    object ContextParameterNames : Incompatible<Nothing>("context parameter names are different")
     object TypeParameterNames : Incompatible<Nothing>("names of type parameters are different")
     object ValueParameterVararg : Incompatible<Nothing>("some value parameter is vararg in one declaration and non-vararg in the other")
     object ValueParameterNoinline :

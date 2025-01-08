@@ -85,7 +85,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         // In such case, regular rules for annotations on overridden declarations apply.
         if (expectSymbol.isFakeOverride(containingExpectClass)) return null
         commonForClassAndCallableChecks(expectSymbol, actualSymbol)?.let { return it }
-        areAnnotationsOnValueParametersCompatible(expectSymbol, actualSymbol)?.let { return it }
+        areAnnotationsOnParametersCompatible(expectSymbol, actualSymbol)?.let { return it }
 
         if (checkPropertyAccessorsForAnnotationsCompatibility
             && expectSymbol is PropertySymbolMarker && actualSymbol is PropertySymbolMarker
@@ -165,20 +165,31 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    private fun ExpectActualMatchingContext<*>.areAnnotationsOnValueParametersCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationsOnParametersCompatible(
         expectSymbol: CallableSymbolMarker,
         actualSymbol: CallableSymbolMarker,
     ): Incompatibility? {
-        val expectParams = expectSymbol.valueParameters
-        val actualParams = actualSymbol.valueParameters
-
-        return expectParams.zipIfSizesAreEqual(actualParams)?.firstNotNullOfOrNull { (expectParam, actualParam) ->
-            areAnnotationsSetOnDeclarationsCompatible(expectParam, actualParam)?.let {
-                // Write containing declarations into diagnostic
-                Incompatibility(expectSymbol, actualSymbol, actualParam.getSourceElement(), it.type)
+        return expectSymbol.valueParameters.zipIfSizesAreEqual(actualSymbol.valueParameters)
+            ?.firstNotNullOfOrNull { (expectParam, actualParam) ->
+                areAnnotationsOfParameterCompatible(expectSymbol, actualSymbol, expectParam, actualParam)
             }
-                ?: areAnnotationsSetOnTypesCompatible(expectSymbol, actualSymbol, expectParam.returnTypeRef, actualParam.returnTypeRef)
+            ?: expectSymbol.contextParameters.zipIfSizesAreEqual(actualSymbol.contextParameters)
+                ?.firstNotNullOfOrNull { (expectParam, actualParam) ->
+                    areAnnotationsOfParameterCompatible(expectSymbol, actualSymbol, expectParam, actualParam)
+                }
+    }
+
+    private fun ExpectActualMatchingContext<*>.areAnnotationsOfParameterCompatible(
+        expectSymbol: CallableSymbolMarker,
+        actualSymbol: CallableSymbolMarker,
+        expectParam: ValueParameterSymbolMarker,
+        actualParam: ValueParameterSymbolMarker,
+    ): Incompatibility? {
+        return areAnnotationsSetOnDeclarationsCompatible(expectParam, actualParam)?.let {
+            // Write containing declarations into diagnostic
+            Incompatibility(expectSymbol, actualSymbol, actualParam.getSourceElement(), it.type)
         }
+            ?: areAnnotationsSetOnTypesCompatible(expectSymbol, actualSymbol, expectParam.returnTypeRef, actualParam.returnTypeRef)
     }
 
     private fun ExpectActualMatchingContext<*>.areAnnotationsOnTypeParametersCompatible(
