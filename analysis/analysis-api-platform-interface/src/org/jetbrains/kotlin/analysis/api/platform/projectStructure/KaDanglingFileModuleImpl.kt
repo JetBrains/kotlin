@@ -14,17 +14,16 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import java.util.Objects
 
 public class KaDanglingFileModuleImpl(
-    file: KtFile,
+    files: List<KtFile>,
     override val contextModule: KaModule,
     override val resolutionMode: KaDanglingFileResolutionMode,
 ) : KaDanglingFileModule {
-    override val isCodeFragment: Boolean = file is KtCodeFragment
+    override val isCodeFragment: Boolean = files.any { it is KtCodeFragment }
 
     @Suppress("DEPRECATION")
-    private val fileRef = file.createSmartPointer()
+    private val fileRefs = files.map { it.createSmartPointer() }
 
     init {
         require(contextModule != this)
@@ -32,12 +31,12 @@ public class KaDanglingFileModuleImpl(
         if (contextModule is KaDanglingFileModule) {
             // Only code fragments can depend on dangling files.
             // This is needed for completion, inspections and refactorings.
-            require(file is KtCodeFragment)
+            require(isCodeFragment)
         }
     }
 
-    override val file: KtFile
-        get() = validFileOrNull ?: error("Dangling file module is invalid")
+    override val files: List<KtFile>
+        get() = validFilesOrNull ?: error("Dangling file module is invalid")
 
     override val project: Project
         get() = contextModule.project
@@ -46,7 +45,13 @@ public class KaDanglingFileModuleImpl(
         get() = contextModule.targetPlatform
 
     override val contentScope: GlobalSearchScope
-        get() = GlobalSearchScope.fileScope(file)
+        get() {
+            val virtualFiles = files.mapNotNull { it.virtualFile }
+            return when {
+                virtualFiles.isEmpty() -> GlobalSearchScope.EMPTY_SCOPE
+                else -> GlobalSearchScope.filesScope(project, virtualFiles)
+            }
+        }
 
     override val directRegularDependencies: List<KaModule>
         get() = contextModule.directRegularDependencies
@@ -64,9 +69,9 @@ public class KaDanglingFileModuleImpl(
         if (this === other) return true
 
         if (other is KaDanglingFileModuleImpl) {
-            val selfFile = this.fileRef.element
-            val otherFile = other.fileRef.element
-            return selfFile != null && selfFile == otherFile
+            val selfFiles = this.fileRefs.mapNotNull { it.element }
+            val otherFiles = other.fileRefs.mapNotNull { it.element }
+            return selfFiles.isNotEmpty() && selfFiles == otherFiles
                     && contextModule == other.contextModule
                     && resolutionMode == other.resolutionMode
         }
@@ -75,11 +80,29 @@ public class KaDanglingFileModuleImpl(
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(fileRef.element, contextModule)
+        var result = contextModule.hashCode()
+        for (fileRef in fileRefs) {
+            result = 31 * result + fileRef.element.hashCode()
+        }
+        return result
     }
 
-    override fun toString(): String = validFileOrNull?.name ?: "Invalid dangling file module"
+    override fun toString(): String {
+        val files = validFilesOrNull
+        if (files != null) {
+            return files.joinToString { it.name }
+        }
 
-    private val validFileOrNull: KtFile?
-        get() = fileRef.element?.takeIf { it.isValid }
+        return "Invalid dangling file module"
+    }
+
+    private val validFilesOrNull: List<KtFile>?
+        get() {
+            val result = ArrayList<KtFile>(fileRefs.size)
+            for (fileRef in fileRefs) {
+                val file = fileRef.element?.takeIf { it.isValid } ?: return null
+                result.add(file)
+            }
+            return result
+        }
 }

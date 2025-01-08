@@ -92,7 +92,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         checkCanceled()
 
         val session = unstableDanglingFileSessionCache.compute(module) { _, existingSession ->
-            if (existingSession is LLFirDanglingFileSession && existingSession.modificationStamp == module.file.modificationStamp) {
+            if (existingSession is LLFirDanglingFileSession && !existingSession.hasFileModifications) {
                 existingSession
             } else {
                 createSession(module)

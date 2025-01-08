@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.forcedSpecialModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.explicitModule
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValue
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -77,12 +77,12 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
 
 
         val module = KaDanglingFileModuleImpl(
-            codeFragment,
+            listOf(codeFragment),
             contextModule.ktModule,
             getResolutionMode(testFile)
         )
 
-        codeFragment.forcedSpecialModule = module
+        codeFragment.explicitModule = module
 
         return KtTestModule(TestModuleKind.CodeFragment, testModule, module, listOf(codeFragment))
     }

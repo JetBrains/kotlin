@@ -382,7 +382,7 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
     val targetModule = target.llFirModuleData.ktModule
 
     if (targetModule is KaDanglingFileModule && targetModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {
-        val targetPsiFile = targetModule.file
+        val targetPsiFile = targetModule.files.singleOrNull() ?: return targetPath
 
         val contextModule = targetModule.contextModule
         val contextResolveSession = contextModule.getFirResolveSession(contextModule.project)

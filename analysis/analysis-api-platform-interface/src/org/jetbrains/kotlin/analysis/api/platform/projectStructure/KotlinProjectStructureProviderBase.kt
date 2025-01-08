@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -19,16 +18,21 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootM
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.explicitModule
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.psi.analysisContext
 
 public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructureProvider {
     protected abstract fun getNotUnderContentRootModule(project: Project): KaNotUnderContentRootModule
 
-    @OptIn(KaImplementationDetail::class)
+    @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
     protected fun computeSpecialModule(file: PsiFile): KaModule? {
-        (file as? KtCodeFragment)?.forcedSpecialModule?.let { return it }
+        if (file is KtFile) {
+            val explicitModule = file.explicitModule
+            if (explicitModule != null) {
+                return explicitModule
+            }
+        }
 
         val virtualFile = file.virtualFile
         if (virtualFile != null) {
@@ -41,7 +45,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         if (file is KtFile && file.isDangling) {
             val contextModule = computeContextModule(file)
             val resolutionMode = file.danglingFileResolutionMode ?: computeDefaultDanglingFileResolutionMode(file)
-            return KaDanglingFileModuleImpl(file, contextModule, resolutionMode)
+            return KaDanglingFileModuleImpl(listOf(file), contextModule, resolutionMode)
         }
 
         return null
@@ -74,5 +78,10 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     }
 }
 
+@OptIn(KaExperimentalApi::class)
+@Deprecated("Use 'explicitModule' instead.")
 public var KtCodeFragment.forcedSpecialModule: KaDanglingFileModule?
-        by UserDataProperty(Key.create("forcedSpecialModule"))
+    get() = explicitModule as? KaDanglingFileModule
+    set(value) {
+        explicitModule = value
+    }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
@@ -133,7 +135,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 components,
                 canContainKotlinPackage = true,
             ) { scope ->
-                scope.createScopedDeclarationProviderForFile(module.file)
+                createScopedDeclarationProviderForFiles(scope, listOf(module.file))
             }
 
             register(FirProvider::class, provider)
@@ -231,7 +233,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 components,
                 canContainKotlinPackage = true,
             ) { scope ->
-                ktFile?.let { scope.createScopedDeclarationProviderForFile(it) }
+                createScopedDeclarationProviderForFiles(scope, listOfNotNull(ktFile))
             }
 
             register(FirProvider::class, provider)
@@ -492,7 +494,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         contextSession: LLFirSession,
         additionalSessionConfiguration: LLFirDanglingFileSession.(DanglingFileSessionCreationContext) -> Unit,
     ): LLFirSession {
-        val danglingFile = module.file
         val platform = module.targetPlatform
 
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
@@ -501,7 +502,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val session = LLFirDanglingFileSession(module, components, builtinsSession.builtinTypes, danglingFile.modificationStamp)
+        val session = LLFirDanglingFileSession(module, components, builtinsSession.builtinTypes)
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -517,7 +518,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 components,
                 canContainKotlinPackage = true,
                 disregardSelfDeclarations = module.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF,
-                declarationProviderFactory = { scope -> scope.createScopedDeclarationProviderForFile(danglingFile) }
+                declarationProviderFactory = { scope -> createScopedDeclarationProviderForFiles(scope, module.files) }
             )
 
             register(FirProvider::class, firProvider)
@@ -626,7 +627,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 requireWithAttachment(dependency.isStable, message = { "Unstable dangling modules cannot be used as a dependency" }) {
                     withKaModuleEntry("module", module)
                     withKaModuleEntry("dependency", dependency)
-                    withPsiEntry("dependencyFile", dependency.file)
+                    dependency.files.forEachIndexed { index, file -> withPsiEntry("dependencyFile$index", file) }
                 }
                 sessionCache.getSession(dependency)
             }
@@ -711,15 +712,31 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     }
 
     /**
-     * Creates a single-file [KotlinDeclarationProvider] for the provided file, if it is in the search scope.
+     * Creates a [KotlinDeclarationProvider] for the provided files if they are in the search [scope].
      *
      * Otherwise, returns `null`.
      */
-    private fun GlobalSearchScope.createScopedDeclarationProviderForFile(file: KtFile): KotlinDeclarationProvider? =
-        // KtFiles without a backing VirtualFile can't be covered by a shadow scope, and are thus assumed in-scope.
-        if (file.virtualFile == null || contains(file.virtualFile)) {
-            KotlinFileBasedDeclarationProvider(file)
-        } else {
-            null
+    private fun createScopedDeclarationProviderForFiles(scope: GlobalSearchScope, files: List<KtFile>): KotlinDeclarationProvider? {
+        if (files.isEmpty()) {
+            return null
         }
+
+        val fileProviders = buildList {
+            for (file in files) {
+                if (file is KtCodeFragment) {
+                    // All declarations inside code fragments are local
+                    continue
+                }
+
+                val virtualFile = file.virtualFile
+
+                // 'KtFile's without a backing 'VirtualFile' can't be covered by a shadow scope, and are thus assumed in-scope.
+                if (virtualFile == null || scope.contains(virtualFile)) {
+                    add(KotlinFileBasedDeclarationProvider(file))
+                }
+            }
+        }
+
+        return KotlinCompositeDeclarationProvider.create(fileProviders)
+    }
 }
