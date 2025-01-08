@@ -140,19 +140,23 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     facadeStep(frontendFacade)
     firHandlersStep {
-        useHandlers(
-            ::FirDiagnosticsHandler,
-            ::FirDumpHandler,
-            ::FirCfgDumpHandler,
-            ::FirVFirDumpHandler,
-            ::FirCfgConsistencyHandler,
-            ::FirResolvedTypesVerifier,
-            ::FirScopeDumpHandler,
-        )
+        setupHandlersForDiagnosticTest()
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
     configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
+}
+
+fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
+    useHandlers(
+        ::FirDiagnosticsHandler,
+        ::FirDumpHandler,
+        ::FirCfgDumpHandler,
+        ::FirVFirDumpHandler,
+        ::FirCfgConsistencyHandler,
+        ::FirResolvedTypesVerifier,
+        ::FirScopeDumpHandler,
+    )
 }
 
 /**

@@ -19,6 +19,24 @@ object TestTierDirectives : SimpleDirectivesContainer() {
     )
 
     /**
+     * [LATEST_PHASE_IN_PIPELINE] determines at which maximum phase the test pipeline theoretically could execute.
+     * [RUN_PIPELINE_TILL] determines at which phase test might fail at leaf module, so it won't count as the test failure.
+     *
+     * Example:
+     * // LATEST_PHASE_IN_PIPELINE: BACKEND
+     * // RUN_PIPELINE_TILL: FIR2IR
+     *
+     * This combination means that the pipeline for all modules in the test will be executed until BACKEND phase, but
+     * it's expected the leaf module will fail at FIR2IR stage.
+     *
+     * Important: [LATEST_PHASE_IN_PIPELINE] should be defined once per test runner and shouldn't be additionally set in any
+     * particular test.
+     */
+    val LATEST_PHASE_IN_PIPELINE by enumDirective<TestTierLabel>(
+        description = "The last phase of the pipeline in the test"
+    )
+
+    /**
      * Essentially, determines the tiered test runner this test must be generated into by specifying the corresponding tier.
      * Overrides/takes precedence over [RUN_PIPELINE_TILL] when both are present.
      *
