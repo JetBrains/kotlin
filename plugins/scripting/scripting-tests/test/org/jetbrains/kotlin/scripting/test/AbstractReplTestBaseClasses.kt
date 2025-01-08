@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_EVAL_FUN_NAME
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.test.FirParser
@@ -26,10 +28,10 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirReplFrontendFacade
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirScriptAndReplCodegenTest
@@ -37,24 +39,76 @@ import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
+import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
+import org.jetbrains.kotlin.utils.bind
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import kotlin.script.experimental.api.repl
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
+import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
+import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.util.LinkedSnippet
 
 open class AbstractReplWithTestExtensionsDiagnosticsTest : AbstractKotlinCompilerTest() {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        baseFirDiagnosticTestConfiguration(frontendFacade = ::FirReplFrontendFacade)
-        enableLazyResolvePhaseChecking()
-        configureFirParser(FirParser.Psi)
-        useConfigurators(
-            ::ReplConfigurator
-        )
-        defaultDirectives {
-            +WITH_STDLIB
+    override fun configure(builder: TestConfigurationBuilder) {
+        with(builder) {
+            baseFirDiagnosticTestConfiguration(frontendFacade = ::FirReplFrontendFacade)
+            enableLazyResolvePhaseChecking()
+            configureFirParser(FirParser.Psi)
+            useConfigurators(
+                ::ReplConfigurator
+            )
+            defaultDirectives {
+                +WITH_STDLIB
+            }
+        }
+    }
+}
+
+open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        with(builder) {
+            val baseDir = "."
+            globalDefaults {
+                frontend = FrontendKinds.FIR
+                targetPlatform = JvmPlatforms.defaultJvmPlatform
+                dependencyKind = DependencyKind.Source
+            }
+
+            defaultDirectives {
+                LANGUAGE + "+EnableDfaWarningsInK2"
+                +WITH_STDLIB
+            }
+
+            enableMetaInfoHandler()
+
+            useConfigurators(
+                ::CommonEnvironmentConfigurator,
+                ::JvmEnvironmentConfigurator,
+                ::ScriptingEnvironmentConfigurator,
+            )
+
+            useAdditionalSourceProviders(
+                ::AdditionalDiagnosticsSourceFilesProvider.bind(baseDir),
+                ::CoroutineHelpersSourceFilesProvider.bind(baseDir),
+            )
+            configureFirParser(FirParser.Psi)
+            useConfigurators(
+                ::ReplConfigurator
+            )
+            facadeStep(::FirReplCompilerFacade)
+            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind) {
+                useHandlers(::ReplCompilerDiagnosticsHandler)
+            }
         }
     }
 }
@@ -80,6 +134,18 @@ open class AbstractReplWithTestExtensionsCodegenTest : AbstractFirScriptAndReplC
         }
     }
 }
+
+open class AbstractReplViaApiEvaluationTest : AbstractReplViaApiDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            namedHandlersStep("ReplEvaluationStep", ReplCompilationArtifact.Kind) {
+                useHandlers(::ReplRunViaApiChecker)
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalCompilerApi::class)
 private class ReplConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -135,7 +201,11 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
             classpath += libPathProvider.scriptRuntimeJarForTests()
             classpath += libPathProvider.kotlinTestJarForTests()
         }
-        return GeneratedClassLoader(classFileFactory, previousSnippetClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray()).also {
+        return GeneratedClassLoader(
+            classFileFactory,
+            previousSnippetClassLoader,
+            *classpath.map { it.toURI().toURL() }.toTypedArray()
+        ).also {
             classLoadersToDispose.add(it)
         }
     }
@@ -191,6 +261,88 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         }
     }
 }
+
+private class ReplRunViaApiChecker(
+    testServices: TestServices
+) : BinaryArtifactHandler<ReplCompilationArtifact>(
+    testServices,
+    ReplCompilationArtifact.Kind,
+    failureDisablesNextSteps = false,
+    doNotRunIfThereWerePreviousFailures = false
+) {
+    val replEvaluator = K2ReplEvaluator()
+
+    private var baseEvaluationConfiguration: ScriptEvaluationConfiguration? = null
+
+    override fun processModule(
+        module: TestModule,
+        info: ReplCompilationArtifact,
+    ) {
+        val compilationResult = info.compilationResult.valueOr { failure ->
+            assertions.fail { failure.reports.joinToString("\n") { it.message } }
+        }
+
+        val evaluationConfiguration = baseEvaluationConfiguration ?: run {
+            val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+            ScriptEvaluationConfiguration {
+                jvm {
+                    baseClassLoader(
+                        if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
+                            testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
+                        } else {
+                            testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
+                        }
+                    )
+                }
+            }.also { baseEvaluationConfiguration = it }
+        }
+
+        @Suppress("DEPRECATION_ERROR")
+        val res = internalScriptingRunSuspend {
+            replEvaluator.eval(compilationResult, evaluationConfiguration)
+        }
+        when (res) {
+            is ResultWithDiagnostics.Success<LinkedSnippet<KJvmEvaluatedSnippet>> -> {
+                val evaluatedSnippet = res.value.get()
+                val evaluationResult = evaluatedSnippet.result
+                if (evaluationResult is ResultValue.Error) {
+                    // TODO: implement expected exception (KT-74354)
+                    assertions.fail { evaluationResult.error.message ?: evaluationResult.error.toString() }
+                }
+                val expected = Regex("// EXPECTED: (\\S+) *== *\"?([^\"]*)\"?").findAll(module.files.first().originalContent).map {
+                    it.groups[1]!!.value to it.groups[2]!!.value
+                }
+                val snippetClass = evaluationResult.scriptClass!!.java
+                val snippet = evaluationResult.scriptInstance
+                for ((fieldName, expectedValue) in expected) {
+                    if (expectedValue == "<missing>") {
+                        try {
+                            snippetClass.getDeclaredField(fieldName)
+                            assertions.fail { "must have no field $fieldName" }
+                        } catch (_: NoSuchFieldException) {
+                            continue
+                        }
+                    }
+                    val result = if (fieldName == "<res>") {
+                        (evaluationResult as ResultValue.Value).value
+                    } else {
+                        val field = snippetClass.getDeclaredField(fieldName)
+                        field.isAccessible = true
+                        field[snippet]
+                    }
+                    val resultString = result?.toString() ?: "null"
+                    assertions.assertEquals(expectedValue.trim(), resultString) { "comparing variable $fieldName" }
+                }
+            }
+            is ResultWithDiagnostics.Failure -> {
+                assertions.fail { res.reports.joinToString("\n") { it.message } }
+            }
+        }
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+}
+
 
 internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
     val outStream = ByteArrayOutputStream()

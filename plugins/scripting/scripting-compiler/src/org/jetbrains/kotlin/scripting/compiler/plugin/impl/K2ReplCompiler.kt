@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistra
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import java.io.File
 import java.nio.file.Path
@@ -92,7 +93,10 @@ class K2ReplCompiler(
             scriptCompilationConfiguration: ScriptCompilationConfiguration,
             hostConfiguration: ScriptingHostConfiguration =
                 ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-                    firReplHistoryProvider(FirReplHistoryProviderImpl())
+                    repl {
+                        firReplHistoryProvider(FirReplHistoryProviderImpl())
+                        isReplSnippetSource { sourceFile, scriptSource -> true }
+                    }
                 }
         ): K2ReplCompilationState {
 

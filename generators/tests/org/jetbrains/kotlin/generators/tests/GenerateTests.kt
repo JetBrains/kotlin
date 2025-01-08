@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.plugin.sandbox.AbstractFirPsiPluginDiagnosticTest
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.samWithReceiver.*
+import org.jetbrains.kotlin.scripting.test.AbstractReplViaApiDiagnosticsTest
+import org.jetbrains.kotlin.scripting.test.AbstractReplViaApiEvaluationTest
 import org.jetbrains.kotlin.scripting.test.AbstractReplWithTestExtensionsCodegenTest
 import org.jetbrains.kotlin.scripting.test.AbstractReplWithTestExtensionsDiagnosticsTest
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
@@ -395,7 +397,19 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractReplViaApiDiagnosticsTest> {
+                model("testData/diagnostics/repl", extension = "kts")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
             testClass<AbstractReplWithTestExtensionsCodegenTest> {
+                model("testData/codegen/repl", extension = "kts")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractReplViaApiEvaluationTest> {
                 model("testData/codegen/repl", extension = "kts")
             }
         }
