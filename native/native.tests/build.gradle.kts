@@ -5,32 +5,13 @@ plugins {
 
 dependencies {
     // Reexport these dependencies to every user of nativeTest()
-    testApi(kotlinStdlib())
-    testApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testApi(intellijCore())
-    testApi(commonDependency("commons-lang:commons-lang"))
-    testApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    testApi(project(":kotlin-compiler-runner-unshaded"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:ir.backend.native"))
     testApi(projectTests(":compiler:tests-integration"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(project(":native:kotlin-native-utils"))
-    testApi(project(":native:executors"))
 
-    testImplementation(projectTests(":generators:test-generator"))
     testImplementation(project(":compiler:ir.serialization.native"))
-    testImplementation(project(":compiler:fir:native"))
     testImplementation(project(":core:compiler.common.native"))
     testImplementation(project(":kotlin-util-klib-abi"))
-    testImplementation(project(":native:swift:swift-export-standalone"))
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
-    testImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
-
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
 sourceSets {

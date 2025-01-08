@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTION
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
@@ -20,14 +19,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_A
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.junit.jupiter.api.Assertions
 import java.io.File
 import kotlin.time.Duration
 
@@ -251,7 +246,7 @@ internal val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
 internal val CINTEROP_DEFINITION_EXTENSIONS = setOf("def", "h")
 internal val KNOWN_EXTENSIONS = setOf("kt") + CINTEROP_DEFINITION_EXTENSIONS + CINTEROP_SOURCE_EXTENSIONS
 
-internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
+class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
 }
 
@@ -335,19 +330,6 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     assertTrue(entryPoint.isNotEmpty()) { "$location: Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
 
     return entryPoint
-}
-
-internal fun parseLLDBSpec(testDataFile: File, registeredDirectives: RegisteredDirectives, settings: Settings): LLDBSessionSpec {
-    val firIdentical = FIR_IDENTICAL in registeredDirectives
-    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2 && !firIdentical) "fir." else ""
-    val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
-    val specFileLocation = "$specFilePathWithoutExtension${firSpecificExt}txt"
-    val specFile = File(specFileLocation)
-    return try {
-        LLDBSessionSpec.parse(specFile.readText())
-    } catch (e: Exception) {
-        Assertions.fail<Nothing>("${testDataFile.absolutePath}: Cannot parse LLDB session specification: " + e.message, e)
-    }
 }
 
 internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {
