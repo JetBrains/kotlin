@@ -67,12 +67,14 @@ fun createIsolatedCompilationContext(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    disposable: Disposable
+    disposable: Disposable,
+    configureCompiler: CompilerConfiguration.() -> Unit = {}
 ): SharedScriptCompilationContext {
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
     val (initialScriptCompilationConfiguration, kotlinCompilerConfiguration) =
         createInitialConfigurations(baseScriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState)
+    kotlinCompilerConfiguration.configureCompiler()
     val environment =
         KotlinCoreEnvironment.createForProduction(
             disposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -163,7 +165,7 @@ internal fun createInitialConfigurations(
     return Pair(initialScriptCompilationConfiguration, kotlinCompilerConfiguration)
 }
 
-private fun CompilerConfiguration.updateWithCompilerOptions(
+internal fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     messageCollector: ScriptDiagnosticsMessageCollector,
     ignoredOptionsReportingState: IgnoredOptionsReportingState,
