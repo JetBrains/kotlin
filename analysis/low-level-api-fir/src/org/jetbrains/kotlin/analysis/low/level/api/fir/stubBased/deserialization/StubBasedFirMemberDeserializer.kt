@@ -5,31 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
-import org.jetbrains.kotlin.KtFakeSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -41,7 +36,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -196,10 +190,10 @@ internal class StubBasedFirMemberDeserializer(
             origin = initialOrigin
             this.name = name
             val visibility = typeAlias.visibility
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
-                visibility.toEffectiveVisibility(owner = null)
+                visibility.toLazyEffectiveVisibility(owner = null)
             ).apply {
                 isExpect = typeAlias.hasModifier(KtTokens.EXPECT_KEYWORD)
                 isActual = false
@@ -227,7 +221,6 @@ internal class StubBasedFirMemberDeserializer(
     ): FirPropertyAccessor {
         val visibility = getter.visibility
         val accessorModality = getter.modality
-        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
         return buildPropertyAccessor {
             source = KtRealPsiSourceElement(getter)
             moduleData = c.moduleData
@@ -235,7 +228,11 @@ internal class StubBasedFirMemberDeserializer(
             this.returnTypeRef = returnTypeRef
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             isGetter = true
-            status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                visibility,
+                accessorModality,
+                visibility.toLazyEffectiveVisibility(classSymbol)
+            ).apply {
                 isInline = getter.hasModifier(KtTokens.INLINE_KEYWORD)
                 isExternal = getter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
             }
@@ -260,7 +257,6 @@ internal class StubBasedFirMemberDeserializer(
     ): FirPropertyAccessor {
         val visibility = setter.visibility
         val accessorModality = setter.modality
-        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
         return buildPropertyAccessor {
             source = KtRealPsiSourceElement(setter)
             moduleData = c.moduleData
@@ -268,7 +264,11 @@ internal class StubBasedFirMemberDeserializer(
             this.returnTypeRef = FirImplicitUnitTypeRef(source)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             isGetter = false
-            status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                visibility,
+                accessorModality,
+                visibility.toLazyEffectiveVisibility(classSymbol)
+            ).apply {
                 isInline = setter.hasModifier(KtTokens.INLINE_KEYWORD)
                 isExternal = setter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
             }
@@ -333,10 +333,10 @@ internal class StubBasedFirMemberDeserializer(
             dispatchReceiverType = c.dispatchReceiver
             isLocal = false
             val visibility = property.visibility
-            val resolvedStatus = FirResolvedDeclarationStatusImpl(
+            val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 propertyModality,
-                visibility.toEffectiveVisibility(classSymbol)
+                visibility.toLazyEffectiveVisibility(classSymbol)
             ).apply {
                 isExpect = property.hasExpectModifier()
                 isActual = false
@@ -378,9 +378,7 @@ internal class StubBasedFirMemberDeserializer(
                 origin = origin,
                 propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 propertySymbol = symbol,
-                visibility = resolvedStatus.visibility,
-                effectiveVisibility = resolvedStatus.effectiveVisibility,
-                modality = resolvedStatus.modality,
+                status = resolvedStatus,
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             )
 
@@ -393,9 +391,7 @@ internal class StubBasedFirMemberDeserializer(
                     origin = origin,
                     propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     propertySymbol = symbol,
-                    visibility = resolvedStatus.visibility,
-                    effectiveVisibility = resolvedStatus.effectiveVisibility,
-                    modality = resolvedStatus.modality,
+                    status = resolvedStatus,
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
                 )
                 else -> null
@@ -460,10 +456,10 @@ internal class StubBasedFirMemberDeserializer(
 
             name = callableName
             val visibility = function.visibility
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 function.modality,
-                visibility.toEffectiveVisibility(classSymbol)
+                visibility.toLazyEffectiveVisibility(classSymbol)
             ).apply {
                 isExpect = function.hasExpectModifier()
                 isActual = false
@@ -534,10 +530,10 @@ internal class StubBasedFirMemberDeserializer(
             returnTypeRef = delegatedSelfType
             val visibility = constructor.visibility
             val isInner = classBuilder.status.isInner
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
-                visibility.toEffectiveVisibility(classBuilder.symbol)
+                visibility.toLazyEffectiveVisibility(classBuilder.symbol)
             ).apply {
                 isExpect = constructor.hasExpectModifier() || classOrObject.hasExpectModifier()
                 isActual = false
@@ -642,5 +638,9 @@ internal class StubBasedFirMemberDeserializer(
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
         }
         return enumEntry
+    }
+
+    private fun Visibility.toLazyEffectiveVisibility(owner: FirClassLikeSymbol<*>?): Lazy<EffectiveVisibility> {
+        return this.toLazyEffectiveVisibility(owner, c.session, forClass = false)
     }
 }
