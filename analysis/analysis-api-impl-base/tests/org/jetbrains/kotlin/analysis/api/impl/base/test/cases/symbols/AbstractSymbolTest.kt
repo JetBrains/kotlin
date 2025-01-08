@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.RENDER_IS_PUBLIC_API
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
@@ -330,8 +331,12 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     protected open fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
-        val renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES }
-        return with(DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = renderExpandedTypes)) { render(useSiteSession, symbol) }
+        val renderer = DebugSymbolRenderer(
+            renderExtra = true,
+            renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES },
+            renderIsPublicApi = RENDER_IS_PUBLIC_API in directives
+        )
+        return with(renderer) { render(useSiteSession, symbol) }
     }
 }
 
@@ -363,6 +368,8 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
     val PRETTY_RENDERER_OPTION by enumDirective(description = "Explicit rendering mode") { PrettyRendererOption.valueOf(it) }
 
     val TARGET_FILE_NAME by stringDirective(description = "The name of the main file")
+
+    val RENDER_IS_PUBLIC_API by directive(description = "Render `isPublicApi` attribute for symbols")
 }
 
 enum class PrettyRendererOption(val transformation: (KaDeclarationRenderer) -> KaDeclarationRenderer) {
