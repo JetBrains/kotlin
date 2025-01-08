@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -535,7 +536,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val dependencyProvider = LLDependenciesSymbolProvider(this) {
                 buildList {
-                    addMerged(session, computeFlattenedSymbolProviders(listOf(contextSession)))
+                    addMerged(session, computeFlattenedDependencySymbolProviders(listOf(contextSession)))
 
                     when (contextSession.ktModule) {
                         is KaLibraryModule, is KaLibrarySourceModule -> {
@@ -612,14 +613,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     }
 
     private fun collectDependencySymbolProviders(module: KaModule): List<FirSymbolProvider> {
-        val llFirSessionCache = LLFirSessionCache.getInstance(project)
+        val sessionCache = LLFirSessionCache.getInstance(project)
 
         fun getOrCreateSessionForDependency(dependency: KaModule): LLFirSession? = when (dependency) {
             is KaBuiltinsModule -> null // Built-ins are already added
 
-            is KaLibraryModule -> llFirSessionCache.getSession(dependency, preferBinary = true)
+            is KaLibraryModule -> sessionCache.getSession(dependency, preferBinary = true)
 
-            is KaSourceModule -> llFirSessionCache.getSession(dependency)
+            is KaSourceModule -> sessionCache.getSession(dependency)
 
             is KaDanglingFileModule -> {
                 requireWithAttachment(dependency.isStable, message = { "Unstable dangling modules cannot be used as a dependency" }) {
@@ -627,7 +628,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                     withKaModuleEntry("dependency", dependency)
                     withPsiEntry("dependencyFile", dependency.file)
                 }
-                llFirSessionCache.getSession(dependency)
+                sessionCache.getSession(dependency)
             }
 
             else -> {
@@ -651,15 +652,23 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val orderedDependencyModules = KmpModuleSorter.order(dependencyModules.toList())
 
         val dependencySessions = orderedDependencyModules.mapNotNull(::getOrCreateSessionForDependency)
-        return computeFlattenedSymbolProviders(dependencySessions)
+        return computeFlattenedDependencySymbolProviders(dependencySessions)
     }
 
-    private fun computeFlattenedSymbolProviders(dependencySessions: List<LLFirSession>): List<FirSymbolProvider> {
-        return dependencySessions.flatMap { session ->
-            when (val dependencyProvider = session.symbolProvider) {
-                is LLModuleWithDependenciesSymbolProvider -> dependencyProvider.providers
-                else -> listOf(dependencyProvider)
+    private fun computeFlattenedDependencySymbolProviders(dependencySessions: List<LLFirSession>): List<FirSymbolProvider> =
+        buildList {
+            dependencySessions.forEach { session ->
+                when (val dependencyProvider = session.symbolProvider) {
+                    is LLModuleWithDependenciesSymbolProvider -> dependencyProvider.providers.forEach { it.flattenTo(this) }
+                    else -> dependencyProvider.flattenTo(this)
+                }
             }
+        }
+
+    private fun FirSymbolProvider.flattenTo(destination: MutableList<FirSymbolProvider>) {
+        when (this) {
+            is FirCompositeSymbolProvider -> providers.forEach { it.flattenTo(destination) }
+            else -> destination.add(this)
         }
     }
 
