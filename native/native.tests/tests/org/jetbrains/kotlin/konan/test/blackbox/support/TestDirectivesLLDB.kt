@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.junit.jupiter.api.Assertions
 import java.io.File
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FIR_IDENTICAL
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 
 internal fun parseLLDBSpec(testDataFile: File, registeredDirectives: RegisteredDirectives, settings: Settings): LLDBSessionSpec {
     val firIdentical = FIR_IDENTICAL in registeredDirectives

@@ -305,7 +305,7 @@ open class TestCompilerArgs(
     }
 }
 
-internal fun parseTestKind(registeredDirectives: RegisteredDirectives, location: Location): TestKind? {
+fun parseTestKind(registeredDirectives: RegisteredDirectives, location: Location): TestKind? {
     if (KIND !in registeredDirectives)
         return null // The default is determined by TEST_KIND global property
 
@@ -313,7 +313,7 @@ internal fun parseTestKind(registeredDirectives: RegisteredDirectives, location:
     return values.singleOrNull() ?: fail { "$location: Exactly one test kind expected in $KIND directive: $values" }
 }
 
-internal fun parseTestRunner(registeredDirectives: RegisteredDirectives, location: Location): TestRunnerType {
+fun parseTestRunner(registeredDirectives: RegisteredDirectives, location: Location): TestRunnerType {
     if (TEST_RUNNER !in registeredDirectives)
         return TestRunnerType.DEFAULT // The default one.
 
@@ -321,7 +321,7 @@ internal fun parseTestRunner(registeredDirectives: RegisteredDirectives, locatio
     return values.singleOrNull() ?: fail { "$location: Exactly one test runner type expected in $TEST_RUNNER directive: $values" }
 }
 
-internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, location: Location): String {
+fun parseEntryPoint(registeredDirectives: RegisteredDirectives, location: Location): String {
     if (ENTRY_POINT !in registeredDirectives)
         return "main" // The default one.
 
@@ -332,7 +332,7 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {
+fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {
     val module = parsedDirective.values.singleOrNull()?.toString()?.let(TEST_MODULE_REGEX::matchEntire)?.let { match ->
         val name = match.groupValues[1]
         val directDependencySymbols = match.groupValues[3].split(',').filter(String::isNotEmpty).toSet()
@@ -361,7 +361,7 @@ private val TEST_MODULE_REGEX = Regex("^([a-zA-Z0-9_]+)(" +          // name
                                               "(\\(([a-zA-Z0-9_,]*)\\))?" + // dependsOn
                                               ")?$")
 
-internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): String {
+fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): String {
     val fileName = parsedDirective.values.singleOrNull()?.toString()
         ?: fail {
             """
@@ -383,7 +383,7 @@ internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDir
     return fileName
 }
 
-internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives, location: Location): Duration? =
+fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives, location: Location): Duration? =
     if (EXPECTED_TIMEOUT_FAILURE in registeredDirectives) {
         val value = registeredDirectives.singleOrZeroValue(EXPECTED_TIMEOUT_FAILURE)
             ?: fail { "$location: Exactly one timeout value expected in $EXPECTED_TIMEOUT_FAILURE directive" }
@@ -393,7 +393,7 @@ internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirecti
         null
     }
 
-internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, location: Location): TestRunCheck.ExitCode {
+fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, location: Location): TestRunCheck.ExitCode {
     if (EXIT_CODE !in registeredDirectives)
         return TestRunCheck.ExitCode.Expected(0)
 
@@ -408,7 +408,7 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, l
     }
 }
 
-internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location): TestCompilerArgs {
+fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location): TestCompilerArgs {
     val assertionsMode = registeredDirectives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT
     val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
     val freeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
@@ -424,10 +424,10 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
     return TestCompilerArgs(freeCompilerArgs, freeCInteropArgs, assertionsMode)
 }
 
-internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
+fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
     parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let { OutputDataFile(file = it) }
 
-internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
+fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
     parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives, location)
 
 private fun parseFileBasedDirective(
@@ -447,9 +447,9 @@ private fun parseFileBasedDirective(
     return file
 }
 
-internal fun parseProgramArguments(registeredDirectives: RegisteredDirectives): List<String> = registeredDirectives[PROGRAM_ARGS]
+fun parseProgramArguments(registeredDirectives: RegisteredDirectives): List<String> = registeredDirectives[PROGRAM_ARGS]
 
-internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestRunCheck.OutputMatcher? {
+fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestRunCheck.OutputMatcher? {
     if (OUTPUT_REGEX !in registeredDirectives)
         return null
     val regexes = registeredDirectives[OUTPUT_REGEX].map { it.toRegex(RegexOption.DOT_MATCHES_ALL) }
@@ -463,7 +463,7 @@ internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestR
     }
 }
 
-internal class Location(private val testDataFile: File, val lineNumber: Int? = null) {
+class Location(private val testDataFile: File, val lineNumber: Int? = null) {
     override fun toString() = buildString {
         append(testDataFile.path)
         if (lineNumber != null) append(':').append(lineNumber + 1)

@@ -17,7 +17,7 @@ internal fun File.ensureExistsAndIsEmptyDirectory(): File {
 
 fun getAbsoluteFile(localPath: String): File = File(getHomeDirectory()).resolve(localPath)
 
-internal fun computeGeneratedSourcesDir(testDataBaseDir: File, testDataFile: File, generatedSourcesBaseDir: File): File {
+fun computeGeneratedSourcesDir(testDataBaseDir: File, testDataFile: File, generatedSourcesBaseDir: File): File {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
         """
             The file is outside of the directory.

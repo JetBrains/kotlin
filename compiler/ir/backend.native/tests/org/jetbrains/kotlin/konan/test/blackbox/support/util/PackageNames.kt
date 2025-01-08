@@ -12,7 +12,7 @@ import java.io.File
 import kotlin.io.path.name
 import kotlin.math.min
 
-internal fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageName {
+fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageName {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
         """
             The file is outside of the directory.
@@ -75,7 +75,7 @@ internal fun joinPackageNames(a: PackageName, b: PackageName): PackageName = whe
 internal fun String.prependPackageName(packageName: PackageName): String =
     if (packageName.isEmpty()) this else "$packageName.$this"
 
-internal fun PackageName.startsWith(other: PackageName): Boolean {
+fun PackageName.startsWith(other: PackageName): Boolean {
     if (segments.size < other.segments.size) return false
 
     for (i in other.segments.indices) {

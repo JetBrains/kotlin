@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 
-internal val KonanTarget.compressedName: String
+val KonanTarget.compressedName: String
     get() = buildString {
         append(family.compressedName)
         name.splitToSequence('_')
@@ -21,7 +21,7 @@ internal val KonanTarget.compressedName: String
         append(architecture.compressedName)
     }
 
-internal val Family.compressedName: Char
+val Family.compressedName: Char
     get() = when (this) {
         Family.OSX -> 'o'
         Family.IOS -> 'i'
@@ -32,7 +32,7 @@ internal val Family.compressedName: Char
         Family.ANDROID -> 'a'
     }
 
-internal val Architecture.compressedName: String
+val Architecture.compressedName: String
     get() = when (this) {
         Architecture.X64 -> "x64"
         Architecture.X86 -> "x86"
@@ -40,10 +40,10 @@ internal val Architecture.compressedName: String
         Architecture.ARM32 -> "a32"
     }
 
-internal val Class<*>.compressedSimpleName: String
+val Class<*>.compressedSimpleName: String
     get() = splitByCharacterTypeCamelCase(simpleName).joinToString("") { it.take(3) }
 
-internal val PackageName.compressedPackageName: String
+val PackageName.compressedPackageName: String
     get() {
         val sanitizedName = segments.joinToString("_")
         return if (sanitizedName.length > COMPRESSED_PACKAGE_FQN_MAX_LENGTH) {

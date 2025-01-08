@@ -20,7 +20,7 @@ internal annotation class DisabledTests(
 // `IGNORE_NATIVE`, `IGNORE_NATIVE_K1`, `IGNORE_NATIVE_K2` with/without a property matcher, for usual easy fails (please provide issue link)
 // `DISABLE_NATIVE`, `DISABLE_NATIVE_K1`, `DISABLE_NATIVE_K2` with/without a property matcher, in case compiler crashes within JVM, or compilation/execution would be a resource waste
 @Target(AnnotationTarget.CLASS)
-internal annotation class DisabledTestsIfProperty(
+annotation class DisabledTestsIfProperty(
     val sourceLocations: Array<String>,
     val property: ClassLevelProperty,
     val propertyValue: String

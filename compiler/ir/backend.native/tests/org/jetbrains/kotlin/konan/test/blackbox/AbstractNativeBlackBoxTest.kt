@@ -73,7 +73,7 @@ abstract class AbstractNativeBlackBoxTest {
      *
      * This function should be called from a method annotated with [org.junit.jupiter.api.TestFactory].
      */
-    internal fun dynamicTestCase(testCaseId: TestCaseId): Collection<DynamicNode> {
+    fun dynamicTestCase(testCaseId: TestCaseId): Collection<DynamicNode> {
         val testRunNodes = testRunProvider.getTestRuns(testCaseId, testRunSettings)
         return buildJUnitDynamicNodes(testRunNodes)
     }

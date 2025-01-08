@@ -13,7 +13,7 @@ import java.nio.file.attribute.BasicFileAttributes
 /**
  * Naive suboptimal implementation of glob expansion.
  */
-internal fun expandGlobTo(unexpandedPath: File, output: MutableCollection<File>) {
+fun expandGlobTo(unexpandedPath: File, output: MutableCollection<File>) {
     assertTrue(unexpandedPath.isAbsolute) { "Path must be absolute: $unexpandedPath" }
 
     val paths: List<File> = generateSequence(unexpandedPath) { it.parentFile }.toMutableList().apply { reverse() }
@@ -45,4 +45,4 @@ internal fun expandGlobTo(unexpandedPath: File, output: MutableCollection<File>)
     output += unexpandedPath
 }
 
-internal fun expandGlob(unexpendedPath: File): Collection<File> = buildList { expandGlobTo(unexpendedPath, this) }
+fun expandGlob(unexpendedPath: File): Collection<File> = buildList { expandGlobTo(unexpendedPath, this) }

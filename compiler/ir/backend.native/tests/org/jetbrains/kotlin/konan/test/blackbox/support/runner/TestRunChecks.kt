@@ -261,7 +261,7 @@ sealed interface TestRunCheck {
             } else Result.Passed
         }
 
-        internal fun doFileCheck(fileCheckDump: File): RunProcessResult {
+        fun doFileCheck(fileCheckDump: File): RunProcessResult {
             val fileCheckExecutable = settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
                     if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
             require(File(fileCheckExecutable).exists()) {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
-internal val Class<*>.sanitizedName: String get() = sanitize(name)
+val Class<*>.sanitizedName: String get() = sanitize(name)
 
 internal fun getSanitizedFileName(fileName: String): String = sanitize(fileName, allowDots = true, allowSlashes = true)
 
@@ -22,10 +22,10 @@ private fun sanitize(s: String, allowDots: Boolean = false, allowSlashes: Boolea
     }
 }
 
-internal const val DEFAULT_FILE_NAME = "main.kt"
+const val DEFAULT_FILE_NAME = "main.kt"
 const val LAUNCHER_FILE_NAME = "__launcher__.kt"
 
-internal const val DEFAULT_MODULE_NAME = "main"
+const val DEFAULT_MODULE_NAME = "main"
 internal const val SUPPORT_MODULE_NAME = "support"
 const val LAUNCHER_MODULE_NAME = "__launcher__"
 

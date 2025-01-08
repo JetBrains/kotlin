@@ -444,7 +444,7 @@ internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KL
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
 }
 
-internal class CInteropCompilation(
+class CInteropCompilation(
     targets: KotlinNativeTargets,
     classLoader: KotlinNativeClassLoader,
     freeCompilerArgs: TestCompilerArgs,

@@ -42,7 +42,7 @@ class KotlinNativeHome(val dir: File) {
     }
 }
 
-internal class LLDB(nativeHome: KotlinNativeHome) {
+class LLDB(nativeHome: KotlinNativeHome) {
     val prettyPrinters: File = nativeHome.dir.resolve("tools/konan_lldb.py")
 
     val isAvailable: Boolean by lazy {
@@ -97,7 +97,7 @@ value class CompilerPlugins(val compilerPluginJars: Set<File>) {
  * The set of custom (external) klibs that should be passed to the Kotlin/Native compiler.
  */
 @JvmInline
-internal value class CustomKlibs(val klibs: Set<File>) {
+value class CustomKlibs(val klibs: Set<File>) {
     init {
         val invalidKlibs = klibs.filterNot { it.isDirectory || (it.isFile && it.extension == "klib") }
         assertTrue(invalidKlibs.isEmpty()) {
@@ -112,7 +112,7 @@ internal value class CustomKlibs(val klibs: Set<File>) {
  * TODO: need to reconsider this setting when other [Runner]s than [RunnerWithExecutor] and [NoopTestRunner] are supported
  */
 @JvmInline
-internal value class ForcedNoopTestRunner(val value: Boolean)
+value class ForcedNoopTestRunner(val value: Boolean)
 
 /**
  * Controls whether tests that support TestRunner should be executed once in the binary.
@@ -344,7 +344,7 @@ internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: K
     }
 }
 
-internal class ReleasedCompiler(private val lazyNativeHome: Lazy<KotlinNativeHome>) {
+class ReleasedCompiler(private val lazyNativeHome: Lazy<KotlinNativeHome>) {
     val nativeHome: KotlinNativeHome get() = lazyNativeHome.value
     val lazyClassloader: Lazy<URLClassLoader> = lazy {
         val nativeClassPath = setOf(

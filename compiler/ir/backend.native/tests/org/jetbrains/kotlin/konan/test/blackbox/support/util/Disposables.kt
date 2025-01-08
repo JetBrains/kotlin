@@ -9,7 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 
-internal open class TestDisposable(parentDisposable: Disposable?) : Disposable {
+open class TestDisposable(parentDisposable: Disposable?) : Disposable {
     init {
         if (parentDisposable != null) {
             @Suppress("LeakingThis")

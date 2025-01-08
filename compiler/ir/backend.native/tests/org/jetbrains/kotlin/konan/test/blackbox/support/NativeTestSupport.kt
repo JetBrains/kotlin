@@ -72,11 +72,11 @@ class NativeSimpleTestSupport : BeforeEachCallback {
     }
 }
 
-internal object CastCompatibleKotlinNativeClassLoader {
+object CastCompatibleKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
 }
 
-internal object RegularKotlinNativeClassLoader {
+object RegularKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader()
 }
 

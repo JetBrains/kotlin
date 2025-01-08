@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
  * yields TestName(packageName = "sample.test", packagePartClassName = "SampleTestKt", functionName = "one")
  *    and TestName(packageName = "sample.test", packagePartClassName = "SampleTestKt", functionName = "two")
  */
-internal object DumpedTestListing {
+object DumpedTestListing {
     fun parse(listing: String): Collection<TestName> {
         val lines = listing.lines()
         var emptyLineEncountered = false
@@ -63,7 +63,7 @@ internal object DumpedTestListing {
  * yields TestName(packageName = "sample.test", packagePartClassName = "SampleTestKt", functionName = "one")
  *    and TestName(packageName = "sample.test", packagePartClassName = "SampleTestKt", functionName = "two")
  */
-internal object GTestListing {
+object GTestListing {
     fun parse(listing: String): Collection<TestName> = buildList {
         var state: ParseState = ParseState.Begin
 

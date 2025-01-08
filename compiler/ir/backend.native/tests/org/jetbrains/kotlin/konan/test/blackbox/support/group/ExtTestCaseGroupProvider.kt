@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
-internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
+open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
 
