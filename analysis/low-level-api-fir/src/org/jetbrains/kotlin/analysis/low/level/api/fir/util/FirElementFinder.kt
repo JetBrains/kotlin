@@ -350,6 +350,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is FirAnonymousInitializer -> SpecialNames.ANONYMOUS
             is FirTypeAlias -> declaration.name
             is FirCodeFragment, is FirDanglingModifierList -> SpecialNames.NO_NAME_PROVIDED
+            is FirReplSnippet -> declaration.name
 
             is FirFile,
             is FirAnonymousFunction,
@@ -357,7 +358,6 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is FirPropertyAccessor,
             is FirAnonymousObject,
             is FirReceiverParameter,
-            is FirReplSnippet,
             is FirTypeParameter,
                 -> errorWithFirSpecificEntries("Unexpected declaration ${declaration::class.simpleName}", fir = declaration)
         }
