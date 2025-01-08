@@ -1,5 +1,5 @@
-group 'org.jetbrains.qa.combompp'
-version publishing_version
+group = 'org.jetbrains.qa.combompp'
+version = publishing_version
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
