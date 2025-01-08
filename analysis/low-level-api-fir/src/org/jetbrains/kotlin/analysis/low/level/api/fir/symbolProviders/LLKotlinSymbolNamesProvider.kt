@@ -3,14 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.util
+package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirDelegatingCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirCachedSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirDelegatingCachedSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterToSetOrEmpty
@@ -70,9 +69,3 @@ internal open class LLFirKotlinSymbolNamesProvider(
             FirDelegatingCachedSymbolNamesProvider(session, LLFirKotlinSymbolNamesProvider(declarationProvider, allowKotlinPackage))
     }
 }
-
-private fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
-private fun String.isKotlinPackage(): Boolean = startsWith(KOTLIN_PACKAGE_PREFIX)
-
-private const val KOTLIN_PACKAGE_PREFIX = "kotlin."
-

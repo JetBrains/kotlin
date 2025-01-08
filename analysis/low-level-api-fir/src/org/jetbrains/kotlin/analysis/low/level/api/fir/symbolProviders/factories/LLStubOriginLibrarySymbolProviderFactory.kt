@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmAndBuiltinsDeserializedContainerSourceProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.NullDeserializedContainerSourceProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinStubBasedLibrarySymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider

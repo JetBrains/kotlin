@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirTypeDeserializer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.loadStubByElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
