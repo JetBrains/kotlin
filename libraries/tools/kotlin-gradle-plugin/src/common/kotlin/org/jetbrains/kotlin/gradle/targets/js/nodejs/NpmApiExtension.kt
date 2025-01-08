@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
  * @param NpmApi The type of NPM API execution implementation. Must extend [NpmApiExecution] with the given environment.
  */
 interface NpmApiExtension<out Env : PackageManagerEnvironment, out NpmApi : NpmApiExecution<Env>> {
+    val name: String
+
     val packageManager: NpmApi
 
     val environment: Env

@@ -9,10 +9,6 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Incubating
 import org.gradle.api.file.*
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.FileTreeElement
-import org.gradle.api.file.RegularFile
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -89,6 +85,12 @@ constructor(
 
     @Input
     var mode: Mode = Mode.DEVELOPMENT
+
+    @get:Internal
+    internal abstract val toolingExtracted: Property<Boolean>
+
+    @get:Internal
+    internal abstract val npmToolingEnvDir: DirectoryProperty
 
     @get:Internal
     abstract val inputFilesDirectory: DirectoryProperty
@@ -270,6 +272,7 @@ constructor(
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
+        resolveLoadersFromKotlinToolingDir = toolingExtracted.get()
     )
 
     private fun createRunner(): KotlinWebpackRunner {
@@ -301,6 +304,8 @@ constructor(
             config = config,
             objects = objects,
             execOps = execOps,
+            npmToolingEnvDir = npmToolingEnvDir.getFile(),
+            toolingExtracted = toolingExtracted.get(),
         )
     }
 

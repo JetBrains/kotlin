@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -27,11 +28,13 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -90,6 +93,8 @@ constructor(
     }
     private val npmProjectDir by project.provider { npmProject.dir }
 
+    private val npmProjectNodeModulesDir by project.provider { npmProject.nodeModulesDir }
+
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
 
@@ -103,6 +108,18 @@ constructor(
     override val settingsState: String
         get() = "KotlinKarma($config)"
 
+    internal val toolingExtracted: Boolean = compilation.webTargetVariant(
+        jsVariant = false,
+        wasmVariant = true,
+    )
+
+    internal val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
+        compilation.webTargetVariant(
+            { npmProjectDir.map { it.asFile } },
+            { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+        )
+    )
+
     val webpackConfig = KotlinWebpackConfig(
         configDirectory = project.projectDir.resolve("webpack.config.d"),
         optimization = KotlinWebpackConfig.Optimization(
@@ -114,7 +131,8 @@ constructor(
         export = false,
         progressReporter = true,
         rules = project.objects.webpackRulesContainer(),
-        experiments = mutableSetOf("topLevelAwait")
+        experiments = mutableSetOf("topLevelAwait"),
+        resolveLoadersFromKotlinToolingDir = toolingExtracted
     )
 
     init {
@@ -154,7 +172,6 @@ constructor(
                 "firefox-nightly-headless" -> useFirefoxNightlyHeadless()
                 "ie" -> useIe()
                 "opera" -> useOpera()
-                "phantom-js" -> usePhantomJS()
                 "safari" -> useSafari()
                 else -> project.logger.warn("Unrecognised `kotlin.js.browser.karma.browsers` value [$it]. Ignoring...")
             }
@@ -245,8 +262,6 @@ constructor(
 
         useChromeLike(debuggableChrome)
     }
-
-    fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomjsLauncher)
 
     private fun useFirefoxLike(id: String) = useBrowser(id, versions.karmaFirefoxLauncher)
 
@@ -362,15 +377,17 @@ constructor(
         val file = task.inputFileProperty.getFile()
         val fileString = file.toString()
 
-        config.files.add(npmProject.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
+        val modules = NpmProjectModules(npmToolingDir.getFile())
+
+        config.files.add(modules.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
         if (!debug) {
             if (platformType == KotlinPlatformType.wasm) {
                 config.files.add(
                     createLoadWasm(npmProject.dir.getFile(), file).normalize().absolutePath
                 )
 
-                config.customContextFile = npmProject.require("kotlin-web-helpers/dist/static/context.html")
-                config.customDebugFile = npmProject.require("kotlin-web-helpers/dist/static/debug.html")
+                config.customContextFile = modules.require("kotlin-web-helpers/dist/static/context.html")
+                config.customDebugFile = modules.require("kotlin-web-helpers/dist/static/debug.html")
             } else {
                 config.files.add(fileString)
             }
@@ -448,23 +465,36 @@ constructor(
             confWriter.println("}")
         }
 
-        val nodeModules = listOf("karma/bin/karma")
-
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
         val args = if (debug) {
             nodeJsArgs + listOf(
-                npmProject.require("kotlin-web-helpers/dist/karma-debug-runner.js"),
+                modules.require("kotlin-web-helpers/dist/karma-debug-runner.js"),
                 karmaConfigAbsolutePath
             )
         } else {
             nodeJsArgs +
-                    nodeModules.map { npmProject.require(it) } +
+                    modules.require("karma/bin/karma") +
                     listOf("start", karmaConfigAbsolutePath)
         }
 
         val processLaunchOpts = objects.processLaunchOptions {
             this.workingDir.set(this@KotlinKarma.workingDir)
             this.executable.set(this@KotlinKarma.executable)
+        }
+
+        if (toolingExtracted) {
+            processLaunchOpts.environment.put(
+                "NODE_PATH",
+                listOf(
+                    npmProjectNodeModulesDir.getFile().normalize().absolutePath,
+                    npmToolingDir.getFile().resolve("node_modules").normalize().absolutePath
+                ).joinToString(File.pathSeparator)
+            )
+
+            processLaunchOpts.environment.put(
+                "KOTLIN_TOOLING_DIR",
+                npmToolingDir.getFile().resolve("node_modules").normalize().absolutePath
+            )
         }
 
         return object : JSServiceMessagesTestExecutionSpec(

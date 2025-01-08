@@ -90,6 +90,46 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @MppGradlePluginTests
+    @DisplayName("works with Wasm project")
+    @GradleTest
+    fun testRelocationKotlinWasm(gradleVersion: GradleVersion) {
+        val (firstProject, secondProject) = prepareTestProjects("new-mpp-wasm-wasi-js-test", gradleVersion)
+
+        checkBuildCacheRelocation(
+            firstProject,
+            secondProject,
+            listOf("assemble"),
+            listOf(
+                ":lib:compileKotlinWasmJs",
+                ":lib:compileKotlinWasmWasi",
+                ":app:compileKotlinWasmJs",
+                ":app:compileKotlinWasmWasi",
+                ":app:compileProductionExecutableKotlinWasmJs",
+                ":app:compileProductionExecutableKotlinWasmWasi",
+            )
+        )
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("works with Wasm Browser project")
+    @GradleTest
+    fun testRelocationKotlinWasmBrowser(gradleVersion: GradleVersion) {
+        val (firstProject, secondProject) = prepareTestProjects("mpp-wasm-js-browser-nodejs", gradleVersion)
+
+        checkBuildCacheRelocation(
+            firstProject,
+            secondProject,
+            listOf("assemble"),
+            listOf(
+                ":compileKotlinWasmJs",
+                ":compileKotlinWasmJs",
+                ":compileProductionExecutableKotlinWasmJs",
+                ":wasmJsBrowserProductionWebpack",
+            )
+        )
+    }
+
+    @MppGradlePluginTests
     @DisplayName("works with Multiplatform")
     @GradleTest
     fun testRelocationMultiplatform(gradleVersion: GradleVersion) {
