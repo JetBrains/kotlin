@@ -1474,7 +1474,18 @@ class CallAndReferenceGenerator(
         when (this) {
             is IrMemberAccessExpression<*> -> {
                 if (declarationSiteSymbol?.dispatchReceiverType != null) {
-                    val baseDispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
+                    // Although type alias constructors with inner RHS work as extension functions
+                    // (https://github.com/Kotlin/KEEP/blob/master/proposals/type-aliases.md#type-alias-constructors-for-inner-classes),
+                    // They should work as real constructors with initialized `dispatchReceiver` instead of `extensionReceiver` on IR level.
+                    val isConstructorOnTypealiasWithInnerRhs =
+                        (qualifiedAccess.calleeReference.symbol as? FirConstructorSymbol)?.let {
+                            it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameter != null
+                        } == true
+                    val baseDispatchReceiver = if (!isConstructorOnTypealiasWithInnerRhs) {
+                        qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
+                    } else {
+                        qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)
+                    }
                     var firDispatchReceiver = qualifiedAccess.dispatchReceiver
                     if (firDispatchReceiver is FirPropertyAccessExpression && firDispatchReceiver.calleeReference is FirSuperReference) {
                         firDispatchReceiver = firDispatchReceiver.dispatchReceiver
@@ -1496,7 +1507,8 @@ class CallAndReferenceGenerator(
                             )
                         }
                 }
-                // constructors don't have extension receiver but may have receiver parameter in case of inner classes
+                // constructors don't have extension receiver (except a case with type alias and inner RHS that is handled above),
+                // but may have receiver parameter in case of inner classes
                 if (declarationSiteSymbol?.receiverParameter != null && declarationSiteSymbol !is FirConstructorSymbol) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
                         val symbol = qualifiedAccess.calleeReference.toResolvedCallableSymbol()
