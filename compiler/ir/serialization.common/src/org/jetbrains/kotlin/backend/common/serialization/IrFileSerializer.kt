@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
@@ -70,6 +71,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
@@ -611,6 +614,31 @@ open class IrFileSerializer(
         return proto.build()
     }
 
+    private fun serializeRichFunctionReference(callable: IrRichFunctionReference): ProtoRichFunctionReference {
+        return ProtoRichFunctionReference.newBuilder().apply {
+            callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
+            overriddenFunctionSymbol = serializeIrSymbol(callable.overriddenFunctionSymbol)
+            for (boundValue in callable.boundValues) {
+                addBoundValues(serializeExpression(boundValue))
+            }
+            invokeFunction = serializeIrFunction(callable.invokeFunction)
+            callable.origin?.let { originName = serializeIrStatementOrigin(it) }
+            flags = RichFunctionReferenceFlags.encode(callable)
+        }.build()
+    }
+
+    private fun serializeRichPropertyReference(callable: IrRichPropertyReference): ProtoRichPropertyReference {
+        return ProtoRichPropertyReference.newBuilder().apply {
+            callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
+            for (boundValue in callable.boundValues) {
+                addBoundValues(serializeExpression(boundValue))
+            }
+            getterFunction = serializeIrFunction(callable.getterFunction)
+            callable.setterFunction?.let { setterFunction = serializeIrFunction(it) }
+            callable.origin?.let { originName = serializeIrStatementOrigin(it) }
+        }.build()
+    }
+
     private fun serializeIrLocalDelegatedPropertyReference(
         callable: IrLocalDelegatedPropertyReference
     ): ProtoLocalDelegatedPropertyReference {
@@ -1019,6 +1047,8 @@ open class IrFileSerializer(
             is IrEnumConstructorCall -> operationProto.enumConstructorCall = serializeEnumConstructorCall(expression)
             is IrFunctionExpression -> operationProto.functionExpression = serializeFunctionExpression(expression)
             is IrFunctionReference -> operationProto.functionReference = serializeFunctionReference(expression)
+            is IrRichFunctionReference if settings.allow220Nodes -> operationProto.richFunctionReference = serializeRichFunctionReference(expression)
+            is IrRichPropertyReference if settings.allow220Nodes -> operationProto.richPropertyReference = serializeRichPropertyReference(expression)
             is IrGetClass -> operationProto.getClass = serializeGetClass(expression)
             is IrGetField -> operationProto.getField = serializeGetField(expression)
             is IrGetValue -> operationProto.getValue = serializeGetValue(expression)

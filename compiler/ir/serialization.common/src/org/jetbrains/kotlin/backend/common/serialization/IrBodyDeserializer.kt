@@ -76,6 +76,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWh
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
 
 class IrBodyDeserializer(
     private val builtIns: IrBuiltIns,
@@ -391,6 +393,53 @@ class IrBodyDeserializer(
             declarationDeserializer.deserializeIrFunction(functionExpression.function),
             deserializeIrStatementOrigin(functionExpression.originName)
         )
+
+    private fun deserializeRichFunctionReference(
+        richFunctionReference: ProtoRichFunctionReference,
+        start: Int,
+        end: Int,
+        type: IrType
+    ) : IrRichFunctionReference {
+        val flags = RichFunctionReferenceFlags.decode(richFunctionReference.flags)
+        return IrRichFunctionReferenceImpl(
+            startOffset = start,
+            endOffset = end,
+            type = type,
+            reflectionTargetSymbol = deserializeTypedSymbolWhen<IrFunctionSymbol>(
+                richFunctionReference.hasReflectionTargetSymbol(),
+                FUNCTION_SYMBOL
+            ) { richFunctionReference.reflectionTargetSymbol },
+            overriddenFunctionSymbol = deserializeTypedSymbol<IrSimpleFunctionSymbol>(
+                richFunctionReference.overriddenFunctionSymbol,
+                FUNCTION_SYMBOL
+            ),
+            invokeFunction = declarationDeserializer.deserializeIrFunction(richFunctionReference.invokeFunction),
+            origin = deserializeIrStatementOrigin(richFunctionReference.hasOriginName()) { richFunctionReference.originName },
+            hasUnitConversion = flags.hasUnitConversion,
+            hasSuspendConversion = flags.hasSuspendConversion,
+            hasVarargConversion = flags.hasVarargConversion,
+            isRestrictedSuspension = flags.isRestrictedSuspension
+        ).apply {
+            boundValues.addAll(richFunctionReference.boundValuesList.map { deserializeExpression(it) })
+        }
+    }
+
+    private fun deserializeRichPropertyReference(
+        richPropertyReference: ProtoRichPropertyReference,
+        start: Int,
+        end: Int,
+        type: IrType
+    ) = IrRichPropertyReferenceImpl(
+        startOffset = start,
+        endOffset = end,
+        type = type,
+        reflectionTargetSymbol = deserializeTypedSymbolWhen<IrDeclarationWithAccessorsSymbol>(richPropertyReference.hasReflectionTargetSymbol(), PROPERTY_SYMBOL) { richPropertyReference.reflectionTargetSymbol },
+        getterFunction = declarationDeserializer.deserializeIrFunction(richPropertyReference.getterFunction),
+        setterFunction = if (richPropertyReference.hasSetterFunction()) declarationDeserializer.deserializeIrFunction(richPropertyReference.setterFunction) else null,
+        origin = deserializeIrStatementOrigin(richPropertyReference.hasOriginName()) { richPropertyReference.originName },
+    ).apply {
+        boundValues.addAll(richPropertyReference.boundValuesList.map { deserializeExpression(it) })
+    }
 
     private fun deserializeErrorExpression(
         proto: ProtoErrorExpression,
@@ -866,6 +915,8 @@ class IrBodyDeserializer(
             DYNAMIC_OPERATOR -> deserializeDynamicOperatorExpression(proto.dynamicOperator, start, end, type)
             CONSTRUCTOR_CALL -> deserializeConstructorCall(proto.constructorCall, start, end, type)
             FUNCTION_EXPRESSION -> deserializeFunctionExpression(proto.functionExpression, start, end, type)
+            RICH_FUNCTION_REFERENCE -> deserializeRichFunctionReference(proto.richFunctionReference, start, end, type)
+            RICH_PROPERTY_REFERENCE -> deserializeRichPropertyReference(proto.richPropertyReference, start, end, type)
             ERROR_EXPRESSION -> deserializeErrorExpression(proto.errorExpression, start, end, type)
             ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.errorCallExpression, start, end, type)
             OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")

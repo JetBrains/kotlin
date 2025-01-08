@@ -202,6 +202,23 @@ message IrPropertyReference {
   required int64 symbol = 6;
 }
 
+message IrRichFunctionReference {
+  repeated IrExpression bound_values = 1;
+  optional int64 reflection_target_symbol = 2;
+  required int64 overridden_function_symbol = 3;
+  required IrFunction invoke_function = 4;
+  optional int64 flags = 5 [default = 0];
+  optional int32 origin_name = 6;
+}
+
+message IrRichPropertyReference {
+  repeated IrExpression bound_values = 1;
+  optional int64 reflection_target_symbol = 2;
+  required IrFunction getter_function = 3;
+  optional IrFunction setter_function = 4;
+  optional int32 origin_name = 5;
+}
+
 message IrComposite {
   repeated IrStatement statement = 1;
   optional int32 origin_name = 2;
@@ -455,6 +472,8 @@ message IrOperation {
     // Operations again
     IrReturnableBlock returnable_block = 36;
     IrInlinedFunctionBlock inlined_function_block = 37;
+    IrRichFunctionReference rich_function_reference = 38;
+    IrRichPropertyReference rich_property_reference = 39;
   }
 }
 

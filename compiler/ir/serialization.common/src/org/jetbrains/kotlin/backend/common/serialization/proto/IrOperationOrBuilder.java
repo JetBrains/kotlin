@@ -355,4 +355,22 @@ public interface IrOperationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getInlinedFunctionBlock();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference rich_function_reference = 38;</code>
+   */
+  boolean hasRichFunctionReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference rich_function_reference = 38;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference getRichFunctionReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference rich_property_reference = 39;</code>
+   */
+  boolean hasRichPropertyReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference rich_property_reference = 39;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference getRichPropertyReference();
 }
