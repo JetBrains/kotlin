@@ -5,48 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.gradle.api.logging.Logger
-import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
-import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
-import java.io.File
 
-class Yarn : NpmApiExecution<YarnEnvironment> {
-    private val yarnWorkspaces = YarnWorkspaces()
-
-    override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> =
-        yarnWorkspaces.preparedFiles(nodeJs)
-
-    override fun prepareRootProject(
-        nodeJs: NodeJsEnvironment,
-        packageManagerEnvironment: YarnEnvironment,
-        rootProjectName: String,
-        rootProjectVersion: String,
-        subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-    ) = yarnWorkspaces
-        .prepareRootProject(
-            nodeJs,
-            packageManagerEnvironment,
-            rootProjectName,
-            rootProjectVersion,
-            subProjects,
-        )
-
-    override fun resolveRootProject(
-        services: ServiceRegistry,
-        logger: Logger,
-        nodeJs: NodeJsEnvironment,
-        packageManagerEnvironment: YarnEnvironment,
-        cliArgs: List<String>
-    ) {
-        yarnWorkspaces
-            .resolveRootProject(
-                services,
-                logger,
-                nodeJs,
-                packageManagerEnvironment,
-                cliArgs
-            )
-    }
-}
+class Yarn : NpmApiExecution<YarnEnvironment> by YarnWorkspaces()

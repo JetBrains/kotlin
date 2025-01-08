@@ -15,7 +15,6 @@ import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.io.path.appendText
-import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -414,6 +413,22 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin/$moduleName.mjs")
                 )
             }
+        }
+    }
+
+    @DisplayName("webpack configuration is valid")
+    @GradleTest
+    fun testWebpackConfig(gradleVersion: GradleVersion) {
+        project("kotlin-js-test-webpack-config", gradleVersion) {
+            build("wasmJsBrowserDevelopmentWebpack")
+
+            build("wasmJsCheckConfigDevelopmentWebpack")
+
+            build("wasmJsCheckConfigProductionWebpack")
+
+            build("wasmJsCheckConfigDevelopmentRun")
+
+            build("wasmJsCheckConfigProductionRun")
         }
     }
 

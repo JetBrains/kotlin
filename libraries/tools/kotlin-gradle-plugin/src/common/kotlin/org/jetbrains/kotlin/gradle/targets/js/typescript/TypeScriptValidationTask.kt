@@ -8,7 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.typescript
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.SkipWhenEmpty
+import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
@@ -16,8 +22,10 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.utils.getFile
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -29,6 +37,8 @@ constructor(
     final override val compilation: KotlinJsIrCompilation,
 ) : DefaultTask(), RequiresNpmDependencies {
     private val npmProject = compilation.npmProject
+
+    private val npmProjectDir = npmProject.dir
 
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
@@ -59,8 +69,12 @@ constructor(
 
         if (files.isEmpty()) return
 
+        val modules = NpmProjectModules(npmProjectDir.getFile())
+
         val result = services.execWithProgress("typescript") {
-            npmProject.useTool(it, "typescript/bin/tsc", listOf(), listOf("--noEmit"))
+            it.workingDir(npmProjectDir)
+            it.executable(npmProject.nodeExecutable)
+            it.args = listOf(modules.require("typescript/bin/tsc")) + "--noEmit"
         }
 
         if (result.exitValue == 0) return

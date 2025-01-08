@@ -67,7 +67,7 @@ kotlin {
                 val projectName = project.name
                 doFirst {
                     this as Exec
-                    npmProject.useTool(this, "webpack/bin/webpack", args = listOf())
+                    this.executable(npmProject.nodeExecutable)
                     this.args = listOf("./$projectName.js")
                     workingDir(workDir)
                 }

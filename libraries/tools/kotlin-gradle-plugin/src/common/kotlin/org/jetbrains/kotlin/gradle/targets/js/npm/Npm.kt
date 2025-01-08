@@ -67,7 +67,7 @@ class Npm : NpmApiExecution<NpmEnvironment> {
     ) {
         val nodeJsWorldDir = nodeJs.rootPackageDir.getFile()
 
-        npmExec(
+        packageManagerExec(
             services,
             logger,
             nodeJs,
@@ -78,7 +78,18 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         )
     }
 
-    fun npmExec(
+    override fun prepareTooling(
+        dir: File,
+    ) {
+        dir.resolve("package-lock.json")
+            .outputStream()
+            .use { out ->
+                Npm::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/npm/package-lock.json")
+                    ?.copyTo(out)
+            }
+    }
+
+    override fun packageManagerExec(
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,

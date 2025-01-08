@@ -26,7 +26,7 @@ class NpmVersions : Serializable {
     val mocha = NpmPackageVersion("mocha", "10.7.3")
     val karma = NpmPackageVersion("karma", "6.4.4")
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.2.0")
-    val karmaPhantomjsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
+    //    val karmaPhantomjsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
     val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "2.1.3")
     val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "1.0.0")
     val karmaIeLauncher = NpmPackageVersion("karma-ie-launcher", "1.0.0")
@@ -36,4 +36,31 @@ class NpmVersions : Serializable {
     val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
     val typescript = NpmPackageVersion("typescript", "5.5.4")
     val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "2.0.0")
+
+    val allDeps = listOf(
+        webpack,
+        webpackCli,
+        webpackDevServer,
+        sourceMapLoader,
+        sourceMapSupport,
+        cssLoader,
+        styleLoader,
+        sassLoader,
+        sass,
+        toStringLoader,
+        miniCssExtractPlugin,
+        mocha,
+        karma,
+        karmaChromeLauncher,
+//        karmaPhantomjsLauncher,
+        karmaFirefoxLauncher,
+        karmaOperaLauncher,
+        karmaIeLauncher,
+        karmaSafariLauncher,
+        karmaMocha,
+        karmaWebpack,
+        karmaSourcemapLoader,
+        typescript,
+        kotlinWebHelpers,
+    )
 }

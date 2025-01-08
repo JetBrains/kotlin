@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.TeamCityMessageCommonClient
 import org.jetbrains.kotlin.gradle.internal.execWithErrorLogger
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import java.io.File
 
 internal data class KotlinWebpackRunner(
@@ -26,7 +27,9 @@ internal data class KotlinWebpackRunner(
     val tool: String,
     val args: List<String>,
     val nodeArgs: List<String>,
-    val config: KotlinWebpackConfig
+    val config: KotlinWebpackConfig,
+    val npmToolingEnvDir: File,
+    val toolingExtracted: Boolean,
 ) {
     fun execute(services: ServiceRegistry) = services.execWithErrorLogger("webpack") { execAction, progressLogger ->
         configureExec(
@@ -61,7 +64,7 @@ internal data class KotlinWebpackRunner(
 
     private fun configureExec(
         execFactory: ExecSpec,
-        progressLogger: ProgressLogger?
+        progressLogger: ProgressLogger?,
     ): Pair<TeamCityMessageCommonClient, TeamCityMessageCommonClient> {
         check(config.entry?.isFile == true) {
             "${this}: Entry file not existed \"${config.entry}\""
@@ -95,12 +98,15 @@ internal data class KotlinWebpackRunner(
             args.add("--progress")
         }
 
-        npmProject.useTool(
-            execFactory,
-            tool,
-            nodeArgs,
-            args
-        )
+        val modules = NpmProjectModules(npmToolingEnvDir)
+        execFactory.workingDir(npmProject.dir)
+        execFactory.executable(npmProject.nodeExecutable)
+        if (toolingExtracted) {
+            execFactory.environment("NODE_PATH", npmToolingEnvDir.resolve("node_modules"))
+            execFactory.environment("KOTLIN_TOOLING_DIR", npmToolingEnvDir.resolve("node_modules"))
+        }
+
+        execFactory.args = nodeArgs + modules.require(tool) + args
 
         return standardClient to errorClient
     }

@@ -8,20 +8,21 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.Npm
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import java.io.File
 
 abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
 
-    fun yarnExec(
+    override fun packageManagerExec(
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        environment: YarnEnvironment,
         dir: File,
         description: String,
-        args: List<String>
+        args: List<String>,
     ) {
         services.execWithProgress(description) { exec ->
             val arguments = args
@@ -29,11 +30,11 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
                     if (logger.isDebugEnabled) "--verbose" else ""
                 )
                 .plus(
-                    if (yarn.ignoreScripts) "--ignore-scripts" else ""
+                    if (environment.ignoreScripts) "--ignore-scripts" else ""
                 ).filter { it.isNotEmpty() }
 
             val nodeExecutable = nodeJs.nodeExecutable
-            if (!yarn.ignoreScripts) {
+            if (!environment.ignoreScripts) {
                 val nodePath = File(nodeExecutable).parent
                 exec.environment(
                     "PATH",
@@ -41,8 +42,8 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
                 )
             }
 
-            val command = yarn.executable
-            if (yarn.standalone) {
+            val command = environment.executable
+            if (environment.standalone) {
                 exec.executable = command
                 exec.args = arguments
             } else {
@@ -53,5 +54,14 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
             exec.workingDir = dir
         }
 
+    }
+
+    override fun prepareTooling(dir: File) {
+        dir.resolve("yarn.lock")
+            .outputStream()
+            .use { out ->
+                Npm::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
+                    ?.copyTo(out)
+            }
     }
 }

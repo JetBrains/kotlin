@@ -41,7 +41,8 @@ data class KotlinWebpackConfig(
     var sourceMaps: Boolean = false,
     var export: Boolean = true,
     var progressReporter: Boolean = false,
-    var resolveFromModulesFirst: Boolean = false
+    var resolveFromModulesFirst: Boolean = false,
+    var resolveLoadersFromKotlinToolingDir: Boolean = false,
 ) : WebpackRulesDsl {
 
     val entryInput: String?
@@ -94,14 +95,14 @@ data class KotlinWebpackConfig(
         var proxy: MutableList<Proxy>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
-        var client: Client? = null
+        var client: Client? = null,
     ) : Serializable {
         data class Client(
-            var overlay: Any /* Overlay | Boolean */
+            var overlay: Any, /* Overlay | Boolean */
         ) : Serializable {
             data class Overlay(
                 var errors: Boolean,
-                var warnings: Boolean
+                var warnings: Boolean,
             ) : Serializable
         }
 
@@ -110,20 +111,20 @@ data class KotlinWebpackConfig(
             val target: String,
             val pathRewrite: MutableMap<String, String>? = null,
             val secure: Boolean? = null,
-            val changeOrigin: Boolean? = null
+            val changeOrigin: Boolean? = null,
         ) : Serializable
     }
 
     @Suppress("unused")
     data class Optimization(
         var runtimeChunk: Any?,
-        var splitChunks: Any?
+        var splitChunks: Any?,
     ) : Serializable
 
     @Suppress("unused")
     data class WatchOptions(
         var aggregateTimeout: Int? = null,
-        var ignored: Any? = null
+        var ignored: Any? = null,
     ) : Serializable
 
     fun save(configFile: File) {
@@ -134,6 +135,14 @@ data class KotlinWebpackConfig(
 
     fun appendTo(target: Appendable) {
         with(target) {
+            val resolveLoaders = if (resolveLoadersFromKotlinToolingDir) {
+                """
+                resolveLoader: {
+                  modules: ['node_modules', process.env['KOTLIN_TOOLING_DIR']]
+                }
+                """.trimIndent()
+            } else ""
+
             //language=JavaScript 1.8
             appendLine(
                 """
@@ -147,7 +156,8 @@ data class KotlinWebpackConfig(
                       plugins: [],
                       module: {
                         rules: []
-                      }
+                      },
+                      $resolveLoaders
                     };
                     
                 """.trimIndent()
