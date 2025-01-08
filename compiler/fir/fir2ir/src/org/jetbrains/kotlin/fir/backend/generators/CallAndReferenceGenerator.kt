@@ -119,7 +119,7 @@ class CallAndReferenceGenerator(
                     getter = referencedPropertyGetterSymbol,
                     setter = referencedPropertySetterSymbol,
                     origin = origin
-                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
@@ -143,7 +143,7 @@ class CallAndReferenceGenerator(
                     getter = referencedPropertyGetterSymbol,
                     setter = referencedPropertySetterSymbol,
                     origin = origin
-                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToLocalDelegatedProperty(propertySymbol: FirPropertySymbol): IrExpression? {
@@ -170,7 +170,7 @@ class CallAndReferenceGenerator(
                     getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(irPropertySymbol) },
                     setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(irPropertySymbol) },
                     origin
-                ).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+                ).applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToFunction(functionSymbol: FirFunctionSymbol<*>): IrExpression? {
@@ -198,7 +198,7 @@ class CallAndReferenceGenerator(
                         hasExtensionReceiver = function.isExtension,
                         reflectionTarget = irFunctionSymbol
                     ).applyTypeArguments(callableReferenceAccess)
-                        .applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+                        .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
                 }
             }
 
@@ -665,7 +665,7 @@ class CallAndReferenceGenerator(
                 is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, irType, irSymbol)
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, irType)
             }
-        }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, convertedExplicitReceiver)
+        }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, firSymbol, convertedExplicitReceiver)
             .applyCallArguments(qualifiedAccess)
     }
 
@@ -851,7 +851,7 @@ class CallAndReferenceGenerator(
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
-        }.applyTypeArguments(lValue).applyReceivers(lValue, explicitReceiverExpression)
+        }.applyTypeArguments(lValue).applyReceivers(lValue, firSymbol, explicitReceiverExpression)
     }
 
     /** Wrap an assignment - as needed - with an implicit cast to the left-hand side type. */
@@ -1468,18 +1468,18 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applyReceivers(
         qualifiedAccess: FirQualifiedAccessExpression,
+        declarationSiteSymbol: FirCallableSymbol<*>?,
         explicitReceiverExpression: IrExpression?,
     ): IrExpression {
         when (this) {
             is IrMemberAccessExpression<*> -> {
-                val resolvedFirSymbol = qualifiedAccess.toResolvedCallableSymbol()
-                if (resolvedFirSymbol?.dispatchReceiverType != null) {
+                if (declarationSiteSymbol?.dispatchReceiverType != null) {
                     val baseDispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                     var firDispatchReceiver = qualifiedAccess.dispatchReceiver
                     if (firDispatchReceiver is FirPropertyAccessExpression && firDispatchReceiver.calleeReference is FirSuperReference) {
                         firDispatchReceiver = firDispatchReceiver.dispatchReceiver
                     }
-                    val notFromAny = !resolvedFirSymbol.isFunctionFromAny()
+                    val notFromAny = !declarationSiteSymbol.isFunctionFromAny()
                     val notAnInterface = firDispatchReceiver?.resolvedType?.toRegularClassSymbol(session)?.isInterface != true
                     dispatchReceiver =
                         if (notFromAny || notAnInterface) {
@@ -1497,7 +1497,7 @@ class CallAndReferenceGenerator(
                         }
                 }
                 // constructors don't have extension receiver but may have receiver parameter in case of inner classes
-                if (resolvedFirSymbol?.receiverParameter != null && resolvedFirSymbol !is FirConstructorSymbol) {
+                if (declarationSiteSymbol?.receiverParameter != null && declarationSiteSymbol !is FirConstructorSymbol) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
                         val symbol = qualifiedAccess.calleeReference.toResolvedCallableSymbol()
                             ?: error("Symbol for call ${qualifiedAccess.render()} not found")
@@ -1517,7 +1517,7 @@ class CallAndReferenceGenerator(
             }
 
             is IrFieldAccessExpression -> {
-                val firDeclaration = qualifiedAccess.toResolvedCallableSymbol()!!.fir.propertyIfBackingField
+                val firDeclaration = declarationSiteSymbol!!.fir.propertyIfBackingField
                 // Top-level properties are considered as static in IR
                 val fieldIsStatic =
                     firDeclaration.isStatic || (firDeclaration is FirProperty && !firDeclaration.isLocal && firDeclaration.containingClassLookupTag() == null)
