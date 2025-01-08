@@ -43,6 +43,14 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
                 ?: error("Fir file for dandling modifier list cannot be null")
         }
         is FirReceiverParameter -> containingDeclarationSymbol.fir.getContainingFile()
+        is FirReplSnippet -> {
+            val ktFile = psi?.containingFile as? KtFile
+                ?: error("File for FirReplSnippet cannot be null")
+            val moduleComponents = llFirResolvableSession?.moduleComponents
+                ?: error("LLFirResolvableModuleSession for FirReplSnippet cannot be null")
+            moduleComponents.cache.getCachedFirFile(ktFile)
+                ?: error("Fir file for FirReplSnippet cannot be null")
+        }
         else -> errorWithFirSpecificEntries("Unsupported declaration ${this::class}", fir = this)
     }
 }

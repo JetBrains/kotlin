@@ -1427,10 +1427,12 @@ open class PsiRawFirBuilder(
                 name = snippetName
                 symbol = snippetSymbol
 
+                var lastStatement: Any? = null // Unclear how to get this from the LazyFirL
                 body = buildOrLazyBlock {
                     withContainerSymbol(snippetSymbol, isLocal = true) {
                         buildBlock {
                             script.declarations.forEach { declaration ->
+                                ;
                                 when (declaration) {
                                     is KtScriptInitializer -> {
                                         val initializer = buildAnonymousInitializer(
@@ -1441,10 +1443,12 @@ open class PsiRawFirBuilder(
                                         )
 
                                         statements.addAll(initializer.body!!.statements)
+                                        lastStatement = initializer.body!!.statements.lastOrNull()
                                     }
                                     is KtDestructuringDeclaration -> {
                                         val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
                                         statements.add(destructuringContainerVar)
+                                        lastStatement = destructuringContainerVar
 
                                         addDestructuringVariables(
                                             statements,
@@ -1466,6 +1470,7 @@ open class PsiRawFirBuilder(
                                         val firStatement = declaration.toFirStatement()
                                         if (firStatement is FirDeclaration) {
                                             statements.add(firStatement)
+                                            lastStatement = firStatement
                                         } else {
                                             error("unexpected declaration type in script")
                                         }
@@ -1477,7 +1482,7 @@ open class PsiRawFirBuilder(
                 }
                 // TODO: proper lazy support - see the script
                 resultTypeRef =
-                    if (body.statements.lastOrNull() is FirDeclaration) implicitUnitType else FirImplicitTypeRefImplWithoutSource
+                    if (lastStatement is FirDeclaration) implicitUnitType else FirImplicitTypeRefImplWithoutSource
                 setup()
             }
         }

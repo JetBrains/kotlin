@@ -1,0 +1,1 @@
+val x = 42<caret>

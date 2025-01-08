@@ -90,6 +90,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
             is FirFile,
             is FirTypeAlias,
             is FirScript,
+            is FirReplSnippet,
             is FirRegularClass,
             is FirAnonymousInitializer,
                 -> rawResolve(target)
@@ -115,6 +116,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
             }
 
             is FirScript -> resolveScriptTypes(target)
+            is FirReplSnippet -> resolveReplTypes(target)
             is FirField if (target.origin == FirDeclarationOrigin.Synthetic.DelegateField) -> {
                 // delegated field should be resolved in the same context as super types
                 resolveOutsideClassBody(target, transformer::transformDelegateField)
@@ -161,6 +163,11 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
     private fun resolveScriptTypes(firScript: FirScript) {
         firScript.transformAnnotations(transformer, null)
         firScript.transformReceivers(transformer, null)
+    }
+
+    private fun resolveReplTypes(firSnippet: FirReplSnippet) {
+        // Repl statements are lazy here, unlike Script. Problem?
+        TODO("Unclear if this is correct")
     }
 
     private fun resolveClassTypes(firClass: FirRegularClass) {
