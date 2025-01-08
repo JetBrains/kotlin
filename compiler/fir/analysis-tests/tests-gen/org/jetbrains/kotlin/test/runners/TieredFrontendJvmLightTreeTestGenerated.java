@@ -25643,9 +25643,21 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
         }
 
         @Test
+        @TestMetadata("DiagnosticCustomMessage_error_override.kt")
+        public void testDiagnosticCustomMessage_error_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticCustomMessage_error_override.kt");
+        }
+
+        @Test
         @TestMetadata("DiagnosticDefaultMessage_error.kt")
         public void testDiagnosticDefaultMessage_error() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_error.kt");
+        }
+
+        @Test
+        @TestMetadata("DiagnosticDefaultMessage_error_override.kt")
+        public void testDiagnosticDefaultMessage_error_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_error_override.kt");
         }
 
         @Test

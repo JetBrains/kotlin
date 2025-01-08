@@ -47256,9 +47256,21 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("DiagnosticCustomMessage_error_override.kt")
+        public void testDiagnosticCustomMessage_error_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticCustomMessage_error_override.kt");
+        }
+
+        @Test
         @TestMetadata("DiagnosticCustomMessage_warning.kt")
         public void testDiagnosticCustomMessage_warning() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticCustomMessage_warning.kt");
+        }
+
+        @Test
+        @TestMetadata("DiagnosticCustomMessage_warning_override.kt")
+        public void testDiagnosticCustomMessage_warning_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticCustomMessage_warning_override.kt");
         }
 
         @Test
@@ -47268,9 +47280,21 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("DiagnosticDefaultMessage_error_override.kt")
+        public void testDiagnosticDefaultMessage_error_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_error_override.kt");
+        }
+
+        @Test
         @TestMetadata("DiagnosticDefaultMessage_warning.kt")
         public void testDiagnosticDefaultMessage_warning() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_warning.kt");
+        }
+
+        @Test
+        @TestMetadata("DiagnosticDefaultMessage_warning_override.kt")
+        public void testDiagnosticDefaultMessage_warning_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_warning_override.kt");
         }
 
         @Test

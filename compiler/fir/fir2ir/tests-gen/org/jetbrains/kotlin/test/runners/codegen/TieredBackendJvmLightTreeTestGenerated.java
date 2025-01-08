@@ -20164,9 +20164,21 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
         }
 
         @Test
+        @TestMetadata("DiagnosticCustomMessage_warning_override.kt")
+        public void testDiagnosticCustomMessage_warning_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticCustomMessage_warning_override.kt");
+        }
+
+        @Test
         @TestMetadata("DiagnosticDefaultMessage_warning.kt")
         public void testDiagnosticDefaultMessage_warning() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_warning.kt");
+        }
+
+        @Test
+        @TestMetadata("DiagnosticDefaultMessage_warning_override.kt")
+        public void testDiagnosticDefaultMessage_warning_override() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage_warning_override.kt");
         }
 
         @Test
