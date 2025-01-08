@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -82,11 +81,6 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     internal fun invalidateAll() {
         builtinsModules.clear()
         builtinsAndCloneableSessions.clear()
-    }
-
-    @TestOnly
-    fun clearForTheNextTest() {
-        invalidateAll()
     }
 
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
