@@ -321,7 +321,6 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         return classCache.getValueIfComputed(classId) ?: typeAliasCache.getValueIfComputed(classId)
     }
 
-    @FirSymbolProviderInternals
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
         val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
         cache.getValueIfComputed(classId)?.let { return it }

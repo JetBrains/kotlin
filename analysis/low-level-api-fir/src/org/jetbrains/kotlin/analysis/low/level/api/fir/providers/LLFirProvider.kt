@@ -58,7 +58,6 @@ internal class LLFirProvider(
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
         sourceSymbolProvider.getClassLikeSymbolByClassId(classId)?.fir
 
-    @OptIn(FirSymbolProviderInternals::class)
     fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
         val classId = classLikeDeclaration.getClassId() ?: return null
         return sourceSymbolProvider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)?.fir

@@ -71,7 +71,6 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
         return classifierCache.get(classId) { computeClassLikeSymbolByClassId(it) }
     }
 
-    @OptIn(FirSymbolProviderInternals::class)
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val candidates = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
         val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
@@ -105,6 +104,10 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
 
     /**
      * Calls [provide] on those providers which can contribute a callable of the given name.
+     *
+     * We cannot use [KotlinDeclarationProvider.getTopLevelCallableFiles] like [LLKotlinSourceSymbolProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider]
+     * for optimization because this approach only works for sources. Stub-based library symbol providers shouldn't access callables from
+     * [KtFile][org.jetbrains.kotlin.psi.KtFile]s.
      */
     private inline fun <A : KtCallableDeclaration> forEachCallableProvider(
         packageFqName: FqName,

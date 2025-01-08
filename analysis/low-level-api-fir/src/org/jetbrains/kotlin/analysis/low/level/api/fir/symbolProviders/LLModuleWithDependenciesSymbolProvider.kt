@@ -72,7 +72,6 @@ internal class LLModuleWithDependenciesSymbolProvider(
     fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
-    @OptIn(FirSymbolProviderInternals::class)
     fun getDeserializedClassLikeSymbolByClassIdWithoutDependencies(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
