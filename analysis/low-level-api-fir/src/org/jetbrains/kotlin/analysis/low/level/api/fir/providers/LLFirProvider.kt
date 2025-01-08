@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptyKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.providers.*
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirEmptySymbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -47,20 +48,21 @@ internal class LLFirProvider(
             }
         }
 
-    private val sourceSymbolProvider =
-        LLKotlinSourceSymbolProvider(session, moduleComponents, searchScope, canContainKotlinPackage, declarationProviderFactory)
-
-    override val symbolProvider: FirSymbolProvider =
-        if (disregardSelfDeclarations) FirEmptySymbolProvider(session) else sourceSymbolProvider
+    override val symbolProvider: LLKotlinSymbolProvider =
+        if (!disregardSelfDeclarations) {
+            LLKotlinSourceSymbolProvider(session, moduleComponents, searchScope, canContainKotlinPackage, declarationProviderFactory)
+        } else {
+            LLEmptyKotlinSymbolProvider(session)
+        }
 
     override val isPhasedFirAllowed: Boolean get() = true
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
-        sourceSymbolProvider.getClassLikeSymbolByClassId(classId)?.fir
+        symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
 
     fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
         val classId = classLikeDeclaration.getClassId() ?: return null
-        return sourceSymbolProvider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)?.fir
+        return symbolProvider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)?.fir
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
@@ -99,7 +101,7 @@ internal class LLFirProvider(
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
-        sourceSymbolProvider.symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)
+        symbolProvider.symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)
             ?: errorWithAttachment("Cannot compute the set of class names in the given package") {
                 withEntry("packageFqName", fqName.asString())
             }
