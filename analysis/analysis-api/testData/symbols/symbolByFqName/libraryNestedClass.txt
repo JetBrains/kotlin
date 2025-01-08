@@ -28,4 +28,4 @@ KaNamedClassSymbol:
   getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
-  isPublicApi: true
+  isPublicApi: false

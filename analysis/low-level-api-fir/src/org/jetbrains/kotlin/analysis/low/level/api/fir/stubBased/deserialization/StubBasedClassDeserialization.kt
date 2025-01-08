@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
 import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
+import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -126,10 +128,10 @@ internal fun deserializeClassToSymbol(
     }
     val modality = classOrObject.modality
     val visibility = classOrObject.visibility
-    val status = FirResolvedDeclarationStatusImpl(
+    val status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
         visibility,
         modality,
-        visibility.toEffectiveVisibility(parentContext?.outerClassSymbol, forClass = true)
+        visibility.toLazyEffectiveVisibility(parentContext?.outerClassSymbol, session, forClass = true)
     ).apply {
         isExpect = classOrObject.hasModifier(KtTokens.EXPECT_KEYWORD)
         isActual = false
