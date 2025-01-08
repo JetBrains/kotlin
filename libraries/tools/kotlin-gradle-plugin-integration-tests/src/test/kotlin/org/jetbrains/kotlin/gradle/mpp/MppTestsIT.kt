@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.api.provider.Property
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeText
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform testing")
@@ -111,6 +114,51 @@ class MppTestsIT : KGPBaseTest() {
                 projectPath.resolve("shared/build/kotlinProjectStructureMetadata/kotlin-project-structure-metadata.json"),
                 """"my-custom-group:my-custom-id""""
             )
+        }
+    }
+
+    @DisplayName("KT-49155: works with test-retry-gradle-plugin")
+    @GradleTest
+    fun worksWithTestRetryPlugin(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            buildGradleKts.replaceText("plugins {", """
+                plugins {
+                    id("org.gradle.test-retry") version "1.6.0"
+            """.trimIndent())
+
+            buildScriptInjection {
+                kotlinMultiplatform.jvm().testRuns.configureEach {
+                    it.executionTask.configure {
+                        it.useJUnitPlatform()
+                        val retryExtension = it.extensions.getByName("retry")
+
+                        @Suppress("UNCHECKED_CAST")
+                        val maxRetriesProperty = retryExtension.javaClass.getMethod("getMaxRetries").invoke(retryExtension) as Property<Int>
+                        maxRetriesProperty.set(1)
+                    }
+                }
+                kotlinMultiplatform.sourceSets.getByName("commonTest").dependencies {
+                    implementation(kotlin("test"))
+                }
+            }
+
+            val jvmTest = kotlinSourcesDir("jvmTest")
+            jvmTest.createDirectories()
+            jvmTest.resolve("MyTest.kt").writeText("""
+                import kotlin.test.*
+
+                internal class MyTest {
+                    @Test
+                    fun myMethod() {
+                        assertTrue(false)
+                    }
+                }
+            """.trimIndent())
+
+            buildAndFail(":jvmTest") {
+                assertTasksFailed(":jvmTest")
+                assertOutputContainsExactlyTimes("MyTest[jvm] > myMethod()[jvm] FAILED", 2)
+            }
         }
     }
 }
