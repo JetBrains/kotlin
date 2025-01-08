@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInAnnotationCallChecker.getSubclassOptInApplicabilityAndMessage
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
@@ -309,35 +310,31 @@ object FirOptInUsageBaseChecker {
             (context.containingDeclarations.lastOrNull() as? FirClass)?.let { getSubclassOptInApplicabilityAndMessage(it).first } ?: false
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
-                val (diagnostic, messageProvider, verb) = when {
-                    fromSupertype && severity == Experimentality.Severity.WARNING -> Triple(
-                        FirErrors.OPT_IN_TO_INHERITANCE,
-                        OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
-                        "should"
-                    )
-                    severity == Experimentality.Severity.WARNING -> Triple(
-                        FirErrors.OPT_IN_USAGE,
-                        OptInUsagesDiagnosticMessageProvider,
-                        "should"
-                    )
-                    fromSupertype && severity == Experimentality.Severity.ERROR -> Triple(
+                val (diagnostic, messageProvider) = when {
+                    severity == Severity.ERROR && fromSupertype -> Pair(
                         FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
-                        OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
-                        "must"
+                        FirOptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
                     )
-                    severity == Experimentality.Severity.ERROR -> Triple(
-                        FirErrors.OPT_IN_USAGE_ERROR,
-                        OptInUsagesDiagnosticMessageProvider,
-                        "must"
+                    fromSupertype -> Pair(
+                        FirErrors.OPT_IN_TO_INHERITANCE,
+                        FirOptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
                     )
-                    else -> error("Unexpected $severity type")
+                    severity == Severity.ERROR ->
+                        Pair(
+                            FirErrors.OPT_IN_USAGE_ERROR,
+                            FirOptInUsagesDiagnosticMessageProvider,
+                        )
+                    else -> Pair(
+                        FirErrors.OPT_IN_USAGE,
+                        FirOptInUsagesDiagnosticMessageProvider,
+                    )
                 }
 
-                val reportedMessage =
-                    if (!message.isNullOrBlank()) messageProvider.buildCustomDiagnosticMessage(message) else messageProvider.buildDefaultDiagnosticMessage(
-                        annotationClassId.asFqNameString(),
-                        verb
-                    )
+                val reportedMessage = messageProvider.buildDiagnosticMessage(
+                    annotationClassId.asFqNameString(),
+                    severity,
+                    message
+                )
 
                 reporter.reportOn(source, diagnostic, annotationClassId, reportedMessage, context)
             }
@@ -355,15 +352,14 @@ object FirOptInUsageBaseChecker {
             if (!symbol.fir.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype = false)
             ) {
-                val (diagnostic, verb) = when (severity) {
-                    Experimentality.Severity.WARNING -> FirErrors.OPT_IN_OVERRIDE to "should"
-                    Experimentality.Severity.ERROR -> FirErrors.OPT_IN_OVERRIDE_ERROR to "must"
+                val diagnostic = when (severity) {
+                    Experimentality.Severity.WARNING -> FirErrors.OPT_IN_OVERRIDE
+                    Experimentality.Severity.ERROR -> FirErrors.OPT_IN_OVERRIDE_ERROR
                 }
-                val message = OptInNames.buildOverrideMessage(
-                    supertypeName ?: "???",
-                    markerMessage,
-                    verb,
-                    markerName = annotationClassId.asFqNameString()
+                val message = FirOptInOverrideDiagnosticMessageProvider(supertypeName ?: "???").buildDiagnosticMessage(
+                    annotationClassId.asFqNameString(),
+                    severity,
+                    markerMessage
                 )
                 reporter.reportOn(symbol.source, diagnostic, annotationClassId, message, context)
             }

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class MarkerA
 

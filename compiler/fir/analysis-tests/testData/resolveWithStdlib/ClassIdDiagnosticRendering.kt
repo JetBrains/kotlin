@@ -12,7 +12,7 @@ annotation class Marker
 class Some
 
 fun main() {
-    <!OPT_IN_USAGE_ERROR("a.b.c.Marker; This declaration needs opt-in. Its usage must be marked with '@a.b.c.Marker' or '@OptIn(a.b.c.Marker::class)'")!>Some<!>()
+    <!OPT_IN_USAGE_ERROR("a.b.c.Marker; This declaration requires opt-in to be used. The usage must be annotated with '@a.b.c.Marker' or '@OptIn(a.b.c.Marker::class)'")!>Some<!>()
 }
 
 annotation class NotOptIn
@@ -27,7 +27,7 @@ internal fun interface StableInterface {
 
 fun testOverrides() {
     object : StableInterface {
-        override fun <!OPT_IN_OVERRIDE_ERROR("a.b.c.Marker; Base declaration of supertype 'StableInterface' needs opt-in. The declaration override must be annotated with '@a.b.c.Marker' or '@OptIn(a.b.c.Marker::class)'")!>experimentalMethod<!>() {}
+        override fun <!OPT_IN_OVERRIDE_ERROR("a.b.c.Marker; Base declaration of supertype 'StableInterface' requires opt-in to be overridden. The overriding declaration must be annotated with '@a.b.c.Marker' or '@OptIn(a.b.c.Marker::class)'")!>experimentalMethod<!>() {}
     }
 }
 
