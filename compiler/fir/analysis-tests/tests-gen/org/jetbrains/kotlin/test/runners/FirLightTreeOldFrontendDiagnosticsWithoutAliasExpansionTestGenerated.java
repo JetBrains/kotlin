@@ -2489,12 +2489,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tieredFailures")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TieredFailures {
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/trailingComma")
     @TestDataPath("$PROJECT_ROOT")
     public class TrailingComma {

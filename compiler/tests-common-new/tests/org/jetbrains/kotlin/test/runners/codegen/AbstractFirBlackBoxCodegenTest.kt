@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -27,11 +26,6 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.configuration.configureTieredBackendJvmTest
-import org.jetbrains.kotlin.test.services.TestTierChecker
-import org.jetbrains.kotlin.test.services.TestTierLabel
-import org.junit.jupiter.api.Tag
 
 abstract class AbstractFirBlackBoxCodegenTestBase(
     val parser: FirParser
@@ -76,23 +70,3 @@ open class AbstractFirLightTreeBlackBoxCodegenTest : AbstractFirBlackBoxCodegenT
 
 @FirPsiCodegenTest
 open class AbstractFirPsiBlackBoxCodegenTest : AbstractFirBlackBoxCodegenTestBase(FirParser.Psi)
-
-abstract class AbstractTieredBackendJvmTest(
-    private val parser: FirParser,
-) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        configureTieredBackendJvmTest(
-            parser, ::Fir2IrResultsConverter, targetBackend,
-            klibFacades = null,
-        )
-
-        useAfterAnalysisCheckers(
-            { TestTierChecker(TestTierLabel.BACKEND, numberOfMarkerHandlersPerModule = 0, it) },
-        )
-    }
-}
-
-open class AbstractTieredBackendJvmLightTreeTest : AbstractTieredBackendJvmTest(FirParser.LightTree)
-
-@Tag("FirPsiCodegenTest")
-open class AbstractTieredBackendJvmPsiTest : AbstractTieredBackendJvmTest(FirParser.Psi)

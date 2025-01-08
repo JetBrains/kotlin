@@ -71,30 +71,6 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
  * - additional source providers
  */
 fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
-    useConfigurators(
-        ::CommonEnvironmentConfigurator,
-        ::JvmEnvironmentConfigurator,
-        ::ScriptingEnvironmentConfigurator,
-    )
-
-    useAdditionalSourceProviders(
-        ::AdditionalDiagnosticsSourceFilesProvider,
-        ::CoroutineHelpersSourceFilesProvider,
-    )
-
-    commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest(targetFrontend)
-}
-
-/**
- * Setups the bare minimum test configuration for JVM backend tests, including
- * - global defaults
- * - environment configurators
- * - additional source providers
- *
- * This method is used as an implementation detail for [commonServicesConfigurationForCodegenAndDebugTest] and
- * [configureTieredBackendJvmTest], so consider using them instead of this method.
- */
-fun TestConfigurationBuilder.commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
     globalDefaults {
         frontend = targetFrontend
         targetPlatform = JvmPlatforms.defaultJvmPlatform
@@ -106,11 +82,16 @@ fun TestConfigurationBuilder.commonServicesMinimalSettingsConfigurationForCodege
     }
 
     useConfigurators(
+        ::CommonEnvironmentConfigurator,
+        ::JvmEnvironmentConfigurator,
+        ::ScriptingEnvironmentConfigurator,
         ::JvmForeignAnnotationsConfigurator,
     )
 
     useAdditionalSourceProviders(
+        ::AdditionalDiagnosticsSourceFilesProvider,
         ::CodegenHelpersSourceFilesProvider,
+        ::CoroutineHelpersSourceFilesProvider,
     )
 }
 
@@ -224,10 +205,7 @@ fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHan
 }
 
 /**
- * Setups the bare minimum test configuration for JVM box tests.
- *
- * This method is used as an implementation detail for [baseFirBlackBoxCodegenTestDirectivesConfiguration] and
- * [configureTieredBackendJvmTest], so consider using them instead of this method.
+ * Setups the bare minimum test configuration for JVM box tests
  */
 fun TestConfigurationBuilder.configureBlackBoxTestSettings() {
     defaultDirectives {

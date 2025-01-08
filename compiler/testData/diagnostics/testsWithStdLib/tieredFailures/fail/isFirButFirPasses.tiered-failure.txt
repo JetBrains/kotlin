@@ -1,1 +1,0 @@
-Looks like tier FRONTEND passes with no error diagnostics. Please update the tier directive to `// RUN_PIPELINE_TILL: FIR2IR` (maybe even BACKEND if you are sure) and regenerate tests.

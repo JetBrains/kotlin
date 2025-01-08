@@ -10,37 +10,22 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.configuration.configurationForTestWithLatestLanguageVersion
 import org.jetbrains.kotlin.test.configuration.configureDiagnosticTest
 import org.jetbrains.kotlin.test.configuration.configureIrActualizerDiagnosticsTest
-import org.jetbrains.kotlin.test.configuration.toTieredHandlersAndCheckerOf
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.PartialTestTierChecker
 import org.jetbrains.kotlin.test.services.PlatformModuleProvider
-import org.jetbrains.kotlin.test.services.TestTierLabel
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
-import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         configureDiagnosticTest(parser)
-
-        forTestsMatching(
-            "compiler/testData/diagnostics/tests/*" or
-                    "compiler/testData/diagnostics/testsWithStdLib/*" or
-                    "compiler/fir/analysis-tests/testData/resolve/*" or
-                    "compiler/fir/analysis-tests/testData/resolveWithStdlib/*" or
-                    "compiler/fir/analysis-tests/testData/resolveFreezesIDE/*"
-        ) {
-            useAfterAnalysisCheckers(::PartialTestTierChecker)
-        }
     }
 }
 
@@ -66,25 +51,6 @@ abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : Abstra
         }
     }
 }
-
-abstract class AbstractTieredFrontendJvmTest(val parser: FirParser) : AbstractKotlinCompilerTest() {
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        configureDiagnosticTest(parser)
-
-        val (handlers, checker) = listOfNotNull(
-            // Makes the FIR tier fail if there are errors; otherwise, it would fail on meta-infos mismatch.
-            // But it's important to continue processing next modules in diagnostic tests, otherwise
-            // we won't collect their meta-infos and see a difference.
-            ::NoFirCompilationErrorsHandler.bind(false) // failureDisablesNextSteps
-        ).toTieredHandlersAndCheckerOf(TestTierLabel.FRONTEND)
-
-        configureFirHandlersStep { useHandlers(handlers) }
-        useAfterAnalysisCheckers(checker)
-    }
-}
-
-open class AbstractTieredFrontendJvmLightTreeTest : AbstractTieredFrontendJvmTest(FirParser.LightTree)
-open class AbstractTieredFrontendJvmPsiTest : AbstractTieredFrontendJvmTest(FirParser.Psi)
 
 abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
