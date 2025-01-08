@@ -52,13 +52,15 @@ abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : Abstra
     }
 }
 
-abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerWithTargetBackendTest(
+    targetBackend = TargetBackend.JVM_IR
+) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
         }
 
-        configureFirParser(parser)
+        configureFirParser(FirParser.LightTree)
         baseFirDiagnosticTestConfiguration()
 
         firHandlersStep {
@@ -72,13 +74,6 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
         useModuleStructureTransformers(PlatformModuleProvider)
 
         configureIrActualizerDiagnosticsTest()
-    }
-}
-
-open class AbstractFirLightTreeWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.LightTree)
-open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractFirLightTreeWithActualizerDiagnosticsTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configurationForTestWithLatestLanguageVersion()
+        configurationForTestWithLatestLanguageVersion()
     }
 }
