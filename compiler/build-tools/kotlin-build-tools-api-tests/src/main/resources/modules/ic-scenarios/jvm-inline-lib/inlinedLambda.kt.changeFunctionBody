@@ -1,0 +1,6 @@
+inline fun calculate(): Int {
+    val callable = {
+        40 + 2 + 3
+    }
+    return callable() + 3
+}

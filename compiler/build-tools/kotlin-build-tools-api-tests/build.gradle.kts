@@ -69,6 +69,7 @@ val businessLogicTestSuits = setOf(
     "testExample",
     "testEscapableCharacters",
     "testInputChangesTracking",
+    "testCrossModuleIncrementalChanges",
 )
 
 testing {
