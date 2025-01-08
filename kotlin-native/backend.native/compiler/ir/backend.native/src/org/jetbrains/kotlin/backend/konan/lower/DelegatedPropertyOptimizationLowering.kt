@@ -81,16 +81,19 @@ internal class DelegatedPropertyOptimizationLowering(val generationState: Native
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
                 super.visitPropertyReference(expression)
+                if (expression.arguments.any { it != null }) return expression
                 return delegatedProperties[expression.symbol]?.invoke(expression) ?: expression
             }
 
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
                 super.visitLocalDelegatedPropertyReference(expression)
+                if (expression.arguments.any { it != null }) return expression
                 return delegatedProperties[expression.symbol]?.invoke(expression) ?: expression
             }
 
             override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
                 super.visitRichPropertyReference(expression)
+                if (expression.boundValues.isNotEmpty()) return expression
                 return expression.reflectionTargetSymbol?.let { delegatedProperties[it] }?.invoke(expression) ?: expression
             }
         })

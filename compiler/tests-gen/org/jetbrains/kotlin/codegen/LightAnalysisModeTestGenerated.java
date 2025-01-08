@@ -5219,6 +5219,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/callableReference/property/kt6870_privatePropertyReference.kt");
       }
 
+      @TestMetadata("kt74104.kt")
+      public void testKt74104() {
+        runTest("compiler/testData/codegen/box/callableReference/property/kt74104.kt");
+      }
+
       @TestMetadata("listOfStringsMapLength.kt")
       public void testListOfStringsMapLength() {
         runTest("compiler/testData/codegen/box/callableReference/property/listOfStringsMapLength.kt");

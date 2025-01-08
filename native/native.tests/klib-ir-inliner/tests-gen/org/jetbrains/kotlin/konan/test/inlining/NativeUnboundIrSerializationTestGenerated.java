@@ -4434,6 +4434,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Test
+        @TestMetadata("kt74104.kt")
+        public void testKt74104() {
+          runTest("compiler/testData/codegen/box/callableReference/property/kt74104.kt");
+        }
+
+        @Test
         @TestMetadata("listOfStringsMapLength.kt")
         public void testListOfStringsMapLength() {
           runTest("compiler/testData/codegen/box/callableReference/property/listOfStringsMapLength.kt");
