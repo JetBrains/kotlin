@@ -1,5 +1,5 @@
-group 'com.example'
-version '1.0'
+group = 'com.example'
+version = '1.0'
 
 buildscript {
     repositories {
