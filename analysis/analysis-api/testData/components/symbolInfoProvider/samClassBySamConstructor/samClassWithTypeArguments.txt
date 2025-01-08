@@ -143,6 +143,9 @@ CONSTRUCTOR:
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
         ]
+        parameters: [
+          KaRegularFunctionValueParameter [name: null, type: null]
+        ]
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: Function1
