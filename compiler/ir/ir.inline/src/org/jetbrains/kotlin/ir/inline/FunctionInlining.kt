@@ -617,8 +617,8 @@ open class FunctionInlining(
         }
 
 
-        private fun ParameterToArgument.andAllOuterClasses(): List<ParameterToArgument> {
-            val allParametersReplacements = mutableListOf(this)
+        private fun ParameterToArgument.allOuterClasses(): List<ParameterToArgument> {
+            val allParametersReplacements = mutableListOf<ParameterToArgument>()
 
             if (!produceOuterThisFields) return allParametersReplacements
 
@@ -655,33 +655,8 @@ open class FunctionInlining(
 
             val parameterToArgument = mutableListOf<ParameterToArgument>()
 
-            if (callSite.dispatchReceiver != null && callee.dispatchReceiverParameter != null)
-                parameterToArgument += ParameterToArgument(
-                    parameter = callee.dispatchReceiverParameter!!,
-                    originalArgumentExpression = callSite.dispatchReceiver!!
-                ).andAllOuterClasses()
-
-            val valueArguments =
-                callSite.symbol.owner.valueParameters.map { callSite.getValueArgument(it.indexInOldValueParameters) }.toMutableList()
-
-            if (callee.extensionReceiverParameter != null) {
-                parameterToArgument += ParameterToArgument(
-                    parameter = callee.extensionReceiverParameter!!,
-                    originalArgumentExpression = if (callSite.extensionReceiver != null) {
-                        callSite.extensionReceiver!!
-                    } else {
-                        // Special case: lambda with receiver is called as usual lambda:
-                        valueArguments.removeAt(0)!!
-                    }
-                )
-            } else if (callSite.extensionReceiver != null) {
-                // Special case: usual lambda is called as lambda with receiver:
-                valueArguments.add(0, callSite.extensionReceiver!!)
-            }
-
             val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
-            for (parameter in callee.valueParameters) {
-                val argument = valueArguments[parameter.indexInOldValueParameters]
+            for ((parameter, argument) in callee.parameters.zip(callSite.arguments)) {
                 when {
                     argument != null -> {
                         parameterToArgument += ParameterToArgument(
@@ -720,6 +695,12 @@ open class FunctionInlining(
                     }
                 }
             }
+            if (callSite.dispatchReceiver != null && callee.dispatchReceiverParameter != null)
+                parameterToArgument += ParameterToArgument(
+                    parameter = callee.dispatchReceiverParameter!!,
+                    originalArgumentExpression = callSite.dispatchReceiver!!
+                ).allOuterClasses()
+
             // All arguments except default are evaluated at callsite,
             // but default arguments are evaluated inside callee.
             return parameterToArgument + parametersWithDefaultToArgument
@@ -811,10 +792,10 @@ open class FunctionInlining(
                     when (val arg = argument.argumentExpression) {
                         is IrCallableReference<*> -> error("Can't inline given reference, it should've been lowered\n${arg.render()}")
                         is IrRichFunctionReference -> {
-                            container += evaluateCapturedValues(arg.invokeFunction.valueParameters, arg.boundValues)
+                            container += evaluateCapturedValues(arg.invokeFunction.parameters, arg.boundValues)
                         }
                         is IrRichPropertyReference -> {
-                            container += evaluateCapturedValues(arg.getterFunction.valueParameters, arg.boundValues)
+                            container += evaluateCapturedValues(arg.getterFunction.parameters, arg.boundValues)
                         }
                         is IrBlock -> if (arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || arg.origin == IrStatementOrigin.LAMBDA) {
                             container += evaluateArguments(arg.statements.last() as IrFunctionReference)
