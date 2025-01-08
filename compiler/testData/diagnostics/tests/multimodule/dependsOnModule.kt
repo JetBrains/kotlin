@@ -1,6 +1,6 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: Unhandled intrinsic in ExpressionCodegen: FUN IR_EXTERNAL_DECLARATION_STUB name:<get-a> visibility:internal modality:FINAL <> () returnType:p.A
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 // MODULE: m1

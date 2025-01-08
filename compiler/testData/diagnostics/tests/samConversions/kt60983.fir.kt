@@ -21,7 +21,7 @@ class K {
 fun J.testJ() {
     <!UNRESOLVED_REFERENCE!>C<!>()
     C2()
-    <!UNRESOLVED_REFERENCE!>I<!> {}
+    I {}
 }
 
 fun testJ2(j: J) {
@@ -33,7 +33,7 @@ fun testJ2(j: J) {
 fun K.testK() {
     <!UNRESOLVED_REFERENCE!>C<!>()
     C2()
-    <!UNRESOLVED_REFERENCE!>I<!> {}
+    I {}
 }
 
 fun testK2(k: K) {
@@ -42,7 +42,6 @@ fun testK2(k: K) {
     k.<!UNRESOLVED_REFERENCE!>I<!> {}
 }
 
-// MODULE: m2(m1)
 // FILE: testResolutionContinues.kt
 fun J.testResolutionContinues() {
     acceptI(I {})

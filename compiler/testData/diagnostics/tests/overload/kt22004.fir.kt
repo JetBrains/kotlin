@@ -1,12 +1,13 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `void A.b()` because it has multiple definitions
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
+// IGNORE_DEXING
 // ISSUE: KT-22004
 
 class A() {
-    fun b() {
-    }
+    <!CONFLICTING_JVM_DECLARATIONS!>fun b() {
+    }<!>
 
-    @Deprecated("test", level = DeprecationLevel.HIDDEN)
+    <!CONFLICTING_JVM_DECLARATIONS!>@Deprecated("test", level = DeprecationLevel.HIDDEN)
     fun b() {
-    }
+    }<!>
 }

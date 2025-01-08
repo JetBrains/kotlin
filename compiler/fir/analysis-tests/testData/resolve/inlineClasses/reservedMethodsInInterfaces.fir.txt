@@ -1,5 +1,4 @@
-Module: lib
-FILE: module_lib_reservedMethodsInInterfaces.kt
+FILE: reservedMethodsInInterfaces.kt
     public abstract interface Lib : R|kotlin/Any| {
         public open override fun hashCode(): R|kotlin/Boolean| {
             ^hashCode Boolean(true)
@@ -24,8 +23,6 @@ FILE: module_lib_reservedMethodsInInterfaces.kt
         }
 
     }
-Module: main
-FILE: module_main_reservedMethodsInInterfaces.kt
     public abstract interface I1 : R|kotlin/Any| {
         public open fun <T> equals(other: R|A1|): R|kotlin/Boolean| {
             ^equals Boolean(true)

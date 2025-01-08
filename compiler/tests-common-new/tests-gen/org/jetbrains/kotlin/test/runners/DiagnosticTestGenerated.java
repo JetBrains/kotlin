@@ -4583,12 +4583,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("ea81649_errorPropertyLHS.kt")
-      public void testEa81649_errorPropertyLHS() {
-        runTest("compiler/testData/diagnostics/tests/callableReference/ea81649_errorPropertyLHS.kt");
-      }
-
-      @Test
       @TestMetadata("emptyLhs.kt")
       public void testEmptyLhs() {
         runTest("compiler/testData/diagnostics/tests/callableReference/emptyLhs.kt");
@@ -13455,6 +13449,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("implictlyExposedAndSuppressed.kt")
+      public void testImplictlyExposedAndSuppressed() {
+        runTest("compiler/testData/diagnostics/tests/exposed/implictlyExposedAndSuppressed.kt");
+      }
+
+      @Test
       @TestMetadata("inaccessibleType.kt")
       public void testInaccessibleType() {
         runTest("compiler/testData/diagnostics/tests/exposed/inaccessibleType.kt");
@@ -16169,9 +16169,15 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("CheckVisibility.kt")
-      public void testCheckVisibility() {
-        runTest("compiler/testData/diagnostics/tests/imports/CheckVisibility.kt");
+      @TestMetadata("CheckVisibility_differentModule.kt")
+      public void testCheckVisibility_differentModule() {
+        runTest("compiler/testData/diagnostics/tests/imports/CheckVisibility_differentModule.kt");
+      }
+
+      @Test
+      @TestMetadata("CheckVisibility_sameModule.kt")
+      public void testCheckVisibility_sameModule() {
+        runTest("compiler/testData/diagnostics/tests/imports/CheckVisibility_sameModule.kt");
       }
 
       @Test
@@ -16184,6 +16190,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("ClassClashStarImport.kt")
       public void testClassClashStarImport() {
         runTest("compiler/testData/diagnostics/tests/imports/ClassClashStarImport.kt");
+      }
+
+      @Test
+      @TestMetadata("ClassClashStarImport_topLevel.kt")
+      public void testClassClashStarImport_topLevel() {
+        runTest("compiler/testData/diagnostics/tests/imports/ClassClashStarImport_topLevel.kt");
+      }
+
+      @Test
+      @TestMetadata("ClassClash_topLevel.kt")
+      public void testClassClash_topLevel() {
+        runTest("compiler/testData/diagnostics/tests/imports/ClassClash_topLevel.kt");
       }
 
       @Test
@@ -16517,9 +16535,15 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("RootPackageNoImports.kt")
-      public void testRootPackageNoImports() {
-        runTest("compiler/testData/diagnostics/tests/imports/RootPackageNoImports.kt");
+      @TestMetadata("RootPackageNoImports_differentModule.kt")
+      public void testRootPackageNoImports_differentModule() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackageNoImports_differentModule.kt");
+      }
+
+      @Test
+      @TestMetadata("RootPackageNoImports_sameModule.kt")
+      public void testRootPackageNoImports_sameModule() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackageNoImports_sameModule.kt");
       }
 
       @Test
@@ -27422,12 +27446,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
-        @TestMetadata("genericArgumentNumberMismatch.kt")
-        public void testGenericArgumentNumberMismatch() {
-          runTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/genericArgumentNumberMismatch.kt");
-        }
-
-        @Test
         @TestMetadata("genericSuperClass.kt")
         public void testGenericSuperClass() {
           runTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/genericSuperClass.kt");
@@ -34081,6 +34099,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("GenericClassVsPackage_topLevel.kt")
+      public void testGenericClassVsPackage_topLevel() {
+        runTest("compiler/testData/diagnostics/tests/qualifiedExpression/GenericClassVsPackage_topLevel.kt");
+      }
+
+      @Test
       @TestMetadata("JavaQualifier.kt")
       public void testJavaQualifier() {
         runTest("compiler/testData/diagnostics/tests/qualifiedExpression/JavaQualifier.kt");
@@ -34102,6 +34126,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("PackageVsClass2.kt")
       public void testPackageVsClass2() {
         runTest("compiler/testData/diagnostics/tests/qualifiedExpression/PackageVsClass2.kt");
+      }
+
+      @Test
+      @TestMetadata("PackageVsClass_differentOrder.kt")
+      public void testPackageVsClass_differentOrder() {
+        runTest("compiler/testData/diagnostics/tests/qualifiedExpression/PackageVsClass_differentOrder.kt");
       }
 
       @Test
@@ -37097,15 +37127,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("invisibleInternalSetterAccessFromDeriviedClass.kt")
-      public void testInvisibleInternalSetterAccessFromDeriviedClass() {
-        runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClass.kt");
+      @TestMetadata("invisibleInternalSetterAccessFromDeriviedClassOn_direct.kt")
+      public void testInvisibleInternalSetterAccessFromDeriviedClassOn_direct() {
+        runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClassOn_direct.kt");
       }
 
       @Test
-      @TestMetadata("invisibleInternalSetterAccessFromDeriviedClassOn.kt")
-      public void testInvisibleInternalSetterAccessFromDeriviedClassOn() {
-        runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClassOn.kt");
+      @TestMetadata("invisibleInternalSetterAccessFromDeriviedClassOn_inherited.kt")
+      public void testInvisibleInternalSetterAccessFromDeriviedClassOn_inherited() {
+        runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClassOn_inherited.kt");
+      }
+
+      @Test
+      @TestMetadata("invisibleInternalSetterAccessFromDeriviedClass_direct.kt")
+      public void testInvisibleInternalSetterAccessFromDeriviedClass_direct() {
+        runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClass_direct.kt");
+      }
+
+      @Test
+      @TestMetadata("invisibleInternalSetterAccessFromDeriviedClass_inherited.kt")
+      public void testInvisibleInternalSetterAccessFromDeriviedClass_inherited() {
+        runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClass_inherited.kt");
       }
 
       @Test

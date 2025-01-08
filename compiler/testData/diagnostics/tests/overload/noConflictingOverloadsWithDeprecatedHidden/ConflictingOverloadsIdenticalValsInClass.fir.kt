@@ -1,7 +1,8 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `int Aaa.getA()` because it has multiple definitions
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
+// IGNORE_DEXING
 class Aaa() {
-    val a = 1
-    @Deprecated("a", level = DeprecationLevel.HIDDEN)
-    val a = 1
+    <!CONFLICTING_JVM_DECLARATIONS!>val a<!> = 1
+    <!CONFLICTING_JVM_DECLARATIONS!>@Deprecated("a", level = DeprecationLevel.HIDDEN)
+    val a<!> = 1
 }

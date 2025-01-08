@@ -1,0 +1,6 @@
+// -- Module: <a> --
+/module_a_implictlyExposedAndSuppressed.fir.kt:(188,194): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
+
+/module_a_implictlyExposedAndSuppressed.fir.kt:(239,269): warning: This code uses error suppression for 'EXPOSED_FUNCTION_RETURN_TYPE'. While it might compile and work, the compiler behavior is UNSPECIFIED and WILL NOT BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
+// -- Module: <b> --
+/module_b_implictlyExposedAndSuppressed.fir.kt:(62,65): error: Cannot access 'interface Inter : Any': it is internal in file.

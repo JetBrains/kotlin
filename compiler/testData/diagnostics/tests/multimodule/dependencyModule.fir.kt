@@ -54,31 +54,3 @@ fun test2() {
     inst.<!INVISIBLE_REFERENCE!>ClassInternal<!>()
     inst.<!INVISIBLE_REFERENCE!>ClassPrivate<!>()
 }
-
-// MODULE: m3(m2)
-// FILE: c.kt
-
-import <!UNRESOLVED_IMPORT!>p<!>.*
-
-fun test3() {
-    <!UNRESOLVED_REFERENCE!>propPublic<!>
-    <!UNRESOLVED_REFERENCE!>propInternal<!>
-    <!UNRESOLVED_REFERENCE!>propPrivate<!>
-    <!UNRESOLVED_REFERENCE!>funPublic<!>()
-    <!UNRESOLVED_REFERENCE!>funInternal<!>()
-    <!UNRESOLVED_REFERENCE!>funPrivate<!>()
-    <!UNRESOLVED_REFERENCE!>ClassPublic<!>()
-    <!UNRESOLVED_REFERENCE!>ClassInternal<!>()
-    <!UNRESOLVED_REFERENCE!>ClassPrivate<!>()
-
-    val inst = <!UNRESOLVED_REFERENCE!>A<!>()
-    inst.propPublic
-    inst.propInternal
-    inst.propPrivate
-    inst.funPublic()
-    inst.funInternal()
-    inst.funPrivate()
-    inst.ClassPublic()
-    inst.ClassInternal()
-    inst.ClassPrivate()
-}

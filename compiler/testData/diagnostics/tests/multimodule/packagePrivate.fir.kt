@@ -6,12 +6,6 @@ package p
 
 private val a = 1
 
-// FILE: b.kt
-
-package p
-
-val b = <!INVISIBLE_REFERENCE!>a<!> // same package, same module
-
 // MODULE: m2(m1)
 // FILE: c.kt
 
