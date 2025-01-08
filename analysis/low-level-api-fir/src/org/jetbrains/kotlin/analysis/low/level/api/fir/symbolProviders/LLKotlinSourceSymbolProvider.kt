@@ -43,6 +43,23 @@ import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 /**
  * [LLKotlinSourceSymbolProvider] is a [LLKotlinSymbolProvider] which provides symbols for source-based modules, such as [KaSourceModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule]
  * and [KaScriptModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule].
+ *
+ * ### Resolve extension symbols
+ *
+ * The symbol provider includes symbols from [LLFirResolveExtensionTool]s. While it would be nicer to have a separate resolve extension
+ * symbol provider, such a setup would destroy the classpath order once symbol providers are combined into
+ * [LLCombinedKotlinSymbolProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider]s,
+ * because we can only ever combine one symbol provider per module. This means that we would combine all regular Kotlin source symbol
+ * providers and append resolve extension symbol providers to the end, which changes the classpath order, as all resolve extensions are now
+ * queried last. So a source module which occurs later in the dependencies would be able to shadow a symbol from an earlier resolve
+ * extension.
+ *
+ * Even separating the internal implementation of this symbol provider into two symbol providers wouldn't quite work without additional
+ * disambiguation logic. That's because the "get symbol" functions for known declarations (i.e. those defined in [LLKotlinSymbolProvider])
+ * would need to disambiguate whether to delegate to the regular symbol provider or the resolve extension symbol provider. If a declaration
+ * from a resolve extension is passed to the regular symbol provider, that symbol provider might cache the symbol for it. This wouldn't lead
+ * to duplicate symbols because FIR files (from which the symbols are taken) are unique in the session, but we would still cache a symbol in
+ * the wrong symbol provider.
  */
 internal class LLKotlinSourceSymbolProvider private constructor(
     session: LLFirSession,

@@ -45,6 +45,9 @@ abstract class LLFirResolveExtensionTool : FirSessionComponent {
     internal abstract val symbolNamesProvider: FirSymbolNamesProvider
 }
 
+/**
+ * The session's [LLFirResolveExtensionTool], or `null` if the session's module defines no resolve extensions.
+ */
 val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.nullableSessionComponentAccessor()
 
 internal class LLFirNonEmptyResolveExtensionTool(
