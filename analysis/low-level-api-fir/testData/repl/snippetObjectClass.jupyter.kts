@@ -1,0 +1,3 @@
+object Foo {
+    <caret>
+}

@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
@@ -28,14 +31,17 @@ import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionReg
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.PrivateSessionConstructor
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
+import org.jetbrains.kotlin.fir.builder.Context
+import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -47,8 +53,14 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
@@ -56,12 +68,87 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.makeScriptCompilerArguments
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.FirReplHistoryScope
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+
+class FirReplSnippetConfiguratorExtensionImpl(
+    session: FirSession,
+    // TODO: left here because it seems it will be needed soon, remove supression if used or remove the param if it is not the case
+    @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
+) : FirReplSnippetConfiguratorExtension(session) {
+
+    override fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean {
+        return (sourceFile?.name?.endsWith(".jupyter.kts") == true)
+    }
+
+    override fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
+    }
+
+    override fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
+    }
+
+    companion object {
+        fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
+            return Factory { session -> FirReplSnippetConfiguratorExtensionImpl(session, hostConfiguration) }
+        }
+    }
+}
+
+class FirReplSnippetResolveExtensionImpl(
+    session: FirSession,
+    // TODO: left here because it seems it will be needed soon, remove suppression if used or remove the param if it is not the case
+    @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
+) : FirReplSnippetResolveExtension(session) {
+
+    private val replHistoryProvider: FirReplHistoryProvider by lazy {
+        session.moduleData.dependencies.firstOrNull()?.session?.replHistoryProvider ?: error("No repl history provider found")
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope? {
+        // TODO: consider caching (KT-72975)
+        val properties = HashMap<Name, FirVariableSymbol<*>>()
+        val functions = HashMap<Name, ArrayList<FirNamedFunctionSymbol>>() // TODO: find out how overloads should work
+        val classLikes = HashMap<Name, FirClassLikeSymbol<*>>()
+        replHistoryProvider.getSnippets().forEach { snippet ->
+            if (currentSnippet == snippet) return@forEach
+            snippet.fir.body.statements.forEach {
+                when (it) {
+                    is FirProperty -> properties.put(it.name, it.symbol)
+                    is FirSimpleFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
+                    is FirRegularClass -> classLikes.put(it.name, it.symbol)
+                    is FirTypeAlias -> classLikes.put(it.name, it.symbol)
+                }
+            }
+        }
+        return FirReplHistoryScope(properties, functions, classLikes, useSiteSession)
+    }
+
+    override fun updateResolved(snippet: FirReplSnippet) {
+        replHistoryProvider.putSnippet(snippet.symbol)
+    }
+
+    companion object {
+        fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
+            return Factory { session -> FirReplSnippetResolveExtensionImpl(session, hostConfiguration) }
+        }
+    }
+}
+
+class FirReplCompilerExtensionRegistrar(
+    private val hostConfiguration: ScriptingHostConfiguration
+) : FirExtensionRegistrar() {
+
+    override fun ExtensionRegistrarContext.configurePlugin() {
+        +FirReplSnippetConfiguratorExtensionImpl.getFactory(hostConfiguration)
+        +FirReplSnippetResolveExtensionImpl.getFactory(hostConfiguration)
+    }
+}
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal abstract class LLFirAbstractSessionFactory(protected val project: Project) {
@@ -187,6 +274,9 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             registerExtensions(extensionRegistrar.configure())
             registerExtensions(FirScriptingSamWithReceiverExtensionRegistrar().configure())
+            // -- Only for testing: Begin --
+            registerExtensions(FirReplCompilerExtensionRegistrar(hostConfiguration).configure())
+            // -- Only for testing: End --
             compilerConfiguration.getList(AssignmentConfigurationKeys.ANNOTATION).takeIf { it.isNotEmpty() }?.let {
                 registerExtensions(FirAssignmentPluginExtensionRegistrar(it).configure())
             }
