@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.visibility
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -153,16 +154,16 @@ private class KaFirUseSiteVisibilityChecker(
             else -> false
         }
         if (isToplevel) {
-            when (modifierList?.visibilityModifierType()) {
-                KtTokens.PUBLIC_KEYWORD -> return true
-                KtTokens.INTERNAL_KEYWORD -> {
+            when {
+                hasModifier(KtTokens.PUBLIC_KEYWORD) -> return true
+                hasModifier(KtTokens.INTERNAL_KEYWORD) -> {
                     val declarationModule = KaModuleProvider.getInstance(project).getModule(containingKtFile, positionModule)
                     return when (positionModule) {
                         is KaDanglingFileModule -> positionModule.contextModule == declarationModule
                         else -> positionModule == declarationModule
                     }
                 }
-                KtTokens.PRIVATE_KEYWORD -> {
+                hasModifier(KtTokens.PRIVATE_KEYWORD) -> {
                     return this.containingKtFile == useSiteFile.psi
                 }
             }
