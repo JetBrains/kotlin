@@ -448,6 +448,7 @@
 /.gitattributes "Kotlin Build Infrastructure"
 /ChangeLog.md "Kotlin Release"
 /CODE_OF_CONDUCT.md "Kotlin Build Infrastructure"
+/intellij.yaml "Kotlin Build Infrastructure"
 /ReadMe.md "Kotlin Build Infrastructure"
 /SECURITY.md "Kotlin Build Infrastructure"
 
