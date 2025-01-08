@@ -31,6 +31,9 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
     protected open val allowExternalInlineFunctions: Boolean
         get() = false
 
+    protected open val upgradeCallableReferenceLowering: ((Context) -> FileLoweringPass)?
+        get() = null
+
     protected abstract val irMangler: IrMangler
 
     private fun privateInlineFunctionResolver(context: Context): InlineFunctionResolver {
@@ -78,6 +81,7 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
             ) then performByIrFile(
                 name = "PrepareForFunctionInlining",
                 createFilePhases(
+                    upgradeCallableReferenceLowering,
                     klibAssertionWrapperLowering, // Only on Native
                     jsCodeOutliningLowering, // Only on JS
                     ::LateinitLowering,
