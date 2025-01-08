@@ -100,6 +100,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("libraryNestedClass.kt")
+  public void testLibraryNestedClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/libraryNestedClass.kt");
+  }
+
+  @Test
   @TestMetadata("listOf.kt")
   public void testListOf() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/listOf.kt");

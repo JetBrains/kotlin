@@ -1,0 +1,32 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: one/Producer.NestedClass
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: FINAL
+  name: NestedClass
+  origin: LIBRARY
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Producer
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
+
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  isPublicApi: false
