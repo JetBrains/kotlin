@@ -97,7 +97,7 @@ abstract class SwiftExportExtension @Inject constructor(
     /**
      * Configure Swift Export Advanced parameters.
      */
-    fun export(configure: Action<SwiftExportAdvancedConfiguration>) = configure {
+    fun configure(configure: Action<SwiftExportAdvancedConfiguration>) = configure {
         configure.execute(this)
     }
 
