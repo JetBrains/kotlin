@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -808,7 +809,8 @@ open class FunctionInlining(
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
 
-                val shouldCreateTemporaryVariable = !argument.doesNotNeedTemporaryVariable()
+                // inline parameters should never be stored to temporaries, as it would prevent their inlining
+                val shouldCreateTemporaryVariable = !argument.doesNotNeedTemporaryVariable() && !argument.isLoadOfInlineParameter()
                 if (shouldCreateTemporaryVariable) {
                     val (newVariable, copiedParameter) = createTemporaryVariable(
                         parameter, variableInitializer, argument.isDefaultArg, callee
@@ -836,6 +838,12 @@ open class FunctionInlining(
         private fun ParameterToArgument.doesNotNeedTemporaryVariable(): Boolean =
             argumentExpression.isPure(false, symbols = context.ir.symbols)
                     && (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS || parameter.isInlineParameter())
+
+        private fun ParameterToArgument.isLoadOfInlineParameter(): Boolean {
+            val expression = argumentExpression as? IrGetValue ?: return false
+            val parameter = expression.symbol.owner as? IrValueParameter ?: return false
+            return parameter.isInlineParameter()
+        }
 
         private fun createTemporaryVariable(
             parameter: IrValueParameter,
