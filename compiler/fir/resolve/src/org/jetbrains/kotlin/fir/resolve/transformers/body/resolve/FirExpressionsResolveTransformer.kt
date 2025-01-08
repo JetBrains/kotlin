@@ -519,7 +519,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 functionCall
             }
 
-            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
+            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data) // And here we run overload resolution
 
             if (!choosingOptionForAugmentedAssignment) {
                 dataFlowAnalyzer.enterFunctionCall(functionCall)
