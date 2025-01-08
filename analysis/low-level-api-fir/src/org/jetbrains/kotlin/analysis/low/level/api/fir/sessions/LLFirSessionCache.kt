@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -37,9 +38,7 @@ private typealias SessionStorage = CleanableValueReferenceCache<KaModule, LLFirS
 @LLFirInternals
 class LLFirSessionCache(private val project: Project) : Disposable {
     companion object {
-        fun getInstance(project: Project): LLFirSessionCache {
-            return project.getService(LLFirSessionCache::class.java)
-        }
+        fun getInstance(project: Project): LLFirSessionCache = project.service()
     }
 
     private val sourceCache: SessionStorage = createWeakValueCache()
