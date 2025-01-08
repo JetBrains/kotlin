@@ -1,6 +1,5 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
-// ISSUE: KT-74107 (blocked by)
+// ISSUE: KT-74107
 // LANGUAGE: +NestedTypeAliases
 
 // FILE: staticScope.kt

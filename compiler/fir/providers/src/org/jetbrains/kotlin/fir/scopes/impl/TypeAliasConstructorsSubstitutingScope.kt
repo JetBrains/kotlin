@@ -128,6 +128,8 @@ class TypeAliasConstructorsSubstitutingScope(
                                 containingDeclarationSymbol = this@buildConstructorCopy.symbol
                             }
                         }
+                        // Never treat type aliases with inner RHS as class members, they are always extensions
+                        dispatchReceiverType = null
                     }
                 }.apply {
                     originalConstructorIfTypeAlias = originalConstructorSymbol.fir
