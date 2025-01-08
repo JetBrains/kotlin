@@ -42,20 +42,11 @@ import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 internal class LLFirProviderHelper(
     firSession: LLFirSession,
     private val firFileBuilder: LLFirFileBuilder,
+    searchScope: GlobalSearchScope,
     canContainKotlinPackage: Boolean,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?
 ) {
     private val extensionTool: LLFirResolveExtensionTool? = firSession.llResolveExtensionTool
-
-    val searchScope: GlobalSearchScope =
-        firSession.ktModule.contentScope.run {
-            val notShadowedScope = extensionTool?.shadowedSearchScope?.let { GlobalSearchScope.notScope(it) }
-            if (notShadowedScope != null) {
-                this.intersectWith(notShadowedScope)
-            } else {
-                this
-            }
-        }
 
     val declarationProvider = KotlinCompositeDeclarationProvider.create(
         listOfNotNull(

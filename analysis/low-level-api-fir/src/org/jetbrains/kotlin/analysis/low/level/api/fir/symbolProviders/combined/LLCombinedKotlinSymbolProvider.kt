@@ -44,11 +44,10 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  * - A small Caffeine cache can avoid most index accesses for classes, because many names are requested multiple times, with a minor memory
  *   footprint.
  *
- * [declarationProvider] must have a scope which combines the scopes of the individual [providers].
+ * @param declarationProvider The declaration provider must have a scope which combines the scopes of the individual [providers].
  *
- * [packageProviderForKotlinPackages] should be the package provider combined from all [providers] which allow `kotlin` packages (see
- * [LLFirProvider.SymbolProvider.allowKotlinPackage][org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider.SymbolProvider.allowKotlinPackage]).
- * It may be `null` if no such provider exists. See [hasPackage] for a use case.
+ * @param packageProviderForKotlinPackages This package provider should be combined from all [providers] which allow `kotlin` packages (see
+ *  [LLKotlinSymbolProvider.allowKotlinPackage]). It may be `null` if no such provider exists. See [hasPackage] for a use case.
  */
 internal class LLCombinedKotlinSymbolProvider private constructor(
     session: FirSession,

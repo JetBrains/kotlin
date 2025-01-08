@@ -9,11 +9,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptySymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
-import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -21,14 +20,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 @ThreadSafeMutableState
@@ -39,34 +34,34 @@ internal class LLFirProvider(
     disregardSelfDeclarations: Boolean = false,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
 ) : FirProvider() {
+    // TODO (KT-73290): Once the content scope refactoring is implemented, we can get rid of this property altogether and simply use the
+    //                  `KaModule`'s content scope. We'll also be able to get rid of `declarationProviderFactory`, as the declaration
+    //                  provider can then be built directly over the content scope.
+    val searchScope: GlobalSearchScope =
+        session.ktModule.contentScope.run {
+            val notShadowedScope = session.llResolveExtensionTool?.shadowedSearchScope?.let { GlobalSearchScope.notScope(it) }
+            if (notShadowedScope != null) {
+                this.intersectWith(notShadowedScope)
+            } else {
+                this
+            }
+        }
+
+    private val sourceSymbolProvider =
+        LLKotlinSourceSymbolProvider(session, moduleComponents, searchScope, canContainKotlinPackage, declarationProviderFactory)
+
     override val symbolProvider: FirSymbolProvider =
-        if (disregardSelfDeclarations) LLEmptySymbolProvider(session) else SymbolProvider()
-
-    private val providerHelper = LLFirProviderHelper(
-        session,
-        moduleComponents.firFileBuilder,
-        canContainKotlinPackage,
-        declarationProviderFactory,
-    )
-
-    val searchScope: GlobalSearchScope
-        get() = providerHelper.searchScope
+        if (disregardSelfDeclarations) LLEmptySymbolProvider(session) else sourceSymbolProvider
 
     override val isPhasedFirAllowed: Boolean get() = true
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
-        getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration = null)
+        sourceSymbolProvider.getClassLikeSymbolByClassId(classId)?.fir
 
+    @OptIn(FirSymbolProviderInternals::class)
     fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
         val classId = classLikeDeclaration.getClassId() ?: return null
-        return getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
-    }
-
-    private fun getFirClassifierByFqNameAndDeclaration(
-        classId: ClassId,
-        classLikeDeclaration: KtClassLikeDeclaration?,
-    ): FirClassLikeDeclaration? {
-        return providerHelper.getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
+        return sourceSymbolProvider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)?.fir
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
@@ -105,7 +100,7 @@ internal class LLFirProvider(
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
-        providerHelper.symbolNameCache.getTopLevelClassifierNamesInPackage(fqName)
+        sourceSymbolProvider.symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)
             ?: errorWithAttachment("Cannot compute the set of class names in the given package") {
                 withEntry("packageFqName", fqName.asString())
             }
@@ -117,89 +112,5 @@ internal class LLFirProvider(
         }
 
         return super.getContainingClass(symbol)
-    }
-
-    @NoMutableState
-    internal inner class SymbolProvider : LLKotlinSymbolProvider(session) {
-        override val declarationProvider: KotlinDeclarationProvider get() = providerHelper.declarationProvider
-
-        override val packageProvider: KotlinPackageProvider get() = providerHelper.packageProvider
-
-        override val symbolNamesProvider: FirSymbolNamesProvider get() = providerHelper.symbolNameCache
-
-        override val allowKotlinPackage get() = providerHelper.allowKotlinPackage
-
-        override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId)) return null
-            return getFirClassifierByFqName(classId)?.symbol
-        }
-
-        @FirSymbolProviderInternals
-        override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
-            return getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)?.symbol
-        }
-
-        override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
-            return providerHelper.getTopLevelCallableSymbols(packageFqName, name)
-        }
-
-        @FirSymbolProviderInternals
-        override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
-            destination += providerHelper.getTopLevelCallableSymbols(packageFqName, name)
-        }
-
-        @FirSymbolProviderInternals
-        override fun getTopLevelCallableSymbolsTo(
-            destination: MutableList<FirCallableSymbol<*>>,
-            callableId: CallableId,
-            callables: Collection<KtCallableDeclaration>
-        ) {
-            destination += providerHelper.getTopLevelCallableSymbols(callableId, callables.mapTo(mutableSetOf()) { it.containingKtFile })
-        }
-
-        override fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
-            return providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
-        }
-
-        @FirSymbolProviderInternals
-        override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
-            destination += providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
-        }
-
-        @FirSymbolProviderInternals
-        override fun getTopLevelFunctionSymbolsTo(
-            destination: MutableList<FirNamedFunctionSymbol>,
-            callableId: CallableId,
-            functions: Collection<KtNamedFunction>
-        ) {
-            destination += providerHelper.getTopLevelFunctionSymbols(callableId, functions.mapTo(mutableSetOf()) { it.containingKtFile })
-        }
-
-        override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
-            return providerHelper.getTopLevelPropertySymbols(packageFqName, name)
-        }
-
-        @FirSymbolProviderInternals
-        override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
-            destination += providerHelper.getTopLevelPropertySymbols(packageFqName, name)
-        }
-
-        @FirSymbolProviderInternals
-        override fun getTopLevelPropertySymbolsTo(
-            destination: MutableList<FirPropertySymbol>,
-            callableId: CallableId,
-            properties: Collection<KtProperty>
-        ) {
-            destination += providerHelper.getTopLevelPropertySymbols(callableId, properties.mapTo(mutableSetOf()) { it.containingKtFile })
-        }
-
-        override fun hasPackage(fqName: FqName): Boolean =
-            providerHelper.hasPackage(fqName)
     }
 }
