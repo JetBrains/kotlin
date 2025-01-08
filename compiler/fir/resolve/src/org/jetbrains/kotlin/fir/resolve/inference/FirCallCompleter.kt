@@ -405,7 +405,6 @@ class FirCallCompleter(
                             name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                             symbol = FirValueParameterSymbol(name)
                             returnTypeRef = contextParameterType
-                                // TODO(KT-73150) investigate/test the need for approximation
                                 .approximateLambdaInputType(symbol, withPCLASession)
                                 .toFirResolvedTypeRef(lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
                             valueParameterKind = if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {

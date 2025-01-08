@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +PartiallySpecifiedTypeArguments
+// LANGUAGE: +PartiallySpecifiedTypeArguments, +ContextParameters
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 
@@ -44,6 +44,7 @@ fun <`_`> bar1(): Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>> = TODO()
 
 fun test() {
     val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> } }
+    val x1cp = foo<Int, <!UNSUPPORTED_FEATURE!>context(<!UNRESOLVED_REFERENCE!>_<!>)<!> () -> Unit> { { "" } }
     val x2 = foo<Int, (Int) -> <!UNRESOLVED_REFERENCE!>_<!>> { { it } }
     val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> } }
     val x4 = <!FUNCTION_CALL_EXPECTED, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>foo<!><!DEBUG_INFO_MISSING_UNRESOLVED!><<!>Int<!SYNTAX!>, _ -> Float><!> { { <!UNRESOLVED_REFERENCE!>it<!> } }
