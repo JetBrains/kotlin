@@ -3,7 +3,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT!>foo<!>()<!>
-<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT!>foo<!>()<!>
+<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()<!>
+<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!>expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()<!>
 
-expect fun <!NO_ACTUAL_FOR_EXPECT!>foo<!>(x: Int)
+expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>(x: Int)
+
+// MODULE: m1-jvm()()(m1-common)

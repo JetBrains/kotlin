@@ -1,5 +1,8 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: FIR2IR
+// LATEST_LV_DIFFERENCE
+// DISABLE_NEXT_TIER_SUGGESTION: we need to run fi2ir to get all actualization diagnostics
+
 // MODULE: common
 
 expect class A

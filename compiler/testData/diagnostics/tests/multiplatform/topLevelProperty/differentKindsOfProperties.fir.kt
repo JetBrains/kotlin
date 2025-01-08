@@ -40,3 +40,5 @@ fun test(): String {
     localVariable = "no"
     return localVariable
 }
+
+// MODULE: m1-jvm()()(m1-common)

@@ -1,5 +1,8 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FIR2IR
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// DISABLE_NEXT_TIER_SUGGESTION: we need to run fi2ir to get all actualization diagnostics
+
 // MODULE: m1-common
 // FILE: common.kt
 

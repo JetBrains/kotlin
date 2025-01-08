@@ -1,6 +1,7 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_FIR_DIAGNOSTICS
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing errorg: Ignoring an implementation of the method `void C.foo()` because it has multiple definitions
+// LATEST_LV_DIFFERENCE
+// IGNORE_DEXING
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-74221
 

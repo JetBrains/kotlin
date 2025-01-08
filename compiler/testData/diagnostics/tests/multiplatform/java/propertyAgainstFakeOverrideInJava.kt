@@ -1,6 +1,6 @@
+// FIR_IDENTICAL
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 expect class Foo {

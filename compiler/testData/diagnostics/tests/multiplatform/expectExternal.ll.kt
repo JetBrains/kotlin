@@ -3,7 +3,7 @@
 // because it is JVM-only checker, and in CLI common module analyzed additionally against JVM target.
 // LL_FIR_DIVERGENCE
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
 

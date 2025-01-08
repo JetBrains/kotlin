@@ -12,3 +12,5 @@ fun check(x1: Foo, x: Any) {
         x.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
+
+// MODULE: m1-jvm()()(m1-common)

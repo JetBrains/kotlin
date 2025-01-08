@@ -5,7 +5,7 @@
 
 <!WRONG_MODIFIER_TARGET!>expect<!> typealias Foo = String
 
-class Outer <!WRONG_MODIFIER_TARGET!>expect<!> constructor() {
+class <!CLASSIFIER_REDECLARATION!>Outer<!> <!WRONG_MODIFIER_TARGET!>expect<!> constructor() {
     <!WRONG_MODIFIER_TARGET!>expect<!> class Nested
 
     <!WRONG_MODIFIER_TARGET!>expect<!> init {}
@@ -14,17 +14,17 @@ class Outer <!WRONG_MODIFIER_TARGET!>expect<!> constructor() {
     <!WRONG_MODIFIER_TARGET!>expect<!> val bar: Int
 }
 
-fun foo() {
+<!CONFLICTING_OVERLOADS!>fun foo()<!> {
     <!WRONG_MODIFIER_TARGET!>expect<!> fun localFun()
     <!WRONG_MODIFIER_TARGET!>expect<!> var x = 42
     <!WRONG_MODIFIER_TARGET!>expect<!> class Bar
 }
 
-// MODULE: m2-jvm
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 class Outer <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!> {
-    actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
+    actual class Nested
 
     <!WRONG_MODIFIER_TARGET!>actual<!> init {}
 }

@@ -1,19 +1,22 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_TIER_SUGGESTION: we need to run fi2ir to get all actualization diagnostics
+// LATEST_LV_DIFFERENCE
+
 // MODULE: common
 
-class <!CLASSIFIER_REDECLARATION!>A<!>
+<!DUPLICATE_CLASS_NAMES!>class <!CLASSIFIER_REDECLARATION!>A<!><!>
 
-class <!CLASSIFIER_REDECLARATION!>C<!>
+<!DUPLICATE_CLASS_NAMES!>class <!CLASSIFIER_REDECLARATION!>C<!><!>
 
 // MODULE: intermediate()()(common)
 
-class A
+<!DUPLICATE_CLASS_NAMES!>class A<!>
 
-class <!CLASSIFIER_REDECLARATION!>B<!>
+<!DUPLICATE_CLASS_NAMES!>class <!CLASSIFIER_REDECLARATION!>B<!><!>
 
 // MODULE: main()()(common, intermediate)
 
-class B
+<!DUPLICATE_CLASS_NAMES!>class B<!>
 
-class C
+<!DUPLICATE_CLASS_NAMES!>class C<!>
