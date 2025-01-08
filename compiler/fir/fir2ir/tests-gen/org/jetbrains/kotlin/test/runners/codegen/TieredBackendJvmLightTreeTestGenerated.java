@@ -13991,6 +13991,12 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       }
 
       @Test
+      @TestMetadata("overridesWithFlexibleBase.kt")
+      public void testOverridesWithFlexibleBase() {
+        runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBase.kt");
+      }
+
+      @Test
       @TestMetadata("ParameterDefaultValues-DefaultValueFromOnlyOneSupertype.kt")
       public void testParameterDefaultValues_DefaultValueFromOnlyOneSupertype() {
         runTest("compiler/testData/diagnostics/tests/override/ParameterDefaultValues-DefaultValueFromOnlyOneSupertype.kt");

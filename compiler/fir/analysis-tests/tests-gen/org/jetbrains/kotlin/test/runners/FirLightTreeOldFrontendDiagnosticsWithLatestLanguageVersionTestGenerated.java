@@ -29593,6 +29593,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("overridesWithFlexibleBase.kt")
+      public void testOverridesWithFlexibleBase() {
+        runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBase.kt");
+      }
+
+      @Test
       @TestMetadata("OverridingFinalMember.kt")
       public void testOverridingFinalMember() {
         runTest("compiler/testData/diagnostics/tests/override/OverridingFinalMember.kt");
