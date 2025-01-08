@@ -44,6 +44,7 @@ public class DebugSymbolRenderer(
     public val renderExtra: Boolean = false,
     public val renderTypeByProperties: Boolean = false,
     public val renderExpandedTypes: Boolean = false,
+    public val renderIsPublicApi: Boolean = false,
 ) {
 
     public fun render(analysisSession: KaSession, symbol: KaSymbol): String = prettyPrint {
@@ -99,6 +100,12 @@ public class DebugSymbolRenderer(
                     renderComputedValue("javaGetterName", printer, currentSymbolStack) { symbol.javaGetterName }
                     renderComputedValue("javaSetterName", printer, currentSymbolStack) { symbol.javaSetterName }
                     renderComputedValue("setterDeprecationStatus", printer, currentSymbolStack) { symbol.setterDeprecationStatus }
+                }
+
+                if (renderIsPublicApi) {
+                    if (symbol is KaDeclarationSymbol) {
+                        renderComputedValue("isPublicApi", printer, currentSymbolStack) { isPublicApi(symbol) }
+                    }
                 }
             }
         } finally {
