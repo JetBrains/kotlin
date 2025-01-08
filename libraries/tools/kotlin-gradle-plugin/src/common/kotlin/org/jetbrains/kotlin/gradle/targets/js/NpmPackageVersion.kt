@@ -7,9 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 
-data class NpmPackageVersion(val name: String, var version: String) : RequiredKotlinJsDependency {
+data class NpmPackageVersion(
+    @Input
+    val name: String,
+    @Input
+    var version: String,
+) : RequiredKotlinJsDependency {
     override fun createDependency(objectFactory: ObjectFactory, scope: NpmDependency.Scope): Dependency =
         NpmDependency(objectFactory, scope, name, version)
 }

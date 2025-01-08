@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.NpmToolingEnv
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingInstallTask
+import org.jetbrains.kotlin.gradle.utils.property
 
 /**
  * Extension for configuring Node.js-specific settings and tasks in a Kotlin/JS project,
@@ -23,6 +28,12 @@ abstract class WasmNodeJsRootExtension internal constructor(
     nodeJs,
     rootDir
 ), HasPlatformDisambiguator by WasmPlatformDisambiguator {
+
+    val npmTooling: Property<NpmToolingEnv> = project.objects.property()
+
+    val toolingInstallTaskProvider: TaskProvider<out KotlinToolingInstallTask>
+        get() = project.tasks.withType(KotlinToolingInstallTask::class.java)
+            .named(extensionName(KotlinToolingInstallTask.NAME))
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String

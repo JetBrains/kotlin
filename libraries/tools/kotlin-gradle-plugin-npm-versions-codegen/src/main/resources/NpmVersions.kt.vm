@@ -15,4 +15,10 @@ class $class : Serializable {
 #foreach( $dep in $dependencies )
     val $dep.camelize() = NpmPackageVersion("$dep.name", "$dep.version")
 #end
+
+    val allDependencies = listOf(
+#foreach( $dep in $dependencies )
+        $dep.camelize(),
+#end
+    )
 }

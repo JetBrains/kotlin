@@ -1404,15 +1404,15 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testWebpackConfig(gradleVersion: GradleVersion) {
         project("kotlin-js-test-webpack-config", gradleVersion) {
-            build("browserDevelopmentWebpack")
+            build("jsBrowserDevelopmentWebpack")
 
-            build("checkConfigDevelopmentWebpack")
+            build("jsCheckConfigDevelopmentWebpack")
 
-            build("checkConfigProductionWebpack")
+            build("jsCheckConfigProductionWebpack")
 
-            build("checkConfigDevelopmentRun")
+            build("jsCheckConfigDevelopmentRun")
 
-            build("checkConfigProductionRun")
+            build("jsCheckConfigProductionRun")
         }
     }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
@@ -27,8 +28,12 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.archivesName
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
+import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
@@ -41,6 +46,11 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         { project.rootProject.wasmKotlinNodeJsRootExtension },
     )
 
+    internal val toolingExtracted: Boolean = subTarget.target.webTargetVariant(
+        jsVariant = false,
+        wasmVariant = true,
+    )
+
     private val webpackTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
     private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
 
@@ -51,6 +61,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         val processResourcesTask = project.tasks.named(compilation.processResourcesTaskName)
 
         val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+
+        val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
+            subTarget.target.webTargetVariant(
+                { compilation.npmProject.dir.map { it.asFile } },
+                { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+            )
+        )
 
         compilation.binaries
             .withType<Executable>()
@@ -92,6 +109,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
                         defaultArchivesName = archivesName,
+                        npmToolingDir = npmToolingDir,
                     )
                 }
 
@@ -123,6 +141,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
     override fun setupRun(compilation: KotlinJsIrCompilation) {
         val target = compilation.target
         val project = target.project
+
+        val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
+            subTarget.target.webTargetVariant(
+                { compilation.npmProject.dir.map { it.asFile } },
+                { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+            )
+        )
 
         compilation.binaries
             .withType<Executable>()
@@ -187,6 +212,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
                         defaultArchivesName = archivesName,
+                        npmToolingDir = npmToolingDir,
                     )
                 }
             }
@@ -203,6 +229,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         entryModuleName: Provider<String>,
         configurationActions: DomainObjectSet<Action<KotlinWebpack>>,
         defaultArchivesName: Property<String>,
+        npmToolingDir: DirectoryProperty,
     ) {
         val target = binary.target
 
@@ -215,6 +242,18 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
 
         configureOptimization(mode)
+
+        this.npmToolingEnvDir
+            .value(npmToolingDir)
+            .disallowChanges()
+
+        val toolingExtractedValue = this@WebpackConfigurator.toolingExtracted
+
+        this.toolingExtracted.value(toolingExtractedValue).disallowChanges()
+
+        if (toolingExtractedValue) {
+            dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+        }
 
         this.versions.value(nodeJsRoot.versions)
             .disallowChanges()

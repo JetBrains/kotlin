@@ -5,9 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.AbstractExecTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -15,12 +23,15 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
 
@@ -46,6 +57,9 @@ constructor(
             }.get()
         }
     }
+
+    @get:Internal
+    internal abstract val npmToolingEnvDir: DirectoryProperty
 
     @Input
     var nodeArgs: MutableList<String> = mutableListOf()
@@ -77,10 +91,14 @@ constructor(
         args?.let { newArgs.addAll(it) }
         args = newArgs
 
+        val modules = NpmProjectModules(
+            npmToolingEnvDir.getFile()
+        )
+
         if (sourceMapStackTraces) {
             val sourceMapSupportArgs = mutableListOf(
                 "--require",
-                npmProject.require("source-map-support/register.js")
+                modules.require("source-map-support/register.js")
             )
 
             args?.let { sourceMapSupportArgs.addAll(it) }
@@ -110,6 +128,18 @@ constructor(
 
             val npmProject = compilation.npmProject
 
+            val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
+                compilation.webTargetVariant(
+                    { npmProject.dir.map { it.asFile } },
+                    { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+                )
+            )
+
+            val toolingExtracted: Boolean = compilation.webTargetVariant(
+                jsVariant = false,
+                wasmVariant = true,
+            )
+
             return project.registerTask(
                 name,
                 listOf(compilation)
@@ -124,6 +154,12 @@ constructor(
                     )
                     it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
                 }
+
+                it.npmToolingEnvDir.value(npmToolingDir).disallowChanges()
+                if (toolingExtracted) {
+                    it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+                }
+
                 with(nodeJsEnvSpec) {
                     it.dependsOn(project.nodeJsSetupTaskProvider)
                 }

@@ -83,6 +83,8 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
 internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orEmpty()
 
 fun contentEquals(file1: File, file2: File): Boolean {
+    if (file1.readLines().size != file2.readLines().size) return false
+
     file1.useLines { seq1 ->
         file2.useLines { seq2 ->
             val iterator1 = seq1.iterator()

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonFilesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
@@ -131,7 +132,7 @@ internal class NodeJsRootPluginApplier(
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
                 task.description = "Create root package.json"
 
-                task.configureNodeJsEnvironmentTasks(
+                task.configureNodeJsEnvironmentWithNpmResolutionManagerTasks(
                     setupFileHasherTask,
                     nodeJsRoot,
                     nodeJs,
@@ -160,7 +161,7 @@ internal class NodeJsRootPluginApplier(
                 npmInstall.group = NodeJsRootPlugin.TASKS_GROUP_NAME
                 npmInstall.description = "Find, download and link NPM dependencies and projects"
 
-                npmInstall.configureNodeJsEnvironmentTasks(
+                npmInstall.configureNodeJsEnvironmentWithNpmResolutionManagerTasks(
                     setupFileHasherTask,
                     nodeJsRoot,
                     nodeJs,
@@ -307,7 +308,7 @@ internal class NodeJsRootPluginApplier(
         }
     }
 
-    private fun NodeJsEnvironmentTask.configureNodeJsEnvironmentTasks(
+    private fun PackageJsonFilesTask.configureNodeJsEnvironmentWithNpmResolutionManagerTasks(
         setupFileHasherTask: TaskProvider<*>,
         nodeJsRoot: BaseNodeJsRootExtension,
         nodeJs: BaseNodeJsEnvSpec,
@@ -331,20 +332,10 @@ internal class NodeJsRootPluginApplier(
             }
         ).disallowChanges()
 
-        val rootPackageDirectory = nodeJsRoot.rootPackageDirectory
-        val packageManager = nodeJsRoot.packageManagerExtension.map { it.packageManager }
-
-        nodeJsEnvironment
-            .value(
-                nodeJs.env.map {
-                    asNodeJsEnvironment(rootPackageDirectory, packageManager, it)
-                }
-            )
-            .disallowChanges()
-
-        packageManagerEnv.value(
-            nodeJsRoot.packageManagerExtension.map { it.environment }
-        ).disallowChanges()
+        configureNodeJsEnvironmentTasks(
+            nodeJsRoot,
+            nodeJs
+        )
     }
 
     // Yes, we need to break Task Configuration Avoidance here
@@ -382,4 +373,24 @@ internal class NodeJsRootPluginApplier(
                 }
             }
     }
+}
+
+internal fun NodeJsEnvironmentTask.configureNodeJsEnvironmentTasks(
+    nodeJsRoot: BaseNodeJsRootExtension,
+    nodeJs: BaseNodeJsEnvSpec,
+) {
+    val rootPackageDirectory = nodeJsRoot.rootPackageDirectory
+    val packageManager = nodeJsRoot.packageManagerExtension.map { it.packageManager }
+
+    nodeJsEnvironment
+        .value(
+            nodeJs.env.map {
+                asNodeJsEnvironment(rootPackageDirectory, packageManager, it)
+            }
+        )
+        .disallowChanges()
+
+    packageManagerEnv.value(
+        nodeJsRoot.packageManagerExtension.map { it.environment }
+    ).disallowChanges()
 }

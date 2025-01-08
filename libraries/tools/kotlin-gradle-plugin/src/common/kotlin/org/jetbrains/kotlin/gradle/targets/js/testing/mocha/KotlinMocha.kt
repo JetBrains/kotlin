@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
@@ -111,13 +112,15 @@ class KotlinMocha internal constructor(
             exclude = task.excludePatterns
         )
 
-        val mocha = npmProject.require("mocha/bin/mocha")
+        val modules = NpmProjectModules(npmProjectDir.getFile())
+
+        val mocha = modules.require("mocha/bin/mocha")
 
         val file = task.inputFileProperty.getFile().toString()
 
         val args = nodeJsArgs + mutableListOf(
             "--require",
-            npmProject.require("source-map-support/register.js")
+            modules.require("source-map-support/register.js")
         ).apply {
             if (debug) {
                 add("--inspect-brk")
@@ -126,7 +129,7 @@ class KotlinMocha internal constructor(
             add(file)
             addAll(cliArgs.toList())
             addAll(cliArg("--reporter", "kotlin-web-helpers/dist/mocha-kotlin-reporter.js"))
-            addAll(cliArg("--require", npmProject.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
+            addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
             if (debug) {
                 add(NO_TIMEOUT_ARG)
             } else {
@@ -139,12 +142,12 @@ class KotlinMocha internal constructor(
         else {
             nodeJsArgs + mutableListOf(
                 "--require",
-                npmProject.require("source-map-support/register.js")
+                modules.require("source-map-support/register.js")
             ).apply {
                 add(mocha)
                 add(file)
                 addAll(cliArgs.toList())
-                addAll(cliArg("--require", npmProject.require("kotlin-web-helpers/dist/kotlin-test-nodejs-empty-runner.js")))
+                addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-empty-runner.js")))
             }
         }
 

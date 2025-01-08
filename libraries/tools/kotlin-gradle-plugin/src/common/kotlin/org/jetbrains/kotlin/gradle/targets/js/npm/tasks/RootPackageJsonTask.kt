@@ -12,12 +12,14 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonFilesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 
 @DisableCachingByDefault
 abstract class RootPackageJsonTask :
     DefaultTask(),
     NodeJsEnvironmentTask,
+    PackageJsonFilesTask,
     UsesKotlinNpmResolutionManager {
     init {
         check(project == project.rootProject)

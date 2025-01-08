@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
-import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
-import java.io.File
+
+class Yarn internal constructor(
+    execOps: ExecOperations,
+    objects: ObjectFactory,
+) : NpmApiExecution<YarnEnvironment> by YarnWorkspaces(
+    execOps,
+    objects,
+)
+
+/*
 
 class Yarn internal constructor(
     execOps: ExecOperations,
@@ -82,3 +87,4 @@ class Yarn internal constructor(
             )
     }
 }
+ */

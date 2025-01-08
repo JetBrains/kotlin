@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 abstract class YarnBasics internal constructor(
@@ -37,53 +39,55 @@ abstract class YarnBasics internal constructor(
 
     @Deprecated(
         "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",
-        ReplaceWith("yarnExec(logger, nodeJs, yarn, dir, description, args)")
+        ReplaceWith("packageManagerExec(logger, nodeJs, yarn, dir, description, args)")
     )
     @Suppress("unused")
-    fun yarnExec(
+    override fun packageManagerExec(
         @Suppress("UNUSED_PARAMETER")
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
+        environment: YarnEnvironment,
         dir: File,
         description: String,
         args: List<String>,
     ) {
-        yarnExec(
+        packageManagerExec(
             logger = logger,
             nodeJs = nodeJs,
-            yarn = yarn,
-            dir = dir,
+            environment = environment,
+            dir = objects.property<File>().value(dir),
             description = description,
             args = args,
         )
     }
 
-    fun yarnExec(
+    override fun packageManagerExec(
         logger: Logger,
         nodeJs: NodeJsEnvironment,
-        yarn: YarnEnvironment,
-        dir: File,
+        environment: YarnEnvironment,
+        dir: Provider<File>,
         description: String,
         args: List<String>,
     ) {
         val progressLogger = objects.newBuildOpLogger()
         execWithProgress(progressLogger, description, execOps) { exec ->
-            val arguments = mutableListOf<String>().apply {
-                addAll(args)
-                if (logger.isDebugEnabled) add("--verbose")
-                if (yarn.ignoreScripts) add("--ignore-scripts")
-            }.filter { it.isNotEmpty() }
+            val arguments = args
+                .plus(
+                    if (logger.isDebugEnabled) "--verbose" else ""
+                )
+                .plus(
+                    if (environment.ignoreScripts) "--ignore-scripts" else ""
+                ).filter { it.isNotEmpty() }
 
             val nodeExecutable = nodeJs.nodeExecutable
-            if (!yarn.ignoreScripts) {
+            if (!environment.ignoreScripts) {
                 val nodePath = File(nodeExecutable).parent
                 exec.environment("PATH", "$nodePath${File.pathSeparator}${System.getenv("PATH")}")
             }
 
-            val command = yarn.executable
-            if (yarn.standalone) {
+            val command = environment.executable
+            if (environment.standalone) {
                 exec.executable = command
                 exec.setArgs(arguments)
             } else {
@@ -91,7 +95,16 @@ abstract class YarnBasics internal constructor(
                 exec.setArgs(listOf(command) + arguments)
             }
 
-            exec.workingDir = dir
+            exec.workingDir = dir.get()
         }
+    }
+
+    override fun prepareTooling(dir: File) {
+        dir.resolve("yarn.lock")
+            .outputStream()
+            .use { out ->
+                YarnBasics::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
+                    ?.copyTo(out)
+            }
     }
 }

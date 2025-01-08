@@ -1,0 +1,18 @@
+{
+  "name": "kotlin-npm-tooling",
+  "version": "$version",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+      #set($dependenciesList ="")
+      #set($separator="")
+      #foreach($item in $dependencies)
+          #set($dependenciesList = $dependenciesList + $separator + $item)
+          #set($separator = ",$newline")
+      #end
+$dependenciesList
+  },
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}

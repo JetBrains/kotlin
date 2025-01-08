@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.internal.execWithErrorLogger
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
 import java.io.File
@@ -31,6 +32,8 @@ internal data class KotlinWebpackRunner(
     val config: KotlinWebpackConfig,
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
+    private val npmToolingEnvDir: File,
+    private val toolingExtracted: Boolean,
 ) {
 
     fun execute(): ExecResult {
@@ -115,12 +118,15 @@ internal data class KotlinWebpackRunner(
 
         val args = buildArgs()
 
-        npmProject.useTool(
-            exec = execSpec,
-            tool = tool,
-            nodeArgs = nodeArgs,
-            args = args,
-        )
+        val modules = NpmProjectModules(npmToolingEnvDir)
+        execSpec.workingDir(npmProject.dir)
+        execSpec.executable(npmProject.nodeExecutable)
+        if (toolingExtracted) {
+            execSpec.environment("NODE_PATH", npmToolingEnvDir.resolve("node_modules"))
+            execSpec.environment("KOTLIN_TOOLING_DIR", npmToolingEnvDir.resolve("node_modules"))
+        }
+
+        execSpec.args = nodeArgs + modules.require(tool) + args
     }
 
     private fun buildArgs(): List<String> {

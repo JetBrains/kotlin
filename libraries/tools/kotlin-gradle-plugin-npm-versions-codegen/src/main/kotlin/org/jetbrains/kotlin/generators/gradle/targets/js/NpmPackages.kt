@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators.gradle.targets.js
 val npmPackages = listOf(
     NpmPackage("webpack"),
     NpmPackage("webpack-cli"),
-    NpmPackage("webpack-dev-server", "4.15.2"),
+    NpmPackage("webpack-dev-server"),
     NpmPackage("source-map-loader"),
     NpmPackage("source-map-support"),
     NpmPackage("css-loader"),
@@ -20,7 +20,6 @@ val npmPackages = listOf(
     NpmPackage("mocha"),
     NpmPackage("karma"),
     NpmPackage("karma-chrome-launcher"),
-    NpmPackage("karma-phantomjs-launcher"),
     NpmPackage("karma-firefox-launcher"),
     NpmPackage("karma-opera-launcher"),
     NpmPackage("karma-ie-launcher"),

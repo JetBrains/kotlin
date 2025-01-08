@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
@@ -40,7 +41,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
         }
 
-        if (test.enabled) {
+        if (target.platformType != KotlinPlatformType.wasm && test.enabled) {
             nodeJsRoot.taskRequirements.addTaskRequirements(test)
         }
     }
