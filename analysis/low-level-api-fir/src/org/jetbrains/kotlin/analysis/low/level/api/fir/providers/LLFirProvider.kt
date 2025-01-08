@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptySymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirEmptySymbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -51,7 +51,7 @@ internal class LLFirProvider(
         LLKotlinSourceSymbolProvider(session, moduleComponents, searchScope, canContainKotlinPackage, declarationProviderFactory)
 
     override val symbolProvider: FirSymbolProvider =
-        if (disregardSelfDeclarations) LLEmptySymbolProvider(session) else sourceSymbolProvider
+        if (disregardSelfDeclarations) FirEmptySymbolProvider(session) else sourceSymbolProvider
 
     override val isPhasedFirAllowed: Boolean get() = true
 

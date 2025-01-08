@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
+package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.resolve.providers.FirEmptySymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -18,13 +19,12 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class LLEmptySymbolProvider(session: FirSession) : FirSymbolProvider(session) {
+@NoMutableState
+class FirEmptySymbolProvider(session: FirSession) : FirSymbolProvider(session) {
     override val symbolNamesProvider: FirSymbolNamesProvider
         get() = FirEmptySymbolNamesProvider
 
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        return null
-    }
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? = null
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -38,7 +38,5 @@ internal class LLEmptySymbolProvider(session: FirSession) : FirSymbolProvider(se
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    override fun hasPackage(fqName: FqName): Boolean {
-        return false
-    }
+    override fun hasPackage(fqName: FqName): Boolean = false
 }
