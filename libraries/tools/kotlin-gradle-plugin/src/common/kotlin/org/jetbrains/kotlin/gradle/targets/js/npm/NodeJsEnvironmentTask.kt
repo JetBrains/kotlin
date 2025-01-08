@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Task
-import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
-import org.gradle.work.NormalizeLineEndings
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 
-internal interface NodeJsEnvironmentTask : Task, UsesKotlinNpmResolutionManager {
+internal interface NodeJsEnvironmentTask : Task {
     @get:Internal
     @InternalKotlinGradlePluginApi
     val nodeJsEnvironment: Property<NodeJsEnvironment>
@@ -22,10 +19,4 @@ internal interface NodeJsEnvironmentTask : Task, UsesKotlinNpmResolutionManager 
     @get:Internal
     @InternalKotlinGradlePluginApi
     val packageManagerEnv: Property<PackageManagerEnvironment>
-
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    @get:InputFiles
-    val packageJsonFiles: ListProperty<RegularFile>
 }

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectKt
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 
 plugins {
     id("org.jetbrains.kotlin.js")
@@ -20,8 +21,6 @@ kotlin {
         browser()
 
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin) {
-//            def kotlinNodeJs = rootProject.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension)
-
             def mainCompilation = compilations["main"]
 
             tasks.register("runWebpack", Exec) {
@@ -32,7 +31,10 @@ kotlin {
                 def npmProject = NpmProjectKt.getNpmProject(mainCompilation)
 
                 doFirst {
-                    npmProject.useTool(it, "webpack/bin/webpack", [], [])
+                    def modules = new NpmProjectModules(npmProject.dir.get().getAsFile(), [], [], [])
+                    it.workingDir(npmProject.dir)
+                    it.executable(npmProject.nodeExecutable)
+                    it.args = [modules.require("webpack/bin/webpack.js")]
                 }
             }
 
@@ -42,22 +44,6 @@ kotlin {
         }
     }
 }
-
-//def compileKotlinJs = tasks.named('compileKotlinJs') {
-//    kotlinOptions {
-//        sourceMap = true
-//        outputFile = "${buildDir}/app/exampleapp.js"
-//        suppressWarnings = true
-//        verbose = true
-//    }
-//}
-
-//tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJsDce).configureEach {
-//    keep("exampleapp.exampleapp.status")
-//    destinationDirectory = project.layout.buildDirectory.dir("kotlin-js-min")
-//}
-
-
 
 tasks.register('runRhino', JavaExec) {
     dependsOn(tasks.named('processDceKotlinJs'))

@@ -73,7 +73,7 @@ class Npm internal constructor(
         packageManagerEnvironment: NpmEnvironment,
         cliArgs: List<String>,
     ) {
-        npmExec(
+        packageManagerExec(
             logger = logger,
             nodeJs = nodeJs,
             environment = packageManagerEnvironment,
@@ -83,12 +83,23 @@ class Npm internal constructor(
         )
     }
 
+    override fun prepareTooling(
+        dir: File,
+    ) {
+        dir.resolve("package-lock.json")
+            .outputStream()
+            .use { out ->
+                Npm::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/npm/package-lock.json")
+                    ?.copyTo(out)
+            }
+    }
+
     @Deprecated(
         "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",
-        ReplaceWith("npmExec(logger, nodeJs, environment, dir, description, args)"),
+        ReplaceWith("packageManagerExec(logger, nodeJs, environment, dir, description, args)"),
     )
     @Suppress("unused")
-    fun npmExec(
+    override fun packageManagerExec(
         @Suppress("UNUSED_PARAMETER")
         services: ServiceRegistry,
         logger: Logger,
@@ -98,7 +109,7 @@ class Npm internal constructor(
         description: String,
         args: List<String>,
     ) {
-        npmExec(
+        packageManagerExec(
             logger = logger,
             nodeJs = nodeJs,
             environment = environment,
@@ -108,7 +119,7 @@ class Npm internal constructor(
         )
     }
 
-    fun npmExec(
+    override fun packageManagerExec(
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         environment: NpmEnvironment,

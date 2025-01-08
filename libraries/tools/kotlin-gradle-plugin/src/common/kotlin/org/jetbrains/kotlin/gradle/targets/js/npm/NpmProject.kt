@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
-import java.io.File
 import java.io.Serializable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
@@ -71,8 +69,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     val project: Project
         get() = target.project
 
-    val nodeModulesDir
-        get() = dir.map { it.dir(NODE_MODULES) }
+    val nodeModulesDir: Provider<Directory> = nodeJsRoot.rootPackageDirectory.map { it.dir(NODE_MODULES) }
 
     val packageJsonFile: Provider<RegularFile>
         get() = dir.map { it.file(PACKAGE_JSON) }
@@ -100,34 +97,9 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         NpmProjectModules(dir.getFile())
     }
 
-    private val nodeExecutable by lazy {
+    val nodeExecutable by lazy {
         nodeJs.executable.get()
     }
-
-    fun useTool(
-        exec: ExecSpec,
-        tool: String,
-        nodeArgs: List<String> = listOf(),
-        args: List<String>,
-    ) {
-        exec.workingDir(dir)
-        exec.executable(nodeExecutable)
-        exec.args = nodeArgs + require(tool) + args
-    }
-
-    /**
-     * Require [request] nodejs module and return canonical path to it's main js file.
-     */
-    fun require(request: String): String {
-//        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
-        return modules.require(request)
-    }
-
-    /**
-     * Find node module according to https://nodejs.org/api/modules.html#modules_all_together,
-     * with exception that instead of traversing parent folders, we are traversing parent projects
-     */
-    internal fun resolve(name: String): File? = modules.resolve(name)
 
     override fun toString() = "NpmProject(${name.get()})"
 

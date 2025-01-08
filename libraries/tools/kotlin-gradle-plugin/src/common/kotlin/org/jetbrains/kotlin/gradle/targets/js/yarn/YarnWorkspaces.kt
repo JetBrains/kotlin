@@ -72,9 +72,9 @@ class YarnWorkspaces internal constructor(
         packageManagerEnvironment: YarnEnvironment,
         cliArgs: List<String>,
     ) {
-        val nodeJsWorldDir = nodeJs.rootPackageDir.getFile()
+        val nodeJsWorldDir = nodeJs.rootPackageDir.map { it.asFile }
 
-        yarnExec(
+        packageManagerExec(
             logger,
             nodeJs,
             packageManagerEnvironment,
