@@ -129,7 +129,12 @@ private fun buildResultingTypeAndAdaptation(
             val returnTypeWithoutCoercion = returnTypeRef.coneType
             val returnType = if (callableReferenceAdaptation == null) {
                 returnTypeWithoutCoercion.also {
-                    fir.valueParameters.mapTo(parameters) { it.returnTypeRef.coneType }
+                    fir.valueParameters.mapTo(parameters) {
+                        if ((fir is FirSimpleFunction || fir is FirConstructor) && fir.origin != FirDeclarationOrigin.SamConstructor)
+                            it.returnTypeRef.coneType.withParameterNameAnnotation(it)
+                        else
+                            it.returnTypeRef.coneType
+                    }
                 }
             } else {
                 parameters += callableReferenceAdaptation.argumentTypes

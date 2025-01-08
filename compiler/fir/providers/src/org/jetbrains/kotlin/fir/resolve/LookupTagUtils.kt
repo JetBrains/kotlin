@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -39,12 +42,21 @@ fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol
 }
 
 fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParameter): ConeKotlinType {
+    val name = parameter.name ?: return this
+    return withParameterNameAnnotation(name, parameter.source)
+}
+
+fun ConeKotlinType.withParameterNameAnnotation(parameter: FirValueParameter): ConeKotlinType {
     val name = parameter.name
-    if (name == null || name == SpecialNames.NO_NAME_PROVIDED || name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
+    return withParameterNameAnnotation(name, parameter.source)
+}
+
+private fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSourceElement?): ConeKotlinType {
+    if (name == SpecialNames.NO_NAME_PROVIDED || name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
     // Existing @ParameterName annotation takes precedence
     if (attributes.parameterNameAttribute != null) return this
 
-    val fakeSource = parameter.source?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
+    val fakeSource = element?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
     val parameterNameAnnotationCall = buildAnnotation {
         source = fakeSource
         annotationTypeRef =

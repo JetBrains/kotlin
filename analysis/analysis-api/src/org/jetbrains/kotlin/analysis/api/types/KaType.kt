@@ -248,6 +248,12 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val parameterTypes: List<KaType>
 
     /**
+     * The function's value parameters
+     */
+    @KaExperimentalApi
+    public abstract val parameters: List<KaFunctionValueParameter>
+
+    /**
      * The function's arity, i.e. the number of [*parameter types*][parameterTypes].
      */
     public abstract val arity: Int
@@ -283,6 +289,35 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
+}
+
+
+/**
+ * Represents a function value parameter
+ */
+@KaExperimentalApi
+public sealed interface KaFunctionValueParameter {
+    /**
+     * Type of the parameter
+     */
+    public val type: KaType
+}
+
+/**
+ * Represents a receiver value parameter in reflect function types
+ */
+@OptIn(KaExperimentalApi::class)
+public interface KaReceiverFunctionValueParameter : KaFunctionValueParameter
+
+/**
+ * Represents a regular function value parameter
+ */
+@OptIn(KaExperimentalApi::class)
+public interface KaRegularFunctionValueParameter : KaFunctionValueParameter {
+    /**
+     * Name of the parameter (if present)
+     */
+    public val name: Name?
 }
 
 /**
