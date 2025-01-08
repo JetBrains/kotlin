@@ -1098,7 +1098,13 @@ internal class PartiallyLinkedIrTreePatcher(
                     if (this is IrTypeOperatorCall && this.operator == IrTypeOperator.IMPLICIT_CAST) {
                         return this.argument.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
                     }
-                    inlinedLambdaArgumentsWithPermittedNonLocalReturns.addIfNotNull((this as? IrFunctionExpression)?.function?.symbol)
+                    inlinedLambdaArgumentsWithPermittedNonLocalReturns.addIfNotNull(
+                        when (this) {
+                            is IrFunctionExpression -> this.function.symbol
+                            is IrRichFunctionReference -> invokeFunction.symbol
+                            else -> null
+                        }
+                    )
                 }
 
                 if (function.extensionReceiverParameter.canHaveNonLocalReturns())
