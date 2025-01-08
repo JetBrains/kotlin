@@ -10588,12 +10588,6 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         }
 
         @Test
-        @TestMetadata("kt72464.kt")
-        public void testKt72464() {
-          runTest("compiler/testData/codegen/box/coroutines/controlFlow/kt72464.kt");
-        }
-
-        @Test
         @TestMetadata("labeledWhile.kt")
         public void testLabeledWhile() {
           runTest("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt");
