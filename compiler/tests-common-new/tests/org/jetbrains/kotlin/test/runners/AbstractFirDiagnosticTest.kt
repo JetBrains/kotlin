@@ -39,7 +39,7 @@ abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : Ab
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFirLightTreeDiagnosticsTest() {
+open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
