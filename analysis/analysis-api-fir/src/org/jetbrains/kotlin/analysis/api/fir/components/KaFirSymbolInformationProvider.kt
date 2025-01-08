@@ -66,11 +66,15 @@ internal class KaFirSymbolInformationProvider(
 
     private fun KaSymbol.deprecationsAreDefinitelyEmpty(): Boolean {
         return when (val psi = psi) {
-            is PsiMember -> psi.annotations.none { it.nameReferenceElement?.referenceName in deprecationAnnotationSimpleNames }
+            is PsiMember -> deprecatedAnnotationsListIsEmpty(psi)
             is KtProperty -> psi.deprecatedAnnotationsListIsEmpty() && psi.accessors.all { it.deprecatedAnnotationsListIsEmpty() }
             is KtDeclaration -> psi.deprecatedAnnotationsListIsEmpty()
             else -> return false
         }
+    }
+
+    private fun deprecatedAnnotationsListIsEmpty(psi: PsiMember): Boolean {
+        return psi.annotations.isEmpty()
     }
 
     private fun KtDeclaration.deprecatedAnnotationsListIsEmpty() =
