@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.ir.isPure
@@ -223,7 +227,7 @@ open class FunctionInlining(
 
     private fun IrBlock.markAsRegenerated(): IrBlock {
         if (!regenerateInlinedAnonymousObjects) return this
-        acceptVoid(object : IrVisitorVoid() {
+        acceptVoid(object : IrElementVisitorVoid {
             private fun IrElement.setUpCorrectAttributeOwner() {
                 if (this.attributeOwnerId == this) return
                 this.originalBeforeInline = this.attributeOwnerId

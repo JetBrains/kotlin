@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.Comparator
 
@@ -28,7 +28,7 @@ import java.util.Comparator
  *
  * Parent class should be Any or class, annotated with @AllPropertiesConstructor
  */
-class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisitorVoid() {
+class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElementVisitorVoid {
     companion object {
         private val ANNOTATION_FQN = "AllPropertiesConstructor".fqn()
     }

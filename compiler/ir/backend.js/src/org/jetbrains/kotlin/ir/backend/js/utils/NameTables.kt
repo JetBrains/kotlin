@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.js.common.isES5IdentifierPart
 import org.jetbrains.kotlin.js.common.isES5IdentifierStart
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
+import kotlin.collections.set
 import kotlin.math.abs
 
 abstract class NameScope {
@@ -189,7 +191,7 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): S
     return calculateJsFunctionSignature(declarationSignature, context)
 }
 
-class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrVisitorVoid() {
+class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElementVisitorVoid {
     val localLoopNames = NameTable<IrLoop>()
     val localReturnableBlockNames = NameTable<IrReturnableBlock>()
 

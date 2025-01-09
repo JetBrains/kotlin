@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Copy of [runOnFilePostfix], but this implementation first lowers declaration, then its children.
  */
 fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
-    irFile.acceptVoid(object : IrVisitorVoid() {
+    irFile.acceptVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -65,7 +65,7 @@ val IrElement.earliestStartOffset: Int
     get() {
         var offset = startOffset
         this.acceptChildrenVoid(
-            object : IrVisitorVoid() {
+            object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     if (element.startOffset < offset) offset = element.startOffset
                     element.acceptChildrenVoid(this)

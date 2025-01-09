@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.util.transformSubsetFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -88,7 +88,7 @@ fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ClassLoweringVisitor(
     private val loweringPass: ClassLoweringPass
-) : IrVisitorVoid() {
+) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -105,7 +105,7 @@ fun ScriptLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ScriptLoweringVisitor(
     private val loweringPass: ScriptLoweringPass
-) : IrVisitorVoid() {
+) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -123,7 +123,7 @@ fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class DeclarationContainerLoweringVisitor(
     private val loweringPass: DeclarationContainerLoweringPass
-) : IrVisitorVoid() {
+) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -239,7 +239,7 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrVisitorVoid() {
+    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

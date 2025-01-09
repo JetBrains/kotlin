@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
@@ -172,7 +172,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                 functions.registerFunction(function, kind, ignored)
     }
 
-    private inner class AnnotationCollector(val irFile: IrFile) : IrVisitorVoid() {
+    private inner class AnnotationCollector(val irFile: IrFile) : IrElementVisitorVoid {
         val testClasses = mutableMapOf<IrClass, TestClass>()
 
         val topLevelFunctions = mutableListOf<TestFunction>()

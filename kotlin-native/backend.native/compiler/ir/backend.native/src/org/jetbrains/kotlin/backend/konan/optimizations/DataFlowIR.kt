@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import java.util.*
@@ -480,7 +480,7 @@ internal object DataFlowIR {
         private var privateFunIndex = 0
 
         fun populateWith(irModule: IrModuleFragment) {
-            irModule.accept(object : IrVisitorVoid() {
+            irModule.accept(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

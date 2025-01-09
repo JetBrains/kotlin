@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.BaseKotlinMangleComputer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
-import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
+import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,12 +13,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isFacadeClass
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 /**
  * A mangle computer that generates a mangled name for a Kotlin declaration represented by [IrDeclaration].
@@ -137,7 +133,7 @@ open class IrMangleComputer(
         }
     }
 
-    private inner class Visitor : IrVisitorVoid() {
+    private inner class Visitor : IrElementVisitorVoid {
 
         override fun visitElement(element: IrElement) =
             error("unexpected element ${element.render()}")

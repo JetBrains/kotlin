@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
@@ -556,7 +556,7 @@ class DumpTreeFromSourceLineVisitor(
     private val lineNumber: Int,
     out: Appendable,
     options: DumpIrTreeOptions,
-) : IrVisitorVoid() {
+) : IrElementVisitorVoid {
     private val dumper = DumpIrTreeVisitor(out, options)
 
     override fun visitElement(element: IrElement) {

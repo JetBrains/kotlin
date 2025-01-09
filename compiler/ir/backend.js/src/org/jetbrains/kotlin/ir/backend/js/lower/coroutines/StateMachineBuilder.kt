@@ -76,7 +76,7 @@ class StateMachineBuilder(
     private val thisSymbol: IrValueParameterSymbol,
     private val getSuspendResultAsType: (IrType) -> IrExpression,
     private val setSuspendResultValue: (IrExpression) -> IrStatement
-) : IrVisitorVoid() {
+) : IrElementVisitorVoid {
 
     private val loopMap = hashMapOf<IrLoop, LoopBounds>()
     private val unit = context.irBuiltIns.unitType

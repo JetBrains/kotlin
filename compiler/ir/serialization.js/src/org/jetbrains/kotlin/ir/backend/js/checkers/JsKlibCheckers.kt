@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 
 object JsKlibCheckers {
@@ -35,8 +36,8 @@ object JsKlibCheckers {
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>>,
         diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration
-    ): IrVisitorVoid {
-        return object : IrVisitorVoid() {
+    ): IrElementVisitorVoid {
+        return object : IrElementVisitorVoid {
             private val diagnosticContext = JsKlibDiagnosticContext(configuration)
 
             override fun visitElement(element: IrElement) {

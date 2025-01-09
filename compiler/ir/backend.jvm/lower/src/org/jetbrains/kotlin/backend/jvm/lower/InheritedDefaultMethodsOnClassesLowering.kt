@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -220,7 +220,7 @@ private fun IrSimpleFunction.isCloneableClone(): Boolean =
  * Resolves calls to Object methods on interface types to virtual methods.
  */
 @PhaseDescription(name = "InterfaceObjectCalls")
-internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
+internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 
     override fun visitElement(element: IrElement) {

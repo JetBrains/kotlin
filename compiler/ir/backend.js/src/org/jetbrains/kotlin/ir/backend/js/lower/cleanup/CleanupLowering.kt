@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -29,7 +29,7 @@ class CleanupLowering : BodyLoweringPass {
     }
 }
 
-private class BlockRemover : IrVisitorVoid() {
+private class BlockRemover : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -58,7 +58,7 @@ private class BlockRemover : IrVisitorVoid() {
     }
 }
 
-private class CodeCleaner : IrVisitorVoid() {
+private class CodeCleaner : IrElementVisitorVoid {
 
     private fun IrStatementContainer.cleanUpStatements() {
         var unreachable = false
@@ -84,7 +84,7 @@ private class CodeCleaner : IrVisitorVoid() {
 
         var hasFakeNothingCalls = false
 
-        acceptVoid(object : IrVisitorVoid() {
+        acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

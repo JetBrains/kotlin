@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.backend.common.lower.optimizations
 
 import org.jetbrains.kotlin.backend.common.copy
 import org.jetbrains.kotlin.backend.common.forEachBit
-import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 
@@ -27,7 +27,7 @@ object LivenessAnalysis {
 
     private fun IrElement.getImmediateChildren(): List<IrElement> {
         val result = mutableListOf<IrElement>()
-        acceptChildrenVoid(object : IrVisitorVoid() {
+        acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 result.add(element)
                 // Do not recurse.

@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.util.parents
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -427,7 +428,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun makeLambdaParameterNullable(function: IrFunction, parameter: IrValueParameter) {
         parameter.type = parameter.type.makeNullable()
-        function.body?.accept(object : IrVisitorVoid() {
+        function.body?.accept(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildren(this, null)
             }

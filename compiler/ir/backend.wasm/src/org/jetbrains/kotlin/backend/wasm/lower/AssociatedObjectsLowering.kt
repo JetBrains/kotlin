@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
@@ -44,7 +43,7 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
         irFile.acceptChildrenVoid(visitor)
     }
 
-    private val visitor = object : IrVisitorVoid() {
+    private val visitor = object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             if (element is IrClass) {
                 element.acceptChildrenVoid(this)
