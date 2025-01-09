@@ -12,12 +12,14 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.api.initialization.Settings
+import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -229,15 +231,22 @@ fun GradleProject.enableBuildScriptInjectionsIfNecessary(
 }
 
 class InjectionLoader {
-    fun invokeBuildScriptInjection(project: Project, serializedInjectionName: String) {
-        project.projectDir.resolve(serializedInjectionName).inputStream().use {
+    fun invokeBuildScriptInjection(project: Project, serializedInjectionPath: File) {
+        serializedInjectionPath.inputStream().use {
             @Suppress("UNCHECKED_CAST")
             (ObjectInputStream(it).readObject() as GradleBuildScriptInjection<Project>).inject(project)
         }
     }
 
-    fun invokeSettingsBuildScriptInjection(settings: Settings, serializedInjectionName: String) {
-        settings.settingsDir.resolve(serializedInjectionName).inputStream().use {
+    fun invokeBuildScriptPluginsInjection(buildscript: ScriptHandler, serializedInjectionPath: File) {
+        serializedInjectionPath.inputStream().use {
+            @Suppress("UNCHECKED_CAST")
+            (ObjectInputStream(it).readObject() as GradleBuildScriptInjection<ScriptHandler>).inject(buildscript)
+        }
+    }
+
+    fun invokeSettingsBuildScriptInjection(settings: Settings, serializedInjectionName: File) {
+        serializedInjectionName.inputStream().use {
             @Suppress("UNCHECKED_CAST")
             (ObjectInputStream(it).readObject() as GradleBuildScriptInjection<Settings>).inject(settings)
         }
@@ -261,6 +270,11 @@ class GradleProjectBuildScriptInjectionContext(
 @BuildGradleKtsInjectionScope
 class GradleSettingsBuildScriptInjectionContext(
     val settings: Settings,
+)
+
+@BuildGradleKtsInjectionScope
+class GradleBuildScriptBuildscriptInjectionContext(
+    val buildscript: ScriptHandler,
 )
 
 typealias BuildAction = TestProject.(buildArguments: Array<String>, buildOptions: BuildOptions) -> Unit
@@ -415,9 +429,8 @@ private fun <T> GradleProject.buildScriptReturnInjection(
     val serializedReturnPath = projectPath.resolve("serializedReturnConfiguration_${injectionIdentifier}").toFile()
     val injection = injectionProvider(serializedReturnPath)
 
-    val serializedInjectionName = "serializedInjection_${injectionIdentifier}"
-    val serializedInjectionPath = projectPath.resolve(serializedInjectionName)
-    serializedInjectionPath.toFile().outputStream().use {
+    val serializedInjectionPath = projectPath.resolve("serializedInjection_${injectionIdentifier}").toFile()
+    serializedInjectionPath.outputStream().use {
         ObjectOutputStream(it).writeObject(injection)
     }
 
@@ -458,9 +471,10 @@ private fun <T> GradleProject.buildScriptReturnInjection(
 /**
  * Inject build script with a lambda that will be executed by the build script at configuration time.
  *
- * The [code] closure is going to be serialized to a file using Java serialization. This allows the instance of the lambda to capture
+ * The [code] and [injectBuildscriptBlock] closures are going to be serialized to a file using Java serialization. This allows the instance of the lambda to capture
  * serializable parameters from the test. When the build script executes, it deserializes the lambda instance and executes it.
  */
+
 fun GradleProject.buildScriptInjection(
     code: GradleProjectBuildScriptInjectionContext.() -> Unit,
 ) {
@@ -476,6 +490,96 @@ fun GradleProject.buildScriptInjection(
         { GradleProjectBuildScriptInjectionContext(it) },
         code,
     )
+}
+
+/**
+ * Transfer repositories from settings pluginManagement into project build script's buildscript repositories and inject the buildscript
+ * block with KGP (without applying any plugins)
+ */
+fun TestProject.addKGPToBuildScriptCompilationClasspath() {
+    val kotlinVersion = buildOptions.kotlinVersion
+    transferPluginRepositoriesIntoBuildScript()
+    buildScriptBuildscriptBlockInjection {
+        buildscript.configurations.getByName("classpath").dependencies.add(
+            buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        )
+    }
+}
+
+fun GradleProject.buildScriptBuildscriptBlockInjection(
+    code: GradleBuildScriptBuildscriptInjectionContext.() -> Unit
+) {
+    enableBuildScriptInjectionsIfNecessary(
+        buildGradle,
+        buildGradleKts,
+    )
+    val buildscriptBlockInjection = serializeInjection<GradleBuildScriptBuildscriptInjectionContext, ScriptHandler>(
+        instantiateInjectionContext = { GradleBuildScriptBuildscriptInjectionContext(it) },
+        code = code,
+    )
+    when {
+        buildGradle.exists() -> buildGradle.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoadGroovy(
+                "invokeBuildScriptPluginsInjection",
+                "buildscript",
+                ScriptHandler::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        buildGradleKts.exists() -> buildGradleKts.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoad(
+                "invokeBuildScriptPluginsInjection",
+                "buildscript",
+                ScriptHandler::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        else -> error("Can't find the build script to append the injection")
+    }
+}
+
+/**
+ * Allow [buildscript] configurations (classpath) to see the same set of repositories that are normally visible to the [plugins] block in
+ * build.gradle.kts
+ */
+private const val transferPluginRepositoriesIntoProjectRepositories = "transferPluginRepositoriesIntoProjectRepositories"
+private fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
+    settingsBuildScriptInjection {
+        if (!settings.extraProperties.has(transferPluginRepositoriesIntoProjectRepositories)) {
+            settings.extraProperties.set(transferPluginRepositoriesIntoProjectRepositories, true)
+            settings.pluginManagement.repositories.all { rep ->
+                settings.gradle.beforeProject { project ->
+                    project.buildscript.repositories.add(rep)
+                }
+            }
+        }
+    }
+}
+
+private val buildscriptBlockStartPattern = Regex("""buildscript\s*\{.*""")
+private fun Path.prependToOrCreateBuildscriptBlock(code: String) {
+    val content = this.readText()
+    val match = buildscriptBlockStartPattern.find(content)
+    if (match != null) {
+        writeText(
+            buildString {
+                append(content.substring(0, match.range.last + 1))
+                appendLine(code)
+                appendLine()
+                append(content.substring(match.range.last + 1, content.length))
+            }
+        )
+    } else {
+        writeText(
+            content.insertBlockToBuildScriptAfterImports(
+                buildString {
+                    appendLine("buildscript {")
+                    appendLine(code)
+                    appendLine("}")
+                }
+            )
+        )
+    }
 }
 
 fun GradleProject.settingsBuildScriptInjection(
@@ -494,27 +598,31 @@ fun GradleProject.settingsBuildScriptInjection(
 fun <Context, Target> GradleProject.loadInjectionDuringEvaluation(
     buildScript: Path,
     buildScriptKts: Path,
-    injectionLoad: (String) -> String,
-    injectionLoadGroovy: (String) -> String,
+    injectionLoad: (File) -> String,
+    injectionLoadGroovy: (File) -> String,
     instantiateInjectionContext: (Target) -> Context,
     code: Context.() -> Unit,
 ) {
-    val injection = UndispatchedInjection(
-        instantiateInjectionContext,
-        code,
-    )
-
-    val serializedInjectionName = "serializedConfiguration_${generateIdentifier()}"
-    val serializedInjectionPath = projectPath.resolve(serializedInjectionName)
-    serializedInjectionPath.toFile().outputStream().use {
-        ObjectOutputStream(it).writeObject(injection)
-    }
-
+    val serializedInjectionPath = serializeInjection(instantiateInjectionContext, code)
     when {
-        buildScriptKts.exists() -> buildScriptKts.appendText(injectionLoad(serializedInjectionName))
-        buildScript.exists() -> buildScript.appendText(injectionLoadGroovy(serializedInjectionName))
+        buildScriptKts.exists() -> buildScriptKts.appendText(injectionLoad(serializedInjectionPath))
+        buildScript.exists() -> buildScript.appendText(injectionLoadGroovy(serializedInjectionPath))
         else -> error("Can't find the build script to append the injection")
     }
+}
+
+private fun <Context, Target> GradleProject.serializeInjection(
+    instantiateInjectionContext: (Target) -> Context,
+    code: Context.() -> Unit,
+): File {
+    val injection = UndispatchedInjection(instantiateInjectionContext, code)
+    val serializedInjectionPath = projectPath
+        .resolve("serializedConfiguration_${generateIdentifier()}")
+        .toFile()
+    serializedInjectionPath.outputStream().use {
+        ObjectOutputStream(it).writeObject(injection)
+    }
+    return serializedInjectionPath
 }
 
 /**
@@ -531,14 +639,14 @@ fun scriptIsolatedInjectionLoad(
     targetMethodName: String,
     targetPropertyName: String,
     targetPropertyClassName: String,
-    serializedInjectionName: String,
+    serializedInjectionPath: File,
 ): String {
     val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
         ?: error("Missing test classes output directory in property '${"buildScriptInjectionsClasspath"}'")
     val escapedInjectionClasses = injectionClasses
         .replace("\\", "\\\\")
         .replace("$", "\\$")
-    val lambdaName = "invokeInjection${serializedInjectionName.replace("-", "_")}"
+    val lambdaName = "invokeInjection${serializedInjectionPath.name.replace("-", "_")}"
 
     return """
         
@@ -551,11 +659,11 @@ fun scriptIsolatedInjectionLoad(
             injectionLoaderClass.getMethod(
                 "$targetMethodName",
                 Class.forName("$targetPropertyClassName"),
-                Class.forName("java.lang.String")
+                Class.forName("java.io.File")
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                "$serializedInjectionName"
+                java.io.File("${serializedInjectionPath.path}")
             )
         }
         ${lambdaName}()
@@ -566,14 +674,14 @@ fun scriptIsolatedInjectionLoadGroovy(
     targetMethodName: String,
     targetPropertyName: String,
     targetPropertyClassName: String,
-    serializedInjectionName: String,
+    serializedInjectionPath: File,
 ): String {
     val injectionClasses = System.getProperty("buildScriptInjectionsClasspath")
         ?: error("Missing test classes output directory in property '${"buildScriptInjectionsClasspath"}'")
     val escapedInjectionClasses = injectionClasses
         .replace("\\", "\\\\")
         .replace("$", "\\$")
-    val lambdaName = "invokeInjection${serializedInjectionName.replace("-", "_")}"
+    val lambdaName = "invokeInjection${serializedInjectionPath.name.replace("-", "_")}"
 
     return """
         
@@ -586,11 +694,11 @@ fun scriptIsolatedInjectionLoadGroovy(
             injectionLoaderClass.getMethod(
                 '${targetMethodName}',
                 Class.forName('${targetPropertyClassName}'),
-                Class.forName('java.lang.String')
+                Class.forName('java.io.File')
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                '${serializedInjectionName}'
+                new java.io.File('${serializedInjectionPath.path}')
             )
         }
         ${lambdaName}()
@@ -598,33 +706,33 @@ fun scriptIsolatedInjectionLoadGroovy(
 }
 
 fun injectionLoadSettings(
-    serializedInjectionName: String,
+    serializedInjectionPath: File,
 ): String = scriptIsolatedInjectionLoad(
     "invokeSettingsBuildScriptInjection",
     "settings",
     Settings::class.java.name,
-    serializedInjectionName,
+    serializedInjectionPath,
 )
 
 fun injectionLoadSettingsGroovy(
-    serializedInjectionName: String,
+    serializedInjectionPath: File,
 ): String = scriptIsolatedInjectionLoadGroovy(
     "invokeSettingsBuildScriptInjection",
     "settings",
     Settings::class.java.name,
-    serializedInjectionName,
+    serializedInjectionPath,
 )
 
 fun injectionLoadProject(
-    serializedInjectionName: String,
+    serializedInjectionPath: File,
 ): String = """
     
-    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, "$serializedInjectionName")
+    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, java.io.File("${serializedInjectionPath.path}"))
 """.trimIndent()
 
 fun injectionLoadProjectGroovy(
-    serializedInjectionName: String,
+    serializedInjectionPath: File,
 ): String = """
     
-    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, '$serializedInjectionName')
+    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path}'))
 """.trimIndent()
