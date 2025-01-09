@@ -29,8 +29,8 @@ class JvmBinariesDslIT : KGPBaseTest() {
                 }
             }
 
-            build("runJvmMain") {
-                assertTasksExecuted(":multiplatform:runJvmMain")
+            build("runJvm") {
+                assertTasksExecuted(":multiplatform:runJvm")
             }
         }
     }
@@ -125,8 +125,8 @@ class JvmBinariesDslIT : KGPBaseTest() {
                 java.modularity.inferModulePath.set(true)
             }
 
-            build("runJvmMain") {
-                assertTasksExecuted(":multiplatform:runJvmMain")
+            build("runJvm") {
+                assertTasksExecuted(":multiplatform:runJvm")
             }
         }
     }

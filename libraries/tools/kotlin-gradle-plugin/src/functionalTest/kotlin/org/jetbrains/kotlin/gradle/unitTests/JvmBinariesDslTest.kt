@@ -41,8 +41,8 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.findByName("runJvmMain") as? JavaExec
-        assertNotNull(runTask, "Expected 'runJvmMain' task to be created")
+        val runTask = project.tasks.findByName("runJvm") as? JavaExec
+        assertNotNull(runTask, "Expected 'runJvm' task to be created")
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
         assertTrue(
@@ -116,7 +116,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.getByName("runJvmMain") as JavaExec
+        val runTask = project.tasks.getByName("runJvm") as JavaExec
         assertEquals("21", runTask.javaLauncher.get().metadata.jvmVersion.substringBefore('.'))
     }
 
@@ -142,11 +142,40 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.getByName("runJvmMain") as JavaExec
+        val runTask = project.tasks.getByName("runJvm") as JavaExec
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals("foo.main", runTask.mainModule.get())
         assertEquals(true, runTask.modularity.inferModulePath.get())
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
+    }
+
+    @Test
+    fun possibleToConfigureSeveralBinariesForTheSameCompilation() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                jvm {
+                    binaries {
+                        executable {
+                            mainClass.set("foo.MainKt")
+                        }
+
+                        executable("main", "another") {
+                            mainClass.set("foo.MainAnotherKt")
+                        }
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val runTask = project.tasks.findByName("runJvm") as? JavaExec
+        assertNotNull(runTask, "Expected 'runJvm' task to be created")
+        assertEquals("foo.MainKt", runTask.mainClass.get())
+
+        val runTaskAnother = project.tasks.findByName("runJvmAnother") as? JavaExec
+        assertNotNull(runTaskAnother, "Expected 'runJvmMainAnother' task to be created")
+        assertEquals("foo.MainAnotherKt", runTaskAnother.mainClass.get())
     }
 
     private fun Iterable<File>.normalizeRelativeToProjectOrRepository(

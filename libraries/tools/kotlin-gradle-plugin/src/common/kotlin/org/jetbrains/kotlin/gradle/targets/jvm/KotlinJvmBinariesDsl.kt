@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -65,7 +66,7 @@ interface KotlinJvmBinariesDsl {
      */
     fun executable(
         configure: KotlinJvmBinaryDsl.() -> Unit
-    ): TaskProvider<JavaExec> = executable(KotlinCompilation.MAIN_COMPILATION_NAME, configure)
+    ): TaskProvider<JavaExec> = executable(KotlinCompilation.MAIN_COMPILATION_NAME, configure = configure)
 
     /**
      * Creates [JavaExec] task to run configured in the [KotlinJvmBinariesDsl] spec class from this target
@@ -73,25 +74,35 @@ interface KotlinJvmBinariesDsl {
      */
     fun executable(
         configure: Action<KotlinJvmBinaryDsl>
-    ): TaskProvider<JavaExec> = executable(KotlinCompilation.MAIN_COMPILATION_NAME, configure)
+    ): TaskProvider<JavaExec> = executable(KotlinCompilation.MAIN_COMPILATION_NAME, configure = configure)
 
     /**
      * Creates [JavaExec] task to run configured in the [KotlinJvmBinariesDsl] spec class from this target
      * compilation with name equals [compilationName].
+     *
+     * @param disambiguationSuffix should be used to distinguish between different executable for the same compilation.
+     * This suffix is used as a last part in executable names - for example,
+     * for compilation "custom" and with disambiguation suffix, "another" [JavaExec] task name will be "runJvmCustomAnother".
      */
     fun executable(
         compilationName: String,
+        disambiguationSuffix: String = "",
         configure: KotlinJvmBinaryDsl.() -> Unit
     ): TaskProvider<JavaExec>
 
     /**
      * Creates [JavaExec] task to run configured in the [KotlinJvmBinariesDsl] spec class from this target
      * compilation with name equals [compilationName].
+     *
+     * @param disambiguationSuffix should be used to distinguish between different executable for the same compilation.
+     * This suffix is used as a last part in executable names - for example,
+     * for compilation "custom" and with disambiguation suffix, "another" [JavaExec] task name will be "runJvmCustomAnother".
      */
     fun executable(
         compilationName: String,
+        disambiguationSuffix: String = "",
         configure: Action<KotlinJvmBinaryDsl>
-    ): TaskProvider<JavaExec> = executable(compilationName) { configure.execute(this) }
+    ): TaskProvider<JavaExec> = executable(compilationName, disambiguationSuffix) { configure.execute(this) }
 }
 
 internal fun ObjectFactory.DefaultKotlinJvmBinariesDsl(
@@ -105,6 +116,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
 ) : KotlinJvmBinariesDsl {
     override fun executable(
         compilationName: String,
+        disambiguationSuffix: String,
         configure: KotlinJvmBinaryDsl.() -> Unit,
     ): TaskProvider<JavaExec> {
         val jvmCompilation = jvmCompilations.getByName(compilationName)
@@ -113,14 +125,16 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         configure(binarySpec)
 
         return registerJvmRunTask(
-            jvmCompilation.runTaskName,
+            jvmCompilation.runTaskName(disambiguationSuffix),
             jvmCompilation,
             binarySpec
         )
     }
 
     // null is only used in JS only projects
-    private val KotlinJvmCompilation.runTaskName get() = "run${target.disambiguationClassifier!!.capitalize()}${name.capitalize()}"
+    private fun KotlinJvmCompilation.runTaskName(
+        disambiguationSuffix: String
+    ) = "run${disambiguateName(disambiguationSuffix.capitalize()).capitalize()}"
 
     private fun registerJvmRunTask(
         taskName: String,
@@ -146,7 +160,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         jvmCompilation: KotlinJvmCompilation,
     ): FileCollection {
 
-        val jarTask = tasks.locateTask<Jar>(jvmCompilation.jarTaskName)
+        val jarTask = jvmCompilation.archiveTaskName?.let { tasks.locateTask<Jar>(it) }
         return objects.fileCollection().from(
             {
                 // Quote from commit 5aa762bf4604 in Gradle:
