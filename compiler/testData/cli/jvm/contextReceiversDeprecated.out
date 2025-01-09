@@ -1,1 +1,6 @@
+warning: experimental context receivers are superseded by context parameters.
+Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
+
+See the context parameters proposal for more details: https://kotl.in/context-parameters
+This warning will become an error in future releases.
 OK

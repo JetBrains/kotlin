@@ -1,15 +1,11 @@
-/contextReceiverAmbiguity.fir.kt:(141,148): warning: Experimental context receivers are deprecated and will be superseded by context parameters.
-Kotlin compiler version 2.2 will be the last version that supports context receivers.
-Consider migrating to extension receivers or regular parameters now.
-Alternatively, migrate directly to context parameters when Kotlin 2.2 is released.
+/contextReceiverAmbiguity.fir.kt:(141,148): warning: Experimental context receivers are superseded by context parameters.
+Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 This warning will become an error in future releases.
 
-/contextReceiverAmbiguity.fir.kt:(187,194): warning: Experimental context receivers are deprecated and will be superseded by context parameters.
-Kotlin compiler version 2.2 will be the last version that supports context receivers.
-Consider migrating to extension receivers or regular parameters now.
-Alternatively, migrate directly to context parameters when Kotlin 2.2 is released.
+/contextReceiverAmbiguity.fir.kt:(187,194): warning: Experimental context receivers are superseded by context parameters.
+Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 This warning will become an error in future releases.

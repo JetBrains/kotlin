@@ -1,6 +1,5 @@
 // LANGUAGE: +ContextReceivers
 // IGNORE_BACKEND_K1: JVM, JVM_IR, JS_IR, JS_IR_ES6, WASM
-// IGNORE_LIGHT_ANALYSIS
 // ISSUE: KT-52002
 
 class Scope(val name: String)
