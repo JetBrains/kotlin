@@ -1378,6 +1378,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("javaFunctionWithImplicitType.kt")
+    public void testJavaFunctionWithImplicitType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFunctionWithImplicitTypeAndAnnotations.kt")
+    public void testJavaFunctionWithImplicitTypeAndAnnotations() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitTypeAndAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFunctionWithImplicitTypeAndAnnotationsAndSubstitutedType.kt")
+    public void testJavaFunctionWithImplicitTypeAndAnnotationsAndSubstitutedType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitTypeAndAnnotationsAndSubstitutedType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFunctionWithImplicitTypeAndAnnotationsAsBase.kt")
+    public void testJavaFunctionWithImplicitTypeAndAnnotationsAsBase() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitTypeAndAnnotationsAsBase.kt");
+    }
+
+    @Test
     @TestMetadata("multiLevelClasspathSubstitution.kt")
     public void testMultiLevelClasspathSubstitution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/multiLevelClasspathSubstitution.kt");
