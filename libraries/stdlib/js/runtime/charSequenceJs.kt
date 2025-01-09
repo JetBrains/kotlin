@@ -11,7 +11,7 @@ internal annotation class DoNotIntrinsify
 @DoNotIntrinsify
 internal fun charSequenceGet(a: CharSequence, index: Int): Char {
     return if (isString(a)) {
-        Char(a.asDynamic().charCodeAt(index).unsafeCast<Int>())
+        a.asDynamic().charCodeAt(index).unsafeCast<Int>().toChar()
     } else {
         a[index]
     }
