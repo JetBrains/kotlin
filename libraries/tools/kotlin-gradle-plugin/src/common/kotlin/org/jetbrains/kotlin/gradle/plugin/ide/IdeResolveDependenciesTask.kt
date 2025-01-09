@@ -8,18 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import com.google.gson.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.filesProvider
-import org.jetbrains.kotlin.gradle.utils.lenientArtifactsView
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.tooling.core.Extras
 import java.io.File
@@ -44,32 +39,37 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
  */
 @DisableCachingByDefault(because = "Used for debugging/diagnostic purpose.")
 internal open class IdeResolveDependenciesTask : DefaultTask() {
+    private val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies")
+    private val kotlinExtension = project.kotlinExtension
+    private val kotlinIdeMultiplatformImport = project.kotlinIdeMultiplatformImport
+    private val kotlinIdeMultiplatformImportStatistics = project.kotlinIdeMultiplatformImportStatistics
+    private val gsonFileAdapter = FileAdapter(project)
+
     @TaskAction
     fun resolveDependencies() {
-        val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies").get().asFile
+        val outputDirectory = outputDirectory.get().asFile
         outputDirectory.deleteRecursively()
         val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting()
             .registerTypeHierarchyAdapter(IdeDependencyResolver::class.java, IdeDependencyResolverAdapter)
             .registerTypeHierarchyAdapter(Extras::class.java, ExtrasAdapter)
             .registerTypeHierarchyAdapter(IdeaKotlinDependencyCoordinates::class.java, IdeaKotlinDependencyCoordinatesAdapter)
-            .registerTypeAdapter(File::class.java, FileAdapter(project))
+            .registerTypeAdapter(File::class.java, gsonFileAdapter)
             .create()
 
-        val extension = project.kotlinExtension
-        extension.sourceSets.forEach { sourceSet ->
-            val dependencies = project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSet)
+        kotlinExtension.sourceSets.forEach { sourceSet ->
+            val dependencies = kotlinIdeMultiplatformImport.resolveDependencies(sourceSet)
             val jsonOutput = outputDirectory.resolve("json/${sourceSet.name}.json")
             jsonOutput.parentFile.mkdirs()
             jsonOutput.writeText(gson.toJson(dependencies))
 
-            project.kotlinIdeMultiplatformImport.serialize(dependencies).forEachIndexed { index, proto ->
+            kotlinIdeMultiplatformImport.serialize(dependencies).forEachIndexed { index, proto ->
                 val protoOutput = outputDirectory.resolve("proto/${sourceSet.name}/$index.bin")
                 protoOutput.parentFile.mkdirs()
                 protoOutput.writeBytes(proto)
             }
         }
 
-        project.kotlinIdeMultiplatformImportStatistics.let { statistics ->
+        kotlinIdeMultiplatformImportStatistics.let { statistics ->
             val timeStatisticsFile = outputDirectory.resolve("times.txt")
             timeStatisticsFile.writeText(buildString {
                 statistics.getExecutionTimes().forEach { (clazz, time) ->
