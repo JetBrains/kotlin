@@ -3,9 +3,3 @@ public final class CodeFragment {
     public method <init>(): void
     public final static method run(p0: int, p1: java.lang.String): void
 }
-
-public final class ContextKt {
-    // source: 'context.kt'
-    private final static method test$call(p0: int, p1: java.lang.String): void
-    public final static method test(): void
-}

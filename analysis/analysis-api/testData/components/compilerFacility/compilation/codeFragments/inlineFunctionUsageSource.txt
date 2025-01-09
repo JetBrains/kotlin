@@ -3,9 +3,3 @@ public final class CodeFragment {
     public method <init>(): void
     public final static method run(): void
 }
-
-public final class ContextKt {
-    // source: 'context.kt'
-    public final static method call(p0: kotlin.jvm.functions.Function1): void
-    public final static method test(): void
-}

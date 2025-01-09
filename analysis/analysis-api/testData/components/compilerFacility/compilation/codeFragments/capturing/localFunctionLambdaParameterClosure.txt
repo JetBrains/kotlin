@@ -3,12 +3,3 @@ public final class CodeFragment {
     public method <init>(): void
     public final static method run(p0: java.lang.String): void
 }
-
-public final class ContextKt {
-    // source: 'context.kt'
-    public final static method block(p0: java.lang.Object, p1: kotlin.jvm.functions.Function1): void
-    public final static method consume(p0: java.lang.String): void
-    private final static method test$lambda$0$call(p0: java.lang.String): void
-    private final static method test$lambda$0(p0: java.lang.String): kotlin.Unit
-    public final static method test(): void
-}

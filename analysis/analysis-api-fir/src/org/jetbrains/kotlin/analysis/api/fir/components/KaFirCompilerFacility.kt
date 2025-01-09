@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -482,6 +484,7 @@ internal class KaFirCompilerFacility(
     }
 
     private fun runJvmIrCodeGen(
+        chunk: ChunkToCompile,
         fir2IrResult: Fir2IrActualizedResult,
         configuration: CompilerConfiguration,
         target: KaCompilerTarget.Jvm,
@@ -492,11 +495,25 @@ internal class KaFirCompilerFacility(
         jvmGeneratorExtensions: JvmGeneratorExtensions,
         fillInlineCache: (GenerationState) -> Unit
     ): KaCompilationResult {
+        val matchingClassNames = mutableSetOf<String>()
+
+        val classBuilderFactory = KaClassBuilderFactory.create(
+            delegateFactory = if (target.isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
+            compiledClassHandler = KaCompiledClassHandler { file, className ->
+                target.compiledClassHandler?.handleClassDefinition(file, className)
+
+                // Synthetic classes often don't have a source element attached, so judging whether the class should stay is hard
+                if (chunk.mainFile == null || file == chunk.mainFile) {
+                    matchingClassNames.add(className)
+                }
+            }
+        )
+
         val generationState = GenerationState(
             project,
             fir2IrResult.irModuleFragment.descriptor,
             configuration,
-            target.classBuilderFactory,
+            classBuilderFactory,
             generateDeclaredClassFilter = generateClassFilter,
             diagnosticReporter = diagnosticReporter
         )
@@ -516,7 +533,17 @@ internal class KaFirCompilerFacility(
         )
         codegenFactory.generateModule(generationState, backendInput)
 
-        val outputFiles = generationState.factory.asList().map(::KaBaseCompiledFileForOutputFile)
+        fun isMatchingRelativeClassPath(path: String): Boolean {
+            val className = path.takeIf { it.endsWith(".class", ignoreCase = true) }?.dropLast(".class".length) ?: return false
+            return className in matchingClassNames || matchingClassNames.any { className.startsWith("$it$") }
+        }
+
+        // Generate class filter makes the backend skip class bodies, but classes are still generated.
+        // Here we filter the unnecessary output.
+        val compiledFiles = generationState.factory.asList()
+            .filter { isMatchingRelativeClassPath(it.relativePath) }
+            .map(::KaBaseCompiledFileForOutputFile)
+
         val capturedValues = buildList {
             if (codeFragmentMappings != null) {
                 addAll(codeFragmentMappings.capturedValues)
@@ -528,8 +555,8 @@ internal class KaFirCompilerFacility(
             }
         }
 
-        require(outputFiles.isNotEmpty()) { "Compilation produced no matching output files" }
-        return KaCompilationResult.Success(outputFiles, capturedValues)
+        require(compiledFiles.isNotEmpty()) { "Compilation produced no matching output files" }
+        return KaCompilationResult.Success(compiledFiles, capturedValues)
     }
 
     private fun getIrGenerationExtensions(module: KaModule): List<IrGenerationExtension> {
@@ -617,6 +644,7 @@ internal class KaFirCompilerFacility(
         )
 
         val result = runJvmIrCodeGen(
+            chunk,
             fir2IrResult,
             configuration,
             target,

@@ -302,6 +302,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("inlinedLambda.kt")
+    public void testInlinedLambda() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlinedLambda.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionOverrideFromSourceSession.kt")
     public void testIntersectionOverrideFromSourceSession() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/intersectionOverrideFromSourceSession.kt");

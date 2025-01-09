@@ -3,10 +3,3 @@ public final class CodeFragment {
     public method <init>(): void
     public final static method run(p0: int): void
 }
-
-public final class ContextKt {
-    // source: 'context.kt'
-    public final static method consume(p0: int): void
-    private final static method test$call(p0: int): void
-    public final static method test(): void
-}

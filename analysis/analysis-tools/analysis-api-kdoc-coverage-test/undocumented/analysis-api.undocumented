@@ -4,7 +4,6 @@ compile/CodeFragmentCapturedValue.kt:CodeFragmentCapturedValue:@KaExperimentalAp
 compile/CodeFragmentCapturedValue.kt:CodeFragmentCapturedValue:@KaExperimentalApi ExtensionReceiver
 compile/CodeFragmentCapturedValue.kt:CodeFragmentCapturedValue:open displayText
 components/KaAnalysisScopeProvider.kt:KaAnalysisScopeProvider
-components/KaCompilerFacility.kt:@KaExperimentalApi @KaImplementationDetail classBuilderFactory
 components/KaCompilerFacility.kt:@KaExperimentalApi KaCompiledFile
 components/KaCompilerFacility.kt:@KaExperimentalApi KaCompilerFacility
 components/KaCompletionCandidateChecker.kt:@KaIdeApi KaCompletionCandidateChecker

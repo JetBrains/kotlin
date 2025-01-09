@@ -111,32 +111,6 @@ public fun interface KaCompiledClassHandler {
 }
 
 @KaExperimentalApi
-@KaImplementationDetail
-public val KaCompilerTarget.classBuilderFactory: ClassBuilderFactory
-    get() = when (this) {
-        is KaCompilerTarget.Jvm -> {
-            val base = if (isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES
-            if (compiledClassHandler == null) base
-            else object : DelegatingClassBuilderFactory(base) {
-                override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
-                    val delegate = base.newClassBuilder(origin)
-                    return object : DelegatingClassBuilder() {
-                        override fun getDelegate(): ClassBuilder = delegate
-
-                        override fun defineClass(
-                            psi: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String,
-                            interfaces: Array<out String?>,
-                        ) {
-                            compiledClassHandler.handleClassDefinition(origin.element?.containingFile, name)
-                            super.defineClass(psi, version, access, name, signature, superName, interfaces)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-@KaExperimentalApi
 public interface KaCompilerFacility : KaSessionComponent {
     @KaExperimentalApi
     public companion object {

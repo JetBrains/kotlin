@@ -1,9 +1,3 @@
-public final class InlineTargetKt {
-    // source: 'InlineTarget.kt'
-    public final static method it1(): java.lang.String
-    public final static method it2(): java.lang.String
-}
-
 public final class MainKt {
     // source: 'main.kt'
     public final static method callInlineTarget(): java.lang.String
