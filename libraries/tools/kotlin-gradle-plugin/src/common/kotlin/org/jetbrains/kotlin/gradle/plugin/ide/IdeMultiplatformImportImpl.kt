@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.gradle.api.Task
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.toByteArray
 import org.jetbrains.kotlin.gradle.idea.proto.toByteArray
@@ -58,6 +61,17 @@ internal class IdeMultiplatformImportImpl(
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
     private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
 
+    @ExperimentalKotlinGradlePluginApi
+    @ExternalKotlinTargetApi
+    override fun addDependencyOnResolvers(task: Task) {
+        registeredDependencyResolvers
+            .map { it.resolver }
+            .filterIsInstance<IdeDependencyResolver.WithBuildDependencies>()
+            .forEach {
+                task.dependsOn(task.project.providers.provider { it.dependencies(task.project) })
+            }
+    }
+
     /**
      * System property passed down by the IDE, reflecting the users setting of 'Download sources during sync'
      * This property is expected to be present in IDEs > 23.3
@@ -89,7 +103,6 @@ internal class IdeMultiplatformImportImpl(
         if (resolver is IdeDependencyResolver.WithBuildDependencies) {
             val project = extension.project
             val dependencies = project.provider { resolver.dependencies(project) }
-            extension.project.locateOrRegisterIdeResolveDependenciesTask().configure { it.dependsOn(dependencies) }
             extension.project.prepareKotlinIdeaImportTask.configure { it.dependsOn(dependencies) }
         }
     }
@@ -231,7 +244,7 @@ internal class IdeMultiplatformImportImpl(
 
     private data class RegisteredDependencyResolver(
         private val statistics: IdeMultiplatformImportStatistics,
-        private val resolver: IdeDependencyResolver,
+        val resolver: IdeDependencyResolver,
         val constraint: SourceSetConstraint,
         val phase: DependencyResolutionPhase,
         val priority: Priority,
