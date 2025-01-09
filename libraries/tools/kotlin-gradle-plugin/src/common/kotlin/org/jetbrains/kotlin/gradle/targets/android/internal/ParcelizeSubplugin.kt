@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -17,11 +16,6 @@ import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 // Use apply plugin: 'kotlin-parcelize' to enable Android Extensions in an Android project.
 class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
-
-        target.plugins.withType(AndroidSubplugin::class.java) {
-            throw GradleException("${target.path}: 'kotlin-parcelize' can't be applied together with 'kotlin-android-extensions'")
-        }
-
         val kotlinPluginVersion = target.getKotlinPluginVersion()
         val dependency = target.dependencies.create("org.jetbrains.kotlin:kotlin-parcelize-runtime:$kotlinPluginVersion")
         target.forAllAndroidVariants {

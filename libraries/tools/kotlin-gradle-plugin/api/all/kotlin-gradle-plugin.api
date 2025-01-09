@@ -397,12 +397,6 @@ public final class org/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder : 
 public final class org/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder$Companion {
 }
 
-public final class org/jetbrains/kotlin/gradle/model/builder/KotlinAndroidExtensionModelBuilder : org/gradle/tooling/provider/model/ToolingModelBuilder {
-	public fun <init> ()V
-	public fun buildAll (Ljava/lang/String;Lorg/gradle/api/Project;)Ljava/lang/Object;
-	public fun canBuild (Ljava/lang/String;)Z
-}
-
 public final class org/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder : org/gradle/tooling/provider/model/ToolingModelBuilder {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder$Companion;
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;)V
@@ -471,26 +465,6 @@ public final class org/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl : ja
 }
 
 public final class org/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KotlinAndroidExtensionImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/KotlinAndroidExtension {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/KotlinAndroidExtensionImpl$Companion;
-	public fun <init> (Ljava/lang/String;ZLjava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Z
-	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;ZLjava/lang/String;)Lorg/jetbrains/kotlin/gradle/model/impl/KotlinAndroidExtensionImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/KotlinAndroidExtensionImpl;Ljava/lang/String;ZLjava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/KotlinAndroidExtensionImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getDefaultCacheImplementation ()Ljava/lang/String;
-	public fun getModelVersion ()J
-	public fun getName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun isExperimental ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KotlinAndroidExtensionImpl$Companion {
 }
 
 public final class org/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/KotlinProject {
@@ -1058,8 +1032,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AndroidExtensionPluginRemoval : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AndroidExtensionPluginRemoval;
-	public final fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
-	public static synthetic fun invoke$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AndroidExtensionPluginRemoval;Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AndroidGradlePluginIsMissing : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {

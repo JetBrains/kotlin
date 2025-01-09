@@ -606,10 +606,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             )
         }.orElse(true)
 
-    internal val enableAndroidExtensionPlugin: Provider<Boolean> =
-        booleanProvider(PropertyNames.KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN)
-            .orElse(false)
-
     /**
      * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
      */
@@ -744,7 +740,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
         val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
-        val KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN = property("kotlin.androidExtensionsPlugin.enabled")
     }
 
     companion object {
