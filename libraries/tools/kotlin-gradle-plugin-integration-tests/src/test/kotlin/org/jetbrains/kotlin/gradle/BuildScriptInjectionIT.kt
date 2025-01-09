@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.plugins.UnknownPluginException
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.plugins.UnknownPluginException
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import java.io.File
-import java.io.NotSerializableException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -25,7 +24,6 @@ import kotlin.test.fail
 @MppGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
 
-    @GradleTestVersions
     @GradleTest
     fun publishAndConsumeKtsTemplate(version: GradleVersion) {
         publishAndConsumeProject(
@@ -34,7 +32,6 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         )
     }
 
-    @GradleTestVersions
     @GradleTest
     fun publishAndConsumeGroovyTemplate(version: GradleVersion) {
         publishAndConsumeProject(
@@ -43,11 +40,11 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         )
     }
 
-    @GradleTestVersions
     @GradleTest
     fun consumeProjectDependencyViaSettingsInjection(version: GradleVersion) {
         // Use Groovy because it loads faster
         project("buildScriptInjectionGroovy", version) {
+            addKgpToBuildScriptCompilationClasspath()
             val producer = project("buildScriptInjectionGroovy", version) {
                 buildScriptInjection {
                     project.applyMultiplatform {
@@ -228,9 +225,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         // Build failures caused by configuration errors are also catchable
         project("buildScriptInjectionGroovy", version) {
             buildScriptInjection {
-                project.afterEvaluate {
-                    throw A()
-                }
+                throw A()
             }
             assertEquals(
                 CaughtBuildFailure.Expected(setOf(A())),
@@ -240,15 +235,54 @@ class BuildScriptInjectionIT : KGPBaseTest() {
 
         project("buildScriptInjectionGroovy", version) {
             buildScriptInjection {
-                project.afterEvaluate {
-                    throw B()
-                }
+                throw B()
             }
             assert(
                 assertIsInstance<CaughtBuildFailure.Unexpected<A>>(
                     catchBuildFailures<A>().buildAndReturn("tasks")
                 ).stackTraceDump.contains("Caused by: B(name=B)")
             )
+        }
+    }
+
+    @GradleTest
+    fun buildscriptBlockInjection(version: GradleVersion) {
+        testBuildscriptBlockInjection(
+            "buildScriptInjection",
+            version,
+        )
+    }
+
+    @GradleTest
+    fun buildscriptBlockInjectionGroovy(version: GradleVersion) {
+        testBuildscriptBlockInjection(
+            "buildScriptInjectionGroovy",
+            version,
+        )
+    }
+
+    private fun testBuildscriptBlockInjection(
+        bareTemplate: String,
+        version: GradleVersion,
+    ) {
+        // Bare template build script should not see KGP
+        project(bareTemplate, version) {
+            buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+            }
+            assertIsInstance<UnknownPluginException>(
+                catchBuildFailures<UnknownPluginException>().buildAndReturn(
+                    "help",
+                ).unwrap().single()
+            )
+        }
+        // But if we inject KGP everything should work
+        project(bareTemplate, version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+            }
+            build("help")
         }
     }
 
@@ -265,6 +299,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             targetProject,
             version,
         ) {
+            addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {
                     linuxArm64()
@@ -280,6 +315,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             targetProject,
             version,
         ) {
+            addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositories(publishedProject)
             buildScriptInjection {
                 project.applyMultiplatform {
