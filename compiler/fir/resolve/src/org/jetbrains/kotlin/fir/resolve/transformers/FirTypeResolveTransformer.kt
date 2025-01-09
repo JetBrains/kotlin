@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import kotlin.collections.plus
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -568,92 +568,98 @@ open class FirTypeResolveTransformer(
      */
     private fun FirVariable.moveOrDeleteIrrelevantAnnotations() {
         if (annotations.isEmpty()) return
-        val backingFieldAnnotations by lazy(LazyThreadSafetyMode.NONE) { backingField?.annotations?.toMutableList() ?: mutableListOf() }
-        var replaceBackingFieldAnnotations = false
         val languageVersionSettings = session.languageVersionSettings
         replaceAnnotations(annotations.filter { annotation ->
             when (annotation.useSiteTarget) {
-                null -> {
-                    val allowedTargets = annotation.useSiteTargetsFromMetaAnnotation(session)
-                    when {
-                        // If parameter is allowed, we apply annotation to it in the first turn, independent of the targeting mode
-                        this is FirValueParameter -> {
-                            CONSTRUCTOR_PARAMETER in allowedTargets
-                        }
-                        this is FirProperty && this.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets -> {
-                            when {
-                                !languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> {
-                                    false
-                                }
-                                // In the property-param mode,
-                                // we should apply annotation also to the property (or to the field) if it's allowed
-                                PROPERTY in allowedTargets -> true
-                                backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
-                                    if (classDeclarationsStack.lastOrNull()?.classKind != ClassKind.ANNOTATION_CLASS) {
-                                        backingFieldAnnotations += annotation
-                                        replaceBackingFieldAnnotations = true
-                                    }
-                                    false
-                                }
-                                else -> false
-                            }
-                        }
-                        // Otherwise (for a regular property or for a constructor property if annotation isn't applicable to parameter),
-                        // we simply choose between a property and a field
-                        this is FirProperty && backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
-                            backingFieldAnnotations += annotation
-                            replaceBackingFieldAnnotations = true
-                            false
-                        }
-                        // Here we can come with a regular (non-constructor) property without a backing field,
-                        // or with some other non-parameter variable
-                        else -> {
-                            true
-                        }
-                    }
-                }
-                ALL -> if (!languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
-                    true
-                } else {
-                    val allowedTargets = annotation.useSiteTargetsFromMetaAnnotation(session)
-                    when (this) {
-                        is FirValueParameter -> {
-                            CONSTRUCTOR_PARAMETER in allowedTargets
-                        }
-                        is FirProperty -> {
-                            var addedSomewhere = false
-
-                            fun FirCallableDeclaration.addAnnotationWithoutUseSiteTarget(annotation: FirAnnotation) {
-                                replaceAnnotations(
-                                    annotations + buildAnnotationCopy(annotation) {
-                                        useSiteTarget = null
-                                        addedSomewhere = true
-                                    }
-                                )
-                            }
-
-                            if (FIELD in allowedTargets && delegate == null) {
-                                backingField?.addAnnotationWithoutUseSiteTarget(annotation)
-                            }
-                            if (PROPERTY_GETTER in allowedTargets) {
-                                getter?.addAnnotationWithoutUseSiteTarget(annotation)
-                            }
-                            if (isVar && SETTER_PARAMETER in allowedTargets) {
-                                setter?.valueParameters?.firstOrNull()?.addAnnotationWithoutUseSiteTarget(annotation)
-                            }
-                            // If annotation isn't applicable anywhere, we keep it at property to report an error later
-                            PROPERTY in allowedTargets || !addedSomewhere
-                        }
-                        else -> {
-                            true
-                        }
-                    }
-                }
+                null -> annotation.multiplexWithoutUseSiteTarget(this, languageVersionSettings)
+                ALL -> annotation.multiplexWithAllUseSiteTarget(this, languageVersionSettings)
                 else -> true
             }
         })
-        if (replaceBackingFieldAnnotations) {
-            backingField?.replaceAnnotations(backingFieldAnnotations)
+    }
+
+    private fun FirAnnotation.multiplexWithoutUseSiteTarget(
+        annotated: FirDeclaration,
+        languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
+        return when (annotated) {
+            // If parameter is allowed, we apply annotation to it in the first turn, independent of the targeting mode
+            is FirValueParameter -> {
+                CONSTRUCTOR_PARAMETER in allowedTargets
+            }
+            is FirProperty if annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets -> {
+                when {
+                    !languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> {
+                        false
+                    }
+                    // In the property-param mode,
+                    // we should apply annotation also to the property (or to the field) if it's allowed
+                    PROPERTY in allowedTargets -> true
+                    annotated.backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
+                        if (classDeclarationsStack.lastOrNull()?.classKind != ClassKind.ANNOTATION_CLASS) {
+                            val backingField = annotated.backingField!!
+                            backingField.replaceAnnotations(backingField.annotations + this)
+                        }
+                        false
+                    }
+                    else -> false
+                }
+            }
+            // Otherwise (for a regular property or for a constructor property if annotation isn't applicable to parameter),
+            // we simply choose between a property and a field
+            is FirProperty if annotated.backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
+                val backingField = annotated.backingField!!
+                backingField.replaceAnnotations(backingField.annotations + this)
+                false
+            }
+            // Here we can come with a regular (non-constructor) property without a backing field,
+            // or with some other non-parameter variable
+            else -> {
+                true
+            }
+        }
+    }
+
+    private fun FirAnnotation.multiplexWithAllUseSiteTarget(
+        annotated: FirDeclaration,
+        languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+            return true
+        }
+        val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
+        return when (annotated) {
+            is FirValueParameter -> {
+                CONSTRUCTOR_PARAMETER in allowedTargets
+            }
+            is FirProperty -> {
+                var addedSomewhere = false
+
+                fun FirCallableDeclaration.addAnnotationWithoutUseSiteTarget(annotation: FirAnnotation) {
+                    replaceAnnotations(
+                        annotations + buildAnnotationCopy(annotation) {
+                            useSiteTarget = null
+                            addedSomewhere = true
+                        }
+                    )
+                }
+
+                if (FIELD in allowedTargets && annotated.delegate == null) {
+                    annotated.backingField?.addAnnotationWithoutUseSiteTarget(this)
+                }
+                if (PROPERTY_GETTER in allowedTargets) {
+                    annotated.getter?.addAnnotationWithoutUseSiteTarget(this)
+                }
+                if (annotated.isVar && SETTER_PARAMETER in allowedTargets) {
+                    annotated.setter?.valueParameters?.firstOrNull()?.addAnnotationWithoutUseSiteTarget(this)
+                }
+                // If annotation isn't applicable anywhere, we keep it at property to report an error later
+                PROPERTY in allowedTargets || !addedSomewhere
+            }
+            else -> {
+                true
+            }
         }
     }
 
