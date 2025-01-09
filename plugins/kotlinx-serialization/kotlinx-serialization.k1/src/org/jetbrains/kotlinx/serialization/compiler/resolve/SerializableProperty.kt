@@ -19,7 +19,7 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.analyzeSpecialSerializers
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.analyzeSpecialSerializers
 
 class SerializableProperty(
     val descriptor: PropertyDescriptor,

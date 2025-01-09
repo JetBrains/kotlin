@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -19,8 +21,6 @@ import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.util.classNameAndMessage
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializationDescriptorUtils
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 open class SerializationResolveExtension @JvmOverloads constructor(val metadataPlugin: SerializationDescriptorSerializerPlugin? = null) : SyntheticResolveExtension {
@@ -103,11 +103,16 @@ open class SerializationResolveExtension @JvmOverloads constructor(val metadataP
     ) {
         if (thisDescriptor.shouldHaveGeneratedMethods) {
             // do not add synthetic deserialization constructor if .deserialize method is customized
-            if (thisDescriptor.hasCompanionObjectAsSerializer && SerializationDescriptorUtils.getSyntheticLoadMember(thisDescriptor.companionObjectDescriptor!!) == null && !thisDescriptor.keepGeneratedSerializer) return
+            if (thisDescriptor.hasCompanionObjectAsSerializer && getSyntheticLoadMember(thisDescriptor.companionObjectDescriptor!!) == null && !thisDescriptor.keepGeneratedSerializer) return
             if (thisDescriptor.isInlineClass()) return
             result.add(KSerializerDescriptorResolver.createLoadConstructorDescriptor(thisDescriptor, bindingContext, metadataPlugin))
         }
     }
+
+    private fun getSyntheticLoadMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = CodegenUtil.getMemberToGenerate(
+        serializerDescriptor, SerialEntityNames.LOAD,
+        serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters
+    )
 
     override fun generateSyntheticMethods(
         thisDescriptor: ClassDescriptor,

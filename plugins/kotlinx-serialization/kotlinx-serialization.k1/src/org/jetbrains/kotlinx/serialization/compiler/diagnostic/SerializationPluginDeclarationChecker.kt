@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.types.typeUtil.isEnum
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors.EXTERNAL_SERIALIZER_USELESS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -433,7 +430,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     }
 
     private fun analyzePropertiesSerializers(trace: BindingTrace, serializableClass: ClassDescriptor, props: List<SerializableProperty>) {
-        val generatorContextForAnalysis = object : AbstractSerialGenerator(trace.bindingContext, serializableClass) {}
+        val serializersDeclaredOnFile = SerializationContextInFile(trace.bindingContext, serializableClass)
         props.forEach {
             val serializer = it.serializableWith?.toClassDescriptor
             val propertyPsi = it.descriptor.findPsi() ?: return@forEach
@@ -446,9 +443,9 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 checkCustomSerializerParameters(it.module, it.descriptor, it.type, annotationPsi, propertyPsi, trace)
                 checkCustomSerializerIsNotLocal(it.module, it.descriptor, trace, propertyPsi)
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace, propertyPsi)
-                generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
+                serializersDeclaredOnFile.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
             } else {
-                generatorContextForAnalysis.checkType(it.module, it.type, ktType, trace, propertyPsi)
+                serializersDeclaredOnFile.checkType(it.module, it.type, ktType, trace, propertyPsi)
                 checkGenericArrayType(it.type, ktType, trace, propertyPsi)
             }
         }
@@ -466,7 +463,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 
-    private fun AbstractSerialGenerator.checkTypeArguments(
+    private fun SerializationContextInFile.checkTypeArguments(
         module: ModuleDescriptor,
         type: KotlinType,
         element: KtTypeElement?,
@@ -491,7 +488,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         return VersionReader.canSupportInlineClasses(module, trace)
     }
 
-    private fun AbstractSerialGenerator.checkType(
+    private fun SerializationContextInFile.checkType(
         module: ModuleDescriptor,
         type: KotlinType,
         ktType: KtTypeReference?,
