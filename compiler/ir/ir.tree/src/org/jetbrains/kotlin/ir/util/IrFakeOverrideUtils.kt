@@ -36,19 +36,19 @@ val IrFunctionAccessExpression.target: IrFunction
     get() = this.symbol.owner.let { (it as? IrSimpleFunction)?.takeUnless { this.isVirtualCall }?.target ?: it }
 
 fun <T : IrOverridableDeclaration<*>> T.collectRealOverrides(
-    toSkip: (T) -> Boolean = { false },
+    isFakeOverride: (T) -> Boolean = IrOverridableDeclaration<*>::isFakeOverride,
     filter: (T) -> Boolean = { false },
 ): Set<T> {
-    if (isReal && !toSkip(this)) return setOf(this)
+    if (!isFakeOverride(this)) return setOf(this)
 
     @Suppress("UNCHECKED_CAST")
     return this.overriddenSymbols
         .map { it.owner as T }
-        .collectAndFilterRealOverrides(toSkip, filter)
+        .collectAndFilterRealOverrides(isFakeOverride, filter)
 }
 
-fun <T : IrOverridableDeclaration<*>> Collection<T>.collectAndFilterRealOverrides(
-    toSkip: (T) -> Boolean = { false },
+private fun <T : IrOverridableDeclaration<*>> Collection<T>.collectAndFilterRealOverrides(
+    isFakeOverride: (T) -> Boolean = IrOverridableDeclaration<*>::isFakeOverride,
     filter: (T) -> Boolean = { false }
 ): Set<T> {
     val visited = mutableSetOf<T>()
@@ -57,7 +57,7 @@ fun <T : IrOverridableDeclaration<*>> Collection<T>.collectAndFilterRealOverride
     fun collectRealOverrides(member: T) {
         if (!visited.add(member) || filter(member)) return
 
-        if (member.isReal && !toSkip(member)) {
+        if (!isFakeOverride(member)) {
             realOverrides += member
         } else {
             @Suppress("UNCHECKED_CAST")
@@ -101,10 +101,10 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideMaybeAb
     resolveFakeOverrideMaybeAbstract() ?: error("No real overrides for ${this.render()}")
 
 fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideMaybeAbstract(
-    toSkip: (T) -> Boolean = { false },
+    isFakeOverride: (T) -> Boolean = IrOverridableDeclaration<*>::isFakeOverride,
 ): T? {
-    if (!isFakeOverride && !toSkip(this)) return this
-    return collectRealOverrides(toSkip).firstOrNull()
+    if (!isFakeOverride(this)) return this
+    return collectRealOverrides(isFakeOverride).firstOrNull()
 }
 
 fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrFail(): T =
@@ -112,10 +112,10 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrFail(
 
 // TODO: use this implementation instead of any other
 fun <T : IrOverridableDeclaration<*>> T.resolveFakeOverride(
-    toSkip: (T) -> Boolean = { false },
+    isFakeOverride: (T) -> Boolean = IrOverridableDeclaration<*>::isFakeOverride,
 ): T? {
-    if (!isFakeOverride && !toSkip(this)) return this
-    return collectRealOverrides(toSkip) { it.modality == Modality.ABSTRACT }
+    if (!isFakeOverride(this)) return this
+    return collectRealOverrides(isFakeOverride) { it.modality == Modality.ABSTRACT }
         .let { realOverrides ->
             // Kotlin forbids conflicts between overrides, but they may trickle down from Java.
             realOverrides.singleOrNull { (it.parent as? IrClass)?.isInterface != true }

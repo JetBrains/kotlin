@@ -71,7 +71,7 @@ fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode,
     val parent = parent
     if (parent is IrClass && (parent.isJvmInterface || parent.isFromJava())) return null
 
-    val implementation = resolveFakeOverride(toSkip = ::isDefaultImplsBridge) ?: return null
+    val implementation = resolveFakeOverride(isFakeOverride = ::isFakeOverrideOrDefaultImplsBridge) ?: return null
 
     if (!implementation.hasInterfaceParent()
         || DescriptorVisibilities.isPrivate(implementation.visibility)
@@ -87,7 +87,7 @@ fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode,
     if (overriddenSymbols.any {
             !it.owner.parentAsClass.isInterface &&
                     it.owner.modality != Modality.ABSTRACT &&
-                    it.owner.resolveFakeOverride(toSkip = ::isDefaultImplsBridge) == implementation
+                    it.owner.resolveFakeOverride(isFakeOverride = ::isFakeOverrideOrDefaultImplsBridge) == implementation
         }) {
         return null
     }
@@ -95,8 +95,8 @@ fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode,
     return implementation
 }
 
-private fun isDefaultImplsBridge(f: IrSimpleFunction) =
-    f.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
+private fun isFakeOverrideOrDefaultImplsBridge(f: IrSimpleFunction): Boolean =
+    f.isFakeOverride || f.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
 
 fun IrFactory.createDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction {
     assert(fakeOverride.isFakeOverride) { "Function should be a fake override: ${fakeOverride.render()}" }

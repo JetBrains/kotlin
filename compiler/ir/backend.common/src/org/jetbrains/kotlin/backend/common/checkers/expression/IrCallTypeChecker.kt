@@ -21,7 +21,9 @@ internal object IrCallTypeChecker : IrCallChecker {
     ) {
         val callee = expression.symbol.owner
         // TODO: We don't have the proper type substitution yet, so skip generics for now.
-        val actualCallee = callee.resolveFakeOverrideMaybeAbstract { it.returnType.classifierOrNull !is IrTypeParameterSymbol } ?: callee
+        val actualCallee = callee.resolveFakeOverrideMaybeAbstract {
+            it.isFakeOverride || it.returnType.classifierOrNull !is IrTypeParameterSymbol
+        } ?: callee
         val returnType = actualCallee.returnType
         if (returnType is IrSimpleType &&
             returnType.classifier is IrClassSymbol &&
@@ -30,5 +32,4 @@ internal object IrCallTypeChecker : IrCallChecker {
             expression.ensureTypeIs(callee.returnType, context)
         }
     }
-
 }

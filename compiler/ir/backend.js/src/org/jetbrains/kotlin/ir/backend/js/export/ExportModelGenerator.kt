@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -803,7 +802,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
 
 fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
     val firstExportedRealOverride = runIf(isFakeOverride) {
-        resolveFakeOverrideMaybeAbstract { it === this || it.parentClassOrNull?.isExported(context) != true }
+        resolveFakeOverrideMaybeAbstract { it === this || it.isFakeOverride || it.parentClassOrNull?.isExported(context) != true }
     }
 
     if (firstExportedRealOverride?.parentClassOrNull.isExportedInterface(context) && firstExportedRealOverride?.isJsExportIgnore() != true) {
