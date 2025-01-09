@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
+import org.jetbrains.kotlin.backend.jvm.ir.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.jvm.ir.firstSuperMethodFromKotlin
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality

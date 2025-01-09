@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.backend.jvm.lower.indy
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
-import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
