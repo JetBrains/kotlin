@@ -53,6 +53,26 @@ private class UuidSerialized(
 internal actual fun serializedUuid(uuid: Uuid): Any =
     UuidSerialized(uuid.mostSignificantBits, uuid.leastSignificantBits)
 
+@ExperimentalUuidApi
+internal actual fun ByteArray.getLongAt(index: Int): Long =
+    getLongAtCommonImpl(index)
+
+@ExperimentalUuidApi
+internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) =
+    formatBytesIntoCommonImpl(dst, dstOffset, startIndex, endIndex)
+
+@ExperimentalUuidApi
+internal actual fun ByteArray.setLongAt(index: Int, value: Long) =
+    setLongAtCommonImpl(index, value)
+
+@ExperimentalUuidApi
+internal actual fun uuidParseHexDash(hexDashString: String): Uuid =
+    uuidParseHexDashCommonImpl(hexDashString)
+
+@ExperimentalUuidApi
+internal actual fun uuidParseHex(hexString: String): Uuid =
+    uuidParseHexCommonImpl(hexString)
+
 /**
  * Converts this [java.util.UUID] value to the corresponding [kotlin.uuid.Uuid] value.
  *

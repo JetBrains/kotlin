@@ -6356,6 +6356,7 @@ public final class kotlin/uuid/Uuid : java/io/Serializable, java/lang/Comparable
 	public static final field Companion Lkotlin/uuid/Uuid$Companion;
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I
+	public synthetic fun <init> (JJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I
 	public fun compareTo (Lkotlin/uuid/Uuid;)I
 	public fun equals (Ljava/lang/Object;)Z

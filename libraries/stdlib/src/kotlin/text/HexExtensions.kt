@@ -937,7 +937,7 @@ public fun String.hexToInt(format: HexFormat = HexFormat.Default): Int = hexToIn
  */
 @ExperimentalStdlibApi
 //@SinceKotlin("1.9")
-private fun String.hexToInt(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Int =
+internal fun String.hexToInt(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Int =
     hexToIntImpl(startIndex, endIndex, format, typeHexLength = 8)
 
 // -------------------------- format and parse Long --------------------------

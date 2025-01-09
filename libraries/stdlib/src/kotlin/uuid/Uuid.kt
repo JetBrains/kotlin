@@ -37,7 +37,7 @@ import kotlin.internal.InlineOnly
  */
 @SinceKotlin("2.0")
 @ExperimentalUuidApi
-public class Uuid internal constructor(
+public class Uuid private constructor(
     @PublishedApi internal val mostSignificantBits: Long,
     @PublishedApi internal val leastSignificantBits: Long
 ) : Comparable<Uuid>, Serializable {
@@ -128,15 +128,15 @@ public class Uuid internal constructor(
      */
     override fun toString(): String {
         val bytes = ByteArray(36)
-        leastSignificantBits.formatBytesInto(bytes, 24, 6)
-        bytes[23] = '-'.code.toByte()
-        (leastSignificantBits ushr 48).formatBytesInto(bytes, 19, 2)
-        bytes[18] = '-'.code.toByte()
-        mostSignificantBits.formatBytesInto(bytes, 14, 2)
-        bytes[13] = '-'.code.toByte()
-        (mostSignificantBits ushr 16).formatBytesInto(bytes, 9, 2)
+        mostSignificantBits.formatBytesInto(bytes, 0, startIndex = 0, endIndex = 4)
         bytes[8] = '-'.code.toByte()
-        (mostSignificantBits ushr 32).formatBytesInto(bytes, 0, 4)
+        mostSignificantBits.formatBytesInto(bytes, 9, startIndex = 4, endIndex = 6)
+        bytes[13] = '-'.code.toByte()
+        mostSignificantBits.formatBytesInto(bytes, 14, startIndex = 6, endIndex = 8)
+        bytes[18] = '-'.code.toByte()
+        leastSignificantBits.formatBytesInto(bytes, 19, startIndex = 0, endIndex = 2)
+        bytes[23] = '-'.code.toByte()
+        leastSignificantBits.formatBytesInto(bytes, 24, startIndex = 2, endIndex = 8)
         return bytes.decodeToString()
     }
 
@@ -157,8 +157,8 @@ public class Uuid internal constructor(
      */
     public fun toHexString(): String {
         val bytes = ByteArray(32)
-        leastSignificantBits.formatBytesInto(bytes, 16, 8)
-        mostSignificantBits.formatBytesInto(bytes, 0, 8)
+        mostSignificantBits.formatBytesInto(bytes, 0, startIndex = 0, endIndex = 8)
+        leastSignificantBits.formatBytesInto(bytes, 16, startIndex = 0, endIndex = 8)
         return bytes.decodeToString()
     }
 
@@ -174,8 +174,8 @@ public class Uuid internal constructor(
      */
     public fun toByteArray(): ByteArray {
         val bytes = ByteArray(SIZE_BYTES)
-        mostSignificantBits.toByteArray(bytes, 0)
-        leastSignificantBits.toByteArray(bytes, 8)
+        bytes.setLongAt(0, mostSignificantBits)
+        bytes.setLongAt(8, leastSignificantBits)
         return bytes
     }
 
@@ -298,7 +298,7 @@ public class Uuid internal constructor(
                 "Expected exactly $SIZE_BYTES bytes, but was ${byteArray.truncateForErrorMessage(32)} of size ${byteArray.size}"
             }
 
-            return fromLongs(byteArray.toLong(startIndex = 0), byteArray.toLong(startIndex = 8))
+            return fromLongs(byteArray.getLongAt(index = 0), byteArray.getLongAt(index = 8))
         }
 
         /**
@@ -322,25 +322,11 @@ public class Uuid internal constructor(
          * @see Uuid.toString
          * @sample samples.uuid.Uuids.parse
          */
-        @OptIn(ExperimentalStdlibApi::class)
         public fun parse(uuidString: String): Uuid {
             require(uuidString.length == 36) {
                 "Expected a 36-char string in the standard hex-and-dash UUID format, but was \"${uuidString.truncateForErrorMessage(64)}\" of length ${uuidString.length}"
             }
-
-            val part1 = uuidString.hexToLong(startIndex = 0, endIndex = 8)
-            uuidString.checkHyphenAt(8)
-            val part2 = uuidString.hexToLong(startIndex = 9, endIndex = 13)
-            uuidString.checkHyphenAt(13)
-            val part3 = uuidString.hexToLong(startIndex = 14, endIndex = 18)
-            uuidString.checkHyphenAt(18)
-            val part4 = uuidString.hexToLong(startIndex = 19, endIndex = 23)
-            uuidString.checkHyphenAt(23)
-            val part5 = uuidString.hexToLong(startIndex = 24, endIndex = 36)
-
-            val msb = (part1 shl 32) or (part2 shl 16) or part3
-            val lsb = (part4 shl 48) or part5
-            return fromLongs(msb, lsb)
+            return uuidParseHexDash(uuidString)
         }
 
         /**
@@ -359,15 +345,11 @@ public class Uuid internal constructor(
          * @see Uuid.toHexString
          * @sample samples.uuid.Uuids.parseHex
          */
-        @OptIn(ExperimentalStdlibApi::class)
         public fun parseHex(hexString: String): Uuid {
             require(hexString.length == 32) {
                 "Expected a 32-char hexadecimal string, but was \"${hexString.truncateForErrorMessage(64)}\" of length ${hexString.length}"
             }
-
-            val msb = hexString.hexToLong(startIndex = 0, endIndex = 16)
-            val lsb = hexString.hexToLong(startIndex = 16, endIndex = 32)
-            return fromLongs(msb, lsb)
+            return uuidParseHex(hexString)
         }
 
         /**
@@ -453,39 +435,107 @@ internal fun uuidFromRandomBytes(randomBytes: ByteArray): Uuid {
     return Uuid.fromByteArray(randomBytes)
 }
 
-private fun ByteArray.toLong(startIndex: Int): Long {
-    return ((this[startIndex + 0].toLong() and 0xFF) shl 56) or
-            ((this[startIndex + 1].toLong() and 0xFF) shl 48) or
-            ((this[startIndex + 2].toLong() and 0xFF) shl 40) or
-            ((this[startIndex + 3].toLong() and 0xFF) shl 32) or
-            ((this[startIndex + 4].toLong() and 0xFF) shl 24) or
-            ((this[startIndex + 5].toLong() and 0xFF) shl 16) or
-            ((this[startIndex + 6].toLong() and 0xFF) shl 8) or
-            (this[startIndex + 7].toLong() and 0xFF)
+/**
+ * Extracts 8 bytes from this byte array starting at [index] to form a Long.
+ * The extraction is performed in a big-endian manner.
+ * Specifically, the byte at `index` becomes the highest byte,
+ * and the byte at `index + 7` becomes the lowest byte.
+ */
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun ByteArray.getLongAt(index: Int): Long
+
+internal fun ByteArray.getLongAtCommonImpl(index: Int): Long {
+    return ((this[index + 0].toLong() and 0xFF) shl 56) or
+            ((this[index + 1].toLong() and 0xFF) shl 48) or
+            ((this[index + 2].toLong() and 0xFF) shl 40) or
+            ((this[index + 3].toLong() and 0xFF) shl 32) or
+            ((this[index + 4].toLong() and 0xFF) shl 24) or
+            ((this[index + 5].toLong() and 0xFF) shl 16) or
+            ((this[index + 6].toLong() and 0xFF) shl 8) or
+            (this[index + 7].toLong() and 0xFF)
 }
 
+/**
+ * Formats this Long as hexadecimal and stores the resulting hexadecimal digits into [dst].
+ * Storage begins at [dstOffset] and proceeds forwards.
+ * Formatting starts from the byte at [startIndex] and continues up to [endIndex] (exclusive).
+ * The index of the highest byte in this Long is `0`, and the index of the lowest byte is `7`.
+ */
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int)
+
 @OptIn(ExperimentalStdlibApi::class)
-private fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, count: Int) {
-    var long = this
-    var dstIndex = dstOffset + 2 * count
-    repeat(count) {
-        val byte = (long and 0xFF).toInt()
+@ExperimentalUuidApi
+internal fun Long.formatBytesIntoCommonImpl(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) {
+    var dstIndex = dstOffset
+    for (reversedIndex in 7 - startIndex downTo 8 - endIndex) {
+        val shift = reversedIndex shl 3
+        val byte = ((this shr shift) and 0xFF).toInt()
         val byteDigits = BYTE_TO_LOWER_CASE_HEX_DIGITS[byte]
-        dst[--dstIndex] = byteDigits.toByte()
-        dst[--dstIndex] = (byteDigits shr 8).toByte()
-        long = long shr 8
+        dst[dstIndex++] = (byteDigits shr 8).toByte()
+        dst[dstIndex++] = byteDigits.toByte()
     }
 }
 
-private fun String.checkHyphenAt(index: Int) {
+internal fun String.checkHyphenAt(index: Int) {
     require(this[index] == '-') { "Expected '-' (hyphen) at index $index, but was '${this[index]}'" }
 }
 
-private fun Long.toByteArray(dst: ByteArray, dstOffset: Int) {
-    for (index in 0 until 8) {
-        val shift = 8 * (7 - index)
-        dst[dstOffset + index] = (this ushr shift).toByte()
+/**
+ * Extracts bytes from the Long [value] and stores them into this byte array starting at [index].
+ * The bytes are stored in a big-endian manner.
+ * Specifically, the highest byte of `value` is stored at `index`,
+ * and the lowest byte is stored at `index + 7`.
+ */
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun ByteArray.setLongAt(index: Int, value: Long)
+
+internal fun ByteArray.setLongAtCommonImpl(index: Int, value: Long) {
+    var i = index
+    for (reversedIndex in 7 downTo 0) {
+        val shift = reversedIndex shl 3
+        this[i++] = (value shr shift).toByte()
     }
+}
+
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun uuidParseHexDash(hexDashString: String): Uuid
+
+@OptIn(ExperimentalStdlibApi::class)
+@ExperimentalUuidApi
+internal fun uuidParseHexDashCommonImpl(hexDashString: String): Uuid {
+    // xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    // 16 hex digits fit into a Long
+    val part1 = hexDashString.hexToLong(startIndex = 0, endIndex = 8)
+    hexDashString.checkHyphenAt(8)
+    val part2 = hexDashString.hexToLong(startIndex = 9, endIndex = 13)
+    hexDashString.checkHyphenAt(13)
+    val part3 = hexDashString.hexToLong(startIndex = 14, endIndex = 18)
+    hexDashString.checkHyphenAt(18)
+    val part4 = hexDashString.hexToLong(startIndex = 19, endIndex = 23)
+    hexDashString.checkHyphenAt(23)
+    val part5 = hexDashString.hexToLong(startIndex = 24, endIndex = 36)
+
+    val msb = (part1 shl 32) or (part2 shl 16) or part3
+    val lsb = (part4 shl 48) or part5
+    return Uuid.fromLongs(msb, lsb)
+}
+
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun uuidParseHex(hexString: String): Uuid
+
+@OptIn(ExperimentalStdlibApi::class)
+@ExperimentalUuidApi
+internal fun uuidParseHexCommonImpl(hexString: String): Uuid {
+    // 16 hex digits fit into a Long
+    val msb = hexString.hexToLong(startIndex = 0, endIndex = 16)
+    val lsb = hexString.hexToLong(startIndex = 16, endIndex = 32)
+    return Uuid.fromLongs(msb, lsb)
 }
 
 private fun String.truncateForErrorMessage(maxLength: Int): String {
