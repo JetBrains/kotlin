@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
-import org.jetbrains.kotlin.ir.generator.elementVisitorVoidType
+import org.jetbrains.kotlin.ir.generator.legacyVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
 import org.jetbrains.kotlin.ir.generator.irTypeProjectionType
 import org.jetbrains.kotlin.ir.generator.model.Element
@@ -26,7 +26,7 @@ internal class TypeVisitorVoidPrinter(
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
         get() = listOf(
             typeVisitorType.withArgs(StandardTypes.unit, visitorDataType),
-            elementVisitorVoidType
+            legacyVisitorVoidType
         )
 
     override val visitorTypeParameters: List<TypeVariable>
@@ -85,7 +85,7 @@ internal class TypeVisitorVoidPrinter(
                     irTypeFields,
                     hasDataParameter = false,
                 )
-                println("super<", elementVisitorVoidType.render(), ">.", element.visitFunctionName, "(", element.visitorParameterName, ")")
+                println("super<", legacyVisitorVoidType.render(), ">.", element.visitFunctionName, "(", element.visitorParameterName, ")")
             }
         }
     }
