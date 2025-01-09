@@ -241,6 +241,13 @@ fun FirClass.scopeForClass(
     memberRequiredPhase = memberRequiredPhase,
 )
 
+fun FirTypeAlias.scopeForTypeAlias(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+): FirScope {
+    return scopeProvider.getTypealiasConstructorScope(this, useSiteSession, scopeSession)
+}
+
 fun ConeKotlinType.scopeForSupertype(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,

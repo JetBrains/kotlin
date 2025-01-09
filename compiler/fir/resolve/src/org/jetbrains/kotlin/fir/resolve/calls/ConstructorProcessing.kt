@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
+import org.jetbrains.kotlin.fir.scopes.scopeForTypeAlias
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -130,7 +130,7 @@ private fun processConstructors(
     whileAnalysing(session, matchedSymbol.fir) {
         val scope = when (matchedSymbol) {
             is FirTypeAliasSymbol -> {
-                TypeAliasConstructorsSubstitutingScope.initialize(matchedSymbol, session, bodyResolveComponents.scopeSession)
+                matchedSymbol.fir.scopeForTypeAlias(session, bodyResolveComponents.scopeSession)
             }
             is FirClassSymbol -> {
                 val firClass = matchedSymbol.fir
