@@ -33,7 +33,7 @@ private var IrSimpleFunction.staticCompanionDeclarations: Pair<IrSimpleFunction,
 
 private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 private var IrClass.defaultImplsClass: IrClass? by irAttribute(followAttributeOwner = false)
-private var IrSimpleFunction.defaultImplsRedirection: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrSimpleFunction.classFakeOverrideReplacement: ClassFakeOverrideReplacement? by irAttribute(followAttributeOwner = false)
 private var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
 private var IrClass.repeatedAnnotationSyntheticContainer: IrClass? by irAttribute(followAttributeOwner = false)
@@ -254,12 +254,20 @@ class JvmCachedDeclarations(
             }
         }
 
-    fun getDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction =
-        fakeOverride::defaultImplsRedirection.getOrSetIfNull {
-            context.irFactory.createDefaultImplsRedirection(fakeOverride).also {
-                context.remapMultiFieldValueClassStructure(fakeOverride, it, parametersMappingOrNull = null)
-            }
+    fun getClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement =
+        if (!fakeOverride.isFakeOverride || fakeOverride.parentAsClass.isJvmInterface)
+            ClassFakeOverrideReplacement.None
+        else fakeOverride::classFakeOverrideReplacement.getOrSetIfNull {
+            findDefaultImplsRedirection(fakeOverride) ?: ClassFakeOverrideReplacement.None
         }
+
+    private fun findDefaultImplsRedirection(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement.DefaultImplsRedirection? {
+        val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode) ?: return null
+        val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
+        context.remapMultiFieldValueClassStructure(fakeOverride, newFunction, parametersMappingOrNull = null)
+        val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
+        return ClassFakeOverrideReplacement.DefaultImplsRedirection(newFunction, superFunction)
+    }
 
     fun getRepeatedAnnotationSyntheticContainer(annotationClass: IrClass): IrClass =
         annotationClass::repeatedAnnotationSyntheticContainer.getOrSetIfNull {

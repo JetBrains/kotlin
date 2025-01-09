@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.jvm.ClassFakeOverrideReplacement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.createDefaultImplsRedirection
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.createPlaceholderAnyNType
+import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -42,17 +46,17 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
             }
         }
 
-        val implementation = declaration.findInterfaceImplementation(context.config.jvmDefaultMode)
-            ?: return declaration
-        return generateDelegationToDefaultImpl(implementation, declaration)
+        val (newFunction, superFunction) =
+            context.cachedDeclarations.getClassFakeOverrideReplacement(declaration) as? ClassFakeOverrideReplacement.DefaultImplsRedirection
+                ?: return declaration
+        return generateDefaultImplsRedirectionBody(newFunction, superFunction)
     }
 
     private fun generateCloneImplementation(fakeOverride: IrSimpleFunction, cloneFun: IrSimpleFunction): IrSimpleFunction {
         assert(fakeOverride.isFakeOverride)
-        val irFunction = context.cachedDeclarations.getDefaultImplsRedirection(fakeOverride)
-        val irClass = fakeOverride.parentAsClass
-        val classStartOffset = irClass.startOffset
-        context.createJvmIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
+        val irFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
+        val offset = fakeOverride.parentAsClass.startOffset
+        context.createJvmIrBuilder(irFunction.symbol, offset, offset).apply {
             irFunction.body = irBlockBody {
                 +irReturn(
                     irCall(cloneFun, origin = null, superQualifierSymbol = cloneFun.parentAsClass.symbol).apply {
@@ -64,31 +68,27 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
         return irFunction
     }
 
-    private fun generateDelegationToDefaultImpl(
-        interfaceImplementation: IrSimpleFunction,
-        classOverride: IrSimpleFunction
+    private fun generateDefaultImplsRedirectionBody(
+        irFunction: IrSimpleFunction,
+        superFunction: IrSimpleFunction,
     ): IrSimpleFunction {
-        val irFunction = context.cachedDeclarations.getDefaultImplsRedirection(classOverride)
-
-        val superMethod = firstSuperMethodFromKotlin(irFunction, interfaceImplementation).owner
-        val superClassType = superMethod.parentAsClass.defaultType
-        val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superMethod)
-        val classStartOffset = classOverride.parentAsClass.startOffset
+        val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superFunction)
+        val offset = irFunction.parentAsClass.startOffset
         val backendContext = context
-        context.createIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
+        context.createIrBuilder(irFunction.symbol, offset, offset).apply {
             irFunction.body = irExprBody(irBlock {
                 val parameter2arguments = backendContext.multiFieldValueClassReplacements
                     .mapFunctionMfvcStructures(this, defaultImplFun, irFunction) { sourceParameter, _ ->
                         irGet(sourceParameter).let {
                             if (sourceParameter != irFunction.dispatchReceiverParameter) it
-                            else it.reinterpretAsDispatchReceiverOfType(superClassType)
+                            else it.reinterpretAsDispatchReceiverOfType(superFunction.parentAsClass.defaultType)
                         }
                     }
                 +irCall(defaultImplFun.symbol, irFunction.returnType).apply {
-                    for (index in superMethod.parentAsClass.typeParameters.indices) {
+                    for (index in superFunction.parentAsClass.typeParameters.indices) {
                         typeArguments[index] = createPlaceholderAnyNType(context.irBuiltIns)
                     }
-                    passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
+                    passTypeArgumentsFrom(irFunction, offset = superFunction.parentAsClass.typeParameters.size)
 
                     for ((parameter, argument) in parameter2arguments) {
                         if (argument != null) {
