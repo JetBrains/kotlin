@@ -47,7 +47,7 @@ public fun java.util.concurrent.atomic.AtomicLong.asKotlinAtomic(): AtomicLong =
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
 @ExperimentalAtomicApi
-public fun <T> AtomicBoolean.asJavaAtomic(): java.util.concurrent.atomic.AtomicBoolean = this as java.util.concurrent.atomic.AtomicBoolean
+public fun AtomicBoolean.asJavaAtomic(): java.util.concurrent.atomic.AtomicBoolean = this as java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Casts the given [java.util.concurrent.atomic.AtomicBoolean] instance to [AtomicBoolean].
@@ -55,7 +55,7 @@ public fun <T> AtomicBoolean.asJavaAtomic(): java.util.concurrent.atomic.AtomicB
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
 @ExperimentalAtomicApi
-public fun <T> java.util.concurrent.atomic.AtomicBoolean.asKotlinAtomic(): AtomicBoolean = this as AtomicBoolean
+public fun java.util.concurrent.atomic.AtomicBoolean.asKotlinAtomic(): AtomicBoolean = this as AtomicBoolean
 
 /**
  * Casts the given [AtomicReference]<T> instance to [java.util.concurrent.atomic.AtomicReference]<T>.
