@@ -523,6 +523,13 @@ open class LocalDeclarationsLowering(
                 }
             }
 
+            // note: we don't need to upgrade property references as properties are not moved by the lowering
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
+                expression.reflectionTargetSymbol = expression.reflectionTargetSymbol?.run { owner.transformed ?: owner }?.symbol
+                return expression
+            }
+
             override fun visitReturn(expression: IrReturn): IrExpression {
                 expression.transformChildrenVoid(this)
 
