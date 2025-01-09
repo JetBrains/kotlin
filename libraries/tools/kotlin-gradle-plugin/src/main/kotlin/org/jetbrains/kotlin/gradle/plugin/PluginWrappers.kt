@@ -74,4 +74,6 @@ private fun Project.registerVariantImplementations() {
         ConfigurationCacheStartParameterAccessorG76.Factory()
     factories[MavenPublicationComponentAccessor.Factory::class] =
         MavenPublicationComponentAccessorG76.Factory()
+    factories[JavaExecTaskParametersCompatibility.Factory::class] =
+        JavaExecTaskParametersCompatibilityG76.Factory()
 }

@@ -160,6 +160,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             MavenPublicationComponentAccessor.Factory::class,
             DefaultMavenPublicationComponentAccessorFactory()
         )
+
+        factories.putIfAbsent(
+            JavaExecTaskParametersCompatibility.Factory::class,
+            DefaultJavaExecTaskParametersCompatibility.Factory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
