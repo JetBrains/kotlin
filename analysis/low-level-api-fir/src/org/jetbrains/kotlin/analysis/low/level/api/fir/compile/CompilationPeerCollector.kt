@@ -48,13 +48,13 @@ class CompilationPeerCollector private constructor() {
             collector.process(file)
 
             return CompilationPeerData(
-                filesToCompile = collector.peers.toList(),
+                peers = collector.peers,
                 inlinedClasses = collector.inlinedClasses
             )
         }
     }
 
-    private val peers = LinkedHashSet<KtFile>()
+    private val peers = LinkedHashMap<KaModule, MutableList<KtFile>>()
     private val inlinedClasses = LinkedHashSet<KtClassOrObject>()
 
     private val visited = HashSet<FirFile>()
@@ -97,7 +97,7 @@ class CompilationPeerCollector private constructor() {
             visitor.files.forEach(::process)
         }
 
-        peers.add(ktFile)
+        peers.getOrPut(module, ::ArrayList).add(ktFile)
     }
 
     private inline fun withModule(module: KaModule, block: () -> Unit) {
@@ -125,14 +125,14 @@ class CompilationPeerData(
      * For example,
      *  - A is a source file in module M(A) to be compiled; it calls an inline function from the file B of module M(B).
      *  - B calls another inline function defined in C in module M(C).
-     *  - [filesToCompile] returned by [CompilationPeerCollector.process] then will be {C, B, A}.
+     *  - [peers] returned by [CompilationPeerCollector.process] then will be {C, B, A}.
      *
-     * More formally, i-th element of [filesToCompile] will not have inline-dependency on any j-th element of
-     * [filesToCompile], where j > i.
+     * More formally, i-th element of [peers] will not have inline-dependency on any j-th element of
+     * [peers], where j > i.
      *
      * This list does not contain duplicated files.
      */
-    val filesToCompile: List<KtFile>,
+    val peers: Map<KaModule, List<KtFile>>,
 
     /** Local classes inlined as a part of inline functions. */
     val inlinedClasses: Set<KtClassOrObject>
