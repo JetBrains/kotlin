@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
@@ -259,34 +256,9 @@ class JvmCachedDeclarations(
 
     fun getDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction =
         fakeOverride::defaultImplsRedirection.getOrSetIfNull {
-            assert(fakeOverride.isFakeOverride)
-            val irClass = fakeOverride.parentAsClass
-            val redirectFunction = context.irFactory.buildFun {
-                origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
-                name = fakeOverride.name
-                visibility = fakeOverride.visibility
-                modality = fakeOverride.modality
-                returnType = fakeOverride.returnType
-                isInline = fakeOverride.isInline
-                isExternal = false
-                isTailrec = false
-                isSuspend = fakeOverride.isSuspend
-                isOperator = fakeOverride.isOperator
-                isInfix = fakeOverride.isInfix
-                isExpect = false
-                isFakeOverride = false
-            }.apply {
-                parent = irClass
-                overriddenSymbols = fakeOverride.overriddenSymbols
-                copyValueAndTypeParametersFrom(fakeOverride)
-                // The fake override's dispatch receiver has the same type as the real declaration's,
-                // i.e. some superclass of the current class. This is not good for accessibility checks.
-                dispatchReceiverParameter?.type = irClass.defaultType
-                annotations = fakeOverride.annotations
-                copyCorrespondingPropertyFrom(fakeOverride)
+            context.irFactory.createDefaultImplsRedirection(fakeOverride).also {
+                context.remapMultiFieldValueClassStructure(fakeOverride, it, parametersMappingOrNull = null)
             }
-            context.remapMultiFieldValueClassStructure(fakeOverride, redirectFunction, parametersMappingOrNull = null)
-            redirectFunction
         }
 
     fun getRepeatedAnnotationSyntheticContainer(annotationClass: IrClass): IrClass =

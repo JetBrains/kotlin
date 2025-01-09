@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
+import org.jetbrains.kotlin.backend.jvm.ir.createDefaultImplsRedirection
 import org.jetbrains.kotlin.backend.jvm.ir.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.jvm.ir.firstSuperMethodFromKotlin
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
@@ -24,8 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.copyValueAndTypeParametersFrom
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.transformInPlace
@@ -85,29 +81,8 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
         return false
     }
 
-    private fun generateBridge(declaration: IrSimpleFunction, implementation: IrSimpleFunction, irClass: IrClass): IrSimpleFunction {
-        return context.irFactory.buildFun {
-            origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
-            name = declaration.name
-            visibility = declaration.visibility
-            modality = declaration.modality
-            returnType = declaration.returnType
-            isInline = declaration.isInline
-            isExternal = false
-            isTailrec = false
-            isSuspend = declaration.isSuspend
-            isOperator = declaration.isOperator
-            isInfix = declaration.isInfix
-            isExpect = false
-            isFakeOverride = false
-        }.apply {
-            parent = irClass
-            overriddenSymbols = declaration.overriddenSymbols
-            copyValueAndTypeParametersFrom(declaration)
-            dispatchReceiverParameter?.type = irClass.defaultType
-            annotations = declaration.annotations
-            copyCorrespondingPropertyFrom(declaration)
-
+    private fun generateBridge(declaration: IrSimpleFunction, implementation: IrSimpleFunction, irClass: IrClass): IrSimpleFunction =
+        context.irFactory.createDefaultImplsRedirection(declaration).apply {
             context.createIrBuilder(symbol, irClass.startOffset, irClass.endOffset).apply {
                 body = irExprBody(irBlock {
                     val superMethod = firstSuperMethodFromKotlin(declaration, implementation)
@@ -126,5 +101,4 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
                 })
             }
         }
-    }
 }

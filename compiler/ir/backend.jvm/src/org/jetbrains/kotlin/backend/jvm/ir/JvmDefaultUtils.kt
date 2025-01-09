@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.util.*
@@ -99,3 +97,32 @@ fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode,
 
 private fun isDefaultImplsBridge(f: IrSimpleFunction) =
     f.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
+
+fun IrFactory.createDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction {
+    assert(fakeOverride.isFakeOverride) { "Function should be a fake override: ${fakeOverride.render()}" }
+    val irClass = fakeOverride.parentAsClass
+    return buildFun {
+        origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
+        name = fakeOverride.name
+        visibility = fakeOverride.visibility
+        modality = fakeOverride.modality
+        returnType = fakeOverride.returnType
+        isInline = fakeOverride.isInline
+        isExternal = false
+        isTailrec = false
+        isSuspend = fakeOverride.isSuspend
+        isOperator = fakeOverride.isOperator
+        isInfix = fakeOverride.isInfix
+        isExpect = false
+        isFakeOverride = false
+    }.apply {
+        parent = irClass
+        overriddenSymbols = fakeOverride.overriddenSymbols
+        copyValueAndTypeParametersFrom(fakeOverride)
+        // The fake override's dispatch receiver has the same type as the real declaration's,
+        // i.e. some superclass of the current class. This is not good for accessibility checks.
+        dispatchReceiverParameter?.type = irClass.defaultType
+        annotations = fakeOverride.annotations
+        copyCorrespondingPropertyFrom(fakeOverride)
+    }
+}
