@@ -682,7 +682,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         initCompanionObjectSymbolAttr()
 
-                        contextParameters.addContextReceivers(classNode, classSymbol)
+                        contextParameters.addContextParameters(classNode, classSymbol)
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
                     }
@@ -1083,7 +1083,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
-                this.contextParameters.addContextReceivers(classNode, constructorSymbol)
+                this.contextParameters.addContextParameters(classNode, constructorSymbol)
             }
 
             return PrimaryConstructor(
@@ -1194,9 +1194,9 @@ class LightTreeRawFirDeclarationBuilder(
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
-                this.contextParameters.addContextReceivers(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol)
+                this.contextParameters.addContextParameters(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol)
                 if (contextParameterEnabled) {
-                    this.contextParameters.addContextReceivers(secondaryConstructor, constructorSymbol)
+                    this.contextParameters.addContextParameters(secondaryConstructor, constructorSymbol)
                 }
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
@@ -1523,7 +1523,7 @@ class LightTreeRawFirDeclarationBuilder(
                     else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                 }
 
-                contextParameters.addContextReceivers(property, propertySymbol)
+                contextParameters.addContextParameters(property, propertySymbol)
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
@@ -1959,7 +1959,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
                     dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
-                    contextParameters.addContextReceivers(functionDeclaration, functionSymbol)
+                    contextParameters.addContextParameters(functionDeclaration, functionSymbol)
                 }
             }
 
@@ -2670,7 +2670,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
-    private fun MutableList<FirValueParameter>.addContextReceivers(
+    private fun MutableList<FirValueParameter>.addContextParameters(
         container: LighterASTNode,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ) {
