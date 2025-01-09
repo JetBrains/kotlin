@@ -7,8 +7,10 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -132,6 +134,13 @@ interface IdeMultiplatformImport {
      */
     @ExternalKotlinTargetApi
     fun registerImportAction(action: IdeMultiplatformImportAction)
+
+    /**
+     * Adds [Task.dependsOn] relation on all registered resolvers for given [task].
+     */
+    @ExperimentalKotlinGradlePluginApi
+    @ExternalKotlinTargetApi
+    fun addDependencyOnResolvers(task: Task)
 
     /**
      * Any [IdeDependencyResolver] has to be registered for a given dependency resolution phase in which it participates
@@ -337,7 +346,7 @@ interface IdeMultiplatformImport {
 }
 
 internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport by projectStoredProperty {
-    IdeMultiplatformImport(project.kotlinExtension)
+    IdeMultiplatformImport(kotlinExtension)
 }
 
 internal val IdeMultiplatformImportSetupAction = KotlinProjectSetupAction {
