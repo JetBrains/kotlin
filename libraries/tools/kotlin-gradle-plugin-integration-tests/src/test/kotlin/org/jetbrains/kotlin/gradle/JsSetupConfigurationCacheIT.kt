@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -28,6 +29,7 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms")
     @GradleTest
+    @Disabled("KTI-2143 Flaky failure because of NPM instability")
     fun checkNodeJsSetup(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-browser-project",
