@@ -178,8 +178,34 @@ interface AbiAnnotatedEntity {
     /**
      * Annotations are not a part of ABI. But sometimes it is useful to have the ability to check if some declaration
      * has a specific annotation. See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
+     *
      */
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"))
     fun hasAnnotation(annotationClassName: AbiQualifiedName): Boolean
+
+    /**
+     * Gets a list of annotations that the declaration is marked with.
+     *
+     * Annotations are **not** a part of ABI.
+     * The result of this method is not related to binary compatibility, and it can change even for fully compatible declarations.
+     *
+     * This function should only be used for filtering and searching for the required declaration.
+     *
+     * See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
+     */
+    fun annotatedWith(): List<AbiAnnotation>
+}
+
+/**
+ * The annotation that marked some [AbiDeclaration].
+ *
+ * It is not part of the ABI, but it can be used to filter and search for the necessary ABI declarations.
+ *
+ * @property qualifiedName The annotation qualified name.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiAnnotation {
+    val qualifiedName: AbiQualifiedName
 }
 
 /**

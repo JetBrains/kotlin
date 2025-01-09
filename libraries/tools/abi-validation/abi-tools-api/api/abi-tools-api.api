@@ -1,0 +1,68 @@
+public final class org/jetbrains/kotlin/abi/tools/api/AbiFilters {
+	public static final field Companion Lorg/jetbrains/kotlin/abi/tools/api/AbiFilters$Companion;
+	public fun <init> (Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;Ljava/util/Set;)V
+	public final fun getExcludedAnnotatedWith ()Ljava/util/Set;
+	public final fun getExcludedClasses ()Ljava/util/Set;
+	public final fun getIncludedAnnotatedWith ()Ljava/util/Set;
+	public final fun getIncludedClasses ()Ljava/util/Set;
+	public final fun isEmpty ()Z
+}
+
+public final class org/jetbrains/kotlin/abi/tools/api/AbiFilters$Companion {
+	public final fun getEMPTY ()Lorg/jetbrains/kotlin/abi/tools/api/AbiFilters;
+}
+
+public abstract interface class org/jetbrains/kotlin/abi/tools/api/AbiToolsFactory {
+	public abstract fun get ()Lorg/jetbrains/kotlin/abi/tools/api/AbiToolsInterface;
+}
+
+public abstract interface class org/jetbrains/kotlin/abi/tools/api/AbiToolsInterface {
+	public abstract fun filesDiff (Ljava/io/File;Ljava/io/File;)Ljava/lang/String;
+	public abstract fun getV2 ()Lorg/jetbrains/kotlin/abi/tools/api/v2/AbiToolsV2;
+}
+
+public abstract interface class org/jetbrains/kotlin/abi/tools/api/v2/AbiToolsV2 {
+	public abstract fun createKlibDump ()Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;
+	public abstract fun extractKlibAbi (Ljava/io/File;Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;Lorg/jetbrains/kotlin/abi/tools/api/AbiFilters;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;
+	public static synthetic fun extractKlibAbi$default (Lorg/jetbrains/kotlin/abi/tools/api/v2/AbiToolsV2;Ljava/io/File;Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;Lorg/jetbrains/kotlin/abi/tools/api/AbiFilters;ILjava/lang/Object;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;
+	public abstract fun loadKlibDump (Ljava/io/File;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;
+	public abstract fun loadKlibDump (Ljava/lang/CharSequence;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;
+	public abstract fun printJvmDump (Ljava/lang/Appendable;Ljava/lang/Iterable;Lorg/jetbrains/kotlin/abi/tools/api/AbiFilters;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/abi/tools/api/v2/KlibDump {
+	public abstract fun copy ()Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;
+	public abstract fun getTargets ()Ljava/util/Set;
+	public abstract fun inferAbiForUnsupportedTarget (Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;
+	public abstract fun merge (Ljava/io/File;)V
+	public abstract fun merge (Ljava/lang/CharSequence;)V
+	public abstract fun merge (Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;)V
+	public abstract fun print (Ljava/io/File;)Ljava/io/File;
+	public abstract fun print (Ljava/lang/Appendable;)Ljava/lang/Appendable;
+	public abstract fun remove (Ljava/lang/Iterable;)V
+	public abstract fun renameSingleTarget (Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;)V
+	public abstract fun replace (Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibDump;)V
+	public abstract fun retain (Ljava/lang/Iterable;)V
+}
+
+public final class org/jetbrains/kotlin/abi/tools/api/v2/KlibTarget : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun configureName (Ljava/lang/String;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConfigurableName ()Ljava/lang/String;
+	public final fun getTargetName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/abi/tools/api/v2/KlibTarget$Companion {
+	public final fun fromKonanTargetName (Ljava/lang/String;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;
+	public final fun parse (Ljava/lang/String;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;
+	public final fun supportedKonanNames ()Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/abi/tools/api/v2/KlibTargetKt {
+	public static final fun KlibTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/abi/tools/api/v2/KlibTarget;
+}
+

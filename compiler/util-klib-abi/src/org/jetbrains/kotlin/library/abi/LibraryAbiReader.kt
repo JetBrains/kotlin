@@ -63,6 +63,7 @@ interface AbiReadingFilter {
     class NonPublicMarkerAnnotations(nonPublicMarkerNames: Collection<AbiQualifiedName>) : AbiReadingFilter {
         private val nonPublicMarkerNames = nonPublicMarkerNames.toSet().toTypedArray()
 
+        @Suppress("DEPRECATION")
         override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean {
             for (nonPublicMarkerName in nonPublicMarkerNames) {
                 if (declaration.hasAnnotation(nonPublicMarkerName)

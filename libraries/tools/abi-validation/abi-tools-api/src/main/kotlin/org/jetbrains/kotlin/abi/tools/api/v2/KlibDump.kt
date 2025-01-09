@@ -130,7 +130,7 @@ public interface KlibDump {
     public fun print(file: File): File
 
     /**
-     * Tries to derive the ABI for the specified [target] from the actual this dump in and the previous dump in [previousDump].
+     * Tries to derive the ABI for the specified [target] from the [this] dump and the previous in [previousDump].
      *
      * Calling this function makes sense only when the current dump does not contain some targets that
      * are present in the [previousDump] due to the fact that compilation of these targets is not supported on the current host.
@@ -144,8 +144,16 @@ public interface KlibDump {
      * where we can infer ABI for the [target].
      *
      *
-     * *Closest targets is a related targets that have a common ancestor with [target].
-     * Because in the end, all goals have a common root ancestor, so the targets with the closest to [target] are returned.
+     * In multiplatform projects source sets are organized as a tree where root is the common (commonMain or commonTest) source set,
+     * leafs are source sets corresponding to individual targets and interior nodes are intermediate source sets capturing functionality
+     * shared by a subset of targets (like source sets sharing code for all Linux or all Native targets).
+     *
+     * If a [target] is not supported by a host compiler, it means that there are no declarations corresponding to its source set
+     * (which is a leaf in a hierarchy mentioned above). However, since its source set extends one of the interior source sets,
+     * we can try to pick one that is extended by other targets supported by the host compiler. Closer such an interior
+     * source set to the [target]'s source set, closer should be its public ABI.
+     *
+     * @throws IllegalStateException in case if this dump and [previousDump] are empty (don't contain targets)
      */
     public fun inferAbiForUnsupportedTarget(previousDump: KlibDump, target: KlibTarget): KlibDump
 }

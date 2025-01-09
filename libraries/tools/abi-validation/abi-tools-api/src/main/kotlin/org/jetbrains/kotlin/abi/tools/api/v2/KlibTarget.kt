@@ -65,6 +65,13 @@ public class KlibTarget(
             val targetName = konanTargetNameMapping[konanName] ?: throw IllegalArgumentException("Konan name '$konanName' not found")
             return KlibTarget(targetName, targetName)
         }
+
+        /**
+         * Get Konan names for supported targets.
+         */
+        public fun supportedKonanNames(): Set<String> {
+            return konanTargetNameMapping.keys
+        }
     }
 
     /**

@@ -44,6 +44,9 @@ internal class AbiTopLevelDeclarationsImpl(
 ) : AbiTopLevelDeclarations
 
 @ExperimentalLibraryAbiReader
+internal class AbiAnnotationImpl(override val qualifiedName: AbiQualifiedName) : AbiAnnotation
+
+@ExperimentalLibraryAbiReader
 internal class AbiClassImpl(
     override val qualifiedName: AbiQualifiedName,
     override val signatures: AbiSignatures,
@@ -68,7 +71,10 @@ internal class AbiClassImpl(
     override val isInner get() = IS_INNER.get(flags)
     override val isValue get() = IS_VALUE.get(flags)
     override val isFunction get() = IS_FUNCTION.get(flags)
+
+    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
     override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
+    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
         private val IS_INNER = FlagField.booleanFirst()
@@ -85,7 +91,9 @@ internal class AbiEnumEntryImpl(
     override val signatures: AbiSignatures,
     private val annotations: Set<AbiQualifiedName>
 ) : AbiEnumEntry {
+    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
     override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
+    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 }
 
 @ExperimentalLibraryAbiReader
@@ -108,7 +116,10 @@ internal class AbiConstructorImpl(
     override val contextReceiverParametersCount get() = CONTEXT_RECEIVERS_COUNT.get(flags)
     override val returnType get() = null // No need to render return type for constructors.
     override val typeParameters get() = emptyList<AbiTypeParameter>()
+
+    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
     override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
+    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
         private val IS_INLINE = FlagField.booleanFirst()
@@ -142,7 +153,10 @@ internal class AbiFunctionImpl(
     override val isSuspend get() = IS_SUSPEND.get(flags)
     override val hasExtensionReceiverParameter get() = HAS_EXTENSION_RECEIVER.get(flags)
     override val contextReceiverParametersCount get() = CONTEXT_RECEIVERS_COUNT.get(flags)
+
+    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
     override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
+    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
         /** JVM allows max 255 parameters for a function. Storing such number requires just 8 bits. */
@@ -197,7 +211,10 @@ internal class AbiPropertyImpl(
 
     override val modality get() = MODALITY.get(flags)
     override val kind get() = PROPERTY_KIND.get(flags)
+
+    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
     override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
+    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
         private val MODALITY = FlagFieldEx.first<AbiModality>()
@@ -207,7 +224,9 @@ internal class AbiPropertyImpl(
 
 @ExperimentalLibraryAbiReader
 internal class AbiFieldImpl(private val annotations: Set<AbiQualifiedName>) : AbiField {
+    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
     override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
+    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 }
 
 @ExperimentalLibraryAbiReader

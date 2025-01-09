@@ -1,0 +1,5 @@
+public final class org/jetbrains/kotlin/abi/tools/AbiToolsFactory : org/jetbrains/kotlin/abi/tools/api/AbiToolsFactory {
+	public fun <init> ()V
+	public fun get ()Lorg/jetbrains/kotlin/abi/tools/api/AbiToolsInterface;
+}
+
