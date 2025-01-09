@@ -13998,6 +13998,18 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       }
 
       @Test
+      @TestMetadata("overridesWithFlexibleBase2.kt")
+      public void testOverridesWithFlexibleBase2() {
+        runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBase2.kt");
+      }
+
+      @Test
+      @TestMetadata("overridesWithFlexibleBase3.kt")
+      public void testOverridesWithFlexibleBase3() {
+        runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBase3.kt");
+      }
+
+      @Test
       @TestMetadata("ParameterDefaultValues-DefaultValueFromOnlyOneSupertype.kt")
       public void testParameterDefaultValues_DefaultValueFromOnlyOneSupertype() {
         runTest("compiler/testData/diagnostics/tests/override/ParameterDefaultValues-DefaultValueFromOnlyOneSupertype.kt");

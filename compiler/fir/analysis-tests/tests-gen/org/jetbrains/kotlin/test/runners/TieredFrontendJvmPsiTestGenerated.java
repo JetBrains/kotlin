@@ -17269,6 +17269,18 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("overridesWithFlexibleBaseOff2.kt")
+      public void testOverridesWithFlexibleBaseOff2() {
+        runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBaseOff2.kt");
+      }
+
+      @Test
+      @TestMetadata("overridesWithFlexibleBaseOff3.kt")
+      public void testOverridesWithFlexibleBaseOff3() {
+        runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBaseOff3.kt");
+      }
+
+      @Test
       @TestMetadata("OverridingFinalMember.kt")
       public void testOverridingFinalMember() {
         runTest("compiler/testData/diagnostics/tests/override/OverridingFinalMember.kt");
