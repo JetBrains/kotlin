@@ -53,7 +53,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      * remove it. This option does NOT impact the presence of symbols or line information normally added by the Kotlin compiler; this option
      * controls only additional source information added by the Compose Compiler.
      */
-    val includeSourceInformation: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val includeSourceInformation: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * Save Compose build metrics to this folder.
