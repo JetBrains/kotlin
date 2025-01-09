@@ -62,6 +62,7 @@ class WritersContractTest {
     }
 
     @Test
+    @Ignore("Enable when KT-74254 is fixed")
     fun nextVersionWrite() = everyType.forEach { before ->
         val md = KotlinClassMetadata.readStrict(before)
         val ver = md.version
