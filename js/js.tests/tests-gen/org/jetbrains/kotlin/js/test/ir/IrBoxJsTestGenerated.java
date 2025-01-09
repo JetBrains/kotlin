@@ -2584,6 +2584,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
       }
 
       @Test
+      @TestMetadata("overridingDefaultMethod.kt")
+      public void testOverridingDefaultMethod() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/overridingDefaultMethod.kt");
+      }
+
+      @Test
       @TestMetadata("packages.kt")
       public void testPackages() {
         runTest("js/js.translator/testData/box/esModules/jsExport/packages.kt");

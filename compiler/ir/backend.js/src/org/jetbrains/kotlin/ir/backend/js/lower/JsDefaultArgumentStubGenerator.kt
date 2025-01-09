@@ -174,7 +174,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
 
             var superContextValueParam: IrValueParameter? = null
 
-            val superFunCall = runIf(wrappedFunctionCall.dispatchReceiver != null && !originalDeclaration.isExported(ctx)) {
+            val superFunCall = runIf(wrappedFunctionCall.dispatchReceiver != null) {
                 val superContext = valueParameters.last().also {
                     superContextValueParam = it
                 }
