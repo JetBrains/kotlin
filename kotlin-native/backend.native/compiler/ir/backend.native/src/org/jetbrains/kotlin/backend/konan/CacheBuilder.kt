@@ -28,7 +28,7 @@ internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String
 
     fun traverseDependencies(library: KotlinLibrary) {
         library.unresolvedDependencies.forEach {
-            val dependency = allLibraries[it.path]!!
+            val dependency = allLibraries[it.path] ?: return@forEach
             if (dependency !in allDependencies) {
                 allDependencies += dependency
                 traverseDependencies(dependency)
@@ -102,8 +102,8 @@ class CacheBuilder(
             } else {
                 if (cache == null) externalLibrariesToCache += library
             }
-            library.unresolvedDependencies.forEach {
-                val dependency = uniqueNameToLibrary[it.path]!!
+            library.unresolvedDependencies.forEach dependenciesLoop@{
+                val dependency = uniqueNameToLibrary[it.path] ?: return@dependenciesLoop
                 dependableLibraries.getOrPut(dependency) { mutableListOf() }.add(library)
             }
         }
