@@ -2602,6 +2602,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
       }
 
       @Test
+      @TestMetadata("privateNestedDataClass.kt")
+      public void testPrivateNestedDataClass() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/privateNestedDataClass.kt");
+      }
+
+      @Test
       @TestMetadata("recursiveExport.kt")
       public void testRecursiveExport() {
         runTest("js/js.translator/testData/box/esModules/jsExport/recursiveExport.kt");
@@ -7600,6 +7606,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("jsExportInClass.kt")
     public void testJsExportInClass() {
       runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("privateNestedDataClass.kt")
+    public void testPrivateNestedDataClass() {
+      runTest("js/js.translator/testData/box/jsExport/privateNestedDataClass.kt");
     }
 
     @Test

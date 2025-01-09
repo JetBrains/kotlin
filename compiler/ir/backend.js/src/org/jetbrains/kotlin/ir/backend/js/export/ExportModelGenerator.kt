@@ -770,7 +770,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     if (declaration is IrClass && declaration.kind == ClassKind.ENUM_ENTRY)
         return false
 
-    if (declaration.isJsExportIgnore())
+    if (declaration.isJsExportIgnore() || (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI == false)
         return false
 
     if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
