@@ -398,6 +398,18 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
   }
 
   @Test
+  @TestMetadata("noLineNumberInEnumEntries.kt")
+  public void testNoLineNumberInEnumEntries() {
+    runTest("compiler/testData/codegen/bytecodeText/noLineNumberInEnumEntries.kt");
+  }
+
+  @Test
+  @TestMetadata("noLinenumberInJvmOverloads.kt")
+  public void testNoLinenumberInJvmOverloads() {
+    runTest("compiler/testData/codegen/bytecodeText/noLinenumberInJvmOverloads.kt");
+  }
+
+  @Test
   @TestMetadata("noNumberCheckCast.kt")
   public void testNoNumberCheckCast() {
     runTest("compiler/testData/codegen/bytecodeText/noNumberCheckCast.kt");

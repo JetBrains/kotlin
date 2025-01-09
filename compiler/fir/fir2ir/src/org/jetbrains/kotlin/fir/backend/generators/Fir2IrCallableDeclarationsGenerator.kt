@@ -106,11 +106,13 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val isSuspend =
             if (isLambda) (function.typeRef as? FirResolvedTypeRef)?.coneType?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
+        val isSynthetic =
+            updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER || updatedOrigin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
         val created = function.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(function)
             IrFactoryImpl.createSimpleFunction(
-                startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
-                endOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
+                startOffset = if (isSynthetic) SYNTHETIC_OFFSET else startOffset,
+                endOffset = if (isSynthetic) SYNTHETIC_OFFSET else endOffset,
                 origin = updatedOrigin,
                 name = name,
                 visibility = c.visibilityConverter.convertToDescriptorVisibility(visibility),
@@ -241,8 +243,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         return property.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(property)
             IrFactoryImpl.createProperty(
-                startOffset = startOffset,
-                endOffset = endOffset,
+                startOffset = if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) SYNTHETIC_OFFSET else startOffset,
+                endOffset = if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) SYNTHETIC_OFFSET else endOffset,
                 origin = origin,
                 name = property.name,
                 visibility = c.visibilityConverter.convertToDescriptorVisibility(property.visibility),
@@ -324,7 +326,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                     getter == null || getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                     else -> origin
                                 },
-                                startOffset, endOffset,
+                                if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) SYNTHETIC_OFFSET else startOffset,
+                                if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) SYNTHETIC_OFFSET else endOffset,
                                 property.unwrapFakeOverrides().getter,
                             )
                         }

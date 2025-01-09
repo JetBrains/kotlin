@@ -49,14 +49,14 @@
     @40:4..10 ENUM_ENTRY name:SINGLE
       @40:4..10 EXPRESSION_BODY
         @40:4..10 ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
-    @39:0..41:1 FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.E>
-      @39:0..41:1 SYNTHETIC_BODY kind=ENUM_VALUES
-    @39:0..41:1 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.E
+    @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.E>
+      @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_VALUES
+    @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.E
       @39:0..41:1 VALUE_PARAMETER name:value index:0 type:kotlin.String
-      @39:0..41:1 SYNTHETIC_BODY kind=ENUM_VALUEOF
-    @39:0..41:1 PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      @39:0..41:1 FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.E>
-        @39:0..41:1 SYNTHETIC_BODY kind=ENUM_ENTRIES
+      @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_VALUEOF
+    @-1:-1..-1 PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.E>
+        @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_ENTRIES
     @39:0..41:1 FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>, other:<root>.E) returnType:kotlin.Int [fake_override,operator]
       @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
       @39:0..41:1 VALUE_PARAMETER name:other index:0 type:<root>.E

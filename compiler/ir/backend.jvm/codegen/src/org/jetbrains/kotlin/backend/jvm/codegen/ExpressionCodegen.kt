@@ -234,15 +234,18 @@ class ExpressionCodegen(
 
             generateNonNullAssertions()
             generateFakeContinuationConstructorIfNeeded()
-            val result = body.accept(this, info)
-            // If this function has an expression body, return the result of that expression.
-            // Otherwise, if it does not end in a return statement, it must be void-returning,
-            // and an explicit return instruction at the end is still required to pass validation.
-            setExtraLineNumberForVoidReturningFunction(irFunction)
-            if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
-                val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
-                result.materializeAt(returnType, returnIrType)
-                mv.areturn(returnType)
+
+            lineNumberMapper.noLineNumberScopeWithCondition(doNotGenerateLinenumbersInBodies(irFunction)) {
+                val result = body.accept(this, info)
+                // If this function has an expression body, return the result of that expression.
+                // Otherwise, if it does not end in a return statement, it must be void-returning,
+                // and an explicit return instruction at the end is still required to pass validation.
+                setExtraLineNumberForVoidReturningFunction(irFunction)
+                if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
+                    val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
+                    result.materializeAt(returnType, returnIrType)
+                    mv.areturn(returnType)
+                }
             }
         } else {
             mv.aconst(null)
@@ -252,6 +255,11 @@ class ExpressionCodegen(
         writeLocalVariablesInTable(info, endLabel)
         writeParameterInLocalVariableTable(startLabel, endLabel)
     }
+
+    private fun doNotGenerateLinenumbersInBodies(irFunction: IrFunction): Boolean =
+        // We need offsets in JvmOverloads wrappers to render CONFLICTING_JVM_DECLARATION diagnostic.
+        // However, we do not want to generate linenumbers there, since it messes up coverage tools
+        irFunction.origin == JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
 
     private fun setExtraLineNumberForVoidReturningFunction(irFunction: IrFunction) {
         val body = irFunction.body ?: return
