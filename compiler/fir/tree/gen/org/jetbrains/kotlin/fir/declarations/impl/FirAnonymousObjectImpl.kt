@@ -36,11 +36,11 @@ internal class FirAnonymousObjectImpl(
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
     override var deprecationsProvider: DeprecationsProvider,
+    override val scopeProvider: FirScopeProvider,
     override val classKind: ClassKind,
     override val superTypeRefs: MutableList<FirTypeRef>,
     override val declarations: MutableList<FirDeclaration>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val scopeProvider: FirScopeProvider,
     override val symbol: FirAnonymousObjectSymbol,
 ) : FirAnonymousObject() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null

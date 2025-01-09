@@ -171,7 +171,7 @@ fun deserializeClassToSymbol(
         )
 
         addDeclarations(
-            classProto.typeAliasList.mapNotNull(classDeserializer::loadTypeAlias)
+            classProto.typeAliasList.mapNotNull { classDeserializer.loadTypeAlias(it, scopeProvider) }
         )
 
         addDeclarations(

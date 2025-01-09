@@ -1901,6 +1901,7 @@ open class PsiRawFirBuilder(
                         source = typeAlias.toFirSourceElement()
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
+                        scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
                         name = typeAlias.nameAsSafeName
                         val isLocal = context.inLocalContext
                         status = FirDeclarationStatusImpl(

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -205,7 +206,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
      * If loading happens in post-compute, then symbol for type alias is already computed and should be provided in [preComputedSymbol]
      * @See AbstractFirDeserializedSymbolProvider.findAndDeserializeTypeAlias
      */
-    fun loadTypeAlias(proto: ProtoBuf.TypeAlias, preComputedSymbol: FirTypeAliasSymbol? = null): FirTypeAlias {
+    fun loadTypeAlias(
+        proto: ProtoBuf.TypeAlias,
+        scopeProvider: FirScopeProvider,
+        preComputedSymbol: FirTypeAliasSymbol? = null
+    ): FirTypeAlias {
         val flags = proto.flags
         val name = c.nameResolver.getName(proto.name)
         val classId = ClassId(c.packageFqName, name)
@@ -215,6 +220,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return buildTypeAlias {
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
+            this.scopeProvider = scopeProvider
             this.name = name
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(

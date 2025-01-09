@@ -217,7 +217,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
             val ids = part.typeAliasNameIndex[classId.shortClassName]
             if (ids == null || ids.isEmpty()) return@firstNotNullOfOrNull null
             val aliasProto = part.proto.getTypeAlias(ids.single())
-            val postProcessor: DeserializedTypeAliasPostProcessor = { part.context.memberDeserializer.loadTypeAlias(aliasProto, it) }
+            val postProcessor: DeserializedTypeAliasPostProcessor = { part.context.memberDeserializer.loadTypeAlias(aliasProto, kotlinScopeProvider, it) }
             FirTypeAliasSymbol(classId) to postProcessor
         } ?: (null to null)
     }

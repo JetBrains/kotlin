@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeAliasImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -33,6 +34,7 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParameterRefsOwnerBuil
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var status: FirDeclarationStatus
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
+    lateinit var scopeProvider: FirScopeProvider
     lateinit var name: Name
     lateinit var symbol: FirTypeAliasSymbol
     lateinit var expandedTypeRef: FirTypeRef
@@ -48,6 +50,7 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParameterRefsOwnerBuil
             typeParameters,
             status,
             deprecationsProvider,
+            scopeProvider,
             name,
             symbol,
             expandedTypeRef,
@@ -79,6 +82,7 @@ inline fun buildTypeAliasCopy(original: FirTypeAlias, init: FirTypeAliasBuilder.
     copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.status = original.status
     copyBuilder.deprecationsProvider = original.deprecationsProvider
+    copyBuilder.scopeProvider = original.scopeProvider
     copyBuilder.name = original.name
     copyBuilder.expandedTypeRef = original.expandedTypeRef
     copyBuilder.annotations.addAll(original.annotations)

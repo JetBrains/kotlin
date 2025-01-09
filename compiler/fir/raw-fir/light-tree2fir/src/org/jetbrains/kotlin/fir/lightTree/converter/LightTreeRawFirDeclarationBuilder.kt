@@ -1307,6 +1307,7 @@ class LightTreeRawFirDeclarationBuilder(
                     source = typeAlias.toFirSourceElement()
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
+                    scopeProvider = baseScopeProvider
                     name = typeAliasName
                     val isLocal = context.inLocalContext
                     status = FirDeclarationStatusImpl(
