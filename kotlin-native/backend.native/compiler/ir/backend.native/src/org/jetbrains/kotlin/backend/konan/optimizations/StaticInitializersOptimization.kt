@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
@@ -287,7 +287,7 @@ internal object StaticInitializersOptimization {
             val initializedFilesAtLoopsContinues = mutableMapOf<IrLoop, BitSet>()
             // Each visitXXX function gets as [data] parameter the set of initialized files before evaluating
             // current element and returns the set of initialized files after evaluating this element.
-            val callerResult = body.accept(object : IrVisitor<BitSet, BitSet>() {
+            val callerResult = body.accept(object : IrElementVisitor<BitSet, BitSet> {
                 private fun intersectInitializedFiles(previous: BitSet?, current: BitSet) =
                         previous?.copy()?.also { it.and(current) } ?: current
 

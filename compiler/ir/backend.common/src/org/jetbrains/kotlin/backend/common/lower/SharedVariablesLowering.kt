@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -69,7 +69,7 @@ class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
 
         private fun collectSharedVariables() {
             val skippedFunctionsParents = mutableMapOf<IrFunction, IrDeclarationParent>()
-            irBody.accept(object : IrVisitor<Unit, IrDeclarationParent?>() {
+            irBody.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
                 val relevantVars = HashSet<IrVariable>()
                 val relevantVals = HashSet<IrVariable>()
 

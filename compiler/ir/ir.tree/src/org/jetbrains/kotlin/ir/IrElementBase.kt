@@ -29,16 +29,13 @@ abstract class IrElementBase : IrElement {
     private var attributeMap: Array<Any?>? = null
 
 
-    @Suppress("DEPRECATED_COMPILER_API")
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data)
 
-    @Suppress("DEPRECATED_COMPILER_API")
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // No children by default
     }
 
-    @Suppress("DEPRECATED_COMPILER_API")
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         // No children by default
     }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Finds enclosing methods for objects inside inline and dynamic lambdas.
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 @PhaseDescription(name = "RecordEnclosingMethods")
 internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
-        irFile.accept(object : IrVisitor<Unit, IrFunction?>() {
+        irFile.accept(object : IrElementVisitor<Unit, IrFunction?> {
             override fun visitElement(element: IrElement, data: IrFunction?) =
                 element.acceptChildren(this, element as? IrFunction ?: data)
 
