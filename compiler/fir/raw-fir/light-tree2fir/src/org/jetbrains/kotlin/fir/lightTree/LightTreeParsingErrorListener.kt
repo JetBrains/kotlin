@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree
 
-import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
@@ -29,7 +29,7 @@ fun DiagnosticReporter.toKotlinParsingErrorListener(
     }
     return LightTreeParsingErrorListener { startOffset, endOffset, message ->
         reportOn(
-            KtOffsetsOnlySourceElement(startOffset, endOffset),
+            IrSourceElement(startOffset, endOffset),
             FirSyntaxErrors.SYNTAX,
             message.orEmpty(),
             diagnosticContext,
