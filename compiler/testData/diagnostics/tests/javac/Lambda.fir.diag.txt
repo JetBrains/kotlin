@@ -1,47 +1,47 @@
-/Call.kt:(233,242): warning: Cannot access class 'B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(232,241): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(233,242): warning: Cannot access class 'C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(232,241): error: Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(233,242): warning: Cannot access class 'A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(232,241): error: Cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(245,253): warning: Cannot access class 'A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(244,252): error: Cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(245,253): warning: Cannot access class 'B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(244,252): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(245,253): warning: Cannot access class 'C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(244,252): error: Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(254,263): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(253,262): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(272,281): warning: Cannot access class 'B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(271,280): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(272,281): warning: Cannot access class 'C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(271,280): error: Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(272,281): warning: Cannot access class 'A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(271,280): error: Cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(284,292): warning: Cannot access class 'A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(283,291): error: Cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(284,292): warning: Cannot access class 'B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(283,291): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(284,292): warning: Cannot access class 'C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(283,291): error: Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(295,297): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(294,296): error: Cannot access class 'B'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(317,335): warning: Cannot access class 'Owner.Nested.VeryNested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(316,334): error: Cannot access class 'Owner.Nested.VeryNested'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(317,335): warning: Cannot access class 'A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(316,334): error: Cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(317,335): warning: Cannot access class 'C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(316,334): error: Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(317,335): warning: Cannot access class 'Owner.Nested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(316,334): error: Cannot access class 'Owner.Nested'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(338,346): warning: Cannot access class 'Owner.Nested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(337,345): error: Cannot access class 'Owner.Nested'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(338,346): warning: Cannot access class 'C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(337,345): error: Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(338,346): warning: Cannot access class 'A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(337,345): error: Cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(338,346): warning: Cannot access class 'Owner.Nested.VeryNested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(337,345): error: Cannot access class 'Owner.Nested.VeryNested'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(347,356): error: Cannot access class 'Owner.Nested.VeryNested'. Check your module classpath for missing or conflicting dependencies.
+/Call.kt:(346,355): error: Cannot access class 'Owner.Nested.VeryNested'. Check your module classpath for missing or conflicting dependencies.
 
-/Call.kt:(384,390): error: Unresolved reference 'result'.
+/Call.kt:(383,389): error: Unresolved reference 'result'.
