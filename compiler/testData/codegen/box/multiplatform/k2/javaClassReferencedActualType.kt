@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
 // TARGET_BACKEND: JVM_IR
 
 // MODULE: common
