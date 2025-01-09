@@ -367,7 +367,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             }
 
             fun getArity(): Int {
-                return referencedFunction.explicitParameters.size - boundParameters + if (referencedFunction.isSuspend) 1 else 0
+                return referencedFunction.parameters.size - boundParameters + if (referencedFunction.isSuspend) 1 else 0
             }
 
             fun returnType(): IrType {
