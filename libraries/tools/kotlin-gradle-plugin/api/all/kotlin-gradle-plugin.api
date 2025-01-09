@@ -5893,8 +5893,31 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnWorkspaces : 
 	public fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/util/List;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl {
+	public abstract fun executable (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun executable (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun executable (Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun executable (Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl$DefaultImpls {
+	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
+	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinaryDsl {
+	public abstract fun getApplicationDefaultJvmArgs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getApplicationName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getExecutableDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getMainClass ()Lorg/gradle/api/provider/Property;
+	public abstract fun getMainModule ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests {
 	public fun <init> (Lorg/gradle/api/Project;)V
+	public final fun binaries (Lkotlin/jvm/functions/Function1;)V
+	public final fun binaries (Lorg/gradle/api/Action;)V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun compilerOptions (Lorg/gradle/api/Action;)V
 	public synthetic fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;

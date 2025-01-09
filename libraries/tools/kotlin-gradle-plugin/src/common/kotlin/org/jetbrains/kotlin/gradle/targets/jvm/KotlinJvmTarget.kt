@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.jvm
 
+import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -93,6 +94,29 @@ abstract class KotlinJvmTarget @Inject constructor(
     @ExperimentalKotlinGradlePluginApi
     fun mainRun(configure: KotlinJvmRunDsl.() -> Unit) = project.launch {
         mainRun.await()?.configure()
+    }
+
+    private val binariesDsl by lazy {
+        // lazy is required as compilation is lateinit property
+        project.objects.DefaultKotlinJvmBinariesDsl(
+            compilations
+        )
+    }
+
+    /**
+     * Configures executable binaries and relevant tasks for this target.
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun binaries(configure: KotlinJvmBinariesDsl.() -> Unit) {
+        configure(binariesDsl)
+    }
+
+    /**
+     * Configures executable binaries and relevant tasks for this target.
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun binaries(configure: Action<KotlinJvmBinariesDsl>) {
+        configure.execute(binariesDsl)
     }
 
     var withJavaEnabled = false
