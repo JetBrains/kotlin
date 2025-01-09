@@ -3,7 +3,6 @@
 // DIAGNOSTICS: -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // WITH_STDLIB
 // FIR_DUMP
-// LATEST_LV_DIFFERENCE
 
 object Plus {
     operator fun plus(number: Int) = this.also { println("p -> plus") }

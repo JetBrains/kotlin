@@ -5428,6 +5428,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceTestGenerate
     }
 
     @Test
+    @TestMetadata("KotlinPropertyAssignmentWithErrors.kt")
+    public void testKotlinPropertyAssignmentWithErrors() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/KotlinPropertyAssignmentWithErrors.kt");
+    }
+
+    @Test
     @TestMetadata("kotlinPropertyGetter.kt")
     public void testKotlinPropertyGetter() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/kotlinPropertyGetter.kt");
@@ -5443,6 +5449,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceTestGenerate
     @TestMetadata("kotlinPropertySetterGeneric.kt")
     public void testKotlinPropertySetterGeneric() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/kotlinPropertySetterGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("KotlinPropertyWithGetterAndSetterAssignmentWithErrors.kt")
+    public void testKotlinPropertyWithGetterAndSetterAssignmentWithErrors() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/KotlinPropertyWithGetterAndSetterAssignmentWithErrors.kt");
     }
 
     @Test
@@ -5563,6 +5575,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceTestGenerate
     @TestMetadata("superTypeCallEntryResolveToCallInfo.kt")
     public void testSuperTypeCallEntryResolveToCallInfo() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/superTypeCallEntryResolveToCallInfo.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticPropertyWithErrors.kt")
+    public void testSyntheticPropertyWithErrors() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/SyntheticPropertyWithErrors.kt");
     }
 
     @Test

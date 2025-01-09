@@ -1,3 +1,5 @@
+// LANGUAGE: -ForbidParenthesizedLhsInAssignments
+
 package name
 
 class Test() {

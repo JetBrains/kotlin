@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 package lvalue_assignment
 
@@ -48,8 +47,8 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>""<!> = "";
     <!VARIABLE_EXPECTED!>foo()<!> = Unit;
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>)<!> = 34
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>)<!> = false
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>)<!> = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>)<!> = false
     <!VARIABLE_EXPECTED!>A()<!> = A()
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
@@ -60,19 +59,19 @@ annotation class Ann
 
 fun canBe(i0: Int, j: Int) {
     var i = i0
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(label@ i)<!> = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ i)<!> = 34
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34 //repeat for j
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34 //repeat for j
 
     val a = A()
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ a.a)<!> = 3894
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(l@ a.a)<!> = 3894
 
     @Ann
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>l@ (i)<!> = 123
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (i)<!> = 123
 }
 
 fun canBe2(j: Int) {
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34
 }
 
 class A() {
@@ -82,19 +81,19 @@ class A() {
 class Test() {
     fun testIllegalValues() {
         <!VARIABLE_EXPECTED!>1<!> += 23
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ <!VARIABLE_EXPECTED!>1<!>)<!> += 23
+        (l@ 1) <!UNRESOLVED_REFERENCE!>+=<!> 23
 
         <!VARIABLE_EXPECTED!>getInt()<!> += 343
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(f@ <!VARIABLE_EXPECTED!>getInt()<!>)<!> += 343
+        (f@ getInt()) <!UNRESOLVED_REFERENCE!>+=<!> 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(r@ <!VARIABLE_EXPECTED!>1<!>)<!>--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(r@ <!VARIABLE_EXPECTED!>1<!>)<!>--
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(m@ <!VARIABLE_EXPECTED!>getInt()<!>)<!>--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(m@ <!VARIABLE_EXPECTED!>getInt()<!>)<!>--
 
         ++<!VARIABLE_EXPECTED!>2<!>
-        --<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(r@ <!VARIABLE_EXPECTED!>2<!>)<!>
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(r@ <!VARIABLE_EXPECTED!>2<!>)<!>
 
         <!VARIABLE_EXPECTED!>this<!><!UNRESOLVED_REFERENCE!>++<!>
 
@@ -104,7 +103,7 @@ class Test() {
         s += (a@ 2)
 
         @Ann
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>l@ (<!VARIABLE_EXPECTED!>1<!>)<!> = 123
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (<!VARIABLE_EXPECTED!>1<!>)<!> = 123
     }
 
     fun testIncompleteSyntax() {
@@ -117,24 +116,24 @@ class Test() {
         val b: Int = 34
 
         a += 34
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ a)<!> += 34
+        (l@ a) <!UNRESOLVED_REFERENCE!>+=<!> 34
 
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(@Ann l@ a)<!>--
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a)<!>++
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(@Ann l@ a)<!>--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)<!>++
         --a
-        ++<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(@Ann l@ a)<!>
-        --<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a)<!>
+        ++<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(@Ann l@ a)<!>
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)<!>
     }
 
     fun testVariables1() {
         val b: Int = 34
 
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ <!VAL_REASSIGNMENT!>b<!>)<!> += 34
+        (l@ b) <!UNRESOLVED_REFERENCE!>+=<!> 34
         //repeat for b
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!VAL_REASSIGNMENT!>b<!>)<!> += 3
+        (b) <!UNRESOLVED_REFERENCE!>+=<!> 3
     }
 
     fun testArrays(a: Array<Int>, ab: Ab) {

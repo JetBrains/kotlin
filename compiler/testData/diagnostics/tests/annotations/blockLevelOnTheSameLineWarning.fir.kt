@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LATEST_LV_DIFFERENCE
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
@@ -44,8 +43,8 @@ fun foo(y: IntArray) {
     var z = 1
     @Ann1 x + z
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>@Ann1 x<!> = x + 2
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>@Ann1 x<!> += z + 2
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>@Ann1 x<!> = x + 2
+    @Ann1 x <!UNRESOLVED_REFERENCE!>+=<!> z + 2
 
     @Ann1 x + 6 * 2 > 0
     @Ann1 x * 6 + 2 > 0

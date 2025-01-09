@@ -1,3 +1,5 @@
+// LANGUAGE: -ForbidParenthesizedLhsInAssignments
+
 class Cell(var x: Int) {
     operator fun get(i: Int) = x
     operator fun set(i: Int, v: Int) { x = v }
