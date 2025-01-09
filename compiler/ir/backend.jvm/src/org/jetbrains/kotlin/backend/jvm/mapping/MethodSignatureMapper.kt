@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -369,7 +369,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             else -> Opcodes.INVOKEVIRTUAL
         }
 
-        val declaration = findSuperDeclaration(callee, isSuperCall)
+        val declaration =
+            if (isSuperCall) resolveSuperCallOfFakeOverride(callee) else findSuperDeclaration(callee)
         val signature =
             if (caller != null && caller.isBridge()) {
                 // Do not remap special builtin methods when called from a bridge. The bridges are there to provide the
@@ -396,11 +397,22 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         return null
     }
 
-    fun mapCalleeToAsmMethod(function: IrSimpleFunction, isSuperCall: Boolean = false): Method =
-        mapAsmMethod(findSuperDeclaration(function, isSuperCall))
+    // We need to resolve fake override, i.e. find the actual implementation that will be called, because super call should always invoke
+    // the most specific (in terms of generics & covariant return type override) signature, and the implementation is guaranteed to have it.
+    // Additional complexity comes from the fact that we generate additional methods in classes which inherit from interfaces. Since we
+    // don't run lowering phases on IR from dependencies, we cannot just look up the IR to find if the method is going to be there in the
+    // JVM class file, we need to reinterpret the fake override instead, in the same way that we're doing during lowering the source IR
+    // (see `ClassFakeOverrideReplacement`).
+    private fun resolveSuperCallOfFakeOverride(function: IrSimpleFunction): IrSimpleFunction {
+        fun shouldMemberBeSkipped(f: IrSimpleFunction): Boolean {
+            if (f.isFakeOverride) return context.cachedDeclarations.getClassFakeOverrideReplacement(f) is ClassFakeOverrideReplacement.None
+            if (!f.parentAsClass.isInterface) return false
+            if (f.modality == Modality.ABSTRACT) return true
+            return f.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && !f.isCompiledToJvmDefault(context.config.jvmDefaultMode)
+        }
 
-    private fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean): IrSimpleFunction =
-        findSuperDeclaration(function, isSuperCall, context.config.jvmDefaultMode)
+        return function.resolveFakeOverride(::shouldMemberBeSkipped) ?: function
+    }
 
     private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? {
         if (
@@ -474,12 +486,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     fun mapToMethodHandle(irFun: IrFunction): Handle {
         val irNonFakeFun = when (irFun) {
-            is IrConstructor ->
-                irFun
-            is IrSimpleFunction ->
-                findSuperDeclaration(irFun, false, context.config.jvmDefaultMode)
+            is IrConstructor -> irFun
+            is IrSimpleFunction -> findSuperDeclaration(irFun)
         }
-
         val irParentClass = irNonFakeFun.parent as? IrClass
             ?: throw AssertionError("Unexpected parent: ${irNonFakeFun.parent.render()}")
         val owner = typeMapper.mapOwner(irParentClass)

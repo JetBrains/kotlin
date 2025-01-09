@@ -369,7 +369,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
     // List of special bridge methods which were not implemented in Kotlin superclasses.
     private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> {
-        val targetJvmMethod = context.defaultMethodSignatureMapper.mapCalleeToAsmMethod(this)
+        val targetJvmMethod = context.defaultMethodSignatureMapper.mapAsmMethod(findSuperDeclaration(this))
         return allOverridden()
             .filter { it.parentAsClass.isInterface || it.isFromJava() }
             .mapNotNull { it.specialBridgeOrNull }

@@ -36690,6 +36690,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("superCallWithGenericSpecialization.kt")
+        public void testSuperCallWithGenericSpecialization() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/superCallWithGenericSpecialization.kt");
+        }
+
+        @Test
         @TestMetadata("suspendFunction.kt")
         public void testSuspendFunction() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/suspendFunction.kt");
@@ -36773,6 +36779,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         @TestMetadata("javaInterface.kt")
         public void testJavaInterface() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/javaInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallWithGenericSubstitution.kt")
+        public void testSuperCallWithGenericSubstitution() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/superCallWithGenericSubstitution.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallWithGenericSubstitutionAcrossModule.kt")
+        public void testSuperCallWithGenericSubstitutionAcrossModule() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/superCallWithGenericSubstitutionAcrossModule.kt");
         }
       }
 
@@ -37048,6 +37066,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("superCallWithGenericSpecialization.kt")
+        public void testSuperCallWithGenericSpecialization() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/superCallWithGenericSpecialization.kt");
+        }
+
+        @Test
         @TestMetadata("suspendFunction.kt")
         public void testSuspendFunction() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/suspendFunction.kt");
@@ -37181,6 +37205,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         @TestMetadata("superCall.kt")
         public void testSuperCall() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/superCall.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallToClass.kt")
+        public void testSuperCallToClass() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/superCallToClass.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallToJavaClass.kt")
+        public void testSuperCallToJavaClass() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/superCallToJavaClass.kt");
         }
       }
 
@@ -58273,6 +58309,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     @TestMetadata("basicproperty.kt")
     public void testBasicproperty() {
       runTest("compiler/testData/codegen/box/super/basicproperty.kt");
+    }
+
+    @Test
+    @TestMetadata("diamondWithCovariantOverride.kt")
+    public void testDiamondWithCovariantOverride() {
+      runTest("compiler/testData/codegen/box/super/diamondWithCovariantOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("diamondWithGenericSpecialization.kt")
+    public void testDiamondWithGenericSpecialization() {
+      runTest("compiler/testData/codegen/box/super/diamondWithGenericSpecialization.kt");
     }
 
     @Test

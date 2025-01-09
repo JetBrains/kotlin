@@ -31137,6 +31137,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
           runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/superCall.kt");
         }
 
+        @TestMetadata("superCallWithGenericSpecialization.kt")
+        public void testSuperCallWithGenericSpecialization() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/superCallWithGenericSpecialization.kt");
+        }
+
         @TestMetadata("suspendFunction.kt")
         public void testSuspendFunction() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/suspendFunction.kt");
@@ -31170,6 +31175,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       @TestDataPath("$PROJECT_ROOT")
       @RunWith(JUnit3RunnerWithInners.class)
       public static class DefaultCompatibilityBridges extends AbstractLightAnalysisModeTest {
+        @TestMetadata("superCallWithGenericSubstitution.kt")
+        public void ignoreSuperCallWithGenericSubstitution() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/superCallWithGenericSubstitution.kt");
+        }
+
+        @TestMetadata("superCallWithGenericSubstitutionAcrossModule.kt")
+        public void ignoreSuperCallWithGenericSubstitutionAcrossModule() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges/superCallWithGenericSubstitutionAcrossModule.kt");
+        }
+
         private void runTest(String testDataFilePath) {
           KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
@@ -31454,6 +31469,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
           runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/simpleFunction.kt");
         }
 
+        @TestMetadata("superCallWithGenericSpecialization.kt")
+        public void testSuperCallWithGenericSpecialization() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/superCallWithGenericSpecialization.kt");
+        }
+
         @TestMetadata("suspendFunction.kt")
         public void testSuspendFunction() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/suspendFunction.kt");
@@ -31584,6 +31604,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("superCall.kt")
         public void testSuperCall() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/superCall.kt");
+        }
+
+        @TestMetadata("superCallToClass.kt")
+        public void testSuperCallToClass() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/superCallToClass.kt");
+        }
+
+        @TestMetadata("superCallToJavaClass.kt")
+        public void testSuperCallToJavaClass() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/superCallToJavaClass.kt");
         }
       }
 
@@ -46636,6 +46666,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("basicproperty.kt")
     public void testBasicproperty() {
       runTest("compiler/testData/codegen/box/super/basicproperty.kt");
+    }
+
+    @TestMetadata("diamondWithCovariantOverride.kt")
+    public void testDiamondWithCovariantOverride() {
+      runTest("compiler/testData/codegen/box/super/diamondWithCovariantOverride.kt");
+    }
+
+    @TestMetadata("diamondWithGenericSpecialization.kt")
+    public void testDiamondWithGenericSpecialization() {
+      runTest("compiler/testData/codegen/box/super/diamondWithGenericSpecialization.kt");
     }
 
     @TestMetadata("enclosedFun.kt")

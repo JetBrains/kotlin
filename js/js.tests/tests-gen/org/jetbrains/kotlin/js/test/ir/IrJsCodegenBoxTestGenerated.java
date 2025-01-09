@@ -41225,6 +41225,18 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("diamondWithCovariantOverride.kt")
+    public void testDiamondWithCovariantOverride() {
+      runTest("compiler/testData/codegen/box/super/diamondWithCovariantOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("diamondWithGenericSpecialization.kt")
+    public void testDiamondWithGenericSpecialization() {
+      runTest("compiler/testData/codegen/box/super/diamondWithGenericSpecialization.kt");
+    }
+
+    @Test
     @TestMetadata("enclosedFun.kt")
     public void testEnclosedFun() {
       runTest("compiler/testData/codegen/box/super/enclosedFun.kt");
