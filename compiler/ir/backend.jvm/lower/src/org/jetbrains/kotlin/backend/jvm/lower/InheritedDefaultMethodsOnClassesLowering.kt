@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -18,19 +16,13 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.putArgument
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Adds bridge implementations in classes that inherit default implementations from interfaces.
@@ -117,89 +109,6 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
     }
 }
 
-/**
- * Redirects super interface calls to DefaultImpls.
- */
-@PhaseDescription(name = "InterfaceSuperCalls")
-internal class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
-    }
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        val superQualifierClass = expression.superQualifierSymbol?.owner
-        if (superQualifierClass == null || !superQualifierClass.isInterface || expression.isSuperToAny()) {
-            return super.visitCall(expression)
-        }
-
-        val superCallee = expression.symbol.owner
-        if (superCallee.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode, superCallee.resolveFakeOverride()))
-            return super.visitCall(expression)
-
-        val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(superCallee)
-        val newCall = createDelegatingCallWithPlaceholderTypeArguments(expression, redirectTarget, context.irBuiltIns)
-        postprocessMovedThis(newCall)
-        return super.visitCall(newCall)
-    }
-
-    private fun postprocessMovedThis(irCall: IrCall) {
-        val movedThisParameter = irCall.symbol.owner.valueParameters
-            .find { it.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER }
-            ?: return
-        val movedThisParameterIndex = movedThisParameter.indexInOldValueParameters
-        irCall.putValueArgument(
-            movedThisParameterIndex,
-            irCall.getValueArgument(movedThisParameterIndex)?.reinterpretAsDispatchReceiverOfType(movedThisParameter.type)
-        )
-    }
-}
-
-// Given a dispatch receiver expression, wrap it in REINTERPRET_CAST to the given type,
-// unless it's a value of inline class (which could be boxed at this point).
-// Avoids a CHECKCAST on a moved dispatch receiver argument.
-internal fun IrExpression.reinterpretAsDispatchReceiverOfType(irType: IrType): IrExpression =
-    if (this.type.isInlineClassType())
-        this
-    else
-        IrTypeOperatorCallImpl(
-            this.startOffset, this.endOffset,
-            irType, IrTypeOperator.REINTERPRET_CAST, irType,
-            this
-        )
-
-/**
- * Redirects interface calls with default arguments to DefaultImpls (except methods compiled to JVM defaults).
- */
-@PhaseDescription(name = "InterfaceDefaultCalls")
-internal class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-    // TODO If there are no default _implementations_ we can avoid generating defaultImpls class entirely by moving default arg dispatchers to the interface class
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
-    }
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        val callee = expression.symbol.owner
-
-        if (!callee.hasInterfaceParent() ||
-            callee.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-            callee.isSimpleFunctionCompiledToJvmDefault(context.config.jvmDefaultMode)
-        ) {
-            return super.visitCall(expression)
-        }
-
-        val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(callee)
-
-        // InterfaceLowering bridges from DefaultImpls in compatibility mode -- if that's the case,
-        // this phase will inadvertently cause a recursive loop as the bridge on the DefaultImpls
-        // gets redirected to call itself.
-        if (redirectTarget == currentFunction?.irElement) return super.visitCall(expression)
-
-        val newCall = createDelegatingCallWithPlaceholderTypeArguments(expression, redirectTarget, context.irBuiltIns)
-
-        return super.visitCall(newCall)
-    }
-}
-
 internal fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(
     jvmDefaultMode: JvmDefaultMode,
     implementation: IrSimpleFunction?,
@@ -215,34 +124,6 @@ private fun IrSimpleFunction.isCloneableClone(): Boolean =
     name.asString() == "clone" &&
             (parent as? IrClass)?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
             valueParameters.isEmpty()
-
-/**
- * Resolves calls to Object methods on interface types to virtual methods.
- */
-@PhaseDescription(name = "InterfaceObjectCalls")
-internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
-    override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildren(this, null)
-    }
-
-    override fun visitCall(expression: IrCall) {
-        expression.acceptChildren(this, null)
-
-        if (expression.superQualifierSymbol != null && !expression.isSuperToAny()) return
-
-        val callee = expression.symbol.owner
-        if (!callee.isMethodOfAny()) return
-        if (!callee.hasInterfaceParent() && expression.dispatchReceiver?.run { type.erasedUpperBound.isJvmInterface } != true) return
-
-        val resolved = callee.resolveFakeOverride() ?: return
-        expression.symbol = resolved.symbol
-        if (expression.superQualifierSymbol != null) {
-            expression.superQualifierSymbol = context.irBuiltIns.anyClass
-        }
-    }
-}
 
 /**
  * Given a fake override in a class, returns an overridden declaration with implementation in interface, such that a method delegating to that
