@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -45,6 +46,10 @@ class Fir2IrLazyPropertyForPureField(
     override var annotations: List<IrConstructorCall>
         get() = emptyList()
         set(_) = mutationNotSupported()
+
+    override var sourceLocation: IrSourceElement
+        get() = IrSourceElement(this.field.startOffset, this.field.endOffset)
+        set(_) = shouldNotBeCalled()
 
     override var startOffset: Int
         get() = this.field.startOffset

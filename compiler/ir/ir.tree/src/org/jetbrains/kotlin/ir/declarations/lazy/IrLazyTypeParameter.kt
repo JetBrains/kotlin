@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -19,8 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyTypeParameter(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override val sourceLocation: IrSourceElement,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
     override val descriptor: TypeParameterDescriptor,

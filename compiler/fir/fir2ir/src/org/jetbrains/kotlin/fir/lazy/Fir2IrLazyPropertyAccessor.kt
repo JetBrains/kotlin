@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
@@ -26,8 +27,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class Fir2IrLazyPropertyAccessor(
     c: Fir2IrComponents,
-    startOffset: Int,
-    endOffset: Int,
+    override var sourceLocation: IrSourceElement,
     origin: IrDeclarationOrigin,
     private val firAccessor: FirPropertyAccessor?,
     val isSetter: Boolean,
@@ -36,8 +36,16 @@ class Fir2IrLazyPropertyAccessor(
     symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     isFakeOverride: Boolean,
-    override var correspondingPropertySymbol: IrPropertySymbol?
-) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
+    override var correspondingPropertySymbol: IrPropertySymbol?,
+) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(
+    c,
+    sourceLocation.startOffset,
+    sourceLocation.endOffset,
+    origin,
+    symbol,
+    parent,
+    isFakeOverride
+) {
     init {
         symbol.bind(this)
         this.contextReceiverParametersCount = fir.contextParametersForFunctionOrContainingProperty().size

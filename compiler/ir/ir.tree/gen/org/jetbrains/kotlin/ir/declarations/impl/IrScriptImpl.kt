@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -26,8 +27,7 @@ class IrScriptImpl(
     override val symbol: IrScriptSymbol,
     override var name: Name,
     override val factory: IrFactory,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override val sourceLocation: IrSourceElement,
 ) : IrScript() {
     override var attributeOwnerId: IrElement = this
 

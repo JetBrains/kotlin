@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.*
@@ -897,7 +898,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     // ------------------------------------ scripts ------------------------------------
 
     fun createIrScript(script: FirScript, symbol: IrScriptSymbol): IrScript = script.convertWithOffsets { startOffset, endOffset ->
-        IrScriptImpl(symbol, script.name, IrFactoryImpl, startOffset, endOffset).also { irScript ->
+        IrScriptImpl(symbol, script.name, IrFactoryImpl, IrSourceElement(startOffset, endOffset)).also { irScript ->
             irScript.origin = SCRIPT_K2_ORIGIN
             irScript.metadata = FirMetadataSource.Script(script)
             irScript.implicitReceiversParameters = emptyList()

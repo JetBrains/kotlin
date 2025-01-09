@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -20,11 +21,8 @@ import org.jetbrains.kotlin.name.Name
 class IrModuleFragmentImpl(
     override val descriptor: ModuleDescriptor,
 ) : IrModuleFragment() {
-    override val startOffset: Int
-        get() = UNDEFINED_OFFSET
-
-    override val endOffset: Int
-        get() = UNDEFINED_OFFSET
+    override val sourceLocation: IrSourceElement
+        get() = IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
     override var attributeOwnerId: IrElement = this
 

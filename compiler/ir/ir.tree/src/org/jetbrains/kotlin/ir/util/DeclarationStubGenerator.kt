@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
@@ -143,7 +144,7 @@ abstract class DeclarationStubGenerator(
         val origin = computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareProperty(descriptor.original) {
             IrLazyProperty(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
@@ -165,7 +166,7 @@ abstract class DeclarationStubGenerator(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor), descriptor.original, descriptor.type.toIrType()
         ) {
             IrLazyField(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor),
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), computeOrigin(descriptor),
                 it, descriptor,
                 descriptor.name, descriptor.visibility,
                 isFinal = !descriptor.isVar,
@@ -197,7 +198,7 @@ abstract class DeclarationStubGenerator(
             else computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareSimpleFunction(descriptor.original) {
             IrLazyFunction(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isInline, descriptor.isExternal, descriptor.isTailrec, descriptor.isSuspend, descriptor.isExpect,
@@ -221,7 +222,7 @@ abstract class DeclarationStubGenerator(
             descriptor.original
         ) {
             IrLazyConstructor(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility,
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
@@ -263,7 +264,7 @@ abstract class DeclarationStubGenerator(
 
     private fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         IrLazyValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name,
+            IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), computeOrigin(this), IrValueParameterSymbolImpl(this), this, name,
             type, varargElementType,
             isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
             stubGenerator = this@DeclarationStubGenerator, typeTranslator = typeTranslator
@@ -310,7 +311,7 @@ abstract class DeclarationStubGenerator(
             val origin = computeOrigin(this)
             return symbolTable.descriptorExtension.declareClass(this) {
                 IrLazyClass(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                    IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                     it, this,
                     name, kind, visibility, getEffectiveModality(this),
                     isCompanion = isCompanionObject,
@@ -336,7 +337,7 @@ abstract class DeclarationStubGenerator(
         val origin = computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareEnumEntry(descriptor) {
             IrLazyEnumEntryImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                 it, descriptor,
                 this, typeTranslator
             ).generateParentDeclaration()
@@ -351,7 +352,7 @@ abstract class DeclarationStubGenerator(
         val origin = computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareGlobalTypeParameter(descriptor) {
             IrLazyTypeParameter(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                 it, descriptor,
                 descriptor.name,
                 descriptor.index,
@@ -370,7 +371,7 @@ abstract class DeclarationStubGenerator(
         val origin = computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareScopedTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
             IrLazyTypeParameter(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                 it, descriptor,
                 descriptor.name,
                 descriptor.index,
@@ -389,7 +390,7 @@ abstract class DeclarationStubGenerator(
         val origin = computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareTypeAlias(descriptor) {
             IrLazyTypeAlias(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                IrSourceElement(UNDEFINED_OFFSET, UNDEFINED_OFFSET), origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.isActual,
                 this, typeTranslator

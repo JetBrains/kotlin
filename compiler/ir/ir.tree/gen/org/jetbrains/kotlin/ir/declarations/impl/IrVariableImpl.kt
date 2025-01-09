@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -25,8 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 class IrVariableImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override val sourceLocation: IrSourceElement,
     override var origin: IrDeclarationOrigin,
     override var name: Name,
     override var type: IrType,

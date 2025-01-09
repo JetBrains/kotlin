@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
@@ -34,7 +35,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
             val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
             val isFakeOverride = fir.isFakeOverride(firContainingClass)
             Fir2IrLazySimpleFunction(
-                c, startOffset, endOffset, declarationOrigin,
+                c, IrSourceElement(startOffset, endOffset), declarationOrigin,
                 fir, firContainingClass, symbol, lazyParent, isFakeOverride
             )
         }
@@ -97,7 +98,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         val originForProperty = if (isPropertyForField) IrDeclarationOrigin.DEFINED else declarationOrigin
         return fir.convertWithOffsets { startOffset, endOffset ->
             Fir2IrLazyProperty(
-                c, startOffset, endOffset, originForProperty, fir, firContainingClass, symbols, lazyParent, isFakeOverride
+                c, IrSourceElement(startOffset, endOffset), originForProperty, fir, firContainingClass, symbols, lazyParent, isFakeOverride
             )
         }
     }
@@ -109,7 +110,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         lazyParent: IrDeclarationParent,
     ): Fir2IrLazyConstructor {
         val irConstructor = fir.convertWithOffsets { startOffset, endOffset ->
-            Fir2IrLazyConstructor(c, startOffset, endOffset, declarationOrigin, fir, symbol, lazyParent)
+            Fir2IrLazyConstructor(c, IrSourceElement(startOffset, endOffset), declarationOrigin, fir, symbol, lazyParent)
         }
 
         irConstructor.prepareTypeParameters()
@@ -156,7 +157,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
     ): Fir2IrLazyClass {
         val firClassOrigin = firClass.irOrigin(c)
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
-            Fir2IrLazyClass(c, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
+            Fir2IrLazyClass(c, IrSourceElement(startOffset, endOffset), firClassOrigin, firClass, symbol, irParent)
         }
 
         // NB: this is needed to prevent recursions in case of self bounds
@@ -172,7 +173,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
     ): Fir2IrLazyTypeAlias {
         val irTypeAlias = firTypeAlias.convertWithOffsets { startOffset, endOffset ->
             Fir2IrLazyTypeAlias(
-                c, startOffset, endOffset, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
+                c, IrSourceElement(startOffset, endOffset), IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
             )
         }
 
@@ -191,7 +192,13 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
     ): Fir2IrLazyField {
         return fir.convertWithOffsets { startOffset, endOffset ->
             Fir2IrLazyField(
-                c, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, irPropertySymbol
+                c,
+                IrSourceElement(startOffset, endOffset),
+                declarationOrigin,
+                fir,
+                (lazyParent as? Fir2IrLazyClass)?.fir,
+                symbol,
+                irPropertySymbol
             ).apply {
                 parent = lazyParent
             }

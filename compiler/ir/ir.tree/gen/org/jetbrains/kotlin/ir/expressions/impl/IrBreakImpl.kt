@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -18,8 +19,7 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrBreakImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override val sourceLocation: IrSourceElement,
     override var type: IrType,
     override var loop: IrLoop,
 ) : IrBreak() {

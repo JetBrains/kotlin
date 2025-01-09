@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.lazyMappedFunctionListVar
@@ -23,15 +24,22 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class Fir2IrLazySimpleFunction(
     c: Fir2IrComponents,
-    startOffset: Int,
-    endOffset: Int,
+    override var sourceLocation: IrSourceElement,
     origin: IrDeclarationOrigin,
     override val fir: FirSimpleFunction,
     private val firParent: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
-    isFakeOverride: Boolean
-) : AbstractFir2IrLazyFunction<FirSimpleFunction>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
+    isFakeOverride: Boolean,
+) : AbstractFir2IrLazyFunction<FirSimpleFunction>(
+    c,
+    sourceLocation.startOffset,
+    sourceLocation.endOffset,
+    origin,
+    symbol,
+    parent,
+    isFakeOverride
+) {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

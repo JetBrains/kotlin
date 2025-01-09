@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,8 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyFunction(
-    startOffset: Int,
-    endOffset: Int,
+    override var sourceLocation: IrSourceElement,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override val descriptor: FunctionDescriptor,
@@ -50,9 +51,9 @@ class IrLazyFunction(
         this.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
     }
 
-    override var startOffset: Int = startOffset
+    override var startOffset: Int = sourceLocation.startOffset
         set(_) = shouldNotBeCalled()
-    override var endOffset: Int = endOffset
+    override var endOffset: Int = sourceLocation.endOffset
         set(_) = shouldNotBeCalled()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

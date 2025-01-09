@@ -21,24 +21,26 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 
 fun IrBlockImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin? = null,
 ) = IrBlockImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
 )
 
 fun IrBlockImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin? = null,
     statements: List<IrStatement>,
 ) = IrBlockImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
 ).apply {
@@ -46,66 +48,61 @@ fun IrBlockImpl(
 }
 
 fun IrBranchImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     condition: IrExpression,
     result: IrExpression,
 ) = IrBranchImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
-    condition = condition,
-    result = result,
-)
-
-fun IrBranchImpl(
-    condition: IrExpression,
-    result: IrExpression,
-) = IrBranchImpl(
-    constructorIndicator = null,
-    sourceLocation = IrSourceElement(condition.startOffset, result.endOffset),
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     condition = condition,
     result = result,
 )
 
 fun IrBreakImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     loop: IrLoop,
 ) = IrBreakImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     loop = loop,
 )
 
 fun IrCompositeImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin? = null,
 ) = IrCompositeImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
 )
 
 fun IrCatchImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     catchParameter: IrVariable,
 ) = IrCatchImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     catchParameter = catchParameter,
     origin = null
 )
 
 fun IrCatchImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     catchParameter: IrVariable,
     result: IrExpression,
     origin: IrStatementOrigin? = null
 ) = IrCatchImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     catchParameter = catchParameter,
     origin = origin
 ).apply {
@@ -113,39 +110,42 @@ fun IrCatchImpl(
 }
 
 fun IrClassReferenceImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrClassifierSymbol,
     classType: IrType,
 ) = IrClassReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     classType = classType,
 )
 
 fun IrConstantArrayImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     initElements: List<IrConstantValue>,
 ) = IrConstantArrayImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
 ).apply {
     elements.addAll(initElements)
 }
 
 fun IrConstantObjectImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     constructor: IrConstructorSymbol,
     initValueArguments: List<IrConstantValue>,
     initTypeArguments: List<IrType>,
     type: IrType = constructor.owner.constructedClassType,
 ) = IrConstantObjectImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     constructor = constructor,
     type = type,
 ).apply {
@@ -154,132 +154,133 @@ fun IrConstantObjectImpl(
 }
 
 fun IrConstantPrimitiveImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     value: IrConst,
 ) = IrConstantPrimitiveImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     value = value,
     type = value.type,
 )
 
 fun <T> IrConstImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     kind: IrConstKind,
     value: T,
 ) = IrConstImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     kind = kind,
     value = value,
 )
 
 fun IrContinueImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     loop: IrLoop,
 ) = IrContinueImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     loop = loop,
 )
 
 fun IrDoWhileLoopImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin?,
 ) = IrDoWhileLoopImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
 )
 
 fun IrDynamicMemberExpressionImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     memberName: String,
     receiver: IrExpression,
 ) = IrDynamicMemberExpressionImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     memberName = memberName,
     receiver = receiver,
 )
 
 fun IrDynamicOperatorExpressionImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     operator: IrDynamicOperator,
 ) = IrDynamicOperatorExpressionImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     operator = operator,
 )
 
 fun IrElseBranchImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     condition: IrExpression,
     result: IrExpression,
 ) = IrElseBranchImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
-    condition = condition,
-    result = result,
-)
-
-fun IrElseBranchImpl(
-    condition: IrExpression,
-    result: IrExpression,
-) = IrElseBranchImpl(
-    constructorIndicator = null,
-    sourceLocation = IrSourceElement(condition.startOffset, result.endOffset),
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     condition = condition,
     result = result,
 )
 
 fun IrErrorCallExpressionImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     description: String,
 ) = IrErrorCallExpressionImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     description = description,
 )
 
 fun IrErrorExpressionImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     description: String,
 ) = IrErrorExpressionImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     description = description,
 )
 
 fun IrFunctionExpressionImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     function: IrSimpleFunction,
     origin: IrStatementOrigin,
 ) = IrFunctionExpressionImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     function = function,
     origin = origin,
 )
 
 fun IrRichFunctionReferenceImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     reflectionTargetSymbol: IrFunctionSymbol?,
     overriddenFunctionSymbol: IrSimpleFunctionSymbol,
@@ -291,7 +292,7 @@ fun IrRichFunctionReferenceImpl(
     isRestrictedSuspension: Boolean = false,
 ) = IrRichFunctionReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     reflectionTargetSymbol = reflectionTargetSymbol,
     overriddenFunctionSymbol = overriddenFunctionSymbol,
@@ -304,7 +305,8 @@ fun IrRichFunctionReferenceImpl(
 )
 
 fun IrRichPropertyReferenceImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol?,
     getterFunction: IrSimpleFunction,
@@ -312,7 +314,7 @@ fun IrRichPropertyReferenceImpl(
     origin: IrStatementOrigin? = null
 ) = IrRichPropertyReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     reflectionTargetSymbol = reflectionTargetSymbol,
     getterFunction = getterFunction,
@@ -321,36 +323,39 @@ fun IrRichPropertyReferenceImpl(
 )
 
 fun IrGetClassImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     argument: IrExpression,
 ) = IrGetClassImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     argument = argument,
 )
 
 fun IrGetEnumValueImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrEnumEntrySymbol,
 ) = IrGetEnumValueImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
 )
 
 fun IrGetFieldImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     symbol: IrFieldSymbol,
     type: IrType,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
 ) = IrGetFieldImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     symbol = symbol,
     type = type,
     origin = origin,
@@ -358,7 +363,8 @@ fun IrGetFieldImpl(
 )
 
 fun IrGetFieldImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     symbol: IrFieldSymbol,
     type: IrType,
     receiver: IrExpression?,
@@ -366,7 +372,7 @@ fun IrGetFieldImpl(
     superQualifierSymbol: IrClassSymbol? = null,
 ) = IrGetFieldImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     symbol = symbol,
     type = type,
     origin = origin,
@@ -376,43 +382,47 @@ fun IrGetFieldImpl(
 }
 
 fun IrGetObjectValueImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrClassSymbol,
 ) = IrGetObjectValueImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
 )
 
 fun IrGetValueImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrValueSymbol,
     origin: IrStatementOrigin? = null,
 ) = IrGetValueImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
 )
 
 fun IrGetValueImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     symbol: IrValueSymbol,
     origin: IrStatementOrigin? = null,
 ) = IrGetValueImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = symbol.owner.type,
     symbol = symbol,
     origin = origin,
 )
 
 fun IrInlinedFunctionBlockImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     inlinedFunctionSymbol: IrFunctionSymbol?,
     inlinedFunctionStartOffset: Int,
@@ -421,7 +431,7 @@ fun IrInlinedFunctionBlockImpl(
     origin: IrStatementOrigin? = null,
 ) = IrInlinedFunctionBlockImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     inlinedFunctionSymbol = inlinedFunctionSymbol,
     inlinedFunctionStartOffset = inlinedFunctionStartOffset,
@@ -431,7 +441,8 @@ fun IrInlinedFunctionBlockImpl(
 )
 
 fun IrInlinedFunctionBlockImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     inlinedFunctionSymbol: IrFunctionSymbol?,
     inlinedFunctionStartOffset: Int,
@@ -441,7 +452,7 @@ fun IrInlinedFunctionBlockImpl(
     statements: List<IrStatement>,
 ) = IrInlinedFunctionBlockImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     inlinedFunctionSymbol = inlinedFunctionSymbol,
     inlinedFunctionStartOffset = inlinedFunctionStartOffset,
@@ -453,49 +464,53 @@ fun IrInlinedFunctionBlockImpl(
 }
 
 fun IrInstanceInitializerCallImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     classSymbol: IrClassSymbol,
     type: IrType,
 ) = IrInstanceInitializerCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     classSymbol = classSymbol,
     type = type,
 )
 
 fun IrRawFunctionReferenceImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrFunctionSymbol,
 ) = IrRawFunctionReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
 )
 
 fun IrReturnableBlockImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrReturnableBlockSymbol,
     origin: IrStatementOrigin? = null,
 ) = IrReturnableBlockImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
 )
 
 fun IrReturnableBlockImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrReturnableBlockSymbol,
     origin: IrStatementOrigin?,
     statements: List<IrStatement>,
 ) = IrReturnableBlockImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -504,14 +519,15 @@ fun IrReturnableBlockImpl(
 }
 
 fun IrSetFieldImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     symbol: IrFieldSymbol,
     type: IrType,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
 ) = IrSetFieldImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     symbol = symbol,
     type = type,
     origin = origin,
@@ -519,7 +535,7 @@ fun IrSetFieldImpl(
 )
 
 fun IrSetFieldImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int, endOffset: Int,
     symbol: IrFieldSymbol,
     receiver: IrExpression?,
     value: IrExpression,
@@ -528,7 +544,7 @@ fun IrSetFieldImpl(
     superQualifierSymbol: IrClassSymbol? = null,
 ) = IrSetFieldImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     symbol = symbol,
     type = type,
     origin = origin,
@@ -539,7 +555,8 @@ fun IrSetFieldImpl(
 }
 
 fun IrSetValueImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrValueSymbol,
     value: IrExpression,
@@ -550,7 +567,7 @@ fun IrSetValueImpl(
     }
     return IrSetValueImpl(
         constructorIndicator = null,
-        sourceLocation = sourceLocation,
+        sourceLocation = IrSourceElement(startOffset, endOffset),
         type = type,
         symbol = symbol,
         value = value,
@@ -559,57 +576,62 @@ fun IrSetValueImpl(
 }
 
 fun IrSpreadElementImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     expression: IrExpression,
 ) = IrSpreadElementImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     expression = expression,
 )
 
 fun IrStringConcatenationImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
 ) = IrStringConcatenationImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
 )
 
 fun IrStringConcatenationImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     arguments: Collection<IrExpression>,
 ) = IrStringConcatenationImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
 ).apply {
     this.arguments.addAll(arguments)
 }
 
 fun IrSuspendableExpressionImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     suspensionPointId: IrExpression,
     result: IrExpression,
 ) = IrSuspendableExpressionImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     suspensionPointId = suspensionPointId,
     result = result,
 )
 
 fun IrSuspensionPointImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     suspensionPointIdParameter: IrVariable,
     result: IrExpression,
     resumeResult: IrExpression,
 ) = IrSuspensionPointImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     suspensionPointIdParameter = suspensionPointIdParameter,
     result = result,
@@ -617,43 +639,47 @@ fun IrSuspensionPointImpl(
 )
 
 fun IrSyntheticBodyImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     kind: IrSyntheticBodyKind,
 ) = IrSyntheticBodyImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     kind = kind,
 )
 
 fun IrThrowImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     value: IrExpression,
 ) = IrThrowImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     value = value,
 )
 
 fun IrTryImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
 ) = IrTryImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
 )
 
 fun IrTryImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     tryResult: IrExpression,
     catches: List<IrCatch>,
     finallyExpression: IrExpression?,
 ) = IrTryImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
 ).apply {
     this.tryResult = tryResult
@@ -662,14 +688,15 @@ fun IrTryImpl(
 }
 
 fun IrTypeOperatorCallImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     operator: IrTypeOperator,
     typeOperand: IrType,
     argument: IrExpression,
 ) = IrTypeOperatorCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     operator = operator,
     typeOperand = typeOperand,
@@ -677,24 +704,26 @@ fun IrTypeOperatorCallImpl(
 )
 
 fun IrVarargImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     varargElementType: IrType,
 ) = IrVarargImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     varargElementType = varargElementType,
 )
 
 fun IrVarargImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     varargElementType: IrType,
     elements: List<IrVarargElement>,
 ) = IrVarargImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     varargElementType = varargElementType,
 ).apply {
@@ -702,24 +731,26 @@ fun IrVarargImpl(
 }
 
 fun IrWhenImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin? = null,
 ) = IrWhenImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
 )
 
 fun IrWhenImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin?,
     branches: List<IrBranch>,
 ) = IrWhenImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
 ).apply {
@@ -727,12 +758,13 @@ fun IrWhenImpl(
 }
 
 fun IrWhileLoopImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin?,
 ) = IrWhileLoopImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
 )
@@ -750,7 +782,8 @@ private fun IrFunctionSymbol.getRealOwner(): IrFunction {
  * If it may be not, use [IrCallImplWithShape].
  */
 fun IrCallImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int = symbol.getRealOwner().typeParameters.size,
@@ -758,7 +791,7 @@ fun IrCallImpl(
     superQualifierSymbol: IrClassSymbol? = null,
 ): IrCallImpl = IrCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -772,7 +805,8 @@ fun IrCallImpl(
  * Prefer [IrCallImpl], unless [symbol] may be unbound.
  */
 fun IrCallImplWithShape(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int,
@@ -784,7 +818,7 @@ fun IrCallImplWithShape(
     superQualifierSymbol: IrClassSymbol? = null,
 ): IrCallImpl = IrCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -804,7 +838,8 @@ fun IrCallImplWithShape(
  * If it may be not, use [IrConstructorCallImplWithShape].
  */
 fun IrConstructorCallImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
@@ -813,7 +848,7 @@ fun IrConstructorCallImpl(
     source: SourceElement = SourceElement.NO_SOURCE,
 ): IrConstructorCallImpl = IrConstructorCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -828,7 +863,8 @@ fun IrConstructorCallImpl(
  * Prefer [IrConstructorCallImpl], unless [symbol] may be unbound.
  */
 fun IrConstructorCallImplWithShape(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
@@ -841,7 +877,7 @@ fun IrConstructorCallImplWithShape(
     source: SourceElement = SourceElement.NO_SOURCE,
 ): IrConstructorCallImpl = IrConstructorCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -862,14 +898,15 @@ fun IrConstructorCallImplWithShape(
  * If it may be not, use [IrDelegatingConstructorCallImplWithShape].
  */
 fun IrDelegatingConstructorCallImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
 ): IrDelegatingConstructorCallImpl = IrDelegatingConstructorCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -882,7 +919,8 @@ fun IrDelegatingConstructorCallImpl(
  * Prefer [IrDelegatingConstructorCallImpl], unless [symbol] may be unbound.
  */
 fun IrDelegatingConstructorCallImplWithShape(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
@@ -893,7 +931,7 @@ fun IrDelegatingConstructorCallImplWithShape(
     origin: IrStatementOrigin? = null,
 ): IrDelegatingConstructorCallImpl = IrDelegatingConstructorCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -912,14 +950,15 @@ fun IrDelegatingConstructorCallImplWithShape(
  * If it may be not, use [IrEnumConstructorCallImplWithShape].
  */
 fun IrEnumConstructorCallImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
 ): IrEnumConstructorCallImpl = IrEnumConstructorCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -932,7 +971,8 @@ fun IrEnumConstructorCallImpl(
  * Prefer [IrEnumConstructorCallImpl], unless [symbol] may be unbound.
  */
 fun IrEnumConstructorCallImplWithShape(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
@@ -943,7 +983,7 @@ fun IrEnumConstructorCallImplWithShape(
     origin: IrStatementOrigin? = null,
 ): IrEnumConstructorCallImpl = IrEnumConstructorCallImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     origin = origin,
@@ -963,7 +1003,8 @@ fun IrEnumConstructorCallImplWithShape(
  * If it may be not, use [IrFunctionReferenceImplWithShape].
  */
 fun IrFunctionReferenceImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
@@ -971,7 +1012,7 @@ fun IrFunctionReferenceImpl(
     origin: IrStatementOrigin? = null,
 ): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
     symbol = symbol,
@@ -985,7 +1026,8 @@ fun IrFunctionReferenceImpl(
  * Prefer [IrFunctionReferenceImpl], unless [symbol] may be unbound.
  */
 fun IrFunctionReferenceImplWithShape(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
@@ -997,7 +1039,7 @@ fun IrFunctionReferenceImplWithShape(
     origin: IrStatementOrigin? = null,
 ): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     origin = origin,
     symbol = symbol,
@@ -1013,7 +1055,8 @@ fun IrFunctionReferenceImplWithShape(
 }
 
 fun IrLocalDelegatedPropertyReferenceImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrLocalDelegatedPropertySymbol,
     delegate: IrVariableSymbol,
@@ -1022,7 +1065,7 @@ fun IrLocalDelegatedPropertyReferenceImpl(
     origin: IrStatementOrigin? = null,
 ): IrLocalDelegatedPropertyReferenceImpl = IrLocalDelegatedPropertyReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     delegate = delegate,
@@ -1043,7 +1086,8 @@ fun IrLocalDelegatedPropertyReferenceImpl(
  * If it may be not, use [IrPropertyReferenceImplWithShape].
  */
 fun IrPropertyReferenceImpl(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrPropertySymbol,
     typeArgumentsCount: Int,
@@ -1053,7 +1097,7 @@ fun IrPropertyReferenceImpl(
     origin: IrStatementOrigin? = null,
 ): IrPropertyReferenceImpl = IrPropertyReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     field = field,
@@ -1069,7 +1113,8 @@ fun IrPropertyReferenceImpl(
  * Prefer [IrPropertyReferenceImpl], unless [symbol] may be unbound.
  */
 fun IrPropertyReferenceImplWithShape(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrPropertySymbol,
     hasDispatchReceiver: Boolean,
@@ -1081,7 +1126,7 @@ fun IrPropertyReferenceImplWithShape(
     origin: IrStatementOrigin? = null,
 ): IrPropertyReferenceImpl = IrPropertyReferenceImpl(
     constructorIndicator = null,
-    sourceLocation = sourceLocation,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     type = type,
     symbol = symbol,
     field = field,
@@ -1101,7 +1146,8 @@ fun IrPropertyReferenceImplWithShape(
 
 @ObsoleteDescriptorBasedAPI
 fun IrCallImpl.Companion.fromSymbolDescriptor(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrSimpleFunctionSymbol,
     origin: IrStatementOrigin? = null,
@@ -1109,7 +1155,7 @@ fun IrCallImpl.Companion.fromSymbolDescriptor(
 ): IrCallImpl {
     val descriptor = symbol.descriptor
     return IrCallImplWithShape(
-        sourceLocation, type, symbol,
+        startOffset, endOffset, type, symbol,
         typeArgumentsCount = descriptor.typeParametersCount,
         valueArgumentsCount = descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
         contextParameterCount = descriptor.contextReceiverParameters.size,
@@ -1121,20 +1167,23 @@ fun IrCallImpl.Companion.fromSymbolDescriptor(
 }
 
 fun IrCallImpl.Companion.fromSymbolOwner(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrSimpleFunctionSymbol,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
 ): IrCallImpl =
-    IrCallImpl(sourceLocation, type, symbol, origin = origin, superQualifierSymbol = superQualifierSymbol)
+    IrCallImpl(startOffset, endOffset, type, symbol, origin = origin, superQualifierSymbol = superQualifierSymbol)
 
 fun IrCallImpl.Companion.fromSymbolOwner(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     symbol: IrSimpleFunctionSymbol,
 ): IrCallImpl =
     IrCallImpl(
-        sourceLocation,
+        startOffset,
+        endOffset,
         symbol.owner.returnType,
         symbol,
         origin = null,
@@ -1144,7 +1193,8 @@ fun IrCallImpl.Companion.fromSymbolOwner(
 
 @ObsoleteDescriptorBasedAPI
 fun IrConstructorCallImpl.Companion.fromSymbolDescriptor(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     constructorSymbol: IrConstructorSymbol,
     origin: IrStatementOrigin? = null,
@@ -1154,7 +1204,7 @@ fun IrConstructorCallImpl.Companion.fromSymbolDescriptor(
     val totalTypeParametersCount = constructorDescriptor.typeParameters.size
     val valueParametersCount = constructorDescriptor.valueParameters.size + constructorDescriptor.contextReceiverParameters.size
     return IrConstructorCallImplWithShape(
-        sourceLocation,
+        startOffset, endOffset,
         type,
         constructorSymbol,
         typeArgumentsCount = totalTypeParametersCount,
@@ -1168,7 +1218,8 @@ fun IrConstructorCallImpl.Companion.fromSymbolDescriptor(
 }
 
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     constructorSymbol: IrConstructorSymbol,
     classTypeParametersCount: Int,
@@ -1179,7 +1230,7 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     val totalTypeParametersCount = classTypeParametersCount + constructorTypeParametersCount
 
     return IrConstructorCallImpl(
-        sourceLocation,
+        startOffset, endOffset,
         type,
         constructorSymbol,
         totalTypeParametersCount,
@@ -1189,36 +1240,28 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
 }
 
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     constructorSymbol: IrConstructorSymbol,
     origin: IrStatementOrigin? = null,
 ): IrConstructorCallImpl {
     val constructedClass = constructorSymbol.owner.parentAsClass
     val classTypeParametersCount = constructedClass.typeParameters.size
-    return fromSymbolOwner(sourceLocation, type, constructorSymbol, classTypeParametersCount, origin)
+    return fromSymbolOwner(startOffset, endOffset, type, constructorSymbol, classTypeParametersCount, origin)
 }
-
-fun IrConstructorCallImpl.Companion.fromSymbolOwner(
-    type: IrType,
-    constructorSymbol: IrConstructorSymbol,
-    origin: IrStatementOrigin? = null,
-): IrConstructorCallImpl =
-    fromSymbolOwner(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
-        origin
-    )
 
 @ObsoleteDescriptorBasedAPI
 fun IrEnumConstructorCallImpl.Companion.fromSymbolDescriptor(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
 ): IrEnumConstructorCallImpl {
     val descriptor = symbol.descriptor
     return IrEnumConstructorCallImplWithShape(
-        sourceLocation, type, symbol,
+        startOffset, endOffset, type, symbol,
         typeArgumentsCount = typeArgumentsCount,
         valueArgumentsCount = descriptor.valueParameters.size + descriptor.contextReceiverParameters.size,
         contextParameterCount = descriptor.contextReceiverParameters.size,
@@ -1230,13 +1273,14 @@ fun IrEnumConstructorCallImpl.Companion.fromSymbolDescriptor(
 
 @ObsoleteDescriptorBasedAPI
 fun IrDelegatingConstructorCallImpl.Companion.fromSymbolDescriptor(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
 ): IrDelegatingConstructorCallImpl {
     val descriptor = symbol.descriptor
     return IrDelegatingConstructorCallImplWithShape(
-        sourceLocation, type, symbol,
+        startOffset, endOffset, type, symbol,
         typeArgumentsCount = descriptor.typeParametersCount,
         valueArgumentsCount = descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
         contextParameterCount = descriptor.contextReceiverParameters.size,
@@ -1247,23 +1291,25 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolDescriptor(
 
 @UnsafeDuringIrConstructionAPI
 fun IrDelegatingConstructorCallImpl.Companion.fromSymbolOwner(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int = symbol.owner.allTypeParameters.size,
 ): IrDelegatingConstructorCallImpl =
-    IrDelegatingConstructorCallImpl(sourceLocation, type, symbol, typeArgumentsCount)
+    IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount)
 
 
 @ObsoleteDescriptorBasedAPI
 fun IrFunctionReferenceImpl.Companion.fromSymbolDescriptor(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrFunctionSymbol,
     reflectionTarget: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null,
 ): IrFunctionReferenceImpl = IrFunctionReferenceImplWithShape(
-    sourceLocation = sourceLocation,
+    startOffset = startOffset, endOffset = endOffset,
     type = type,
     symbol = symbol,
     typeArgumentsCount = symbol.descriptor.typeParametersCount,
@@ -1276,14 +1322,15 @@ fun IrFunctionReferenceImpl.Companion.fromSymbolDescriptor(
 )
 
 fun IrFunctionReferenceImpl.Companion.fromSymbolOwner(
-    sourceLocation: IrSourceElement,
+    startOffset: Int,
+    endOffset: Int,
     type: IrType,
     symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     reflectionTarget: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null,
 ): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
-    sourceLocation,
+    startOffset, endOffset,
     type,
     symbol,
     typeArgumentsCount,

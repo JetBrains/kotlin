@@ -526,7 +526,7 @@ sealed class AbstractKtSourceElement {
     }
 }
 
-class IrSourceElement(
+data class IrSourceElement(
     override val startOffset: Int,
     override val endOffset: Int,
 ) : AbstractKtSourceElement()

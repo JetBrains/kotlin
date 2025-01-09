@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -77,7 +78,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     // ------------------------------------ script ------------------------------------
 
     override fun defaultScriptFactory(startOffset: Int, endOffset: Int, script: ScriptDescriptor, symbol: IrScriptSymbol): IrScript {
-        return IrScriptImpl(symbol, nameProvider.nameForDeclaration(script), irFactory, startOffset, endOffset)
+        return IrScriptImpl(symbol, nameProvider.nameForDeclaration(script), irFactory, IrSourceElement(startOffset, endOffset))
     }
 
     override fun createScriptSymbol(declaration: ScriptDescriptor, signature: IdSignature?): IrScriptSymbol {

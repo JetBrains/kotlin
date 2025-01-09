@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
@@ -23,8 +24,7 @@ fun IrVariableImpl(
     isLateinit: Boolean,
 ): IrVariableImpl = IrVariableImpl(
     constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
+    sourceLocation = IrSourceElement(startOffset, endOffset),
     origin = origin,
     symbol = symbol,
     name = name,

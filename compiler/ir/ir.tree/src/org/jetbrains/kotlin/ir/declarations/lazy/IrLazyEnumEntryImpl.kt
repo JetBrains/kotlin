@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -32,8 +33,7 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyEnumEntryImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var sourceLocation: IrSourceElement,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
     override val descriptor: ClassDescriptor,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -38,8 +39,7 @@ import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyField(
     private val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override val sourceLocation: IrSourceElement,
     override var origin: IrDeclarationOrigin,
     override val fir: FirField,
     val containingClass: FirRegularClass?,

@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -24,8 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
-    override var startOffset: Int,
-    override var endOffset: Int,
+    override var sourceLocation: IrSourceElement,
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,

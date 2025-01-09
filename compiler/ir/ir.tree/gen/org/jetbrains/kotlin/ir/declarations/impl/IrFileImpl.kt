@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -26,11 +27,8 @@ class IrFileImpl(
     override val symbol: IrFileSymbol,
     override var packageFqName: FqName,
 ) : IrFile() {
-    override val startOffset: Int
-        get() = 0
-
-    override val endOffset: Int
-        get() = fileEntry.maxOffset
+    override val sourceLocation: IrSourceElement
+        get() = IrSourceElement(0, fileEntry.maxOffset)
 
     override var attributeOwnerId: IrElement = this
 

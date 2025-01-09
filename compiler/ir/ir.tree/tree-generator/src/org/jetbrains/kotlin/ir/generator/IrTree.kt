@@ -99,19 +99,15 @@ object IrTree : AbstractTreeBuilder() {
         needTransformMethod()
         transformByChildren = true
 
-        fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = false) {
+        +field("sourceLocation", type(Packages.root, "IrSourceElement"), mutable = false) {
             kDoc = """
-            The $prefix offset of the syntax node from which this IR node was generated,
+            The start and end offset of the syntax node from which this IR node was generated,
             in number of characters from the start of the source file. If there is no source information for this IR node,
             the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column number from this offset,
             [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
-            
             @see IrFileEntry.getSourceRangeInfo
             """.trimIndent()
         }
-
-        +offsetField("start")
-        +offsetField("end")
 
         +field("attributeOwnerId", rootElement, isChild = false) {
             deepCopyExcludeFromApply = true
@@ -122,6 +118,22 @@ object IrTree : AbstractTreeBuilder() {
         }
 
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."
+
+        generationCallback = {
+            println()
+            printPropertyDeclaration("startOffset", int, VariableKind.VAL)
+            println()
+            withIndent {
+                println("get() = sourceLocation.startOffset")
+            }
+
+            println()
+            printPropertyDeclaration("endOffset", int, VariableKind.VAL)
+            println()
+            withIndent {
+                println("get() = sourceLocation.endOffset")
+            }
+        }
     }
     val statement: Element by element(Other)
 
@@ -210,12 +222,29 @@ object IrTree : AbstractTreeBuilder() {
 
         // These fields are made mutable here to allow converting fake overrides to non-fake overrides
         // (for example, to delegated members) and replacing their debug info without performing a full copy.
-        +field("startOffset", int, mutable = true)
-        +field("endOffset", int, mutable = true)
+        +field("sourceLocation", type(Packages.root, "IrSourceElement"), mutable = true)
+
 
         +declaredSymbol(s)
         +field("isFakeOverride", boolean)
         +referencedSymbolList("overriddenSymbols", s)
+
+        generationCallback = {
+            println()
+            printPropertyDeclaration("startOffset", int, VariableKind.VAR, override = true)
+            println()
+            withIndent {
+                println("get() = sourceLocation.startOffset")
+                println("set(value) { sourceLocation = sourceLocation.copy(startOffset = value) }")
+            }
+            println()
+            printPropertyDeclaration("endOffset", int, VariableKind.VAR, override = true)
+            println()
+            withIndent {
+                println("get() = sourceLocation.endOffset")
+                println("set(value) { sourceLocation = sourceLocation.copy(endOffset = value) }")
+            }
+        }
     }
     val memberWithContainerSource: Element by element(Declaration) {
         parent(declarationWithName)
@@ -470,7 +499,7 @@ object IrTree : AbstractTreeBuilder() {
     val moduleFragment: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         +descriptor("ModuleDescriptor").apply {
             optInAnnotation = null
         }
@@ -607,7 +636,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
-        
+
         kDoc = """
             This is a root parent element for external declarations (meaning those that come from
             another compilation unit/module, not to be confused with [IrPossiblyExternalDeclaration.isExternal]). 

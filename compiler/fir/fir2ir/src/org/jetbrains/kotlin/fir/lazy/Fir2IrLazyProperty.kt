@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -42,8 +43,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrLazyProperty(
     private val c: Fir2IrComponents,
-    startOffset: Int,
-    endOffset: Int,
+    override var sourceLocation: IrSourceElement,
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
@@ -53,9 +53,9 @@ class Fir2IrLazyProperty(
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
     override val symbol: IrPropertySymbol = symbols.propertySymbol
 
-    override var startOffset: Int = startOffset
+    override var startOffset: Int = sourceLocation.startOffset
         set(_) = shouldNotBeCalled()
-    override var endOffset: Int = endOffset
+    override var endOffset: Int = sourceLocation.endOffset
         set(_) = shouldNotBeCalled()
 
     init {
@@ -201,7 +201,7 @@ class Fir2IrLazyProperty(
 
     override var getter: IrSimpleFunction? = symbols.getterSymbol?.let {
         Fir2IrLazyPropertyAccessor(
-            c, startOffset, endOffset,
+            c, IrSourceElement(startOffset, endOffset),
             origin = when {
                 origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                 fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
@@ -226,7 +226,7 @@ class Fir2IrLazyProperty(
     override var setter: IrSimpleFunction? = run {
         if (!fir.isVar || symbols.setterSymbol == null) return@run null
         Fir2IrLazyPropertyAccessor(
-            c, startOffset, endOffset,
+            c, IrSourceElement(startOffset, endOffset),
             origin = when {
                 origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                 fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR

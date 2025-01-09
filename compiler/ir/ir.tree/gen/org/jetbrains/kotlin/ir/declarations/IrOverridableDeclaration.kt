@@ -8,19 +8,26 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.overridableDeclaration]
  */
 sealed interface IrOverridableDeclaration<S : IrSymbol> : IrOverridableMember {
-    override var startOffset: Int
-
-    override var endOffset: Int
+    override var sourceLocation: IrSourceElement
 
     override val symbol: S
 
     var isFakeOverride: Boolean
 
     var overriddenSymbols: List<S>
+
+    override var startOffset: Int
+        get() = sourceLocation.startOffset
+        set(value) { sourceLocation = sourceLocation.copy(startOffset = value) }
+
+    override var endOffset: Int
+        get() = sourceLocation.endOffset
+        set(value) { sourceLocation = sourceLocation.copy(endOffset = value) }
 }

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
+import org.jetbrains.kotlin.IrSourceElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -41,8 +42,7 @@ open class IrFactory(
         isStatic: Boolean = false,
     ): IrAnonymousInitializer =
         IrAnonymousInitializerImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             isStatic = isStatic,
@@ -69,8 +69,7 @@ open class IrFactory(
         source: SourceElement = SourceElement.NO_SOURCE,
     ): IrClass =
         IrClassImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -105,8 +104,7 @@ open class IrFactory(
         containerSource: DeserializedContainerSource? = null,
     ): IrConstructor =
         IrConstructorImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -131,8 +129,7 @@ open class IrFactory(
         symbol: IrEnumEntrySymbol,
     ): IrEnumEntry =
         IrEnumEntryImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -146,8 +143,7 @@ open class IrFactory(
         descriptor: DeclarationDescriptor? = null,
     ): IrErrorDeclaration =
         IrErrorDeclarationImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             factory = this,
             origin = IrDeclarationOrigin.DEFINED,
         ).declarationCreated().apply {
@@ -167,8 +163,7 @@ open class IrFactory(
         isExternal: Boolean = false,
     ): IrField =
         IrFieldImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -200,8 +195,7 @@ open class IrFactory(
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     ): IrSimpleFunction =
         IrFunctionImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -241,8 +235,7 @@ open class IrFactory(
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     ): IrFunctionWithLateBinding =
         IrFunctionWithLateBindingImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             name = name,
             visibility = visibility,
@@ -272,8 +265,7 @@ open class IrFactory(
         isVar: Boolean,
     ): IrLocalDelegatedProperty =
         IrLocalDelegatedPropertyImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -300,8 +292,7 @@ open class IrFactory(
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     ): IrProperty =
         IrPropertyImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -334,8 +325,7 @@ open class IrFactory(
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     ): IrPropertyWithLateBinding =
         IrPropertyWithLateBindingImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             name = name,
             visibility = visibility,
@@ -361,8 +351,7 @@ open class IrFactory(
         expandedType: IrType,
     ): IrTypeAlias =
         IrTypeAliasImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             symbol = symbol,
             name = name,
             visibility = visibility,
@@ -383,8 +372,7 @@ open class IrFactory(
         isReified: Boolean,
     ): IrTypeParameter =
         IrTypeParameterImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -412,8 +400,7 @@ open class IrFactory(
         isHidden: Boolean,
     ): IrValueParameter =
         IrValueParameterImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -441,8 +428,7 @@ open class IrFactory(
         isHidden: Boolean,
     ): IrValueParameter =
         IrValueParameterImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             origin = origin,
             symbol = symbol,
             name = name,
@@ -496,8 +482,7 @@ open class IrFactory(
     ): IrExpressionBody =
         IrExpressionBodyImpl(
             constructorIndicator = null,
-            startOffset = startOffset,
-            endOffset = endOffset,
+            sourceLocation = IrSourceElement(startOffset, endOffset),
             expression = expression
         )
 
@@ -507,7 +492,6 @@ open class IrFactory(
     ): IrBlockBody =
         IrBlockBodyImpl(
             constructorIndicator = null,
-            startOffset = startOffset,
-            endOffset = endOffset
+            sourceLocation = IrSourceElement(startOffset, endOffset),
         )
 }

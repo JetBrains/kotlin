@@ -145,8 +145,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(moduleFragment) {
             implementation.putImplementationOptInInConstructor = false
-            default("startOffset", undefinedOffset(), withGetter = true)
-            default("endOffset", undefinedOffset(), withGetter = true)
+            default("sourceLocation", undefinedSourceLocation(), withGetter = true)
             default("name", "descriptor.name", withGetter = true)
         }
 
@@ -166,8 +165,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             additionalImports(
                 ArbitraryImportable(Packages.descriptors, "ModuleDescriptor"),
             )
-            default("startOffset", undefinedOffset(), withGetter = true)
-            default("endOffset", undefinedOffset(), withGetter = true)
+            default("sourceLocation", undefinedSourceLocation(), withGetter = true)
             implementation.generationCallback = {
                 println()
                 printlnMultiLine(
@@ -188,8 +186,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(file) {
             implementation.putImplementationOptInInConstructor = false
             implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
-            default("startOffset", "0", withGetter = true)
-            default("endOffset", "fileEntry.maxOffset", withGetter = true)
+            default("sourceLocation", sourceLocation("0", "fileEntry.maxOffset"), withGetter = true)
             isMutable("module")
             isLateinit("module")
             implementation.generationCallback = {
@@ -284,8 +281,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         statements: List<IrStatement>,
                     ) : this(
                         constructorIndicator = null,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
+                        sourceLocation = IrSourceElement(startOffset, endOffset),
                         type = type,
                         origin = origin,
                     ) {
@@ -309,8 +305,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         value: IrExpression,
                     ) : this(
                         constructorIndicator = null,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
+                        sourceLocation = IrSourceElement(startOffset, endOffset),
                         type = type,
                         returnTargetSymbol = returnTargetSymbol,
                         value = value,

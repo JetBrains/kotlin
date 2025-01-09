@@ -20,6 +20,16 @@ abstract class AbstractIrTreeImplementationConfigurator : AbstractImplementation
             additionalImports(ArbitraryImportable(Packages.tree, it))
         }
 
+    protected fun ImplementationContext.undefinedSourceLocation(): String =
+        sourceLocation("UNDEFINED_OFFSET", "UNDEFINED_OFFSET").also {
+            additionalImports(ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET"))
+        }
+
+    protected fun ImplementationContext.sourceLocation(startOffset: String, endOffset: String): String =
+        "IrSourceElement($startOffset, $endOffset)".also {
+            additionalImports(ArbitraryImportable(Packages.root, "IrSourceElement"))
+        }
+
     protected fun ImplementationContext.smartList(): String =
         "SmartList()".also {
             additionalImports(ArbitraryImportable("org.jetbrains.kotlin.utils", "SmartList"))

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.generator.Packages.util
 import org.jetbrains.kotlin.ir.generator.Packages.visitors
 
 object Packages {
+    const val root = "org.jetbrains.kotlin"
     const val tree = "org.jetbrains.kotlin.ir"
     const val exprs = "org.jetbrains.kotlin.ir.expressions"
     const val symbols = "org.jetbrains.kotlin.ir.symbols"
