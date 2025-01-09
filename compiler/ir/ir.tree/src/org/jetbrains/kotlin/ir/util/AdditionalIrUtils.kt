@@ -169,12 +169,13 @@ fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
     firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
 
+@Deprecated("Use IrDeclaration.computeFileEntry() instead", ReplaceWith("this.computeFileEntry()"))
 val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
         when (it) {
             is IrFile -> it.fileEntry
             is IrPackageFragment -> TODO("Unknown file")
-            is IrDeclaration -> it.fileEntry
+            is IrDeclaration -> @Suppress("DEPRECATION") it.fileEntry
             else -> TODO("Unexpected declaration parent")
         }
     }

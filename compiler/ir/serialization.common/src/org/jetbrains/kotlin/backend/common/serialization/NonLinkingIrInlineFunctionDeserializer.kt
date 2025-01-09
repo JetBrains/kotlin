@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
@@ -132,6 +131,8 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         function.body = bodyWithRemappedSymbols
         function.parameters.forEachIndexed { index, parameter -> parameter.defaultValue = defaultValuesWithRemappedSymbols[index] }
+
+        function.setFileEntryIfTopLevelDeclarationIsLazyIr(deserializedFunction::computeFileEntry)
     }
 
     private fun referencePublicSymbol(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
@@ -156,7 +157,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         private val dummyFileSymbol = IrFileSymbolImpl().apply {
             IrFileImpl(
-                fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name),
+                fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name, fileProto.fileEntry.lineStartOffsetList.toIntArray()),
                 symbol = this,
                 packageFqName = FqName(irInterner.string(fileReader.deserializeFqName(fileProto.fqNameList)))
             )

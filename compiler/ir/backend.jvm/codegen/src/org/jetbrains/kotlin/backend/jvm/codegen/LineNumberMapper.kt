@@ -171,7 +171,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
         val currentLineNumber = if (overrideLineNumber) irInlineData.first().smap.callSite!!.line else lineNumberForOffset
 
         val firstLine = callee?.body?.statements?.firstOrNull()?.let {
-            inlinedBlock.inlineDeclaration.fileEntry.getLineNumber(it.startOffset) + 1
+            inlinedBlock.inlineDeclaration.computeFileEntry().getLineNumber(it.startOffset) + 1
         } ?: -1
         if ((inlinedBlock.isInvokeOnDefaultArg() != overrideLineNumber) && currentLineNumber >= 0 && firstLine == currentLineNumber) {
             val label = Label()
