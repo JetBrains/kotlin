@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.scopeForTypeAlias
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 
 fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
@@ -32,8 +32,7 @@ fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
         is FirTypeAliasSymbol -> {
             val expandedType = resolvedExpandedTypeRef.coneType as? ConeClassLikeType ?: return null
             val expandedClass = expandedType.toRegularClassSymbol(session) ?: return null
-            val typeAliasConstructorScope = TypeAliasConstructorsSubstitutingScope.initialize(this, session, scopeSession)
-            expandedClass to typeAliasConstructorScope
+            expandedClass to this.fir.scopeForTypeAlias(session, scopeSession)
         }
         else -> null
     }

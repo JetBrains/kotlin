@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
@@ -51,6 +52,7 @@ class TypeAliasConstructorsSubstitutingScope(
     private val session: FirSession,
 ) : FirScope() {
     companion object {
+        @FirImplementationDetail
         fun initialize(
             typeAliasSymbol: FirTypeAliasSymbol,
             session: FirSession,

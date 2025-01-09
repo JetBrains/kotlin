@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.*
@@ -89,6 +90,7 @@ class FirKotlinScopeProvider(
         }
     }
 
+    @OptIn(FirImplementationDetail::class)
     override fun getTypealiasConstructorScope(
         typeAlias: FirTypeAlias,
         useSiteSession: FirSession,
@@ -240,6 +242,13 @@ fun FirClass.scopeForClass(
     memberOwnerLookupTag = memberOwnerLookupTag,
     memberRequiredPhase = memberRequiredPhase,
 )
+
+fun FirTypeAlias.scopeForTypeAlias(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+): FirScope {
+    return scopeProvider.getTypealiasConstructorScope(this, useSiteSession, scopeSession)
+}
 
 fun ConeKotlinType.scopeForSupertype(
     useSiteSession: FirSession,
