@@ -19,8 +19,11 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeOrNull
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.inlineCall
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
+import org.jetbrains.kotlin.ir.util.isLambdaBlock
+import org.jetbrains.kotlin.ir.util.isLambdaInlining
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -31,7 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
     name = "MarkNecessaryInlinedClassesAsRegeneratedLowering",
     prerequisite = [JvmIrInliner::class, CreateSeparateCallForInlinedLambdasLowering::class]
 )
-internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
     private var IrDeclaration.wasVisitedForRegenerationLowering: Boolean by irFlag(false)
 
     override fun lower(irFile: IrFile) {
@@ -64,7 +67,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
 
     private fun IrInlinedFunctionBlock.collectDeclarationsThatMustBeRegenerated(): Set<IrElement> {
         val classesToRegenerate = mutableSetOf<IrElement>()
-        this.acceptVoid(object : IrElementVisitorVoid {
+        this.acceptVoid(object : IrVisitorVoid() {
             private val containersStack = mutableListOf<IrElement>()
             private val inlinableParameters = mutableListOf<IrValueParameter>()
             private val reifiedArguments = mutableListOf<IrType>()
@@ -183,12 +186,12 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
     private fun IrElement.hasReifiedTypeArguments(reifiedArguments: List<IrType>): Boolean {
         var hasReified = false
 
-        fun IrType.recursiveWalkDown(visitor: IrElementVisitorVoid) {
+        fun IrType.recursiveWalkDown(visitor: IrVisitorVoid) {
             hasReified = hasReified || this@recursiveWalkDown in reifiedArguments
             (this@recursiveWalkDown as? IrSimpleType)?.arguments?.forEach { it.typeOrNull?.recursiveWalkDown(visitor) }
         }
 
-        this.acceptVoid(object : IrElementVisitorVoid {
+        this.acceptVoid(object : IrVisitorVoid() {
             private val visitedClasses = mutableSetOf<IrClass>()
 
             override fun visitElement(element: IrElement) {
@@ -223,7 +226,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
     }
 
     private fun IrElement.setUpCorrectAttributesForAllInnerElements(mustBeRegenerated: Set<IrElement>) {
-        this.acceptChildrenVoid(object : IrElementVisitorVoid {
+        this.acceptChildrenVoid(object : IrVisitorVoid() {
             private fun checkAndSetUpCorrectAttributes(element: IrElement) {
                 when {
                     element !in mustBeRegenerated && element.originalBeforeInline != null -> element.setUpOriginalAttributes()
@@ -250,7 +253,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
     }
 
     private fun IrElement.setUpOriginalAttributes() {
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 if (element.originalBeforeInline != null) {
                     // Basically we need to generate SEQUENCE of `element.originalBeforeInline` and find the original one.

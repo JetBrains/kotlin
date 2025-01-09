@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -89,7 +89,7 @@ open class JvmIrLinkageModeTest : CodegenTestCase() {
         override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
             val file = moduleFragment.files.single()
             val signatures = mutableListOf<IdSignature>()
-            file.acceptVoid(object : IrElementVisitorVoid {
+            file.acceptVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
@@ -62,7 +62,7 @@ private class BackendChecker(
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns,
         private val irFile: IrFile,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     val target = context.config.target
 
     fun reportError(location: IrElement, message: String): Nothing =
@@ -536,7 +536,7 @@ private class BackendChecker(
         if (targetValues.isEmpty()) return emptyList()
 
         val result = mutableListOf<IrExpression>()
-        function.acceptChildrenVoid(object: IrElementVisitorVoid {
+        function.acceptChildrenVoid(object: IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

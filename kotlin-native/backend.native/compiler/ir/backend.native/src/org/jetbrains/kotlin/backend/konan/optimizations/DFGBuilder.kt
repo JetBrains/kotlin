@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 internal val STATEMENT_ORIGIN_PRODUCER_INVOCATION = IrStatementOriginImpl("PRODUCER_INVOCATION")
 internal val STATEMENT_ORIGIN_JOB_INVOCATION = IrStatementOriginImpl("JOB_INVOCATION")
@@ -201,7 +201,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         return function
     }
 
-    private inner class ElementFinderVisitor : IrElementVisitorVoid {
+    private inner class ElementFinderVisitor : IrVisitorVoid() {
         val expressions = mutableMapOf<IrExpression, IrLoop?>()
         val parentLoops = mutableMapOf<IrLoop, IrLoop?>()
         val variableValues = VariableValues()
@@ -788,7 +788,7 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
         symbolTable.populateWith(irModule)
 
         val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
-        irModule.accept(object : IrElementVisitorVoid {
+        irModule.accept(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

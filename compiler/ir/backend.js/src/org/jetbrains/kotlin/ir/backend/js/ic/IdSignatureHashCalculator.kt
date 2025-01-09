@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -53,7 +53,7 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
             val usedInlineFunctions = linkedSetOf<IrFunction>()
             val usedConstants = linkedSetOf<IrProperty>()
 
-            acceptVoid(object : IrElementVisitorVoid {
+            acceptVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

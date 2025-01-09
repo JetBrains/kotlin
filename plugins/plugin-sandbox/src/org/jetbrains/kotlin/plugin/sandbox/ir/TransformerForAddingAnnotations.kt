@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementVisitorVoid {
+class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.AddAnnotations")
         private val annotationToAddId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), Name.identifier("AnnotationToAdd"))
@@ -52,7 +52,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
         }
     }
 
-    private inner class AnnotationsAdder : IrElementVisitorVoid {
+    private inner class AnnotationsAdder : IrVisitorVoid() {
         val annotationClass = context.referenceClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
         val simpleAnnotationClass = context.referenceClass(simpleAnnotationId)?.takeIf { it.owner.isAnnotationClass }
         val arrayAnnotationClass = context.referenceClass(arrayAnnotationId)?.takeIf { it.owner.isAnnotationClass }

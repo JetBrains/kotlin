@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import kotlin.collections.contains
@@ -62,7 +62,7 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
 
     // Locate all inline lambdas in the scope of the given IrElement.
     fun scan(element: IrElement) {
-        element.acceptVoid(object : IrElementVisitorVoid {
+        element.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

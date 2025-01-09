@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -206,7 +206,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
                 var meetCapturing = false
                 val boxParameter = it.boxParameter
 
-                it.body?.acceptChildrenVoid(object : IrElementVisitorVoid {
+                it.body?.acceptChildrenVoid(object : IrVisitorVoid() {
                     override fun visitSetField(expression: IrSetField) {
                         val receiver = expression.receiver as? IrGetValue
                         if (receiver != null && receiver.symbol == boxParameter?.symbol) {

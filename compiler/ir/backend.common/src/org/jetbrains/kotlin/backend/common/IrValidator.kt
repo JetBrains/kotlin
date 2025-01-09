@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -66,7 +66,7 @@ private class IrValidator(
     val validatorConfig: IrValidatorConfig,
     val irBuiltIns: IrBuiltIns,
     val reportError: ReportIrValidationError,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) =
         throw IllegalStateException("IR validation must start from files, modules, or declarations")
 
