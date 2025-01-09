@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.builder
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 
@@ -20,6 +22,12 @@ object StubFirScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope = error("Stub")
+
+    override fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope = error("Stub")
 
     override fun getStaticCallableMemberScope(
         klass: FirClass,

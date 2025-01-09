@@ -179,6 +179,8 @@ inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSes
 
 val USE_SITE: ScopeSessionKey<Pair<FirSession, FirClassSymbol<*>>, FirTypeScope> = scopeSessionKey()
 
+val TYPEALIAS_CONSTRUCTOR: ScopeSessionKey<Pair<FirSession, FirTypeAliasSymbol>, FirScope> = scopeSessionKey()
+
 /* TODO REMOVE */
 fun createSubstitutionForScope(
     typeParameters: List<FirTypeParameterRef>, // TODO: or really declared?

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.scopes.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirNameAwareOnlyCallablesScope
@@ -44,6 +46,12 @@ object JavaScopeProvider : FirScopeProvider() {
         }
         return enhancementScope
     }
+
+    override fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope = FirTypeScope.Empty
 
     private fun buildSyntheticScopeForAnnotations(
         session: FirSession,

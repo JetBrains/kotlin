@@ -89,6 +89,16 @@ class FirKotlinScopeProvider(
         }
     }
 
+    override fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope {
+        return scopeSession.getOrBuild(useSiteSession to typeAlias.symbol, TYPEALIAS_CONSTRUCTOR) {
+            TypeAliasConstructorsSubstitutingScope.initialize(typeAlias.symbol, useSiteSession, scopeSession)
+        }
+    }
+
     override fun getStaticCallableMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 abstract class FirScopeProvider {
@@ -17,6 +18,12 @@ abstract class FirScopeProvider {
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope
+
+    abstract fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope
 
     abstract fun getStaticCallableMemberScope(
         klass: FirClass,

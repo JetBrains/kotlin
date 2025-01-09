@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.types.*
@@ -284,6 +286,12 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             scopeSession: ScopeSession,
             memberRequiredPhase: FirResolvePhase?,
         ): FirTypeScope = shouldNotBeCalled()
+
+        override fun getTypealiasConstructorScope(
+            typeAlias: FirTypeAlias,
+            useSiteSession: FirSession,
+            scopeSession: ScopeSession,
+        ): FirScope = shouldNotBeCalled()
 
         override fun getStaticCallableMemberScope(
             klass: FirClass,

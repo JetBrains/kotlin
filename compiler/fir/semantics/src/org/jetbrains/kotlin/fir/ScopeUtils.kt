@@ -32,7 +32,7 @@ fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
         is FirTypeAliasSymbol -> {
             val expandedType = resolvedExpandedTypeRef.coneType as? ConeClassLikeType ?: return null
             val expandedClass = expandedType.toRegularClassSymbol(session) ?: return null
-            val typeAliasConstructorScope = TypeAliasConstructorsSubstitutingScope.initialize(this, session, scopeSession) ?: return null
+            val typeAliasConstructorScope = TypeAliasConstructorsSubstitutingScope.initialize(this, session, scopeSession)
             expandedClass to typeAliasConstructorScope
         }
         else -> null

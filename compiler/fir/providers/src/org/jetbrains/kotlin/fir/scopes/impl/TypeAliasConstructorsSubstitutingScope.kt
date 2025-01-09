@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 
@@ -43,7 +44,7 @@ private object TypeAliasConstructorSubstitutorKey : FirDeclarationDataKey()
 
 var FirConstructor.typeAliasConstructorSubstitutor: ConeSubstitutor? by FirDeclarationDataRegistry.data(TypeAliasConstructorSubstitutorKey)
 
-class TypeAliasConstructorsSubstitutingScope private constructor(
+class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val session: FirSession,
@@ -53,8 +54,8 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
             typeAliasSymbol: FirTypeAliasSymbol,
             session: FirSession,
             scopeSession: ScopeSession,
-        ): TypeAliasConstructorsSubstitutingScope? {
-            val expandedType = typeAliasSymbol.resolvedExpandedTypeRef.coneType as? ConeClassLikeType ?: return null
+        ): FirScope {
+            val expandedType = typeAliasSymbol.resolvedExpandedTypeRef.coneType as? ConeClassLikeType ?: return FirTypeScope.Empty
             val expandedTypeScope = expandedType.scope(
                 session, scopeSession,
                 CallableCopyTypeCalculator.DoNothing,
@@ -63,7 +64,7 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
                 // we request declared constructor symbols from the scope returned below.
                 // See: `LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated.testTypealiasAnnotationWithFixedTypeArgument`
                 requiredMembersPhase = FirResolvePhase.STATUS,
-            ) ?: return null
+            ) ?: return FirTypeScope.Empty
 
             return TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, expandedTypeScope, session)
         }
