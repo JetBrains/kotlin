@@ -34,11 +34,11 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
+    override lateinit var scopeProvider: FirScopeProvider
     override lateinit var classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override lateinit var scopeProvider: FirScopeProvider
     lateinit var symbol: FirAnonymousObjectSymbol
 
     override fun build(): FirAnonymousObject {
@@ -51,11 +51,11 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
             typeParameters,
             status,
             deprecationsProvider,
+            scopeProvider,
             classKind,
             superTypeRefs,
             declarations,
             annotations.toMutableOrEmpty(),
-            scopeProvider,
             symbol,
         )
     }

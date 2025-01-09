@@ -32,13 +32,13 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowG
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
+    abstract override val scopeProvider: FirScopeProvider
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirClassSymbol<FirClass>
     abstract val classKind: ClassKind
     abstract val superTypeRefs: List<FirTypeRef>
     abstract val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
-    abstract val scopeProvider: FirScopeProvider
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

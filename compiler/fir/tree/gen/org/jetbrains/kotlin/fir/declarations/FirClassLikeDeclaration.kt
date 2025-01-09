@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -30,6 +31,7 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement, Fir
     abstract override val status: FirDeclarationStatus
     abstract override val symbol: FirClassLikeSymbol<FirClassLikeDeclaration>
     abstract val deprecationsProvider: DeprecationsProvider
+    abstract val scopeProvider: FirScopeProvider
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClassLikeDeclaration(this, data)

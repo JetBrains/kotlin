@@ -397,6 +397,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
             isMutable = true
         }
+        +field("scopeProvider", firScopeProviderType)
     }
 
     val klass: Element by sealedElement(Declaration, name = "Class") {
@@ -411,7 +412,6 @@ object FirTree : AbstractFirTreeBuilder() {
             withTransform = true
         }
         +annotations
-        +field("scopeProvider", firScopeProviderType)
     }
 
     val regularClass: Element by element(Declaration) {

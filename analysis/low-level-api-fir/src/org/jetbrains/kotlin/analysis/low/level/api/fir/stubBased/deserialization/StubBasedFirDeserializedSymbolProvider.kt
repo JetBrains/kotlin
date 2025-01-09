@@ -126,7 +126,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
                     null, null, symbol,
                     initialOrigin = getDeclarationOriginFor(classLikeDeclaration.containingKtFile)
                 )
-                rootContext.memberDeserializer.loadTypeAlias(classLikeDeclaration, symbol)
+                rootContext.memberDeserializer.loadTypeAlias(classLikeDeclaration, symbol, kotlinScopeProvider)
             }
             return symbol to postProcessor
         }
