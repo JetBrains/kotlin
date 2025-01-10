@@ -258,7 +258,9 @@ class JvmCachedDeclarations(
         if (!fakeOverride.isFakeOverride || fakeOverride.parentAsClass.isJvmInterface)
             ClassFakeOverrideReplacement.None
         else fakeOverride::classFakeOverrideReplacement.getOrSetIfNull {
-            findDefaultImplsRedirection(fakeOverride) ?: ClassFakeOverrideReplacement.None
+            findDefaultImplsRedirection(fakeOverride)
+                ?: findDefaultCompatibilityBridge(fakeOverride)
+                ?: ClassFakeOverrideReplacement.None
         }
 
     private fun findDefaultImplsRedirection(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement.DefaultImplsRedirection? {
@@ -267,6 +269,29 @@ class JvmCachedDeclarations(
         context.remapMultiFieldValueClassStructure(fakeOverride, newFunction, parametersMappingOrNull = null)
         val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
         return ClassFakeOverrideReplacement.DefaultImplsRedirection(newFunction, superFunction)
+    }
+
+    private fun findDefaultCompatibilityBridge(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement.DefaultCompatibilityBridge? {
+        val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true) ?: return null
+        if (!needsJvmDefaultCompatibilityBridge(fakeOverride)) return null
+        val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
+        val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
+        return ClassFakeOverrideReplacement.DefaultCompatibilityBridge(newFunction, superFunction)
+    }
+
+    // Generating the default compatibility bridge is only necessary if there's a risk that some other method will be called at runtime
+    // by JVM when resolving the call to method from this class. This is only possible when this class has a superclass, where this method
+    // is present as a bridge to DefaultImpls of some other interface.
+    private fun needsJvmDefaultCompatibilityBridge(declaration: IrSimpleFunction): Boolean {
+        var current: IrSimpleFunction? = declaration.overriddenSymbols.singleOrNull { it.owner.parentAsClass.isClass }?.owner
+        while (current != null) {
+            if (current.modality == Modality.ABSTRACT) return false
+
+            if (current.findInterfaceImplementation(context.config.jvmDefaultMode) != null) return true
+
+            current = current.overriddenSymbols.singleOrNull { it.owner.parentAsClass.isClass }?.owner
+        }
+        return false
     }
 
     fun getRepeatedAnnotationSyntheticContainer(annotationClass: IrClass): IrClass =
