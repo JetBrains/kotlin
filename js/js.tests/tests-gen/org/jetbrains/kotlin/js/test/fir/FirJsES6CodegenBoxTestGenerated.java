@@ -32072,6 +32072,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("eagerInitializationGlobal4.kt")
+    public void testEagerInitializationGlobal4() {
+      runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal4.kt");
+    }
+
+    @Test
     @TestMetadata("eagerInitializationWithSimpleObject.kt")
     public void testEagerInitializationWithSimpleObject() {
       runTest("compiler/testData/codegen/box/properties/eagerInitializationWithSimpleObject.kt");

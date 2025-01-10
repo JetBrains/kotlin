@@ -1,10 +1,12 @@
-// TARGET_BACKEND: JS_IR, JS_IR_ES6, WASM, NATIVE
+// ES_MODULES
 // PROPERTY_LAZY_INITIALIZATION
 
+// MODULE: lib1
 // FILE: lib.kt
 var z1 = false
 var z2 = false
 
+// MODULE: lib2(lib1)
 // FILE: lib2.kt
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
@@ -19,6 +21,7 @@ private fun foo(): Int {
 // Will be initialized since [x]'s initializer calls a function from the file.
 val y = run { z2 = true; 117 }
 
+// MODULE: main(lib1, lib2)
 // FILE: main.kt
 
 fun box(): String {

@@ -58,8 +58,11 @@ class JsIrModule(
         val definitions = mutableSetOf<String>()
         val optionalCrossModuleImports = hashSetOf<String>()
         var hasDeclarationsToReexport = false
+        var hasAnEffectInside = false
         for (fragment in fragments) {
-            hasDeclarationsToReexport = hasDeclarationsToReexport || !fragment.exports.isEmpty
+            if (!fragment.exports.isEmpty) hasDeclarationsToReexport = true
+            if (fragment.hasEffect) hasAnEffectInside = true
+
             for ((tag, name) in fragment.nameBindings.entries) {
                 nameBindings[tag] = name.toString()
             }
@@ -68,13 +71,13 @@ class JsIrModule(
         }
         return JsIrModuleHeader(
             moduleName = moduleName,
+            associatedModule = this,
             externalModuleName = externalModuleName,
             definitions = definitions,
             nameBindings = nameBindings,
             optionalCrossModuleImports = optionalCrossModuleImports,
             reexportedInModuleWithName = reexportedInModuleWithName.takeIf { hasDeclarationsToReexport },
-            importedWithEffectInModuleWithName = importedWithEffectInModuleWithName,
-            associatedModule = this
+            importedWithEffectInModuleWithName = importedWithEffectInModuleWithName.takeIf { hasAnEffectInside },
         )
     }
 }

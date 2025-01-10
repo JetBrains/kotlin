@@ -62,7 +62,7 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
                 optionalCrossModuleImports = optionalCrossModuleImports,
                 reexportedInModuleWithName = reexportedIn,
                 importedWithEffectInModuleWithName = importWithEffectIn,
-                associatedModule = JsIrModule(moduleName, moduleName, listOf(this), reexportedIn)
+                associatedModule = JsIrModule(moduleName, moduleName, listOf(this), reexportedIn, importWithEffectIn)
             )
         }
     }

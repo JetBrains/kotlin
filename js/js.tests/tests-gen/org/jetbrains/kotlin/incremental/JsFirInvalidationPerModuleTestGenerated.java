@@ -463,6 +463,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("multiModuleEagerInitialization")
+  public void testMultiModuleEagerInitialization() {
+    runTest("js/js.translator/testData/incremental/invalidation/multiModuleEagerInitialization/");
+  }
+
+  @Test
   @TestMetadata("multiPlatformClashFileNames")
   public void testMultiPlatformClashFileNames() {
     runTest("js/js.translator/testData/incremental/invalidation/multiPlatformClashFileNames/");

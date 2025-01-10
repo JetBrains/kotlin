@@ -58,6 +58,13 @@ fun generateProxyIrModuleWith(
     importedWithEffectInModuleWithName: String? = null
 ): JsIrModule {
     val programFragment = JsIrProgramFragment(safeName, "<proxy-file>").apply {
+        // INFO: we need it to "simulate"
+        // that this program fragment has an effect in case if the [importedWithEffectInModuleWithName] was provided,
+        // It should be revisited and reworked if the `per-module` granularity is dropped
+        importedWithEffectInModuleWithName?.let {
+            eagerInitializers.statements += JsCompositeBlock()
+        }
+
         mainFunctionTag?.let {
             this.mainFunctionTag = it
             nameBindings[it] = ReservedJsNames.makeMainFunctionName()
@@ -267,17 +274,22 @@ class IrModuleToJsTransformer(
 
     private fun generateJsIrProgramPerModule(exportData: List<IrAndExportedDeclarations>, mode: TranslationMode): JsIrProgram {
         val mainModule = exportData.last()
+        val mainModuleSafeName = mainModule.fragment.safeName
 
         return JsIrProgram(
             exportData.map { data ->
+                val couldBeReexportedInMain = !isEsModules && data !== mainModule
+                val couldBeImportedWithEffectInMain = isEsModules && data !== mainModule
+
                 JsIrModule(
-                    data.fragment.safeName,
-                    moduleFragmentToNameMapper.getExternalNameFor(data.fragment),
-                    data.files.flatMap {
+                    moduleName = data.fragment.safeName,
+                    externalModuleName = moduleFragmentToNameMapper.getExternalNameFor(data.fragment),
+                    fragments = data.files.flatMap {
                         val fragments = generateProgramFragment(it, mode)
                         listOfNotNull(fragments.mainFragment, fragments.exportFragment)
                     },
-                    mainModule.fragment.safeName.takeIf { !isEsModules && data != mainModule }
+                    reexportedInModuleWithName = runIf(couldBeReexportedInMain) { mainModuleSafeName },
+                    importedWithEffectInModuleWithName = runIf(couldBeImportedWithEffectInMain) { mainModuleSafeName },
                 )
             }
         )

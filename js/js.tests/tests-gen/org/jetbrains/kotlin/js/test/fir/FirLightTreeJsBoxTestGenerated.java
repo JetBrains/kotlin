@@ -2138,6 +2138,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
       }
 
       @Test
+      @TestMetadata("eagerInitializationGlobal4.kt")
+      public void testEagerInitializationGlobal4() {
+        runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/eagerInitializationGlobal4.kt");
+      }
+
+      @Test
       @TestMetadata("inheritance.kt")
       public void testInheritance() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inheritance.kt");
