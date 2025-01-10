@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDecla
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkInitializerIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -173,41 +173,33 @@ internal class LLFirImplicitBodyTargetResolver(
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        when {
-            target is FirCallableDeclaration && target.isCopyCreatedInScope -> {
+        when (target) {
+            is FirCallableDeclaration if target.canHaveDeferredReturnTypeCalculation -> {
                 transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
             }
 
-            target is FirFunction -> {
+            is FirFunction -> {
                 if (target.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.FUNCTION)
                 }
             }
 
-            target is FirProperty -> {
+            is FirProperty -> {
                 if (target.isConst || target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.PROPERTY)
                 }
             }
 
-            target is FirField -> {
+            is FirField -> {
                 if (target.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.FIELD)
                 }
             }
 
-            target is FirRegularClass ||
-                    target is FirTypeAlias ||
-                    target is FirFile ||
-                    target is FirCodeFragment ||
-                    target is FirAnonymousInitializer ||
-                    target is FirDanglingModifierList ||
-                    target is FirEnumEntry ||
-                    target is FirErrorProperty ||
-                    target is FirScript
-            -> {
+            is FirRegularClass, is FirTypeAlias, is FirFile, is FirCodeFragment, is FirAnonymousInitializer, is FirDanglingModifierList, is FirEnumEntry, is FirErrorProperty, is FirScript -> {
                 // No implicit bodies here
             }
+
             else -> throwUnexpectedFirElementError(target)
         }
 

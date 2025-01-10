@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
@@ -137,10 +138,12 @@ internal sealed class LLFirTargetResolver(
     private fun resolveDependencies(target: FirElementWithResolveState) {
         if (skipDependencyTargetResolutionStep) return
 
-        val originalDeclaration = (target as? FirCallableDeclaration)?.originalIfFakeOverrideOrDelegated()
         when {
             // Fake or delegate declaration shared types and annotations from the original one
-            originalDeclaration != null -> originalDeclaration.lazyResolveToPhase(resolverPhase)
+            target is FirCallableDeclaration && target.canHaveDeferredReturnTypeCalculation -> {
+                val originalDeclaration = target.originalIfFakeOverrideOrDelegated()
+                originalDeclaration?.lazyResolveToPhase(resolverPhase)
+            }
 
             target is FirProperty -> {
                 // We share type references and annotations with the original parameter

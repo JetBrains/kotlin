@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector.shouldBeResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 
 /**
  * Collects [LLFirResolveTarget] for requested [FirElementWithResolveState].
@@ -58,7 +58,7 @@ internal object LLFirResolveDesignationCollector {
             is FirTypeParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
             is FirValueParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
             is FirReceiverParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
-            is FirCallableDeclaration if target.isCopyCreatedInScope -> FirDesignation(target)
+            is FirCallableDeclaration if target.canHaveDeferredReturnTypeCalculation -> FirDesignation(target)
             else -> target.tryCollectDesignation()
         }
     }

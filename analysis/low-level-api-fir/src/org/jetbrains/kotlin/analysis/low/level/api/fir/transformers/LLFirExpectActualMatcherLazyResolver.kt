@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkExpectForActualIsResolved
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -72,14 +72,14 @@ private class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget
     }
 }
 
-private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when {
+private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when (this) {
     // We shouldn't try to calculate expect/actual mapping for fake declarations
-    this is FirCallableDeclaration && isCopyCreatedInScope -> false
-    this is FirEnumEntry -> true
-    this is FirProperty -> true
-    this is FirConstructor -> true
-    this is FirSimpleFunction -> true
-    this is FirRegularClass -> true
-    this is FirTypeAlias -> true
+    is FirCallableDeclaration if canHaveDeferredReturnTypeCalculation -> false
+    is FirEnumEntry -> true
+    is FirProperty -> true
+    is FirConstructor -> true
+    is FirSimpleFunction -> true
+    is FirRegularClass -> true
+    is FirTypeAlias -> true
     else -> false
 }

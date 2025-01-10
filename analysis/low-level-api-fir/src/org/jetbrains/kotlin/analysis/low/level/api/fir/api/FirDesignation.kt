@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -146,7 +146,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
             -> {
             // We shouldn't try to build a designation path for such fake declarations as they
             // do not depend on outer classes during resolution
-            if (target.isCopyCreatedInScope) return FirDesignation(target)
+            if (target.canHaveDeferredReturnTypeCalculation) return FirDesignation(target)
 
             if (target.symbol.isLocalForLazyResolutionPurposes) {
                 return null
