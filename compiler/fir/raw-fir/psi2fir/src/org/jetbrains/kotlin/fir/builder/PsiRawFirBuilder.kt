@@ -1786,7 +1786,7 @@ open class PsiRawFirBuilder(
                                 val zippedParameters =
                                     classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() } zip declarations.filterIsInstance<FirProperty>()
                                 DataClassMembersGenerator(
-                                    classOrObject,
+                                    classOrObject.primaryConstructor ?: classOrObject,
                                     this,
                                     firPrimaryConstructor,
                                     zippedParameters,

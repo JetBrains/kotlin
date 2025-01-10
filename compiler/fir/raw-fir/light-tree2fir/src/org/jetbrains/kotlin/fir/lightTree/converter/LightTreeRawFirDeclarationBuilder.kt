@@ -642,7 +642,7 @@ class LightTreeRawFirDeclarationBuilder(
                         if (calculatedModifiers.isDataClass() && firPrimaryConstructor != null) {
                             val zippedParameters = properties.map { it.source!!.lighterASTNode to it }
                             DataClassMembersGenerator(
-                                classNode,
+                                primaryConstructor ?: classNode,
                                 this,
                                 firPrimaryConstructor,
                                 zippedParameters,

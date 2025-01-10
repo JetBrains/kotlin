@@ -1,0 +1,3 @@
+KtNameReferenceExpression(82,86): 'copy'
+  KtSimpleNameReference:
+    (in Data) {psi: KtPrimaryConstructor} fun copy({psi: KtParameter} aaa: kotlin.Int): Data

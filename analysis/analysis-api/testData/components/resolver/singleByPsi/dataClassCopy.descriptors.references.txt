@@ -1,0 +1,6 @@
+KtNameReferenceExpression(82,86): 'copy'
+  KtSimpleNameReference:
+    (in Data) {psi: KtClass} fun copy({psi: KtParameter} aaa: kotlin.Int): Data
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

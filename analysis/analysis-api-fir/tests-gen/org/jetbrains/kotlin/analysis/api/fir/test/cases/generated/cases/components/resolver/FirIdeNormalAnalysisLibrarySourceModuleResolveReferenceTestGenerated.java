@@ -353,6 +353,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
   }
 
   @Test
+  @TestMetadata("dataClassCopy.kt")
+  public void testDataClassCopy() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/dataClassCopy.kt");
+  }
+
+  @Test
   @TestMetadata("DefaultObjectAsExtensionReceiverForFunction.kt")
   public void testDefaultObjectAsExtensionReceiverForFunction() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/DefaultObjectAsExtensionReceiverForFunction.kt");

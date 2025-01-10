@@ -303,6 +303,9 @@ internal class KaFirSymbolRelationProvider(
                     val constructor = source.ownerFunction as KtPrimaryConstructor
                     constructor.containingClassOrObject!!
                 }
+                is KtPrimaryConstructor -> {
+                    source.containingClassOrObject!!
+                }
                 else -> null
             }
             else -> null
