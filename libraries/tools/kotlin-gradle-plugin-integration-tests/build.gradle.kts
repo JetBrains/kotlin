@@ -23,7 +23,7 @@ kotlin {
             "kotlin.io.path.ExperimentalPathApi",
         )
         freeCompilerArgs.add(
-            // Avoid having to JvmSerializableLambda in build script injections
+            // Avoid having to use JvmSerializableLambda in build script injections
             "-Xlambdas=class"
         )
     }
@@ -419,7 +419,7 @@ fun configureJvmTarget8() {
 
 configureJvmTarget8()
 
-val singleTestClassesClasspathTask = tasks.register<Copy>("testClassesCopy") {
+val mergedTestClassesClasspathTask = tasks.register<Copy>("testClassesCopy") {
     from(kotlin.target.compilations.getByName("test").output.classesDirs)
     into(layout.buildDirectory.dir("testClassesCopy"))
 }
@@ -487,10 +487,10 @@ tasks.withType<Test>().configureEach {
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
-    val singleTestClassesDirectory = files(singleTestClassesClasspathTask)
-    inputs.files(singleTestClassesDirectory)
+    val mergedTestClassesDirectory = files(mergedTestClassesClasspathTask)
+    inputs.files(mergedTestClassesDirectory)
     doFirst {
-        systemProperty("buildScriptInjectionsClasspath", singleTestClassesDirectory.single())
+        systemProperty("buildScriptInjectionsClasspath", mergedTestClassesDirectory.single())
     }
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
