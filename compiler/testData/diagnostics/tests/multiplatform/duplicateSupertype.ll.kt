@@ -12,7 +12,7 @@ interface A {
 
 expect interface B
 
-class C : A, <!SUPERTYPE_APPEARS_TWICE!>B<!> {}
+class C : A, B {}
 
 // MODULE: jvm()()(common)
 
