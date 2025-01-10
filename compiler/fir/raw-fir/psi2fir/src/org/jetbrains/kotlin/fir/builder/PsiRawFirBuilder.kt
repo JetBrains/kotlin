@@ -390,7 +390,8 @@ open class PsiRawFirBuilder(
                     )
                 }
                 is KtDestructuringDeclaration -> {
-                    buildErrorTopLevelDestructuringDeclaration(toFirSourceElement())
+                    val propertyInitializer = toInitializerExpression()
+                    buildErrorTopLevelDestructuringDeclaration(toFirSourceElement(), propertyInitializer)
                 }
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)

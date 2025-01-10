@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorPropertyImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
@@ -41,6 +42,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorPropertySymbol
+    var initializer: FirExpression? = null
 
     override fun build(): FirErrorProperty {
         return FirErrorPropertyImpl(
@@ -58,6 +60,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
             annotations.toMutableOrEmpty(),
             diagnostic,
             symbol,
+            initializer,
         )
     }
 

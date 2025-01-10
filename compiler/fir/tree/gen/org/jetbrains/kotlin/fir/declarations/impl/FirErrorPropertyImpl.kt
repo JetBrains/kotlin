@@ -45,6 +45,7 @@ internal class FirErrorPropertyImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorPropertySymbol,
+    override val initializer: FirExpression?
 ) : FirErrorProperty() {
     override val typeParameters: List<FirTypeParameterRef>
         get() = emptyList()
@@ -52,8 +53,8 @@ internal class FirErrorPropertyImpl(
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)
     override val receiverParameter: FirReceiverParameter?
         get() = null
-    override val initializer: FirExpression?
-        get() = null
+//    override val initializer: FirExpression?
+//        get() = null
     override val delegate: FirExpression?
         get() = null
     override val isVar: Boolean
