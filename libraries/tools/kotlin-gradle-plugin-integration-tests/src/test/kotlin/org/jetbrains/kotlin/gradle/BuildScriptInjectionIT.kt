@@ -124,12 +124,15 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             val returnValue = providerBuildScriptReturn {
                 project.provider { project }
             }
-            buildAndFail("tasks", "-P${returnValue.injectionLoadProperty}") {
+            buildAndFail(
+                "tasks", "-P${returnValue.injectionLoadProperty}",
+                buildOptions = defaultBuildOptions.withConfigurationCache,
+            ) {
                 assertOutputContains("cannot serialize object of type")
             }
         }
 
-        // Project reference can be captured in the return lambda even in runs with CC
+        // Check that in the simple case we don't fail to return value with CC
         project("buildScriptInjectionGroovy", version) {
             buildScriptReturn {
                 project.layout.projectDirectory.file("foo").asFile
