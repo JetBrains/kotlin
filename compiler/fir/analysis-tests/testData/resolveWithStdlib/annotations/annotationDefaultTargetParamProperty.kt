@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +PropertyParamAnnotationDefaultTargetMode
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-73255 KT-73831
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
@@ -62,7 +61,7 @@ class My(
 annotation class Your(
     @ParamOnly
     @PropertyOnly
-    <!WRONG_ANNOTATION_TARGET_WARNING!>@FieldOnly<!>
+    <!WRONG_ANNOTATION_TARGET!>@FieldOnly<!>
     @ParamProperty
     @ParamField
     @PropertyField

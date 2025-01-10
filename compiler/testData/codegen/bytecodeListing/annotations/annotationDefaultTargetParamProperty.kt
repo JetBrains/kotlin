@@ -9,5 +9,3 @@ annotation class SomeField
 annotation class SomeProperty
 
 class My(@SomeField @SomeProperty val x: String)
-
-annotation class Your(@SomeField @SomeProperty val value: String)
