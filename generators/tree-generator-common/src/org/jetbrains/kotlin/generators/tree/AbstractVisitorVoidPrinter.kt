@@ -32,19 +32,15 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
 
     abstract val overriddenVisitMethodsAreFinal: Boolean
 
-    protected open fun shouldOverrideMethodWithNoDataParameter(element: Element): Boolean = false
+    override fun overrideVisitMethod(element: Element): Boolean = false
+
+    protected open fun shouldPrintMethodWithDataParameter(element: Element): Boolean = true
 
     final override fun printMethodsForElement(element: Element) {
         val parentInVisitor = parentInVisitor(element)
         if (!element.isRootElement && parentInVisitor == null) return
 
         val isAbstractVisitRootElementMethod = element.isRootElement && useAbstractMethodForRootElement
-
-        printMethodDeclarationForElement(
-            element,
-            modality = Modality.FINAL.takeIf { overriddenVisitMethodsAreFinal },
-            override = true,
-        )
 
         fun ImportCollectingPrinter.printBody(parentInVisitor: Element?) {
             printBlock {
@@ -55,9 +51,17 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
         }
 
         printer.run {
-            printBody(element)
+            if (shouldPrintMethodWithDataParameter(element)) {
+                println()
+                printVisitMethodDeclaration(
+                    element,
+                    modality = Modality.FINAL.takeIf { overriddenVisitMethodsAreFinal },
+                    override = true,
+                )
+                printBody(element)
+            }
             println()
-            val override = shouldOverrideMethodWithNoDataParameter(element)
+            val override = overrideVisitMethod(element)
             printVisitMethodDeclaration(
                 element,
                 hasDataParameter = false,

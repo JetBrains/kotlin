@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,20 +7,21 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.ir.generator.irLeafVisitorVoidType
+import org.jetbrains.kotlin.ir.generator.irLeafVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 
-internal class VisitorVoidPrinter(
+internal class LeafVisitorVoidPrinter(
     importCollectingPrinter: ImportCollectingPrinter,
     override val visitorType: ClassRef<*>,
+    private val rootElement: Element,
 ) : AbstractVisitorVoidPrinter<Element, Field>(importCollectingPrinter) {
 
     override val visitorSuperClass: ClassRef<PositionTypeParameterRef>
-        get() = irLeafVisitorVoidType
+        get() = irLeafVisitorType
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(visitorSuperClass)
+        get() = listOf(visitorSuperClass.withArgs(StandardTypes.unit, visitorDataType))
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false
@@ -31,10 +32,9 @@ internal class VisitorVoidPrinter(
     override val overriddenVisitMethodsAreFinal: Boolean
         get() = false
 
-    override fun skipElement(element: Element): Boolean = element.isRootElement
+    override fun skipElement(element: Element): Boolean =
+        !element.hasAcceptMethod
 
-    override fun overrideVisitMethod(element: Element): Boolean =
-        element.hasAcceptMethod
-
-    override fun shouldPrintMethodWithDataParameter(element: Element): Boolean = false
+    override fun parentInVisitor(element: Element): Element? =
+        element.parentInLeafOnlyVisitor(rootElement)
 }

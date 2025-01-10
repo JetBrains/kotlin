@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.irTransformerType
-import org.jetbrains.kotlin.ir.generator.irVisitorType
+import org.jetbrains.kotlin.ir.generator.irLeafVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
@@ -43,7 +43,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
 
         printAcceptMethod(
             element = element,
-            visitorClass = irVisitorType,
+            visitorClass = irLeafVisitorType,
             hasImplementation = !element.isRootElement,
             treeName = "IR",
         )
@@ -59,7 +59,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         if (element.hasAcceptChildrenMethod) {
             printAcceptChildrenMethod(
                 element = element,
-                visitorClass = irVisitorType,
+                visitorClass = irLeafVisitorType,
                 visitorResultType = StandardTypes.unit,
                 override = !element.isRootElement,
             )

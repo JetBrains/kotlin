@@ -8,7 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody]
@@ -16,6 +16,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 abstract class IrSyntheticBody : IrBody() {
     abstract var kind: IrSyntheticBodyKind
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitSyntheticBody(this, data)
 }

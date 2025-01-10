@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.spreadElement]
@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
     abstract var expression: IrExpression
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitSpreadElement(this, data)
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrSpreadElement =
         accept(transformer, data) as IrSpreadElement
 
-    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
     }
 
