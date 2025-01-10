@@ -35,7 +35,7 @@ abstract class B(override val size: Int) : LinkedHashSet<Int>() {
         return null!!
     }
 
-    override fun addFirst(e: Int?) {
+    override fun addFirst(e: Int) {
         super.addFirst(e)
     }
 }
@@ -82,12 +82,12 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J) {
     a.reversed()
     a.first
     a.addFirst(1)
-    a.addLast(null)
+    a.addLast(1)
 
     b.reversed()
     b.first
     b.addFirst(1)
-    b.addLast(null)
+    b.addLast(1)
 
     c.reversed()
     c.first
