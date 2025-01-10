@@ -54,7 +54,10 @@ val runCommonizer by tasks.registering(JavaExec::class) {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        resources.srcDir("testData")
+    }
 }
 
 projectTest(parallel = true) {

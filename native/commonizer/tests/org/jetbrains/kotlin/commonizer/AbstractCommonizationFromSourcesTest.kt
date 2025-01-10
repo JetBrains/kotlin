@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
@@ -40,6 +39,8 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.alwaysTrue
 import java.io.File
+import java.net.URL
+import kotlin.also
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.fail
 
@@ -56,13 +57,11 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             this::class.java.simpleName.substringBefore("FromSources").substringBefore("Test"),
             true
         )
-        val testDir = testDirectoryName
 
-        return File(KtTestUtil.getHomeDirectory())
-            .resolve("native/commonizer/testData")
-            .resolve(testCaseDir)
-            .resolve(testDir)
-            .also(::assertIsDirectory)
+        val testData: URL = this::class.java.getResource("/$testCaseDir/$testDirectoryName")
+            ?: throw error("testData $testCaseDir/$testDirectoryName not found in resources")
+
+        return File(testData.path).also(::assertIsDirectory)
     }
 
     protected fun doTestSuccessfulCommonization() {
