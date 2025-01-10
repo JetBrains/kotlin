@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -36,11 +39,13 @@ import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class JavaOverrideChecker internal constructor(
@@ -56,7 +61,7 @@ class JavaOverrideChecker internal constructor(
     private fun isEqualTypes(
         candidateType: ConeKotlinType,
         baseType: ConeKotlinType,
-        substitutor: ConeSubstitutor
+        substitutor: ConeSubstitutor,
     ): Boolean {
         if (candidateType is ConeRawType) {
             return candidateType.computeJvmDescriptorRepresentation() == baseType.computeJvmDescriptorRepresentation()
@@ -65,8 +70,10 @@ class JavaOverrideChecker internal constructor(
         if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor)
         if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor)
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
-            val candidateTypeClassId = candidateType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
-            val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val candidateLookupTag = candidateType.fullyExpandedType(session).lookupTag
+            val candidateTypeClassId = candidateLookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val baseLookupTag = baseType.fullyExpandedType(session).lookupTag
+            val baseTypeClassId = baseLookupTag.classId.let { it.readOnlyToMutable() ?: it }
             if (candidateTypeClassId != baseTypeClassId) return false
             if (candidateTypeClassId == StandardClassIds.Array) {
                 assert(candidateType.typeArguments.size == 1) {
@@ -78,10 +85,36 @@ class JavaOverrideChecker internal constructor(
                 return isEqualArrayElementTypeProjections(
                     candidateType.typeArguments.single(),
                     baseType.typeArguments.single(),
-                    substitutor
+                    substitutor,
                 )
             }
-            return true
+            // We don't compare arguments in pre-2.2 mode (as it worked so at this period of time in K2)
+            if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ProperHandlingOfGenericAndRawTypesInJavaOverrides)
+            ) {
+                return true
+            }
+            // Java spec (8.4.2, 8.4.8) says here that methods should either have the same signature,
+            // or signature erasure for base method should be the same as signature (without erasure) for candidate method
+            // So the candidate type (but not the base type) is allowed to be raw, but we checked it at the beginning of the function
+            // Now we have to check type arguments equality, with some exceptions (note that in Kotlin 2.0-2.1 we didn't check arguments at all)
+            if (candidateType.typeArguments.size != baseType.typeArguments.size) return false
+            return candidateType.typeArguments.zip(baseType.typeArguments).withIndex().all { (index, pair) ->
+                // We prefer read-only classes here as they have out variance
+                val varianceLookupTag = baseLookupTag.toSymbol(session)?.takeIf { JavaToKotlinClassMap.isReadOnly(it.classId) }
+                    ?: candidateLookupTag.toSymbol(session)
+                val typeParameterSymbol = varianceLookupTag?.typeParameterSymbols[index]
+                val variance = typeParameterSymbol?.variance ?: Variance.INVARIANT
+                val (ct, bt) = pair
+                when {
+                    bt.kind == ProjectionKind.STAR -> ct.kind == ProjectionKind.STAR
+                    // Why this line is necessary: see java.util.Provider.putAll vs java.util.Hashtable.putAll
+                    ct.kind == ProjectionKind.STAR -> (substitutor.substituteArgument(bt, index) ?: bt).isStarOrOutBound(
+                        typeParameterSymbol
+                    )
+                    bt !is ConeKotlinTypeProjection || ct !is ConeKotlinTypeProjection -> false
+                    else -> compatibleProjections(variance, ct, bt, substitutor)
+                }
+            }
         }
         return with(context) {
             areEqualTypeConstructors(
@@ -89,6 +122,48 @@ class JavaOverrideChecker internal constructor(
                 substitutor.substituteOrSelf(baseType).typeConstructor()
             )
         }
+    }
+
+    private fun ConeTypeProjection.isStarOrOutBound(typeParameterSymbol: FirTypeParameterSymbol?): Boolean {
+        return when (kind) {
+            ProjectionKind.STAR ->
+                true
+            ProjectionKind.OUT ->
+                matchesTypeParameterFirstBound(typeParameterSymbol)
+            ProjectionKind.INVARIANT -> if (typeParameterSymbol?.variance == Variance.OUT_VARIANCE) {
+                // invariant projection with out variance is equivalent to out projection
+                matchesTypeParameterFirstBound(typeParameterSymbol)
+            } else false
+            else ->
+                false
+        }
+    }
+
+    private fun ConeTypeProjection.matchesTypeParameterFirstBound(typeParameterSymbol: FirTypeParameterSymbol?): Boolean {
+        // We take upper bound as Any! vs Any? should be correct
+        return type!!.upperBoundIfFlexible() == typeParameterSymbol?.resolvedBounds?.firstOrNull()?.coneType?.upperBoundIfFlexible()
+    }
+
+    private fun compatibleProjections(
+        variance: Variance,
+        candidateProjection: ConeKotlinTypeProjection,
+        baseProjection: ConeKotlinTypeProjection,
+        substitutor: ConeSubstitutor,
+    ): Boolean {
+        if (baseProjection.kind != candidateProjection.kind) {
+            when (variance) {
+                Variance.INVARIANT -> return false
+                // With out variance, OUT and INVARIANT are effectively the same, but IN is not
+                Variance.OUT_VARIANCE -> if (baseProjection.kind == ProjectionKind.IN || candidateProjection.kind == ProjectionKind.IN) {
+                    return false
+                }
+                // With in variance, IN and INVARIANT are effectively the same, but OUT is not
+                Variance.IN_VARIANCE -> if (baseProjection.kind == ProjectionKind.OUT || candidateProjection.kind == ProjectionKind.OUT) {
+                    return false
+                }
+            }
+        }
+        return isEqualTypes(candidateProjection.type, baseProjection.type, substitutor)
     }
 
     private fun isEqualTypes(
@@ -168,7 +243,7 @@ class JavaOverrideChecker internal constructor(
     private fun isEqualArrayElementTypeProjections(
         candidateTypeProjection: ConeTypeProjection,
         baseTypeProjection: ConeTypeProjection,
-        substitutor: ConeSubstitutor
+        substitutor: ConeSubstitutor,
     ): Boolean =
         when {
             candidateTypeProjection is ConeKotlinTypeProjection && baseTypeProjection is ConeKotlinTypeProjection ->
@@ -295,8 +370,10 @@ class JavaOverrideChecker internal constructor(
         val substitutor = buildTypeParametersSubstitutorIfCompatible(this, other)
         val forceBoxValueParameterType = forceSingleValueParameterBoxing(this)
         val forceBoxOtherValueParameterType = forceSingleValueParameterBoxing(other)
-        val otherUnwrappedValueParameterTypes = other.unwrapFakeOverrides().collectValueParameterTypes()
-        val unwrappedValueParameterTypes = unwrapFakeOverrides().valueParameters.map { it.returnTypeRef }
+        val otherUnwrapped = other.unwrapFakeOverrides()
+        val otherUnwrappedValueParameterTypes = otherUnwrapped.collectValueParameterTypes()
+        val unwrapped = unwrapFakeOverrides()
+        val unwrappedValueParameterTypes = unwrapped.valueParameters.map { it.returnTypeRef }
 
         for (i in valueParameterTypes.indices) {
             if (!isEqualTypes(

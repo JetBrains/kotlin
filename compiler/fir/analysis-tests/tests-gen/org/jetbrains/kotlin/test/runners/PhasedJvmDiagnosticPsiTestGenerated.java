@@ -31041,9 +31041,27 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("InheritingJavaClassWithGenericAndRawClashInOverrideSignature.kt")
+      public void testInheritingJavaClassWithGenericAndRawClashInOverrideSignature() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericAndRawClashInOverrideSignature.kt");
+      }
+
+      @Test
       @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature.kt")
       public void testInheritingJavaClassWithGenericClashInOverrideSignature() {
         runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature2.kt")
+      public void testInheritingJavaClassWithGenericClashInOverrideSignature2() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature2.kt");
+      }
+
+      @Test
+      @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature3.kt")
+      public void testInheritingJavaClassWithGenericClashInOverrideSignature3() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature3.kt");
       }
 
       @Test
@@ -53768,6 +53786,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/overrides")
     @TestDataPath("$PROJECT_ROOT")
     public class Overrides {
+      @Test
+      @TestMetadata("complexGenericOverrideWithRawTypeInField.kt")
+      public void testComplexGenericOverrideWithRawTypeInField() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeInField.kt");
+      }
+
+      @Test
+      @TestMetadata("complexGenericOverrideWithRawTypeInProperty.kt")
+      public void testComplexGenericOverrideWithRawTypeInProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeInProperty.kt");
+      }
+
       @Test
       @TestMetadata("generics.kt")
       public void testGenerics() {

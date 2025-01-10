@@ -1,0 +1,12 @@
+FILE: test.kt
+    public final class MySubject : R|StackJava.SubjectClass| {
+        public constructor(): R|MySubject| {
+            super<R|StackJava.SubjectClass|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval sf: R|ft<Raw type StackJava.AnyGeneric<kotlin/Any!>, StackJava.AnyGeneric<*>?>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.someField>|
+            lval af: R|ft<Raw type StackJava.AnyGeneric<kotlin/Any!>, StackJava.AnyGeneric<*>?>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.anotherField>|
+        }
+
+    }

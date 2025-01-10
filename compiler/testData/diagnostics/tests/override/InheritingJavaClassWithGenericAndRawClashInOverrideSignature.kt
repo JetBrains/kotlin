@@ -1,10 +1,9 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74148
-// SCOPE_DUMP: C:foo
-// FIR_IDENTICAL
 // FILE: A.java
 public abstract class A<T> {
-    public abstract Object foo(A<Object> arg0, T arg1);
+    public abstract Object foo(A arg0, T arg1);
 }
 
 // FILE: B.java

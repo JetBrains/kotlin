@@ -4574,6 +4574,18 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("complexGenericOverrideWithRawTypeInField.kt")
+      public void testComplexGenericOverrideWithRawTypeInField() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeInField.kt");
+      }
+
+      @Test
+      @TestMetadata("complexGenericOverrideWithRawTypeInProperty.kt")
+      public void testComplexGenericOverrideWithRawTypeInProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeInProperty.kt");
+      }
+
+      @Test
       @TestMetadata("generics.kt")
       public void testGenerics() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/generics.kt");
