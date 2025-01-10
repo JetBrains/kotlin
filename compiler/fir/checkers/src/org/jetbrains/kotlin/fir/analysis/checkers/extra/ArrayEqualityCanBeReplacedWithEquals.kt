@@ -19,6 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
+private val ARRAY_CLASS_IDS = listOf(StandardClassIds.Array)
+    .plus(StandardClassIds.primitiveArrayTypeByElementType.values)
+    .plus(StandardClassIds.unsignedArrayTypeByElementType.values)
+
 object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirEqualityOperatorCall) return
@@ -27,9 +31,11 @@ object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker(MppCheck
         val left = arguments.getOrNull(0) ?: return
         val right = arguments.getOrNull(1) ?: return
 
-        if (left.resolvedType.fullyExpandedClassId(context.session) != StandardClassIds.Array) return
-        if (right.resolvedType.fullyExpandedClassId(context.session) != StandardClassIds.Array) return
+        val leftClassId = ARRAY_CLASS_IDS.indexOf(left.resolvedType.fullyExpandedClassId(context.session))
+        val rightClassId = ARRAY_CLASS_IDS.indexOf(right.resolvedType.fullyExpandedClassId(context.session))
 
-        reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, context)
+        if (leftClassId != -1 && leftClassId == rightClassId) {
+            reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, context)
+        }
     }
 }

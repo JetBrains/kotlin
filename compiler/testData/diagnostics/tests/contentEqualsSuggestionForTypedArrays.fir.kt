@@ -11,7 +11,7 @@ fun normal() {
 fun chars() {
     val a = charArrayOf('a', 'b', 'c')
     val b = charArrayOf('a', 'b', 'c')
-    a == b
+    a <!ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS!>==<!> b
 }
 
 fun normalAndChar() {
