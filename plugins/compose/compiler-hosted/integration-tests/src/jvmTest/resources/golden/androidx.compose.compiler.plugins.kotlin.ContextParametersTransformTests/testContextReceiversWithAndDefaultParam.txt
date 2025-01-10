@@ -29,7 +29,7 @@ fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     with(foo) {
-      "Hello".A(%this%with, 2, null, %composer, 0b000110000110, 0b0100)
+      "Hello".A(%this%with, 2, null, %composer, 0b000110110000, 0b0100)
     }
     if (isTraceInProgress()) {
       traceEventEnd()
