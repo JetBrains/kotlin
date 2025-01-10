@@ -29,9 +29,6 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
     protected open val jsCodeOutliningLowering: ((Context) -> FileLoweringPass)?
         get() = null
 
-    protected open val allowExternalInlineFunctions: Boolean
-        get() = false
-
     protected open val upgradeCallableReferenceLowering: ((Context) -> FileLoweringPass)?
         get() = null
 
@@ -42,7 +39,6 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
     private fun privateInlineFunctionResolver(context: Context): InlineFunctionResolver {
         return PreSerializationPrivateInlineFunctionResolver(
             context = context,
-            allowExternalInlining = allowExternalInlineFunctions,
         )
     }
 
@@ -50,7 +46,6 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
     private fun nonPrivateInlineFunctionResolver(context: Context): InlineFunctionResolver {
         return PreSerializationNonPrivateInlineFunctionResolver(
             context = context,
-            allowExternalInlining = allowExternalInlineFunctions,
             irMangler = irMangler,
         )
     }

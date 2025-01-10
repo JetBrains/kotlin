@@ -29,4 +29,7 @@ class JsPreSerializationLoweringContext(
     }
 
     override val sharedVariablesManager: SharedVariablesManager by lazy { JsSharedVariablesManager(irBuiltIns, dynamicType, intrinsics) }
+
+    override val allowExternalInlining: Boolean
+        get() = true
 }

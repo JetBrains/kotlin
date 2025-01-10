@@ -88,6 +88,9 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
     protected val context: Ctx,
     inlineMode: InlineMode,
 ) : InlineFunctionResolver(inlineMode) {
+    final override val allowExternalInlining: Boolean
+        get() = context.allowExternalInlining
+
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
@@ -113,7 +116,6 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
  */
 internal class PreSerializationPrivateInlineFunctionResolver(
     context: LoweringContext,
-    override val allowExternalInlining: Boolean,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol)
@@ -126,7 +128,6 @@ internal class PreSerializationPrivateInlineFunctionResolver(
 
 internal class PreSerializationNonPrivateInlineFunctionResolver(
     context: LoweringContext,
-    override val allowExternalInlining: Boolean,
     irMangler: KotlinMangler.IrMangler,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
 

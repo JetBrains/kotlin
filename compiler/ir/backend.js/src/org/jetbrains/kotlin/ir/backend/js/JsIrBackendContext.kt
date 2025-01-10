@@ -73,6 +73,9 @@ class JsIrBackendContext(
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
 
+    override val allowExternalInlining: Boolean
+        get() = true
+
     val polyfills = JsPolyfills()
     val globalIrInterner = IrInterningService()
 

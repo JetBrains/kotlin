@@ -20,9 +20,6 @@ object JsPreSerializationLoweringPhasesProvider : PreSerializationLoweringPhases
 
     override val jsCodeOutliningLowering: (JsPreSerializationLoweringContext) -> FileLoweringPass = ::jsCodeOutliningLoweringFactory
 
-    override val allowExternalInlineFunctions: Boolean
-        get() = true
-
     override val irMangler: KotlinMangler.IrMangler
         get() = JsManglerIr
 
