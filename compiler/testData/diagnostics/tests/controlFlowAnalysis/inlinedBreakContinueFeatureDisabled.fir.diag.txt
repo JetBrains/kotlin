@@ -1,18 +1,18 @@
-/inlinedBreakContinueFeatureDisabled.kt:(378,383): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(378,383): error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(400,408): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(400,408): error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(432,437): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(432,437): error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(462,470): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(462,470): error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(529,534): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(529,534): error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(554,562): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(554,562): error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(590,595): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(590,595): error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(629,637): error: The feature "break continue in inline lambdas" is only available since language version 2.2
+/inlinedBreakContinueFeatureDisabled.kt:(629,637): error: The feature "break continue in inline lambdas" is disabled
 
 /inlinedBreakContinueFeatureDisabled.kt:(711,716): error: 'break' or 'continue' crosses a function or class boundary.
 
