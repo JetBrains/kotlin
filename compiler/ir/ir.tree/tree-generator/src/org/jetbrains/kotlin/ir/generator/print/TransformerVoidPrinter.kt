@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.utils.withIndent
 internal class TransformerVoidPrinter(
     printer: ImportCollectingPrinter,
     override val visitorType: ClassRef<*>,
+    private val rootElement: Element,
 ) : AbstractTransformerVoidPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
@@ -48,6 +49,18 @@ internal class TransformerVoidPrinter(
         get() = false
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
+        println()
+        printRootTransformMethodDeclaration(rootElement, Modality.OPEN, hasDataParameter = false)
+        printBlock {
+            println(rootElement.visitorParameterName, ".transformChildren(this, null)")
+            println("return ", rootElement.visitorParameterName)
+        }
+        println()
+        printRootTransformMethodDeclaration(rootElement, Modality.FINAL, hasDataParameter = true, override = true)
+        println(" =")
+        withIndent {
+            println("transformElement(", rootElement.visitorParameterName, ")")
+        }
         println()
         val typeParameter = TypeVariable("T", listOf(IrTree.rootElement))
         printFunctionWithBlockBody(
@@ -82,9 +95,9 @@ internal class TransformerVoidPrinter(
             println()
             printVisitMethodDeclaration(element, hasDataParameter = false, modality = Modality.OPEN)
             if (element.transformByChildrenVoid && !element.isPackageFragmentChild) {
-                printBlock {
-                    println(element.visitorParameterName, ".transformChildren(this, null)")
-                    println("return ", element.visitorParameterName)
+                println(" =")
+                withIndent {
+                    println("transformElement(", element.visitorParameterName, ")")
                 }
             } else {
                 println(" =")

@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
                 irVisitorType to ::VisitorPrinter,
                 irVisitorVoidType to ::VisitorVoidPrinter,
                 irTransformerType to ::TransformerPrinter.bind(model.rootElement),
-                elementTransformerVoidType to ::TransformerVoidPrinter,
+                elementTransformerVoidType to ::TransformerVoidPrinter.bind(model.rootElement),
                 typeVisitorType to ::TypeVisitorPrinter.bind(model.rootElement),
                 typeVisitorVoidType to ::TypeVisitorVoidPrinter.bind(model.rootElement),
                 deepCopyIrTreeWithSymbolsType to ::DeepCopyIrTreeWithSymbolsPrinter

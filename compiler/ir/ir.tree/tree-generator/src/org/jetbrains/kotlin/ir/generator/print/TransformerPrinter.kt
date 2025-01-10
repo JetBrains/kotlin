@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
@@ -30,6 +31,14 @@ internal class TransformerPrinter(
 
     override fun visitMethodReturnType(element: Element) = element.getTransformExplicitType()
 
+    override fun ImportCollectingPrinter.printAdditionalMethods() {
+        printRootTransformMethodDeclaration(rootElement, Modality.OPEN, hasDataParameter = true)
+        printBlock {
+            println(rootElement.visitorParameterName, ".transformChildren(this, data)")
+            println("return ", rootElement.visitorParameterName)
+        }
+    }
+
     override fun printMethodsForElement(element: Element) {
         printer.run {
             val parent = element.parentInVisitor
@@ -40,9 +49,9 @@ internal class TransformerPrinter(
                     override = true,
                 )
                 if (element.transformByChildren) {
-                    printBlock {
-                        println(element.visitorParameterName, ".transformChildren(this, data)")
-                        println("return ", element.visitorParameterName)
+                    println(" =")
+                    withIndent {
+                        println("transformElement(", element.visitorParameterName, ", data)")
                     }
                 } else {
                     println(" =")

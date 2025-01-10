@@ -18,22 +18,32 @@ abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Fie
 
     override fun visitMethodReturnType(element: Element) = element.transformerClass
 
+    protected fun ImportCollectingPrinter.printRootTransformMethodDeclaration(
+        element: Element,
+        modality: Modality?,
+        hasDataParameter: Boolean,
+        override: Boolean = false,
+    ) {
+        val elementTP = TypeVariable("E", listOf(element))
+        printFunctionDeclaration(
+            name = "transformElement",
+            parameters = listOfNotNull(
+                FunctionParameter(element.visitorParameterName, elementTP),
+                FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
+            ),
+            returnType = elementTP,
+            typeParameters = listOf(elementTP),
+            modality = modality,
+            override = override,
+        )
+    }
+
     override fun printMethodsForElement(element: Element) {
         printer.run {
             println()
             val elementParameterName = element.visitorParameterName
             if (element.isRootElement) {
-                val elementTP = TypeVariable("E", listOf(element))
-                printFunctionDeclaration(
-                    name = "transformElement",
-                    parameters = listOf(
-                        FunctionParameter(elementParameterName, elementTP),
-                        FunctionParameter("data", dataTypeVariable)
-                    ),
-                    returnType = elementTP,
-                    typeParameters = listOf(elementTP),
-                    modality = Modality.ABSTRACT,
-                )
+                this.printRootTransformMethodDeclaration(element, Modality.ABSTRACT, hasDataParameter = true)
                 println()
             } else {
                 val parentInVisitor = parentInVisitor(element) ?: return
