@@ -354,6 +354,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("contentEqualsSuggestionForTypedArrays.kt")
+    public void testContentEqualsSuggestionForTypedArrays() {
+      runTest("compiler/testData/diagnostics/tests/contentEqualsSuggestionForTypedArrays.kt");
+    }
+
+    @Test
     @TestMetadata("CovariantOverrideType.kt")
     public void testCovariantOverrideType() {
       runTest("compiler/testData/diagnostics/tests/CovariantOverrideType.kt");
