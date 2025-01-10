@@ -96,9 +96,11 @@ internal object SharedExecutionBuilder {
             }
 
             // If the test run is expected to fail or timeout, it should not be executed with others.
+            // Same if the output needs to be checked.
             // Add it to the map of ignored test cases for the executable
             testCases.filter {
                 it.expectedFailure || it.checks.executionTimeoutCheck is TestRunCheck.ExecutionTimeout.ShouldExceed
+                        || testRun.checks.outputMatcher != null
             }.toMutableList()
         }
 
