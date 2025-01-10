@@ -32271,6 +32271,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature.kt")
+      public void testInheritingJavaClassWithGenericClashInOverrideSignature() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature.kt");
+      }
+
+      @Test
       @TestMetadata("InheritingJavaClassWithRawTypeInOverrideSignature.kt")
       public void testInheritingJavaClassWithRawTypeInOverrideSignature() {
         runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithRawTypeInOverrideSignature.kt");
