@@ -4,4 +4,10 @@ compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyJavaConfli
 compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyJavaConflictingLibraries/source.kt:4:20: error: cannot access class 'Inner'. Check your module classpath for missing or conflicting dependencies.
     b2.consumeA(b1.produceA())
                    ^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyJavaConflictingLibraries/source.kt:7:8: error: cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeListOfAs(b1.produceListOfAs())
+       ^^^^^^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyJavaConflictingLibraries/source.kt:7:27: error: cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeListOfAs(b1.produceListOfAs())
+                          ^^^^^^^^^^^^^^^
 COMPILATION_ERROR

@@ -13019,6 +13019,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("implictlyExposed.kt")
+      public void testImplictlyExposed() {
+        runTest("compiler/testData/diagnostics/tests/exposed/implictlyExposed.kt");
+      }
+
+      @Test
       @TestMetadata("implictlyExposedAndSuppressed.kt")
       public void testImplictlyExposedAndSuppressed() {
         runTest("compiler/testData/diagnostics/tests/exposed/implictlyExposedAndSuppressed.kt");

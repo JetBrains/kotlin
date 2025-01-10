@@ -1,0 +1,3 @@
+/implictlyExposed.kt:12:5: error: 'public' function exposes its 'local' return type argument <no name provided>
+fun other() = public(object : Inter {})
+    ^^^^^
