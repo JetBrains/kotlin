@@ -1,0 +1,24 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+}
+
+kotlin {
+    jvm()
+    linuxX64()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                def dep1 = project(":lib2")
+                def dep2 = project(":lib2", null)
+                def dep3 = project([path: ':lib2', configuration: null])
+                if (dep1 !instanceof ProjectDependency) throw new Error("dep1 is not a ProjectDependency")
+                if (dep2 !instanceof ProjectDependency) throw new Error("dep2 is not a ProjectDependency")
+                if (dep3 !instanceof ProjectDependency) throw new Error("dep3 is not a ProjectDependency")
+                implementation(dep1)
+                implementation(dep2)
+                implementation(dep3)
+            }
+        }
+    }
+}

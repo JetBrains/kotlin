@@ -1318,6 +1318,16 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-72130: project dependencies can be correctly created in Source Set dependencies block in groovy")
+    fun groovyAccessProjectInSourceSetDependenciesBlock(gradleVersion: GradleVersion) {
+        project("mpp-groovy-access-project-in-sourceset-dependencies-block", gradleVersion) {
+            val buildOptions = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)) {
+                buildOptions.enableIsolatedProjects()
+            } else buildOptions
+            build("build", "--dry-run", buildOptions = buildOptions) {}
+        }
+    }
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,

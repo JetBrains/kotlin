@@ -320,6 +320,21 @@ interface KotlinDependencyHandler : HasProject {
      * Note: The created dependency should be manually added to this entity using other methods from this DSL:
      * ```
      * kotlin.sourceSets["jvmMain"].dependencies {
+     *     implementation(project(":my-library"))
+     * }
+     * ```
+     *
+     * @param path The project path
+     * @param configuration The optional target configuration in the project
+     */
+    fun project(path: String) = project(path, null)
+
+    /**
+     * Creates a Gradle project dependency.
+     *
+     * Note: The created dependency should be manually added to this entity using other methods from this DSL:
+     * ```
+     * kotlin.sourceSets["jvmMain"].dependencies {
      *     implementation(project(mapOf("path" to ":project-a", "configuration" to "someOtherConfiguration")))
      * }
      * ```

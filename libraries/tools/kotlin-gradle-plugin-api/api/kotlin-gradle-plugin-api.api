@@ -996,6 +996,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDepende
 	public abstract fun peerNpm (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun platform (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun platform (Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun project (Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public abstract fun project (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public abstract fun project (Ljava/util/Map;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public abstract fun runtimeOnly (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
@@ -1023,6 +1024,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler$De
 	public static fun optionalNpm (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/lang/String;Z)Lorg/gradle/api/artifacts/Dependency;
 	public static fun platform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun platform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun project (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public static fun project (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public static synthetic fun project$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
