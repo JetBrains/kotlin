@@ -450,7 +450,7 @@ private fun <T> GradleProject.buildScriptReturnInjection(
             it.insertInjection(
                 whenPropertySpecified(
                     injectionIdentifier,
-                    injectionLoadProject(serializedInjectionPath.name)
+                    injectionLoadProject(serializedInjectionPath)
                 )
             )
         }
@@ -458,7 +458,7 @@ private fun <T> GradleProject.buildScriptReturnInjection(
             it.insertInjection(
                 whenPropertySpecified(
                     injectionIdentifier,
-                    injectionLoadProjectGroovy(serializedInjectionPath.name)
+                    injectionLoadProjectGroovy(serializedInjectionPath)
                 )
             )
         }
