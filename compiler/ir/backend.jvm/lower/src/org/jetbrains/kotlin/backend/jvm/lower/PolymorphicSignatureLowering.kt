@@ -62,11 +62,6 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
     private fun IrTypeOperatorCall.isCast(): Boolean =
         operator != IrTypeOperator.INSTANCEOF && operator != IrTypeOperator.NOT_INSTANCEOF
 
-    override fun visitElement(element: IrElement, data: Data): IrElement {
-        element.transformChildren(this, Data.NO_COERCION)
-        return element
-    }
-
     // If the return type is Any?, then it is also polymorphic (e.g. MethodHandle.invokeExact
     // has polymorphic return type, while VarHandle.compareAndSet does not).
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Data): IrExpression {

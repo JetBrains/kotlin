@@ -232,8 +232,6 @@ internal abstract class ScriptLikeToClassTransformer(
     private fun unexpectedElement(element: IrElement): Nothing =
         throw IllegalArgumentException("Unsupported element type: $element")
 
-    override fun visitElement(element: IrElement, data: ScriptLikeToClassTransformerContext): IrElement = unexpectedElement(element)
-
     override fun visitModuleFragment(declaration: IrModuleFragment, data: ScriptLikeToClassTransformerContext): IrModuleFragment =
         unexpectedElement(declaration)
 
@@ -431,8 +429,6 @@ internal class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrTrans
 
     private fun unexpectedElement(element: IrElement): Nothing =
         throw IllegalArgumentException("Unsupported element type: $element")
-
-    override fun visitElement(element: IrElement, data: ScriptFixLambdasTransformerContext): IrElement = unexpectedElement(element)
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: ScriptFixLambdasTransformerContext): IrModuleFragment =
         unexpectedElement(declaration)

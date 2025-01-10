@@ -101,12 +101,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
 
         printer.run {
             if (element.isRootElement) {
-                println()
-                printVisitMethodDeclaration(element, hasDataParameter = false, override = true)
-                println(" =")
-                withIndent {
-                    println("throw IllegalArgumentException(\"Unsupported element type: $${element.visitorParameterName}\")")
-                }
                 return
             }
 

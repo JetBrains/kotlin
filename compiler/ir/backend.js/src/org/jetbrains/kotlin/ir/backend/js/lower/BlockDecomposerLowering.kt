@@ -144,8 +144,6 @@ class BlockDecomposerTransformer(
         return declaration.transformStatement(statementTransformer)
     }
 
-    override fun visitElement(element: IrElement) = element.transform(statementTransformer, null)
-
     private fun processStatements(statements: MutableList<IrStatement>) {
         statements.transformFlat {
             destructureComposite(it.transformStatement(statementTransformer))

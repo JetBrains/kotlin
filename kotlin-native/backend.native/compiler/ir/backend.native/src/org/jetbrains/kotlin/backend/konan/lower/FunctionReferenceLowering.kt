@@ -84,13 +84,6 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
         irFile.transform(object : IrTransformer<IrDeclarationParent>() {
             private val stack = mutableListOf<IrElement>()
 
-            override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
-                stack.push(element)
-                val result = super.visitElement(element, data)
-                stack.pop()
-                return result
-            }
-
             override fun visitExpression(expression: IrExpression, data: IrDeclarationParent): IrExpression {
                 stack.push(expression)
                 val result = super.visitExpression(expression, data)

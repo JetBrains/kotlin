@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -40,9 +39,6 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun IrType.remapType() = typeRemapper.remapType(this)
-
-    override fun visitElement(element: IrElement): IrElement =
-        throw IllegalArgumentException("Unsupported element type: $element")
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
         IrValueParameterImpl(

@@ -42,9 +42,6 @@ internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendConte
 
     override fun lower(irFile: IrFile) = irFile.transformChildren(this, AssertionScope.Enabled)
 
-    override fun visitElement(element: IrElement, data: AssertionScope): IrElement =
-        super.visitElement(element, AssertionScope.Enabled)
-
     override fun visitDeclaration(declaration: IrDeclarationBase, data: AssertionScope): IrStatement =
         super.visitDeclaration(declaration, AssertionScope.Enabled)
 

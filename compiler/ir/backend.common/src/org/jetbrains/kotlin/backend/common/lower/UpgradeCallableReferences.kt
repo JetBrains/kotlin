@@ -99,18 +99,9 @@ open class UpgradeCallableReferences(
             }
         }
 
-        override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
+        override fun <E : IrElement> transformElement(element: E, data: IrDeclarationParent): E {
             element.transformChildren(this, element as? IrDeclarationParent ?: data)
             return element
-        }
-
-        // IrTransformer defines this to not calling visitElement, which leads to incorrect parent creation
-        override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
-            return visitElement(declaration, data) as IrStatement
-        }
-
-        override fun visitFile(declaration: IrFile, data: IrDeclarationParent): IrFile {
-            return visitElement(declaration, data) as IrFile
         }
 
         private fun IrType.arrayDepth(): Int {

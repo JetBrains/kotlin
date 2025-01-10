@@ -49,10 +49,6 @@ abstract class KlibAssertionWrapperLowering(val context: LoweringContext) : File
     }
 
     private inner class Transformer : IrTransformer<IrSymbol>() {
-        override fun visitElement(element: IrElement, data: IrSymbol): IrElement {
-            return super.visitElement(element, if (element is IrSymbolOwner) element.symbol else data)
-        }
-
         override fun visitDeclaration(declaration: IrDeclarationBase, data: IrSymbol): IrStatement {
             return super.visitDeclaration(declaration, declaration.symbol)
         }

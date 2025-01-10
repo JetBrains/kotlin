@@ -173,9 +173,6 @@ internal class ArrayAccessAssignmentReceiver(
     private class SamConversionsRewriter(
         private val replacementVars: Map<IrVariable, IrVariable>
     ) : IrElementTransformerVoid() {
-        override fun visitElement(element: IrElement): IrElement {
-            return element.apply { transformChildrenVoid() }
-        }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
             val irGetVar = expression.getSamConvertedGetValue()

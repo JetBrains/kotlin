@@ -551,8 +551,6 @@ open class FunctionInlining(
                     super.visitExpression(immediateCall)
                 }.doImplicitCastIfNeededTo(irCall.type)
             }
-
-            override fun visitElement(element: IrElement) = element.accept(this, null)
         }
 
         private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
