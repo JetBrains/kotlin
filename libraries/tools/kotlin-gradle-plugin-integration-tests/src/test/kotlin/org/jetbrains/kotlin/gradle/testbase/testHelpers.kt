@@ -22,8 +22,20 @@ import kotlin.test.fail
  *
  * To run task with the same build option as test - use `run.sh` (or `run.bat`) script.
  */
-fun TestProject.makeSnapshotTo(destinationPath: String, buildOptions: BuildOptions = this.buildOptions) {
+fun TestProject.makeSnapshotTo(
+    destinationPath: String,
+    buildOptions: BuildOptions = this.buildOptions,
+    useSnapshotWithInjections: Boolean = false,
+) {
     if (isTeamCityRun) fail("Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!")
+    if (!useSnapshotWithInjections && usesInjections) fail(
+        """
+            Test project tries to make a snapshot with injections. Rebuilding test classes will result in the updated behavior in the snapshot.
+              
+            Please opt-in explicitly using "makeSnapshotTo(..., useSnapshotWithInjections = true)"
+            
+        """.trimIndent()
+    )
 
     val dest = Paths
         .get(destinationPath)
