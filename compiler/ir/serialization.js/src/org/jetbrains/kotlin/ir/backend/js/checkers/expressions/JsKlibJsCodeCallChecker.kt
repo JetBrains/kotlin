@@ -33,6 +33,8 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
         if (!context.compilerConfiguration.languageVersionSettings.languageVersion.usesK2) {
             return
         }
+
+        // TODO do a signature check
         if (expression.symbol.owner.fqNameWhenAvailable != jsCodeFqName) {
             return
         }

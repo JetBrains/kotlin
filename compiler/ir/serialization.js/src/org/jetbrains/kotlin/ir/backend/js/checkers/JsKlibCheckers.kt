@@ -64,9 +64,9 @@ object JsKlibCheckers {
             }
 
             override fun visitCall(expression: IrCall) {
-                for (checker in callCheckers) {
-                    checker.check(expression, this.diagnosticContext, diagnosticReporter)
-                }
+//                for (checker in callCheckers) {
+//                    checker.check(expression, this.diagnosticContext, diagnosticReporter)
+//                }
                 super.visitCall(expression)
             }
         }
