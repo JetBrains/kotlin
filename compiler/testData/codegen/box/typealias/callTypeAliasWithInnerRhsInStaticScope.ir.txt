@@ -64,11 +64,11 @@ FILE fqName:<root> fileName:/callTypeAliasWithInnerRhsInStaticScope.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner' type=<root>.C.Inner origin=null
-            $outer: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=null
+            $outer: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner2' type=<root>.C.Inner2<kotlin.String> origin=null
             <class: K>: kotlin.String
-            $outer: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=null
+            $outer: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
         VAR name:callable type:kotlin.reflect.KFunction0<<root>.C.Inner> [val]
           FUNCTION_REFERENCE 'public constructor <init> () declared in <root>.C.Inner' type=kotlin.reflect.KFunction0<<root>.C.Inner> origin=null reflectionTarget=<same>
             $this: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=null
@@ -81,11 +81,11 @@ FILE fqName:<root> fileName:/callTypeAliasWithInnerRhsInStaticScope.kt
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner' type=<root>.C.Inner origin=null
-          $outer: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=null
+          $outer: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=IMPLICIT_ARGUMENT
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner2' type=<root>.C.Inner2<kotlin.String> origin=null
           <class: K>: kotlin.String
-          $outer: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=null
+          $outer: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=IMPLICIT_ARGUMENT
       CALL 'public final fun f (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=null
       VAR name:callable type:kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> [val]
@@ -105,11 +105,11 @@ FILE fqName:<root> fileName:/callTypeAliasWithInnerRhsInStaticScope.kt
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner' type=<root>.C.Inner origin=null
-                    $outer: GET_VAR '$this$with: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=null
+                    $outer: GET_VAR '$this$with: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=IMPLICIT_ARGUMENT
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.C.Inner2<kotlin.Int> declared in <root>.box'
                   CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner2' type=<root>.C.Inner2<kotlin.Int> origin=null
                     <class: K>: kotlin.Int
-                    $outer: GET_VAR '$this$with: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=null
+                    $outer: GET_VAR '$this$with: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=IMPLICIT_ARGUMENT
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
   TYPEALIAS name:TA visibility:public expandedType:<root>.C.Inner
