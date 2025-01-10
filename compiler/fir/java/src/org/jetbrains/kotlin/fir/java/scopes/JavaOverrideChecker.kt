@@ -81,7 +81,14 @@ class JavaOverrideChecker internal constructor(
                     substitutor
                 )
             }
-            return true
+            // Java spec (8.4.2) says here that methods should either have the same signature,
+            // or signature erasure for candidate is the same as signature (without erasure) for base method
+            // So we allow here the base type (but not the candidate type) being raw or having no type arguments
+            if (baseType.isRaw() || baseType.typeArguments.isEmpty()) return true
+            if (candidateType.typeArguments.size != baseType.typeArguments.size) return false
+            return candidateType.typeArguments.zip(baseType.typeArguments).all { (ct, bt) ->
+                bt !is ConeKotlinTypeProjection || ct !is ConeKotlinTypeProjection || isEqualTypes(ct.type, bt.type, substitutor)
+            }
         }
         return with(context) {
             areEqualTypeConstructors(

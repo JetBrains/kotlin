@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74148
 // SCOPE_DUMP: C:foo
+// FIR_IDENTICAL
 // FILE: A.java
 public abstract class A<T> {
     public abstract Object foo(A<Object> arg0, T arg1);
@@ -15,4 +16,3 @@ public abstract class B extends A<B> {
 
 // FILE: Main.kt
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class C<!> : B()
-
