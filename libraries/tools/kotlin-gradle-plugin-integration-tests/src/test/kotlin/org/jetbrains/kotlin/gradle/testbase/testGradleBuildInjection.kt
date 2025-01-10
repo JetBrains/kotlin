@@ -405,7 +405,7 @@ sealed class CaughtBuildFailure<ExpectedException : Throwable> : Serializable {
  * - [CaughtBuildFailure.Unexpected]: The backtrace of the top level exception caught by the build when [T] wasn't found in the exception cause graph
  * - [CaughtBuildFailure.UnexpectedMissingBuildFailure]: Build was expected to fail, but no failure was reported by Gradle
  *
- * FIXME: Currently CC serialization failures are not caught
+ * FIXME: Currently CC serialization failures are not caught - KT-74367
  */
 internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): ReturnFromBuildScriptAfterExecution<CaughtBuildFailure<T>> {
     return buildScriptReturnInjection(
