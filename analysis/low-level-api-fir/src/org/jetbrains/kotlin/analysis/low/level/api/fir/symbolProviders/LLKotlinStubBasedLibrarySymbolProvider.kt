@@ -12,18 +12,15 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.DeserializedContainerSourceProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedAnnotationDeserializer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializationContext
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirTypeDeserializer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.deserializeClassToSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.loadStubByElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -36,7 +33,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
-import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -183,24 +181,14 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
 
         return ArrayList<FirNamedFunctionSymbol>(topLevelFunctions.size).apply {
             for (function in topLevelFunctions) {
-                val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function)
-                val functionFile = function.containingKtFile
-                val functionOrigin = getDeclarationOriginFor(functionFile)
-                val containerSource =
-                    deserializedContainerSourceProvider.getFacadeContainerSource(functionFile, functionStub?.origin, functionOrigin)
-
-                if (!functionOrigin.isBuiltIns &&
-                    containerSource is FacadeClassSource &&
-                    containerSource.className.internalName in KotlinBuiltins
-                ) {
-                    continue
-                }
-
-                val symbol = FirNamedFunctionSymbol(callableId)
-                val rootContext = StubBasedFirDeserializationContext
-                    .createRootContext(session, moduleData, callableId, function, symbol, functionOrigin, containerSource)
-
-                add(rootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol)
+                val symbol = loadFunction(
+                    function = function,
+                    callableId = callableId,
+                    functionOrigin = getDeclarationOriginFor(function.containingKtFile),
+                    deserializedContainerSourceProvider = deserializedContainerSourceProvider,
+                    session = session,
+                ) ?: continue
+                add(symbol)
             }
         }
     }
@@ -208,22 +196,16 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     private fun loadPropertiesByCallableId(callableId: CallableId, foundProperties: Collection<KtProperty>?): List<FirPropertySymbol> {
         val topLevelProperties = foundProperties ?: declarationProvider.getTopLevelProperties(callableId)
 
-        return buildList {
+        return ArrayList<FirPropertySymbol>(topLevelProperties.size).apply {
             for (property in topLevelProperties) {
-                val propertyStub = property.stub as? KotlinPropertyStubImpl ?: loadStubByElement(property)
-                val propertyFile = property.containingKtFile
-                val propertyOrigin = getDeclarationOriginFor(propertyFile)
-                val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
-                    propertyFile,
-                    propertyStub?.origin,
-                    propertyOrigin,
-                )
-
-                val symbol = FirPropertySymbol(callableId)
-                val rootContext = StubBasedFirDeserializationContext
-                    .createRootContext(session, moduleData, callableId, property, symbol, propertyOrigin, containerSource)
-
-                add(rootContext.memberDeserializer.loadProperty(property, null, symbol).symbol)
+                val symbol = loadProperty(
+                    property = property,
+                    callableId = callableId,
+                    propertyOrigin = getDeclarationOriginFor(property.containingKtFile),
+                    deserializedContainerSourceProvider = deserializedContainerSourceProvider,
+                    session = session,
+                ) ?: continue
+                add(symbol)
             }
         }
     }
@@ -376,6 +358,83 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             is KtProperty -> propertyCache.getValue(callableId)
             else -> null
         }
+
         return callableSymbols?.singleOrNull { it.fir.realPsi == callableDeclaration }
+    }
+
+    companion object {
+        fun loadProperty(
+            property: KtProperty,
+            callableId: CallableId,
+            propertyOrigin: FirDeclarationOrigin,
+            deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
+            session: FirSession,
+        ): FirPropertySymbol? {
+            val propertyStub = property.stub as? KotlinPropertyStubImpl ?: loadStubByElement(property)
+            val propertyFile = property.containingKtFile
+            val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
+                file = propertyFile,
+                stubOrigin = propertyStub?.origin,
+                declarationOrigin = propertyOrigin,
+            )
+
+            val symbol = FirPropertySymbol(callableId)
+            val rootContext = StubBasedFirDeserializationContext.createRootContext(
+                session = session,
+                moduleData = session.moduleData,
+                callableId = callableId,
+                parameterListOwner = property,
+                symbol = symbol,
+                initialOrigin = propertyOrigin,
+                containerSource = containerSource,
+            )
+
+            return rootContext.memberDeserializer.loadProperty(
+                property = property,
+                classSymbol = null,
+                existingSymbol = symbol,
+            ).symbol
+        }
+
+        fun loadFunction(
+            function: KtNamedFunction,
+            callableId: CallableId,
+            functionOrigin: FirDeclarationOrigin,
+            deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
+            session: FirSession,
+        ): FirNamedFunctionSymbol? {
+            val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function)
+            val functionFile = function.containingKtFile
+            val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
+                file = functionFile,
+                stubOrigin = functionStub?.origin,
+                declarationOrigin = functionOrigin,
+            )
+
+            if (!functionOrigin.isBuiltIns &&
+                containerSource is FacadeClassSource &&
+                containerSource.className.internalName in KotlinBuiltins
+            ) {
+                return null
+            }
+
+            val symbol = FirNamedFunctionSymbol(callableId)
+            val rootContext = StubBasedFirDeserializationContext.createRootContext(
+                session = session,
+                moduleData = session.moduleData,
+                callableId = callableId,
+                parameterListOwner = function,
+                symbol = symbol,
+                initialOrigin = functionOrigin,
+                containerSource = containerSource,
+            )
+
+            return rootContext.memberDeserializer.loadFunction(
+                function = function,
+                classSymbol = null,
+                session = session,
+                existingSymbol = symbol,
+            ).symbol
+        }
     }
 }

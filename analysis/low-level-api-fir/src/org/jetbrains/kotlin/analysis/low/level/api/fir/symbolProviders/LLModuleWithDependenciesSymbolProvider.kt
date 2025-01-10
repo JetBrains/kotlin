@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -89,6 +89,10 @@ internal class LLModuleWithDependenciesSymbolProvider(
         dependencyProvider.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
     }
 
+    private val multifileClassPartCallableSymbolProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLKotlinStubBasedLibraryMultifileClassPartCallableSymbolProvider(session)
+    }
+
     @FirSymbolProviderInternals
     fun getTopLevelDeserializedCallableSymbolsToWithoutDependencies(
         destination: MutableList<FirCallableSymbol<*>>,
@@ -96,6 +100,8 @@ internal class LLModuleWithDependenciesSymbolProvider(
         shortName: Name,
         callableDeclaration: KtCallableDeclaration,
     ) {
+        val sizeBefore = destination.size
+
         providers.forEach { provider ->
             when (provider) {
                 is LLKotlinStubBasedLibrarySymbolProvider ->
@@ -106,6 +112,11 @@ internal class LLModuleWithDependenciesSymbolProvider(
 
                 else -> {}
             }
+        }
+
+        // Must be called after the original search as this is only a fallback solution
+        if (sizeBefore == destination.size && providers.any { it is LLKotlinStubBasedLibrarySymbolProvider }) {
+            multifileClassPartCallableSymbolProvider.addCallableIfNeeded(destination, packageFqName, shortName, callableDeclaration)
         }
     }
 

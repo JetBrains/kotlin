@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -35,14 +37,14 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 /**
  * Allows to search for FIR declarations by compiled [KtDeclaration]s.
  */
-internal class FirDeclarationForCompiledElementSearcher(private val session: FirSession) {
-    private val project = session.llFirModuleData.ktModule.project
+internal class FirDeclarationForCompiledElementSearcher(private val session: LLFirSession) {
+    private val project get() = session.project
 
-    private val projectStructureProvider by lazy {
+    private val projectStructureProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KotlinProjectStructureProvider.getInstance(project)
     }
 
-    private val firElementByPsiElementChooser by lazy {
+    private val firElementByPsiElementChooser by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LLFirElementByPsiElementChooser.getInstance(project)
     }
 

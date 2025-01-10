@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,6 +26,9 @@ import com.intellij.util.io.StringRef
 import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.SmartPointerIncompatiblePsiFile
+import org.jetbrains.kotlin.analysis.api.platform.declarations.*
+import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -33,13 +36,6 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger
-import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
@@ -394,10 +390,29 @@ class KotlinStandaloneDeclarationProviderFactory(
             binaryRoots
                 .map { collectStubsFromBinaryRoot(it, binaryClassCache) }
                 .forEach { processCollectedBinaryStubs(it, isSharedStubs = false) }
+
+            for (file in sourceKtFiles) {
+                if (!file.isCompiled) continue
+
+                // Special handling for builtins is required as normally they are indexed by [loadBuiltIns],
+                // so [buildStubByVirtualFile] skips them explicitly, but actually stubs for them exist
+                val stub = buildStubByVirtualFile(file.virtualFile, binaryClassCache, preserveBuiltins = skipBuiltins)
+
+                // Only files for which stub exists should be indexed, so some synthetic classes should be ignored.
+                // This behavior is closer to real indices.
+                if (stub != null) {
+                    stub.psi = file
+                    processMultifileClassStub(stub)
+
+                    file.accept(recorder)
+                }
+            }
         }
 
         sourceKtFiles.forEach { file ->
-            file.accept(recorder)
+            if (!shouldBuildStubsForBinaryLibraries || !file.isCompiled) {
+                file.accept(recorder)
+            }
         }
     }
 
@@ -424,18 +439,20 @@ class KotlinStandaloneDeclarationProviderFactory(
         }
     }
 
-    private fun processStub(ktFileStub: KotlinFileStubImpl) {
+    private fun processMultifileClassStub(ktFileStub: KotlinFileStubImpl) {
         val ktFile: KtFile = ktFileStub.psi
-        addToFacadeFileMap(ktFile)
 
-        val partNames = ktFileStub.facadePartSimpleNames
-        if (partNames != null) {
-            val packageFqName = ktFileStub.getPackageFqName()
-            for (partName in partNames) {
-                val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
-                index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
-            }
+        val partNames = ktFileStub.facadePartSimpleNames ?: return
+        val packageFqName = ktFileStub.getPackageFqName()
+        for (partName in partNames) {
+            val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
+            index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
         }
+    }
+
+    private fun processStub(ktFileStub: KotlinFileStubImpl) {
+        addToFacadeFileMap(ktFileStub.psi)
+        processMultifileClassStub(ktFileStub)
 
         // top-level functions and properties, built-in classes
         ktFileStub.childrenStubs.forEach(::indexStub)
@@ -449,7 +466,7 @@ class KotlinStandaloneDeclarationProviderFactory(
             VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
                 override fun visitFile(file: VirtualFile): Boolean {
                     if (!file.isDirectory) {
-                        val stub = buildStubByVirtualFile(file, binaryClassCache) ?: return true
+                        val stub = buildStubByVirtualFile(file, binaryClassCache, preserveBuiltins = false) ?: return true
                         put(file, stub)
                     }
                     return true
@@ -457,7 +474,11 @@ class KotlinStandaloneDeclarationProviderFactory(
             })
         }
 
-    private fun buildStubByVirtualFile(file: VirtualFile, binaryClassCache: ClsKotlinBinaryClassCache): KotlinFileStubImpl? {
+    private fun buildStubByVirtualFile(
+        file: VirtualFile,
+        binaryClassCache: ClsKotlinBinaryClassCache,
+        preserveBuiltins: Boolean,
+    ): KotlinFileStubImpl? {
         val fileContent = FileContentImpl.createByFile(file)
         val fileType = fileContent.fileType
         val stubBuilder = when (fileType) {
@@ -465,7 +486,7 @@ class KotlinStandaloneDeclarationProviderFactory(
                 KotlinClsStubBuilder()
             }
 
-            KotlinBuiltInFileType if file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
+            KotlinBuiltInFileType if preserveBuiltins || file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
                 builtInDecompiler.stubBuilder
             }
 
