@@ -1174,6 +1174,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("destructuringNonLocalBeforeInitBlock.kt")
+    public void testDestructuringNonLocalBeforeInitBlock() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/destructuringNonLocalBeforeInitBlock.kt");
+    }
+
+    @Test
     @TestMetadata("duplicatedClasses.kt")
     public void testDuplicatedClasses() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/duplicatedClasses.kt");
