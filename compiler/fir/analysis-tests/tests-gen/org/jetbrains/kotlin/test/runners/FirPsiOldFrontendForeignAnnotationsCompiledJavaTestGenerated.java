@@ -1007,6 +1007,18 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         }
 
         @Test
+        @TestMetadata("DnnOverridesFlexible.kt")
+        public void testDnnOverridesFlexible() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/DnnOverridesFlexible.kt");
+        }
+
+        @Test
+        @TestMetadata("DnnOverridesFlexibleDisabled.kt")
+        public void testDnnOverridesFlexibleDisabled() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/DnnOverridesFlexibleDisabled.kt");
+        }
+
+        @Test
         @TestMetadata("forkPointCausedByWarnAnnotation.kt")
         public void testForkPointCausedByWarnAnnotation() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/forkPointCausedByWarnAnnotation.kt");
