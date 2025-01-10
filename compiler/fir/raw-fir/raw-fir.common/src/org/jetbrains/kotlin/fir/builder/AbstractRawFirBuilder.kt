@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 //T can be either PsiElement, or LighterASTNode
 abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context: Context<T> = Context()) {
@@ -157,11 +160,16 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
      * @see Context.pushContainerSymbol
      * @see Context.popContainerSymbol
      */
+    @OptIn(ExperimentalContracts::class)
     inline fun <T> withContainerSymbol(
         symbol: FirBasedSymbol<*>,
         isLocal: Boolean = false,
         block: () -> T,
     ): T {
+        contract {
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        }
+
         if (!isLocal) {
             context.pushContainerSymbol(symbol)
         }

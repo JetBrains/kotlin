@@ -9,12 +9,11 @@ import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
 open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
-    val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    val annotations: MutableList<LighterASTNode> = mutableListOf()
 
     fun addModifier(modifier: LighterASTNode, isInClass: Boolean = false) {
         when (val tokenType = modifier.tokenType) {

@@ -556,7 +556,7 @@ class LightTreeRawFirExpressionBuilder(
         val firAnnotationList = mutableListOf<FirAnnotation>()
         annotatedExpression.forEachChildren {
             when (it.tokenType) {
-                ANNOTATION -> firAnnotationList += declarationBuilder.convertAnnotation(it)
+                ANNOTATION -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
                 ANNOTATION_ENTRY -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
                 BLOCK -> firExpression = declarationBuilder.convertBlockExpression(it)
                 else -> if (it.isExpression()) {

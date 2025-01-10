@@ -89,7 +89,7 @@ class LightTreeRawFirDeclarationBuilder(
             when (child.tokenType) {
                 FILE_ANNOTATION_LIST -> {
                     withContainerSymbol(fileSymbol) {
-                        fileAnnotations += convertAnnotationList(child)
+                        convertAnnotationsOnlyTo(child, fileAnnotations)
                     }
                 }
                 PACKAGE_DIRECTIVE -> {
@@ -283,90 +283,78 @@ class LightTreeRawFirDeclarationBuilder(
 
     /*****    MODIFIERS    *****/
     /**
-     * Convert only modifiers
+     * Convert modifiers and collect annotations.
+     *
+     * To convert annotations, [Modifier.convertAnnotationsTo] or [Modifier.convertAnnotations] must be called inside
+     * a [withContainerSymbol] block.
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
      */
     private fun convertModifierList(modifiers: LighterASTNode, isInClass: Boolean = false): Modifier {
-        val modifier = Modifier()
-        modifiers.forEachChildren {
-            if (it.tokenType is KtModifierKeywordToken) {
-                modifier.addModifier(it, isInClass)
-            }
-        }
-
-        return modifier
-    }
-
-    /**
-     * Convert only annotations
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
-     */
-    private fun convertAnnotationList(annotations: LighterASTNode): List<FirAnnotationCall> {
-        return annotations.forEachChildrenReturnList<FirAnnotationCall> { node, list ->
-            when (node.tokenType) {
-                ANNOTATION -> list += convertAnnotation(node)
-                ANNOTATION_ENTRY -> list += convertAnnotationEntry(node)
-            }
-        }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeModifierList
-     */
-    private fun convertTypeModifierList(modifiers: LighterASTNode): Modifier {
-        val typeModifier = Modifier()
-        modifiers.forEachChildren {
-            when (it.tokenType) {
-                ANNOTATION -> typeModifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> typeModifier.annotations += convertAnnotationEntry(it)
-                is KtModifierKeywordToken -> typeModifier.addModifier(it)
-            }
-        }
-        return typeModifier
+        return Modifier().also { it.consume(modifiers, isInClass) }
     }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentModifierList
      */
     private fun convertTypeArgumentModifierList(modifiers: LighterASTNode): TypeProjectionModifier {
-        val typeArgumentModifier = TypeProjectionModifier()
-        modifiers.forEachChildren {
-            when (it.tokenType) {
-                ANNOTATION -> typeArgumentModifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> typeArgumentModifier.annotations += convertAnnotationEntry(it)
-                is KtModifierKeywordToken -> typeArgumentModifier.addModifier(it)
-            }
-        }
-        return typeArgumentModifier
+        return TypeProjectionModifier().also { it.consume(modifiers) }
     }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentModifierList
      */
     private fun convertTypeParameterModifiers(modifiers: LighterASTNode): TypeParameterModifier {
-        val modifier = TypeParameterModifier()
-        modifiers.forEachChildren {
+        return TypeParameterModifier().also { it.consume(modifiers) }
+    }
+
+    private fun Modifier.consume(modifierList: LighterASTNode, isInClass: Boolean = false) {
+        modifierList.forEachChildren {
             when (it.tokenType) {
-                ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it)
-                is KtModifierKeywordToken -> modifier.addModifier(it)
+                ANNOTATION -> annotations += it
+                ANNOTATION_ENTRY -> annotations += it
+                is KtModifierKeywordToken -> addModifier(it, isInClass)
             }
         }
-        return modifier
     }
 
     /*****    ANNOTATIONS    *****/
+    /**
+     * Convert only annotations
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
+     */
+    private fun convertAnnotationsOnlyTo(modifierList: LighterASTNode, list: MutableList<in FirAnnotationCall>) {
+        modifierList.forEachChildren { node ->
+            convertAnnotationOrAnnotationEntryTo(node, list)
+        }
+    }
+
+    private fun Modifier.convertAnnotationsTo(list: MutableList<in FirAnnotationCall>) {
+        for (node in annotations) {
+            convertAnnotationOrAnnotationEntryTo(node, list)
+        }
+    }
+
+    private fun Modifier.convertAnnotations(): List<FirAnnotationCall> {
+        return buildList<FirAnnotationCall> { convertAnnotationsTo(this) }
+    }
+
+    private fun convertAnnotationOrAnnotationEntryTo(node: LighterASTNode, list: MutableList<in FirAnnotationCall>) {
+        when (node.tokenType) {
+            ANNOTATION -> convertAnnotationTo(node, list)
+            ANNOTATION_ENTRY -> list += convertAnnotationEntry(node)
+        }
+    }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationOrList
      */
-    fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
+    fun convertAnnotationTo(node: LighterASTNode, list: MutableList<in FirAnnotationCall>) {
         var annotationTarget: AnnotationUseSiteTarget? = null
-        return annotationNode.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ANNOTATION_TARGET -> annotationTarget = convertAnnotationTarget(node)
-                ANNOTATION_ENTRY -> container += convertAnnotationEntry(
-                    node,
+        node.forEachChildren { child ->
+            when (child.tokenType) {
+                ANNOTATION_TARGET -> annotationTarget = convertAnnotationTarget(child)
+                ANNOTATION_ENTRY -> list += convertAnnotationEntry(
+                    child,
                     annotationTarget,
                     runIf(annotationTarget == ALL) {
                         ConeSimpleDiagnostic(
@@ -471,7 +459,6 @@ class LightTreeRawFirDeclarationBuilder(
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         var primaryConstructor: LighterASTNode? = null
         val typeConstraints = mutableListOf<TypeConstraint>()
-        val classAnnotations = mutableListOf<FirAnnotationCall>()
         var classBody: LighterASTNode? = null
         var superTypeList: LighterASTNode? = null
         var typeParameterList: LighterASTNode? = null
@@ -492,9 +479,6 @@ class LightTreeRawFirDeclarationBuilder(
             withContainerSymbol(classSymbol) {
                 classNode.forEachChildren {
                     when (it.tokenType) {
-                        MODIFIER_LIST -> {
-                            classAnnotations += convertAnnotationList(it)
-                        }
                         CLASS_KEYWORD -> classKind = ClassKind.CLASS
                         INTERFACE_KEYWORD -> classKind = ClassKind.INTERFACE
                         OBJECT_KEYWORD -> classKind = ClassKind.OBJECT
@@ -544,7 +528,7 @@ class LightTreeRawFirDeclarationBuilder(
                         this.classKind = classKind
                         scopeProvider = baseScopeProvider
                         symbol = classSymbol
-                        annotations += classAnnotations
+                        modifiers?.convertAnnotationsTo(annotations)
                         typeParameters += firTypeParameters
 
                         context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
@@ -650,9 +634,13 @@ class LightTreeRawFirDeclarationBuilder(
                                 context.className,
                                 addValueParameterAnnotations = { valueParam ->
                                     withContainerSymbol(symbol) {
-                                        valueParam.forEachChildren {
-                                            if (it.tokenType == MODIFIER_LIST) convertAnnotationList(it).filterTo(annotations) {
-                                                it.useSiteTarget.appliesToPrimaryConstructorParameter()
+                                        valueParam.forEachChildren { node ->
+                                            if (node.tokenType == MODIFIER_LIST) {
+                                                buildList {
+                                                    convertAnnotationsOnlyTo(node, this)
+                                                }.filterTo(annotations) {
+                                                    it.useSiteTarget.appliesToPrimaryConstructorParameter()
+                                                }
                                             }
                                         }
                                     }
@@ -721,7 +709,6 @@ class LightTreeRawFirDeclarationBuilder(
                     registerSelfType(delegatedSelfType)
 
                     var modifiers: Modifier? = null
-                    val objectAnnotations = mutableListOf<FirAnnotationCall>()
                     var primaryConstructor: LighterASTNode? = null
                     val superTypeRefs = mutableListOf<FirTypeRef>()
                     var delegatedSuperTypeRef: FirTypeRef? = null
@@ -734,7 +721,6 @@ class LightTreeRawFirDeclarationBuilder(
                         when (child.tokenType) {
                             MODIFIER_LIST -> {
                                 modifiers = convertModifierList(child)
-                                objectAnnotations += convertAnnotationList(child)
                             }
                             PRIMARY_CONSTRUCTOR -> primaryConstructor = child
                             SUPER_TYPE_LIST -> convertDelegationSpecifiers(child).let { specifiers ->
@@ -755,7 +741,7 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                     val delegatedSuperType = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource
 
-                    annotations += objectAnnotations
+                    modifiers?.convertAnnotationsTo(annotations)
                     this.superTypeRefs += superTypeRefs
 
                     val classWrapper = ClassWrapper(
@@ -795,7 +781,6 @@ class LightTreeRawFirDeclarationBuilder(
      */
     private fun convertEnumEntry(enumEntry: LighterASTNode, classWrapper: ClassWrapper): FirEnumEntry {
         var modifiers: Modifier? = null
-        val entryAnnotations = mutableListOf<FirAnnotationCall>()
         lateinit var identifier: String
         val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
         var classBodyNode: LighterASTNode? = null
@@ -813,7 +798,6 @@ class LightTreeRawFirDeclarationBuilder(
                     when (it.tokenType) {
                         MODIFIER_LIST -> {
                             modifiers = convertModifierList(it)
-                            entryAnnotations += convertAnnotationList(it)
                         }
                         INITIALIZER_LIST -> {
                             enumSuperTypeCallEntry += convertInitializerList(it)
@@ -835,11 +819,11 @@ class LightTreeRawFirDeclarationBuilder(
                     isExpect = containingClassIsExpectClass
                 }
                 if (classWrapper.hasDefaultConstructor && enumEntry.getChildNodeByType(INITIALIZER_LIST) == null &&
-                    entryAnnotations.isEmpty() && classBodyNode == null
+                    modifiers.let { it == null || it.annotations.isEmpty() } && classBodyNode == null
                 ) {
                     return@buildEnumEntry
                 }
-                annotations += entryAnnotations
+                modifiers?.convertAnnotationsTo(annotations)
                 initializer = withChildClassName(enumEntryName, isExpect = false) {
                     buildAnonymousObjectExpression {
                         val entrySource = enumEntry.toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
@@ -951,7 +935,7 @@ class LightTreeRawFirDeclarationBuilder(
         diagnostic = ConeDanglingModifierOnTopLevel
         symbol = FirDanglingModifierSymbol()
         withContainerSymbol(symbol) {
-            annotations += convertAnnotationList(node)
+            convertAnnotationsOnlyTo(node, annotations)
         }
     }
 
@@ -982,14 +966,12 @@ class LightTreeRawFirDeclarationBuilder(
         val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
         withContainerSymbol(constructorSymbol) {
             var modifiersIfPresent: Modifier? = null
-            val constructorAnnotations = mutableListOf<FirAnnotationCall>()
             val valueParameters = mutableListOf<ValueParameter>()
             var hasConstructorKeyword = false
             primaryConstructor?.forEachChildren {
                 when (it.tokenType) {
                     MODIFIER_LIST -> {
                         modifiersIfPresent = convertModifierList(it)
-                        constructorAnnotations += convertAnnotationList(it)
                     }
                     CONSTRUCTOR_KEYWORD -> hasConstructorKeyword = true
                     VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(
@@ -1078,7 +1060,7 @@ class LightTreeRawFirDeclarationBuilder(
                 dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
                 this.status = status
                 symbol = constructorSymbol
-                annotations += constructorAnnotations
+                modifiersIfPresent?.convertAnnotationsTo(annotations)
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
@@ -1105,25 +1087,24 @@ class LightTreeRawFirDeclarationBuilder(
     ): FirDeclaration {
         val initializerSymbol = FirAnonymousInitializerSymbol()
         withContainerSymbol(initializerSymbol) {
-            var firBlock: FirBlock? = null
-            val initializerAnnotations = mutableListOf<FirAnnotationCall>()
-            anonymousInitializer.forEachChildren {
-                when (it.tokenType) {
-                    MODIFIER_LIST -> initializerAnnotations += convertAnnotationList(it)
-                    BLOCK -> withForcedLocalContext {
-                        firBlock = convertBlock(it)
+            return buildAnonymousInitializer {
+                var firBlock: FirBlock? = null
+
+                anonymousInitializer.forEachChildren {
+                    when (it.tokenType) {
+                        MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
+                        BLOCK -> withForcedLocalContext {
+                            firBlock = convertBlock(it)
+                        }
                     }
                 }
-            }
 
-            return buildAnonymousInitializer {
                 symbol = initializerSymbol
                 source = anonymousInitializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 body = firBlock ?: buildEmptyExpressionBlock()
                 containingDeclarationSymbol = classWrapper.classBuilder.ownerRegularOrAnonymousObjectSymbol
-                annotations += initializerAnnotations
             }
         }
     }
@@ -1133,7 +1114,6 @@ class LightTreeRawFirDeclarationBuilder(
      */
     private fun convertSecondaryConstructor(secondaryConstructor: LighterASTNode, classWrapper: ClassWrapper): FirConstructor {
         var modifiers: Modifier? = null
-        val constructorAnnotations = mutableListOf<FirAnnotationCall>()
         val firValueParameters = mutableListOf<ValueParameter>()
         var constructorDelegationCall: FirDelegatedConstructorCall? = null
         var block: LighterASTNode? = null
@@ -1145,7 +1125,6 @@ class LightTreeRawFirDeclarationBuilder(
                 when (it.tokenType) {
                     MODIFIER_LIST -> {
                         modifiers = convertModifierList(it)
-                        constructorAnnotations += convertAnnotationList(it)
                     }
                     VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(
                         it,
@@ -1185,7 +1164,7 @@ class LightTreeRawFirDeclarationBuilder(
                 delegatedConstructor = constructorDelegationCall
 
                 context.firFunctionTargets += target
-                annotations += constructorAnnotations
+                modifiers?.convertAnnotationsTo(annotations)
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 valueParameters += firValueParameters.map { it.firValueParameter }
                 val (body, contractDescription) = withForcedLocalContext {
@@ -1269,13 +1248,15 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
         var modifiers: Modifier? = null
         var identifier: String? = null
-        lateinit var firType: FirTypeRef
-        val aliasAnnotations = mutableListOf<FirAnnotationCall>()
+        lateinit var typeRefNode: LighterASTNode
+        var typeParametersNode: LighterASTNode? = null
 
         typeAlias.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 IDENTIFIER -> identifier = it.asText
+                TYPE_REFERENCE -> typeRefNode = it
+                TYPE_PARAMETER_LIST -> typeParametersNode = it
             }
         }
 
@@ -1285,22 +1266,6 @@ class LightTreeRawFirDeclarationBuilder(
         return withChildClassName(typeAliasName, isExpect = typeAliasIsExpect) {
             val typeAliasSymbol = FirTypeAliasSymbol(context.currentClassId)
             withContainerSymbol(typeAliasSymbol) {
-                typeAlias.forEachChildren {
-                    when (it.tokenType) {
-                        MODIFIER_LIST -> {
-                            aliasAnnotations += convertAnnotationList(it)
-                        }
-                        TYPE_REFERENCE -> firType = convertType(it)
-                    }
-                }
-
-                val firTypeParameters = mutableListOf<FirTypeParameter>()
-                typeAlias.forEachChildren {
-                    if (it.tokenType == TYPE_PARAMETER_LIST) {
-                        firTypeParameters += convertTypeParameters(it, emptyList(), typeAliasSymbol)
-                    }
-                }
-
                 val isInner = calculatedModifiers.isInner()
                 buildTypeAlias {
                     source = typeAlias.toFirSourceElement()
@@ -1319,9 +1284,9 @@ class LightTreeRawFirDeclarationBuilder(
                     }
 
                     symbol = typeAliasSymbol
-                    expandedTypeRef = firType
-                    annotations += aliasAnnotations
-                    typeParameters += firTypeParameters
+                    expandedTypeRef = convertType(typeRefNode)
+                    modifiers?.convertAnnotationsTo(annotations)
+                    typeParametersNode?.let { typeParameters += convertTypeParameters(it, emptyList(), typeAliasSymbol) }
 
                     if (isInner || isLocal) {
                         context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
@@ -1336,7 +1301,6 @@ class LightTreeRawFirDeclarationBuilder(
      */
     fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirDeclaration {
         var modifiers: Modifier? = null
-        val propertyAnnotations = mutableListOf<FirAnnotationCall>()
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         var isReturnType = false
@@ -1368,7 +1332,6 @@ class LightTreeRawFirDeclarationBuilder(
                 when (it.tokenType) {
                     MODIFIER_LIST -> {
                         modifiers = convertModifierList(it)
-                        propertyAnnotations += convertAnnotationList(it)
                     }
                     TYPE_PARAMETER_LIST -> typeParameterList = it
                     COLON -> isReturnType = true
@@ -1391,6 +1354,8 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             val calculatedModifiers = modifiers ?: Modifier()
+            val propertyAnnotations = calculatedModifiers.convertAnnotations()
+
             return buildProperty {
                 source = propertySource
                 moduleData = baseModuleData
@@ -1543,7 +1508,7 @@ class LightTreeRawFirDeclarationBuilder(
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> annotations += convertAnnotationList(it)
+                MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
                 // Property delegates should be ignored as they aren't a valid initializers
@@ -1574,7 +1539,7 @@ class LightTreeRawFirDeclarationBuilder(
         var firType: FirTypeRef? = null
         entry.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> annotations += convertAnnotationList(it)
+                MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 IDENTIFIER -> identifier = it.asText
                 TYPE_REFERENCE -> firType = convertType(it)
             }
@@ -1606,7 +1571,6 @@ class LightTreeRawFirDeclarationBuilder(
         propertyAnnotations: List<FirAnnotationCall>,
     ): FirPropertyAccessor {
         var modifiers: Modifier? = null
-        val accessorAnnotations = mutableListOf<FirAnnotationCall>()
         var isGetter = true
         var returnType: FirTypeRef? = null
         val propertyTypeRefToUse = propertyTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
@@ -1629,7 +1593,6 @@ class LightTreeRawFirDeclarationBuilder(
                 SET_KEYWORD -> isGetter = false
                 MODIFIER_LIST -> {
                     modifiers = convertModifierList(it)
-                    accessorAnnotations += convertAnnotationList(it)
                 }
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> {
@@ -1663,6 +1626,7 @@ class LightTreeRawFirDeclarationBuilder(
             if (isGetter) PROPERTY_GETTER
             else PROPERTY_SETTER
         )
+        val accessorAnnotations = calculatedModifiers.convertAnnotations()
         if (block == null && expression == null) {
             return FirDefaultPropertyAccessor
                 .createGetterOrSetter(
@@ -1727,14 +1691,12 @@ class LightTreeRawFirDeclarationBuilder(
         property: LighterASTNode,
     ): FirBackingField {
         var modifiers: Modifier? = null
-        val fieldAnnotations = mutableListOf<FirAnnotationCall>()
         var returnType: FirTypeRef = implicitType
         var backingFieldInitializer: FirExpression? = null
         this?.forEachChildren {
             when {
                 it.tokenType == MODIFIER_LIST -> {
                     modifiers = convertModifierList(it)
-                    fieldAnnotations += convertAnnotationList(it)
                 }
                 it.tokenType == TYPE_REFERENCE -> returnType = convertType(it)
                 it.isExpression() -> {
@@ -1758,7 +1720,7 @@ class LightTreeRawFirDeclarationBuilder(
                 name = StandardNames.BACKING_FIELD
                 symbol = FirBackingFieldSymbol(CallableId(name))
                 this.status = status
-                annotations += fieldAnnotations
+                modifiers?.convertAnnotationsTo(annotations)
                 annotations += annotationsFromProperty
                 this.propertySymbol = propertySymbol
                 this.initializer = backingFieldInitializer
@@ -1864,7 +1826,6 @@ class LightTreeRawFirDeclarationBuilder(
      */
     fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirStatement {
         var modifiers: Modifier? = null
-        val functionAnnotations = mutableListOf<FirAnnotationCall>()
         var identifier: String? = null
         var valueParametersList: LighterASTNode? = null
         var isReturnType = false
@@ -1897,7 +1858,6 @@ class LightTreeRawFirDeclarationBuilder(
                 when (it.tokenType) {
                     MODIFIER_LIST -> {
                         modifiers = convertModifierList(it)
-                        functionAnnotations += convertAnnotationList(it)
                     }
                     TYPE_PARAMETER_LIST -> typeParameterList = it
                     VALUE_PARAMETER_LIST -> valueParametersList = it //must convert later, because it can contains "return"
@@ -1972,7 +1932,7 @@ class LightTreeRawFirDeclarationBuilder(
                 returnTypeRef = returnType
 
                 context.firFunctionTargets += target
-                annotations += functionAnnotations
+                modifiers?.convertAnnotationsTo(annotations)
 
                 val actualTypeParameters = if (this is FirSimpleFunctionBuilder) {
                     typeParameters += firTypeParameters
@@ -2275,7 +2235,7 @@ class LightTreeRawFirDeclarationBuilder(
             containingDeclarationSymbol = containingSymbol
             variance = calculatedTypeParameterModifiers.getVariance()
             isReified = calculatedTypeParameterModifiers.hasReified()
-            annotations += calculatedTypeParameterModifiers.annotations
+            typeParameterModifiers?.convertAnnotationsTo(annotations)
             firType?.let { bounds += it }
             for (typeConstraint in typeConstraints) {
                 if (typeConstraint.identifier == identifier) {
@@ -2312,7 +2272,7 @@ class LightTreeRawFirDeclarationBuilder(
         type.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firType = convertType(it)
-                MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
+                MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
                 USER_TYPE -> firType = convertUserType(typeRefSource, it)
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
                 FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isSuspend = allTypeModifiers.hasSuspend())
@@ -2335,7 +2295,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         for (modifierList in allTypeModifiers) {
-            calculatedFirType.replaceAnnotations(calculatedFirType.annotations.smartPlus(modifierList.annotations))
+            calculatedFirType.replaceAnnotations(calculatedFirType.annotations.smartPlus(modifierList.convertAnnotations()))
         }
         return calculatedFirType
     }
@@ -2391,7 +2351,7 @@ class LightTreeRawFirDeclarationBuilder(
         lateinit var firType: FirTypeRef
         nullableType.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
+                MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
                 USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
                 FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
@@ -2596,7 +2556,6 @@ class LightTreeRawFirDeclarationBuilder(
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ValueParameter {
         var modifiers: Modifier? = null
-        val valueAnnotations = mutableListOf<FirAnnotationCall>()
         var isVal = false
         var isVar = false
         var identifier: String? = null
@@ -2620,34 +2579,35 @@ class LightTreeRawFirDeclarationBuilder(
         withContainerSymbol(valueParameterSymbol, isLocal = valueParameterDeclaration != ValueParameterDeclaration.FUNCTION) {
             valueParameter.forEachChildren {
                 when (it.tokenType) {
-                    MODIFIER_LIST -> valueAnnotations += convertAnnotationList(it)
                     TYPE_REFERENCE -> firType = convertType(it)
                 }
             }
-        }
 
-        val valueParameterSource = valueParameter.toFirSourceElement()
-        return ValueParameter(
-            valueParameterSymbol = valueParameterSymbol,
-            isVal = isVal,
-            isVar = isVar,
-            modifiers = modifiers ?: Modifier(),
-            valueParameterAnnotations = valueAnnotations,
-            returnTypeRef = firType
-                ?: when {
-                    valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef(valueParameterSource)
-                    else -> implicitType
-                },
-            source = valueParameterSource,
-            moduleData = baseModuleData,
-            isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR,
-            isContextParameter = valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER,
-            additionalAnnotations = additionalAnnotations,
-            name = name,
-            defaultValue = firExpression,
-            containingDeclarationSymbol = containingDeclarationSymbol,
-            destructuringDeclaration = destructuringDeclaration
-        )
+            val valueParameterSource = valueParameter.toFirSourceElement()
+            return ValueParameter(
+                valueParameterSymbol = valueParameterSymbol,
+                isVal = isVal,
+                isVar = isVar,
+                modifiers = modifiers ?: Modifier(),
+                valueParameterAnnotations = modifiers?.convertAnnotations() ?: emptyList(),
+                returnTypeRef = firType
+                    ?: when {
+                        valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef(
+                            valueParameterSource
+                        )
+                        else -> implicitType
+                    },
+                source = valueParameterSource,
+                moduleData = baseModuleData,
+                isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR,
+                isContextParameter = valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER,
+                additionalAnnotations = additionalAnnotations,
+                name = name,
+                defaultValue = firExpression,
+                containingDeclarationSymbol = containingDeclarationSymbol,
+                destructuringDeclaration = destructuringDeclaration
+            )
+        }
     }
 
     private fun <T> fillDanglingConstraintsTo(
