@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.EMPTY
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.FUNCTION_PARAMETERS
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NOT_RENDERED
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NULLABLE_STRING
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID_RELATIVE_NAME_ONLY
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -426,6 +427,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_SUSPEND_AN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES
@@ -1469,6 +1471,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL,
             "Usage of a qualifier with type arguments to call nested class constructor is deprecated. The type arguments must be removed."
+        )
+        map.put(
+            ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY,
+            "''{0}'' uses identity equality, but ''{1}'' does not have a consistent identity.",
+            CLASS_ID_RELATIVE_NAME_ONLY,
+            RENDER_TYPE,
         )
 
         map.put(TYPE_MISMATCH, "Type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)

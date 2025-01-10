@@ -78,6 +78,12 @@ object JvmStandardClassIds {
     @JvmField
     val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAME)
 
+    @JvmField
+    val ATOMIC_REFERENCE_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicReference")
+
+    @JvmField
+    val ATOMIC_REFERENCE_CLASS_ID = ClassId.topLevel(ATOMIC_REFERENCE_FQ_NAME)
+
     const val MULTIFILE_PART_NAME_DELIMITER = "__"
 
     object Annotations {

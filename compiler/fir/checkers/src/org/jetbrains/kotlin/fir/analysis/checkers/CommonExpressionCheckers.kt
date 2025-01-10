@@ -78,6 +78,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirProtectedConstructorNotInSuperCallChecker,
             FirOptionalExpectationExpressionChecker,
             FirParenthesizedLhsSetOperatorChecker,
+            FirCommonAtomicReferenceToPrimitiveCallChecker,
             FirGenericQualifierOnConstructorCallChecker,
         )
 

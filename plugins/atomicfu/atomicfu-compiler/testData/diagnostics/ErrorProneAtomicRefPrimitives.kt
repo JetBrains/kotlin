@@ -6,17 +6,17 @@
 import kotlinx.atomicfu.*
 
 fun test() {
-    val a = atomic<Int>(127)
+    val a = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>atomic<Int>(127)<!>
     a.compareAndSet(127, 128) // true
     a.compareAndSet(128, 7777) // false
 
-    val aa: AtomicRef<Int>
+    val aa: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicRef<Int><!>
     aa = a
 }
 
 typealias AtomicfuAtomicReference<T> = AtomicRef<T>
 
 fun testTypealiased() {
-    val aa: AtomicfuAtomicReference<Int>
-    aa = atomic<Int>(127)
+    val aa: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicfuAtomicReference<Int><!>
+    aa = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>atomic<Int>(127)<!>
 }

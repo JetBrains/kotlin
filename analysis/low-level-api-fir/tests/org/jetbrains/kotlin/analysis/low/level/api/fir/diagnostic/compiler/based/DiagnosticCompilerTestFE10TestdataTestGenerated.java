@@ -154,6 +154,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("atomicReferenceToValueClass.kt")
+    public void testAtomicReferenceToValueClass() {
+      runTest("compiler/testData/diagnostics/tests/atomicReferenceToValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("AutoCreatedIt.kt")
     public void testAutoCreatedIt() {
       runTest("compiler/testData/diagnostics/tests/AutoCreatedIt.kt");

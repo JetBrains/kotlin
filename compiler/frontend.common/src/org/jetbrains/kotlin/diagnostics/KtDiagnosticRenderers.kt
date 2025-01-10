@@ -38,6 +38,10 @@ object KtDiagnosticRenderers {
         classId.asFqNameString()
     }
 
+    val CLASS_ID_RELATIVE_NAME_ONLY = Renderer { classId: ClassId ->
+        classId.relativeClassName.asString()
+    }
+
     @Suppress("FunctionName")
     fun <T> COLLECTION(renderer: ContextIndependentParameterRenderer<T>): ContextIndependentParameterRenderer<Collection<T>> {
         return Renderer { list ->

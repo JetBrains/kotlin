@@ -9,11 +9,11 @@
 import kotlin.concurrent.atomics.AtomicReference
 
 fun commonTestKotlin() {
-    val k = AtomicReference<Int>(127)
+    val k = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY, ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY{METADATA}!>AtomicReference<Int>(127)<!>
     k.compareAndSet(127, 128) // true
     k.compareAndSet(128, 7777) // false
 
-    val kk: AtomicReference<Int>
+    val kk: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY, ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY{METADATA}!>AtomicReference<Int><!>
     kk = k
 }
 
@@ -22,11 +22,11 @@ expect class KotlinAtomicReference<T>(value: T) {
 }
 
 fun commonTypealiasedKotlin() {
-    val k = KotlinAtomicReference<Int>(127)
+    val k = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>KotlinAtomicReference<Int>(127)<!>
     k.compareAndSet(127, 128) // true
     k.compareAndSet(128, 7777) // false
 
-    val kk: KotlinAtomicReference<Int>
+    val kk: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>KotlinAtomicReference<Int><!>
     kk = k
 }
 
@@ -36,22 +36,22 @@ fun commonTypealiasedKotlin() {
 import kotlin.concurrent.atomics.AtomicReference
 
 fun testKotlin() {
-    val k = AtomicReference<Int>(127)
+    val k = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int>(127)<!>
     k.compareAndSet(127, 128) // true
     k.compareAndSet(128, 7777) // false
 
-    val kk: AtomicReference<Int>
+    val kk: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int><!>
     kk = k
 }
 
 actual typealias KotlinAtomicReference<T> = AtomicReference<T>
 
 fun testTypealiasedKotlin() {
-    val k = KotlinAtomicReference<Int>(127)
+    val k = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>KotlinAtomicReference<Int>(127)<!>
     k.compareAndSet(127, 128) // true
     k.compareAndSet(128, 7777) // false
 
-    val kk: KotlinAtomicReference<Int>
+    val kk: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>KotlinAtomicReference<Int><!>
     kk = k
 }
 
@@ -60,10 +60,10 @@ fun testTypealiasedKotlin() {
 import java.util.concurrent.atomic.AtomicReference
 
 fun testJava() {
-    val j = AtomicReference<Int>(127)
+    val j = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int>(127)<!>
     j.compareAndSet(127, 128) // true
     j.compareAndSet(128, 7777) // false
 
-    val jj: AtomicReference<Int>
+    val jj: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int><!>
     jj = j
 }

@@ -1002,6 +1002,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             LanguageFeature.ProhibitGenericQualifiersOnConstructorCalls,
             PositioningStrategy.TYPE_ARGUMENT_LIST_OR_SELF
         )
+        val ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY by warning<PsiElement> {
+            parameter<ClassId>("atomicRef")
+            parameter<ConeKotlinType>("argumentType")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

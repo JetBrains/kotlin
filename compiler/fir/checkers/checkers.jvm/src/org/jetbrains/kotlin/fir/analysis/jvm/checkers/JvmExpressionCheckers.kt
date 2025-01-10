@@ -48,6 +48,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJvmSynchronizedByValueClassOrPrimitiveChecker,
             FirJvmInconsistentOperatorFromJavaCallChecker,
             FirJvmPolymorphicSignatureCallChecker,
+            FirJvmAtomicReferenceToPrimitiveCallChecker,
             FirJavaSamConstructorNullabilityChecker,
         )
 

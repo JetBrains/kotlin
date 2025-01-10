@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirArrayOfNullableNothingTypeChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirFunctionalTypeParameterNameChecker
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirJvmAtomicReferenceToPrimitiveTypeChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirJvmModuleAccessibilityTypeChecker
 
 object JvmTypeCheckers : TypeCheckers() {
@@ -21,6 +22,7 @@ object JvmTypeCheckers : TypeCheckers() {
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
         FirDynamicUnsupportedChecker,
         FirJvmModuleAccessibilityTypeChecker,
+        FirJvmAtomicReferenceToPrimitiveTypeChecker,
         FirArrayOfNullableNothingTypeChecker,
     )
 }
