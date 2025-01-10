@@ -1,0 +1,23 @@
+FILE: base.kt
+    public abstract interface AnyGeneric<T> : R|kotlin/Any| {
+    }
+    public abstract interface Base<T> : R|kotlin/Any| {
+        public abstract val x: R|AnyGeneric<T>|
+            public get(): R|AnyGeneric<T>|
+
+        public abstract val y: R|AnyGeneric<T>|
+            public get(): R|AnyGeneric<T>|
+
+    }
+FILE: test.kt
+    public final class MySubject : R|StackJava.SubjectClass| {
+        public constructor(): R|MySubject| {
+            super<R|StackJava.SubjectClass|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval x: R|AnyGeneric<kotlin/String>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.x: R|ft<@EnhancedNullability Raw type AnyGeneric<kotlin/Any?>, @EnhancedNullability AnyGeneric<*>>|>|
+            lval y: R|AnyGeneric<kotlin/String>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.y: R|ft<@EnhancedNullability Raw type AnyGeneric<kotlin/Any?>, @EnhancedNullability AnyGeneric<*>>|>|
+        }
+
+    }

@@ -1,0 +1,7 @@
+C:
+  [Enhancement]: public open fun foo(arg0: R|ft<A<*>, A<*>?>|, arg1: R|B!|): R|kotlin/Any!| from Use site scope of /C [id: 0]
+    [Enhancement]: public open fun foo(arg0: R|ft<A<*>, A<*>?>|, arg1: R|B!|): R|kotlin/Any!| from Java enhancement scope for /B [id: 0]
+  [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(arg0: R|ft<A<kotlin/Any!>, A<kotlin/Any!>?>|, arg1: R|B!|): R|kotlin/Any!| from Use site scope of /C [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(arg0: R|ft<A<kotlin/Any!>, A<kotlin/Any!>?>|, arg1: R|B!|): R|kotlin/Any!| from Java enhancement scope for /B [id: 0]
+      [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(arg0: R|ft<A<kotlin/Any!>, A<kotlin/Any!>?>|, arg1: R|B!|): R|kotlin/Any!| from Substitution scope for [Java enhancement scope for /A] for type B [id: 0]
+        [Enhancement]: public abstract fun foo(arg0: R|ft<A<kotlin/Any!>, A<kotlin/Any!>?>|, arg1: R|T!|): R|kotlin/Any!| from Java enhancement scope for /A [id: 1]
