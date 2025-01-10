@@ -137,7 +137,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
         }
 
         // Catch the errors caused directly by the build failure
-        if (GradleVersion.current() < GradleVersion.version("8.0")) {
+        if (GradleVersion.current() < GradleVersion.version("8.1")) {
             @Suppress("DEPRECATION")
             target.gradle.buildFinished {
                 serializeOutput(it.failure)
