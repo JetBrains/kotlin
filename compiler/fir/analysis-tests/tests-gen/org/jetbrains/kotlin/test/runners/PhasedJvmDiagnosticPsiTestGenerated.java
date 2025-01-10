@@ -534,6 +534,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("errorProneAtomicReferencePrimitives.kt")
+    public void testErrorProneAtomicReferencePrimitives() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicReferencePrimitives.kt");
+    }
+
+    @Test
     @TestMetadata("errorSuppressionsWithoutWarning.kt")
     public void testErrorSuppressionsWithoutWarning() {
       runTest("compiler/testData/diagnostics/tests/errorSuppressionsWithoutWarning.kt");
@@ -26890,6 +26896,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("duplicateSupertype.kt")
       public void testDuplicateSupertype() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/duplicateSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("errorProneAtomicReferencePrimitivesInKMP.kt")
+      public void testErrorProneAtomicReferencePrimitivesInKMP() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/errorProneAtomicReferencePrimitivesInKMP.kt");
       }
 
       @Test

@@ -29,4 +29,10 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   public void testCheckAtomicVisibilityTest() {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/CheckAtomicVisibilityTest.kt");
   }
+
+  @Test
+  @TestMetadata("ErrorProneAtomicRefPrimitives.kt")
+  public void testErrorProneAtomicRefPrimitives() {
+    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/ErrorProneAtomicRefPrimitives.kt");
+  }
 }
