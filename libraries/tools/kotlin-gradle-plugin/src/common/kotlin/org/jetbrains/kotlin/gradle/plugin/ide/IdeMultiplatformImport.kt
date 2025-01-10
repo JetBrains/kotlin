@@ -337,7 +337,15 @@ interface IdeMultiplatformImport {
 }
 
 internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport by projectStoredProperty {
-    IdeMultiplatformImport(project.kotlinExtension)
+    project.kotlinIdeMultiplatformImport()
+}
+
+// Useful to avoid circular task dependencies for IdeResolveDependenciesTask
+internal fun Project.kotlinIdeMultiplatformImport(
+    ideResolveDependenciesTask: IdeResolveDependenciesTask? = null,
+): IdeMultiplatformImport {
+    val prop = projectStoredProperty { IdeMultiplatformImport(project.kotlinExtension, ideResolveDependenciesTask) }
+    return prop.getValue(this, this::kotlinIdeMultiplatformImport)
 }
 
 internal val IdeMultiplatformImportSetupAction = KotlinProjectSetupAction {

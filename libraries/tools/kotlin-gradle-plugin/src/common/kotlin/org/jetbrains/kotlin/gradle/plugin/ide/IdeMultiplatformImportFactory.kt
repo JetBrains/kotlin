@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 
-internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
-    return IdeMultiplatformImportImpl(extension).apply {
+internal fun IdeMultiplatformImport(
+    extension: KotlinProjectExtension,
+    ideResolveDependenciesTask: IdeResolveDependenciesTask?,
+): IdeMultiplatformImport {
+    return IdeMultiplatformImportImpl(extension, ideResolveDependenciesTask).apply {
 
         registerDependencyResolver(
             resolver = IdeDependsOnDependencyResolver,

@@ -23,6 +23,7 @@ import kotlin.system.measureTimeMillis
 
 internal class IdeMultiplatformImportImpl(
     private val extension: KotlinProjectExtension,
+    private val ideResolveDependenciesTask: IdeResolveDependenciesTask?,
 ) : IdeMultiplatformImport {
 
     override fun resolveDependencies(sourceSetName: String): Set<IdeaKotlinDependency> {
@@ -89,7 +90,11 @@ internal class IdeMultiplatformImportImpl(
         if (resolver is IdeDependencyResolver.WithBuildDependencies) {
             val project = extension.project
             val dependencies = project.provider { resolver.dependencies(project) }
-            extension.project.locateOrRegisterIdeResolveDependenciesTask().configure { it.dependsOn(dependencies) }
+            if (ideResolveDependenciesTask != null) {
+                ideResolveDependenciesTask.dependsOn(dependencies)
+            } else {
+                extension.project.locateOrRegisterIdeResolveDependenciesTask().configure { it.dependsOn(dependencies) }
+            }
             extension.project.prepareKotlinIdeaImportTask.configure { it.dependsOn(dependencies) }
         }
     }

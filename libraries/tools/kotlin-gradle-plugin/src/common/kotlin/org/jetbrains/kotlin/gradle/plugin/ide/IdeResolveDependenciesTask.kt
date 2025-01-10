@@ -41,7 +41,7 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
 internal open class IdeResolveDependenciesTask : DefaultTask() {
     private val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies")
     private val kotlinExtension = project.kotlinExtension
-    private val kotlinIdeMultiplatformImport = project.kotlinIdeMultiplatformImport
+    private val kotlinIdeMultiplatformImport = project.kotlinIdeMultiplatformImport(this)
     private val kotlinIdeMultiplatformImportStatistics = project.kotlinIdeMultiplatformImportStatistics
     private val gsonFileAdapter = FileAdapter(project)
 

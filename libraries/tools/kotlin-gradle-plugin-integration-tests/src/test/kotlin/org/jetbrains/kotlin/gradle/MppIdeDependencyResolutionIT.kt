@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import io.ktor.util.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
