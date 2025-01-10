@@ -261,6 +261,37 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         )
     }
 
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MAX_SUPPORTED,
+    )
+    @GradleTest
+    fun testPrependToOrCreateBuildscriptBlock() {
+        assertEquals(
+            """
+            buildscript {
+            foo
+            
+            }
+            
+            """.trimIndent(),
+            """
+            buildscript {
+            }
+            
+            """.trimIndent().prependToOrCreateBuildscriptBlock("foo")
+        )
+        assertEquals(
+            """
+            buildscript {
+            foo
+            }
+            
+            """.trimIndent(),
+            """
+            """.trimIndent().prependToOrCreateBuildscriptBlock("foo")
+        )
+    }
+
     private fun testBuildscriptBlockInjection(
         bareTemplate: String,
         version: GradleVersion,
