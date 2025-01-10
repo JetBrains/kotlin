@@ -1,0 +1,17 @@
+KT element: KtLambdaArgument
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] destructuringNonLocalBeforeInitBlock.kt
+    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+    }
