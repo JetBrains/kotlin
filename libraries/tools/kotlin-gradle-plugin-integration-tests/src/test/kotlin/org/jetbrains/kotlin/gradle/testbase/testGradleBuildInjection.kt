@@ -426,6 +426,7 @@ private fun <T> GradleProject.buildScriptReturnInjection(
     injectionProvider: (serializedReturnPath: File) -> GradleBuildScriptInjection<Project>,
     returnObjectProvider: (serializedReturnPath: File, injectionIdentifier: String) -> ReturnFromBuildScriptAfterExecution<T>,
 ): ReturnFromBuildScriptAfterExecution<T> {
+    markAsUsingInjections()
     enableBuildScriptInjectionsIfNecessary(
         buildGradle,
         buildGradleKts,
@@ -483,6 +484,7 @@ private fun <T> GradleProject.buildScriptReturnInjection(
 fun GradleProject.buildScriptInjection(
     code: GradleProjectBuildScriptInjectionContext.() -> Unit,
 ) {
+    markAsUsingInjections()
     enableBuildScriptInjectionsIfNecessary(
         buildGradle,
         buildGradleKts,
@@ -514,6 +516,7 @@ fun TestProject.addKgpToBuildScriptCompilationClasspath() {
 fun GradleProject.buildScriptBuildscriptBlockInjection(
     code: GradleBuildScriptBuildscriptInjectionContext.() -> Unit
 ) {
+    markAsUsingInjections()
     enableBuildScriptInjectionsIfNecessary(
         buildGradle,
         buildGradleKts,
@@ -549,6 +552,7 @@ fun GradleProject.buildScriptBuildscriptBlockInjection(
  */
 private const val transferPluginRepositoriesIntoProjectRepositories = "transferPluginRepositoriesIntoProjectRepositories"
 private fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
+    markAsUsingInjections()
     settingsBuildScriptInjection {
         if (!settings.extraProperties.has(transferPluginRepositoriesIntoProjectRepositories)) {
             settings.extraProperties.set(transferPluginRepositoriesIntoProjectRepositories, true)
