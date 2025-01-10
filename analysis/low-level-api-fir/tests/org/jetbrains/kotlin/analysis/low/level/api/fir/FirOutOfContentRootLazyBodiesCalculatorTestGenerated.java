@@ -553,6 +553,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("destructuringBeforeInitBlock.kt")
+      public void testDestructuringBeforeInitBlock() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringBeforeInitBlock.kt");
+      }
+
+      @Test
       @TestMetadata("setterWithNoBodyAndDifferentValueParameterType.kt")
       public void testSetterWithNoBodyAndDifferentValueParameterType() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/setterWithNoBodyAndDifferentValueParameterType.kt");

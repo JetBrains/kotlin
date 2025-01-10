@@ -1,0 +1,9 @@
+FILE: destructuringBeforeInitBlock.kt
+    public final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+    }

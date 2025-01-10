@@ -492,6 +492,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
+      @TestMetadata("destructuringBeforeInitBlock.kt")
+      public void testDestructuringBeforeInitBlock() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringBeforeInitBlock.kt");
+      }
+
       @TestMetadata("setterWithNoBodyAndDifferentValueParameterType.kt")
       public void testSetterWithNoBodyAndDifferentValueParameterType() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/setterWithNoBodyAndDifferentValueParameterType.kt");
