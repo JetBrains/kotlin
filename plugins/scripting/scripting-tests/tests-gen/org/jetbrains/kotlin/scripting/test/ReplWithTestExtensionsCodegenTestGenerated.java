@@ -31,6 +31,12 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   }
 
   @Test
+  @TestMetadata("class_mutates_top_level_properties.repl.kts")
+  public void testClass_mutates_top_level_properties_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_mutates_top_level_properties.repl.kts");
+  }
+
+  @Test
   @TestMetadata("class_uses_top_level_mutating_properties.repl.kts")
   public void testClass_uses_top_level_mutating_properties_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_uses_top_level_mutating_properties.repl.kts");

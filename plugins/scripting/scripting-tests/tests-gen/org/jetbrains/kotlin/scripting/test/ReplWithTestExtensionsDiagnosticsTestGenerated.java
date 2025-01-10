@@ -24,6 +24,12 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
+  @TestMetadata("class_references_top_level_mutating_properties.repl.kts")
+  public void testClass_references_top_level_mutating_properties_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/class_references_top_level_mutating_properties.repl.kts");
+  }
+
+  @Test
   @TestMetadata("mixed1.repl.kts")
   public void testMixed1_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/mixed1.repl.kts");
