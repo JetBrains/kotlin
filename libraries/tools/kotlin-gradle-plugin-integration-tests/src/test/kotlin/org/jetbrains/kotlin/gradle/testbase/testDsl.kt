@@ -379,6 +379,12 @@ open class GradleProject(
     fun generateIdentifier(): String {
         return counter.toString().also { counter += 1 }
     }
+
+    fun markAsUsingInjections() {
+        usesInjections = true
+    }
+    var usesInjections = false
+        private set
 }
 
 /**
