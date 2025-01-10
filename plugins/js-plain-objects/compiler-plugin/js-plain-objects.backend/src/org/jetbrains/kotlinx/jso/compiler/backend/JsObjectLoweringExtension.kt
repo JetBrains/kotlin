@@ -30,8 +30,9 @@ import org.jetbrains.kotlinx.jspo.compiler.resolve.StandardIds
 import kotlin.math.abs
 
 private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val context: IrPluginContext) : DeclarationTransformer {
-    private val jsFunction = context.referenceFunctions(StandardIds.JS_FUNCTION_ID).single()
     private val EXPECTED_ORIGIN = IrDeclarationOrigin.GeneratedByPlugin(JsPlainObjectsPluginKey)
+
+    private val jsFunction = context.referenceFunctions(StandardIds.JS_FUNCTION_ID).single()
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         val file = declaration.file
@@ -68,9 +69,14 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
 
             copyParametersFrom(declaration, substitutionMap)
 
-            extensionReceiverParameter = dispatchReceiverParameter
-            dispatchReceiverParameter = null
+
             returnType = returnType.substitute(substitutionMap)
+
+            if (parent.isCompanion) {
+                parameters = parameters.filter { it.kind != IrParameterKind.DispatchReceiver }
+            } else {
+                dispatchReceiverParameter?.kind = IrParameterKind.ExtensionReceiver
+            }
 
             body = when (declaration.name) {
                 StandardNames.DATA_CLASS_COPY -> generateBodyForCopyFunction()
@@ -95,7 +101,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     proxyFunction.symbol,
                     proxyFunction.typeParameters.size,
                 ).apply {
-                    declaration.dispatchReceiverParameter?.let {
+                    declaration.dispatchReceiverParameter.takeIf { declaration.parentClassOrNull?.isCompanion != true }?.let {
                         extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
                     }
 
@@ -185,8 +191,9 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     jsFunction,
                     0,
                 ).apply {
-                    val objectAssignCall = "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(declaration.valueParameters)})"
-                    putValueArgument(0, objectAssignCall.toIrConst(context.irBuiltIns.stringType))
+                    val objectAssignCall =
+                        "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(declaration.parameters.filter { it.kind == IrParameterKind.Regular })})"
+                    arguments[0] = objectAssignCall.toIrConst(context.irBuiltIns.stringType)
                 }
             )
         }

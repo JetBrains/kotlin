@@ -54,6 +54,9 @@ object JsStandardClassIds {
         val JsImplicitExport = "JsImplicitExport".jsId()
 
         @JvmField
+        val JsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
+
+        @JvmField
         val JsStatic = "JsStatic".jsId()
 
         @JvmField

@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
@@ -35,8 +37,10 @@ import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -68,6 +72,7 @@ import org.jetbrains.kotlinx.jspo.compiler.resolve.StandardIds
  *      Admin.Companion.invoke(chat, name)
  *
  *   companion object {
+ *      @JsNoDispatchReceiver
  *      inline operator fun invoke(chat: Chat, email: String? = VOID): Admin =
  *          js("{ chat: chat, name: name }")
  *   }
@@ -267,6 +272,17 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             returnTypeRef = replacedJsPlainObjectType
             dispatchReceiverType =
                 if (parent.isCompanion) parent.defaultType() else replacedJsPlainObjectType.coneType as ConeSimpleKotlinType
+
+            if (parent.isCompanion) {
+                annotations += buildAnnotation {
+                    annotationTypeRef = buildResolvedTypeRef {
+                        val annotationClassId = JsStandardClassIds.Annotations.JsNoDispatchReceiver
+                        coneType = annotationClassId.toLookupTag()
+                            .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
+                    }
+                    argumentMapping = FirEmptyAnnotationArgumentMapping
+                }
+            }
 
             jsPlainObjectProperties.mapTo(valueParameters) {
                 val typeRef = it.resolvedReturnTypeRef

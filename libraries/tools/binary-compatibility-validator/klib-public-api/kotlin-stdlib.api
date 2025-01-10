@@ -14216,6 +14216,11 @@ open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/Js
 }
 
 // Targets: [js]
+open annotation class kotlin.js/JsNoDispatchReceiver : kotlin/Annotation { // kotlin.js/JsNoDispatchReceiver|null[0]
+    constructor <init>() // kotlin.js/JsNoDispatchReceiver.<init>|<init>(){}[0]
+}
+
+// Targets: [js]
 open annotation class kotlin.js/JsNonModule : kotlin/Annotation { // kotlin.js/JsNonModule|null[0]
     constructor <init>() // kotlin.js/JsNonModule.<init>|<init>(){}[0]
 }
