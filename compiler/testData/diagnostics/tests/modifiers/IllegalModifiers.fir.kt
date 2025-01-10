@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 @<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!>
 package illegal_modifiers
 
@@ -30,7 +29,7 @@ class FinalClass() {
 annotation class annotated(val text: String = "not given")
 
 //Check legal modifiers in constructor
-class LegalModifier(val a: Int, @annotated private var b: String, @annotated vararg v: Int)
+class LegalModifier(val a: Int, <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@annotated<!> private var b: String, @annotated vararg v: Int)
 
 //Check illegal modifier in constructor parameters
 class IllegalModifiers1(

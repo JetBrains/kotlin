@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FIR_DUMP
-// LATEST_LV_DIFFERENCE
 
 annotation class NoTarget
 
