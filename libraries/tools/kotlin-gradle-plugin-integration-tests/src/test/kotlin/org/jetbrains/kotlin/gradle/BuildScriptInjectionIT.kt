@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import java.io.File
-import java.io.NotSerializableException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -46,7 +45,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     fun consumeProjectDependencyViaSettingsInjection(version: GradleVersion) {
         // Use Groovy because it loads faster
         project("buildScriptInjectionGroovy", version) {
-            addKGPToBuildScriptCompilationClasspath()
+            addKgpToBuildScriptCompilationClasspath()
             val producer = project("buildScriptInjectionGroovy", version) {
                 buildScriptInjection {
                     project.applyMultiplatform {
@@ -280,7 +279,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         }
         // But if we inject KGP everything should work
         project(bareTemplate, version) {
-            addKGPToBuildScriptCompilationClasspath()
+            addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.plugins.apply("org.jetbrains.kotlin.multiplatform")
             }
@@ -301,7 +300,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             targetProject,
             version,
         ) {
-            addKGPToBuildScriptCompilationClasspath()
+            addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {
                     linuxArm64()
@@ -317,7 +316,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             targetProject,
             version,
         ) {
-            addKGPToBuildScriptCompilationClasspath()
+            addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositories(publishedProject)
             buildScriptInjection {
                 project.applyMultiplatform {

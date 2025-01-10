@@ -496,7 +496,7 @@ fun GradleProject.buildScriptInjection(
  * Transfer repositories from settings pluginManagement into project build script's buildscript repositories and inject the buildscript
  * block with KGP (without applying any plugins)
  */
-fun TestProject.addKGPToBuildScriptCompilationClasspath() {
+fun TestProject.addKgpToBuildScriptCompilationClasspath() {
     val kotlinVersion = buildOptions.kotlinVersion
     transferPluginRepositoriesIntoBuildScript()
     buildScriptBuildscriptBlockInjection {
