@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.print
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.generators.tree.printer.printAnnotation
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.irVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
@@ -44,8 +45,19 @@ internal class TransformerPrinter(
             val parent = element.parentInVisitor
             if (element.transformByChildren || parent != null) {
                 println()
+                if (element.isRootElement) {
+                    printAnnotation(
+                        Deprecated(
+                            message = "Call transformElement instead",
+                            replaceWith = ReplaceWith("transformElement(${element.visitorParameterName}, data)"),
+                            level = DeprecationLevel.ERROR,
+                        )
+                    )
+                }
                 printVisitMethodDeclaration(
                     element = element,
+                    // visitElement is final because it's not called from anywhere and thus is not supposed to be overridden.
+                    modality = Modality.FINAL.takeIf { element.isRootElement },
                     override = true,
                 )
                 if (element.transformByChildren) {

@@ -562,6 +562,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val packageFragment: Element by element(Declaration) {
         ownsChildren = false
+        transformByChildren = true
 
         parent(declarationContainer)
         parent(symbolOwner)
@@ -571,7 +572,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
-        
+
         kDoc = """
             This is a root parent element for external declarations (meaning those that come from
             another compilation unit/module, not to be confused with [IrPossiblyExternalDeclaration.isExternal]). 

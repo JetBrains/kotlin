@@ -36,12 +36,6 @@ abstract class IrElementTransformerVoid : IrTransformer<Nothing?>() {
         transformChildrenVoid(this@IrElementTransformerVoid)
     }
 
-    open fun visitElement(element: IrElement): IrElement =
-        transformElement(element)
-
-    final override fun visitElement(element: IrElement, data: Nothing?): IrElement =
-        visitElement(element)
-
     open fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         transformElement(declaration)
 
@@ -147,7 +141,7 @@ abstract class IrElementTransformerVoid : IrTransformer<Nothing?>() {
     open fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment =
         transformElement(declaration)
 
-    final override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?): IrElement =
+    final override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?): IrPackageFragment =
         visitPackageFragment(declaration)
 
     open fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =

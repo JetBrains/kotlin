@@ -201,14 +201,17 @@ private fun ImportCollectingPrinter.printAnnotationArgument(argument: Any?) {
             }
             print("]")
         }
+        is Annotation -> {
+            printAnnotationImpl(argument)
+        }
         else -> print(argument)
     }
 }
 
-fun <A : Annotation> ImportCollectingPrinter.printAnnotation(annotation: A) {
+private fun <A : Annotation> ImportCollectingPrinter.printAnnotationImpl(annotation: A) {
     @Suppress("UNCHECKED_CAST")
     val annotationInterface = annotation::class.java.interfaces.single().kotlin as KClass<Annotation>
-    print("@", annotationInterface.asRef<PositionTypeParameterRef>().render())
+    print(annotationInterface.asRef<PositionTypeParameterRef>().render())
     val properties = annotationInterface.memberProperties
     if (properties.isNotEmpty()) {
         println("(")
@@ -219,10 +222,14 @@ fun <A : Annotation> ImportCollectingPrinter.printAnnotation(annotation: A) {
                 println(",")
             }
         }
-        println(")")
-    } else {
-        println()
+        print(")")
     }
+}
+
+fun <A : Annotation> ImportCollectingPrinter.printAnnotation(annotation: A) {
+    print("@")
+    printAnnotationImpl(annotation)
+    println()
 }
 
 fun ImportCollectingPrinter.printPropertyDeclaration(

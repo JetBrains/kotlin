@@ -22,7 +22,15 @@ abstract class IrTransformer<in D> : IrVisitor<IrElement, D>() {
         return element
     }
 
-    override fun visitElement(element: IrElement, data: D): IrElement =
+    @Deprecated(
+        level = DeprecationLevel.ERROR,
+        message = "Call transformElement instead",
+        replaceWith = ReplaceWith(
+            expression = "transformElement(element, data)",
+            imports = [],
+        ),
+    )
+    final override fun visitElement(element: IrElement, data: D): IrElement =
         transformElement(element, data)
 
     override fun visitDeclaration(declaration: IrDeclarationBase, data: D): IrStatement =
@@ -76,8 +84,8 @@ abstract class IrTransformer<in D> : IrVisitor<IrElement, D>() {
     override fun visitVariable(declaration: IrVariable, data: D): IrStatement =
         visitDeclaration(declaration, data)
 
-    override fun visitPackageFragment(declaration: IrPackageFragment, data: D): IrElement =
-        visitElement(declaration, data)
+    override fun visitPackageFragment(declaration: IrPackageFragment, data: D): IrPackageFragment =
+        transformElement(declaration, data)
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: D): IrExternalPackageFragment =
         transformElement(declaration, data)

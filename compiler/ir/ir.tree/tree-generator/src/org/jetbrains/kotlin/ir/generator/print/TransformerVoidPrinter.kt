@@ -89,6 +89,7 @@ internal class TransformerVoidPrinter(
     }
 
     override fun printMethodsForElement(element: Element) {
+        if (element.isRootElement) return
         val parent = element.parentInVisitor
         if (!element.transformByChildrenVoid && parent == null) return
         printer.run {
