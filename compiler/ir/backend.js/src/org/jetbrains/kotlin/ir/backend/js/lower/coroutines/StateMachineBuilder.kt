@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
@@ -36,30 +36,23 @@ class SuspendState(type: IrType) {
     var id = -1
 }
 
+private var IrComposite.suspendState: SuspendState? by irAttribute(followAttributeOwner = false)
+
 data class LoopBounds(val headState: SuspendState, val exitState: SuspendState)
 
 data class TryState(val tryState: SuspendState, val catchState: SuspendState)
 
-class IrDispatchPoint(val target: SuspendState) : IrExpression() {
-    override val startOffset: Int get() = UNDEFINED_OFFSET
-    override val endOffset: Int get() = UNDEFINED_OFFSET
-
-    override var type: IrType
-        get() = target.entryBlock.type
-        set(value) {
-            target.entryBlock.type = value
-        }
-
-    override var attributeOwnerId: IrElement = this
-
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
-}
+/**
+ * A placeholder [IrExpression] that is later replaced by a suspension point identifier
+ * in [DispatchPointTransformer].
+ */
+private fun createDispatchPoint(target: SuspendState): IrComposite =
+    JsIrBuilder.buildComposite(target.entryBlock.type).also { it.suspendState = target }
 
 class DispatchPointTransformer(val action: (SuspendState) -> IrExpression) : IrElementTransformerVoid() {
-    override fun visitExpression(expression: IrExpression): IrExpression {
-        val dispatchPoint = expression as? IrDispatchPoint
-            ?: return super.visitExpression(expression)
-        return action(dispatchPoint.target)
+    override fun visitComposite(expression: IrComposite): IrExpression {
+        val suspendState = expression.suspendState ?: return super.visitComposite(expression)
+        return action(suspendState)
     }
 }
 
@@ -123,7 +116,7 @@ class StateMachineBuilder(
             val elseBlock = JsIrBuilder.buildBlock(unit)
             val check = JsIrBuilder.buildCall(eqeqeqSymbol).apply {
                 arguments[0] = exceptionState()
-                arguments[1] = IrDispatchPoint(rootExceptionTrap)
+                arguments[1] = createDispatchPoint(rootExceptionTrap)
             }
             block.statements += JsIrBuilder.buildIfElse(unit, check, thenBlock, elseBlock)
             thenBlock.statements += JsIrBuilder.buildThrow(
@@ -196,7 +189,7 @@ class StateMachineBuilder(
     private fun doDispatch(target: SuspendState, andContinue: Boolean = true) = doDispatchImpl(target, currentBlock, andContinue)
 
     private fun doDispatchImpl(target: SuspendState, block: IrContainerExpression, andContinue: Boolean) {
-        val irDispatch = IrDispatchPoint(target)
+        val irDispatch = createDispatchPoint(target)
         currentState.successors.add(target)
         block.addStatement(JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
             arguments[0] = thisReceiver
@@ -288,7 +281,7 @@ class StateMachineBuilder(
             val continueState = SuspendState(unit)
             val unboxState = if (isInlineClassExpected) SuspendState(unit) else null
 
-            val dispatch = IrDispatchPoint(unboxState ?: continueState)
+            val dispatch = createDispatchPoint(unboxState ?: continueState)
 
             if (unboxState != null) currentState.successors += unboxState
 
@@ -315,7 +308,7 @@ class StateMachineBuilder(
             if (isInlineClassExpected) {
                 addStatement(JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
                     arguments[0] = thisReceiver
-                    arguments[1] = IrDispatchPoint(continueState)
+                    arguments[1] = createDispatchPoint(continueState)
                 })
             }
 
@@ -747,7 +740,7 @@ class StateMachineBuilder(
         addStatement(
             JsIrBuilder.buildCall(exStateSymbolSetter.symbol, unit).apply {
                 arguments[0] = thisReceiver
-                arguments[1] = IrDispatchPoint(target)
+                arguments[1] = createDispatchPoint(target)
             }
         )
     }
