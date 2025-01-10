@@ -182,7 +182,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
 
 private const val buildScriptInjectionsMarker = "// MARKER: GradleBuildScriptInjections Enabled"
 
-fun GradleProject.enableBuildScriptInjectionsIfNecessary(
+private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     buildScript: Path,
     buildScriptKts: Path,
 ) {
@@ -232,6 +232,7 @@ fun GradleProject.enableBuildScriptInjectionsIfNecessary(
 }
 
 class InjectionLoader {
+    @Suppress("unused")
     fun invokeBuildScriptInjection(project: Project, serializedInjectionPath: File) {
         serializedInjectionPath.inputStream().use {
             @Suppress("UNCHECKED_CAST")
@@ -239,6 +240,7 @@ class InjectionLoader {
         }
     }
 
+    @Suppress("unused")
     fun invokeBuildScriptPluginsInjection(buildscript: ScriptHandler, serializedInjectionPath: File) {
         serializedInjectionPath.inputStream().use {
             @Suppress("UNCHECKED_CAST")
@@ -246,6 +248,7 @@ class InjectionLoader {
         }
     }
 
+    @Suppress("unused")
     fun invokeSettingsBuildScriptInjection(settings: Settings, serializedInjectionName: File) {
         serializedInjectionName.inputStream().use {
             @Suppress("UNCHECKED_CAST")
@@ -559,27 +562,25 @@ private fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
 }
 
 private val buildscriptBlockStartPattern = Regex("""buildscript\s*\{.*""")
-private fun Path.prependToOrCreateBuildscriptBlock(code: String) {
-    val content = this.readText()
+private fun Path.prependToOrCreateBuildscriptBlock(code: String) = modify {
+    it.prependToOrCreateBuildscriptBlock(code)
+}
+internal fun String.prependToOrCreateBuildscriptBlock(code: String): String {
+    val content = this
     val match = buildscriptBlockStartPattern.find(content)
-    if (match != null) {
-        writeText(
-            buildString {
-                append(content.substring(0, match.range.last + 1))
-                appendLine(code)
-                appendLine()
-                append(content.substring(match.range.last + 1, content.length))
-            }
-        )
+    return if (match != null) {
+        buildString {
+            appendLine(content.substring(0, match.range.last + 1))
+            appendLine(code)
+            append(content.substring(match.range.last + 1, content.length))
+        }
     } else {
-        writeText(
-            content.insertBlockToBuildScriptAfterImports(
-                buildString {
-                    appendLine("buildscript {")
-                    appendLine(code)
-                    appendLine("}")
-                }
-            )
+        content.insertBlockToBuildScriptAfterImports(
+            buildString {
+                appendLine("buildscript {")
+                appendLine(code)
+                appendLine("}")
+            }
         )
     }
 }
@@ -597,7 +598,7 @@ fun GradleProject.settingsBuildScriptInjection(
     )
 }
 
-fun <Context, Target> GradleProject.loadInjectionDuringEvaluation(
+private fun <Context, Target> GradleProject.loadInjectionDuringEvaluation(
     buildScript: Path,
     buildScriptKts: Path,
     injectionLoad: (File) -> String,
@@ -637,7 +638,7 @@ private fun <Context, Target> GradleProject.serializeInjection(
  * classloader. Gradle disposes of the settings classloader before execution and complains if the project build script referenced anything
  * captured for execution from this classloader
  */
-fun scriptIsolatedInjectionLoad(
+private fun scriptIsolatedInjectionLoad(
     targetMethodName: String,
     targetPropertyName: String,
     targetPropertyClassName: String,
@@ -672,7 +673,7 @@ fun scriptIsolatedInjectionLoad(
     """.trimIndent()
 }
 
-fun scriptIsolatedInjectionLoadGroovy(
+private fun scriptIsolatedInjectionLoadGroovy(
     targetMethodName: String,
     targetPropertyName: String,
     targetPropertyClassName: String,
@@ -707,7 +708,7 @@ fun scriptIsolatedInjectionLoadGroovy(
     """.trimIndent()
 }
 
-fun injectionLoadSettings(
+private fun injectionLoadSettings(
     serializedInjectionPath: File,
 ): String = scriptIsolatedInjectionLoad(
     "invokeSettingsBuildScriptInjection",
@@ -716,7 +717,7 @@ fun injectionLoadSettings(
     serializedInjectionPath,
 )
 
-fun injectionLoadSettingsGroovy(
+private fun injectionLoadSettingsGroovy(
     serializedInjectionPath: File,
 ): String = scriptIsolatedInjectionLoadGroovy(
     "invokeSettingsBuildScriptInjection",
@@ -725,14 +726,14 @@ fun injectionLoadSettingsGroovy(
     serializedInjectionPath,
 )
 
-fun injectionLoadProject(
+private fun injectionLoadProject(
     serializedInjectionPath: File,
 ): String = """
     
     org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, File("${serializedInjectionPath.path.normalizePath()}"))
 """.trimIndent()
 
-fun injectionLoadProjectGroovy(
+private fun injectionLoadProjectGroovy(
     serializedInjectionPath: File,
 ): String = """
     
