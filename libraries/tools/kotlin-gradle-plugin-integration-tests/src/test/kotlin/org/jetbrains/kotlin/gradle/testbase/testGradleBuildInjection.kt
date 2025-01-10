@@ -334,8 +334,12 @@ class ReturnFromBuildScriptAfterExecution<T>(
 }
 
 /**
+ * Inject build script with a return lambda that serializes the return value at build completion.
+ *
  * The [returnFromProject] by default executes without CC and at build completion. If you enable CC it will execute eagerly at CC
  * serialization time.
+ *
+ * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.consumeProjectDependencyViaSettingsInjection
  */
 internal fun <T> TestProject.buildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
@@ -346,9 +350,13 @@ internal fun <T> TestProject.buildScriptReturn(
 }
 
 /**
+ * Inject build script with a return lambda that serializes the return value from a [org.gradle.api.provider.Provider] at build completion.
+ *
  * The [returnFromProject] by default executes without CC and at build completion. If you enable CC the closure will execute whenever Gradle
  * serializes the Provider value; in most cases this happens before execution, but for example if you flatMap the task output or derive
  * Provider from [providers.environmentVariable] it might execute at build completion time.
+ *
+ * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.buildScriptReturnIsCCFriendly
  */
 internal fun <T> TestProject.providerBuildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> Provider<T>,
@@ -475,8 +483,10 @@ private fun <T> GradleProject.buildScriptReturnInjection(
 /**
  * Inject build script with a lambda that will be executed by the build script at configuration time.
  *
- * The [code] and [injectBuildscriptBlock] closures are going to be serialized to a file using Java serialization. This allows the instance of the lambda to capture
+ * The [code] closure is going to be serialized to a file using Java serialization. This allows the instance of the lambda to capture
  * serializable parameters from the test. When the build script executes, it deserializes the lambda instance and executes it.
+ *
+ * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.publishAndConsumeProject
  */
 
 fun GradleProject.buildScriptInjection(
@@ -498,8 +508,10 @@ fun GradleProject.buildScriptInjection(
 }
 
 /**
- * Transfer repositories from settings pluginManagement into project build script's buildscript repositories and inject the buildscript
- * block with KGP (without applying any plugins)
+ * Add KGP to the build script classpath by transferring repositories from settings pluginManagement into project build script's buildscript
+ * repositories and inject the buildscript block with KGP (without applying any plugins)
+ *
+ * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT
  */
 fun TestProject.addKgpToBuildScriptCompilationClasspath() {
     val kotlinVersion = buildOptions.kotlinVersion
@@ -511,6 +523,10 @@ fun TestProject.addKgpToBuildScriptCompilationClasspath() {
     }
 }
 
+/**
+ * Inject the [buildscript] block of the project build script. The primary use case for this injection is the configuration of the build
+ * script classpath before plugin application
+ */
 fun GradleProject.buildScriptBuildscriptBlockInjection(
     code: GradleBuildScriptBuildscriptInjectionContext.() -> Unit
 ) {
@@ -587,6 +603,12 @@ internal fun String.prependToOrCreateBuildscriptBlock(code: String): String {
     }
 }
 
+/**
+ * Inject settings build script with a lambda that will be executed by at configuration time. This injection can be used for arbitrary
+ * settings logic: multi-project setups, dependency management, etc.
+ *
+ * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.consumeProjectDependencyViaSettingsInjection
+ */
 fun GradleProject.settingsBuildScriptInjection(
     code: GradleSettingsBuildScriptInjectionContext.() -> Unit,
 ) {
