@@ -78,12 +78,6 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
     targetBackend: TargetBackend,
     converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>,
     klibFacades: KlibFacades?,
-    /**
-     * When tiered tests are implemented, runners of later tiers may be run for test data
-     * originally designed for lower tiers, but sometimes handlers interfere with one another.
-     * Until this is fixed, tiered runners will need a workaround.
-     * See: KT-67281.
-     */
     includeAllDumpHandlers: Boolean,
 ) {
     globalDefaults {

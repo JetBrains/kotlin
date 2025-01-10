@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.directives.TestTierDirectives
-import org.jetbrains.kotlin.test.directives.TestTierDirectives.DISABLE_NEXT_TIER_SUGGESTION
-import org.jetbrains.kotlin.test.directives.TestTierDirectives.LATEST_PHASE_IN_PIPELINE
-import org.jetbrains.kotlin.test.directives.TestTierDirectives.RUN_PIPELINE_TILL
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.DISABLE_NEXT_PHASE_SUGGESTION
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.ArtifactKind
@@ -29,7 +29,7 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
         get() = Order.P4
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(TestTierDirectives)
+        get() = listOf(TestPhaseDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         checkLatestPhaseDirective()?.let { return failedAssertions + it }
@@ -46,10 +46,10 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
         }
     }
 
-    private fun TestArtifactKind<*>.toPhase(): TestTierLabel? = when (this) {
-        is FrontendKind -> TestTierLabel.FRONTEND
-        is BackendKind -> TestTierLabel.FIR2IR
-        is ArtifactKind -> TestTierLabel.BACKEND
+    private fun TestArtifactKind<*>.toPhase(): TestPhaseLabel? = when (this) {
+        is FrontendKind -> TestPhaseLabel.FRONTEND
+        is BackendKind -> TestPhaseLabel.FIR2IR
+        is ArtifactKind -> TestPhaseLabel.BACKEND
         else -> null
     }
 
@@ -65,7 +65,7 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
 
     private fun checkPhaseConsistency(): List<WrappedException> {
         val directives = testServices.moduleStructure.allDirectives
-        if (DISABLE_NEXT_TIER_SUGGESTION in directives) return emptyList()
+        if (DISABLE_NEXT_PHASE_SUGGESTION in directives) return emptyList()
         val expectedLastPhase = directives[LATEST_PHASE_IN_PIPELINE].first()
         val targetedPhase = directives[RUN_PIPELINE_TILL].firstOrNull()
         if (targetedPhase != null && targetedPhase > expectedLastPhase) {

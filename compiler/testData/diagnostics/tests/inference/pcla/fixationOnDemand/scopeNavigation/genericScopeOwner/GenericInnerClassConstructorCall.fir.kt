@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DISABLE_NEXT_TIER_SUGGESTION: exception from frontend
+// DISABLE_NEXT_PHASE_SUGGESTION: exception from frontend
 // ISSUE: KT-71662
 // ISSUE: KT-72115
 

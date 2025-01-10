@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.test.services
 
 /**
- * The list of all possible test tier labels one can use in
- * [RUN_PIPELINE_TILL][org.jetbrains.kotlin.test.directives.TestTierDirectives.RUN_PIPELINE_TILL].
+ * The list of all possible test phase labels one can use in
+ * [RUN_PIPELINE_TILL][org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL].
  */
-enum class TestTierLabel {
+enum class TestPhaseLabel {
     FRONTEND,
     FIR2IR,
     BACKEND;

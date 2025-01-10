@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.services.TestTierLabel
+import org.jetbrains.kotlin.test.services.TestPhaseLabel
 
-object TestTierDirectives : SimpleDirectivesContainer() {
+object TestPhaseDirectives : SimpleDirectivesContainer() {
     /**
-     * See: [TestTierLabel] for the list of values.
-     * If not set, the test will be generated into [FRONTEND][TestTierLabel.FRONTEND]
-     * tiers, but the infrastructure will still complain about the missing directive.
+     * See: [TestPhaseLabel] for the list of values.
+     * If not set, the test will be generated into [FRONTEND][TestPhaseLabel.FRONTEND]
+     * phases, but the infrastructure will still complain about the missing directive.
      */
-    val RUN_PIPELINE_TILL by enumDirective<TestTierLabel>(
-        description = "Verify that the test runs successfully until the specified tier (including). See `TestTiers` for the list of tiers"
+    val RUN_PIPELINE_TILL by enumDirective<TestPhaseLabel>(
+        description = "Verify that the test runs successfully until the specified phase (including). See `TestPhaseLabel` for the list of phases"
     )
 
     /**
@@ -32,11 +32,11 @@ object TestTierDirectives : SimpleDirectivesContainer() {
      * Important: [LATEST_PHASE_IN_PIPELINE] should be defined once per test runner and shouldn't be additionally set in any
      * particular test.
      */
-    val LATEST_PHASE_IN_PIPELINE by enumDirective<TestTierLabel>(
+    val LATEST_PHASE_IN_PIPELINE by enumDirective<TestPhaseLabel>(
         description = "The last phase of the pipeline in the test"
     )
 
-    val DISABLE_NEXT_TIER_SUGGESTION by stringDirective(
-        description = "Prevents the tiered test runners from complaining that the current tier could be upgraded. Use this directive if the test contains something obviously wrong, like disabling of some language features or cringe error suppression, causing failures on higher tiers"
+    val DISABLE_NEXT_PHASE_SUGGESTION by stringDirective(
+        description = "Prevents the phased test runners from complaining that the current phase could be upgraded. Use this directive if the test contains something obviously wrong, like disabling of some language features or cringe error suppression, causing failures on higher phase"
     )
 }
