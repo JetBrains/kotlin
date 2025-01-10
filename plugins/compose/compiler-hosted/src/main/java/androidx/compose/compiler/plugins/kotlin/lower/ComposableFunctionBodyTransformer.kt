@@ -3503,8 +3503,8 @@ class ComposableFunctionBodyTransformer(
         extensionArg: CallArgumentMeta?,
         dispatchArg: CallArgumentMeta?,
     ): List<IrExpression> {
-        val allArgs = listOfNotNull(extensionArg) +
-                contextArgs +
+        val allArgs = contextArgs +
+                listOfNotNull(extensionArg) +
                 valueArgs +
                 listOfNotNull(dispatchArg)
         // passing in 0 for thisParams since they should be included in the params list
@@ -4153,27 +4153,34 @@ class ComposableFunctionBodyTransformer(
 
             val isComposable = composerParameter != null
 
-            // Kotlin orders params as [dispatch receiver, context, extension receiver, normal parameters].
-            // Compose uses a different order: [extension receiver, context, normal parameters, dispatch receiver]
-            // Normally this does not matter, but lambda calls with context / extension params are converted into
-            // regular params on a call site (because it calls a generic FunctionN). This means that we need to
-            // use a different order for lambdas to avoid breaking the ABI for regular functions.
-            // todo(ashikov): avoid building multiple lists with .filter
-            val allTrackedParams =
-                if (function.isLambda()) {
-                    function.parameters.filter { it.kind == IrParameterKind.Context } +
-                            function.parameters.filter { it.kind == IrParameterKind.ExtensionReceiver } +
-                            function.parameters.filter { it.kind == IrParameterKind.Regular }.take(realValueParamCount) +
-                            function.parameters.filter { it.kind == IrParameterKind.DispatchReceiver }
-                } else {
-                    function.parameters.filter { it.kind == IrParameterKind.ExtensionReceiver } +
-                            function.parameters.filter { it.kind == IrParameterKind.Context } +
-                            function.parameters.filter { it.kind == IrParameterKind.Regular }.take(realValueParamCount) +
-                            function.parameters.filter { it.kind == IrParameterKind.DispatchReceiver }
+            val allTrackedParams = buildList {
+                function.parameters.fastForEach {
+                    if (it.kind == IrParameterKind.Context) {
+                        add(it)
+                    }
                 }
+                function.parameters.fastForEach {
+                    if (it.kind == IrParameterKind.ExtensionReceiver) {
+                        add(it)
+                    }
+                }
+                var parameterCount = realValueParamCount
+                function.parameters.fastForEach {
+                    if (parameterCount > 0 && it.kind == IrParameterKind.Regular) {
+                        parameterCount--
+                        add(it)
+                    }
+                }
+                function.parameters.fastForEach {
+                    if (it.kind == IrParameterKind.DispatchReceiver) {
+                        add(it)
+                    }
+                }
+            }
 
+            private val hasExtensionReceiver = function.parameters.any { it.kind == IrParameterKind.ExtensionReceiver }
             fun defaultIndexForSlotIndex(index: Int): Int {
-                return if (function.extensionReceiverParameter != null) index - 1 else index
+                return if (hasExtensionReceiver) index - 1 else index
             }
 
             val usedParams = BooleanArray(slotCount) { false }
