@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.delegatingConstructorCall]
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 abstract class IrDelegatingConstructorCall : IrFunctionAccessExpression() {
     abstract override var symbol: IrConstructorSymbol
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitDelegatingConstructorCall(this, data)
 
-    override fun acceptVoid(visitor: IrVisitorVoid) {
+    override fun acceptVoid(visitor: IrLeafVisitorVoid) {
         visitor.visitDelegatingConstructorCall(this)
     }
 

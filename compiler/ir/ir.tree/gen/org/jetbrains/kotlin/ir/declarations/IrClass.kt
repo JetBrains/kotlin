@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.class]
@@ -71,10 +71,10 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
      */
     abstract var sealedSubclasses: List<IrClassSymbol>
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 
-    override fun acceptVoid(visitor: IrVisitorVoid) {
+    override fun acceptVoid(visitor: IrLeafVisitorVoid) {
         visitor.visitClass(this)
     }
 
@@ -84,13 +84,13 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
         transformer.visitClass(this)
 
-    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         thisReceiver?.accept(visitor, data)
     }
 
-    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+    override fun acceptChildrenVoid(visitor: IrLeafVisitorVoid) {
         typeParameters.forEach { it.acceptVoid(visitor) }
         declarations.forEach { it.acceptVoid(visitor) }
         thisReceiver?.acceptVoid(visitor)

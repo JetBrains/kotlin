@@ -109,29 +109,27 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
         )
     }
 
-    protected fun printMethodDeclarationForElement(element: Element, modality: Modality? = null, override: Boolean) {
-        printer.run {
-            println()
-            printVisitMethodDeclaration(
-                element,
-                modality = modality,
-                override = override
-            )
+    protected open fun visitMethodModality(element: Element): Modality? {
+        val parentInVisitor = parentInVisitor(element)
+        return when {
+            visitorSuperTypes.isEmpty() && parentInVisitor == null && visitorType.kind == TypeKind.Class -> Modality.ABSTRACT
+            visitorSuperTypes.isEmpty() && parentInVisitor != null && visitorType.kind == TypeKind.Class -> Modality.OPEN
+            else -> null
         }
     }
+
+    protected open fun overrideVisitMethod(element: Element): Boolean =
+        parentInVisitor(element) != null && visitorSuperTypes.isNotEmpty()
 
     protected open fun printMethodsForElement(element: Element) {
         printer.run {
             val parentInVisitor = parentInVisitor(element)
             if (parentInVisitor == null && !element.isRootElement) return
-            printMethodDeclarationForElement(
+            println()
+            printVisitMethodDeclaration(
                 element,
-                modality = when {
-                    visitorSuperTypes.isEmpty() && parentInVisitor == null && visitorType.kind == TypeKind.Class -> Modality.ABSTRACT
-                    visitorSuperTypes.isEmpty() && parentInVisitor != null && visitorType.kind == TypeKind.Class -> Modality.OPEN
-                    else -> null
-                },
-                override = parentInVisitor != null && visitorSuperTypes.isNotEmpty(),
+                modality = visitMethodModality(element),
+                override = overrideVisitMethod(element)
             )
             if (parentInVisitor != null) {
                 println(" =")

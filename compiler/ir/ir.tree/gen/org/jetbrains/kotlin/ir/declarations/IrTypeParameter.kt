@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -35,10 +35,10 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
 
     abstract var superTypes: List<IrType>
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)
 
-    override fun acceptVoid(visitor: IrVisitorVoid) {
+    override fun acceptVoid(visitor: IrLeafVisitorVoid) {
         visitor.visitTypeParameter(this)
     }
 

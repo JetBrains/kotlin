@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
@@ -26,10 +26,10 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
 
     abstract var fileEntry: IrFileEntry
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)
 
-    override fun acceptVoid(visitor: IrVisitorVoid) {
+    override fun acceptVoid(visitor: IrLeafVisitorVoid) {
         visitor.visitFile(this)
     }
 
@@ -39,11 +39,11 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
     override fun transformVoid(transformer: IrElementTransformerVoid): IrFile =
         transformer.visitFile(this)
 
-    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
     }
 
-    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+    override fun acceptChildrenVoid(visitor: IrLeafVisitorVoid) {
         declarations.forEach { it.acceptVoid(visitor) }
     }
 

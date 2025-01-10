@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * This is a root parent element for external declarations (meaning those that come from
@@ -38,10 +38,10 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 abstract class IrExternalPackageFragment : IrPackageFragment() {
     abstract override val symbol: IrExternalPackageFragmentSymbol
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)
 
-    override fun acceptVoid(visitor: IrVisitorVoid) {
+    override fun acceptVoid(visitor: IrLeafVisitorVoid) {
         visitor.visitExternalPackageFragment(this)
     }
 
@@ -51,11 +51,11 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
         transformer.visitExternalPackageFragment(this)
 
-    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
     }
 
-    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+    override fun acceptChildrenVoid(visitor: IrLeafVisitorVoid) {
         declarations.forEach { it.acceptVoid(visitor) }
     }
 

@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.generators.tree.ClassRef
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
-import org.jetbrains.kotlin.ir.generator.irTransformerType
 import org.jetbrains.kotlin.ir.generator.model.Element
 
 internal fun Element.getTransformExplicitType(): Element {
@@ -18,4 +15,10 @@ internal fun Element.getTransformExplicitType(): Element {
                 else -> it.transformerReturnType
             }
         } ?: this
+}
+
+internal fun Element.parentInLeafOnlyVisitor(rootElement: Element): Element? = when {
+    isRootElement -> null
+    parentInVisitor?.hasAcceptMethod == true -> parentInVisitor
+    else -> rootElement
 }

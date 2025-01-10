@@ -30,6 +30,8 @@ fun main(args: Array<String>) {
             elementBaseType,
             ::ElementPrinter,
             listOf(
+                irLeafVisitorType to ::LeafVisitorPrinter.bind(model.rootElement),
+                irLeafVisitorVoidType to ::LeafVisitorVoidPrinter.bind(model.rootElement),
                 irVisitorType to ::VisitorPrinter,
                 irVisitorVoidType to ::VisitorVoidPrinter,
                 irTransformerType to ::TransformerPrinter.bind(model.rootElement),

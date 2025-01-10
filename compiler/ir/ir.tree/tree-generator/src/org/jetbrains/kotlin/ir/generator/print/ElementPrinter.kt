@@ -117,7 +117,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
 
         printAcceptMethod(
             element = element,
-            visitorClass = irVisitorType,
+            visitorClass = irLeafVisitorType,
             hasImplementation = !element.isRootElement,
             treeName = "IR",
         )
@@ -125,7 +125,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         var acceptMethodHasBody = false
         if (element.hasAcceptMethod) {
             println()
-            val visitorParameter = FunctionParameter("visitor", irVisitorVoidType)
+            val visitorParameter = FunctionParameter("visitor", irLeafVisitorVoidType)
             printFunctionDeclaration(
                 name = "acceptVoid",
                 parameters = listOf(visitorParameter),
@@ -197,14 +197,14 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         if (element.hasAcceptChildrenMethod) {
             printAcceptChildrenMethod(
                 element = element,
-                visitorClass = irVisitorType,
+                visitorClass = irLeafVisitorType,
                 visitorResultType = StandardTypes.unit,
                 override = !element.isRootElement,
             )
             printAcceptChildrenMethodImplementation(element, hasData = true)
 
             println()
-            val visitorParameter = FunctionParameter("visitor", irVisitorVoidType)
+            val visitorParameter = FunctionParameter("visitor", irLeafVisitorVoidType)
             printFunctionDeclaration(
                 name = "acceptChildrenVoid",
                 parameters = listOf(visitorParameter),

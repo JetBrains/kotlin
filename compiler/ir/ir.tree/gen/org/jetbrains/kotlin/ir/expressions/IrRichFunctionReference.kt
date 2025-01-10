@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * This node is intended to unify different ways of handling function reference-like objects in IR.
@@ -145,10 +145,10 @@ abstract class IrRichFunctionReference : IrExpression() {
 
     abstract var isRestrictedSuspension: Boolean
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitRichFunctionReference(this, data)
 
-    override fun acceptVoid(visitor: IrVisitorVoid) {
+    override fun acceptVoid(visitor: IrLeafVisitorVoid) {
         visitor.visitRichFunctionReference(this)
     }
 
@@ -158,12 +158,12 @@ abstract class IrRichFunctionReference : IrExpression() {
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
         transformer.visitRichFunctionReference(this)
 
-    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         boundValues.forEach { it.accept(visitor, data) }
         invokeFunction.accept(visitor, data)
     }
 
-    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+    override fun acceptChildrenVoid(visitor: IrLeafVisitorVoid) {
         boundValues.forEach { it.acceptVoid(visitor) }
         invokeFunction.acceptVoid(visitor)
     }

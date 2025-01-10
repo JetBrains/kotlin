@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Represents a string template expression.
@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 abstract class IrStringConcatenation : IrExpression() {
     abstract val arguments: MutableList<IrExpression>
 
-    override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
+    override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitStringConcatenation(this, data)
 
-    override fun acceptVoid(visitor: IrVisitorVoid) {
+    override fun acceptVoid(visitor: IrLeafVisitorVoid) {
         visitor.visitStringConcatenation(this)
     }
 
@@ -44,11 +44,11 @@ abstract class IrStringConcatenation : IrExpression() {
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
         transformer.visitStringConcatenation(this)
 
-    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+    override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         arguments.forEach { it.accept(visitor, data) }
     }
 
-    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+    override fun acceptChildrenVoid(visitor: IrLeafVisitorVoid) {
         arguments.forEach { it.acceptVoid(visitor) }
     }
 
