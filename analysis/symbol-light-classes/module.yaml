@@ -1,0 +1,96 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - javax.annotation:jsr250-api:1.0
+  - org.jetbrains.intellij.deps:asm-all:9.0
+  - com.google.guava:guava:33.3.1-jre
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - io.vavr:vavr:0.10.4
+  - javax.inject:javax.inject:1
+  - com.google.guava:failureaccess:1.0.2
+  - com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+  - com.google.code.findbugs:jsr305:3.0.2
+  - org.checkerframework:checker-qual:3.43.0
+  - com.google.errorprone:error_prone_annotations:2.28.0
+  - com.google.j2objc:j2objc-annotations:3.0.0
+  - org.jetbrains:annotations:13.0
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - io.opentelemetry:opentelemetry-api:1.41.0
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - com.jetbrains.intellij.platform:diagnostic:233.13135.128
+  - io.opentelemetry:opentelemetry-context:1.41.0
+  - ../decompiled/light-classes-for-decompiled
+  - ../../compiler/frontend.java
+  - ../light-classes-base
+  - ../../compiler/psi
+  - ../../compiler/backend.common.jvm
+  - ../../core/compiler.common
+  - ../analysis-api-platform-interface
+  - ../analysis-api
+  - ../analysis-internal-utils
+  - ../../dependencies/intellij-core
+  - ../decompiled/decompiler-to-psi
+  - ../../compiler/frontend
+  - ../../compiler/resolution.common.jvm
+  - ../../compiler/frontend.common.jvm
+  - ../../core/descriptors.jvm
+  - ../../core/descriptors
+  - ../../compiler/config.jvm
+  - ../../compiler/util
+  - ../../compiler/frontend.common-psi
+  - ../../core/compiler.common.jvm
+  - ../../compiler/frontend.common
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+  - ../../core/util.runtime
+  - ../../libraries/tools/kotlin-annotations-jvm
+  - ../../core/deserialization
+  - ../../compiler/resolution
+  - ../../compiler/config
+  - ../../compiler/container
+  - ../../compiler/resolution.common
+  - ../../core/deserialization.common.jvm
+  - ../../core/deserialization.common
+  - ../../core/metadata.jvm
+  - ../../compiler/compiler.version
+  - ../../core/metadata
+  - ../decompiled/decompiler-native
+  - ../decompiled/decompiler-to-file-stubs
+  - ../../compiler/backend
+  - ../kt-references
+  - ../../js/js.serializer
+  - ../decompiled/decompiler-to-stubs
+  - ../../compiler/util-klib-metadata
+  - ../../compiler/backend-common
+  - ../../compiler/serialization
+  - ../../js/js.config
+  - ../../js/js.ast
+  - ../../compiler/util-klib
+  - ../../compiler/util-io
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xcontext-receivers, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction,org.jetbrains.kotlin.analysis.api.KaExperimentalApi,org.jetbrains.kotlin.analysis.api.KaPlatformInterface,kotlin.RequiresOptIn,org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction, -Xskip-prerelease-check, -Xwhen-guards]

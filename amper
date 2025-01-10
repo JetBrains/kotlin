@@ -1,0 +1,273 @@
+#!/bin/sh
+
+#
+# Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+#
+
+# TODO gradlew also tries to set ulimit -n (max files), probably we should too
+# TODO Script could be run in parallel for the first time, so download/extract code should not fail in that case
+
+# Possible environment variables:
+#   AMPER_DOWNLOAD_ROOT        Maven repository to download Amper dist from.
+#                              default: https://packages.jetbrains.team/maven/p/amper/amper
+#   AMPER_JRE_DOWNLOAD_ROOT    Url prefix to download Amper JRE from.
+#                              default: https:/
+#   AMPER_BOOTSTRAP_CACHE_DIR  Cache directory to store extracted JRE and Amper distribution
+#   AMPER_JAVA_HOME            JRE to run Amper itself (optional, does not affect compilation)
+#   AMPER_JAVA_OPTIONS         JVM options to pass to the JVM running Amper (does not affect the user's application)
+
+set -e -u
+
+# The version of the Amper distribution to provision and use
+amper_version=0.6.0-dev-2357
+# Establish chain of trust from here by specifying exact checksum of Amper distribution to be run
+amper_sha256=70921af68dc7fab955535b1ea0064b2f61dd71982dd96df7abe77b1a610d5540
+
+AMPER_DOWNLOAD_ROOT="${AMPER_DOWNLOAD_ROOT:-https://packages.jetbrains.team/maven/p/amper/amper}"
+AMPER_JRE_DOWNLOAD_ROOT="${AMPER_JRE_DOWNLOAD_ROOT:-https:/}"
+
+die() {
+  echo >&2
+  echo "$@" >&2
+  echo >&2
+  exit 1
+}
+
+download_and_extract() {
+  moniker="$1"
+  file_url="$2"
+  file_sha="$3"
+  sha_size="$4"
+  cache_dir="$5"
+  extract_dir="$6"
+
+  if [ -e "$extract_dir/.flag" ] && [ "$(cat "$extract_dir/.flag")" = "${file_sha}" ]; then
+    # Everything is up-to-date in $extract_dir, do nothing
+    return 0;
+  fi
+
+  mkdir -p "$cache_dir"
+
+  # Take a lock for the download of this file
+  short_sha=$(echo "$file_sha" | cut -c1-32) # cannot use the ${short_sha:0:32} syntax in regular /bin/sh
+  download_lock_file="$cache_dir/download-${short_sha}.lock"
+  process_lock_file="$cache_dir/download-${short_sha}.$$.lock"
+  echo $$ >"$process_lock_file"
+  while ! ln "$process_lock_file" "$download_lock_file" 2>/dev/null; do
+    lock_owner=$(cat "$download_lock_file" 2>/dev/null || true)
+    if [ -n "$lock_owner" ] && ps -p "$lock_owner" >/dev/null; then
+      echo "Another Amper instance (pid $lock_owner) is downloading $moniker. Awaiting the result..."
+      sleep 1
+    elif [ -n "$lock_owner" ] && [ "$(cat "$download_lock_file" 2>/dev/null)" = "$lock_owner" ]; then
+      rm -f "$download_lock_file"
+      # We don't want to simply loop again here, because multiple concurrent processes may face this at the same time,
+      # which means the 'rm' command above from another script could delete our new valid lock file. Instead, we just
+      # ask the user to try again. This doesn't 100% eliminate the race, but the probability of issues is drastically
+      # reduced because it would involve 4 processes with perfect timing. We can revisit this later.
+      die "Another Amper instance (pid $lock_owner) locked the download of $moniker, but is no longer running. The lock file is now removed, please try again."
+    fi
+  done
+
+  # shellcheck disable=SC2064
+  trap "rm -f \"$download_lock_file\"" EXIT
+  rm -f "$process_lock_file"
+
+  unlock_and_cleanup() {
+    rm -f "$download_lock_file"
+    trap - EXIT
+    return 0
+  }
+
+  if [ -e "$extract_dir/.flag" ] && [ "$(cat "$extract_dir/.flag")" = "${file_sha}" ]; then
+    # Everything is up-to-date in $extract_dir, just release the lock
+    unlock_and_cleanup
+    return 0;
+  fi
+
+  temp_file="$cache_dir/download-file-$$.bin"
+
+  echo "Downloading $moniker... (only happens on the first run of this version)"
+
+  rm -f "$temp_file"
+  if command -v curl >/dev/null 2>&1; then
+    if [ -t 1 ]; then CURL_PROGRESS="--progress-bar"; else CURL_PROGRESS="--silent --show-error"; fi
+    # shellcheck disable=SC2086
+    curl $CURL_PROGRESS -L --fail --retry 5 --connect-timeout 30 --output "${temp_file}" "$file_url" 2>&1
+  elif command -v wget >/dev/null 2>&1; then
+    if [ -t 1 ]; then WGET_PROGRESS=""; else WGET_PROGRESS="-nv"; fi
+    wget $WGET_PROGRESS --tries=5 --connect-timeout=30 --read-timeout=120 -O "${temp_file}" "$file_url" 2>&1
+  else
+    die "ERROR: Please install 'wget' or 'curl', as Amper needs one of them to download $moniker"
+  fi
+
+  check_sha "$file_url" "$temp_file" "$file_sha" "$sha_size"
+
+  rm -rf "$extract_dir"
+  mkdir -p "$extract_dir"
+
+  case "$file_url" in
+    *".zip")
+      if command -v unzip >/dev/null 2>&1; then
+        unzip -q "$temp_file" -d "$extract_dir"
+      else
+        die "ERROR: Please install 'unzip', as Amper needs it to extract $moniker"
+      fi ;;
+    *)
+      if command -v tar >/dev/null 2>&1; then
+        tar -x -f "$temp_file" -C "$extract_dir"
+      else
+        die "ERROR: Please install 'tar', as Amper needs it to extract $moniker"
+      fi ;;
+  esac
+
+  rm -f "$temp_file"
+
+  echo "$file_sha" >"$extract_dir/.flag"
+
+  # Unlock and cleanup the lock file
+  unlock_and_cleanup
+
+  echo "Download complete."
+  echo
+}
+
+# usage: check_sha SOURCE_MONIKER FILE SHA_CHECKSUM SHA_SIZE
+# $1 SOURCE_MONIKER (e.g. url)
+# $2 FILE
+# $3 SHA hex string
+# $4 SHA size in bits (256, 512, ...)
+check_sha() {
+  sha_size=$4
+  if command -v shasum >/dev/null 2>&1; then
+    echo "$3 *$2" | shasum -a "$sha_size" --status -c || {
+      echo "$2 (downloaded from $1):" >&2
+      echo "expected checksum $3 but got: $(shasum --binary -a "$sha_size" "$2" | awk '{print $1}')" >&2
+
+      die "ERROR: Checksum mismatch for $1"
+    }
+    return 0
+  fi
+
+  shaNsumCommand="sha${sha_size}sum"
+  if command -v "$shaNsumCommand" >/dev/null 2>&1; then
+    echo "$3 *$2" | $shaNsumCommand -w -c || {
+      echo "$2 (downloaded from $1):" >&2
+      echo "expected checksum $3 but got: $($shaNsumCommand "$2" | awk '{print $1}')" >&2
+
+      die "ERROR: Checksum mismatch for $1"
+    }
+    return 0
+  fi
+
+  echo "Both 'shasum' and 'sha${sha_size}sum' utilities are missing. Please install one of them"
+  return 1
+}
+
+# ********** System detection **********
+
+kernelName=$(uname -s)
+arch=$(uname -m)
+case "$kernelName" in
+  Darwin* )
+    simpleOs="macos"
+    jbr_os="osx"
+    default_amper_cache_dir="$HOME/Library/Caches/Amper"
+    ;;
+  Linux* )
+    simpleOs="linux"
+    jbr_os="linux"
+    default_amper_cache_dir="$HOME/.cache/Amper"
+    # If linux runs in 32-bit mode, we want the "fake" 32-bit architecture, not the real hardware,
+    # because in this mode linux cannot run 64-bit binaries.
+    # shellcheck disable=SC2046
+    arch=$(linux$(getconf LONG_BIT) uname -m)
+    ;;
+  CYGWIN* | MSYS* | MINGW* )
+    simpleOs="windows"
+    jbr_os="windows"
+    if command -v cygpath >/dev/null 2>&1; then
+      default_amper_cache_dir=$(cygpath -u "$LOCALAPPDATA\Amper")
+    else
+      die "The 'cypath' command is not available, but Amper needs it. Use amper.bat instead, or try a Cygwin or MSYS environment."
+    fi
+    ;;
+  *)
+    die "Unsupported platform $kernelName"
+    ;;
+esac
+
+# TODO should we respect --shared-caches-root instead of (or in addition to) this env var?
+amper_cache_dir="${AMPER_BOOTSTRAP_CACHE_DIR:-$default_amper_cache_dir}"
+
+# ********** Provision Amper distribution **********
+
+amper_url="$AMPER_DOWNLOAD_ROOT/org/jetbrains/amper/cli/$amper_version/cli-$amper_version-dist.tgz"
+amper_target_dir="$amper_cache_dir/amper-cli-$amper_version"
+download_and_extract "Amper distribution v$amper_version" "$amper_url" "$amper_sha256" 256 "$amper_cache_dir" "$amper_target_dir"
+
+# ********** Provision JRE for Amper **********
+
+if [ "x${AMPER_JAVA_HOME:-}" = "x" ]; then
+  case $arch in
+    x86_64 | x64)    jbr_arch="x64" ;;
+    aarch64 | arm64) jbr_arch="aarch64" ;;
+    *) die "Unsupported architecture $arch" ;;
+  esac
+
+  # Auto-updated from syncVersions.main.kts, do not modify directly here
+  jbr_version=21.0.4
+  jbr_build=b509.26
+
+  # URL for JBR (vanilla) - see https://github.com/JetBrains/JetBrainsRuntime/releases
+  jbr_url="$AMPER_JRE_DOWNLOAD_ROOT/cache-redirector.jetbrains.com/intellij-jbr/jbr-$jbr_version-$jbr_os-$jbr_arch-$jbr_build.tar.gz"
+  jbr_target_dir="$amper_cache_dir/jbr-$jbr_version-$jbr_os-$jbr_arch-$jbr_build"
+
+  platform="$jbr_os $jbr_arch"
+  case $platform in
+    "osx x64")         jbr_sha512=04ef2e808e691451c62b557e8f151aedbffca1a9d9c93d8eddff8f47f8cd3a1ad06dabb6ea908ae8a97616fc34d96a352319efd480bcfd7d024e80b5050e1343 ;;
+    "osx aarch64")     jbr_sha512=fe7f85ed23a0cd47384e80ce99e5bb746fd0303ee197a0076ea026e5d7898c7e91a7189e0d23fbb18b26edd693e13507d29b5ffdfd08d4712e96c2303cf2ed70 ;;
+    "linux x64")       jbr_sha512=b631092e911d84b6d2d116e3668a05b884e7a9696d2c67b842bfabc93bad9773671605934c4262ea647bcf3bbfaa2eb535d56d458510b9bc924471dd88296912 ;;
+    "linux aarch64")   jbr_sha512=9136bf6b8bc2f10d750848dceacb25baeded3a05e4bc694a63602386738a72e81c578d5146d99a68fbb2cde04852a23e843539869bbbb6fb8794038a5e4a5061 ;;
+    "windows x64")     jbr_sha512=6a639d23039b83cf1b0ed57d082bb48a9bff6acae8964192a1899e8a1c0915453199b501b498e5874bc57c9996d871d49f438054b3c86f643f1c1c4f178026a3 ;;
+    "windows aarch64") jbr_sha512=9fd2333f3d55f0d40649435fc27e5ab97ad44962f54c1c6513e66f89224a183cd0569b9a3994d840b253060d664630610f82a02f45697e5e6c0b4ee250dd1857 ;;
+    *) die "Unsupported platform $platform" ;;
+  esac
+
+  download_and_extract "JetBrains Runtime v$jbr_version$jbr_build" "$jbr_url" "$jbr_sha512" 512 "$amper_cache_dir" "$jbr_target_dir"
+
+  AMPER_JAVA_HOME=
+  for d in "$jbr_target_dir" "$jbr_target_dir"/* "$jbr_target_dir"/Contents/Home "$jbr_target_dir"/*/Contents/Home; do
+    if [ -e "$d/bin/java" ]; then
+      AMPER_JAVA_HOME="$d"
+    fi
+  done
+
+  if [ "x${AMPER_JAVA_HOME:-}" = "x" ]; then
+    die "Unable to find bin/java under $jbr_target_dir"
+  fi
+fi
+
+java_exe="$AMPER_JAVA_HOME/bin/java"
+if [ '!' -x "$java_exe" ]; then
+  die "Unable to find bin/java executable at $java_exe"
+fi
+
+# ********** Script path detection **********
+
+# We might need to resolve symbolic links here
+wrapper_path=$(realpath "$0")
+
+# ********** Launch Amper **********
+
+if [ "$simpleOs" = "windows" ]; then
+  # Can't cygpath the '*' so it has to be outside
+  classpath="$(cygpath -w "$amper_target_dir")\lib\*"
+else
+  classpath="$amper_target_dir/lib/*"
+fi
+jvm_args="-ea -XX:+EnableDynamicAgentLoading ${AMPER_JAVA_OPTIONS:-}"
+# shellcheck disable=SC2086
+exec "$java_exe" \
+  "-Damper.wrapper.dist.sha256=$amper_sha256" \
+  "-Damper.wrapper.path=$wrapper_path" \
+  $jvm_args -cp "$classpath" org.jetbrains.amper.cli.MainKt "$@"

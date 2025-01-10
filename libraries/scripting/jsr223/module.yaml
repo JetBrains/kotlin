@@ -1,0 +1,70 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - org.jline:jline:3.24.1
+  - org.jetbrains:annotations:13.0
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - ../jvm-host
+  - ../../../plugins/scripting/scripting-compiler
+  - ../scripting-jvm
+  - ../../../compiler/cli/cli-common
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+  - ../common
+  - ../../../dependencies/intellij-core
+  - ../../../plugins/scripting/scripting-compiler-impl
+  - ../../../compiler/plugin-api
+  - ../../../compiler/config.jvm
+  - ../../../js/js.config
+  - ../../../wasm/wasm.config
+  - ../../../compiler/config
+  - ../../../native/utils
+  - ../../../core/util.runtime
+  - ../../../compiler/frontend
+  - ../../../compiler/util
+  - ../../../core/compiler.common.jvm
+  - ../../../core/metadata
+  - ../../../core/compiler.common
+  - ../../../compiler/util-klib
+  - ../../../compiler/util-io
+  - ../../../compiler/frontend.common-psi
+  - ../../../compiler/psi
+  - ../../../compiler/frontend.common
+  - ../../../core/deserialization
+  - ../../../compiler/resolution
+  - ../../../core/descriptors
+  - ../../../compiler/container
+  - ../../tools/kotlin-annotations-jvm
+  - ../../../compiler/compiler.version
+  - ../../../core/deserialization.common
+  - ../../../compiler/resolution.common
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xallow-kotlin-package, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

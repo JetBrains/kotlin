@@ -1,0 +1,14 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - org.jetbrains:annotations:21.0.0
+
+module:
+  layout: gradle-jvm

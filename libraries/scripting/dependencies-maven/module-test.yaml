@@ -1,0 +1,60 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.apache.maven:maven-core:3.9.9
+  - org.apache.maven.wagon:wagon-http:3.5.3
+  - org.apache.maven.resolver:maven-resolver-connector-basic:1.9.2
+  - org.apache.maven.resolver:maven-resolver-transport-file:1.9.2
+  - org.apache.maven.resolver:maven-resolver-transport-wagon:1.9.2
+  - org.apache.maven.resolver:maven-resolver-impl:1.9.22
+  - commons-io:commons-io:2.18.0
+  - org.jetbrains:annotations:13.0
+  - org.apache.maven:maven-resolver-provider:3.9.9
+  - org.apache.maven:maven-plugin-api:3.9.9
+  - org.apache.maven:maven-model-builder:3.9.9
+  - org.apache.maven:maven-model:3.9.9
+  - org.apache.maven:maven-settings-builder:3.9.9
+  - org.apache.maven:maven-settings:3.9.9
+  - org.apache.maven:maven-builder-support:3.9.9
+  - org.apache.maven:maven-repository-metadata:3.9.9
+  - org.apache.maven:maven-artifact:3.9.9
+  - org.apache.maven.resolver:maven-resolver-spi:1.9.22
+  - org.apache.maven.resolver:maven-resolver-util:1.9.22
+  - org.apache.maven.resolver:maven-resolver-api:1.9.22
+  - org.apache.maven.shared:maven-shared-utils:3.4.2
+  - org.eclipse.sisu:org.eclipse.sisu.plexus:0.9.0.M3
+  - org.eclipse.sisu:org.eclipse.sisu.inject:0.9.0.M3
+  - com.google.inject:guice:5.1.0
+  - com.google.guava:guava:33.2.1-jre
+  - com.google.guava:failureaccess:1.0.2
+  - javax.inject:javax.inject:1
+  - org.codehaus.plexus:plexus-utils:3.5.1
+  - org.codehaus.plexus:plexus-classworlds:2.8.0
+  - org.codehaus.plexus:plexus-interpolation:1.27
+  - org.codehaus.plexus:plexus-component-annotations:2.1.0
+  - org.slf4j:slf4j-api:1.7.36
+  - org.apache.maven.wagon:wagon-http-shared:3.5.3
+  - org.apache.maven.wagon:wagon-provider-api:3.5.3
+  - org.apache.httpcomponents:httpclient:4.5.14
+  - org.apache.maven.resolver:maven-resolver-named-locks:1.9.22
+  - org.codehaus.plexus:plexus-sec-dispatcher:2.0
+  - org.codehaus.plexus:plexus-xml:3.0.0
+  - aopalliance:aopalliance:1.0
+  - org.apache.httpcomponents:httpcore:4.4.16
+  - commons-codec:commons-codec:1.11
+  - org.codehaus.plexus:plexus-cipher:2.0
+  - org.slf4j:jcl-over-slf4j:1.7.36
+  - ../dependencies
+  - ../common
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xallow-kotlin-package, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

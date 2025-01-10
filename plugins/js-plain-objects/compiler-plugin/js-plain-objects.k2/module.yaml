@@ -1,0 +1,102 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.annotation:jsr250-api:1.0
+  - javax.inject:javax.inject:1
+  - org.jetbrains:annotations:13.0
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - io.vavr:vavr-match:0.10.4
+  - ../../../../compiler/fir/plugin-utils
+  - ../../../../compiler/fir/fir-entrypoint
+  - ../../../../compiler/fir/resolve
+  - ../../../../compiler/fir/tree
+  - ../../../../compiler/fir/cones
+  - ../../../../compiler/cli/cli-common
+  - ../../../../dependencies/intellij-core
+  - ../js-plain-objects.common
+  - ../../../../compiler/fir/semantics
+  - ../../../../compiler/fir/providers
+  - ../../../../compiler/resolution.common
+  - ../../../../core/compiler.common
+  - ../../../../compiler/fir/checkers/checkers.jvm
+  - ../../../../compiler/fir/java
+  - ../../../../compiler/fir/checkers/checkers.js
+  - ../../../../compiler/fir/checkers/checkers.native
+  - ../../../../compiler/fir/checkers/checkers.wasm
+  - ../../../../compiler/fir/checkers
+  - ../../../../compiler/fir/raw-fir/psi2fir
+  - ../../../../compiler/fir/raw-fir/light-tree2fir
+  - ../../../../compiler/frontend.java
+  - ../../../../wasm/wasm.frontend
+  - ../../../../compiler/ir/ir.actualization
+  - ../../../../core/descriptors.jvm
+  - ../../../../compiler/fir/native
+  - ../../../../compiler/fir/fir2ir
+  - ../../../../native/frontend-native
+  - ../../../../compiler/frontend.common
+  - ../../../../compiler/plugin-api
+  - ../../../../compiler/config.jvm
+  - ../../../../js/js.config
+  - ../../../../wasm/wasm.config
+  - ../../../../compiler/config
+  - ../../../../core/util.runtime
+  - ../../../../native/utils
+  - ../../../../compiler/util
+  - ../../../../libraries/tools/kotlin-annotations-jvm
+  - ../../../../compiler/fir/fir-deserialization
+  - ../../../../compiler/resolution.common.jvm
+  - ../../../../compiler/frontend.common.jvm
+  - ../../../../core/compiler.common.jvm
+  - ../../../../core/metadata.jvm
+  - ../../../../compiler/fir/checkers/checkers.web.common
+  - ../../../../core/compiler.common.js
+  - ../../../../js/js.ast
+  - ../../../../compiler/fir/raw-fir/raw-fir.common
+  - ../../../../compiler/frontend
+  - ../../../../core/descriptors
+  - ../../../../js/js.frontend
+  - ../../../../compiler/ir/ir.tree
+  - ../../../../core/deserialization
+  - ../../../../core/deserialization.common.jvm
+  - ../../../../compiler/container
+  - ../../../../core/metadata
+  - ../../../../compiler/util-klib
+  - ../../../../compiler/util-io
+  - ../../../../compiler/compiler.version
+  - ../../../../compiler/psi
+  - ../../../../core/deserialization.common
+  - ../../../../compiler/resolution
+  - ../../../../compiler/frontend.common-psi
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+  - ../../../../js/js.serializer
+  - ../../../../js/js.parser
+  - ../../../../compiler/serialization
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

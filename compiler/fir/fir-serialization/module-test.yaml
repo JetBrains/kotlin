@@ -1,0 +1,71 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - javax.inject:javax.inject:1
+  - org.jetbrains:annotations:13.0
+  - io.vavr:vavr:0.10.4
+  - io.vavr:vavr-match:0.10.4
+  - ../java
+  - ../resolve
+  - ../fir-deserialization
+  - ../semantics
+  - ../providers
+  - ../tree
+  - ../cones
+  - ../../../dependencies/intellij-core
+  - ../../serialization
+  - ../../../core/compiler.common
+  - ../../../core/metadata
+  - ../../util-klib-metadata
+  - ../../util-klib
+  - ../checkers
+  - ../../config.jvm
+  - ../../resolution.common.jvm
+  - ../../../core/compiler.common.jvm
+  - ../../frontend.common.jvm
+  - ../../frontend.common
+  - ../../../core/metadata.jvm
+  - ../../resolution.common
+  - ../../resolution
+  - ../../../core/deserialization
+  - ../../util
+  - ../../../core/util.runtime
+  - ../../../libraries/tools/kotlin-annotations-jvm
+  - ../../util-io
+  - ../raw-fir/raw-fir.common
+  - ../../config
+  - ../../psi
+  - ../../../core/deserialization.common.jvm
+  - ../../../core/deserialization.common
+  - ../../container
+  - ../../../core/descriptors
+  - ../../compiler.version
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ../../frontend.common-psi
+  - ../../../core/descriptors.jvm
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals,org.jetbrains.kotlin.types.model.K2Only,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

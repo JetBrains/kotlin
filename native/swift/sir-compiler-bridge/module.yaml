@@ -1,0 +1,84 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.intellij.deps:asm-all:9.0
+  - com.google.guava:guava:33.3.1-jre
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - com.jetbrains.intellij.platform:diagnostic:233.13135.128
+  - com.google.guava:failureaccess:1.0.2
+  - com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+  - com.google.code.findbugs:jsr305:3.0.2
+  - org.checkerframework:checker-qual:3.43.0
+  - com.google.errorprone:error_prone_annotations:2.28.0
+  - com.google.j2objc:j2objc-annotations:3.0.0
+  - javax.annotation:jsr250-api:1.0
+  - io.vavr:vavr:0.10.4
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - ../sir
+  - ../sir-providers
+  - ../../../analysis/analysis-api
+  - ../../../compiler/psi
+  - ../../../analysis/analysis-internal-utils
+  - ../../../analysis/kt-references
+  - ../../../compiler/backend
+  - ../../../dependencies/intellij-core
+  - ../../../compiler/frontend.common
+  - ../../../core/compiler.common
+  - ../../../compiler/util
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+  - ../../../analysis/light-classes-base
+  - ../../../compiler/backend-common
+  - ../../../compiler/frontend.java
+  - ../../../compiler/frontend
+  - ../../../compiler/backend.common.jvm
+  - ../../../compiler/serialization
+  - ../../../libraries/tools/kotlin-annotations-jvm
+  - ../../../compiler/config
+  - ../../../compiler/container
+  - ../../../core/util.runtime
+  - ../../../compiler/compiler.version
+  - ../../../compiler/frontend.common-psi
+  - ../../../compiler/resolution.common.jvm
+  - ../../../compiler/frontend.common.jvm
+  - ../../../core/compiler.common.jvm
+  - ../../../core/descriptors
+  - ../../../compiler/config.jvm
+  - ../../../core/descriptors.jvm
+  - ../../../core/deserialization
+  - ../../../compiler/resolution
+  - ../../../core/metadata
+  - ../../../compiler/resolution.common
+  - ../../../core/deserialization.common.jvm
+  - ../../../core/deserialization.common
+  - ../../../core/metadata.jvm
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xexplicit-api=strict, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

@@ -1,0 +1,54 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.inject:javax.inject:1
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - ../../../core/compiler.common.native
+  - ../../ir/serialization.native
+  - ../../ir/serialization.common
+  - ../resolve
+  - ../../frontend.common
+  - ../fir2ir
+  - ../../ir/ir.tree
+  - ../../serialization
+  - ../../util-klib-metadata
+  - ../../util-klib
+  - ../../util
+  - ../semantics
+  - ../providers
+  - ../../config
+  - ../../container
+  - ../../../core/deserialization
+  - ../../../core/descriptors
+  - ../../resolution
+  - ../../util-io
+  - ../../../core/util.runtime
+  - ../../compiler.version
+  - ../tree
+  - ../../resolution.common
+  - ../cones
+  - ../../../core/compiler.common
+  - ../../../core/metadata
+  - ../../../core/deserialization.common
+  - ../../../libraries/tools/kotlin-annotations-jvm
+  - ../../ir/ir.objcinterop
+  - ../../frontend.common-psi
+  - ../../psi
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

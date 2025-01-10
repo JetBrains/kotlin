@@ -1,0 +1,99 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - javax.annotation:jsr250-api:1.0
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - org.jetbrains:annotations:13.0
+  - io.vavr:vavr-match:0.10.4
+  - ../../../compiler/fir/fir-entrypoint
+  - ../../../compiler/fir/java
+  - ../../../compiler/fir/resolve
+  - ../../../compiler/fir/checkers
+  - ../../../compiler/fir/providers
+  - ../../../compiler/fir/tree
+  - ../../../compiler/fir/cones
+  - ../../../dependencies/intellij-core
+  - ../lombok.common
+  - ../../../compiler/fir/checkers/checkers.jvm
+  - ../../../compiler/fir/checkers/checkers.js
+  - ../../../compiler/fir/checkers/checkers.native
+  - ../../../compiler/fir/checkers/checkers.wasm
+  - ../../../compiler/fir/raw-fir/psi2fir
+  - ../../../compiler/fir/raw-fir/light-tree2fir
+  - ../../../compiler/frontend.java
+  - ../../../wasm/wasm.frontend
+  - ../../../core/descriptors.jvm
+  - ../../../compiler/ir/ir.actualization
+  - ../../../compiler/fir/native
+  - ../../../compiler/fir/fir2ir
+  - ../../../native/frontend-native
+  - ../../../compiler/fir/fir-deserialization
+  - ../../../compiler/resolution.common.jvm
+  - ../../../compiler/config.jvm
+  - ../../../core/compiler.common.jvm
+  - ../../../compiler/frontend.common.jvm
+  - ../../../compiler/frontend.common
+  - ../../../core/metadata.jvm
+  - ../../../compiler/fir/semantics
+  - ../../../compiler/fir/raw-fir/raw-fir.common
+  - ../../../compiler/resolution.common
+  - ../../../core/compiler.common
+  - ../../../compiler/fir/checkers/checkers.web.common
+  - ../../../core/compiler.common.js
+  - ../../../js/js.ast
+  - ../../../compiler/frontend
+  - ../../../core/descriptors
+  - ../../../compiler/util
+  - ../../../js/js.frontend
+  - ../../../wasm/wasm.config
+  - ../../../core/deserialization.common.jvm
+  - ../../../core/deserialization
+  - ../../../core/util.runtime
+  - ../../../libraries/tools/kotlin-annotations-jvm
+  - ../../../compiler/ir/ir.tree
+  - ../../../native/utils
+  - ../../../compiler/psi
+  - ../../../compiler/config
+  - ../../../core/deserialization.common
+  - ../../../compiler/container
+  - ../../../core/metadata
+  - ../../../compiler/resolution
+  - ../../../compiler/frontend.common-psi
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+  - ../../../compiler/compiler.version
+  - ../../../js/js.serializer
+  - ../../../js/js.parser
+  - ../../../compiler/util-klib
+  - ../../../compiler/util-io
+  - ../../../compiler/serialization
+  - ../../../js/js.config
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

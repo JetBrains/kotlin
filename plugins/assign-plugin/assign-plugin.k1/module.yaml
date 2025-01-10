@@ -1,0 +1,64 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - javax.annotation:jsr250-api:1.0
+  - io.vavr:vavr:0.10.4
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - ../../../compiler/frontend.java
+  - ../../../compiler/frontend
+  - ../../../dependencies/intellij-core
+  - ../assign-plugin.common
+  - ../../../core/descriptors.jvm
+  - ../../../core/descriptors
+  - ../../../compiler/resolution.common.jvm
+  - ../../../compiler/frontend.common.jvm
+  - ../../../compiler/config.jvm
+  - ../../../compiler/util
+  - ../../../core/deserialization
+  - ../../../compiler/resolution
+  - ../../../compiler/frontend.common-psi
+  - ../../../compiler/psi
+  - ../../../compiler/frontend.common
+  - ../../../compiler/config
+  - ../../../libraries/tools/kotlin-annotations-jvm
+  - ../../../compiler/container
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+  - ../../../core/deserialization.common.jvm
+  - ../../../core/compiler.common.jvm
+  - ../../../core/util.runtime
+  - ../../../core/compiler.common
+  - ../../../compiler/resolution.common
+  - ../../../core/deserialization.common
+  - ../../../core/metadata.jvm
+  - ../../../compiler/compiler.version
+  - ../../../core/metadata
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

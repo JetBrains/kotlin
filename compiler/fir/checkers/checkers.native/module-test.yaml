@@ -1,0 +1,71 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - io.vavr:vavr:0.10.4
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - org.jetbrains:annotations:13.0
+  - ..
+  - ../../../../core/compiler.common.native
+  - ../../../../dependencies/intellij-core
+  - ../../../frontend
+  - ../../../psi
+  - ../../native
+  - ../../semantics
+  - ../../providers
+  - ../../raw-fir/raw-fir.common
+  - ../../../frontend.common-psi
+  - ../../../../core/deserialization
+  - ../../../resolution
+  - ../../../../core/descriptors
+  - ../../../frontend.common
+  - ../../../config
+  - ../../../../libraries/tools/kotlin-annotations-jvm
+  - ../../../util
+  - ../../../container
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ../../../../core/compiler.common
+  - ../../tree
+  - ../../../resolution.common
+  - ../../cones
+  - ../../../../core/deserialization.common
+  - ../../../../core/util.runtime
+  - ../../../../core/metadata
+  - ../../../compiler.version
+  - ../../../ir/serialization.native
+  - ../../../ir/serialization.common
+  - ../../resolve
+  - ../../fir2ir
+  - ../../../ir/ir.objcinterop
+  - ../../../ir/ir.tree
+  - ../../../serialization
+  - ../../../util-klib-metadata
+  - ../../../util-klib
+  - ../../../util-io
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

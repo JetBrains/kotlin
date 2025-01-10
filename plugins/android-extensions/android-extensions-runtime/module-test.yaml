@@ -1,0 +1,25 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - com.google.android:android:4.1.1.4
+  - org.jetbrains:annotations:13.0
+  - org.apache.httpcomponents:httpclient:4.5.14
+  - commons-logging:commons-logging:1.2
+  - org.khronos:opengl-api:gl1.1-android-2.1_r1
+  - xerces:xmlParserAPIs:2.6.2
+  - xpp3:xpp3:1.1.4c
+  - org.json:json:20231013
+  - org.apache.httpcomponents:httpcore:4.4.16
+  - commons-codec:commons-codec:1.11
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

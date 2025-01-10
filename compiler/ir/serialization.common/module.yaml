@@ -1,0 +1,71 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+test-dependencies:
+    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil:8.5.4-9
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - it.unimi.dsi:fastutil:8.5.4
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - javax.inject:javax.inject:1
+  - org.jetbrains:annotations:13.0
+  - it.unimi.dsi:fastutil-extra:8.5.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - io.vavr:vavr:0.10.4
+  - it.unimi.dsi:fastutil-core:8.5.4
+  - io.vavr:vavr-match:0.10.4
+  - ../ir.tree
+  - ../../serialization
+  - ../../util-klib-metadata
+  - ../../cli/cli-common
+  - ../../util-klib
+  - ../../frontend.common-psi
+  - ../../psi
+  - ../../util
+  - ../../../dependencies/intellij-core
+  - ../../frontend.common
+  - ../../../core/deserialization
+  - ../../../core/descriptors
+  - ../../resolution
+  - ../../util-io
+  - ../../../native/utils
+  - ../../plugin-api
+  - ../../config.jvm
+  - ../../../js/js.config
+  - ../../../wasm/wasm.config
+  - ../../config
+  - ../../../core/util.runtime
+  - ../../../core/compiler.common
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
+  - ../../compiler.version
+  - ../../container
+  - ../../../core/deserialization.common
+  - ../../../core/metadata
+  - ../../../libraries/tools/kotlin-annotations-jvm
+  - ../../resolution.common
+  - ../../frontend
+  - ../../../core/compiler.common.jvm
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

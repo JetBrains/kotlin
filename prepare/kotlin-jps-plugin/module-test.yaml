@@ -1,0 +1,22 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains:annotations:13.0
+  - ../../compiler/daemon/daemon-client
+  - ../../compiler/util-klib-metadata
+  - ../../native/utils
+  - ../../compiler/util-klib
+  - ../../compiler/util-io
+  - ../../compiler/build-tools/kotlin-build-tools-api
+
+module:
+  layout: gradle-jvm

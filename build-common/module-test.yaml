@@ -1,0 +1,82 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - org.jetbrains.intellij.deps:asm-all:9.0
+  - javax.annotation:jsr250-api:1.0
+  - com.google.guava:guava:33.3.1-jre
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - io.vavr:vavr:0.10.4
+  - javax.inject:javax.inject:1
+  - com.google.guava:failureaccess:1.0.2
+  - com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+  - com.google.code.findbugs:jsr305:3.0.2
+  - org.checkerframework:checker-qual:3.43.0
+  - com.google.errorprone:error_prone_annotations:2.28.0
+  - com.google.j2objc:j2objc-annotations:3.0.0
+  - org.jetbrains:annotations:13.0
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - ../compiler/frontend.java
+  - ../js/js.serializer
+  - ../compiler/cli/cli-common
+  - ../js/js.config
+  - ../compiler/backend.common.jvm
+  - ../compiler/util
+  - ../core/util.runtime
+  - ../compiler/util-klib-metadata
+  - ../dependencies/intellij-core
+  - ../compiler/build-tools/kotlin-build-statistics
+  - ../compiler/config.jvm
+  - ../compiler/frontend
+  - ../compiler/resolution.common.jvm
+  - ../compiler/frontend.common.jvm
+  - ../core/descriptors.jvm
+  - ../core/descriptors
+  - ../compiler/serialization
+  - ../js/js.ast
+  - ../wasm/wasm.config
+  - ../compiler/plugin-api
+  - ../compiler/config
+  - ../native/utils
+  - ../core/compiler.common.jvm
+  - ../compiler/compiler.version
+  - ../compiler/util-klib
+  - ../compiler/util-io
+  - ../compiler/frontend.common-psi
+  - ../compiler/psi
+  - ../compiler/frontend.common
+  - ../compiler/resolution
+  - ../core/deserialization
+  - ../compiler/container
+  - ../libraries/tools/kotlin-annotations-jvm
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ../compiler/resolution.common
+  - ../core/deserialization.common.jvm
+  - ../core/deserialization.common
+  - ../core/metadata.jvm
+  - ../core/compiler.common
+  - ../core/metadata
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn,org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction, -Xskip-prerelease-check, -Xwhen-guards]

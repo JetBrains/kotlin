@@ -1,0 +1,60 @@
+product:
+  type: lib
+  platforms: [jvm]
+
+repositories:
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
+  - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
+  - mavenCentral
+
+dependencies:
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - ../serialization.common
+  - ../ir.objcinterop
+  - ../ir.tree
+  - ../../../dependencies/intellij-core
+  - ../../fir/fir2ir
+  - ../../fir/tree
+  - ../../../core/compiler.common.native
+  - ../../serialization
+  - ../../util-klib-metadata
+  - ../../util-klib
+  - ../../util
+  - ../../../core/compiler.common
+  - ../../../core/deserialization
+  - ../../../core/descriptors
+  - ../../frontend.common
+  - ../../fir/cones
+  - ../../resolution
+  - ../../util-io
+  - ../../../core/util.runtime
+  - ../../compiler.version
+  - ../../../libraries/tools/kotlin-annotations-jvm
+  - ../../../core/deserialization.common
+  - ../../../core/metadata
+  - ../../config
+  - ../../container
+  - ../../resolution.common
+  - ../../frontend.common-psi
+  - ../../psi
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+
+settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
