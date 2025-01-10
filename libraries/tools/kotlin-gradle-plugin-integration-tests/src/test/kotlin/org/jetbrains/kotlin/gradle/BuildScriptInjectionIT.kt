@@ -5,11 +5,20 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.plugins.UnknownPluginException
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.OutputFile
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
+import java.io.File
+import java.io.NotSerializableException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -110,9 +119,59 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     )
     @GradleTest
     fun buildScriptReturnIsCCFriendly(version: GradleVersion) {
+        // Sanity check that enabling CC produces CC serialization errors with inappropriately constructed providers in providerBuildScriptReturn
+        project("buildScriptInjectionGroovy", version) {
+            val returnValue = providerBuildScriptReturn {
+                project.provider { project }
+            }
+            buildAndFail("tasks", "-P${returnValue.injectionLoadProperty}") {
+                assertOutputContains("cannot serialize object of type")
+            }
+        }
+
+        // Project reference can be captured in the return lambda even in runs with CC
         project("buildScriptInjectionGroovy", version) {
             buildScriptReturn {
                 project.layout.projectDirectory.file("foo").asFile
+            }.buildAndReturn(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+            )
+        }
+
+        // Make sure delayed task providers (e.g. mapped from a task) get queried at the correct time even in runs with CC
+        abstract class MappedTaskOutput : DefaultTask() {
+            @get:OutputFile
+            abstract val out: RegularFileProperty
+        }
+        project("buildScriptInjectionGroovy", version) {
+            val taskName = "foo"
+            val produceCCSerializationError = "produceCCSerializationError"
+            val mappedTaskOutputProvider: GradleProjectBuildScriptInjectionContext.() -> Provider<File> = {
+                project.tasks.named(taskName, MappedTaskOutput::class.java).flatMap {
+                    it.out
+                }.map {
+                    it.asFile
+                }
+            }
+
+            buildScriptInjection {
+                project.tasks.register(taskName, MappedTaskOutput::class.java) {
+                    it.out.set(project.layout.buildDirectory.file("foo"))
+                }
+                if (project.hasProperty(produceCCSerializationError)) {
+                    mappedTaskOutputProvider().get()
+                }
+            }
+
+            assertContains(
+                catchBuildFailures<InvalidUserCodeException>().buildAndReturn(
+                    "tasks", "-P${produceCCSerializationError}",
+                ).unwrap().single().message!!,
+                "Querying the mapped value of",
+            )
+
+            providerBuildScriptReturn {
+                mappedTaskOutputProvider()
             }.buildAndReturn(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
             )

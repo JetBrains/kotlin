@@ -13,6 +13,7 @@ import org.gradle.api.publish.PublishingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.api.initialization.Settings
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.internal.extensions.core.serviceOf
@@ -41,15 +42,15 @@ class UndispatchedInjection<Context, Target>(
 }
 
 /**
- * Serializes returned value on build completion
+ * Serializes returned value on build completion that wraps the returned value in a Provider for CC safety.
  *
- * The injection executes at:
- * - CC serialization time with CC
+ * The injection in general executes at:
+ * - Provider serialization time with CC
  * - Build completion without CC
  */
 class OnBuildCompletionSerializingInjection<Return>(
     val serializedReturnPath: File,
-    val returnValueInjection: GradleProjectBuildScriptInjectionContext.() -> Return,
+    val returnValueInjection: GradleProjectBuildScriptInjectionContext.() -> Provider<Return>,
 ) : GradleBuildScriptInjection<Project> {
     class ExecuteOnBuildFinish : FlowAction<ExecuteOnBuildFinish.Parameters> {
         interface Parameters : FlowParameters {
@@ -63,19 +64,16 @@ class OnBuildCompletionSerializingInjection<Return>(
     }
 
     override fun inject(target: Project) {
-        val returnEvaluationProvider = target.providers.provider {
-            GradleProjectBuildScriptInjectionContext(target).returnValueInjection()
-        }
+        val returnEvaluationProvider = GradleProjectBuildScriptInjectionContext(target).returnValueInjection()
         val serializeOutput = {
             val returnValue = returnEvaluationProvider.get()
             serializedReturnPath.outputStream().use {
                 ObjectOutputStream(it).writeObject(returnValue)
             }
         }
-        if (GradleVersion.current() < GradleVersion.version("8.0")) {
+        if (GradleVersion.current() < GradleVersion.version("8.1")) {
             @Suppress("DEPRECATION")
             target.gradle.buildFinished {
-                println(it)
                 serializeOutput()
             }
         } else {
@@ -89,7 +87,7 @@ class OnBuildCompletionSerializingInjection<Return>(
 }
 
 /**
- * Serializes build failure as [CaughtBuildFailure] (or [CaughtBuildFailure.BuildSucceeded] is there was no failure) upon build completion
+ * Serializes build failure as [CaughtBuildFailure] (or [CaughtBuildFailure.UnexpectedMissingBuildFailure] is there was no failure) upon build completion
  */
 class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
     val serializedReturnPath: File,
@@ -113,7 +111,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
     override fun inject(target: Project) {
         val serializeOutput: (Throwable?) -> Unit = { topLevelException ->
             val toSerialize = if (topLevelException == null) {
-                CaughtBuildFailure.BuildSucceeded()
+                CaughtBuildFailure.UnexpectedMissingBuildFailure()
             } else {
                 val matchingExceptions = findMatchingExceptions(
                     topLevelException,
@@ -137,6 +135,8 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
                 ObjectOutputStream(it).writeObject(toSerialize)
             }
         }
+
+        // Catch the errors caused directly by the build failure
         if (GradleVersion.current() < GradleVersion.version("8.0")) {
             @Suppress("DEPRECATION")
             target.gradle.buildFinished {
@@ -157,7 +157,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
     ): Set<T> {
         val exceptionsStack = mutableListOf(topLevelException)
         val walkedExceptions = mutableSetOf<Throwable>()
-        val matchingExceptions = hashSetOf<T>()
+        val matchingExceptions = mutableSetOf<T>()
         while (exceptionsStack.isNotEmpty()) {
             val current = exceptionsStack.removeLast()
             if (current in walkedExceptions) continue
@@ -176,7 +176,6 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
         return matchingExceptions
     }
 }
-
 
 private const val buildScriptInjectionsMarker = "// MARKER: GradleBuildScriptInjections Enabled"
 
@@ -278,19 +277,27 @@ class ReturnFromBuildScriptAfterExecution<T>(
      * out for configuration entities.
      */
     fun buildAndReturn(
-        evaluationTask: String = defaultEvaluationTask,
+        vararg buildArguments: String = arrayOf(defaultEvaluationTask),
         executingProject: TestProject = returnContainingGradleProject,
+        /**
+         * FIXME: With enabled CC and "configuration-cache.problems=fail" if build fails due to CC serialization, Gradle will not report an
+         * error in the FlowScope and it will not be caught in [catchBuildFailures]. With "configuration-cache.problems=warn" Gradle
+         * always forces CC deserialization before task execution and will therefore produce a catchable build failure, but only if the
+         * violating task actually executes
+         */
         configurationCache: BuildOptions.ConfigurationCacheValue = BuildOptions.ConfigurationCacheValue.DISABLED,
+        configurationCacheProblems: BuildOptions.ConfigurationCacheProblems = BuildOptions.ConfigurationCacheProblems.FAIL,
         deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
         buildAction: BuildAction = defaultBuildAction,
     ): T {
         executingProject.buildAction(
             arrayOf(
-                evaluationTask,
+                *buildArguments,
                 "-P${injectionLoadProperty}=true",
             ),
             executingProject.deriveBuildOptions().copy(
                 configurationCache = configurationCache,
+                configurationCacheProblems = configurationCacheProblems,
             )
         )
         ObjectInputStream(serializedReturnPath.inputStream()).use {
@@ -309,10 +316,28 @@ class ReturnFromBuildScriptAfterExecution<T>(
     }
 }
 
+/**
+ * The [returnFromProject] by default executes without CC and at build completion. If you enable CC it will execute eagerly at CC
+ * serialization time.
+ */
 internal fun <T> TestProject.buildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
+) = providerBuildScriptReturn {
+    project.provider {
+        returnFromProject()
+    }
+}
+
+/**
+ * The [returnFromProject] by default executes without CC and at build completion. If you enable CC the closure will execute whenever Gradle
+ * serializes the Provider value; in most cases this happens before execution, but for example if you flatMap the task output or derive
+ * Provider from [providers.environmentVariable] it might execute at build completion time.
+ */
+internal fun <T> TestProject.providerBuildScriptReturn(
+    returnFromProject: GradleProjectBuildScriptInjectionContext.() -> Provider<T>,
 ): ReturnFromBuildScriptAfterExecution<T> {
     return buildScriptReturnInjection(
+        insertInjection = String::plus,
         injectionProvider = { serializedReturnPath ->
             OnBuildCompletionSerializingInjection(
                 serializedReturnPath,
@@ -332,19 +357,34 @@ internal fun <T> TestProject.buildScriptReturn(
 sealed class CaughtBuildFailure<ExpectedException : Throwable> : Serializable {
     data class Expected<ExpectedException : Throwable>(val matchedExceptions: Set<ExpectedException>) : CaughtBuildFailure<ExpectedException>()
     data class Unexpected<ExpectedException : Throwable>(val stackTraceDump: String) : CaughtBuildFailure<ExpectedException>()
-    class BuildSucceeded<ExpectedException : Throwable> : CaughtBuildFailure<ExpectedException>()
+    class UnexpectedMissingBuildFailure<ExpectedException : Throwable> : CaughtBuildFailure<ExpectedException>()
 
     fun unwrap(): Set<ExpectedException> {
         return when (this) {
             is Expected<ExpectedException> -> matchedExceptions
             is Unexpected<ExpectedException> -> error(stackTraceDump)
-            is BuildSucceeded<ExpectedException> -> error("build didn't fail")
+            is UnexpectedMissingBuildFailure<ExpectedException> -> error(
+                """
+                Build completion handler executed, but there were no failures. This likely means either:
+                - Build succeeded
+                - There was a CC serialization error; these are currently not caught
+                """.trimIndent()
+            )
         }
     }
 }
 
+/**
+ * Catch all build failures of type [T] thrown at configuration or execution time. This function returns one of the following:
+ * - [CaughtBuildFailure.Expected]: The caught exception of type [T] thrown some time during the build
+ * - [CaughtBuildFailure.Unexpected]: The backtrace of the top level exception caught by the build when [T] wasn't found in the exception cause graph
+ * - [CaughtBuildFailure.UnexpectedMissingBuildFailure]: Build was expected to fail, but no failure was reported by Gradle
+ *
+ * FIXME: Currently CC serialization failures are not caught
+ */
 internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): ReturnFromBuildScriptAfterExecution<CaughtBuildFailure<T>> {
     return buildScriptReturnInjection(
+        insertInjection = String::insertBlockToBuildScriptAfterImports,
         injectionProvider = { serializedReturnPath ->
             FindMatchingBuildFailureInjection(
                 serializedReturnPath,
@@ -363,6 +403,7 @@ internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): Re
 }
 
 private fun <T> GradleProject.buildScriptReturnInjection(
+    insertInjection: String.(insertion: String) -> String,
     injectionProvider: (serializedReturnPath: File) -> GradleBuildScriptInjection<Project>,
     returnObjectProvider: (serializedReturnPath: File, injectionIdentifier: String) -> ReturnFromBuildScriptAfterExecution<T>,
 ): ReturnFromBuildScriptAfterExecution<T> {
@@ -392,18 +433,22 @@ private fun <T> GradleProject.buildScriptReturnInjection(
     """.trimIndent()
 
     when {
-        buildGradleKts.exists() -> buildGradleKts.appendText(
-            whenPropertySpecified(
-                injectionIdentifier,
-                injectionLoadProject(serializedInjectionName)
+        buildGradleKts.exists() -> buildGradleKts.modify {
+            it.insertInjection(
+                whenPropertySpecified(
+                    injectionIdentifier,
+                    injectionLoadProject(serializedInjectionPath)
+                )
             )
-        )
-        buildGradle.exists() -> buildGradle.appendText(
-            whenPropertySpecified(
-                injectionIdentifier,
-                injectionLoadProjectGroovy(serializedInjectionName)
+        }
+        buildGradle.exists() -> buildGradle.modify {
+            it.insertInjection(
+                whenPropertySpecified(
+                    injectionIdentifier,
+                    injectionLoadProjectGroovy(serializedInjectionPath)
+                )
             )
-        )
+        }
         else -> error("Can't find the build script to append the return injection")
     }
 
