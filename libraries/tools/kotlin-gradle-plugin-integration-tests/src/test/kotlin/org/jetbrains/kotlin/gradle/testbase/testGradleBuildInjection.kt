@@ -384,7 +384,7 @@ sealed class CaughtBuildFailure<ExpectedException : Throwable> : Serializable {
  */
 internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): ReturnFromBuildScriptAfterExecution<CaughtBuildFailure<T>> {
     return buildScriptReturnInjection(
-        insertInjection = String::insertBlockToBuildScriptAfterImports,
+        insertInjection = String::insertBlockToBuildScriptAfterPluginsAndImports,
         injectionProvider = { serializedReturnPath ->
             FindMatchingBuildFailureInjection(
                 serializedReturnPath,
@@ -437,7 +437,7 @@ private fun <T> GradleProject.buildScriptReturnInjection(
             it.insertInjection(
                 whenPropertySpecified(
                     injectionIdentifier,
-                    injectionLoadProject(serializedInjectionPath)
+                    injectionLoadProject(serializedInjectionPath.name)
                 )
             )
         }
@@ -445,7 +445,7 @@ private fun <T> GradleProject.buildScriptReturnInjection(
             it.insertInjection(
                 whenPropertySpecified(
                     injectionIdentifier,
-                    injectionLoadProjectGroovy(serializedInjectionPath)
+                    injectionLoadProjectGroovy(serializedInjectionPath.name)
                 )
             )
         }
