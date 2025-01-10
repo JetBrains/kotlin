@@ -72,12 +72,6 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
         useAfterAnalysisCheckers(::LLFirTestSuppressor)
     }
 
-    override fun configure(builder: TestConfigurationBuilder) {
-        configureTest(builder)
-    }
-
-    abstract fun configureTest(builder: TestConfigurationBuilder)
-
     inner class LowLevelFirFrontendFacade(
         testServices: TestServices,
         private val facadeFactory: LLFirAnalyzerFacadeFactory,

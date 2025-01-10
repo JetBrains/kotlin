@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractDiagnosticCompilerTestDataTest : AbstractLowLevelCompilerBasedTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
+    override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             baseFirDiagnosticTestConfiguration(
                 frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve),

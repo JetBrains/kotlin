@@ -18,8 +18,8 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 abstract class AbstractLLFirScriptDiagnosticCompilerTestDataTest : AbstractDiagnosticCompilerTestDataTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
         builder.configureCustomScriptDefinitions()
     }
 }

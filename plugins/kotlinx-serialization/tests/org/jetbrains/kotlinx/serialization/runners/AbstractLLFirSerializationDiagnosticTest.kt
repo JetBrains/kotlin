@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractLLFirSerializationDiagnosticTest : AbstractDiagnosticCompilerTestDataTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
         builder.configureSerializationFirPsiDiagnosticTest()
     }
 }

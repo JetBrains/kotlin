@@ -37,7 +37,7 @@ abstract class AbstractLLFirBlackBoxCodegenBasedTestBase : AbstractLowLevelCompi
     abstract fun facade(): Constructor<LowLevelFirFrontendFacade>
     abstract fun facadeSpecificSuppressor(): Constructor<AfterAnalysisChecker>
 
-    override fun configureTest(builder: TestConfigurationBuilder) {
+    override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             facadeStep(facade())
             baseFirBlackBoxCodegenTestDirectivesConfiguration()

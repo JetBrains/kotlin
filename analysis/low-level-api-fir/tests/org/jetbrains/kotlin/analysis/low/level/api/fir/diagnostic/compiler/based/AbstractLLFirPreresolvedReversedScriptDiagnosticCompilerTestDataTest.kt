@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractLLFirPreresolvedReversedScriptDiagnosticCompilerTestDataTest :
     AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
         builder.configureCustomScriptDefinitions()
     }
 }
