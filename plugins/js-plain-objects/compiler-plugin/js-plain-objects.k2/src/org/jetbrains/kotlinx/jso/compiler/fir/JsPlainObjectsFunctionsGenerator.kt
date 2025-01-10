@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -48,6 +50,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.jspo.compiler.fir.services.jsPlainObjectPropertiesProvider
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsPluginKey
 import org.jetbrains.kotlinx.jspo.compiler.resolve.StandardIds
+import kotlin.collections.plusAssign
 
 /**
  * The extension generate a synthetic factory and copy-method for an `external interface` annotated with @JsPlainObjects
@@ -71,6 +74,7 @@ import org.jetbrains.kotlinx.jspo.compiler.resolve.StandardIds
  *  inline fun copy(chat: Chat = this.chat, email: String = this.email): Admin =
  *      Admin.Companion.invoke(chat, name)
  *
+ *   @JsExport.Ignore
  *   companion object {
  *      @JsNoDispatchReceiver
  *      inline operator fun invoke(chat: Chat, email: String? = VOID): Admin =
@@ -136,6 +140,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             }
             name = classId.shortClassName
             symbol = FirRegularClassSymbol(classId)
+            annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
         }.symbol
     }
 
@@ -236,6 +241,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                 isOperator = true
             }
 
+            annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
 
             if (parent.isCompanion && jsPlainObjectInterface.typeParameterSymbols.isNotEmpty()) {
                 jsPlainObjectInterface.typeParameterSymbols.mapTo(typeParameters) {
@@ -274,14 +280,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                 if (parent.isCompanion) parent.defaultType() else replacedJsPlainObjectType.coneType as ConeSimpleKotlinType
 
             if (parent.isCompanion) {
-                annotations += buildAnnotation {
-                    annotationTypeRef = buildResolvedTypeRef {
-                        val annotationClassId = JsStandardClassIds.Annotations.JsNoDispatchReceiver
-                        coneType = annotationClassId.toLookupTag()
-                            .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
-                    }
-                    argumentMapping = FirEmptyAnnotationArgumentMapping
-                }
+                annotateWith(JsStandardClassIds.Annotations.JsNoDispatchReceiver)
             }
 
             jsPlainObjectProperties.mapTo(valueParameters) {
@@ -303,5 +302,15 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                 }
             }
         }.also(functionTarget::bind)
+    }
+
+    private fun FirAnnotationContainerBuilder.annotateWith(classId: ClassId) {
+        annotations += buildAnnotation {
+            annotationTypeRef = buildResolvedTypeRef {
+                coneType = classId.toLookupTag()
+                    .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
+            }
+            argumentMapping = FirEmptyAnnotationArgumentMapping
+        }
     }
 }

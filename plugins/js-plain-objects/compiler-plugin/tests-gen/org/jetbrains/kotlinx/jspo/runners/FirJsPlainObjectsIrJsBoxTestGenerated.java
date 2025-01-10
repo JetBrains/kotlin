@@ -31,6 +31,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("jsExport.kt")
+  public void testJsExport() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/jsExport.kt");
+  }
+
+  @Test
   @TestMetadata("jsQualifier.kt")
   public void testJsQualifier() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/jsQualifier.kt");
