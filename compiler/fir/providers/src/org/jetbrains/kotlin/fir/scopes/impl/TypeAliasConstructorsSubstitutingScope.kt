@@ -77,106 +77,116 @@ class TypeAliasConstructorsSubstitutingScope(
         .languageVersionSettings
         .getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)
 
+    private val constructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
+
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
-            val originalConstructor = originalConstructorSymbol.fir
-            val newConstructorSymbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
+            val typealiasConstructor = constructors.getOrPut(originalConstructorSymbol) {
+                createTypealiasConstructor(originalConstructorSymbol)
+            }
 
-            buildConstructor {
-                symbol = newConstructorSymbol
+            processor(typealiasConstructor)
+        }
+    }
 
-                // Typealiased constructors point to the typealias source for the convenience of Analysis API
-                source = typeAliasSymbol.source
-                resolvePhase = originalConstructor.resolvePhase
-                // We consider typealiased constructors to be coming from the module of the typealias
-                moduleData = typeAliasSymbol.moduleData
-                origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-                attributes = originalConstructor.attributes.copy()
+    private fun createTypealiasConstructor(originalConstructorSymbol: FirConstructorSymbol): FirConstructorSymbol {
+        val originalConstructor = originalConstructorSymbol.fir
+        val newConstructorSymbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
 
-                typeAliasSymbol.fir.typeParameters.mapTo(typeParameters) {
-                    buildConstructedClassTypeParameterRef { symbol = it.symbol }
-                }
+        buildConstructor {
+            symbol = newConstructorSymbol
 
-                status = originalConstructor.status
+            // Typealiased constructors point to the typealias source for the convenience of Analysis API
+            source = typeAliasSymbol.source
+            resolvePhase = originalConstructor.resolvePhase
+            // We consider typealiased constructors to be coming from the module of the typealias
+            moduleData = typeAliasSymbol.moduleData
+            origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
+            attributes = originalConstructor.attributes.copy()
 
-                deprecationsProvider = originalConstructor.deprecationsProvider
-                containerSource = originalConstructor.containerSource
+            typeAliasSymbol.fir.typeParameters.mapTo(typeParameters) {
+                buildConstructedClassTypeParameterRef { symbol = it.symbol }
+            }
 
-                originalConstructor.contextParameters.mapTo(contextParameters) {
-                    buildValueParameterCopy(it) {
-                        symbol = FirValueParameterSymbol(it.name)
-                        moduleData = typeAliasSymbol.moduleData
-                        origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-                        containingDeclarationSymbol = newConstructorSymbol
-                    }
-                }
+            status = originalConstructor.status
 
-                originalConstructor.valueParameters.mapTo(valueParameters) {
-                    buildValueParameterCopy(it) {
-                        symbol = FirValueParameterSymbol(it.name)
-                        moduleData = typeAliasSymbol.moduleData
-                        origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-                        containingDeclarationSymbol = newConstructorSymbol
-                    }
-                }
+            deprecationsProvider = originalConstructor.deprecationsProvider
+            containerSource = originalConstructor.containerSource
 
-                returnTypeRef = originalConstructor.returnTypeRef.let {
-                    if (aliasedTypeExpansionGloballyEnabled) {
-                        it.withReplacedConeType(it.coneType.withAbbreviation(AbbreviatedTypeAttribute(typeAliasSymbol.defaultType())))
-                    } else {
-                        it
-                    }
-                }
-
-                contractDescription = originalConstructor.contractDescription
-                annotations.addAll(originalConstructor.annotations)
-                delegatedConstructor = originalConstructor.delegatedConstructor
-                body = originalConstructor.body
-
-                val outerType = (typeAliasSymbol.resolvedExpandedTypeRef.coneType as? ConeClassLikeType)?.let { expandedType ->
-                    outerType(expandedType, session) { session.firProvider.getContainingClass(it) }
-                }
-                if (outerType != null) {
-                    // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
-                    //
-                    //   class Outer {
-                    //     inner class Inner
-                    //   }
-                    //   typealias OI = Outer.Inner
-                    //   fun foo() { Outer().OI() }
-                    //
-                    // the chances are that `processor` belongs to [ScopeTowerLevel] (to resolve type aliases at top-level), which treats
-                    // the explicit receiver (`Outer()`) as an extension receiver, whereas the constructor of the nested class may regard
-                    // the same explicit receiver as a dispatch receiver (hence inconsistent receiver).
-                    // Here, we add a copy of the nested class constructor, along with the outer type as an extension receiver, so that it
-                    // can be seen as if resolving:
-                    //
-                    //   fun Outer.OI(): OI = ...
-                    //
-                    //
-                    receiverParameter = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType).let {
-                        buildReceiverParameter {
-                            typeRef = it
-                            symbol = FirReceiverParameterSymbol()
-                            moduleData = typeAliasSymbol.moduleData
-                            origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-                            containingDeclarationSymbol = newConstructorSymbol
-                        }
-                    }
-                }
-
-                // Never treat typealiased constructors as class members, they can be only an extension or a regular function
-                dispatchReceiverType = null
-            }.apply {
-                originalConstructorIfTypeAlias = originalConstructorSymbol.fir
-                typeAliasForConstructor = typeAliasSymbol
-                if (delegatingScope is FirClassSubstitutionScope) {
-                    typeAliasConstructorSubstitutor = delegatingScope.substitutor
+            originalConstructor.contextParameters.mapTo(contextParameters) {
+                buildValueParameterCopy(it) {
+                    symbol = FirValueParameterSymbol(it.name)
+                    moduleData = typeAliasSymbol.moduleData
+                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
+                    containingDeclarationSymbol = newConstructorSymbol
                 }
             }
 
-            processor(newConstructorSymbol)
+            originalConstructor.valueParameters.mapTo(valueParameters) {
+                buildValueParameterCopy(it) {
+                    symbol = FirValueParameterSymbol(it.name)
+                    moduleData = typeAliasSymbol.moduleData
+                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
+                    containingDeclarationSymbol = newConstructorSymbol
+                }
+            }
+
+            returnTypeRef = originalConstructor.returnTypeRef.let {
+                if (aliasedTypeExpansionGloballyEnabled) {
+                    it.withReplacedConeType(it.coneType.withAbbreviation(AbbreviatedTypeAttribute(typeAliasSymbol.defaultType())))
+                } else {
+                    it
+                }
+            }
+
+            contractDescription = originalConstructor.contractDescription
+            annotations.addAll(originalConstructor.annotations)
+            delegatedConstructor = originalConstructor.delegatedConstructor
+            body = originalConstructor.body
+
+            val outerType = (typeAliasSymbol.resolvedExpandedTypeRef.coneType as? ConeClassLikeType)?.let { expandedType ->
+                outerType(expandedType, session) { session.firProvider.getContainingClass(it) }
+            }
+            if (outerType != null) {
+                // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
+                //
+                //   class Outer {
+                //     inner class Inner
+                //   }
+                //   typealias OI = Outer.Inner
+                //   fun foo() { Outer().OI() }
+                //
+                // the chances are that `processor` belongs to [ScopeTowerLevel] (to resolve type aliases at top-level), which treats
+                // the explicit receiver (`Outer()`) as an extension receiver, whereas the constructor of the nested class may regard
+                // the same explicit receiver as a dispatch receiver (hence inconsistent receiver).
+                // Here, we add a copy of the nested class constructor, along with the outer type as an extension receiver, so that it
+                // can be seen as if resolving:
+                //
+                //   fun Outer.OI(): OI = ...
+                //
+                //
+                receiverParameter = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType).let {
+                    buildReceiverParameter {
+                        typeRef = it
+                        symbol = FirReceiverParameterSymbol()
+                        moduleData = typeAliasSymbol.moduleData
+                        origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
+                        containingDeclarationSymbol = newConstructorSymbol
+                    }
+                }
+            }
+
+            // Never treat typealiased constructors as class members, they can be only an extension or a regular function
+            dispatchReceiverType = null
+        }.apply {
+            originalConstructorIfTypeAlias = originalConstructorSymbol.fir
+            typeAliasForConstructor = typeAliasSymbol
+            if (delegatingScope is FirClassSubstitutionScope) {
+                typeAliasConstructorSubstitutor = delegatingScope.substitutor
+            }
         }
+
+        return newConstructorSymbol
     }
 
     @DelicateScopeAPI
