@@ -1109,6 +1109,7 @@ enum class EnableGradleDebug {
             DISABLED -> return false
             ENABLED -> return true
             AUTO -> {
+                return true
                 val isAutomaticDebuggingEnabled = System.getProperty("kotlin.gradle.autoDebugIT").toBoolean()
                 if (overridingEnvironmentVariablesInstantiationBacktrace != null) {
                     if (isAutomaticDebuggingEnabled) {

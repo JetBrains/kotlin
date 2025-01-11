@@ -690,7 +690,7 @@ private fun scriptIsolatedInjectionLoad(
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                java.io.File("${serializedInjectionPath.path}")
+                java.io.File("${serializedInjectionPath.path.replace("\\", "\\\\")}")
             )
         }
         ${lambdaName}()
@@ -725,7 +725,7 @@ private fun scriptIsolatedInjectionLoadGroovy(
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                new java.io.File('${serializedInjectionPath.path}')
+                new java.io.File('${serializedInjectionPath.path.replace("\\", "\\\\")}')
             )
         }
         ${lambdaName}()
@@ -754,12 +754,12 @@ private fun injectionLoadProject(
     serializedInjectionPath: File,
 ): String = """
     
-    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, java.io.File("${serializedInjectionPath.path}"))
+    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, java.io.File("${serializedInjectionPath.path.replace("\\", "\\\\")}"))
 """.trimIndent()
 
 private fun injectionLoadProjectGroovy(
     serializedInjectionPath: File,
 ): String = """
     
-    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path}'))
+    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path.replace("\\", "\\\\")}'))
 """.trimIndent()

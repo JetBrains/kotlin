@@ -126,9 +126,11 @@ fun TestProject.include(
     subproject: TestProject,
     name: String,
 ) {
-    Files.createSymbolicLink(projectPath.resolve(name), subproject.projectPath)
+    val f = subproject.projectPath.toFile()
+//    Files.createSymbolicLink(projectPath.resolve(name), subproject.projectPath)
     settingsBuildScriptInjection {
         settings.include(":${name}")
+        settings.project(":${name}").projectDir = f
     }
 }
 
