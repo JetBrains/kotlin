@@ -487,10 +487,10 @@ tasks.withType<Test>().configureEach {
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
-    val singleTestClassesDirectory = files(mergedTestClassesClasspathTask)
-    inputs.files(singleTestClassesDirectory)
+    val mergedTestClassesDirectory = files(mergedTestClassesClasspathTask)
+    inputs.files(mergedTestClassesDirectory)
     doFirst {
-        systemProperty("buildScriptInjectionsClasspath", singleTestClassesDirectory.single())
+        systemProperty("buildScriptInjectionsClasspath", mergedTestClassesDirectory.single())
     }
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
