@@ -663,7 +663,7 @@ fun scriptIsolatedInjectionLoad(
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                java.io.File("${serializedInjectionPath.path}")
+                File("${serializedInjectionPath.path.normalizePath()}")
             )
         }
         ${lambdaName}()
@@ -698,7 +698,7 @@ fun scriptIsolatedInjectionLoadGroovy(
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                new java.io.File('${serializedInjectionPath.path}')
+                new java.io.File('${serializedInjectionPath.path.normalizePath()}')
             )
         }
         ${lambdaName}()
@@ -727,12 +727,12 @@ fun injectionLoadProject(
     serializedInjectionPath: File,
 ): String = """
     
-    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, java.io.File("${serializedInjectionPath.path}"))
+    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, File("${serializedInjectionPath.path.normalizePath()}"))
 """.trimIndent()
 
 fun injectionLoadProjectGroovy(
     serializedInjectionPath: File,
 ): String = """
     
-    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path}'))
+    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path.normalizePath()}'))
 """.trimIndent()
