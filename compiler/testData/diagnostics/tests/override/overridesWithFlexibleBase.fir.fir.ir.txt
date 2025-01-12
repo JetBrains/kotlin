@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/main.kt
             t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={S of <root>.Aside & Any} origin=EXCLEXCL
               <T0>: {S of <root>.Aside & Any}
               arg0: CALL 'public final fun <get-s> (): S of <root>.Aside declared in <root>.Aside' type=S of <root>.Aside origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Aside<S of <root>.Aside> declared in <root>.Aside.bar' type=<root>.Aside<S of <root>.Aside> origin=null
+                $this: GET_VAR '<this>: <root>.Aside<S of <root>.Aside> declared in <root>.Aside.bar' type=<root>.Aside<S of <root>.Aside> origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Aside<S of <root>.Aside>, t:{S of <root>.Aside & Any}) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Aside<S of <root>.Aside>
       VALUE_PARAMETER name:t index:0 type:{S of <root>.Aside & Any}
@@ -206,7 +206,7 @@ FILE fqName:<root> fileName:/main.kt
           CONSTRUCTOR_CALL 'public constructor <init> (t: @[FlexibleNullability] T of <root>.Inv?) declared in <root>.Inv' type=<root>.Inv<E1 of <root>.FooImpl2> origin=null
             <class: T>: E1 of <root>.FooImpl2
             t: CALL 'public final fun <get-e> (): E1 of <root>.FooImpl2 declared in <root>.FooImpl2' type=E1 of <root>.FooImpl2 origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.FooImpl2<E1 of <root>.FooImpl2> declared in <root>.FooImpl2.bar' type=<root>.FooImpl2<E1 of <root>.FooImpl2> origin=null
+              $this: GET_VAR '<this>: <root>.FooImpl2<E1 of <root>.FooImpl2> declared in <root>.FooImpl2.bar' type=<root>.FooImpl2<E1 of <root>.FooImpl2> origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.FooImpl2<E1 of <root>.FooImpl2>, t:E1 of <root>.FooImpl2) returnType:kotlin.Unit
       overridden:
         public abstract fun foo (t: @[FlexibleNullability] T of <root>.Foo?): kotlin.Unit declared in <root>.Foo
@@ -256,7 +256,7 @@ FILE fqName:<root> fileName:/main.kt
             t: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={E1 of <root>.FooImpl3 & Any} origin=EXCLEXCL
               <T0>: {E1 of <root>.FooImpl3 & Any}
               arg0: CALL 'public final fun <get-e> (): E1 of <root>.FooImpl3 declared in <root>.FooImpl3' type=E1 of <root>.FooImpl3 origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.FooImpl3<E1 of <root>.FooImpl3> declared in <root>.FooImpl3.bar' type=<root>.FooImpl3<E1 of <root>.FooImpl3> origin=null
+                $this: GET_VAR '<this>: <root>.FooImpl3<E1 of <root>.FooImpl3> declared in <root>.FooImpl3.bar' type=<root>.FooImpl3<E1 of <root>.FooImpl3> origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.FooImpl3<E1 of <root>.FooImpl3>, t:{E1 of <root>.FooImpl3 & Any}) returnType:kotlin.Unit
       overridden:
         public abstract fun foo (t: @[FlexibleNullability] T of <root>.Foo?): kotlin.Unit declared in <root>.Foo
