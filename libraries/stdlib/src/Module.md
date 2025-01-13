@@ -30,6 +30,10 @@ Helper functions for creating [Comparator][kotlin.Comparator] instances.
 
 Low-level building blocks and utility functions for concurrent programming.
 
+# Package kotlin.concurrent.atomics
+
+Atomic scalar and array types and utilities for working with them.
+
 # Package kotlin.contracts
 
 Experimental DSL for declaring custom function contracts.

@@ -31,16 +31,22 @@ import kotlin.internal.ActualizeByJvmBuiltinProvider
 public expect class AtomicInt public constructor(value: Int) {
     /**
      * Atomically loads the value from this [AtomicInt].
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.load
      */
     public fun load(): Int
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicInt].
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.store
      */
     public fun store(newValue: Int)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicInt] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.exchange
      */
     public fun exchange(newValue: Int): Int
 
@@ -52,6 +58,8 @@ public expect class AtomicInt public constructor(value: Int) {
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.compareAndSet
      */
     public fun compareAndSet(expectedValue: Int, newValue: Int): Boolean
 
@@ -60,16 +68,22 @@ public expect class AtomicInt public constructor(value: Int) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.compareAndExchange
      */
     public fun compareAndExchange(expectedValue: Int, newValue: Int): Int
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.fetchAndAdd
      */
     public fun fetchAndAdd(delta: Int): Int
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the new value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.addAndFetch
      */
     public fun addAndFetch(delta: Int): Int
 
@@ -83,6 +97,8 @@ public expect class AtomicInt public constructor(value: Int) {
 
 /**
  * Atomically adds the [given value][delta] to the current value of this [AtomicInt].
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.plusAssign
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -90,6 +106,8 @@ public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(de
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicInt].
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.minusAssign
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -97,6 +115,8 @@ public operator fun AtomicInt.minusAssign(delta: Int): Unit { this.addAndFetch(-
 
 /**
  * Atomically increments the current value of this [AtomicInt] by one and returns the old value.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.fetchAndIncrement
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -104,6 +124,8 @@ public fun AtomicInt.fetchAndIncrement(): Int = this.fetchAndAdd(1)
 
 /**
  * Atomically increments the current value of this [AtomicInt] by one and returns the new value.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.incrementAndFetch
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -111,6 +133,8 @@ public fun AtomicInt.incrementAndFetch(): Int = this.addAndFetch(1)
 
 /**
  * Atomically decrements the current value of this [AtomicInt] by one and returns the new value.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.decrementAndFetch
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -118,6 +142,8 @@ public fun AtomicInt.decrementAndFetch(): Int = this.addAndFetch(-1)
 
 /**
  * Atomically decrements the current value of this [AtomicInt] by one and returns the old value.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.fetchAndDecrement
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -142,16 +168,22 @@ public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
 public expect class AtomicLong public constructor(value: Long) {
     /**
      * Atomically loads the value from this [AtomicLong].
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.load
      */
     public fun load(): Long
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicLong].
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.store
      */
     public fun store(newValue: Long)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicLong]. and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.exchange
      */
     public fun exchange(newValue: Long): Long
 
@@ -163,6 +195,8 @@ public expect class AtomicLong public constructor(value: Long) {
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.compareAndSet
      */
     public fun compareAndSet(expectedValue: Long, newValue: Long): Boolean
 
@@ -171,16 +205,22 @@ public expect class AtomicLong public constructor(value: Long) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.compareAndExchange
      */
     public fun compareAndExchange(expectedValue: Long, newValue: Long): Long
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.fetchAndAdd
      */
     public fun fetchAndAdd(delta: Long): Long
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the new value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.addAndFetch
      */
     public fun addAndFetch(delta: Long): Long
 
@@ -194,6 +234,8 @@ public expect class AtomicLong public constructor(value: Long) {
 
 /**
  * Atomically adds the [given value][delta] to the current value of this [AtomicLong].
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.plusAssign
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -201,6 +243,8 @@ public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicLong].
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.minusAssign
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -208,6 +252,8 @@ public operator fun AtomicLong.minusAssign(delta: Long): Unit { this.addAndFetch
 
 /**
  * Atomically increments the current value of this [AtomicLong] by one and returns the old value.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.fetchAndIncrement
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -215,6 +261,8 @@ public fun AtomicLong.fetchAndIncrement(): Long = this.fetchAndAdd(1)
 
 /**
  * Atomically increments the current value of this [AtomicLong] by one and returns the new value.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.incrementAndFetch
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -222,6 +270,8 @@ public fun AtomicLong.incrementAndFetch(): Long = this.addAndFetch(1)
 
 /**
  * Atomically decrements the current value of this [AtomicLong] by one and returns the new value.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.decrementAndFetch
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -229,6 +279,8 @@ public fun AtomicLong.decrementAndFetch(): Long = this.addAndFetch(-1)
 
 /**
  * Atomically decrements the current value of this [AtomicLong] by one and returns the old value.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.fetchAndDecrement
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -253,16 +305,22 @@ public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
 public expect class AtomicBoolean public constructor(value: Boolean) {
     /**
      * Atomically loads the value from this [AtomicBoolean].
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.load
      */
     public fun load(): Boolean
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicBoolean].
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.store
      */
     public fun store(newValue: Boolean)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicBoolean] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.exchange
      */
     public fun exchange(newValue: Boolean): Boolean
 
@@ -274,6 +332,8 @@ public expect class AtomicBoolean public constructor(value: Boolean) {
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.compareAndSet
      */
     public fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean
 
@@ -282,6 +342,8 @@ public expect class AtomicBoolean public constructor(value: Boolean) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.compareAndExchange
      */
     public fun compareAndExchange(expectedValue: Boolean, newValue: Boolean): Boolean
 
@@ -310,16 +372,22 @@ public expect class AtomicBoolean public constructor(value: Boolean) {
 public expect class AtomicReference<T> public constructor(value: T) {
     /**
      * Atomically loads the value from this [AtomicReference].
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.load
      */
     public fun load(): T
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicReference].
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.store
      */
     public fun store(newValue: T)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicReference]. and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.exchange
      */
     public fun exchange(newValue: T): T
 
@@ -331,6 +399,8 @@ public expect class AtomicReference<T> public constructor(value: T) {
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by reference.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.compareAndSet
      */
     public fun compareAndSet(expectedValue: T, newValue: T): Boolean
 
@@ -339,6 +409,8 @@ public expect class AtomicReference<T> public constructor(value: T) {
      * and returns the old value in any case.
      *
      * Comparison of values is done by reference.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.compareAndExchange
      */
     public fun compareAndExchange(expectedValue: T, newValue: T): T
 

@@ -32,16 +32,22 @@ public expect class AtomicIntArray {
     /**
      * Creates a new [AtomicIntArray] of the specified [size], with all elements initialized to zero.
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.sizeCons
      */
     public constructor(size: Int)
 
     /**
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.intArrCons
      */
     public constructor(array: IntArray)
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.size
      */
     public val size: Int
 
@@ -49,6 +55,8 @@ public expect class AtomicIntArray {
      * Atomically loads the value from the element of this [AtomicIntArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.loadAt
      */
     public fun loadAt(index: Int): Int
 
@@ -56,6 +64,8 @@ public expect class AtomicIntArray {
      * Atomically stores the [new value][newValue] into the element of this [AtomicIntArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.storeAt
      */
     public fun storeAt(index: Int, newValue: Int)
 
@@ -64,6 +74,8 @@ public expect class AtomicIntArray {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.exchangeAt
      */
     public fun exchangeAt(index: Int, newValue: Int): Int
 
@@ -78,6 +90,8 @@ public expect class AtomicIntArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndSetAt
      */
     public fun compareAndSetAt(index: Int, expectedValue: Int, newValue: Int): Boolean
 
@@ -88,6 +102,8 @@ public expect class AtomicIntArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.compareAndExchangeAt
      */
     public fun compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int): Int
 
@@ -95,6 +111,8 @@ public expect class AtomicIntArray {
      * Atomically adds the given [delta] to the element of this [AtomicIntArray] at the given [index] and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndAddAt
      */
     public fun fetchAndAddAt(index: Int, delta: Int): Int
 
@@ -102,6 +120,8 @@ public expect class AtomicIntArray {
      * Atomically adds the given [delta] to the element of this [AtomicIntArray] at the given [index] and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicIntArray.addAndFetchAt
      */
     public fun addAndFetchAt(index: Int, delta: Int): Int
 
@@ -120,6 +140,8 @@ public expect class AtomicIntArray {
  * It should return the value for an array element given its index.
  *
  * @throws RuntimeException if the specified [size] is negative.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.initCons
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -130,6 +152,8 @@ public inline fun AtomicIntArray(size: Int, init: (Int) -> Int): AtomicIntArray 
  * Atomically increments the element of this [AtomicIntArray] at the given [index] by one and returns the old value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndIncrementAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -139,6 +163,8 @@ public fun AtomicIntArray.fetchAndIncrementAt(index: Int): Int = this.fetchAndAd
  * Atomically increments the element of this [AtomicIntArray] at the given [index] by one and returns the new value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.incrementAndFetchAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -148,6 +174,8 @@ public fun AtomicIntArray.incrementAndFetchAt(index: Int): Int = this.addAndFetc
  * Atomically decrements the element of this [AtomicIntArray] at the given [index] by one and returns the new value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.decrementAndFetchAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -157,6 +185,8 @@ public fun AtomicIntArray.decrementAndFetchAt(index: Int): Int = this.addAndFetc
  * Atomically decrements the element of this [AtomicIntArray] at the given [index] by one and returns the old value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndDecrementAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -182,16 +212,22 @@ public expect class AtomicLongArray {
     /**
      * Creates a new [AtomicLongArray] of the specified [size], with all elements initialized to zero.
      * @throws RuntimeException if the specified [size] is negative.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.sizeCons
      */
     public constructor(size: Int)
 
     /**
      * Creates a new [AtomicLongArray] filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.longArrCons
      */
     public constructor(array: LongArray)
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.size
      */
     public val size: Int
 
@@ -199,6 +235,8 @@ public expect class AtomicLongArray {
      * Atomically loads the value from the element of this [AtomicLongArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.loadAt
      */
     public fun loadAt(index: Int): Long
 
@@ -206,6 +244,8 @@ public expect class AtomicLongArray {
      * Atomically stores the [new value][newValue] into the element of this [AtomicLongArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.storeAt
      */
     public fun storeAt(index: Int, newValue: Long)
 
@@ -214,6 +254,8 @@ public expect class AtomicLongArray {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.exchangeAt
      */
     public fun exchangeAt(index: Int, newValue: Long): Long
 
@@ -228,6 +270,8 @@ public expect class AtomicLongArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndSetAt
      */
     public fun compareAndSetAt(index: Int, expectedValue: Long, newValue: Long): Boolean
 
@@ -238,6 +282,8 @@ public expect class AtomicLongArray {
      * Comparison of values is done by value.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.compareAndExchangeAt
      */
     public fun compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long): Long
 
@@ -245,6 +291,8 @@ public expect class AtomicLongArray {
      * Atomically adds the given [delta] to the element of this [AtomicLongArray] at the given [index] and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndAddAt
      */
     public fun fetchAndAddAt(index: Int, delta: Long): Long
 
@@ -252,6 +300,8 @@ public expect class AtomicLongArray {
      * Atomically adds the given [delta] to the element of this [AtomicLongArray] at the given [index] and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicLongArray.addAndFetchAt
      */
     public fun addAndFetchAt(index: Int, delta: Long): Long
 
@@ -270,6 +320,8 @@ public expect class AtomicLongArray {
  * It should return the value for an array element given its index.
  *
  * @throws RuntimeException if the specified [size] is negative.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.initCons
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -280,6 +332,8 @@ public inline fun AtomicLongArray(size: Int, init: (Int) -> Long): AtomicLongArr
  * Atomically increments the element of this [AtomicLongArray] at the given [index] by one and returns the old value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndIncrementAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -289,6 +343,8 @@ public fun AtomicLongArray.fetchAndIncrementAt(index: Int): Long = this.fetchAnd
  * Atomically increments the element of this [AtomicLongArray] at the given [index] by one and returns the new value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.incrementAndFetchAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -298,6 +354,8 @@ public fun AtomicLongArray.incrementAndFetchAt(index: Int): Long = this.addAndFe
  * Atomically decrements the element of this [AtomicLongArray] at the given [index] by one and returns the new value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.decrementAndFetchAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -307,6 +365,8 @@ public fun AtomicLongArray.decrementAndFetchAt(index: Int): Long = this.addAndFe
  * Atomically decrements the element of this [AtomicLongArray] at the given [index] by one and returns the old value of the element.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndDecrementAt
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -332,11 +392,15 @@ public expect class AtomicArray<T> {
 
     /**
      * Creates a new [AtomicArray]<T> filled with elements of the given [array].
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.arrCons
      */
     public constructor(array: Array<T>)
 
     /**
      * Returns the number of elements in the array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.size
      */
     public val size: Int
 
@@ -344,6 +408,8 @@ public expect class AtomicArray<T> {
      * Atomically loads the value from the element of this [AtomicArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.loadAt
      */
     public fun loadAt(index: Int): T
 
@@ -351,6 +417,8 @@ public expect class AtomicArray<T> {
      * Atomically stores the [new value][newValue] into the element of this [AtomicArray] at the given [index].
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.storeAt
      */
     public fun storeAt(index: Int, newValue: T)
 
@@ -359,6 +427,8 @@ public expect class AtomicArray<T> {
      * and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.exchangeAt
      */
     public fun exchangeAt(index: Int, newValue: T): T
 
@@ -373,6 +443,8 @@ public expect class AtomicArray<T> {
      * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndSetAt
      */
     public fun compareAndSetAt(index: Int, expectedValue: T, newValue: T): Boolean
 
@@ -383,6 +455,8 @@ public expect class AtomicArray<T> {
      * Comparison of values is done by reference.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+     *
+     * @sample samples.concurrent.atomics.AtomicArray.compareAndExchangeAt
      */
     public fun compareAndExchangeAt(index: Int, expectedValue: T, newValue: T): T
 
@@ -401,6 +475,8 @@ public expect class AtomicArray<T> {
  * It should return the value for an array element given its index.
  *
  * @throws RuntimeException if the specified [size] is negative.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.initCons
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi

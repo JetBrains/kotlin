@@ -9,6 +9,8 @@ package kotlin.concurrent.atomics
  * An [Int] value that may be updated atomically.
  *
  * Instances of [AtomicInt] are represented by [java.util.concurrent.atomic.AtomicInteger] and provide the the same atomicity guarantees.
+ *
+ * @sample samples.concurrent.atomics.AtomicJvmSamples.processItems
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
