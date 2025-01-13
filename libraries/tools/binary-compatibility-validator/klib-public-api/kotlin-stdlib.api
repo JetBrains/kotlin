@@ -1999,12 +1999,13 @@ final class kotlin.time/TestTimeSource : kotlin.time/AbstractLongTimeSource { //
     final fun plusAssign(kotlin.time/Duration) // kotlin.time/TestTimeSource.plusAssign|plusAssign(kotlin.time.Duration){}[0]
 }
 
-final class kotlin.uuid/Uuid : kotlin.io/Serializable { // kotlin.uuid/Uuid|null[0]
+final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.uuid/Uuid> { // kotlin.uuid/Uuid|null[0]
     final val leastSignificantBits // kotlin.uuid/Uuid.leastSignificantBits|{}leastSignificantBits[0]
         final fun <get-leastSignificantBits>(): kotlin/Long // kotlin.uuid/Uuid.leastSignificantBits.<get-leastSignificantBits>|<get-leastSignificantBits>(){}[0]
     final val mostSignificantBits // kotlin.uuid/Uuid.mostSignificantBits|{}mostSignificantBits[0]
         final fun <get-mostSignificantBits>(): kotlin/Long // kotlin.uuid/Uuid.mostSignificantBits.<get-mostSignificantBits>|<get-mostSignificantBits>(){}[0]
 
+    final fun compareTo(kotlin.uuid/Uuid): kotlin/Int // kotlin.uuid/Uuid.compareTo|compareTo(kotlin.uuid.Uuid){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.uuid/Uuid.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // kotlin.uuid/Uuid.hashCode|hashCode(){}[0]
     final fun toByteArray(): kotlin/ByteArray // kotlin.uuid/Uuid.toByteArray|toByteArray(){}[0]

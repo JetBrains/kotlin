@@ -209,22 +209,26 @@ class UuidTest {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun lexicalOrder() {
         val maxUuid = Uuid.parse(uuidStringMax)
 
-        for (id in listOf(uuid, Uuid.NIL, maxUuid)) {
-            assertEquals(0, Uuid.LEXICAL_ORDER.compare(id, id), id.toString())
+        // TODO: Once LEXICAL_ORDER is dropped, test Uuid.compareTo directly instead
+        for (lexicalOrder in listOf(Uuid.LEXICAL_ORDER, naturalOrder())) {
+            for (id in listOf(uuid, Uuid.NIL, maxUuid)) {
+                assertEquals(0, lexicalOrder.compare(id, id), id.toString())
+            }
+
+            assertTrue(lexicalOrder.compare(Uuid.NIL, uuid) < 0)
+            assertTrue(lexicalOrder.compare(Uuid.NIL, maxUuid) < 0)
+
+            assertTrue(lexicalOrder.compare(uuid, Uuid.NIL) > 0)
+            assertTrue(lexicalOrder.compare(uuid, maxUuid) < 0)
+
+            assertTrue(lexicalOrder.compare(maxUuid, Uuid.NIL) > 0)
+            assertTrue(lexicalOrder.compare(maxUuid, uuid) > 0)
         }
-
-        assertTrue(Uuid.LEXICAL_ORDER.compare(Uuid.NIL, uuid) < 0)
-        assertTrue(Uuid.LEXICAL_ORDER.compare(Uuid.NIL, maxUuid) < 0)
-
-        assertTrue(Uuid.LEXICAL_ORDER.compare(uuid, Uuid.NIL) > 0)
-        assertTrue(Uuid.LEXICAL_ORDER.compare(uuid, maxUuid) < 0)
-
-        assertTrue(Uuid.LEXICAL_ORDER.compare(maxUuid, Uuid.NIL) > 0)
-        assertTrue(Uuid.LEXICAL_ORDER.compare(maxUuid, uuid) > 0)
     }
 
     @Test

@@ -6,6 +6,7 @@
 package samples.uuid
 
 import samples.*
+import kotlin.test.*
 import kotlin.uuid.*
 
 @OptIn(ExperimentalUuidApi::class)
@@ -160,6 +161,23 @@ class Uuids {
         assertPrints(uuid2 == uuid3, "false")
     }
 
+    @Sample
+    fun compareTo() {
+        val uuid1 = Uuid.parse("49d6d991-c780-4eb5-8585-5169c25af912")
+        val uuid2 = Uuid.parse("c0bac692-7208-4448-a8fe-3e3eb128db2a")
+        val uuid3 = Uuid.parse("49d6d991-aa92-4da0-917e-527c69621cb7")
+
+        assertTrue(uuid1 < uuid2)
+        assertTrue(uuid1 > uuid3)
+
+        val sortedUuids = listOf(uuid1, uuid2, uuid3).sorted()
+
+        assertPrints(sortedUuids[0], "49d6d991-aa92-4da0-917e-527c69621cb7")
+        assertPrints(sortedUuids[1], "49d6d991-c780-4eb5-8585-5169c25af912")
+        assertPrints(sortedUuids[2], "c0bac692-7208-4448-a8fe-3e3eb128db2a")
+    }
+
+    @Suppress("DEPRECATION")
     @Sample
     fun lexicalOrder() {
         val uuid1 = Uuid.parse("49d6d991-c780-4eb5-8585-5169c25af912")

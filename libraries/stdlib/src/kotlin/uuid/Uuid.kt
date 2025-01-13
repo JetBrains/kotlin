@@ -40,7 +40,7 @@ import kotlin.internal.InlineOnly
 public class Uuid internal constructor(
     @PublishedApi internal val mostSignificantBits: Long,
     @PublishedApi internal val leastSignificantBits: Long
-) : Serializable {
+) : Comparable<Uuid>, Serializable {
 
     /**
      * Executes the specified block of code, providing access to the uuid's bits in the form of two [Long] values.
@@ -193,6 +193,35 @@ public class Uuid internal constructor(
         if (other !is Uuid) return false
         return mostSignificantBits == other.mostSignificantBits &&
                 leastSignificantBits == other.leastSignificantBits
+    }
+
+    /**
+     * Compares this uuid with the [other] uuid for lexical order.
+     *
+     * Returns zero if this uuid is lexically equal to the specified other uuid, a negative number
+     * if it's less than the other, or a positive number if it's greater than the other.
+     *
+     * This function compares the two 128-bit uuids bit by bit sequentially,
+     * starting from the most significant bit to the least significant.
+     * `this` uuid is considered less than `other` if, at the first position where corresponding bits
+     * of the two uuids differ, the bit in `this` is zero and the bit in `other` is one.
+     * Conversely, `this` is considered greater than `other` if, at the first differing position,
+     * the bit in `this` is one and the bit in `other` is zero.
+     * If no differing bits are found, the two uuids are considered equal.
+     *
+     * The result of the comparison of `this` and `other` uuids is equivalent to:
+     * ```kotlin
+     * this.toString().compareTo(other.toString())
+     * ```
+     *
+     * @sample samples.uuid.Uuids.compareTo
+     */
+    @SinceKotlin("2.1")
+    override fun compareTo(other: Uuid): Int {
+        return if (mostSignificantBits != other.mostSignificantBits)
+            mostSignificantBits.toULong().compareTo(other.mostSignificantBits.toULong())
+        else
+            leastSignificantBits.toULong().compareTo(other.leastSignificantBits.toULong())
     }
 
     override fun hashCode(): Int {
@@ -381,6 +410,12 @@ public class Uuid internal constructor(
         /**
          * A [Comparator] that lexically orders uuids.
          *
+         * Note:
+         *   [Uuid] is a [Comparable] type, and its [compareTo] function establishes lexical order.
+         *   [LEXICAL_ORDER] was introduced when `Uuid`s were not comparable.
+         *   It is now deprecated and will be removed in a future release.
+         *   Instead, use [`naturalOrder<Uuid>()`][naturalOrder], which is equivalent to [LEXICAL_ORDER].
+         *
          * This comparator compares the given two 128-bit uuids bit by bit sequentially,
          * starting from the most significant bit to the least significant.
          * uuid `a` is considered less than `b` if, at the first position where corresponding bits
@@ -396,12 +431,10 @@ public class Uuid internal constructor(
          *
          * @sample samples.uuid.Uuids.lexicalOrder
          */
-        public val LEXICAL_ORDER: Comparator<Uuid> = Comparator { a, b ->
-            if (a.mostSignificantBits != b.mostSignificantBits)
-                a.mostSignificantBits.toULong().compareTo(b.mostSignificantBits.toULong())
-            else
-                a.leastSignificantBits.toULong().compareTo(b.leastSignificantBits.toULong())
-        }
+        @Deprecated("Use naturalOrder<Uuid>() instead", ReplaceWith("naturalOrder<Uuid>()", imports = ["kotlin.comparisons.naturalOrder"]))
+        @DeprecatedSinceKotlin(warningSince = "2.1")
+        public val LEXICAL_ORDER: Comparator<Uuid>
+            get() = naturalOrder()
     }
 }
 

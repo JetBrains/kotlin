@@ -6352,10 +6352,12 @@ public final class kotlin/time/TimedValue {
 public abstract interface annotation class kotlin/uuid/ExperimentalUuidApi : java/lang/annotation/Annotation {
 }
 
-public final class kotlin/uuid/Uuid : java/io/Serializable {
+public final class kotlin/uuid/Uuid : java/io/Serializable, java/lang/Comparable {
 	public static final field Companion Lkotlin/uuid/Uuid$Companion;
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lkotlin/uuid/Uuid;)I
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getLeastSignificantBits ()J
 	public final fun getMostSignificantBits ()J
