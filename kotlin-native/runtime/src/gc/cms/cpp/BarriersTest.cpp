@@ -50,7 +50,7 @@ public:
     }
 
     auto withMutatorQueue(mm::ThreadData& thread) {
-        auto& markData = thread.gc().impl().gc().mark();
+        auto& markData = thread.gc().impl().mark_;
         return ScopeGuard{[&]{
             markData.markQueue().construct(parProc_);
         }, [&]{

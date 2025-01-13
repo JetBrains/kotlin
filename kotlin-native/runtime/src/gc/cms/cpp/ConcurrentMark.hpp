@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <condition_variable>
 #include <mutex>
 
 #include "GCStatistics.hpp"
@@ -97,14 +96,28 @@ public:
         friend ConcurrentMark;
 
     public:
+        ThreadData(ConcurrentMark& mark, mm::ThreadData& threadData) noexcept : mark_(mark), threadData_(threadData) {}
+
         auto& markQueue() noexcept { return markQueue_; }
         void onSafePoint() noexcept;
+        void onSuspendForGC() noexcept;
+
+        bool tryLockRootSet() noexcept;
+        void publish() noexcept;
+        bool published() const noexcept;
+        void clearMarkFlags() noexcept;
 
     private:
         void ensureFlushActionExecuted() noexcept;
 
+        ConcurrentMark& mark_;
+        mm::ThreadData& threadData_;
+
         ManuallyScoped<MutatorQueue, true> markQueue_{};
         ManuallyScoped<OnceExecutable, true> flushAction_{};
+
+        std::atomic<bool> rootSetLocked_ = false;
+        std::atomic<bool> published_ = false;
     };
 
     void beginMarkingEpoch(GCHandle gcHandle);

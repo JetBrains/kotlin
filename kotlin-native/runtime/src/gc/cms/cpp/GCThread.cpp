@@ -1,37 +1,25 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
-#include "ConcurrentMarkAndSweep.hpp"
+#include "GCThread.hpp"
 
-#include <optional>
-#include <string_view>
-
+#include "Allocator.hpp"
 #include "AllocatorImpl.hpp"
-#include "CallsChecker.hpp"
-#include "CompilerConstants.hpp"
+#include "ConcurrentMark.hpp"
+#include "GCScheduler.hpp"
+#include "GCStatistics.hpp"
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
-#include "Memory.h"
+#include "RootSet.hpp"
 #include "ThreadData.hpp"
+#include "ThreadRegistry.hpp"
 #include "ThreadSuspension.hpp"
-#include "GCState.hpp"
-#include "GCStatistics.hpp"
-#include "concurrent/UtilityThread.hpp"
 
 using namespace kotlin;
 
 namespace {
-
-template <typename Body>
-UtilityThread createGCThread(const char* name, Body&& body) {
-    return UtilityThread(std::string_view(name), [name, body] {
-        RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " starts execution", name, konan::currentThreadId());
-        body();
-        RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " finishes execution", name, konan::currentThreadId());
-    });
-}
 
 #ifndef CUSTOM_ALLOCATOR
 // TODO move to common
@@ -54,72 +42,23 @@ UtilityThread createGCThread(const char* name, Body&& body) {
 
 } // namespace
 
-void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
-    gc_.markDispatcher_.runOnMutator(commonThreadData());
-}
-
-bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
-    bool expected = false;
-    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
-    if (locked) {
-        RuntimeLogDebug(
-                {kTagGC}, "Thread %" PRIuPTR " have exclusively acquired thread %" PRIuPTR "'s root set", konan::currentThreadId(), threadData_.threadId());
-    }
-    return locked;
-}
-
-void gc::ConcurrentMarkAndSweep::ThreadData::publish() {
-    threadData_.Publish();
-    published_.store(true, std::memory_order_release);
-}
-
-bool gc::ConcurrentMarkAndSweep::ThreadData::published() const {
-    return published_.load(std::memory_order_acquire);
-}
-
-void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
-    published_.store(false, std::memory_order_relaxed);
-    rootSetLocked_.store(false, std::memory_order_release);
-}
-
-gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
-        alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
+gc::internal::GCThread::GCThread(
+        GCStateHolder& state,
+        SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
+        mark::ConcurrentMark& markDispatcher,
+        alloc::Allocator& allocator,
+        gcScheduler::GCScheduler& gcScheduler) noexcept :
+    state_(state),
+    finalizerProcessor_(finalizerProcessor),
+    markDispatcher_(markDispatcher),
     allocator_(allocator),
     gcScheduler_(gcScheduler),
-    finalizerProcessor_([this](int64_t epoch) {
-        GCHandle::getByEpoch(epoch).finalizersDone();
-        state_.finalized(epoch);
-    }),
-    mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); })) {
-    RuntimeAssert(!mutatorsCooperate, "Cooperative mutators aren't supported yet");
-    RuntimeAssert(auxGCThreads == 0, "Auxiliary GC threads aren't supported yet");
-    RuntimeLogInfo({kTagGC}, "Concurrent Mark & Sweep GC initialized");
-}
+    thread_(std::string_view("Main GC thread"), [this] { body(); }) {}
 
-gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
-    state_.shutdown();
-}
-
-void gc::ConcurrentMarkAndSweep::StartFinalizerThreadIfNeeded() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_.StartFinalizerThreadIfNone();
-    finalizerProcessor_.WaitFinalizerThreadInitialized();
-}
-
-void gc::ConcurrentMarkAndSweep::StopFinalizerThreadIfRunning() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_.StopFinalizerThread();
-}
-
-bool gc::ConcurrentMarkAndSweep::FinalizersThreadIsRunning() noexcept {
-    return finalizerProcessor_.IsRunning();
-}
-
-void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
+void gc::internal::GCThread::body() noexcept {
     RuntimeLogWarning({kTagGC}, "Initializing Concurrent Mark and Sweep GC.");
     while (true) {
-        auto epoch = state_.waitScheduled();
-        if (epoch.has_value()) {
+        if (auto epoch = state_.waitScheduled()) {
             PerformFullGC(*epoch);
         } else {
             break;
@@ -127,7 +66,7 @@ void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
     }
 }
 
-void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
+void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto gcHandle = GCHandle::create(epoch);
@@ -184,12 +123,8 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
 
-    if (!mainThreadFinalizerProcessor_.available()) {
-        finalizerQueue.mergeIntoRegular();
-    }
     // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
     // destructors running. So, it must ensured that no locks are held by this point.
     // TODO: Consider having an always on sleeping finalizer thread.
-    finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue.regular), epoch);
-    mainThreadFinalizerProcessor_.schedule(std::move(finalizerQueue.mainThread), epoch);
+    finalizerProcessor_.schedule(std::move(finalizerQueue), epoch);
 }

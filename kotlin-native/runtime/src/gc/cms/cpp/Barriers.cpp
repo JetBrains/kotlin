@@ -66,7 +66,7 @@ void switchPhase(BarriersPhase from, BarriersPhase to) noexcept {
 }
 
 auto& markDispatcher() noexcept {
-    return mm::GlobalData::Instance().gc().impl().gc().mark();
+    return mm::GlobalData::Instance().gc().impl().markDispatcher_;
 }
 
 inline constexpr auto kTagBarriers = logging::Tag::kBarriers;
@@ -108,7 +108,7 @@ void gc::barriers::enableBarriers(int64_t epoch) noexcept {
     markingEpoch.store(epoch, std::memory_order_relaxed);
     switchPhase(BarriersPhase::kDisabled, BarriersPhase::kMarkClosure);
     for (auto& mutator : mutators) {
-        mutator.gc().impl().gc().barriers().startMarkingNewObjects(GCHandle::getByEpoch(epoch));
+        mutator.gc().impl().barriers_.startMarkingNewObjects(GCHandle::getByEpoch(epoch));
     }
 }
 
@@ -120,7 +120,7 @@ void gc::barriers::disableBarriers() noexcept {
     auto mutators = mm::ThreadRegistry::Instance().LockForIter();
     switchPhase(BarriersPhase::kWeakProcessing, BarriersPhase::kDisabled);
     for (auto& mutator : mutators) {
-        mutator.gc().impl().gc().barriers().stopMarkingNewObjects();
+        mutator.gc().impl().barriers_.stopMarkingNewObjects();
     }
 }
 
@@ -143,7 +143,7 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
 
         // TODO perhaps it would be better to pass the thread data from outside
         auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
-        auto& markQueue = *threadData.gc().impl().gc().mark().markQueue();
+        auto& markQueue = *threadData.gc().impl().mark_.markQueue();
         gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, prev);
         // No need to add the marked object in statistics here.
         // Objects will be counted on dequeue.
@@ -186,7 +186,7 @@ namespace {
 NO_INLINE void weakRefReadInMarkSlowPath(ObjHeader* weakReferee) noexcept {
     assertPhase(BarriersPhase::kMarkClosure);
     auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto& markQueue = *threadData.gc().impl().gc().mark().markQueue();
+    auto& markQueue = *threadData.gc().impl().mark_.markQueue();
     gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, weakReferee);
 }
 
