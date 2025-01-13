@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -26,12 +28,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.errorProperty]
  */
-abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
+abstract class FirErrorProperty : FirProperty(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
@@ -48,6 +49,11 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override val setter: FirPropertyAccessor?
     abstract override val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotation>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol?
+    abstract override val isLocal: Boolean
+    abstract override val bodyResolveState: FirPropertyBodyResolveState
+    abstract override val typeParameters: List<FirTypeParameter>
     abstract override val diagnostic: ConeDiagnostic
     abstract override val symbol: FirErrorPropertySymbol
 
@@ -78,7 +84,9 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorProperty
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
+    abstract override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState)
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
@@ -99,6 +107,8 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorProperty
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorProperty
 }
