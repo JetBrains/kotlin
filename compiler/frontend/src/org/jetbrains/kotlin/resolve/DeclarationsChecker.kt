@@ -263,7 +263,7 @@ class DeclarationsChecker(
         checkVarargParameters(trace, constructorDescriptor)
         checkConstructorVisibility(constructorDescriptor, declaration)
         checkExpectedClassConstructor(constructorDescriptor, declaration)
-        checkContextParameters(declaration.modifierList?.getChildOfType())
+        checkContextParameters(declaration.modifierList)
     }
 
     private fun checkExpectedClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
@@ -353,7 +353,7 @@ class DeclarationsChecker(
         checkPrimaryConstructor(classOrObject, classDescriptor)
 
         checkExpectDeclarationModifiers(classOrObject, classDescriptor)
-        checkContextParameters(classOrObject.contextReceiverList)
+        checkContextParameters(classOrObject.modifierList)
     }
 
     private fun checkLocalAnnotation(classDescriptor: ClassDescriptor, classOrObject: KtClassOrObject) {
@@ -630,7 +630,7 @@ class DeclarationsChecker(
         checkImplicitCallableType(property, propertyDescriptor)
         checkExpectDeclarationModifiers(property, propertyDescriptor)
         checkBackingField(property)
-        checkContextParameters(property.contextReceiverList)
+        checkContextParameters(property.modifierList)
     }
 
     private fun checkExpectDeclarationModifiers(declaration: KtDeclaration, descriptor: MemberDescriptor) {
@@ -950,7 +950,7 @@ class DeclarationsChecker(
         }
 
         shadowedExtensionChecker.checkDeclaration(function, functionDescriptor)
-        checkContextParameters(function.contextReceiverList)
+        checkContextParameters(function.modifierList)
     }
 
     private fun checkExpectedFunction(function: KtNamedFunction, functionDescriptor: FunctionDescriptor) {
@@ -1081,9 +1081,16 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkContextParameters(contextReceiverList: KtContextReceiverList?) {
-        if (!contextReceiverList?.contextParameters().isNullOrEmpty()) {
-            trace.report(CONTEXT_PARAMETERS_UNSUPPORTED.on(contextReceiverList))
+    private fun checkContextParameters(modifierList: KtModifierList?) {
+        val contextReceiverLists = modifierList?.contextReceiverLists ?: return
+        contextReceiverLists.forEach { contextReceiverList ->
+            if (contextReceiverList.contextParameters().isNotEmpty()) {
+                trace.report(CONTEXT_PARAMETERS_UNSUPPORTED.on(contextReceiverList))
+            }
+        }
+
+        if (contextReceiverLists.size > 1) {
+            trace.report(MULTIPLE_CONTEXT_LISTS.on(modifierList))
         }
     }
 
