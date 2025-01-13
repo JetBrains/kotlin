@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
@@ -47,10 +48,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * responsibility, which is the burden of the Analysis API platform.
  */
 internal class LLModuleWithDependenciesSymbolProvider(
-    session: FirSession,
+    session: LLFirSession,
     val providers: List<FirSymbolProvider>,
     val dependencyProvider: LLDependenciesSymbolProvider,
-) : FirSymbolProvider(session) {
+) : FirSymbolProvider(session), LLPsiAwareSymbolProvider {
     /**
      * This symbol names provider is not used directly by [LLModuleWithDependenciesSymbolProvider], because in the IDE, Java symbol
      * providers currently cannot provide name sets (see KTIJ-24642). So in most cases, name sets would be `null` anyway.
@@ -71,19 +72,28 @@ internal class LLModuleWithDependenciesSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        getClassLikeSymbolByClassIdWithoutDependencies(classId)
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
             ?: dependencyProvider.getClassLikeSymbolByClassId(classId)
 
-    fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? =
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolMatchingPsi(classId, declaration) }
+            ?: dependencyProvider.getClassLikeSymbolByPsi(classId, declaration)
 
-    fun getDeserializedClassLikeSymbolByClassIdWithoutDependencies(
+    fun getDeserializedClassLikeSymbolByPsiWithoutDependencies(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
     ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
         when (provider) {
-            is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
+            is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolMatchingPsi(classId, classLikeDeclaration)
+
+            // Symbols deserialized from metadata don't have associated PSI elements. Hence, we cannot use `getClassLikeSymbolMatchingPsi`,
+            // as it requires the resulting symbol to have `classLikeDeclaration` as its PSI.
+            //
+            // The core problem comes down to a conceptual irregularity: If the found symbol doesn't have PSI, how can we get a
+            // `KtClassLikeDeclaration` to find it with in the first place? However, to avoid breaking existing functionality in Standalone,
+            // this needs to be properly investigated.
             is AbstractFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
+
             else -> null
         }
     }
@@ -159,7 +169,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
 internal class LLDependenciesSymbolProvider(
     session: FirSession,
     val computeProviders: () -> List<FirSymbolProvider>,
-) : FirSymbolProvider(session) {
+) : FirSymbolProvider(session), LLPsiAwareSymbolProvider {
     /**
      * Dependency symbol providers are lazy to support cyclic dependencies between modules. If a module A and a module B depend on each
      * other and session creation tries to access dependency symbol providers eagerly, the creation of session A would try to create session
@@ -178,6 +188,9 @@ internal class LLDependenciesSymbolProvider(
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
+
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? =
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolMatchingPsi(classId, declaration) }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
