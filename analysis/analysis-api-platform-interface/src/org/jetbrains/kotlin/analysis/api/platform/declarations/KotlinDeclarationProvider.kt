@@ -35,6 +35,13 @@ import org.jetbrains.kotlin.psi.*
  * state.
  */
 public interface KotlinDeclarationProvider : KotlinComposableProvider {
+    /**
+     * Returns a [KtClassLikeDeclaration] that has the given [classId], or `null` if no such declaration exists.
+     *
+     * [getClassLikeDeclarationByClassId] does not guarantee a stable result for ambiguous class IDs. If multiple declarations share the
+     * same class ID, the declaration provider may return any one of them. To get a list of all possibilities, [getAllClassesByClassId] and
+     * [getAllTypeAliasesByClassId] should be used instead.
+     */
     public fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration?
 
     public fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject>

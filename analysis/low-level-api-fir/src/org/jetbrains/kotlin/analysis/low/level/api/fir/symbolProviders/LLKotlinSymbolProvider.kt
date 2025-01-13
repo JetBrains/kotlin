@@ -41,12 +41,16 @@ internal abstract class LLKotlinSymbolProvider(session: FirSession) : FirSymbolP
      * Returns the [FirClassLikeSymbol] with the given [classId] for a known [classLikeDeclaration].
      *
      * As [classLikeDeclaration] is already known, this function is optimized to avoid declaration provider accesses. However, the given
-     * class declaration has to be coherent with [KotlinDeclarationProvider.getClassLikeDeclarationByClassId]. In other words, the
-     * declaration must be chosen such that the resulting [FirClassLikeSymbol] is the same as the result of [getClassLikeSymbolByClassId]
-     * without a known declaration.
+     * declaration has to be one of the [classes][KotlinDeclarationProvider.getAllClassesByClassId] or [type aliases][KotlinDeclarationProvider.getAllTypeAliasesByClassId]
+     * provided by the [declarationProvider].
      *
-     * In case of [ClassId] ambiguities, passing a different [classLikeDeclaration] *does not* change the result. Such behavior violates the
-     * coherence constraint above and is prohibited.
+     * Furthermore, the function does not guarantee that a symbol for exactly [classLikeDeclaration] will be returned, as this parameter is
+     * only used for optimization. This is in line with the contracts of [FirSymbolProvider.getClassLikeSymbolByClassId], which only
+     * considers the [ClassId] itself and operates on a first-come, first-serve basis. The first [KtClassLikeDeclaration] passed to this
+     * function or fetched with [KotlinDeclarationProvider.getClassLikeDeclarationByClassId] (which does not guarantee a stable result
+     * either) becomes the basis of the class-like symbol for that class ID.
+     *
+     * To get a symbol for an exact class-like declaration, [getClassLikeSymbolByPsi] should be used instead.
      */
     abstract fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>?
 

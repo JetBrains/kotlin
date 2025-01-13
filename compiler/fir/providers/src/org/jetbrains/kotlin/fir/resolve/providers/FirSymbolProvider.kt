@@ -30,6 +30,13 @@ annotation class FirSymbolProviderInternals
 abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent {
     abstract val symbolNamesProvider: FirSymbolNamesProvider
 
+    /**
+     * Returns a [FirClassLikeSymbol] with the given [classId], or `null` if such a symbol cannot be found.
+     *
+     * In case of multiple declarations sharing the same class ID, [getClassLikeSymbolByClassId] consistently returns a symbol for one of
+     * these declarations. However, which declaration is initially chosen is not defined, meaning the symbol provider may choose any one of
+     * the possible declarations at its leisure.
+     */
     abstract fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>?
 
     @OptIn(FirSymbolProviderInternals::class)
