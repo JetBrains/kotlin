@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -18,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isBoxedArray
+import org.jetbrains.kotlin.name.SpecialNames
 
 interface IrParcelSerializer {
     fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression
@@ -647,6 +655,60 @@ class IrRangeParcelSerializer(
             +irCall(constructorSymbol).apply {
                 arguments[0] = readParcelWith(underlyingTypeSerializer, parcel)
                 arguments[1] = readParcelWith(underlyingTypeSerializer, parcel)
+            }
+        }
+    }
+}
+
+class IrUuidParcelSerializer(
+    private val irClass: IrClass,
+    private val longParcelSerializer: IrParcelSerializer,
+): IrParcelSerializer {
+    override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
+        val lambdaFunction = context.irFactory.buildFun {
+            origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+            name = SpecialNames.NO_NAME_PROVIDED
+            visibility = DescriptorVisibilities.LOCAL
+            returnType = context.irBuiltIns.unitType
+            modality = Modality.FINAL
+        }.apply {
+            parent = scope.getLocalDeclarationParent()
+            val mostSignBits = addValueParameter("v1", context.irBuiltIns.longType)
+            val leastSignBits = addValueParameter("v2", context.irBuiltIns.longType)
+            body = irBlockBody {
+                +writeParcelWith(longParcelSerializer, parcel, flags, irGet(mostSignBits))
+                +writeParcelWith(longParcelSerializer, parcel, flags, irGet(leastSignBits))
+            }
+        }
+        val functionType = context.irBuiltIns.functionN(2).typeWith(
+            context.irBuiltIns.longType,
+            context.irBuiltIns.longType,
+            context.irBuiltIns.unitType
+        )
+        val lambdaExpr = IrFunctionExpressionImpl(
+            startOffset, endOffset, functionType, lambdaFunction, IrStatementOrigin.LAMBDA
+        )
+        val toLongs = requireNotNull(irClass.getSimpleFunction("toLongs")) { "method kotlin.uuid.Uuid.toLongs not found" }
+        return irBlock {
+            +irCall(toLongs).apply {
+                arguments[0] = value
+                arguments[1] = lambdaExpr
+            }
+        }
+    }
+
+    override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
+        val companionReceiver = requireNotNull(irClass.companionObject()?.symbol) {
+            "kotlin.uuid.Uuid was expected to have a companion object but none was found"
+        }
+        val fromLongsFunction = requireNotNull(irClass.companionObject()?.getSimpleFunction("fromLongs")) {
+            "function kotlin.uuid.Uuid.fromLongs not found"
+        }
+        return irBlock {
+            +irCall(fromLongsFunction).apply {
+                arguments[0] = irGetObject(companionReceiver)
+                arguments[1] = readParcelWith(longParcelSerializer, parcel)
+                arguments[2] = readParcelWith(longParcelSerializer, parcel)
             }
         }
     }

@@ -160,6 +160,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             "kotlin.ULongArray" ->
                 return ulongArraySerializer
             // Library types
+            "kotlin.uuid.Uuid" ->
+                return wrapNullableSerializerIfNeeded(
+                    irType, IrUuidParcelSerializer(irType.getClass()!!, longSerializer))
             "kotlin.time.Duration" ->
                 return wrapNullableSerializerIfNeeded(irType, durationSerializer)
             "kotlin.ranges.IntRange" -> return wrapNullableSerializerIfNeeded(

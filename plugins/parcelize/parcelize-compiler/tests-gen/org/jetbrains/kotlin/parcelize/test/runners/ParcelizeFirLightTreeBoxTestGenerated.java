@@ -577,6 +577,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   }
 
   @Test
+  @TestMetadata("uuid.kt")
+  public void testUuid() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/uuid.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassWrapper.kt")
   public void testValueClassWrapper() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/valueClassWrapper.kt");
