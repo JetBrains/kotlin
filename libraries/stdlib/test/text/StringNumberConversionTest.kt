@@ -806,6 +806,13 @@ class FpNumberToStringTest {
     }
 
     @Test
+    fun kt74441() {
+        val a = identity(1e-45)
+        // Exact string is platform-dependent: "1.0E-45" or "1e-45"
+        assertEquals(a, a.toString().toDouble())
+    }
+
+    @Test
     fun kt69107() {
         val a = identity(0.30000001192092F)
         assertEquals("0.3", (round(a * 10f) / 10f).toString())

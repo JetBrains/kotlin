@@ -98,7 +98,7 @@ private fun utoaDecSimple64(buffer: WasmCharArray, numInput: ULong, offsetInput:
 }
 
 
-private fun Boolean.toLong() = toInt().toLong()
+private fun Boolean.toULong() = toInt().toULong()
 
 private fun decimalCount32(value: UInt): Int {
     if (value < 100000u) {
@@ -129,7 +129,6 @@ internal fun itoa64(inputValue: Long): String {
 
 internal fun utoa64(inputValue: ULong): String {
     if (inputValue <= UInt.MAX_VALUE) return utoa32(inputValue.toUInt())
-
     val decimals = decimalCount64High(inputValue)
     val buf = WasmCharArray(decimals)
 
@@ -192,9 +191,9 @@ private fun dtoaCore(buffer: WasmCharArray, valueInp: Double, isSinglePrecision:
 // TODO: What we are going to do with multiple threads?
 private var _K: Int = 0
 private var _exp: Int = 0
-private var _frc_minus: Long = 0
-private var _frc_plus:  Long = 0
-private var _frc_pow: Long = 0
+private var _frc_minus: ULong = 0u
+private var _frc_plus: ULong = 0u
+private var _frc_pow: ULong = 0u
 private var _exp_pow: Int = 0
 
 private val EXP_POWERS = shortArrayOf(
@@ -246,7 +245,7 @@ private const val DOUBLE_SIGNIFICANT_SIZE = 52  // Excluding hidden bit
 private const val DOUBLE_EXPONENT_BIAS = 0x3FF + DOUBLE_SIGNIFICANT_SIZE
 
 private fun grisu2(value: Double, buffer: WasmCharArray, sign: Int, isSinglePrecision: Boolean): Int {
-    var frc: Long
+    var frc: ULong
     var exp: Int
 
     // frexp routine
@@ -254,13 +253,13 @@ private fun grisu2(value: Double, buffer: WasmCharArray, sign: Int, isSinglePrec
         val uv = value.toFloat().toBits()
         exp = (uv and SINGLE_EXPONENT_MASK) ushr SINGLE_SIGNIFICANT_SIZE
         val sid = uv and SINGLE_SIGNIFICANT_MASK
-        frc = ((exp != 0).toLong() shl SINGLE_SIGNIFICANT_SIZE) + sid
+        frc = ((exp != 0).toULong() shl SINGLE_SIGNIFICANT_SIZE) + sid.toULong()
         exp = (if (exp != 0) exp else 1) - SINGLE_EXPONENT_BIAS
     } else {
         val uv = value.toBits()
         exp = ((uv and DOUBLE_EXPONENT_MASK) ushr DOUBLE_SIGNIFICANT_SIZE).toInt()
         val sid = uv and DOUBLE_SIGNIFICANT_MASK
-        frc = ((exp != 0).toLong() shl DOUBLE_SIGNIFICANT_SIZE) + sid
+        frc = ((exp != 0).toULong() shl DOUBLE_SIGNIFICANT_SIZE) + sid.toULong()
         exp = (if (exp != 0) exp else 1) - DOUBLE_EXPONENT_BIAS
     }
 
@@ -277,30 +276,30 @@ private fun grisu2(value: Double, buffer: WasmCharArray, sign: Int, isSinglePrec
 
     var w_frc = umul64f(frc, frc_pow)
 
-    var wp_frc = umul64f(_frc_plus, frc_pow) - 1
+    var wp_frc = umul64f(_frc_plus, frc_pow) - 1u
     var wp_exp = umul64e(_exp, exp_pow)
 
-    var wm_frc = umul64f(_frc_minus, frc_pow) + 1
+    var wm_frc = umul64f(_frc_minus, frc_pow) + 1u
     var delta = wp_frc - wm_frc
 
     return genDigits(buffer, w_frc, wp_frc, wp_exp, delta, sign);
 }
 
-private fun umul64f(u: Long, v: Long): Long {
-    val u0 = u and 0xFFFFFFFF
-    val v0 = v and 0xFFFFFFFF
+private fun umul64f(u: ULong, v: ULong): ULong {
+    val u0 = u and 0xFFFFFFFFU
+    val v0 = v and 0xFFFFFFFFU
 
-    val u1 = u ushr 32
-    val v1 = v ushr 32
+    val u1 = u shr 32
+    val v1 = v shr 32
 
     val l = u0 * v0
-    var t = u1 * v0 + (l ushr 32)
-    var w = u0 * v1 + (t and 0xFFFFFFFF)
+    var t = u1 * v0 + (l shr 32)
+    var w = u0 * v1 + (t and 0xFFFFFFFFU)
 
-    w += 0x7FFFFFFF // rounding
+    w += 0x7FFFFFFFU // rounding
 
-    t = t ushr 32
-    w = w ushr 32
+    t = t shr 32
+    w = w shr 32
 
     return u1 * v1 + t + w
 }
@@ -309,18 +308,18 @@ private fun umul64e(e1: Int, e2: Int): Int {
     return e1 + e2 + 64 // where 64 is significand size
 }
 
-private fun normalizedBoundaries(f: Long, e: Int, isSinglePrecision: Boolean) {
-    var frc = (f shl 1) + 1
+private fun normalizedBoundaries(f: ULong, e: Int, isSinglePrecision: Boolean) {
+    var frc = (f shl 1) + 1u
     var exp = e - 1
     val off = frc.countLeadingZeroBits()
     frc = frc shl off
     exp -= off
 
-    val smallestNormalizedSignificand: Long = if (isSinglePrecision) 0x00800000 else 0x0010000000000000
+    val smallestNormalizedSignificand: ULong = if (isSinglePrecision) 0x00800000u else 0x0010000000000000u
     val m = 1 + (f == smallestNormalizedSignificand).toInt()
 
     _frc_plus = frc
-    _frc_minus = ((f shl m) - 1) shl e - m - exp
+    _frc_minus = ((f shl m) - 1u) shl e - m - exp
     _exp = exp
 }
 
@@ -332,46 +331,46 @@ private fun getCachedPower(minExp: Int) {
 
     val index = (k shr 3) + 1
     _K = 348 - (index shl 3)    // decimal exponent no need lookup table
-    _frc_pow = FRC_POWERS[index]
+    _frc_pow = FRC_POWERS[index].toULong()
     _exp_pow = EXP_POWERS[index].toInt()
 }
 
-private fun genDigits(buffer: WasmCharArray, w_frc: Long, mp_frc: Long, mp_exp: Int, deltaInp: Long, sign: Int): Int {
+private fun genDigits(buffer: WasmCharArray, w_frc: ULong, mp_frc: ULong, mp_exp: Int, deltaInp: ULong, sign: Int): Int {
     var delta = deltaInp
     val one_exp = -mp_exp
-    val one_frc = 1L shl one_exp
-    val mask = one_frc - 1
+    val one_frc = 1uL shl one_exp
+    val mask = one_frc - 1u
 
     var wp_w_frc = mp_frc - w_frc
 
-    var p1 = (mp_frc ushr one_exp).toInt()
-    var p2 = mp_frc and mask
+    var p1 = (mp_frc shr one_exp).toInt()
+    var p2: ULong = mp_frc and mask
 
     var kappa = decimalCount32(p1.toUInt())
     var len = sign
 
     while (kappa > 0) {
         var d: Int
-        var pow10: Long
+        var pow10: ULong
         when (kappa) {
-            0 -> { d = p1 / 1000000000; p1 %= 1000000000; pow10 = 1000000000; }
-            9 -> { d = p1 /  100000000; p1 %=  100000000; pow10 = 100000000; }
-            8 -> { d = p1 /   10000000; p1 %=   10000000; pow10 = 10000000; }
-            7 -> { d = p1 /    1000000; p1 %=    1000000; pow10 = 1000000; }
-            6 -> { d = p1 /     100000; p1 %=     100000; pow10 = 100000; }
-            5 -> { d = p1 /      10000; p1 %=      10000; pow10 = 10000; }
-            4 -> { d = p1 /       1000; p1 %=       1000; pow10 = 1000; }
-            3 -> { d = p1 /        100; p1 %=        100; pow10 = 100; }
-            2 -> { d = p1 /         10; p1 %=         10; pow10 = 10; }
-            1 -> { d = p1;              p1 =           0; pow10 = 1; }
-            else -> { d = 0; pow10 = 1; }
+            0 -> { d = p1 / 1000000000; p1 %= 1000000000; pow10 = 1000000000u; }
+            9 -> { d = p1 /  100000000; p1 %=  100000000; pow10 = 100000000u; }
+            8 -> { d = p1 /   10000000; p1 %=   10000000; pow10 = 10000000u; }
+            7 -> { d = p1 /    1000000; p1 %=    1000000; pow10 = 1000000u; }
+            6 -> { d = p1 /     100000; p1 %=     100000; pow10 = 100000u; }
+            5 -> { d = p1 /      10000; p1 %=      10000; pow10 = 10000u; }
+            4 -> { d = p1 /       1000; p1 %=       1000; pow10 = 1000u; }
+            3 -> { d = p1 /        100; p1 %=        100; pow10 = 100u; }
+            2 -> { d = p1 /         10; p1 %=         10; pow10 = 10u; }
+            1 -> { d = p1;              p1 =           0; pow10 = 1u; }
+            else -> { d = 0; pow10 = 1u; }
         }
 
         if (d or len != 0)
             buffer.set(len++, digitToChar(d))
 
         --kappa
-        val tmp = (p1.toLong() shl one_exp) + p2
+        val tmp = (p1.toULong() shl one_exp) + p2
         if (tmp <= delta) {
             _K += kappa
             grisuRound(buffer, len, delta, tmp, pow10 shl one_exp, wp_w_frc)
@@ -379,14 +378,14 @@ private fun genDigits(buffer: WasmCharArray, w_frc: Long, mp_frc: Long, mp_exp: 
         }
     }
 
-    var unit = 1L
+    var unit = 1uL
     while (true) {
-        p2 *= 10
-        delta *= 10
-        unit *= 10
+        p2 *= 10u
+        delta *= 10u
+        unit *= 10u
 
-        val d = p2 ushr one_exp
-        if (d or len.toLong() != 0L)
+        val d: ULong = p2 shr one_exp
+        if (d or len.toULong() != 0uL)
             buffer.set(len++, digitToChar(d.toInt()))
 
         p2 = p2 and mask
@@ -399,7 +398,7 @@ private fun genDigits(buffer: WasmCharArray, w_frc: Long, mp_frc: Long, mp_exp: 
     }
 }
 
-private fun grisuRound(buffer: WasmCharArray, len: Int, delta: Long, restInp: Long, ten_kappa: Long, wp_w: Long) {
+private fun grisuRound(buffer: WasmCharArray, len: Int, delta: ULong, restInp: ULong, ten_kappa: ULong, wp_w: ULong) {
     var rest = restInp
     val lastp = len - 1
     var digit = buffer.get(lastp)
