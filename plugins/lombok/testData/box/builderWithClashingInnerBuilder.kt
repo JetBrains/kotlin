@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 
 // ISSUE: KT-74315
 
@@ -31,7 +30,7 @@ class Klass {
 
 fun box(): String {
     val klassBuilder: Klass.KlassBuilder = Klass.builder() // Use the generated method on the existing class
-    val class1: Klass = klassBuilder.<!UNRESOLVED_REFERENCE!>str<!>("hello").build() // Use the generated methods on the existing class
+    val class1: Klass = klassBuilder.str("hello").build() // Use the generated methods on the existing class
     klassBuilder.customMethod() // Use the existing custom method on the existing class
     if (class1.str != "hello") return "Error $class1"
 
