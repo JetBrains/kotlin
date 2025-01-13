@@ -8,24 +8,30 @@ package org.jetbrains.kotlin.gradle.targets.jvm
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
+import org.gradle.api.distribution.DistributionContainer
+import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ApplicationPlugin.APPLICATION_GROUP
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.PluginManager
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.registerArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
@@ -54,8 +60,35 @@ interface KotlinJvmBinaryDsl {
 
     /**
      * Directory to place executables in.
+     *
+     * The default value is "bin".
      */
-    val executableDir: DirectoryProperty
+    val executableDir: Property<String>
+
+    /**
+     * The specification of the contents of the distribution.
+     *
+     * Use this [CopySpec] to include extra files/resource in the application distribution:
+     * ```
+     * kotlin {
+     *    jvm {
+     *      binaries {
+     *         executable {
+     *            mainClass.set("foo.MainKt")
+     *            applicationDistribution.from("some/dir") {
+     *                it.include("*.txt")
+     *            }
+     *         }
+     *      }
+     *    }
+     *  }
+     * ```
+     *
+     * Note that the application plugin pre-configures this spec to include the contents of "src/dist",
+     * copy the application start scripts into the "bin" directory,
+     * and copy the built jar and its dependencies into the "lib" directory.
+     */
+    var applicationDistribution: CopySpec
 }
 
 @KotlinGradlePluginDsl
@@ -106,25 +139,47 @@ interface KotlinJvmBinariesDsl {
 }
 
 internal fun ObjectFactory.DefaultKotlinJvmBinariesDsl(
-    jvmCompilations: NamedDomainObjectCollection<KotlinJvmCompilation>
-) = newInstance<DefaultKotlinJvmBinariesDsl>(jvmCompilations)
+    jvmCompilations: NamedDomainObjectCollection<KotlinJvmCompilation>,
+    project: Project,
+) = newInstance<DefaultKotlinJvmBinariesDsl>(jvmCompilations, project)
 
 internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val taskContainer: TaskContainer,
+    private val pluginManager: PluginManager,
     private val jvmCompilations: NamedDomainObjectCollection<KotlinJvmCompilation>,
+    private val project: Project,
 ) : KotlinJvmBinariesDsl {
+
+    init {
+        pluginManager.apply("distribution")
+    }
+
+    private val distributionContainer = project.extensions.getByType<DistributionContainer>()
+
     override fun executable(
         compilationName: String,
         disambiguationSuffix: String,
         configure: KotlinJvmBinaryDsl.() -> Unit,
     ): TaskProvider<JavaExec> {
+        applyDistributionPluginIfMissing()
         val jvmCompilation = jvmCompilations.getByName(compilationName)
 
         val binarySpec = objectFactory.newInstance<KotlinJvmBinaryDsl>()
+        binarySpec.applicationName.convention(project.name)
+        binarySpec.executableDir.convention("bin")
+        binarySpec.applicationDistribution = project.copySpec()
         configure(binarySpec)
 
         val jarTask = jvmCompilation.jarTask
+        registerDistribution(
+            jvmCompilation.distributionName(disambiguationSuffix),
+            binarySpec,
+            jvmCompilation,
+            jarTask,
+            disambiguationSuffix,
+        )
+
         return registerJvmRunTask(
             jvmCompilation.runTaskName(disambiguationSuffix),
             jvmCompilation,
@@ -137,6 +192,10 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
     private fun KotlinJvmCompilation.runTaskName(
         disambiguationSuffix: String
     ) = "run${disambiguateName(disambiguationSuffix.capitalize()).capitalize()}"
+
+    private fun KotlinJvmCompilation.distributionName(
+        disambiguationSuffix: String
+    ) = disambiguateName(disambiguationSuffix)
 
     private fun registerJvmRunTask(
         taskName: String,
@@ -178,9 +237,9 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
                 //    module-info.class becomes unaccessible. Hence, we always use the complete
                 //    Jar now to run a module via the :run task.
                 if (jvmBinarySpec.mainModule.isPresent) {
-                    arrayOf(
-                        compilationJarTask.map { it.archiveFile },
-                        jvmCompilation.runtimeDependencyFiles,
+                    jarOnlyClasspath(
+                        jvmCompilation,
+                        compilationJarTask,
                     )
                 } else {
                     arrayOf(
@@ -192,9 +251,90 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         )
     }
 
+    private fun jarOnlyClasspath(
+        jvmCompilation: KotlinJvmCompilation,
+        compilationJarTask: TaskProvider<Jar>,
+    ): FileCollection = jvmCompilation.project.layout.files(
+        {
+            arrayOf(
+                compilationJarTask.map { it.archiveFile },
+                jvmCompilation.runtimeDependencyFiles,
+            )
+        }
+    )
+
     private fun JavaExec.configureTaskToolchain() {
         val toolchainService = project.extensions.getByType(JavaToolchainService::class.java)
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
         javaLauncher.convention(toolchainService.launcherFor(toolchain))
+    }
+
+    private fun registerDistribution(
+        distributionName: String,
+        jvmBinarySpec: KotlinJvmBinaryDsl,
+        jvmCompilation: KotlinJvmCompilation,
+        compilationJarTask: TaskProvider<Jar>,
+        disambiguationSuffix: String,
+    ) {
+        val createStartScriptsTask = registerDistributionScriptsTask(
+            distributionName,
+            jvmBinarySpec,
+            jvmCompilation,
+            compilationJarTask,
+        )
+        distributionContainer.register(distributionName) { distribution ->
+            distribution.distributionBaseName.convention(jvmBinarySpec.applicationName)
+            val distSpec = distribution.contents
+            distribution.distributionClassifier.convention(jvmCompilation.disambiguateName(disambiguationSuffix))
+
+            val libChildSpec = project.copySpec().into("lib")
+            libChildSpec.from(jvmCompilation.runtimeDependencyFiles)
+            libChildSpec.from(jvmCompilation.jarTask)
+
+            val binChildSpec = project.copySpec()
+            binChildSpec.into(jvmBinarySpec.executableDir)
+            binChildSpec.from(createStartScriptsTask)
+            if (GradleVersion.current() >= GradleVersion.version("8.3")) {
+                binChildSpec.filePermissions { it.unix("rwxr-xr-x") }
+            } else {
+                @Suppress("DEPRECATION")
+                binChildSpec.fileMode = 0b111_101_101 // rwxr-xr-x
+            }
+
+            val childSpec = project.copySpec()
+            childSpec.from(project.file("src/dist"))
+            childSpec.with(libChildSpec)
+            childSpec.with(binChildSpec)
+
+            distSpec.with(childSpec)
+            distSpec.with(jvmBinarySpec.applicationDistribution)
+        }
+    }
+
+    private fun registerDistributionScriptsTask(
+        distributionName: String,
+        jvmBinarySpec: KotlinJvmBinaryDsl,
+        jvmCompilation: KotlinJvmCompilation,
+        compilationJarTask: TaskProvider<Jar>,
+    ): TaskProvider<CreateStartScripts> {
+        return taskContainer.register("startScriptsFor${distributionName.capitalize()}", CreateStartScripts::class.java) { task ->
+            task.description = "Creates OS specific scripts to run the project/${distributionName} as a JVM application."
+
+            task.classpath = jarOnlyClasspath(jvmCompilation, compilationJarTask)
+            task.mainClass.convention(jvmBinarySpec.mainClass)
+            task.mainModule.convention(jvmBinarySpec.mainModule)
+            task.applicationName = jvmBinarySpec.applicationName.get()
+            task.outputDir = project.layout.buildDirectory.dir("${distributionName}/scripts").get().asFile
+            task.executableDir = jvmBinarySpec.executableDir.get()
+            task.defaultJvmOpts = jvmBinarySpec.applicationDefaultJvmArgs.get()
+
+            val javaPluginExtension = project.extensions.getByType(JavaPluginExtension::class.java)
+            task.modularity.inferModulePath.convention(javaPluginExtension.modularity.inferModulePath)
+        }
+    }
+
+    private fun applyDistributionPluginIfMissing() {
+        if (!pluginManager.hasPlugin("distribution"))
+            pluginManager.apply("distribution")
     }
 }

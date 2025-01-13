@@ -5912,10 +5912,12 @@ public final class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl$
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinaryDsl {
 	public abstract fun getApplicationDefaultJvmArgs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getApplicationDistribution ()Lorg/gradle/api/file/CopySpec;
 	public abstract fun getApplicationName ()Lorg/gradle/api/provider/Property;
-	public abstract fun getExecutableDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getExecutableDir ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMainClass ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMainModule ()Lorg/gradle/api/provider/Property;
+	public abstract fun setApplicationDistribution (Lorg/gradle/api/file/CopySpec;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests {
