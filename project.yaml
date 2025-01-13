@@ -131,7 +131,7 @@ modules:
 - plugins/sam-with-receiver/sam-with-receiver.cli
 #- plugins/sam-with-receiver
 - plugins/sam-with-receiver/sam-with-receiver.k1
-- plugins/pill/pill-importer
+#- plugins/pill/pill-importer
 #- plugins/pill/generate-all-tests
 - plugins/android-extensions/android-extensions-compiler
 - plugins/android-extensions/android-extensions-runtime
