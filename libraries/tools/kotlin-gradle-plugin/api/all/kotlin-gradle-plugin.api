@@ -995,6 +995,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/D
 	public abstract fun getParent ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/DiagnosticGroup;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AbiValidationUnsupportedTarget : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AbiValidationUnsupportedTarget;
+	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AgpRequirementNotMetForAndroidSourceSetLayoutV2 : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AgpRequirementNotMetForAndroidSourceSetLayoutV2;
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;

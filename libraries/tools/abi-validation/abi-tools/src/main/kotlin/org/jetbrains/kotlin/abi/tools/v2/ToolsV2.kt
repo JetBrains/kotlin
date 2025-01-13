@@ -42,11 +42,11 @@ internal object ToolsV2 : AbiToolsV2 {
     }
 
     override fun extractKlibAbi(
-        klibFile: File,
+        klib: File,
         target: KlibTarget,
         filters: AbiFilters,
     ): KlibDump {
-        val dump = KlibDumpImpl.fromKlib(klibFile, filters)
+        val dump = KlibDumpImpl.fromKlib(klib, filters)
         dump.renameSingleTarget(target)
         return dump
     }

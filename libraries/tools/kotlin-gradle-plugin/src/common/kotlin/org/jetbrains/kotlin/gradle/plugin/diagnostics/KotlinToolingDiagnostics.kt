@@ -1585,6 +1585,18 @@ object KotlinToolingDiagnostics {
                 }
         }
     }
+
+    object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
+        operator fun invoke(targetName: String): ToolingDiagnostic = build {
+            title("ABI Validation: unsupported target")
+                .description {
+                    "Target $targetName is not supported by the host compiler and a KLib ABI dump could not be directly generated for it."
+                }
+                .solution {
+                    "Build project on suitable machine"
+                }
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

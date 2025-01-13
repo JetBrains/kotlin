@@ -48,7 +48,14 @@ private class Filter(filters: AbiFilters) : AbiReadingFilter {
 
         if (declaration is AbiFunction || declaration is AbiProperty) {
             if (filtersMatcher.hasAnnotationFilters) {
-                val annotationNames = declaration.annotatedWith().map { annotation -> annotation.qualifiedName.toKotlinQualifiedName() }
+                var annotationNames = declaration.annotatedWith().names()
+
+                val backingField = (declaration as? AbiProperty)?.backingField
+                if (backingField != null) {
+                    // add field's annotations
+                    annotationNames = annotationNames + backingField.annotatedWith().names()
+                }
+
                 if (filtersMatcher.isExcludedByAnnotations(annotationNames)) return true
             }
         }
@@ -60,12 +67,14 @@ private class Filter(filters: AbiFilters) : AbiReadingFilter {
         }
 
         if (filtersMatcher.hasAnnotationFilters) {
-            val annotationNames = declaration.annotatedWith().map { annotation -> annotation.qualifiedName.toKotlinQualifiedName() }
+            val annotationNames = declaration.annotatedWith().names()
             if (filtersMatcher.isExcludedByAnnotations(annotationNames)) return true
         }
 
         return false
     }
+
+    private fun List<AbiAnnotation>.names(): List<String> = map { annotation -> annotation.qualifiedName.toKotlinQualifiedName() }
 }
 
 private fun AbiQualifiedName.toKotlinQualifiedName(): String {

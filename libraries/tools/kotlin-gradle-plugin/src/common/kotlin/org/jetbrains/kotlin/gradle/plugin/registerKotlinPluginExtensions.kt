@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.artifacts.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
@@ -63,6 +64,9 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, SetupKotlinNativeStdlibAndPlatformDependenciesImport)
         register(project, FinalizeConfigurationFusMetricAction)
 
+        if (isAbiValidationEnabled) {
+            register(project, AbiValidationSetupAction)
+        }
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)
@@ -188,6 +192,8 @@ internal fun Project.registerKotlinPluginExtensions() {
 }
 
 private val Project.isKmpProjectIsolationEnabled get() = PropertiesProvider(project).kotlinKmpProjectIsolationEnabled
+
+private val Project.isAbiValidationEnabled get() = !PropertiesProvider(project).abiValidationDisabled
 
 /* Helper functions to make configuration code above easier to read */
 

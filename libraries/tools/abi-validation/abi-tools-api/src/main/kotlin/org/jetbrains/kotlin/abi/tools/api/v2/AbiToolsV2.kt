@@ -43,12 +43,12 @@ public interface AbiToolsV2 {
     public fun loadKlibDump(dump: CharSequence): KlibDump
 
     /**
-     * Get an ABI from a KLib file with specified [target].
+     * Get an ABI from a zipped or unpacked KLib specified in [klib] with specified [target].
      *
      * To control which declarations are passed to the dump, [filters] could be used. By default, no filters will be applied.
      *
-     * @throws IllegalStateException if a KLib could not be loaded from [klibFile].
-     * @throws java.io.FileNotFoundException if [klibFile] does not exist.
+     * @throws IllegalStateException if a KLib could not be loaded from [klib].
+     * @throws java.io.FileNotFoundException if file or directory [klib] does not exist.
      */
-    public fun extractKlibAbi(klibFile: File, target: KlibTarget, filters: AbiFilters = AbiFilters.Companion.EMPTY): KlibDump
+    public fun extractKlibAbi(klib: File, target: KlibTarget, filters: AbiFilters = AbiFilters.Companion.EMPTY): KlibDump
 }
