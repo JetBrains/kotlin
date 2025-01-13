@@ -354,7 +354,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @NativeGradlePluginTests
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
-    @Disabled("[KT-66423](http://youtrack.jetbrains.com/issue/KT-66423): ignore test until source-value changes are made")
+//    @Disabled("[KT-66423](http://youtrack.jetbrains.com/issue/KT-66423): ignore test until source-value changes are made")
     fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
         nativeProject(
             "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
@@ -364,7 +364,30 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 konanDataDir = konanDirTemp,
             )
         ) {
-            testConfigurationCacheOf(":assemble")
+            val taskName = ":assemble"
+            // separate fix for provision.ok file is required
+            build(taskName, buildOptions = buildOptions) {
+                assertTasksExecuted(taskName)
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+                    assertOutputContains(
+                        "Calculating task graph as no configuration cache is available for tasks: ${taskName}"
+                    )
+                } else {
+                    assertOutputContains(
+                        "Calculating task graph as no cached configuration is available for tasks: ${taskName}"
+                    )
+                }
+
+                assertConfigurationCacheStored()
+            }
+
+            build("clean", buildOptions = buildOptions)
+
+            // Then run a build where tasks states are deserialized to check that they work correctly in this mode
+            build(taskName, buildOptions = buildOptions) {
+                assertTasksExecuted(taskName)
+                assertOutputContains("provisioned.ok' has been created.")
+            }
         }
     }
 }
