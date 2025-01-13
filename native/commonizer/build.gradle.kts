@@ -61,7 +61,7 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
-    workingDir = rootDir
+    ignoreFailures = false
 }
 
 runtimeJar()

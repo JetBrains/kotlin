@@ -307,9 +307,12 @@ fun Project.configureTests() {
         maxParallelUsages = 1
     }
 
+    val cacheableProjects = listOf<String>(
+        ":native:kotlin-klib-commonizer",
+    )
     tasks.withType<Test>().configureEach {
-        if (!plugins.hasPlugin("compiler-tests-convention")) {
-            outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
+        if (!plugins.hasPlugin("compiler-tests-convention") && project.path !in cacheableProjects) {
+            outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112 for ${project.path}") { true }
         }
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
             usesService(concurrencyLimitService)
