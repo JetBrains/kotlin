@@ -30981,9 +30981,21 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("InheritingJavaClassWithGenericAndRawClashInOverrideSignature.kt")
+      public void testInheritingJavaClassWithGenericAndRawClashInOverrideSignature() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericAndRawClashInOverrideSignature.kt");
+      }
+
+      @Test
       @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature.kt")
       public void testInheritingJavaClassWithGenericClashInOverrideSignature() {
         runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature2.kt")
+      public void testInheritingJavaClassWithGenericClashInOverrideSignature2() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature2.kt");
       }
 
       @Test
