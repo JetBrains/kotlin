@@ -3,14 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-#include "ParallelMarkConcurrentSweep.hpp"
+#include "GCImpl.hpp"
 
 #include <mutex>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "GCImpl.hpp"
+#include "GCImplTestSupport.hpp"
 #include "GlobalData.hpp"
 #include "SafePoint.hpp"
 #include "StableRef.hpp"
@@ -21,12 +21,13 @@ using namespace kotlin;
 
 namespace {
 
-template<std::size_t kMaxParallelism, bool kCooperativeMutators, std::size_t kAuxGCThreads>
+template <std::size_t kMaxParallelism, bool kCooperativeMutators, std::size_t kAuxGCThreads>
 class ParallelMarkConcurrentSweepTest {
 public:
     ParallelMarkConcurrentSweepTest() {
         if (supportedConfiguration()) {
-            mm::GlobalData::Instance().gc().impl().gc().reconfigure(kMaxParallelism, kCooperativeMutators, kAuxGCThreads);
+            gc::test_support::reconfigureGCParallelism(
+                    mm::GlobalData::Instance().gc().impl(), kMaxParallelism, kCooperativeMutators, kAuxGCThreads);
         }
     }
 
@@ -53,9 +54,7 @@ public:
     }
 
 private:
-    bool supportedConfiguration() const {
-        return !compiler::gcMarkSingleThreaded() || (!kCooperativeMutators && kAuxGCThreads == 0);
-    }
+    bool supportedConfiguration() const { return !compiler::gcMarkSingleThreaded() || (!kCooperativeMutators && kAuxGCThreads == 0); }
 };
 
 } // namespace
@@ -64,12 +63,13 @@ using ParallelismConfigs = ::testing::Types<
         ParallelMarkConcurrentSweepTest<kDefaultThreadCount * 3, false, 0>,
         ParallelMarkConcurrentSweepTest<kDefaultThreadCount * 3, true, 0>
 #if !__has_feature(thread_sanitizer) // TODO: Fix auxilary threads with tsan.
-        , ParallelMarkConcurrentSweepTest<kDefaultThreadCount * 3, false, kDefaultThreadCount>,
+        ,
+        ParallelMarkConcurrentSweepTest<kDefaultThreadCount * 3, false, kDefaultThreadCount>,
         ParallelMarkConcurrentSweepTest<kDefaultThreadCount * 3, true, kDefaultThreadCount>,
         ParallelMarkConcurrentSweepTest<kDefaultThreadCount / 2, false, kDefaultThreadCount>,
         ParallelMarkConcurrentSweepTest<kDefaultThreadCount / 2 * 3, true, kDefaultThreadCount>
 #endif
->;
+        >;
 struct NameGenerator {
     template <typename T>
     static std::string GetName(int) {

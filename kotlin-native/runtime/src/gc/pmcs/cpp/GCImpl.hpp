@@ -5,37 +5,47 @@
 
 #pragma once
 
-#include "GC.hpp"
+#include <cstddef>
 
-#include "ParallelMarkConcurrentSweep.hpp"
+#include "AllocatorImpl.hpp"
+#include "Barriers.hpp"
+#include "GC.hpp"
+#include "GCState.hpp"
+#include "GCThread.hpp"
+#include "ParallelMark.hpp"
+#include "SegregatedGCFinalizerProcessor.hpp"
+#include "ThreadData.hpp"
 
 namespace kotlin {
 namespace gc {
 
+// Stop-the-world parallel mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
 class GC::Impl : private Pinned {
 public:
-    Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
-        gc_(allocator, gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads()) {}
+    Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, size_t auxGCThreads) noexcept :
+        finalizerProcessor_(state_),
+        markDispatcher_(mutatorsCooperate),
+        mainThread_(state_, finalizerProcessor_, markDispatcher_, allocator, gcScheduler),
+        auxThreads_(markDispatcher_, auxGCThreads) {}
 
-    ParallelMarkConcurrentSweep& gc() noexcept { return gc_; }
-
-private:
-    ParallelMarkConcurrentSweep gc_;
+    GCStateHolder state_;
+    internal::SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
+    mark::ParallelMark markDispatcher_;
+    internal::MainGCThread mainThread_;
+    internal::AuxiliaryGCThreads auxThreads_;
 };
 
 class GC::ThreadData::Impl : private Pinned {
 public:
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept : gc_(gc.impl_->gc(), threadData) {}
+    Impl(GC::Impl& gc, mm::ThreadData& threadData) noexcept : markDispatcher_(gc.markDispatcher_, threadData) {}
 
-    ParallelMarkConcurrentSweep::ThreadData& gc() noexcept { return gc_; }
-
-private:
-    ParallelMarkConcurrentSweep::ThreadData gc_;
+    BarriersThreadData barriers_;
+    mark::ParallelMarkThreadData markDispatcher_;
 };
 
 namespace barriers {
 class SpecialRefReleaseGuard::Impl {};
-}
+} // namespace barriers
 
 } // namespace gc
 } // namespace kotlin

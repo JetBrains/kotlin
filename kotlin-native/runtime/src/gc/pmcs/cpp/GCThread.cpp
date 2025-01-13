@@ -1,29 +1,26 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
-#include "ParallelMarkConcurrentSweep.hpp"
+#include <cstdint>
 
-#include <optional>
-#include <string_view>
+#include "GCThread.hpp"
 
+#include "Allocator.hpp"
 #include "AllocatorImpl.hpp"
-#include "CallsChecker.hpp"
-#include "CompilerConstants.hpp"
-#include "Logging.hpp"
-#include "MarkAndSweepUtils.hpp"
-#include "Memory.h"
-#include "ThreadData.hpp"
-#include "ThreadSuspension.hpp"
+#include "Barriers.hpp"
+#include "GCScheduler.hpp"
 #include "GCState.hpp"
-#include "GCStatistics.hpp"
+#include "MarkAndSweepUtils.hpp"
+#include "ParallelMark.hpp"
+#include "SegregatedGCFinalizerProcessor.hpp"
 
 using namespace kotlin;
 
 namespace {
 
-template<typename Body>
+template <typename Body>
 UtilityThread createGCThread(const char* name, Body&& body) {
     return UtilityThread(std::string_view(name), [name, body] {
         RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " starts execution", name, konan::currentThreadId());
@@ -36,7 +33,7 @@ UtilityThread createGCThread(const char* name, Body&& body) {
 // TODO move to common
 [[maybe_unused]] inline void checkMarkCorrectness(alloc::ObjectFactoryImpl::Iterable& heap) {
     if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
-    for (auto objRef: heap) {
+    for (auto objRef : heap) {
         auto obj = objRef.GetObjHeader();
         auto& objData = objRef.ObjectData();
         if (objData.marked()) {
@@ -53,78 +50,22 @@ UtilityThread createGCThread(const char* name, Body&& body) {
 
 } // namespace
 
-void gc::ParallelMarkConcurrentSweep::ThreadData::OnSuspendForGC() noexcept {
-    CallsCheckerIgnoreGuard guard;
-
-    gc_.markDispatcher_.runOnMutator(commonThreadData());
-}
-
-bool gc::ParallelMarkConcurrentSweep::ThreadData::tryLockRootSet() {
-    bool expected = false;
-    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
-    if (locked) {
-        RuntimeLogDebug({kTagGC}, "Thread %" PRIuPTR " have exclusively acquired thread %" PRIuPTR "'s root set", konan::currentThreadId(), threadData_.threadId());
-    }
-    return locked;
-}
-
-void gc::ParallelMarkConcurrentSweep::ThreadData::publish() {
-    threadData_.Publish();
-    published_.store(true, std::memory_order_release);
-}
-
-bool gc::ParallelMarkConcurrentSweep::ThreadData::published() const {
-    return published_.load(std::memory_order_acquire);
-}
-
-void gc::ParallelMarkConcurrentSweep::ThreadData::clearMarkFlags() {
-    published_.store(false, std::memory_order_relaxed);
-    rootSetLocked_.store(false, std::memory_order_release);
-}
-
-mm::ThreadData& gc::ParallelMarkConcurrentSweep::ThreadData::commonThreadData() const {
-    return threadData_;
-}
-
-gc::ParallelMarkConcurrentSweep::ParallelMarkConcurrentSweep(
-        alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
+gc::internal::MainGCThread::MainGCThread(
+        GCStateHolder& state,
+        SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
+        mark::ParallelMark& markDispatcher,
+        alloc::Allocator& allocator,
+        gcScheduler::GCScheduler& gcScheduler) noexcept :
+    state_(state),
+    finalizerProcessor_(finalizerProcessor),
+    markDispatcher_(markDispatcher),
     allocator_(allocator),
     gcScheduler_(gcScheduler),
-    finalizerProcessor_([this](int64_t epoch) {
-        GCHandle::getByEpoch(epoch).finalizersDone();
-        state_.finalized(epoch);
-    }),
-    markDispatcher_(mutatorsCooperate),
-    mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); })) {
-    for (std::size_t i = 0; i < auxGCThreads; ++i) {
-        auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
-    }
-    RuntimeLogInfo({kTagGC}, "Parallel Mark & Concurrent Sweep GC initialized");
-}
+    thread_(createGCThread("Main GC Thread", [this] { body(); })) {}
 
-gc::ParallelMarkConcurrentSweep::~ParallelMarkConcurrentSweep() {
-    state_.shutdown();
-}
-
-void gc::ParallelMarkConcurrentSweep::StartFinalizerThreadIfNeeded() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_.StartFinalizerThreadIfNone();
-    finalizerProcessor_.WaitFinalizerThreadInitialized();
-}
-
-void gc::ParallelMarkConcurrentSweep::StopFinalizerThreadIfRunning() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_.StopFinalizerThread();
-}
-
-bool gc::ParallelMarkConcurrentSweep::FinalizersThreadIsRunning() noexcept {
-    return finalizerProcessor_.IsRunning();
-}
-
-void gc::ParallelMarkConcurrentSweep::mainGCThreadBody() {
+void gc::internal::MainGCThread::body() noexcept {
     while (true) {
-        auto epoch = state_.waitScheduled();
-        if (epoch.has_value()) {
+        if (auto epoch = state_.waitScheduled()) {
             PerformFullGC(*epoch);
         } else {
             break;
@@ -133,14 +74,7 @@ void gc::ParallelMarkConcurrentSweep::mainGCThreadBody() {
     markDispatcher_.requestShutdown();
 }
 
-void gc::ParallelMarkConcurrentSweep::auxiliaryGCThreadBody() {
-    RuntimeAssert(!compiler::gcMarkSingleThreaded(), "Should not reach here during single threaded mark");
-    while (!markDispatcher_.shutdownRequested()) {
-        markDispatcher_.runAuxiliary();
-    }
-}
-
-void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
+void gc::internal::MainGCThread::PerformFullGC(int64_t epoch) noexcept {
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto gcHandle = GCHandle::create(epoch);
@@ -211,24 +145,31 @@ void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
 
-    if (!mainThreadFinalizerProcessor_.available()) {
-        finalizerQueue.mergeIntoRegular();
-    }
     // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
     // destructors running. So, it must ensured that no locks are held by this point.
     // TODO: Consider having an always on sleeping finalizer thread.
-    finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue.regular), epoch);
-    mainThreadFinalizerProcessor_.schedule(std::move(finalizerQueue.mainThread), epoch);
+    finalizerProcessor_.schedule(std::move(finalizerQueue), epoch);
 }
 
-void gc::ParallelMarkConcurrentSweep::reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept {
-    if (compiler::gcMarkSingleThreaded()) {
-        RuntimeCheck(auxGCThreads == 0, "Auxiliary GC threads must not be created with gcMarkSingleThread");
-        return;
+gc::internal::AuxiliaryGCThreads::AuxiliaryGCThreads(mark::ParallelMark& markDispatcher, size_t count) noexcept :
+    markDispatcher_(markDispatcher) {
+    startThreads(count);
+}
+
+void gc::internal::AuxiliaryGCThreads::stopThreads() noexcept {
+    threads_.clear();
+}
+
+void gc::internal::AuxiliaryGCThreads::startThreads(size_t count) noexcept {
+    RuntimeAssert(threads_.empty(), "Auxiliary threads must have been cleared");
+    for (size_t i = 0; i < count; ++i) {
+        threads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { body(); }));
     }
-    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
-    markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
-    for (std::size_t i = 0; i < auxGCThreads; ++i) {
-        auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
+}
+
+void gc::internal::AuxiliaryGCThreads::body() noexcept {
+    RuntimeAssert(!compiler::gcMarkSingleThreaded(), "Should not reach here during single threaded mark");
+    while (!markDispatcher_.shutdownRequested()) {
+        markDispatcher_.runAuxiliary();
     }
 }

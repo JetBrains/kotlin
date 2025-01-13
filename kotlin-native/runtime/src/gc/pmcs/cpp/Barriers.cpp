@@ -95,7 +95,7 @@ void gc::EnableWeakRefBarriers(int64_t epoch) noexcept {
     weakProcessingEpoch.store(epoch, std::memory_order_relaxed);
     weakRefBarrier.store(weakRefBarrierImpl, std::memory_order_seq_cst);
     for (auto& mutator: mutators) {
-        mutator.gc().impl().gc().barriers().startMarkingNewObjects(GCHandle::getByEpoch(epoch));
+        mutator.gc().impl().barriers_.startMarkingNewObjects(GCHandle::getByEpoch(epoch));
     }
 }
 
@@ -103,7 +103,7 @@ void gc::DisableWeakRefBarriers() noexcept {
     auto mutators = mm::ThreadRegistry::Instance().LockForIter();
     weakRefBarrier.store(nullptr, std::memory_order_seq_cst);
     for (auto& mutator: mutators) {
-        mutator.gc().impl().gc().barriers().stopMarkingNewObjects();
+        mutator.gc().impl().barriers_.stopMarkingNewObjects();
     }
 }
 

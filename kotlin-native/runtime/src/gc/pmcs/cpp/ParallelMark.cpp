@@ -6,11 +6,9 @@
 #include "ParallelMark.hpp"
 
 #include "MarkAndSweepUtils.hpp"
-#include "GCStatistics.hpp"
-#include "Utils.hpp"
-
-// required to access gc thread data
 #include "GCImpl.hpp"
+#include "GCStatistics.hpp"
+#include "ThreadData.hpp"
 
 using namespace kotlin;
 
@@ -118,9 +116,7 @@ void gc::mark::ParallelMark::runMainInSTW() {
 
         pacer_.begin(MarkPacer::Phase::kRootSet);
         completeMutatorsRootSet(mainWorker);
-        spinWait([this] {
-            return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().published(); });
-        });
+        spinWait([this] { return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().markDispatcher_.published(); }); });
         // global root set must be collected after all the mutator's global data have been published
         collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
 
@@ -195,7 +191,7 @@ void gc::mark::ParallelMark::completeMutatorsRootSet(MarkTraits::MarkQueue& mark
 }
 
 void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkTraits::MarkQueue& markQueue) {
-    auto& gcData = thread.gc().impl().gc();
+    auto& gcData = thread.gc().impl().markDispatcher_;
     if (!gcData.tryLockRootSet()) return;
 
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %" PRIuPTR " for thread %" PRIuPTR,
@@ -225,11 +221,43 @@ std::optional<gc::mark::ParallelMark::ParallelProcessor::Worker> gc::mark::Paral
 
 void gc::mark::ParallelMark::resetMutatorFlags() {
     for (auto& mut: *lockedMutatorsList_) {
-        auto& gcData = mut.gc().impl().gc();
+        auto& gcData = mut.gc().impl().markDispatcher_;
         if (!compiler::gcMarkSingleThreaded()) {
             // single threaded mark do not use this flag
             RuntimeAssert(gcData.published(), "Must have been published during mark");
         }
         gcData.clearMarkFlags();
     }
+}
+
+gc::mark::ParallelMarkThreadData::ParallelMarkThreadData(gc::mark::ParallelMark& markDispatcher, mm::ThreadData& threadData) noexcept :
+    markDispatcher_(markDispatcher), threadData_(threadData) {}
+
+void gc::mark::ParallelMarkThreadData::onSuspendForGC() noexcept {
+    markDispatcher_.runOnMutator(threadData_);
+}
+
+bool gc::mark::ParallelMarkThreadData::tryLockRootSet() noexcept {
+    bool expected = false;
+    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
+    if (locked) {
+        RuntimeLogDebug(
+                {kTagGC}, "Thread %" PRIuPTR " have exclusively acquired thread %" PRIuPTR "'s root set", konan::currentThreadId(),
+                threadData_.threadId());
+    }
+    return locked;
+}
+
+void gc::mark::ParallelMarkThreadData::publish() noexcept {
+    threadData_.Publish();
+    published_.store(true, std::memory_order_release);
+}
+
+bool gc::mark::ParallelMarkThreadData::published() const noexcept {
+    return published_.load(std::memory_order_acquire);
+}
+
+void gc::mark::ParallelMarkThreadData::clearMarkFlags() noexcept {
+    published_.store(false, std::memory_order_relaxed);
+    rootSetLocked_.store(false, std::memory_order_release);
 }
