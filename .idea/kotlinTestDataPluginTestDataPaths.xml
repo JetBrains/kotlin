@@ -281,7 +281,7 @@
             </array>
           </value>
         </entry>
-        <entry key="Tiered.*Jvm.*">
+        <entry key="Phased.*Jvm.*">
           <value>
             <array>
               <option value="FIR" />
