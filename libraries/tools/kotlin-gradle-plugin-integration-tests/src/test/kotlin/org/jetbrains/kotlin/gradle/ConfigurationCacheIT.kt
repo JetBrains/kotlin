@@ -95,7 +95,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_11)
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
             val commonizeNativeDistributionTask = ":lib:commonizeNativeDistribution"
@@ -360,10 +359,9 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         nativeProject(
             "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-                    version = TestVersions.Kotlin.STABLE_RELEASE,
-                    distributionDownloadFromMaven = true,
+                    version = TestVersions.Kotlin.CURRENT,
                 ),
-                konanDataDir = konanDirTemp
+                konanDataDir = konanDirTemp,
             )
         ) {
             testConfigurationCacheOf(":assemble")
