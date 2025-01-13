@@ -5,7 +5,9 @@ product:
 repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
-  - mavenCentral
+  - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
+  - https://www.jetbrains.com/intellij-repository/releases
+
 
 test-dependencies:
     - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
@@ -43,7 +45,7 @@ dependencies:
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
-  - cli-base
+  - ./cli-base
   - ../ir/backend.jvm/entrypoint
   - ../backend
   - ../backend-common
@@ -71,7 +73,7 @@ dependencies:
   - ../ir/backend.jvm
   - ../light-classes
   - ../ir/backend.common
-  - cli-common
+  - ./cli-common
   - ../javac-wrapper
   - ../frontend.java
   - ../frontend/cfg

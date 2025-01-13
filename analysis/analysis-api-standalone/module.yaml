@@ -5,7 +5,9 @@ product:
 repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
-  - mavenCentral
+  - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
+  - https://www.jetbrains.com/intellij-repository/releases
+
 
 test-dependencies:
     - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
@@ -48,7 +50,7 @@ dependencies:
   - org.jline:jline:3.24.1
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - ../analysis-api-fir
-  - analysis-api-standalone-base
+  - ./analysis-api-standalone-base
   - ../analysis-api
   - ../analysis-api-platform-interface
   - ../low-level-api-fir
@@ -56,7 +58,7 @@ dependencies:
   - ../decompiled/light-classes-for-decompiled
   - ../../dependencies/intellij-core
   - ../../compiler/psi
-  - analysis-api-fir-standalone-base
+  - ./analysis-api-fir-standalone-base
   - ../analysis-api-impl-base
   - ../../compiler/fir/fir-entrypoint
   - ../../compiler/fir/checkers/checkers.jvm

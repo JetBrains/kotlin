@@ -5,7 +5,9 @@ product:
 repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
-  - mavenCentral
+  - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
+  - https://www.jetbrains.com/intellij-repository/releases
+  
 
 test-dependencies:
     - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663

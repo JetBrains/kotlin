@@ -5,7 +5,9 @@ product:
 repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
-  - mavenCentral
+  - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
+  - https://www.jetbrains.com/intellij-repository/releases
+
 
 test-dependencies:
     - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
@@ -39,9 +41,21 @@ dependencies:
   - org.codehaus.woodstox:stax2-api:4.2
   - org.jetbrains.intellij.deps:trove4j:1.0.20221201
   - ../core/util.runtime
-
-module:
-  layout: gradle-jvm
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - ../wasm/wasm.ir
+  - ../compiler/compiler.version
+  - ../compiler/util
+  - ../compiler/container
+  - ../compiler/config
+  - ../libraries/tools/kotlin-annotations-jvm
+  - ../core/compiler.common
+  - ../core/metadata
+  - ../core/deserialization.common
+  - ../compiler/frontend.common
+  - ../core/descriptors
+  - ../core/deserialization
+  - ../compiler/ir/ir.tree
 
 settings:
   kotlin:

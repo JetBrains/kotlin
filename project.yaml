@@ -160,7 +160,7 @@ modules:
 #- wasm/wasm.tests
 - wasm/wasm.ir
 - wasm/wasm.frontend
-- jps/jps-plugin
+#- jps/jps-plugin
 - jps/jps-platform-api-signatures
 - jps/jps-common
 - dependencies/intellij-core
