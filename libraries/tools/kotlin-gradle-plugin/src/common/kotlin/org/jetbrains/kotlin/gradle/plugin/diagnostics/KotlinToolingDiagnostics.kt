@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SU
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroups
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
@@ -1582,6 +1583,18 @@ object KotlinToolingDiagnostics {
                 .solution {
                     "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT}' from your " +
                             "Gradle properties."
+                }
+        }
+    }
+
+    object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Experimental) {
+        operator fun invoke(targetName: String): ToolingDiagnostic = build {
+            title("ABI Validation: unsupported target")
+                .description {
+                    "Target $targetName is not supported by the host compiler and a KLib ABI dump could not be directly generated for it."
+                }
+                .solution {
+                    "Build project on suitable machine"
                 }
         }
     }

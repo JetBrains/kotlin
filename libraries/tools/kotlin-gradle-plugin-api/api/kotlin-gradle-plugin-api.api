@@ -696,6 +696,90 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion$Companion {
 	public final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec {
+	public abstract fun getAnnotatedWith ()Lorg/gradle/api/provider/SetProperty;
+	public abstract fun getClasses ()Lorg/gradle/api/provider/SetProperty;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec {
+	public abstract fun excluded (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun excluded (Lorg/gradle/api/Action;)V
+	public abstract fun getExcluded ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec;
+	public abstract fun getIncluded ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec;
+	public abstract fun included (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun included (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec$DefaultImpls {
+	public static fun excluded (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lkotlin/jvm/functions/Function1;)V
+	public static fun excluded (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lorg/gradle/api/Action;)V
+	public static fun included (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lkotlin/jvm/functions/Function1;)V
+	public static fun included (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
+	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationKlibKindExtension {
+	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeepUnsupportedTargets ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension {
+	public abstract fun getLegacyCheckTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getLegacyDumpTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getLegacyUpdateTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getReferenceDumpDir ()Lorg/gradle/api/file/DirectoryProperty;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec {
+	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension;Lorg/gradle/api/Action;)V
+	public static fun klib (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
+	public abstract fun getKlib ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationKlibKindExtension;
+	public abstract fun klib (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec;Lorg/gradle/api/Action;)V
+	public static fun klib (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec : org/gradle/api/Named {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$Companion;
+	public static final field MAIN_VARIANT_NAME Ljava/lang/String;
+	public abstract fun filters (Lorg/gradle/api/Action;)V
+	public abstract fun getFilters ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;
+	public abstract fun getLegacyDump ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;
+	public abstract fun legacyDump (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$Companion {
+	public static final field MAIN_VARIANT_NAME Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$DefaultImpls {
+	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec;Lorg/gradle/api/Action;)V
+	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/abi/ExperimentalAbiValidation : java/lang/annotation/Annotation {
+}
+
 public final class org/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode : java/lang/Enum {
 	public static final field ERROR Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
 	public static final field IGNORE Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
@@ -1604,6 +1688,15 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/UsesKotlinJava
 
 public final class org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain$DefaultImpls {
 	public static fun getKotlinJavaToolchain (Lorg/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLegacyAbiCheckTask : org/gradle/api/Task {
+	public abstract fun getActualDir ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getReferenceDir ()Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLegacyAbiDumpTask : org/gradle/api/Task {
+	public abstract fun getDumpDir ()Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/project/model/LanguageSettings {
