@@ -1721,6 +1721,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MultipleContextLists::class
     }
 
+    interface NamedContextParameterInFunctionType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NamedContextParameterInFunctionType::class
+    }
+
     interface RecursionInImplicitTypes : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RecursionInImplicitTypes::class
     }

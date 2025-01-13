@@ -378,7 +378,11 @@ class TypeResolver(
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
                 val contextReceiverList = type.contextReceiverList
+
                 val contextReceiversTypes = if (contextReceiverList != null) {
+                    if (contextReceiverList.contextParameters().isNotEmpty()) {
+                        c.trace.report(CONTEXT_PARAMETERS_UNSUPPORTED.on(contextReceiverList))
+                    }
                     checkContextReceiversAreEnabled(c.trace, languageVersionSettings, contextReceiverList)
                     val types = contextReceiverList.typeReferences().map { typeRef ->
                         resolveType(c.noBareTypes(), typeRef)

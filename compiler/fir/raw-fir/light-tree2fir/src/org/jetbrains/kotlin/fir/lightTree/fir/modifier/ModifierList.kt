@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
-open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
+open class ModifierList(var modifiers: Long = ModifierFlag.NONE.value) {
     val annotations: MutableList<LighterASTNode> = mutableListOf()
     var contextList: LighterASTNode? = null
 

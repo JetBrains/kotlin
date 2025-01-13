@@ -7393,6 +7393,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("functionTypeWithNamedContextParametersEnabled.kt")
+      public void testFunctionTypeWithNamedContextParametersEnabled() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/functionTypeWithNamedContextParametersEnabled.kt");
+      }
+
+      @Test
+      @TestMetadata("functionTypeWithNamedContextReceiversEnabled.kt")
+      public void testFunctionTypeWithNamedContextReceiversEnabled() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/functionTypeWithNamedContextReceiversEnabled.kt");
+      }
+
+      @Test
       @TestMetadata("invoke.kt")
       public void testInvoke() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/invoke.kt");

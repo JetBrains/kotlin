@@ -40,6 +40,10 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
                 withFirEntry("fir", typeRef)
             }
 
+        source.forEachChildOfType(valueParameterElementSet, depth = 1) {
+            reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE, context)
+        }
+
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             if (checkSubTypes(typeRef.coneType.contextParameterTypes(context.session), context)) {
                 reporter.reportOn(
@@ -58,6 +62,8 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
             )
         }
     }
+
+    private val valueParameterElementSet = setOf(KtStubElementTypes.VALUE_PARAMETER)
 
     private fun KtSourceElement.findContextReceiverListSource(): KtSourceElement? {
         fun PsiElement.findContextReceiverListSource(): KtPsiSourceElement? {
