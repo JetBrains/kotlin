@@ -57,6 +57,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("lazyResolve", pattern = TestGeneratorUtil.KT)
         }
 
+        testClass<AbstractFirReplSnippetResolveTest> {
+            model("repl", pattern = TestGeneratorUtil.KTS, testMethod = "runTest")
+        }
+
         testClass<AbstractFirScriptLazyDeclarationResolveTest> {
             model("lazyResolve", pattern = TestGeneratorUtil.KTS)
         }

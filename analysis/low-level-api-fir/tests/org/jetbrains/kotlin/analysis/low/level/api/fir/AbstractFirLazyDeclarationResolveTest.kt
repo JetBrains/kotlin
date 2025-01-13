@@ -66,6 +66,10 @@ abstract class AbstractFirScriptLazyDeclarationResolveTest : AbstractFirLazyDecl
     override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }
 
+abstract class AbstractFirReplSnippetResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+}
+
 abstract class AbstractFirCustomScriptDefinitionLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirCustomScriptDefinitionTestConfigurator(
         analyseInDependentSession = false,
