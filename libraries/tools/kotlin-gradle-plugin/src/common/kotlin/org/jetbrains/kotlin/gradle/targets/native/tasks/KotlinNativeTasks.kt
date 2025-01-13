@@ -339,17 +339,6 @@ internal constructor(
         else "${project.name}_${compilation.compilationName}"
     }
 
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val nativeDistributionDependencies = project.provider {
-        when (val compilation = compilation) {
-            is KotlinCompilationInfo.TCS ->
-                @OptIn(UnsafeApi::class)
-                inferCommonizerTarget(compilation.compilation)
-                    ?.let { compilation.project.getNativeDistributionDependencies(it).exclude(originalPlatformLibraries()) }
-        }
-    }
-
     @Deprecated(
         message = "Please use 'compilerOptions.moduleName' to configure",
         replaceWith = ReplaceWith("compilerOptions.moduleName.get()")
@@ -526,7 +515,7 @@ internal constructor(
             args.libraries = runSafe {
                 //filterKlibsPassedToCompiler call exists on files
                 val filteredLibraries = libraries.exclude(originalPlatformLibraries()).files.filterKlibsPassedToCompiler().toMutableList()
-                nativeDistributionDependencies.orNull?.files?.also { filteredLibraries.addAll(it) }
+//                nativeDistributionDependencies.orNull?.files?.also { filteredLibraries.addAll(it) }
                 filteredLibraries.toPathsArray()
             }
             args.friendModules = runSafe {
