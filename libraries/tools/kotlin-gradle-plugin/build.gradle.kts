@@ -28,7 +28,8 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
-                "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl"
+                "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
+                "org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation",
             )
         )
     }
@@ -159,6 +160,8 @@ dependencies {
 
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
+
+    commonImplementation(project(":libraries:tools:abi-validation:abi-tools-api"))
 
     commonRuntimeOnly(project(":kotlin-compiler-runner")) { // TODO: consider removing in KT-70247
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
