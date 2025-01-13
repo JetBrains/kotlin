@@ -6,10 +6,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
@@ -44,7 +43,9 @@ interface TypeParameters {
 }
 
 object EmptyTypeParameters : TypeParameters {
-    override fun get(id: Int): Name = throw IllegalStateException("Unknown type parameter with id = $id")
+    override fun get(id: Int): Name {
+        return Name.identifier("`Unable to load type parameter $id`")
+    }
 }
 
 class TypeParametersImpl(
