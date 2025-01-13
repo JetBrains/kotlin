@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.commonizer.cli.Task.Category
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    println("----------------------CommonizerCLI---------------")
+    args.forEach { println(it) }
+    println("----------------------")
     val tasks = parseTasksFromCommandLineArguments(args)
     executeTasks(tasks)
 }
