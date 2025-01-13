@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -94,7 +94,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, name)
             arguments[1] = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, ignored)
 
-            val refType = IrSimpleTypeImpl(context.symbols.functionN(0), false, emptyList(), emptyList())
+            val refType = context.symbols.functionN(0).typeWith(function.returnType)
             arguments[2] = JsIrBuilder.buildFunctionExpression(refType, function)
         }
 
@@ -225,7 +225,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 )
             }
 
-            val refType = IrSimpleTypeImpl(context.symbols.functionN(0), false, emptyList(), emptyList())
+            val refType = context.symbols.functionN(0).typeWith(afterFunction.returnType)
             val finallyLambda = JsIrBuilder.buildFunctionExpression(refType, afterFunction)
             val finally = promiseSymbol.owner.declarations
                 .findIsInstanceAnd<IrSimpleFunction> { it.name.asString() == "finally" }!!
