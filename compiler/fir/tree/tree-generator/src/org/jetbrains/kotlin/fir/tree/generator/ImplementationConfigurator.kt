@@ -300,7 +300,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
             defaultNull(
                 "receiverParameter",
-                "initializer",
                 "delegate",
                 "getter", "setter",
                 withGetter = true

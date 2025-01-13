@@ -194,7 +194,7 @@ class FirReceiverParameterSymbol : FirBasedSymbol<FirReceiverParameter>(), FirTh
 
 class FirErrorPropertySymbol(
     val diagnostic: ConeDiagnostic
-) : FirVariableSymbol<FirErrorProperty>(CallableId(FqName.ROOT, NAME)), FirErrorCallableSymbol<FirProperty> {
+) : FirPropertySymbol(CallableId(FqName.ROOT, NAME)), FirErrorCallableSymbol<FirProperty> {
     companion object {
         val NAME: Name = Name.special("<error property>")
     }

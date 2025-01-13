@@ -196,7 +196,7 @@ internal class LLFirImplicitBodyTargetResolver(
                 }
             }
 
-            is FirRegularClass, is FirTypeAlias, is FirFile, is FirCodeFragment, is FirAnonymousInitializer, is FirDanglingModifierList, is FirEnumEntry, is FirErrorProperty, is FirScript -> {
+            is FirRegularClass, is FirTypeAlias, is FirFile, is FirCodeFragment, is FirAnonymousInitializer, is FirDanglingModifierList, is FirEnumEntry, is FirScript -> {
                 // No implicit bodies here
             }
 

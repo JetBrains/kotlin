@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -73,6 +74,10 @@ internal fun checkProperty(
     reporter: DiagnosticReporter,
     reachable: Boolean,
 ) {
+    if (property is FirErrorProperty) {
+        // We need to report diagnostics on a KtProperty, but FirErrorProperty may be backed by a KtDestructuringDeclaration.
+        return
+    }
     val source = property.source ?: return
     if (source.kind is KtFakeSourceElementKind) return
     // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.

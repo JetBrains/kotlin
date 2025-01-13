@@ -142,7 +142,6 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
         is FirField,
         is FirConstructor,
         is FirEnumEntry,
-        is FirErrorProperty,
             -> {
             // We shouldn't try to build a designation path for such fake declarations as they
             // do not depend on outer classes during resolution
