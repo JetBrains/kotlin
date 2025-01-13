@@ -23,6 +23,7 @@ class UuidTest {
     private val uuidStringNil = "00000000-0000-0000-0000-000000000000"
     private val uuidHexStringNil = "00000000000000000000000000000000"
 
+    private val uuidMax = Uuid.fromLongs(-1, -1)
     private val uuidStringMax = "ffffffff-ffff-ffff-ffff-ffffffffffff"
     private val uuidHexStringMax = "ffffffffffffffffffffffffffffffff"
 
@@ -140,150 +141,78 @@ class UuidTest {
 
     @Test
     fun parse() {
-        // lower case
-        assertEquals(uuidString, Uuid.parse(uuidString).toString())
-        assertSame(Uuid.NIL, Uuid.parse(uuidStringNil))
-        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax).toString())
+        fun test(hexDash: String? = null, hex: String? = null, check: (parse: () -> Uuid) -> Unit) {
+            require(hexDash != null || hex != null)
 
-        // upper case
-        assertEquals(uuidString, Uuid.parse(uuidString.uppercase()).toString())
-        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax.uppercase()).toString())
-
-        // mixed case
-        assertEquals(uuidString, Uuid.parse(uuidString.mixedcase()).toString())
-        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax.mixedcase()).toString())
-
-        // Illegal String format
-        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidHexString) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parse("$uuidString-") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parse("-$uuidString") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parse("${uuidString}0") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parse("0${uuidString}") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidString.replace("d", "g")) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidString.drop(1)) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidString.dropLast(1)) }
-
-        for (i in uuidString.indices) {
-            if (uuidString[i] == '-') {
-                assertFailsWith<IllegalArgumentException> {
-                    Uuid.parse(uuidString.substring(0..<i) + "+" + uuidString.substring(i + 1))
-                }.also { exception ->
-                    assertEquals("Expected '-' (hyphen) at index $i, but was '+'", exception.message)
-                }
-
-                assertFailsWith<IllegalArgumentException> {
-                    Uuid.parse(uuidString.substring(0..<i) + "0" + uuidString.substring(i + 1))
-                }.also { exception ->
-                    assertEquals("Expected '-' (hyphen) at index $i, but was '0'", exception.message)
-                }
+            if (hexDash != null) {
+                check { Uuid.parseHexDash(hexDash) }
+                check { Uuid.parse(hexDash) }
+            }
+            if (hex != null) {
+                check { Uuid.parseHex(hex) }
+                check { Uuid.parse(hex) }
             }
         }
 
-        // Truncating the illegal String
-        val longString = uuidString.repeat(2).take(64)
-        assertFailsWith<IllegalArgumentException> {
-            Uuid.parse(longString)
-        }.also { exception ->
-            assertContains(exception.message!!, "but was \"$longString\" of length 64")
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Uuid.parse(longString + "0")
-        }.also { exception ->
-            assertContains(exception.message!!, "but was \"$longString...\" of length 65")
-        }
-    }
-
-    @Test
-    fun parseHexDash() {
         // lower case
-        assertEquals(uuidString, Uuid.parseHexDash(uuidString).toString())
-        assertSame(Uuid.NIL, Uuid.parseHexDash(uuidStringNil))
-        assertEquals(uuidStringMax, Uuid.parseHexDash(uuidStringMax).toString())
+        test(uuidString, uuidHexString) { assertEquals(uuid, it()) }
+        test(uuidStringNil, uuidHexStringNil) { assertSame(Uuid.NIL, it()) }
+        test(uuidStringMax, uuidHexStringMax) { assertEquals(uuidMax, it()) }
 
         // upper case
-        assertEquals(uuidString, Uuid.parseHexDash(uuidString.uppercase()).toString())
-        assertEquals(uuidStringMax, Uuid.parseHexDash(uuidStringMax.uppercase()).toString())
+        test(uuidString.uppercase(), uuidHexString.uppercase()) { assertEquals(uuid, it()) }
+        test(uuidStringMax.uppercase(), uuidHexStringMax.uppercase()) { assertEquals(uuidMax, it()) }
 
         // mixed case
-        assertEquals(uuidString, Uuid.parseHexDash(uuidString.mixedcase()).toString())
-        assertEquals(uuidStringMax, Uuid.parseHexDash(uuidStringMax.mixedcase()).toString())
+        test(uuidString.mixedcase(), uuidHexString.mixedcase()) { assertEquals(uuid, it()) }
+        test(uuidStringMax.mixedcase(), uuidHexStringMax.mixedcase()) { assertEquals(uuidMax, it()) }
 
         // Illegal String format
         assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidHexString) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("$uuidString-") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("-$uuidString") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("${uuidString}0") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash("0${uuidString}") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidString.replace("d", "g")) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidString.drop(1)) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidString.dropLast(1)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidString) }
+        test("$uuidString-", "$uuidHexString-") { assertFailsWith<IllegalArgumentException> { it() } }
+        test("-$uuidString", "-$uuidHexString") { assertFailsWith<IllegalArgumentException> { it() } }
+        test("${uuidString}0", "${uuidHexString}0") { assertFailsWith<IllegalArgumentException> { it() } }
+        test("0${uuidString}", "0${uuidHexString}") { assertFailsWith<IllegalArgumentException> { it() } }
+        test(uuidString.replace("d", "g"), uuidHexString.replace("d", "g")) { assertFailsWith<IllegalArgumentException> { it() } }
+        test(uuidString.drop(1), uuidHexString.drop(1)) { assertFailsWith<IllegalArgumentException> { it() } }
+        test(uuidString.dropLast(1), uuidHexString.dropLast(1)) { assertFailsWith<IllegalArgumentException> { it() } }
 
         for (i in uuidString.indices) {
             if (uuidString[i] == '-') {
-                assertFailsWith<IllegalArgumentException> {
-                    Uuid.parseHexDash(uuidString.substring(0..<i) + "+" + uuidString.substring(i + 1))
-                }.also { exception ->
-                    assertEquals("Expected '-' (hyphen) at index $i, but was '+'", exception.message)
+                test(hexDash = uuidString.substring(0..<i) + "+" + uuidString.substring(i + 1)) {
+                    assertFailsWith<IllegalArgumentException> {
+                        it()
+                    }.also { exception ->
+                        assertEquals("Expected '-' (hyphen) at index $i, but was '+'", exception.message)
+                    }
                 }
 
-                assertFailsWith<IllegalArgumentException> {
-                    Uuid.parseHexDash(uuidString.substring(0..<i) + "0" + uuidString.substring(i + 1))
-                }.also { exception ->
-                    assertEquals("Expected '-' (hyphen) at index $i, but was '0'", exception.message)
+                test(hexDash = uuidString.substring(0..<i) + "0" + uuidString.substring(i + 1)) {
+                    assertFailsWith<IllegalArgumentException> {
+                        it()
+                    }.also { exception ->
+                        assertEquals("Expected '-' (hyphen) at index $i, but was '0'", exception.message)
+                    }
                 }
             }
         }
 
         // Truncating the illegal String
-        val longString = uuidString.repeat(2).take(64)
-        assertFailsWith<IllegalArgumentException> {
-            Uuid.parseHexDash(longString)
-        }.also { exception ->
-            assertContains(exception.message!!, "but was \"$longString\" of length 64")
+        val longString = "x".repeat(64)
+        test(longString, longString) {
+            assertFailsWith<IllegalArgumentException> {
+                it()
+            }.also { exception ->
+                assertContains(exception.message!!, "but was \"$longString\" of length 64")
+            }
         }
-        assertFailsWith<IllegalArgumentException> {
-            Uuid.parseHexDash(longString + "0")
-        }.also { exception ->
-            assertContains(exception.message!!, "but was \"$longString...\" of length 65")
-        }
-    }
-
-    @Test
-    fun parseHex() {
-        // lower case
-        assertEquals(uuidString, Uuid.parseHex(uuidHexString).toString())
-        assertSame(Uuid.NIL, Uuid.parseHex(uuidHexStringNil))
-        assertEquals(uuidStringMax, Uuid.parseHex(uuidHexStringMax).toString())
-
-        // upper case
-        assertEquals(uuidString, Uuid.parseHex(uuidHexString.uppercase()).toString())
-        assertEquals(uuidStringMax, Uuid.parseHex(uuidHexStringMax.uppercase()).toString())
-
-        // mixed case
-        assertEquals(uuidString, Uuid.parseHex(uuidHexString.mixedcase()).toString())
-        assertEquals(uuidStringMax, Uuid.parseHex(uuidHexStringMax.mixedcase()).toString())
-
-        // Illegal String format
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidString) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("$uuidHexString-") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("-$uuidHexString") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("${uuidHexString}0") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("0${uuidHexString}") }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.replace("d", "g")) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.drop(1)) }
-        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.dropLast(1)) }
-
-        // Truncating the illegal String
-        val longString = uuidHexString.repeat(2) // length = 64
-        assertFailsWith<IllegalArgumentException> {
-            Uuid.parseHex(longString)
-        }.also { exception ->
-            assertContains(exception.message!!, "but was \"$longString\" of length 64")
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Uuid.parseHex(longString + "0")
-        }.also { exception ->
-            assertContains(exception.message!!, "but was \"$longString...\" of length 65")
+        test(longString + "0", longString + "0") {
+            assertFailsWith<IllegalArgumentException> {
+                it()
+            }.also { exception ->
+                assertContains(exception.message!!, "but was \"$longString...\" of length 65")
+            }
         }
     }
 

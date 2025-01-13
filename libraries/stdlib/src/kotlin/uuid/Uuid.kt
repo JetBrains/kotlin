@@ -362,28 +362,36 @@ public class Uuid private constructor(
         }
 
         /**
-         * Parses a uuid from the standard string representation as described in [Uuid.toString].
+         * Parses a uuid from one of the supported string representations.
          *
-         * This function is case-insensitive, and for a valid [uuidString], the following property holds:
-         * ```kotlin
-         * val uuid = Uuid.parse(uuidString)
-         * assertEquals(uuid.toString(), uuidString.lowercase())
-         * ```
+         * This function supports parsing the standard hex-and-dash and the hexadecimal string representations.
+         * For details about the hex-and-dash format, refer to [toHexDashString].
+         * If parsing only the hex-and-dash format is desired, use [parseHexDash] instead.
+         * For details about the hexadecimal format, refer to [toHexString].
+         * If parsing only the hexadecimal format is desired, use [parseHex] instead.
          *
-         * The standard textual representation of uuids is specified by
-         * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
+         * Note that this function is case-insensitive,
+         * meaning both lowercase and uppercase hexadecimal digits are considered valid.
+         * Additionally, support for more uuid formats may be introduced in the future.
+         * Therefore, users should not rely on the rejection of formats not currently supported.
          *
-         * @param uuidString A string in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-         *   where each 'x' is a hexadecimal digit, either lowercase or uppercase.
-         * @throws IllegalArgumentException If the [uuidString] is not a 36-character string
-         *   in the standard uuid format.
+         * @param uuidString A string in one of the supported uuid formats.
+         * @throws IllegalArgumentException If the [uuidString] is not in a supported uuid format.
          * @return A uuid equivalent to the specified uuid string.
          *
-         * @see Uuid.toString
+         * @see Uuid.parseHexDash
+         * @see Uuid.parseHex
          * @sample samples.uuid.Uuids.parse
          */
         public fun parse(uuidString: String): Uuid {
-            return parseHexDash(uuidString)
+            return when (uuidString.length) {
+                36 -> uuidParseHexDash(uuidString)
+                32 -> uuidParseHex(uuidString)
+                else -> throw IllegalArgumentException(
+                    "Expected either a 36-char string in the standard hex-and-dash UUID format or a 32-char hexadecimal string, " +
+                            "but was \"${uuidString.truncateForErrorMessage(64)}\" of length ${uuidString.length}"
+                )
+            }
         }
 
         /**

@@ -25,7 +25,7 @@ class Uuids {
     @Sample
     fun toJavaUuid() {
         val hexString = "550e8400e29b41d4a716446655440000"
-        val kotlinUuid = Uuid.parseHex(hexString)
+        val kotlinUuid = Uuid.parse(hexString)
         val javaUuid = kotlinUuid.toJavaUuid()
 
         assertPrints(javaUuid, "550e8400-e29b-41d4-a716-446655440000")
@@ -164,8 +164,13 @@ class Uuids {
 
     @Sample
     fun parse() {
-        val uuid = Uuid.parse("550E8400-e29b-41d4-A716-446655440000") // case insensitive
-        assertPrints(uuid, "550e8400-e29b-41d4-a716-446655440000")
+        // Parsing is case-insensitive
+        val uuid1 = Uuid.parse("550E8400-e29b-41d4-A716-446655440000") // hex-and-dash
+        val uuid2 = Uuid.parse("550e8400E29b41D4a716446655440000") // hexadecimal
+
+        assertTrue(uuid1 == uuid2)
+        assertPrints(uuid1, "550e8400-e29b-41d4-a716-446655440000")
+        assertPrints(uuid2, "550e8400-e29b-41d4-a716-446655440000")
     }
 
     @Sample
