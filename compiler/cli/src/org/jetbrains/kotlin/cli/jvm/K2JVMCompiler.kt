@@ -69,7 +69,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        configuration.phaseConfig = createPhaseConfig(arguments).also {
+        configuration.phaseConfig = createPhaseConfig(arguments, jvmPhases).also {
             if (arguments.listPhases) it.list(jvmPhases)
         }
 

@@ -62,7 +62,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         configuration.setupJvmSpecificArguments(arguments)
         configuration.setupIncrementalCompilationServices(arguments, services)
 
-        configuration.phaseConfig = createPhaseConfig(arguments).also {
+        configuration.phaseConfig = createPhaseConfig(arguments, jvmPhases).also {
             if (arguments.listPhases) it.list(jvmPhases)
         }
         if (!configuration.configureJdkHome(arguments)) return

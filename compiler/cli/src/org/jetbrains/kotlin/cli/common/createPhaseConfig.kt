@@ -10,16 +10,18 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 fun createPhaseConfig(
-    arguments: CommonCompilerArguments
+    arguments: CommonCompilerArguments,
+    phasesToExecute: CompilerPhase<*, *, *>? = null,
 ): PhaseConfig {
     val toDumpBoth = createPhaseSetFromArguments(arguments.phasesToDump)
     val toValidateBoth = createPhaseSetFromArguments(arguments.phasesToValidate)
 
+    val (additionalBefore, additionalAfter) = getCornerPhasesToDump(arguments, phasesToExecute)
     return PhaseConfig(
         createPhaseSetFromArguments(arguments.disablePhases),
         createPhaseSetFromArguments(arguments.verbosePhases),
-        createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth,
-        createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth,
+        createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth + additionalBefore,
+        createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth + additionalAfter,
         createPhaseSetFromArguments(arguments.phasesToValidateBefore) + toValidateBoth,
         createPhaseSetFromArguments(arguments.phasesToValidateAfter) + toValidateBoth,
         arguments.dumpDirectory,
@@ -28,6 +30,17 @@ fun createPhaseConfig(
         arguments.checkPhaseConditions,
         arguments.checkStickyPhaseConditions
     )
+}
+
+private fun getCornerPhasesToDump(
+    arguments: CommonCompilerArguments,
+    phasesToExecute: CompilerPhase<*, *, *>? = null,
+): Pair<PhaseSet, PhaseSet> {
+    if (phasesToExecute != null && arguments.phasesToDump?.contains("IrLowering") == true) {
+        val (firstPhase, lastPhase) = phasesToExecute.getNamedSubphases().let { it.first().second.name to it.last().second.name }
+        return PhaseSet.Enum(setOf(firstPhase)) to PhaseSet.Enum(setOf(lastPhase))
+    }
+    return PhaseSet.Empty to PhaseSet.Empty
 }
 
 fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
