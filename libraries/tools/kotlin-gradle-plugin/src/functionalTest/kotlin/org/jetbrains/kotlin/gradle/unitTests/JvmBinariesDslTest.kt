@@ -94,6 +94,33 @@ class JvmBinariesDslTest {
                     )
                 )
         )
+        assertNotNull(project.tasks.findByName("jvmTestJar"))
+    }
+
+    @Test
+    fun createRunTaskForCustomCompilation() {
+        val project = buildProjectWithMPP {
+            repositories.mavenLocal()
+
+            kotlin {
+                jvm {
+                    val customCompilation = compilations.register("custom")
+                    binaries {
+                        executable(customCompilation.name) {
+                            mainClass.set("foo.MainKt")
+                        }
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val runTask = project.tasks.findByName("runJvmCustom") as? JavaExec
+        assertNotNull(runTask, "Expected 'runJvmCustom' task to be created")
+        assertEquals("foo.MainKt", runTask.mainClass.get())
+        assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
+        assertNotNull(project.tasks.findByName("jvmCustomJar"))
     }
 
     @Test

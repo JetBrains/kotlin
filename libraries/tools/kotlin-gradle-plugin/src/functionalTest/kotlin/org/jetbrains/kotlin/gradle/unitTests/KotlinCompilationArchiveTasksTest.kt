@@ -26,7 +26,7 @@ class KotlinCompilationArchiveTasksTest {
     }
 
     private val Project.kotlinCompilationsArchiveTasks: KotlinCompilationArchiveTasks
-        get() = extensions.getByName("kotlinCompilationsArchiveTasks") as KotlinCompilationArchiveTasks
+        get() = extensions.extraProperties.get("kotlinCompilationsArchiveTasks") as KotlinCompilationArchiveTasks
 
     val testProject: Project = buildProject {
         enableKotlinCompilationArchiveTasksCreation()
