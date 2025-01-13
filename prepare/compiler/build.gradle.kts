@@ -105,6 +105,7 @@ val distLibraryProjects = listOfNotNull(
     // SNAPSHOT reflect into the dist because we use reflect dist in user code compile classpath (see JvmArgumentsKt.configureStandardLibs).
     // We can use reflect of a bigger version in Kotlin compiler runtime, because kotlin-reflect follows backwards binary compatibility
     ":kotlin-reflect",
+    ":kotlin-metadata-jvm",
     ":kotlin-runner",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
@@ -137,6 +138,7 @@ val distCompilerPluginProjectsCompat = listOf(
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
     ":kotlin-script-runtime",
+    ":kotlin-metadata-jvm",
 )
 
 configurations.all {
