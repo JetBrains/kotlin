@@ -2497,7 +2497,6 @@ open class PsiRawFirBuilder(
             // 2. `(suspend @A () -> Int)?` is a nullable suspend function type but the modifier list is on the child KtNullableType
             //
             // `getModifierList()` only returns the first one so we have to get all modifier list children.
-            // TODO: Report MODIFIER_LIST_NOT_ALLOWED error when there are multiple modifier lists. How do we report on each of them?
             fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
                 getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 

@@ -2306,7 +2306,6 @@ class LightTreeRawFirDeclarationBuilder(
         // 1. `@A Int?` and `(@A Int)?` are effectively the same, but in the latter, the modifier list is on the child NULLABLE_TYPE
         // 2. `(suspend @A () -> Int)?` is a nullable suspend function type but the modifier list is on the child NULLABLE_TYPE
         //
-        // TODO: Report MODIFIER_LIST_NOT_ALLOWED error when there are multiple modifier lists. How do we report on each of them?
         val allTypeModifiers = mutableListOf<Modifier>()
 
         var firType: FirTypeRef? = null
