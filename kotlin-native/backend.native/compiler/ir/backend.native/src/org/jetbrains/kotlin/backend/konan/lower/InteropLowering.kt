@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
@@ -24,16 +21,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.objcinterop.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -41,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -51,6 +46,88 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
+
+private fun addSubstitutedTypesFromReceiver(
+        callee: IrFunction, receiver: IrExpression?, substitutionMap: MutableMap<IrTypeParameterSymbol, IrType>
+): IrType? {
+    val receiverClass = callee.parentClassOrNull
+    val receiverType = receiver?.type
+    if (receiverType == null || receiverClass == null || receiverType.makeNotNull().isNothing()
+            || callee is IrConstructor
+    ) {
+        return null
+    }
+
+    callee as IrSimpleFunction
+    val allClassSuperTypes = receiverType.getAllClassSuperTypes()
+    val receiverClassType = allClassSuperTypes.firstOrNull { it.classOrFail == receiverClass.symbol }
+            ?: receiverType.takeIf {
+                callee.resolveFakeOverrideMaybeAbstract()!!.parentAsClass == receiverType.classOrNull?.owner
+                        || callee.allOverriddenFunctions.any { it.isFromAny() }
+            }
+            ?: error("Can't find ${receiverClass.render()} in the super types of ${receiverType.render()}: " +
+                    "[${allClassSuperTypes.joinToString { it.render() }}]\n${receiver.dump()}\n${callee.dump()}")
+
+    val typeParameters = mutableListOf<IrTypeParameter>()
+    var irClass: IrClass = receiverClassType.classOrFail.owner
+    while (true) {
+        typeParameters.addAll(irClass.typeParameters)
+        if (!irClass.isInner) break
+        irClass = irClass.parentAsClass
+    }
+    val typeParametersFromClassCount = typeParameters.size
+    var irFunction = irClass.parent as? IrFunction
+    while (irFunction != null) {
+        typeParameters.addAll(irFunction.typeParameters)
+        irFunction = irFunction.parent as? IrFunction
+    }
+    val arguments = (receiverClassType as IrSimpleType).arguments
+    check(arguments.size >= typeParametersFromClassCount) {
+        "Expected at least ${arguments.size} type parameters: ${receiverClassType.render()}"
+    }
+    for (index in 0..<kotlin.math.min(typeParameters.size, arguments.size)) {
+        val parameter = typeParameters[index]
+        substitutionMap[parameter.symbol] = arguments[index].typeOrNull ?: parameter.defaultType.eraseTypeParameters()
+    }
+
+    return receiverClassType
+}
+
+private fun IrType.getAllClassSuperTypes(): List<IrType> {
+    val result = mutableListOf<IrType>()
+    val visitedTypeParameters = mutableSetOf<IrTypeParameterSymbol>()
+
+    fun collectAllClassSuperTypes(superTypes: List<IrType>) {
+        for (superType in superTypes) {
+            when (val classifier = superType.classifierOrNull) {
+                is IrClassSymbol -> {
+                    result.add(superType)
+                    collectAllClassSuperTypes(classifier.owner.superTypes)
+                }
+                is IrTypeParameterSymbol -> {
+                    if (visitedTypeParameters.add(classifier))
+                        collectAllClassSuperTypes(classifier.owner.superTypes)
+                }
+                else -> continue
+            }
+        }
+    }
+
+    when (val classifier = this.classifierOrFail) {
+        is IrClassSymbol -> {
+            result.add(this)
+            collectAllClassSuperTypes(classifier.owner.superTypes)
+        }
+        is IrTypeParameterSymbol -> {
+            visitedTypeParameters.add(classifier)
+            collectAllClassSuperTypes(classifier.owner.superTypes)
+        }
+        else -> error("Unexpected classifier: ${this::class.java}")
+    }
+    return result.toList()
+}
+
+private fun IrFunction.isFromAny() = this.parentClassOrNull?.isAny() == true
 
 internal class InteropLowering(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -185,7 +262,7 @@ private abstract class BaseInteropIrTransformer(
         expression.transformChildrenVoid()
 
         builder.at(expression)
-        val trampoline = tryBuildTrampoline(expression.symbol.owner)
+        val trampoline = tryBuildTrampoline(expression.symbol.owner, expression.arguments.firstOrNull())
         return if (trampoline == null)
             expression
         else builder.irBlock {
@@ -205,8 +282,9 @@ private abstract class BaseInteropIrTransformer(
         expression.transformChildrenVoid()
 
         builder.at(expression)
-        val getterTrampoline = expression.getter?.let { tryBuildTrampoline(it.owner) }
-        val setterTrampoline = expression.setter?.let { tryBuildTrampoline(it.owner) }
+        val receiver = expression.arguments.firstOrNull()
+        val getterTrampoline = expression.getter?.let { tryBuildTrampoline(it.owner, receiver) }
+        val setterTrampoline = expression.setter?.let { tryBuildTrampoline(it.owner, receiver) }
         return if (getterTrampoline == null && setterTrampoline == null)
             expression
         else builder.irBlock {
@@ -222,7 +300,7 @@ private abstract class BaseInteropIrTransformer(
         }
     }
 
-    private fun tryBuildTrampoline(callee: IrFunction): IrSimpleFunction? {
+    private fun tryBuildTrampoline(callee: IrFunction, receiver: IrExpression?): IrSimpleFunction? {
         val typeParametersContainer = when (callee) {
             is IrSimpleFunction -> callee
             is IrConstructor -> callee.constructedClass
@@ -237,9 +315,14 @@ private abstract class BaseInteropIrTransformer(
         trampoline.parent = builder.parent
         trampoline.copyTypeParametersFrom(typeParametersContainer)
         val typeParametersMap = typeParametersContainer.typeParameters.zip(trampoline.typeParameters).toMap()
-        trampoline.returnType = callee.returnType.remapTypeParameters(typeParametersContainer, trampoline, typeParametersMap)
+
+        val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
+        addSubstitutedTypesFromReceiver(callee, receiver, substitutionMap)
+
+        trampoline.returnType = callee.returnType.remapTypeParameters(typeParametersContainer, trampoline, typeParametersMap).substitute(substitutionMap)
         trampoline.parameters = callee.parameters.map {
-            it.copyTo(trampoline, origin = IrDeclarationOrigin.DEFINED, kind = IrParameterKind.Regular, remapTypeMap = typeParametersMap)
+            val remappedType = it.type.remapTypeParameters(typeParametersContainer, trampoline, typeParametersMap).substitute(substitutionMap)
+            it.copyTo(trampoline, origin = IrDeclarationOrigin.DEFINED, kind = IrParameterKind.Regular, type = remappedType)
         }
 
         val localBuilder = context.createIrBuilder(trampoline.symbol, trampoline.startOffset, trampoline.endOffset)
