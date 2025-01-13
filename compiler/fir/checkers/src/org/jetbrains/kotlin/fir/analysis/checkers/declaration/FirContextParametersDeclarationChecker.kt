@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.findChildByType
+import org.jetbrains.kotlin.diagnostics.findChildrenByType
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -19,13 +20,21 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 
-        val source = declaration.source?.findContextReceiverListSource() ?: return
+        val contextListSources = declaration.source?.findContextReceiverListSources().orEmpty().ifEmpty { return }
+
+        val source = contextListSources.first()
+
+        if (contextListSources.size > 1) {
+            reporter.reportOn(source, FirErrors.MULTIPLE_CONTEXT_LISTS, context)
+        }
 
         val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
         val contextParametersEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
@@ -118,6 +127,17 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 
+    private fun KtSourceElement.findContextReceiverListSources(): List<KtSourceElement> {
+        return when (this) {
+            is KtPsiSourceElement ->
+                psi.getChildOfType<KtModifierList>()?.contextReceiverLists?.map { it.toKtPsiSourceElement() }.orEmpty()
+            is KtLightSourceElement ->
+                treeStructure.findChildByType(lighterASTNode, KtNodeTypes.MODIFIER_LIST)
+                    ?.let { treeStructure.findChildrenByType(it, KtNodeTypes.CONTEXT_RECEIVER_LIST) }
+                    ?.map { it.toKtLightSourceElement(treeStructure) }
+                    .orEmpty()
+        }
+    }
 
     /**
      * Simplified checking of subtype relation used in context receiver checkers.

@@ -5,24 +5,40 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
+import com.intellij.lang.LighterASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextParametersDeclarationChecker.checkSubTypes
-import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.contextParameterTypes
 import org.jetbrains.kotlin.fir.types.hasContextParameters
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.KtNullableType
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef.source?.kind is KtFakeSourceElementKind) return
-        if (!typeRef.coneType.hasContextParameters) return
-        val source = typeRef.source?.findContextReceiverListSource() ?: return
+        if (!typeRef.coneType.abbreviatedTypeOrSelf.hasContextParameters) return
+
+        val source = typeRef.source?.findContextReceiverListSource()
+            ?: errorWithAttachment("Source for type ref of contextual function type doesn't contain context list.") {
+                withFirEntry("fir", typeRef)
+            }
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             if (checkSubTypes(typeRef.coneType.contextParameterTypes(context.session), context)) {
@@ -40,6 +56,34 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
                 LanguageFeature.ContextParameters to context.languageVersionSettings,
                 context
             )
+        }
+    }
+
+    private fun KtSourceElement.findContextReceiverListSource(): KtSourceElement? {
+        fun PsiElement.findContextReceiverListSource(): KtPsiSourceElement? {
+            return when (this) {
+                is KtTypeReference -> typeElement?.findContextReceiverListSource()
+                is KtNullableType -> innerType?.findContextReceiverListSource()
+                is KtFunctionType -> contextReceiverList?.toKtPsiSourceElement()
+                else -> null
+            }
+        }
+
+        fun LighterASTNode.findContextReceiverListSource(tree: FlyweightCapableTreeStructure<LighterASTNode>): KtLightSourceElement? {
+            return when (tokenType) {
+                KtNodeTypes.TYPE_REFERENCE, KtNodeTypes.NULLABLE_TYPE -> tree
+                    .findChildByType(this, KtTokenSets.TYPE_ELEMENT_TYPES)
+                    ?.findContextReceiverListSource(tree)
+                KtNodeTypes.FUNCTION_TYPE -> tree
+                    .findChildByType(this, KtNodeTypes.CONTEXT_RECEIVER_LIST)
+                    ?.toKtLightSourceElement(tree)
+                else -> null
+            }
+        }
+
+        return when (this) {
+            is KtPsiSourceElement -> psi.findContextReceiverListSource()
+            is KtLightSourceElement -> lighterASTNode.findContextReceiverListSource(treeStructure)
         }
     }
 }

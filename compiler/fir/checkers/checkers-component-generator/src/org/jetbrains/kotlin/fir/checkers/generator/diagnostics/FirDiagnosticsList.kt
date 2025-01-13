@@ -772,6 +772,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION by error<KtElement>() {
             parameter<FirCallableSymbol<*>>("symbol")
         }
+        val MULTIPLE_CONTEXT_LISTS by error<KtElement>()
     }
 
     val TYPES_AND_TYPE_PARAMETERS by object : DiagnosticGroup("Types & type parameters") {
