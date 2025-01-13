@@ -246,6 +246,13 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             withCopy()
         }
 
+        builder(errorProperty) {
+            parents += variableBuilder
+            parents += typeParametersOwnerBuilder
+            defaultFalse("isLocal")
+            default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
+        }
+
         builder(field) {
             parents += variableBuilder
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")

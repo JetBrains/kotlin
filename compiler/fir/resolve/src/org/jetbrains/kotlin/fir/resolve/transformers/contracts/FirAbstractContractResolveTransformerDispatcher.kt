@@ -116,6 +116,10 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             return property
         }
 
+        override fun transformErrorProperty(errorProperty: FirErrorProperty, data: ResolutionMode): FirStatement {
+            return transformProperty(errorProperty, data)
+        }
+
         override fun transformField(field: FirField, data: ResolutionMode): FirField {
             return field
         }
