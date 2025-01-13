@@ -6279,6 +6279,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     }
 
     @Test
+    @TestMetadata("flatMapWithReverseOrder.kt")
+    public void testFlatMapWithReverseOrder() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/flatMapWithReverseOrder.kt");
+    }
+
+    @Test
     @TestMetadata("functionAndFunctionN.kt")
     public void testFunctionAndFunctionN() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/functionAndFunctionN.kt");
