@@ -725,6 +725,10 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
         return property
     }
 
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: PersistentList<FirDeclaration>): FirStatement {
+        return transformProperty(errorProperty, data)
+    }
+
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
         if (enumEntry.initializer is FirLazyExpression) {
             val designation = FirDesignation(data, enumEntry)
@@ -881,5 +885,9 @@ private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<Pers
         }
 
         return property
+    }
+
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: PersistentList<FirDeclaration>): FirStatement {
+        return transformProperty(errorProperty, data)
     }
 }
