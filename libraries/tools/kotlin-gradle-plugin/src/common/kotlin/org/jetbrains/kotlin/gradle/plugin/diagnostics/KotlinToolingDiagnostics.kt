@@ -1361,15 +1361,21 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedInKMPJavaPluginsDiagnostic : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(pluginId: String): ToolingDiagnostic {
+    object KMPJavaPluginsIncompatibilityDiagnostic : ToolingDiagnosticFactory(ERROR) {
+        private val errorSinceGradleVersion = GradleVersion.version("8.7")
+
+        operator fun invoke(
+            pluginId: String,
+        ): ToolingDiagnostic {
             val pluginString = when (pluginId) {
                 "application" -> "'$pluginId' (also applies 'java' plugin)"
                 "java-library" -> "'$pluginId' (also applies 'java' plugin)"
                 else -> "'$pluginId'"
             }
 
-            return build {
+            return build(
+                severity = if (GradleVersion.current() >= errorSinceGradleVersion) ERROR else WARNING,
+            ) {
                 title("'$pluginId' Plugin Incompatible with 'org.jetbrains.kotlin.multiplatform' Plugin")
                     .description {
                         "$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin."
