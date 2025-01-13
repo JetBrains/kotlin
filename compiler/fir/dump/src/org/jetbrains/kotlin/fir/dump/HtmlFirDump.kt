@@ -1207,7 +1207,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     is FirPropertyAccessor,
                     is FirBackingField,
                     is FirEnumEntry,
-                    is FirErrorProperty,
                     is FirValueParameter -> {}
                 }
             }
