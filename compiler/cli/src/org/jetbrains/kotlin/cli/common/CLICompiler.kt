@@ -197,6 +197,10 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
         val useK2 = configuration.get(CommonConfigurationKeys.USE_FIR) == true
 
+        if (!checkPluginsArguments(messageCollector, useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
+            return INTERNAL_ERROR
+        }
+
         val scriptingPluginClasspath = mutableListOf<String>()
         val scriptingPluginOptions = mutableListOf<String>()
 
@@ -228,10 +232,6 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
         pluginClasspaths.addAll(scriptingPluginClasspath)
         pluginOptions.addAll(scriptingPluginOptions)
-
-        if (!checkPluginsArguments(messageCollector, useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
-            return INTERNAL_ERROR
-        }
 
         return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration)
     }
