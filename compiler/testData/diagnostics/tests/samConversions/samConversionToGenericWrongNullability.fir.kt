@@ -69,6 +69,16 @@ fun main() {
         ""
     }
 
+    Supplier<String> {
+        try {
+            if (1 == 2) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+        } catch(e: Exception) {
+        } finally {
+            run { return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!> }
+        }
+        ""
+    }
+
     Supplier<String?> {
         returnNullableString()
     }

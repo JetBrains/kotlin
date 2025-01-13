@@ -956,8 +956,7 @@ fun FirAnonymousFunction.getReturnedExpressions(): List<FirExpression> {
             is JumpNode -> (it.fir as? FirReturnExpression)?.result
             is BlockExitNode -> (it.fir.statements.lastOrNull() as? FirReturnExpression)?.result
             is FinallyBlockExitNode -> {
-                val finallyBlockEnterNode =
-                    generateSequence(it, CFGNode<*>::lastPreviousNode).firstIsInstanceOrNull<FinallyBlockEnterNode>() ?: return null
+                val finallyBlockEnterNode = it.enterNode
                 finallyBlockEnterNode.previousNodes.firstOrNull { x -> finallyBlockEnterNode.edgeFrom(x) == exitNode.edgeFrom(it) }
                     ?.let(::extractReturnedExpression)
             }
