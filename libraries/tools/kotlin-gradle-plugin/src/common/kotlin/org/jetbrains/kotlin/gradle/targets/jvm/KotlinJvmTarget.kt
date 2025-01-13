@@ -99,7 +99,8 @@ abstract class KotlinJvmTarget @Inject constructor(
     private val binariesDsl by lazy {
         // lazy is required as compilation is lateinit property
         project.objects.DefaultKotlinJvmBinariesDsl(
-            compilations
+            compilations,
+            project,
         )
     }
 
