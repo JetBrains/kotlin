@@ -6,11 +6,11 @@
 
 import kotlin.js.Promise
 
-<!NON_EXPORTABLE_TYPE!>@JsExport
-fun foo(): Promise<*><!> = null!!
+@JsExport
+fun foo(): Promise<*> = null!!
 
-<!NON_EXPORTABLE_TYPE!>@JsExport
-fun bar(): Promise<Unit><!> = null!!
+@JsExport
+fun bar(): Promise<Unit> = null!!
 
 @JsExport
 class Box<T>

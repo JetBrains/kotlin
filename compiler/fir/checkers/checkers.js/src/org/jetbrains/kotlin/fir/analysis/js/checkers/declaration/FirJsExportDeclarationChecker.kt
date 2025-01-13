@@ -24,15 +24,18 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.isEnumEntries
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+import org.jetbrains.kotlin.types.Variance
 
 object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -203,23 +206,44 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
     private fun ConeKotlinType.isExportableTypeArguments(
         session: FirSession,
-        currentlyProcessed: MutableSet<ConeKotlinType>,
-        isFunctionType: Boolean
+        currentlyProcessed: MutableSet<ConeKotlinType>
     ): Boolean {
         if (typeArguments.isEmpty()) {
             return true
         }
-        for (i in 0 until typeArguments.lastIndex) {
-            if (typeArguments[i].type?.isExportable(session, currentlyProcessed) != true) {
+        val symbol = toRegularClassSymbol(session) ?: return false
+        for (i in 0 until typeArguments.size) {
+            val parameter = symbol.typeParameterSymbols.getOrNull(i) ?: return false
+            if (!typeArguments[i].isExportable(session, parameter, currentlyProcessed)) {
                 return false
             }
         }
-        val isLastExportable = if (isFunctionType) {
-            typeArguments.last().type?.isExportableReturn(session, currentlyProcessed)
-        } else {
-            typeArguments.last().type?.isExportable(session, currentlyProcessed)
-        }
-        return isLastExportable == true
+        return true
+    }
+
+    private fun ConeTypeProjection.isExportable(
+        session: FirSession,
+        declarationSite: FirTypeParameterSymbol,
+        currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf(),
+    ): Boolean {
+        val typeFromProjection = when (kind) {
+            ProjectionKind.INVARIANT -> type
+            ProjectionKind.IN -> when (declarationSite.variance) {
+                Variance.IN_VARIANCE -> type
+                else -> null
+            }
+            ProjectionKind.OUT -> when (declarationSite.variance) {
+                Variance.OUT_VARIANCE -> type
+                else -> null
+            }
+            ProjectionKind.STAR -> when (declarationSite.variance) {
+                Variance.INVARIANT -> null
+                else -> declarationSite.getProjectionForRawType(session, makeNullable = false)
+            }
+        } ?: return false
+
+        return declarationSite.variance == Variance.OUT_VARIANCE && typeFromProjection.isUnit
+                || typeFromProjection.isExportable(session, currentlyProcessed)
     }
 
     private fun ConeKotlinType.isExportable(
@@ -233,7 +257,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         val expandedType = fullyExpandedType(session)
 
         val isFunctionType = expandedType.isBasicFunctionType(session)
-        val isExportableArgs = expandedType.isExportableTypeArguments(session, currentlyProcessed, isFunctionType)
+        val isExportableArgs = expandedType.isExportableTypeArguments(session, currentlyProcessed)
         currentlyProcessed.remove(this)
         if (isFunctionType || !isExportableArgs) {
             return isExportableArgs
