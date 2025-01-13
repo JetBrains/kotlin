@@ -26246,6 +26246,24 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("kt67024.kt")
+    public void testKt67024() {
+      runTest("compiler/testData/codegen/box/inline/kt67024.kt");
+    }
+
+    @Test
+    @TestMetadata("kt67866.kt")
+    public void testKt67866() {
+      runTest("compiler/testData/codegen/box/inline/kt67866.kt");
+    }
+
+    @Test
+    @TestMetadata("kt69041.kt")
+    public void testKt69041() {
+      runTest("compiler/testData/codegen/box/inline/kt69041.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAsAny.kt")
     public void testLambdaAsAny() {
       runTest("compiler/testData/codegen/box/inline/lambdaAsAny.kt");

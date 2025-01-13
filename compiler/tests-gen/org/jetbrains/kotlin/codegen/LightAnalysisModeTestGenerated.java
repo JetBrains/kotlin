@@ -21986,6 +21986,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inline/kt66017_inlineFromTheSameModule.kt");
     }
 
+    @TestMetadata("kt67024.kt")
+    public void testKt67024() {
+      runTest("compiler/testData/codegen/box/inline/kt67024.kt");
+    }
+
+    @TestMetadata("kt67866.kt")
+    public void testKt67866() {
+      runTest("compiler/testData/codegen/box/inline/kt67866.kt");
+    }
+
+    @TestMetadata("kt69041.kt")
+    public void testKt69041() {
+      runTest("compiler/testData/codegen/box/inline/kt69041.kt");
+    }
+
     @TestMetadata("lambdaAsAny.kt")
     public void testLambdaAsAny() {
       runTest("compiler/testData/codegen/box/inline/lambdaAsAny.kt");
