@@ -73,19 +73,19 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             val file = File("native_compiler_report.txt")
             file.createNewFile()
 
-            val reportFile = Files.createTempFile(
+            /*val reportFile = Files.createTempFile(
                 "compiler-native-report",
                 ".txt"
-            )
+            )*/
 
             val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile.get()) {
-                val argFile = args.toArgFile(reportFile)
+                val argFile = args.toArgFile(/*reportFile*/)
                 argFile to listOfNotNull(
                     toolSpec.optionalToolName.orNull,
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportFile.toAbsolutePath().toString()
+                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments /*+ reportFile.toAbsolutePath().toString()*/
             }
 
             try {
@@ -115,8 +115,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 //                    spec.args("\"${file.absolutePath}\"")
                 }
                 println("------------------")
-                println(reportFile.toFile().readText())
-                metricsReporter.parseCompilerMetricsFromFile(reportFile)
+                println(file.readText())
+                metricsReporter.parseCompilerMetricsFromFile(file)
                 println("-------------------")
                 file.delete()
             } finally {
@@ -130,8 +130,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         }
     }
 
-    private fun BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(file: Path) {
-        file.toFile().forEachLine { line ->
+    private fun BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(file: File) {
+        file.forEachLine { line ->
             when {
                 line.startsWith("TRANSLATION") -> metricsReporter.addTimeMetricNs(GradleBuildTime.IR_TRANSLATION, parseTimeFromString(line))
                 line.startsWith("LOWERING") -> metricsReporter.addTimeMetricNs(GradleBuildTime.IR_LOWERING, parseTimeFromString(line))
@@ -229,7 +229,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             else -> this
         }
 
-    private fun ToolArguments.toArgFile(reportFile: Path? = null): Path {
+    private fun ToolArguments.toArgFile(/*reportFile: Path? = null*/): Path {
         val argFile = Files.createTempFile(
             "kotlinc-native-args",
             ".lst"
@@ -242,9 +242,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     .replace("\"", "\\\"")
                 w.println("\"$escapedArg\"")
             }
-            reportFile?.toAbsolutePath()?.also {
-                w.println("\"$it\"")
-            }
+//            reportFile?.toAbsolutePath()?.also {
+//                w.println("\"$it\"")
+//            }
         }
 
         return argFile
