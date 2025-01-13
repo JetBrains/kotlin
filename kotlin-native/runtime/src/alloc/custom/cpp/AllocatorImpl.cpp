@@ -7,6 +7,7 @@
 
 #include "GCApi.hpp"
 #include "Heap.hpp"
+#include "ThreadData.hpp"
 
 using namespace kotlin;
 
@@ -90,4 +91,18 @@ void alloc::destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
         // GC sweep will just collect this extra object.
         extraObject.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }
+}
+
+alloc::SweepState alloc::Allocator::Impl::prepareForSweep() noexcept {
+    return {};
+}
+
+alloc::FinalizerQueue alloc::Allocator::Impl::sweep(gc::GCHandle gcHandle, alloc::SweepState state) noexcept {
+    // also sweeps extraObjects
+    auto finalizerQueue = heap().Sweep(gcHandle);
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        finalizerQueue.mergeFrom(thread.allocator().impl().alloc().ExtractFinalizerQueue());
+    }
+    finalizerQueue.mergeFrom(heap().ExtractFinalizerQueue());
+    return finalizerQueue;
 }

@@ -62,25 +62,11 @@ void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
     }
     allocator_.prepareForGC();
 
-#ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
-    std::optional extraObjectFactoryIterable = allocator_.impl().extraObjectDataFactory().LockForIter();
-    std::optional objectFactoryIterable = allocator_.impl().objectFactory().LockForIter();
+    auto sweepState = allocator_.impl().prepareForSweep();
 
-    alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *extraObjectFactoryIterable);
-    extraObjectFactoryIterable = std::nullopt;
-    auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *objectFactoryIterable);
-    objectFactoryIterable = std::nullopt;
-    alloc::compactObjectPoolInMainThread();
-#else
-    // also sweeps extraObjects
-    auto finalizerQueue = allocator_.impl().heap().Sweep(gcHandle);
-    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        finalizerQueue.mergeFrom(thread.allocator().impl().alloc().ExtractFinalizerQueue());
-    }
-    finalizerQueue.mergeFrom(allocator_.impl().heap().ExtractFinalizerQueue());
-#endif
+    auto finalizerQueue = allocator_.impl().sweep(gcHandle, std::move(sweepState));
 
     gcScheduler_.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
 

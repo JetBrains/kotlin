@@ -14,11 +14,16 @@
 
 namespace kotlin::alloc {
 
+struct SweepState {};
+
 class Allocator::Impl : private Pinned {
 public:
     Impl() noexcept = default;
 
     Heap& heap() noexcept { return heap_; }
+
+    SweepState prepareForSweep() noexcept;
+    FinalizerQueue sweep(gc::GCHandle gcHandle, SweepState state) noexcept;
 
 private:
     Heap heap_;

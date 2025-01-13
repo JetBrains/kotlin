@@ -192,8 +192,6 @@ bitcode {
                 test {}
                 testFixtures {}
             }
-
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
         testsGroup("custom_alloc_test") {
@@ -318,8 +316,6 @@ bitcode {
             sourceSets {
                 main {}
             }
-
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
         module("same_thread_ms_gc") {
@@ -343,8 +339,6 @@ bitcode {
                 main {}
                 test {}
             }
-
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
         testsGroup("stms_gc_custom_test") {
@@ -375,8 +369,6 @@ bitcode {
                 testFixtures {}
                 test {}
             }
-
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
         testsGroup("pmcs_gc_custom_test") {
@@ -405,8 +397,6 @@ bitcode {
                 main {}
                 test {}
             }
-
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
         testsGroup("cms_gc_custom_test") {

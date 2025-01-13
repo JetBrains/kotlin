@@ -5,9 +5,32 @@
 
 #include "AllocatorImpl.hpp"
 
+#include "Allocator.hpp"
+#include "ExtraObjectDataFactory.hpp"
+#include "GC.hpp"
+#include "MarkAndSweepUtils.hpp"
 #include "ThreadData.hpp"
 
 using namespace kotlin;
+
+namespace {
+
+// TODO move to common
+[[maybe_unused]] inline void checkMarkCorrectness(alloc::ObjectFactoryImpl::Iterable& heap) {
+    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
+    for (auto objRef : heap) {
+        auto obj = objRef.GetObjHeader();
+        if (gc::isMarked(obj)) {
+            traverseReferredObjects(obj, [obj](ObjHeader* field) {
+                if (field->heap()) {
+                    RuntimeAssert(gc::isMarked(field), "Field %p of an alive obj %p must be alive", field, obj);
+                }
+            });
+        }
+    }
+}
+
+}
 
 alloc::Allocator::ThreadData::ThreadData(Allocator& allocator) noexcept : impl_(std::make_unique<Impl>(allocator.impl())) {}
 
@@ -79,4 +102,22 @@ void alloc::destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
     extraObject.Uninstall();
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     threadData->allocator().impl().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
+}
+
+alloc::SweepState::SweepState(alloc::ObjectFactoryImpl& objectFactory, alloc::ExtraObjectDataFactory& extraObjectDataFactory) noexcept :
+    extraObjectFactoryIterable_(extraObjectDataFactory.LockForIter()), objectFactoryIterable_(objectFactory.LockForIter()) {}
+
+alloc::SweepState alloc::Allocator::Impl::prepareForSweep() noexcept {
+    alloc::SweepState result{objectFactory_, extraObjectDataFactory_};
+    checkMarkCorrectness(*result.objectFactoryIterable_);
+    return result;
+}
+
+alloc::FinalizerQueue alloc::Allocator::Impl::sweep(gc::GCHandle gcHandle, alloc::SweepState state) noexcept {
+    alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *state.extraObjectFactoryIterable_);
+    state.extraObjectFactoryIterable_ = std::nullopt;
+    auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *state.objectFactoryIterable_);
+    state.objectFactoryIterable_ = std::nullopt;
+    alloc::compactObjectPoolInMainThread();
+    return finalizerQueue;
 }

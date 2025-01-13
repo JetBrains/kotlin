@@ -10,6 +10,7 @@
 #include "ExtraObjectDataFactory.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
+#include "GCStatistics.hpp"
 #include "GlobalData.hpp"
 #include "ObjectFactory.hpp"
 #include "ObjectFactoryAllocator.hpp"
@@ -37,12 +38,22 @@ using FinalizerQueueSingle = ObjectFactoryImpl::FinalizerQueue;
 using FinalizerQueue = SegregatedFinalizerQueue<FinalizerQueueSingle>;
 using FinalizerQueueTraits = ObjectFactoryImpl::FinalizerQueueTraits;
 
+struct SweepState : private MoveOnly {
+    SweepState(ObjectFactoryImpl& objectFactory, ExtraObjectDataFactory& extraObjectDataFactory) noexcept;
+
+    std::optional<ExtraObjectDataFactory::Iterable> extraObjectFactoryIterable_;
+    std::optional<ObjectFactoryImpl::Iterable> objectFactoryIterable_;
+};
+
 class Allocator::Impl : private Pinned {
 public:
     Impl() noexcept = default;
 
     ObjectFactoryImpl& objectFactory() noexcept { return objectFactory_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+
+    SweepState prepareForSweep() noexcept;
+    FinalizerQueue sweep(gc::GCHandle gcHandle, SweepState state) noexcept;
 
 private:
     ObjectFactoryImpl objectFactory_;

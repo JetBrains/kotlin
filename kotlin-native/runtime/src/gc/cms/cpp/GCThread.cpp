@@ -19,29 +19,6 @@
 
 using namespace kotlin;
 
-namespace {
-
-#ifndef CUSTOM_ALLOCATOR
-// TODO move to common
-[[maybe_unused]] inline void checkMarkCorrectness(alloc::ObjectFactoryImpl::Iterable& heap) {
-    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
-    for (auto objRef : heap) {
-        auto obj = objRef.GetObjHeader();
-        auto& objData = objRef.ObjectData();
-        if (objData.marked()) {
-            traverseReferredObjects(obj, [obj](ObjHeader* field) {
-                if (field->heap()) {
-                    auto& fieldObjData = alloc::ObjectFactoryImpl::NodeRef::From(field).ObjectData();
-                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
-                }
-            });
-        }
-    }
-}
-#endif
-
-} // namespace
-
 gc::internal::GCThread::GCThread(
         GCStateHolder& state,
         SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
@@ -93,31 +70,14 @@ void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
     }
     allocator_.prepareForGC();
 
-#ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
-    std::optional objectFactoryIterable = allocator_.impl().objectFactory().LockForIter();
-    std::optional extraObjectFactoryIterable = allocator_.impl().extraObjectDataFactory().LockForIter();
-
-    checkMarkCorrectness(*objectFactoryIterable);
-#endif
+    auto sweepState = allocator_.impl().prepareForSweep();
 
     resumeTheWorld(gcHandle);
 
-#ifndef CUSTOM_ALLOCATOR
-    alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *extraObjectFactoryIterable);
-    extraObjectFactoryIterable = std::nullopt;
-    auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *objectFactoryIterable);
-    objectFactoryIterable = std::nullopt;
-    alloc::compactObjectPoolInMainThread();
-#else
-    // also sweeps extraObjects
-    auto finalizerQueue = allocator_.impl().heap().Sweep(gcHandle);
-    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        finalizerQueue.mergeFrom(thread.allocator().impl().alloc().ExtractFinalizerQueue());
-    }
-    finalizerQueue.mergeFrom(allocator_.impl().heap().ExtractFinalizerQueue());
-#endif
+    auto finalizerQueue = allocator_.impl().sweep(gcHandle, std::move(sweepState));
+
     scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
