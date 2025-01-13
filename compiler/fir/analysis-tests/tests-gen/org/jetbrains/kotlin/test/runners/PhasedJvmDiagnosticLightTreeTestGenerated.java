@@ -13489,6 +13489,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("multipleContextReceiverLists.kt")
+        public void testMultipleContextReceiverLists() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/multipleContextReceiverLists.kt");
+        }
+
+        @Test
         @TestMetadata("noBackingField.kt")
         public void testNoBackingField() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noBackingField.kt");
@@ -51006,6 +51012,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestMetadata("contextParameterSyntaxWithoutLanguageFeature.kt")
         public void testContextParameterSyntaxWithoutLanguageFeature() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/contextParameterSyntaxWithoutLanguageFeature.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleContextParameterLists.kt")
+        public void testMultipleContextParameterLists() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multipleContextParameterLists.kt");
         }
 
         @Test

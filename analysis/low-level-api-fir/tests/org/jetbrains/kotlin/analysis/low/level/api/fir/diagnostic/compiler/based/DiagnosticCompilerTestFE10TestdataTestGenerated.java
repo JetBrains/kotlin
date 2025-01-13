@@ -13934,6 +13934,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("multipleContextReceiverLists.kt")
+        public void testMultipleContextReceiverLists() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/multipleContextReceiverLists.kt");
+        }
+
+        @Test
         @TestMetadata("noBackingField.kt")
         public void testNoBackingField() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noBackingField.kt");
