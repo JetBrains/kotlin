@@ -182,16 +182,18 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
 
                 metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
-                    val file = "/Users/Nataliya.Valtman/Development/configuration_cache_fus/report"
+                    val reportFile = Files.createTempFile(
+                        "compiler-native-report",
+                        ".txt"
+                    )
                     val compilerMetricList = ArrayList<BuildTime>()
                     GradleBuildTime.COMPILER_PERFORMANCE.children()?.let { compilerMetricList.addAll(it) }
                     GradleBuildTime.COMPILATION_ROUND.children()?.let { compilerMetricList.addAll(it) }
 
-                    val result = entryPoint.invoke(null, toolArgs.toTypedArray(), file)
+                    val result = entryPoint.invoke(null, toolArgs.toTypedArray(), reportFile.toFile())
                     println(result)
-                    println(File(file).readText())
-                    File(file).delete()
-
+                    println(reportFile.toFile().readText())
+                    metricsReporter.parseCompilerMetricsFromFile(reportFile.toFile())
                 }
             } catch (t: InvocationTargetException) {
                 throw t.targetException
