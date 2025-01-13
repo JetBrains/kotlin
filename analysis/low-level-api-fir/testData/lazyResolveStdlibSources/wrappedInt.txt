@@ -824,7 +824,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
         }
 
         public open override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
-            ^hashCode this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/Any.hashCode|().R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/Any.hashCode|()).R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|.R|kotlin/Int.hashCode|())
+            ^hashCode this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/Any.hashCode|().R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/Any.hashCode|()).R|kotlin/Int.times|(Int(31)).R|kotlin/Int.plus|(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|.R|kotlin/Any.hashCode|())
         }
 
         public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
@@ -936,7 +936,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                 }
             }
 
-            [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.R|kotlin/toString|()
+            [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.<Ambiguity: toString, [kotlin/toString, kotlin/toString]>#()
             ^asString when (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|) {
                 ==($subj$, Q|kotlin/reflect/KVariance|.R|kotlin/reflect/KVariance.INVARIANT|) ->  {
                     R|<local>/typeString|
