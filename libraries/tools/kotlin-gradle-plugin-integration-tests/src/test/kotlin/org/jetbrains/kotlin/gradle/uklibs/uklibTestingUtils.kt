@@ -157,17 +157,19 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
                         .declaredMethods
                         .single { it.name == "exec" }
 
-                    val result = entryPoint.invoke(
-                        null,
-                        PrintStream(FileOutputStream(outputFile)),
-                        System.err,
-                        arrayOf(
-                            "dump-metadata-signatures", klib.path,
-                            "-test-mode", "true",
-                        )
-                    ) as Int
-                    if (result != 0) {
-                        error("Couldn't dump metadata klib at ${klib}. Stdout:\n${outputFile.readText()}")
+                    FileOutputStream(outputFile).use {
+                        val result = entryPoint.invoke(
+                            null,
+                            PrintStream(it),
+                            System.err,
+                            arrayOf(
+                                "dump-metadata-signatures", klib.path,
+                                "-test-mode", "true",
+                            )
+                        ) as Int
+                        if (result != 0) {
+                            error("Couldn't dump metadata klib at ${klib}. Stdout:\n${outputFile.readText()}")
+                        }
                     }
                 }
             }
