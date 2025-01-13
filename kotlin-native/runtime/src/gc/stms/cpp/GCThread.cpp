@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
-#include "SameThreadMarkAndSweep.hpp"
+#include "GCThread.hpp"
 
-#include <string_view>
-
+#include "Allocator.hpp"
+#include "AllocatorImpl.hpp"
+#include "GCScheduler.hpp"
 #include "GCStatistics.hpp"
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
-#include "Memory.h"
 #include "RootSet.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
@@ -18,53 +18,35 @@
 
 using namespace kotlin;
 
-gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
+gc::internal::GCThread::GCThread(
+        GCStateHolder& state,
+        SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
+        alloc::Allocator& allocator,
+        gcScheduler::GCScheduler& gcScheduler) noexcept :
+    state_(state),
+    finalizerProcessor_(finalizerProcessor),
+    allocator_(allocator),
+    gcScheduler_(gcScheduler),
+    thread_(std::string_view("GC thread"), [this] { body(); }) {}
 
-    allocator_(allocator), gcScheduler_(gcScheduler), finalizerProcessor_([this](int64_t epoch) noexcept {
-        GCHandle::getByEpoch(epoch).finalizersDone();
-        state_.finalized(epoch);
-    }) {
-    gcThread_ = UtilityThread(std::string_view("GC thread"), [this] {
-        while (true) {
-            auto epoch = state_.waitScheduled();
-            if (epoch.has_value()) {
-                PerformFullGC(*epoch);
-            } else {
-                break;
-            }
+void gc::internal::GCThread::body() noexcept {
+    while (true) {
+        if (auto epoch = state_.waitScheduled()) {
+            PerformFullGC(*epoch);
+        } else {
+            break;
         }
-    });
-    RuntimeLogDebug({kTagGC}, "Same thread Mark & Sweep GC initialized");
+    }
 }
 
-gc::SameThreadMarkAndSweep::~SameThreadMarkAndSweep() {
-    state_.shutdown();
-}
-
-void gc::SameThreadMarkAndSweep::StartFinalizerThreadIfNeeded() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_.StartFinalizerThreadIfNone();
-    finalizerProcessor_.WaitFinalizerThreadInitialized();
-}
-
-void gc::SameThreadMarkAndSweep::StopFinalizerThreadIfRunning() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_.StopFinalizerThread();
-}
-
-bool gc::SameThreadMarkAndSweep::FinalizersThreadIsRunning() noexcept {
-    return finalizerProcessor_.IsRunning();
-}
-
-void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
+void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto gcHandle = GCHandle::create(epoch);
 
     stopTheWorld(gcHandle, "GC stop the world");
 
-    auto& scheduler = gcScheduler_;
-    scheduler.onGCStart();
+    gcScheduler_.onGCStart();
 
     state_.start(epoch);
 
@@ -100,16 +82,12 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     finalizerQueue.mergeFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
 
-    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
+    gcScheduler_.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
 
     resumeTheWorld(gcHandle);
 
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
-    if (!mainThreadFinalizerProcessor_.available()) {
-        finalizerQueue.mergeIntoRegular();
-    }
-    finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue.regular), epoch);
-    mainThreadFinalizerProcessor_.schedule(std::move(finalizerQueue.mainThread), epoch);
+    finalizerProcessor_.schedule(std::move(finalizerQueue), epoch);
 }

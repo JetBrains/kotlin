@@ -3,12 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-#include "SameThreadMarkAndSweep.hpp"
+#include "GCImpl.hpp"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "GCImpl.hpp"
 #include "GlobalData.hpp"
 #include "TracingGCTest.hpp"
 
