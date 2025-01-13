@@ -50997,6 +50997,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Diagnostics {
         @Test
+        @TestMetadata("contextParameterSyntaxWithReceiversLanguageFeature.kt")
+        public void testContextParameterSyntaxWithReceiversLanguageFeature() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/contextParameterSyntaxWithReceiversLanguageFeature.kt");
+        }
+
+        @Test
         @TestMetadata("contextParameterSyntaxWithoutLanguageFeature.kt")
         public void testContextParameterSyntaxWithoutLanguageFeature() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/contextParameterSyntaxWithoutLanguageFeature.kt");

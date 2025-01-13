@@ -32,10 +32,8 @@ object FirContextReceiversTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind
                     context
                 )
             }
-            return
-        }
-
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, context)
+        } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
             reporter.reportOn(
                 source,
                 FirErrors.UNSUPPORTED_FEATURE,

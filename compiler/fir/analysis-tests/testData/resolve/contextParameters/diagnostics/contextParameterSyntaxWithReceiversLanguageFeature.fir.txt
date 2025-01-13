@@ -1,4 +1,4 @@
-FILE: contextParameterSyntaxWithoutLanguageFeature.kt
+FILE: contextParameterSyntaxWithReceiversLanguageFeature.kt
     context(s: R|kotlin/String|)
     public final fun foo(): R|kotlin/Unit| {
     }

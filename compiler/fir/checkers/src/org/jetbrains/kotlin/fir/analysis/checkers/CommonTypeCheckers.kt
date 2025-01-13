@@ -23,7 +23,6 @@ object CommonTypeCheckers : TypeCheckers() {
         FirOptionalExpectationTypeChecker,
         FirIncompatibleClassTypeChecker,
         FirContextReceiversTypeChecker,
-        FirContextReceiversDeprecatedTypeChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinTypeChecker,
         FirProjectionRelationChecker,
         FirCommonAtomicReferenceToPrimitiveTypeChecker,
