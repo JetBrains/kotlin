@@ -121,6 +121,13 @@ class JvmIrCodegenFactory(
         val allBuiltins: List<IrFile>,
     )
 
+    /**
+     * If the extension is marked with this marker, it is applied even on expression evaluation in the IDE
+     *
+     * see [convertToIr] for implementation details
+     */
+    interface IrGeneratorExtensionMarkerForExpressionEvaluation
+
     fun convertAndGenerate(files: Collection<KtFile>, state: GenerationState, bindingContext: BindingContext) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         val backendInput = convertToIr(state, files, bindingContext)
@@ -217,21 +224,22 @@ class JvmIrCodegenFactory(
             irLinker,
             messageCollector,
             diagnosticReporter
-        ).takeIf { !ideCodegenSettings.doNotLoadDependencyModuleHeaders }
-        if (pluginExtensions.isNotEmpty() && pluginContext != null) {
-            for (extension in pluginExtensions) {
-                if (psi2irContext.configuration.generateBodies ||
-                    @OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
-                ) {
-                    psi2ir.addPostprocessingStep { module ->
-                        val old = stubGenerator.unboundSymbolGeneration
-                        try {
-                            stubGenerator.unboundSymbolGeneration = true
-                            extension.generate(module, pluginContext)
-                        } finally {
-                            stubGenerator.unboundSymbolGeneration = old
-                        }
-                    }
+        )
+        val skipRegularPlugins = ideCodegenSettings.doNotLoadDependencyModuleHeaders
+        for (extension in pluginExtensions) {
+            if (skipRegularPlugins && extension !is IrGeneratorExtensionMarkerForExpressionEvaluation) continue
+
+            if (!psi2irContext.configuration.generateBodies &&
+                !@OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
+            ) continue
+
+            psi2ir.addPostprocessingStep { module ->
+                val old = stubGenerator.unboundSymbolGeneration
+                try {
+                    stubGenerator.unboundSymbolGeneration = true
+                    extension.generate(module, pluginContext)
+                } finally {
+                    stubGenerator.unboundSymbolGeneration = old
                 }
             }
         }

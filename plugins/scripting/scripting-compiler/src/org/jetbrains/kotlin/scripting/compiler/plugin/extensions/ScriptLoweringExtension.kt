@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.extensions
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.IrGeneratorExtensionMarkerForExpressionEvaluation
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.JvmSymbolsForScripting
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ScriptsToClassesLowering
 
-class ScriptLoweringExtension : IrGenerationExtension {
+class ScriptLoweringExtension : IrGenerationExtension, IrGeneratorExtensionMarkerForExpressionEvaluation {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext,
