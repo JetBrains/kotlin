@@ -456,6 +456,20 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val appleCopyDsymDuringArchiving: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING) ?: true
 
+    /**
+     * Application Binary Interface (ABI) validation:
+     * Disable compilation support for some targets in functional tests.
+     */
+    val abiValidationBannedTargets: String?
+        get() = property(PropertyNames.ABI_VALIDATION_BANNED_TARGETS).orNull
+
+    /**
+     * Application Binary Interface (ABI) validation:
+     * Disable extension and task creation.
+     */
+    val abiValidationDisabled: Boolean
+        get() = booleanProperty(PropertyNames.ABI_VALIDATION_DISABLED) ?: false
+
 
     /**
      * Allows suppressing the diagnostic [KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency].
@@ -740,6 +754,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
         val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
+        val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
+        val ABI_VALIDATION_DISABLED = property(ABI_VALIDATION_DISABLED_NAME)
     }
 
     companion object {
@@ -751,6 +767,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         private const val KOTLIN_NATIVE_BINARY_OPTION_PREFIX = "kotlin.native.binary."
 
         internal const val KOTLIN_INTERNAL_NAMESPACE = "kotlin.internal"
+
+        internal const val ABI_VALIDATION_BANNED_TARGETS_NAME = "kotlin.internal.abi.validation.klib.targets.disabled.for.testing"
+
+        internal const val ABI_VALIDATION_DISABLED_NAME = "kotlin.abi.validation.disabled"
 
         operator fun invoke(project: Project): PropertiesProvider =
             with(project.extensions.extraProperties) {
