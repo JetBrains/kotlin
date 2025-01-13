@@ -124,10 +124,12 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         val binarySpec = objectFactory.newInstance<KotlinJvmBinaryDsl>()
         configure(binarySpec)
 
+        val jarTask = jvmCompilation.jarTask
         return registerJvmRunTask(
             jvmCompilation.runTaskName(disambiguationSuffix),
             jvmCompilation,
-            binarySpec
+            binarySpec,
+            jarTask,
         )
     }
 
@@ -140,11 +142,12 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         taskName: String,
         jvmCompilation: KotlinJvmCompilation,
         jvmBinarySpec: KotlinJvmBinaryDsl,
+        compilationJarTask: TaskProvider<Jar>,
     ): TaskProvider<JavaExec> = taskContainer.register(taskName, JavaExec::class.java) { runTask ->
         runTask.group = APPLICATION_GROUP
         runTask.description = "Run Kotlin ${jvmCompilation.disambiguatedName} as a JVM application."
 
-        runTask.classpath(runTask.project.calculateRunClasspath(jvmBinarySpec, jvmCompilation))
+        runTask.classpath(runTask.project.calculateRunClasspath(jvmBinarySpec, jvmCompilation, compilationJarTask))
         runTask.mainModule.set(jvmBinarySpec.mainModule)
         runTask.mainClass.set(jvmBinarySpec.mainClass)
         runTask.compatibilityWrapper().setJvmArgumentsConvention(jvmBinarySpec.applicationDefaultJvmArgs)
@@ -155,12 +158,16 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         runTask.configureTaskToolchain()
     }
 
+    private val KotlinJvmCompilation.jarTask: TaskProvider<Jar>
+        get() = archiveTaskName?.let { this@DefaultKotlinJvmBinariesDsl.taskContainer.locateTask(it) }
+            ?: registerArchiveTask(project)
+
     private fun Project.calculateRunClasspath(
         jvmBinarySpec: KotlinJvmBinaryDsl,
         jvmCompilation: KotlinJvmCompilation,
+        compilationJarTask: TaskProvider<Jar>,
     ): FileCollection {
 
-        val jarTask = jvmCompilation.archiveTaskName?.let { tasks.locateTask<Jar>(it) }
         return objects.fileCollection().from(
             {
                 // Quote from commit 5aa762bf4604 in Gradle:
@@ -170,9 +177,9 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
                 //    everything that is not in the same 'classes' folder as the
                 //    module-info.class becomes unaccessible. Hence, we always use the complete
                 //    Jar now to run a module via the :run task.
-                if (jvmBinarySpec.mainModule.isPresent && jarTask != null) {
+                if (jvmBinarySpec.mainModule.isPresent) {
                     arrayOf(
-                        jarTask.map { it.archiveFile },
+                        compilationJarTask.map { it.archiveFile },
                         jvmCompilation.runtimeDependencyFiles,
                     )
                 } else {
