@@ -9,46 +9,53 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-abstract class IrSymbolVisitor : IrVisitorVoid() {
-    abstract fun processSymbol(symbol: IrSymbol)
+private abstract class IrSymbolVisitor : IrVisitorVoid() {
+    abstract fun processSymbol(element: IrElement, symbol: IrSymbol)
+
+    override fun visitElement(element: IrElement) {
+        if (element is IrSymbolOwner) {
+            processSymbol(element, element.symbol)
+        }
+    }
 
     override fun visitDeclarationReference(expression: IrDeclarationReference) {
-        super.visitDeclarationReference(expression)
-        processSymbol(expression.symbol)
+        visitElement(expression)
+        processSymbol(expression, expression.symbol)
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
-        super.visitInstanceInitializerCall(expression)
-        processSymbol(expression.classSymbol)
+        visitElement(expression)
+        processSymbol(expression, expression.classSymbol)
     }
 
     override fun visitReturn(expression: IrReturn) {
-        super.visitReturn(expression)
-        processSymbol(expression.returnTargetSymbol)
+        visitElement(expression)
+        processSymbol(expression, expression.returnTargetSymbol)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference) {
-        super.visitPropertyReference(expression)
-        expression.field?.let { processSymbol(it) }
-        expression.getter?.let { processSymbol(it) }
-        expression.setter?.let { processSymbol(it) }
+        visitDeclarationReference(expression)
+        expression.field?.let { processSymbol(expression, it) }
+        expression.getter?.let { processSymbol(expression, it) }
+        expression.setter?.let { processSymbol(expression, it) }
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
-        super.visitLocalDelegatedPropertyReference(expression)
-        processSymbol(expression.delegate)
-        processSymbol(expression.getter)
-        expression.setter?.let { processSymbol(it) }
+        visitDeclarationReference(expression)
+        processSymbol(expression, expression.delegate)
+        processSymbol(expression, expression.getter)
+        expression.setter?.let { processSymbol(expression, it) }
     }
 
     override fun visitCall(expression: IrCall) {
-        super.visitCall(expression)
-        expression.superQualifierSymbol?.let { processSymbol(it) }
+        visitDeclarationReference(expression)
+        expression.superQualifierSymbol?.let { processSymbol(expression, it) }
     }
 }
 
@@ -58,7 +65,9 @@ fun checkUnboundSymbols(element: IrElement) {
     val message = mutableListOf<String>()
     val parentChain: MutableList<IrElement> = mutableListOf()
     val visitor = object : IrSymbolVisitor() {
-        override fun processSymbol(symbol: IrSymbol) {
+        override fun processSymbol(element: IrElement, symbol: IrSymbol) {
+            if (element is IrExpression && element.type is IrDynamicType) return
+
             if (!symbol.isBound) {
                 message.add(
                     buildString {
@@ -76,10 +85,19 @@ fun checkUnboundSymbols(element: IrElement) {
         override fun visitElement(element: IrElement) {
             parentChain.temporarilyPushing(element) {
                 element.acceptChildrenVoid(this)
-                if (element is IrSymbolOwner) {
-                    processSymbol(element.symbol)
-                }
+                super.visitElement(element)
             }
+        }
+
+        override fun visitDeclarationReference(expression: IrDeclarationReference) {
+            visitElement(expression)
+            // TODO: Fix unbound dynamic field declarations (KT-74548)
+            if (expression is IrFieldAccessExpression) {
+                val receiverType = expression.receiver?.type
+                if (receiverType is IrDynamicType)
+                    return
+            }
+            processSymbol(expression, expression.symbol)
         }
     }
     element.acceptVoid(visitor)
