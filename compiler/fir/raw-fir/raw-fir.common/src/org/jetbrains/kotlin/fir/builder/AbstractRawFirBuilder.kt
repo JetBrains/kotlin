@@ -1232,6 +1232,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         name = Name.special("<destructuring>")
         diagnostic = ConeDestructuringDeclarationsOnTopLevel
         symbol = FirErrorPropertySymbol(diagnostic)
+        isLocal = false
         this.initializer = initializer
     }
 

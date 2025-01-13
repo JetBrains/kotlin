@@ -675,7 +675,7 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val errorProperty: Element by element(Declaration) {
-        parent(variable)
+        parent(property)
         parent(diagnosticHolder)
 
         +declaredSymbol(errorPropertySymbolType)
