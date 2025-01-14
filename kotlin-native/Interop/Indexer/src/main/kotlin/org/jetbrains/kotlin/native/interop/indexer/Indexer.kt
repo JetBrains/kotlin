@@ -1090,15 +1090,21 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             else -> error(cursor.kind)
         }
 
+        check(hasAttribute(cursor, CXCursorKind.CXCursor_ObjCDesignatedInitializer) == hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER))
+        check(hasAttribute(cursor, CXCursorKind.CXCursor_NSReturnsRetained) == (clang_Cursor_isObjCReturningRetainedMethod(cursor) != 0)) {
+            "Expected ${clang_getCursorUSR(cursor).convertAndDispose()} to be ${if (clang_Cursor_isObjCReturningRetainedMethod(cursor) != 0) "NS_RETURNS_RETAINED" else "not NS_RETURNS_RETAINED"}"
+        }
+        check(hasAttribute(cursor, CXCursorKind.CXCursor_NSConsumesSelf) == (clang_Cursor_isObjCConsumingSelfMethod(cursor) != 0))
+
         return ObjCMethod(
             selector, encoding, parameters, returnType,
             isVariadic = clang_Cursor_isVariadic(cursor) != 0,
             isClass = isClass,
-            nsConsumesSelf = clang_Cursor_isObjCConsumingSelfMethod(cursor) != 0,
-            nsReturnsRetained = clang_Cursor_isObjCReturningRetainedMethod(cursor) != 0,
+            nsConsumesSelf = hasAttribute(cursor, CXCursorKind.CXCursor_NSConsumesSelf),
+            nsReturnsRetained = hasAttribute(cursor, CXCursorKind.CXCursor_NSReturnsRetained),
             isOptional = (clang_Cursor_isObjCOptional(cursor) != 0),
             isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
-            isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
+            isExplicitlyDesignatedInitializer = hasAttribute(cursor, CXCursorKind.CXCursor_ObjCDesignatedInitializer),
             isDirect = hasAttribute(cursor, OBJC_DIRECT),
         )
     }
@@ -1136,8 +1142,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
             val argName = getCursorSpelling(argCursor)
             val type = convertCursorType(argCursor)
+            check(hasAttribute(argCursor, CXCursorKind.CXCursor_NSConsumed) == hasAttribute(argCursor, NS_CONSUMED))
             Parameter(argName, type,
-                    nsConsumed = hasAttribute(argCursor, NS_CONSUMED))
+                    nsConsumed = hasAttribute(argCursor, CXCursorKind.CXCursor_NSConsumed))
         }
         return args
     }
@@ -1150,6 +1157,20 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         var result = false
         visitChildren(cursor) { child, _ ->
             if (clang_isAttribute(child.kind) != 0 && clang_Cursor_getAttributeSpelling(child)?.toKString() == name) {
+                result = true
+                CXChildVisitResult.CXChildVisit_Break
+            } else {
+                CXChildVisitResult.CXChildVisit_Continue
+            }
+        }
+        return result
+    }
+
+    private fun hasAttribute(cursor: CValue<CXCursor>, kind: CXCursorKind): Boolean {
+        check(clang_isAttribute(kind) != 0) { "Not an attribute cursor kind: $kind" }
+        var result = false
+        visitChildren(cursor) { child, _ ->
+            if (child.kind == kind) {
                 result = true
                 CXChildVisitResult.CXChildVisit_Break
             } else {
