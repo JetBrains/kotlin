@@ -142,6 +142,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
     }
 
     @Test
+    @TestMetadata("incorrectAnnotationArguments.kt")
+    public void testIncorrectAnnotationArguments() {
+      runTest("plugins/lombok/testData/diagnostics/k1+k2/incorrectAnnotationArguments.kt");
+    }
+
+    @Test
     @TestMetadata("setters.kt")
     public void testSetters() {
       runTest("plugins/lombok/testData/diagnostics/k1+k2/setters.kt");

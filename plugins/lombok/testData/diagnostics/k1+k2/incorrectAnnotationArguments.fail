@@ -1,0 +1,10 @@
+java.lang.IllegalStateException: Annotation argument value cannot be null: builderMethodName
+	at org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.namedAnnotationArguments(JavaElementCollectionFromPsiArrayUtil.kt:84)
+	at org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl.getArguments(JavaAnnotationImpl.java:47)
+	at org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor.allValueArguments_delegate$lambda$5(LazyJavaAnnotationDescriptor.kt:62)
+	at org.jetbrains.kotlin.storage.LockBasedStorageManager$LockBasedLazyValue.invoke(LockBasedStorageManager.java:408)
+	at org.jetbrains.kotlin.storage.LockBasedStorageManager$LockBasedNotNullLazyValue.invoke(LockBasedStorageManager.java:527)
+	at org.jetbrains.kotlin.storage.StorageKt.getValue(storage.kt:42)
+	at org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor.getAllValueArguments(LazyJavaAnnotationDescriptor.kt:61)
+	at org.jetbrains.kotlin.lombok.utils.AnnotationUtilsKt.getStringArgument(annotationUtils.kt:29)
+	...
