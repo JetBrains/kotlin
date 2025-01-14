@@ -30,7 +30,7 @@ namespace {
     }
 }
 
-}
+} // namespace
 
 alloc::Allocator::ThreadData::ThreadData(Allocator& allocator) noexcept : impl_(std::make_unique<Impl>(allocator.impl())) {}
 
@@ -82,8 +82,32 @@ alloc::Allocator::~Allocator() = default;
 void alloc::Allocator::prepareForGC() noexcept {}
 
 void alloc::Allocator::clearForTests() noexcept {
+    stopFinalizerThreadIfRunning();
     impl_->extraObjectDataFactory().ClearForTests();
     impl_->objectFactory().ClearForTests();
+    impl_->pendingFinalizers().reset();
+}
+
+void alloc::Allocator::startFinalizerThreadIfNeeded() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    impl_->finalizerProcessor().startThreadIfNeeded();
+}
+
+void alloc::Allocator::stopFinalizerThreadIfRunning() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    impl_->finalizerProcessor().stopThread();
+}
+
+bool alloc::Allocator::finalizersThreadIsRunning() noexcept {
+    return impl_->finalizerProcessor().isThreadRunning();
+}
+
+void alloc::Allocator::configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept {
+    impl_->finalizerProcessor().configureMainThread(std::move(f));
+}
+
+bool alloc::Allocator::mainThreadFinalizerProcessorAvailable() noexcept {
+    return impl_->finalizerProcessor().mainThreadAvailable();
 }
 
 gc::GC::ObjectData& alloc::objectDataForObject(ObjHeader* object) noexcept {
@@ -120,4 +144,8 @@ alloc::FinalizerQueue alloc::Allocator::Impl::sweep(gc::GCHandle gcHandle, alloc
     state.objectFactoryIterable_ = std::nullopt;
     alloc::compactObjectPoolInMainThread();
     return finalizerQueue;
+}
+
+void alloc::Allocator::Impl::scheduleFinalization(FinalizerQueue queue, int64_t epoch) noexcept {
+    finalizerProcessor_.schedule(std::move(queue), epoch);
 }

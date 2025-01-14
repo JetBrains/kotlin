@@ -24,7 +24,7 @@
 #include <CoreFoundation/CFRunLoop.h>
 #endif
 
-namespace kotlin::gc {
+namespace kotlin::alloc {
 
 template <typename FinalizerQueue, typename FinalizerQueueTraits>
 class FinalizerProcessor : private Pinned {
@@ -119,7 +119,8 @@ private:
 #if KONAN_OBJC_INTEROP
     class ProcessingLoopWithCFImpl final : public ProcessingLoop {
     public:
-        explicit ProcessingLoopWithCFImpl(FinalizerProcessor& owner) : owner_(owner), runLoopSource_([this]() noexcept { handleNewFinalizers(); }) {}
+        explicit ProcessingLoopWithCFImpl(FinalizerProcessor& owner) :
+            owner_(owner), runLoopSource_([this]() noexcept { handleNewFinalizers(); }) {}
 
         void notify() override {
             // wait until runLoop_ ptr is published
@@ -131,9 +132,7 @@ private:
             CFRunLoopWakeUp(runLoop_);
         }
 
-        void initThreadData() override {
-            runLoop_.store(CFRunLoopGetCurrent(), std::memory_order_release);
-        }
+        void initThreadData() override { runLoop_.store(CFRunLoopGetCurrent(), std::memory_order_release); }
 
         void body() override {
             objc_support::AutoreleasePool autoreleasePool;
@@ -171,19 +170,17 @@ private:
     public:
         explicit ProcessingLoopImpl(FinalizerProcessor& owner) : owner_(owner) {}
 
-        void notify() override {
-            owner_.finalizerQueueCondVar_.notify_all();
-        }
+        void notify() override { owner_.finalizerQueueCondVar_.notify_all(); }
 
-        void initThreadData() override { /* noop */ }
+        void initThreadData() override { /* noop */
+        }
 
         void body() override {
             int64_t finishedEpoch = 0;
             while (true) {
                 std::unique_lock lock(owner_.finalizerQueueMutex_);
-                owner_.finalizerQueueCondVar_.wait(lock, [this, &finishedEpoch] {
-                    return owner_.hasNewTasks(finishedEpoch) || owner_.shutdownFlag_;
-                });
+                owner_.finalizerQueueCondVar_.wait(
+                        lock, [this, &finishedEpoch] { return owner_.hasNewTasks(finishedEpoch) || owner_.shutdownFlag_; });
                 if (!owner_.hasNewTasks(finishedEpoch)) {
                     RuntimeAssert(owner_.shutdownFlag_, "Nothing to do, but no shutdownFlag_ is set on wakeup");
                     owner_.newTasksAllowed_ = false;
@@ -226,7 +223,6 @@ private:
     bool initialized_ = false;
 
     std::mutex threadCreatingMutex_;
-
 };
 
-} // namespace kotlin::gc
+} // namespace kotlin::alloc

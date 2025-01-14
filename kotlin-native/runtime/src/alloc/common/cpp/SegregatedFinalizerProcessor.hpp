@@ -5,22 +5,17 @@
 
 #pragma once
 
-#include "GCState.hpp"
-#include "GCStatistics.hpp"
 #include "FinalizerProcessor.hpp"
 #include "MainThreadFinalizerProcessor.hpp"
 #include "SegregatedFinalizerQueue.hpp"
 
-namespace kotlin::gc::internal {
+namespace kotlin::alloc {
 
 template <typename FinalizerQueueSingle, typename FinalizerQueueTraits>
-class SegregatedGCFinalizerProcessor : private Pinned {
+class SegregatedFinalizerProcessor : private Pinned {
 public:
-    explicit SegregatedGCFinalizerProcessor(GCStateHolder& state) noexcept :
-        finalizerProcessor_([&state](int64_t epoch) noexcept {
-            GCHandle::getByEpoch(epoch).finalizersDone();
-            state.finalized(epoch);
-        }) {}
+    explicit SegregatedFinalizerProcessor(std::function<void(int64_t)> epochDoneCallback) noexcept :
+        finalizerProcessor_(std::move(epochDoneCallback)) {}
 
     void schedule(alloc::SegregatedFinalizerQueue<FinalizerQueueSingle> queue, int64_t epoch) noexcept {
         if (!mainThreadFinalizerProcessor_.available()) {
@@ -50,4 +45,4 @@ private:
     alloc::MainThreadFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits> mainThreadFinalizerProcessor_;
 };
 
-} // namespace kotlin::gc::internal
+} // namespace kotlin::alloc

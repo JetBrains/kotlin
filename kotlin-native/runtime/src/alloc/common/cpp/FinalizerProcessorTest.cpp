@@ -29,7 +29,7 @@ public:
         }
     };
 
-    using FinalizerProcessor = gc::FinalizerProcessor<FinalizerQueue, FinalizerQueueTraits>;
+    using FinalizerProcessor = alloc::FinalizerProcessor<FinalizerQueue, FinalizerQueueTraits>;
 
     FinalizerProcessorTest() noexcept { setFinalizerHook_ = &finalizerHook_; }
 

@@ -38,22 +38,7 @@ gc::GC::~GC() {
 }
 
 void gc::GC::ClearForTests() noexcept {
-    StopFinalizerThreadIfRunning();
     GCHandle::ClearForTests();
-}
-
-void gc::GC::StartFinalizerThreadIfNeeded() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    impl_->finalizerProcessor_.startThreadIfNeeded();
-}
-
-void gc::GC::StopFinalizerThreadIfRunning() noexcept {
-    NativeOrUnregisteredThreadGuard guard(true);
-    impl_->finalizerProcessor_.stopThread();
-}
-
-bool gc::GC::FinalizersThreadIsRunning() noexcept {
-    return impl_->finalizerProcessor_.isThreadRunning();
 }
 
 // static
@@ -76,14 +61,6 @@ void gc::GC::WaitFinished(int64_t epoch) noexcept {
 
 void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
     impl_->state_.waitEpochFinalized(epoch);
-}
-
-void gc::GC::configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept {
-    impl_->finalizerProcessor_.configureMainThread(std::move(f));
-}
-
-bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
-    return impl_->finalizerProcessor_.mainThreadAvailable();
 }
 
 ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
@@ -122,4 +99,9 @@ ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignmen
 // static
 ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
     return new (ptr) gc::GC::ObjectData();
+}
+
+void gc::GC::onEpochFinalized(int64_t epoch) noexcept {
+    GCHandle::getByEpoch(epoch).finalizersDone();
+    impl_->state_.finalized(epoch);
 }

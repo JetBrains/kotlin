@@ -15,6 +15,7 @@
 #include "ObjectFactory.hpp"
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectFactorySweep.hpp"
+#include "SegregatedFinalizerProcessor.hpp"
 #include "Logging.hpp"
 
 namespace kotlin::alloc {
@@ -47,17 +48,20 @@ struct SweepState : private MoveOnly {
 
 class Allocator::Impl : private Pinned {
 public:
-    Impl() noexcept = default;
+    Impl() noexcept : finalizerProcessor_([](int64_t epoch) noexcept { mm::GlobalData::Instance().gc().onEpochFinalized(epoch); }) {}
 
     ObjectFactoryImpl& objectFactory() noexcept { return objectFactory_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits>& finalizerProcessor() noexcept { return finalizerProcessor_; }
 
     SweepState prepareForSweep() noexcept;
     FinalizerQueue sweep(gc::GCHandle gcHandle, SweepState state) noexcept;
+    void scheduleFinalization(FinalizerQueue queue, int64_t epoch) noexcept;
 
 private:
     ObjectFactoryImpl objectFactory_;
     ExtraObjectDataFactory extraObjectDataFactory_;
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits> finalizerProcessor_;
 };
 
 class Allocator::ThreadData::Impl : private Pinned {

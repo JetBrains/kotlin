@@ -56,6 +56,13 @@ public:
 
     void TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept;
 
+    void startFinalizerThreadIfNeeded() noexcept;
+    void stopFinalizerThreadIfRunning() noexcept;
+    bool finalizersThreadIsRunning() noexcept;
+
+    void configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept;
+    bool mainThreadFinalizerProcessorAvailable() noexcept;
+
 private:
     std::unique_ptr<Impl> impl_;
 };

@@ -5,13 +5,11 @@
 
 #pragma once
 
-#include "AllocatorImpl.hpp"
 #include "Barriers.hpp"
 #include "ConcurrentMark.hpp"
 #include "GC.hpp"
 #include "GCState.hpp"
 #include "GCThread.hpp"
-#include "SegregatedGCFinalizerProcessor.hpp"
 
 namespace kotlin {
 namespace gc {
@@ -20,13 +18,12 @@ namespace gc {
 class GC::Impl : private Pinned {
 public:
     Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, size_t auxGCThreads) noexcept :
-        finalizerProcessor_(state_), gcThread_(state_, finalizerProcessor_, markDispatcher_, allocator, gcScheduler) {
+        gcThread_(state_, markDispatcher_, allocator, gcScheduler) {
         RuntimeAssert(!mutatorsCooperate, "Cooperative mutators aren't supported yet");
         RuntimeAssert(auxGCThreads == 0, "Auxiliary GC threads aren't supported yet");
     }
 
     GCStateHolder state_;
-    internal::SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
     mark::ConcurrentMark markDispatcher_;
     internal::GCThread gcThread_;
 };

@@ -18,16 +18,8 @@
 
 using namespace kotlin;
 
-gc::internal::GCThread::GCThread(
-        GCStateHolder& state,
-        SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
-        alloc::Allocator& allocator,
-        gcScheduler::GCScheduler& gcScheduler) noexcept :
-    state_(state),
-    finalizerProcessor_(finalizerProcessor),
-    allocator_(allocator),
-    gcScheduler_(gcScheduler),
-    thread_(std::string_view("GC thread"), [this] { body(); }) {}
+gc::internal::GCThread::GCThread(GCStateHolder& state, alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
+    state_(state), allocator_(allocator), gcScheduler_(gcScheduler), thread_(std::string_view("GC thread"), [this] { body(); }) {}
 
 void gc::internal::GCThread::body() noexcept {
     while (true) {
@@ -75,5 +67,5 @@ void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
-    finalizerProcessor_.schedule(std::move(finalizerQueue), epoch);
+    allocator_.impl().scheduleFinalization(std::move(finalizerQueue), epoch);
 }

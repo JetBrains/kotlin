@@ -7,13 +7,11 @@
 
 #include <cstddef>
 
-#include "AllocatorImpl.hpp"
 #include "Barriers.hpp"
 #include "GC.hpp"
 #include "GCState.hpp"
 #include "GCThread.hpp"
 #include "ParallelMark.hpp"
-#include "SegregatedGCFinalizerProcessor.hpp"
 #include "ThreadData.hpp"
 
 namespace kotlin {
@@ -23,13 +21,11 @@ namespace gc {
 class GC::Impl : private Pinned {
 public:
     Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, size_t auxGCThreads) noexcept :
-        finalizerProcessor_(state_),
         markDispatcher_(mutatorsCooperate),
-        mainThread_(state_, finalizerProcessor_, markDispatcher_, allocator, gcScheduler),
+        mainThread_(state_, markDispatcher_, allocator, gcScheduler),
         auxThreads_(markDispatcher_, auxGCThreads) {}
 
     GCStateHolder state_;
-    internal::SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
     mark::ParallelMark markDispatcher_;
     internal::MainGCThread mainThread_;
     internal::AuxiliaryGCThreads auxThreads_;

@@ -7,9 +7,7 @@
 
 #include <vector>
 
-#include "AllocatorImpl.hpp"
 #include "GC.hpp"
-#include "SegregatedGCFinalizerProcessor.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
 #include "ParallelMark.hpp"
@@ -22,7 +20,6 @@ class MainGCThread : private MoveOnly {
 public:
     MainGCThread(
             GCStateHolder& state,
-            SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
             mark::ParallelMark& markDispatcher,
             alloc::Allocator& allocator,
             gcScheduler::GCScheduler& gcScheduler) noexcept;
@@ -32,7 +29,6 @@ private:
     void PerformFullGC(int64_t epoch) noexcept;
 
     GCStateHolder& state_;
-    SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor_;
     mark::ParallelMark& markDispatcher_;
     alloc::Allocator& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;

@@ -35,14 +35,6 @@ void gc::GC::ClearForTests() noexcept {
     GCHandle::ClearForTests();
 }
 
-void gc::GC::StartFinalizerThreadIfNeeded() noexcept {}
-
-void gc::GC::StopFinalizerThreadIfRunning() noexcept {}
-
-bool gc::GC::FinalizersThreadIsRunning() noexcept {
-    return false;
-}
-
 // static
 ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {}
 
@@ -56,12 +48,6 @@ int64_t gc::GC::Schedule() noexcept {
 void gc::GC::WaitFinished(int64_t epoch) noexcept {}
 
 void gc::GC::WaitFinalizers(int64_t epoch) noexcept {}
-
-void gc::GC::configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept {}
-
-bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
-    return false;
-}
 
 ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
 
@@ -102,3 +88,5 @@ ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignmen
 ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
     return reinterpret_cast<gc::GC::ObjectData*>(ptr);
 }
+
+void gc::GC::onEpochFinalized(int64_t epoch) noexcept {}

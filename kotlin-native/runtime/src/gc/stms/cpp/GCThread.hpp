@@ -5,12 +5,10 @@
 
 #pragma once
 
-#include "AllocatorImpl.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
 #include "MarkTraits.hpp"
-#include "SegregatedGCFinalizerProcessor.hpp"
 #include "Utils.hpp"
 #include "concurrent/UtilityThread.hpp"
 
@@ -18,18 +16,13 @@ namespace kotlin::gc::internal {
 
 class GCThread : private MoveOnly {
 public:
-    GCThread(
-            GCStateHolder& state,
-            SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
-            alloc::Allocator& allocator,
-            gcScheduler::GCScheduler& gcScheduler) noexcept;
+    GCThread(GCStateHolder& state, alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
 
 private:
     void body() noexcept;
     void PerformFullGC(int64_t epoch) noexcept;
 
     GCStateHolder& state_;
-    SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor_;
     alloc::Allocator& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;
     MarkQueue markQueue_;

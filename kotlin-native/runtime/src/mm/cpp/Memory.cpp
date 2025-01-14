@@ -98,7 +98,7 @@ extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
         ThreadStateGuard guard(state, ThreadState::kRunnable);
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
         // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
-        mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
+        mm::GlobalData::Instance().allocator().stopFinalizerThreadIfRunning();
     }
     if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
         // we can clear reference in advance, as Unregister function can't use it anyway
@@ -326,44 +326,45 @@ extern "C" void Kotlin_native_internal_GC_setPauseOnTargetHeapOverflow(ObjHeader
 }
 
 extern "C" KBoolean Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_isAvailable(ObjHeader* gc) {
-    return mm::GlobalData::Instance().gc().mainThreadFinalizerProcessorAvailable();
+    return mm::GlobalData::Instance().allocator().mainThreadFinalizerProcessorAvailable();
 }
 
 extern "C" KLong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMaxTimeInTask(ObjHeader* gc) {
     KLong result;
-    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
+    mm::GlobalData::Instance().allocator().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
         result = std::chrono::duration_cast<std::chrono::microseconds>(config.maxTimeInTask).count();
     });
     return result;
 }
 
 extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMaxTimeInTask(ObjHeader* gc, KLong value) {
-    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+    mm::GlobalData::Instance().allocator().configureMainThreadFinalizerProcessor(
             [=](auto& config) noexcept -> void { config.maxTimeInTask = std::chrono::microseconds(value); });
 }
 
 extern "C" KLong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMinTimeBetweenTasks(ObjHeader* gc) {
     KLong result;
-    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
+    mm::GlobalData::Instance().allocator().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
         result = std::chrono::duration_cast<std::chrono::microseconds>(config.minTimeBetweenTasks).count();
     });
     return result;
 }
 
 extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMinTimeBetweenTasks(ObjHeader* gc, KLong value) {
-    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+    mm::GlobalData::Instance().allocator().configureMainThreadFinalizerProcessor(
             [=](auto& config) noexcept -> void { config.minTimeBetweenTasks = std::chrono::microseconds(value); });
 }
 
 extern "C" KULong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getBatchSize(ObjHeader* gc) {
     KULong result;
-    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+    mm::GlobalData::Instance().allocator().configureMainThreadFinalizerProcessor(
             [&](auto& config) noexcept -> void { result = config.batchSize; });
     return result;
 }
 
 extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSize(ObjHeader* gc, KULong value) {
-    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([=](auto& config) noexcept -> void { config.batchSize = value; });
+    mm::GlobalData::Instance().allocator().configureMainThreadFinalizerProcessor(
+            [=](auto& config) noexcept -> void { config.batchSize = value; });
 }
 
 extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
@@ -445,11 +446,11 @@ PERFORMANCE_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool ree
 }
 
 void kotlin::StartFinalizerThreadIfNeeded() noexcept {
-    mm::GlobalData::Instance().gc().StartFinalizerThreadIfNeeded();
+    mm::GlobalData::Instance().allocator().startFinalizerThreadIfNeeded();
 }
 
 bool kotlin::FinalizersThreadIsRunning() noexcept {
-    return mm::GlobalData::Instance().gc().FinalizersThreadIsRunning();
+    return mm::GlobalData::Instance().allocator().finalizersThreadIsRunning();
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {

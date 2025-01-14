@@ -69,10 +69,6 @@ public:
 
     void ClearForTests() noexcept;
 
-    void StartFinalizerThreadIfNeeded() noexcept;
-    void StopFinalizerThreadIfRunning() noexcept;
-    bool FinalizersThreadIsRunning() noexcept;
-
     static void processObjectInMark(void* state, ObjHeader* object) noexcept;
     static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
 
@@ -81,12 +77,11 @@ public:
     void WaitFinished(int64_t epoch) noexcept;
     void WaitFinalizers(int64_t epoch) noexcept;
 
-    void configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept;
-    bool mainThreadFinalizerProcessorAvailable() noexcept;
-
     auto gcLock() noexcept {
         return std::unique_lock{gcLock_};
     }
+
+    void onEpochFinalized(int64_t epoch) noexcept;
 
 private:
     std::unique_ptr<Impl> impl_;

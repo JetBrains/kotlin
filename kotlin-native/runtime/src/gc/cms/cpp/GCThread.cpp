@@ -21,12 +21,10 @@ using namespace kotlin;
 
 gc::internal::GCThread::GCThread(
         GCStateHolder& state,
-        SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
         mark::ConcurrentMark& markDispatcher,
         alloc::Allocator& allocator,
         gcScheduler::GCScheduler& gcScheduler) noexcept :
     state_(state),
-    finalizerProcessor_(finalizerProcessor),
     markDispatcher_(markDispatcher),
     allocator_(allocator),
     gcScheduler_(gcScheduler),
@@ -86,5 +84,5 @@ void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
     // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
     // destructors running. So, it must ensured that no locks are held by this point.
     // TODO: Consider having an always on sleeping finalizer thread.
-    finalizerProcessor_.schedule(std::move(finalizerQueue), epoch);
+    allocator_.impl().scheduleFinalization(std::move(finalizerQueue), epoch);
 }

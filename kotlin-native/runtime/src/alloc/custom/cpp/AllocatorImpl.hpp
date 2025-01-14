@@ -10,7 +10,9 @@
 #include "CustomAllocator.hpp"
 #include "CustomFinalizerProcessor.hpp"
 #include "GCApi.hpp"
+#include "GlobalData.hpp"
 #include "Heap.hpp"
+#include "SegregatedFinalizerProcessor.hpp"
 
 namespace kotlin::alloc {
 
@@ -18,15 +20,18 @@ struct SweepState {};
 
 class Allocator::Impl : private Pinned {
 public:
-    Impl() noexcept = default;
+    Impl() noexcept : finalizerProcessor_([](int64_t epoch) noexcept { mm::GlobalData::Instance().gc().onEpochFinalized(epoch); }) {}
 
     Heap& heap() noexcept { return heap_; }
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits>& finalizerProcessor() noexcept { return finalizerProcessor_; }
 
     SweepState prepareForSweep() noexcept;
     FinalizerQueue sweep(gc::GCHandle gcHandle, SweepState state) noexcept;
+    void scheduleFinalization(FinalizerQueue queue, int64_t epoch) noexcept;
 
 private:
     Heap heap_;
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits> finalizerProcessor_;
 };
 
 class Allocator::ThreadData::Impl : private Pinned {

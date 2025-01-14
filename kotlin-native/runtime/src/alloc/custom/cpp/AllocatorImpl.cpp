@@ -5,6 +5,7 @@
 
 #include "AllocatorImpl.hpp"
 
+#include "Allocator.hpp"
 #include "GCApi.hpp"
 #include "Heap.hpp"
 #include "ThreadData.hpp"
@@ -49,7 +50,9 @@ void alloc::Allocator::prepareForGC() noexcept {
 }
 
 void alloc::Allocator::clearForTests() noexcept {
+    stopFinalizerThreadIfRunning();
     impl_->heap().ClearForTests();
+    impl_->pendingFinalizers().reset();
 }
 
 void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
@@ -58,6 +61,28 @@ void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> 
 
 void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
     impl_->heap().TraverseAllocatedExtraObjects(fn);
+}
+
+void alloc::Allocator::startFinalizerThreadIfNeeded() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    impl_->finalizerProcessor().startThreadIfNeeded();
+}
+
+void alloc::Allocator::stopFinalizerThreadIfRunning() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    impl_->finalizerProcessor().stopThread();
+}
+
+bool alloc::Allocator::finalizersThreadIsRunning() noexcept {
+    return impl_->finalizerProcessor().isThreadRunning();
+}
+
+void alloc::Allocator::configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept {
+    impl_->finalizerProcessor().configureMainThread(std::move(f));
+}
+
+bool alloc::Allocator::mainThreadFinalizerProcessorAvailable() noexcept {
+    return impl_->finalizerProcessor().mainThreadAvailable();
 }
 
 void alloc::initObjectPool() noexcept {}
@@ -105,4 +130,8 @@ alloc::FinalizerQueue alloc::Allocator::Impl::sweep(gc::GCHandle gcHandle, alloc
     }
     finalizerQueue.mergeFrom(heap().ExtractFinalizerQueue());
     return finalizerQueue;
+}
+
+void alloc::Allocator::Impl::scheduleFinalization(FinalizerQueue queue, int64_t epoch) noexcept {
+    finalizerProcessor_.schedule(std::move(queue), epoch);
 }

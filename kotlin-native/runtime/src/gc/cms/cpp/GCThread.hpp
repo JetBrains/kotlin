@@ -5,12 +5,10 @@
 
 #pragma once
 
-#include "AllocatorImpl.hpp"
 #include "ConcurrentMark.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
-#include "SegregatedGCFinalizerProcessor.hpp"
 #include "Utils.hpp"
 #include "concurrent/UtilityThread.hpp"
 
@@ -20,7 +18,6 @@ class GCThread : private MoveOnly {
 public:
     GCThread(
             GCStateHolder& state,
-            SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor,
             mark::ConcurrentMark& markDispatcher,
             alloc::Allocator& allocator,
             gcScheduler::GCScheduler& gcScheduler) noexcept;
@@ -30,7 +27,6 @@ private:
     void PerformFullGC(int64_t epoch) noexcept;
 
     GCStateHolder& state_;
-    SegregatedGCFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& finalizerProcessor_;
     mark::ConcurrentMark& markDispatcher_;
     alloc::Allocator& allocator_;
     gcScheduler::GCScheduler& gcScheduler_;
