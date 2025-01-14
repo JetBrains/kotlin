@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 
 /**
  * Creates a separate call to `singleArgumentInlineFunction` with previously inlined lambda as argument.
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
     name = "CreateSeparateCallForInlinedLambdasLowering",
     prerequisite = [JvmIrInliner::class]
 )
-class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext) : IrLeafTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.enableIrInliner) {
             irFile.transformChildrenVoid()

@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -300,7 +300,7 @@ private class CorrespondingPropertyCache(private val context: JvmBackendContext,
 
 private class UpdateFunctionCallSites(
     private val functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
-) : IrVisitor<Unit, IrFunction?>(), FileLoweringPass {
+) : IrLeafVisitor<Unit, IrFunction?>(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildren(this, null)
     }
@@ -309,8 +309,11 @@ private class UpdateFunctionCallSites(
         element.acceptChildren(this, data)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: IrFunction?): Unit =
-        super.visitFunction(declaration, declaration)
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrFunction?): Unit =
+        declaration.acceptChildren(this, declaration)
+
+    override fun visitConstructor(declaration: IrConstructor, data: IrFunction?): Unit =
+        declaration.acceptChildren(this, declaration)
 
     override fun visitCall(expression: IrCall, data: IrFunction?) {
         expression.acceptChildren(this, data)
@@ -331,7 +334,7 @@ private class UpdateConstantFacadePropertyReferences(
         val facadeClass = getReplacementFacadeClassOrNull(irClass) ?: return
 
         // Replace the class reference in the body of the property reference class (in getOwner) to refer to the facade class instead.
-        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irClass.transformChildrenVoid(object : IrLeafTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement = declaration
 
             override fun visitClassReference(expression: IrClassReference): IrExpression = IrClassReferenceImpl(

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
     name = "InlinedClassReferencesBoxingLowering",
     prerequisite = [JvmIrInliner::class, MarkNecessaryInlinedClassesAsRegeneratedLowering::class]
 )
-internal class InlinedClassReferencesBoxingLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
+internal class InlinedClassReferencesBoxingLowering(val context: JvmBackendContext) : IrLeafVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.enableIrInliner) {
             irFile.acceptChildrenVoid(this)

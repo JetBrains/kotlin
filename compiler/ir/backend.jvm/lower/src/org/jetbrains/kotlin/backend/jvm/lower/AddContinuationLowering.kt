@@ -56,13 +56,19 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
     }
 
     private fun addContinuationParameterToSuspendCalls(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irFile.transformChildrenVoid(object : IrLeafTransformerVoid() {
             val functionStack = mutableListOf<IrFunction>()
 
-            override fun visitFunction(declaration: IrFunction): IrStatement {
+            private fun visitFunction(declaration: IrFunction): IrStatement {
                 functionStack.push(declaration)
-                return super.visitFunction(declaration).also { functionStack.pop() }
+                return transformElement(declaration).also { functionStack.pop() }
             }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement =
+                visitFunction(declaration)
+
+            override fun visitConstructor(declaration: IrConstructor): IrStatement =
+                visitFunction(declaration)
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 val transformed = super.visitFunctionReference(expression) as IrFunctionReference
@@ -235,7 +241,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             assert(movedDispatchParameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER) {
                 "MOVED_DISPATCH_RECEIVER should be the first parameter in ${static.render()}"
             }
-            static.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+            static.body!!.transformChildrenVoid(object : IrLeafTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     val owner = expression.symbol.owner
                     if (owner is IrValueParameter && isInstanceReceiverOfOuterClass(owner)) {
@@ -290,7 +296,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
     }
 
     private fun addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile: IrFile) {
-        irFile.accept(object : IrElementTransformerVoid() {
+        irFile.accept(object : IrLeafTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformDeclarationsFlat {
                     if (it is IrSimpleFunction && it.isSuspend)
@@ -370,17 +376,25 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
             private fun IrSimpleFunction.isCapturingCrossinline(): Boolean {
                 var capturesCrossinline = false
-                (this.originalBeforeInline ?: this).acceptVoid(object : IrVisitorVoid() {
+                (this.originalBeforeInline ?: this).acceptVoid(object : IrLeafVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
 
-                    override fun visitFieldAccess(expression: IrFieldAccessExpression) {
+                    private fun visitFieldAccess(expression: IrFieldAccessExpression) {
                         if (expression.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE) {
                             capturesCrossinline = true
                             return
                         }
-                        super.visitFieldAccess(expression)
+                        expression.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitGetField(expression: IrGetField) {
+                        visitFieldAccess(expression)
+                    }
+
+                    override fun visitSetField(expression: IrSetField) {
+                        visitFieldAccess(expression)
                     }
 
                     override fun visitClass(declaration: IrClass) {

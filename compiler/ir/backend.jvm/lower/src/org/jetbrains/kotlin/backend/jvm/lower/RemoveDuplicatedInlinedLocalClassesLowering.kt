@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.name.NameUtils
 
 /**
@@ -51,7 +51,7 @@ private data class Data(
     var modifyTree: Boolean = true,
 )
 
-private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBackendContext) : IrTransformer<Data>() {
+private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBackendContext) : IrLeafTransformer<Data>() {
     private val visited = mutableSetOf<IrElement>()
     private val capturedConstructors = context.mapping.capturedConstructors
 

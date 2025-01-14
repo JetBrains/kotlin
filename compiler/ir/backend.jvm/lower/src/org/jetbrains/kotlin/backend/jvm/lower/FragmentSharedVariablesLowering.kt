@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.copyTo
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -89,7 +89,7 @@ internal class FragmentSharedVariablesLowering(
         declaration: IrFunction,
         promotedParameters: Map<IrValueParameterSymbol, IrValueParameterSymbol>
     ) {
-        declaration.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+        declaration.body!!.transformChildrenVoid(object : IrLeafTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 expression.transformChildrenVoid(this)
                 val newDeclaration = promotedParameters[expression.symbol] ?: return expression

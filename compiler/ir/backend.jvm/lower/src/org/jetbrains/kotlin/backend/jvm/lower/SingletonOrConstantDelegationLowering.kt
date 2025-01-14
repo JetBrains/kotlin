@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.remapReceiver
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 
 /**
  * Optimizes `val x by C` where `C` is either a constant or singleton: instead of storing the value `C` in a field, we access it every time
@@ -34,7 +34,7 @@ internal class SingletonOrConstantDelegationLowering(val context: JvmBackendCont
     }
 }
 
-private class SingletonOrConstantDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
+private class SingletonOrConstantDelegationTransformer(val context: JvmBackendContext) : IrLeafTransformerVoid() {
     override fun visitClass(declaration: IrClass): IrClass {
         declaration.transformChildren(this, null)
         declaration.transformDeclarationsFlat {
@@ -47,7 +47,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
         val delegate = getSingletonOrConstantForOptimizableDelegatedProperty() ?: return null
         val originalThis = parentAsClass.thisReceiver
 
-        class DelegateFieldAccessTransformer(val newReceiver: IrExpression) : IrElementTransformerVoid() {
+        class DelegateFieldAccessTransformer(val newReceiver: IrExpression) : IrLeafTransformerVoid() {
             override fun visitGetField(expression: IrGetField): IrExpression =
                 if (expression.symbol == backingField?.symbol) newReceiver else super.visitGetField(expression)
         }

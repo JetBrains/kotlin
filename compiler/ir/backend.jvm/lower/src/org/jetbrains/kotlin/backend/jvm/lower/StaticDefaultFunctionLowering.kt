@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.util.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 /**
@@ -41,12 +41,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
     name = "StaticDefaultFunction",
     prerequisite = [/* JvmStaticInObjectLowering::class */]
 )
-internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrLeafTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
 
-    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement = super.visitFunction(
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement = transformElement(
         if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null)
             getStaticFunctionWithReceivers(declaration).also {
                 it.body = declaration.moveBodyTo(it)

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 
@@ -124,7 +125,7 @@ class SingletonObjectJvmStaticTransformer(
     }
 }
 
-private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
+private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext) : IrLeafTransformerVoid() {
     // TODO: would be nice to add a mode that *only* leaves static versions for all annotated methods, with nothing
     //  in companions - this would reduce the number of classes if the companion only has `@JvmStatic` declarations.
     private fun IrSimpleFunction.needsStaticProxy(): Boolean = when {

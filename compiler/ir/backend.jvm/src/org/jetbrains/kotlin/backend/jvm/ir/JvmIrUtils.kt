@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -138,7 +138,7 @@ fun IrElement.replaceThisByStaticReference(
     irClass: IrClass,
     oldThisReceiverParameter: IrValueParameter
 ) {
-    transformChildrenVoid(object : IrElementTransformerVoid() {
+    transformChildrenVoid(object : IrLeafTransformerVoid() {
         override fun visitGetValue(expression: IrGetValue): IrExpression =
             if (expression.symbol == oldThisReceiverParameter.symbol) {
                 IrGetFieldImpl(
@@ -294,7 +294,7 @@ fun IrFile.getIoFile(): File? =
 
 inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolean {
     var result = false
-    acceptChildren(object : IrVisitorVoid() {
+    acceptChildren(object : IrLeafVisitorVoid() {
         override fun visitElement(element: IrElement) = when {
             result -> Unit
             block(element) -> result = true

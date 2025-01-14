@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 @PhaseDescription(name = "FakeLocalVariablesForIrInlinerLowering")
 internal class FakeLocalVariablesForIrInlinerLowering(
     override val context: JvmBackendContext
-) : IrVisitorVoid(), FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {
+) : IrLeafVisitorVoid(), FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
     private var container: IrDeclaration? = null
 
@@ -105,7 +105,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
     }
 }
 
-private class LocalVariablesProcessor : IrVisitor<Unit, LocalVariablesProcessor.Data>() {
+private class LocalVariablesProcessor : IrLeafVisitor<Unit, LocalVariablesProcessor.Data>() {
     data class Data(val processingOriginalDeclarations: Boolean)
 
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
@@ -165,7 +165,7 @@ private class LocalVariablesProcessor : IrVisitor<Unit, LocalVariablesProcessor.
     }
 }
 
-private class FunctionParametersProcessor : IrVisitorVoid() {
+private class FunctionParametersProcessor : IrLeafVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -185,7 +185,7 @@ private class FunctionParametersProcessor : IrVisitorVoid() {
     }
 }
 
-private class ScopeNumberVariableProcessor : IrVisitorVoid() {
+private class ScopeNumberVariableProcessor : IrLeafVisitorVoid() {
     private val inlinedStack = mutableListOf<Pair<IrInlinedFunctionBlock, Int>>()
     private var lastInlineScopeNumber = 0
 
@@ -200,7 +200,12 @@ private class ScopeNumberVariableProcessor : IrVisitorVoid() {
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitFunction(declaration: IrFunction) {
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        val processor = ScopeNumberVariableProcessor()
+        declaration.acceptChildrenVoid(processor)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor) {
         val processor = ScopeNumberVariableProcessor()
         declaration.acceptChildrenVoid(processor)
     }

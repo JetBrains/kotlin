@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -162,7 +162,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
 
             // marking the parameters referenced in the function
             function.acceptChildrenVoid(
-                object : IrVisitorVoid() {
+                object : IrLeafVisitorVoid() {
                     override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
                     override fun visitGetValue(expression: IrGetValue) {
@@ -244,7 +244,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             }
 
             body = irFunction.moveBodyTo(this, mapOf())?.let { body ->
-                body.transform(object : IrElementTransformerVoid() {
+                body.transform(object : IrLeafTransformerVoid() {
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
                         val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
                             ?: return expression

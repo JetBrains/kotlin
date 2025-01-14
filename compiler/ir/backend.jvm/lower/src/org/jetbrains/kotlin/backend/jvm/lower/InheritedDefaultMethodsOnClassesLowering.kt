@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -121,7 +121,7 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
  * Redirects super interface calls to DefaultImpls.
  */
 @PhaseDescription(name = "InterfaceSuperCalls")
-internal class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+internal class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrLeafTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -220,7 +220,7 @@ private fun IrSimpleFunction.isCloneableClone(): Boolean =
  * Resolves calls to Object methods on interface types to virtual methods.
  */
 @PhaseDescription(name = "InterfaceObjectCalls")
-internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
+internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrLeafVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 
     override fun visitElement(element: IrElement) {
