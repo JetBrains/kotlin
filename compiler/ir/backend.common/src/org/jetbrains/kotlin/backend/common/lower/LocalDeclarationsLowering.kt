@@ -929,7 +929,7 @@ open class LocalDeclarationsLowering(
 
         private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, usedNames: MutableSet<String>, isExplicitLocalFunction: Boolean = false): Name {
             if (declaration is IrValueParameter) {
-                if (declaration.name.asString() == "<this>" && declaration.isDispatchReceiver()) {
+                if (declaration.name.asString() == "<this>" && declaration.kind == IrParameterKind.DispatchReceiver) {
                     return findFirstUnusedName("this\$0", usedNames) {
                         "this\$$it"
                     }
@@ -970,16 +970,6 @@ open class LocalDeclarationsLowering(
                 chosen = nextName(++suffix)
             return Name.identifier(chosen)
         }
-
-        private fun IrValueParameter.isDispatchReceiver(): Boolean =
-            when (val parent = this.parent) {
-                is IrFunction ->
-                    parent.dispatchReceiverParameter == this
-                is IrClass ->
-                    parent.thisReceiver == this
-                else ->
-                    false
-            }
 
         private val CAPTURED_RECEIVER_PREFIX = "\$this\$"
 
