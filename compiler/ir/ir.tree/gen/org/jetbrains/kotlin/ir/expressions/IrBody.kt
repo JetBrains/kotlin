@@ -10,12 +10,12 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
  */
 sealed class IrBody : IrElementBase(), IrElement {
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBody =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrBody =
         accept(transformer, data) as IrBody
 }

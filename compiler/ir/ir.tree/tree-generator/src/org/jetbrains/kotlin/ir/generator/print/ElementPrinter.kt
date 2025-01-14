@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.generators.tree.nullable
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.ir.generator.irTransformerType
+import org.jetbrains.kotlin.ir.generator.irLeafTransformerType
 import org.jetbrains.kotlin.ir.generator.irLeafVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
@@ -50,7 +50,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
 
         printTransformMethod(
             element = element,
-            transformerClass = irTransformerType,
+            transformerClass = irLeafTransformerType,
             implementation = "accept(transformer, data)".takeIf { !element.isRootElement },
             returnType = element,
             treeName = "IR",
@@ -88,7 +88,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         if (element.hasTransformChildrenMethod) {
             printTransformChildrenMethod(
                 element = element,
-                transformerClass = irTransformerType,
+                transformerClass = irLeafTransformerType,
                 returnType = StandardTypes.unit,
                 override = !element.isRootElement,
             )

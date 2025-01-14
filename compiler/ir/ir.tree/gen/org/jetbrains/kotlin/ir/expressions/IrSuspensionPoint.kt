@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.suspensionPoint]
@@ -31,7 +31,7 @@ abstract class IrSuspensionPoint : IrExpression() {
         resumeResult.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         suspensionPointIdParameter = suspensionPointIdParameter.transform(transformer, data) as IrVariable
         result = result.transform(transformer, data)
         resumeResult = resumeResult.transform(transformer, data)

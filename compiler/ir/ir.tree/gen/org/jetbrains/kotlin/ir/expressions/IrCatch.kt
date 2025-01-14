@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.catch]
@@ -27,7 +27,7 @@ abstract class IrCatch : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitCatch(this, data)
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrCatch =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrCatch =
         accept(transformer, data) as IrCatch
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -35,7 +35,7 @@ abstract class IrCatch : IrElementBase(), IrElement {
         result.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         catchParameter = catchParameter.transform(transformer, data) as IrVariable
         result = result.transform(transformer, data)
     }

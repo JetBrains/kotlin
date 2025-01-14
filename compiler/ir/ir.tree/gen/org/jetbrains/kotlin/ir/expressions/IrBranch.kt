@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.branch]
@@ -24,7 +24,7 @@ abstract class IrBranch : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitBranch(this, data)
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBranch =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrBranch =
         accept(transformer, data) as IrBranch
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -32,7 +32,7 @@ abstract class IrBranch : IrElementBase(), IrElement {
         result.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         condition = condition.transform(transformer, data)
         result = result.transform(transformer, data)
     }

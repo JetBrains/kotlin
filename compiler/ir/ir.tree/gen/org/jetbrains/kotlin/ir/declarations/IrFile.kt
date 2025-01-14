@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
@@ -27,14 +27,14 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
     override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrFile =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrFile =
         accept(transformer, data) as IrFile
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         declarations.transformInPlace(transformer, data)
     }
 }

@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
@@ -19,6 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement {
     abstract var type: IrType
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         accept(transformer, data) as IrExpression
 }

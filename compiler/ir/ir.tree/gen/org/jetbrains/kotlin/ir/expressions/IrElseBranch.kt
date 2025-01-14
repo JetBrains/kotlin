@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.elseBranch]
@@ -18,6 +18,6 @@ abstract class IrElseBranch : IrBranch() {
     override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitElseBranch(this, data)
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElseBranch =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElseBranch =
         accept(transformer, data) as IrElseBranch
 }

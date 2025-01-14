@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
@@ -133,14 +134,14 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     override fun <R, D> accept(visitor: IrLeafVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrValueParameter =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrValueParameter =
         accept(transformer, data) as IrValueParameter
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         defaultValue = defaultValue?.transform(transformer, data)
     }
 }
