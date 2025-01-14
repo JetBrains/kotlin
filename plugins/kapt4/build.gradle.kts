@@ -39,7 +39,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testApi(projectTests(":kotlin-annotation-processing-compiler"))
-    testImplementation(project(":analysis:analysis-api-standalone"))
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
