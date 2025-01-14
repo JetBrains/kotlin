@@ -767,8 +767,8 @@ open class LocalDeclarationsLowering(
 
             newDeclaration.parent = ownerParent
             newDeclaration.returnType = localFunctionContext.remapType(oldDeclaration.returnType)
-            newDeclaration.extensionReceiverParameter = oldDeclaration.extensionReceiverParameter?.run {
-                copyTo(newDeclaration, type = localFunctionContext.remapType(this.type)).also {
+            oldDeclaration.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.run {
+                newDeclaration.parameters += copyTo(newDeclaration, type = localFunctionContext.remapType(this.type)).also {
                     newParameterToOld.putAbsentOrSame(it, this)
                 }
             }
