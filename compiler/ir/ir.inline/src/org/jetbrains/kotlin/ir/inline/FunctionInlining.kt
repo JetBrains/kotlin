@@ -223,7 +223,7 @@ open class FunctionInlining(
 
     private fun IrBlock.markAsRegenerated(): IrBlock {
         if (!regenerateInlinedAnonymousObjects) return this
-        acceptVoid(object : IrVisitorVoid() {
+        acceptVoid(object : IrLeafVisitorVoid() {
             private fun IrElement.setUpCorrectAttributeOwner() {
                 if (this.attributeOwnerId == this) return
                 this.originalBeforeInline = this.attributeOwnerId
@@ -329,7 +329,7 @@ open class FunctionInlining(
                 origin = null,
                 statements = listOf(inlinedBlock),
             ).apply {
-                transformChildrenVoid(object : IrElementTransformerVoid() {
+                transformChildrenVoid(object : IrLeafTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {
                         expression.transformChildrenVoid(this)
 
@@ -362,7 +362,7 @@ open class FunctionInlining(
 
         //---------------------------------------------------------------------//
 
-        private inner class ParameterSubstitutor : IrElementTransformerVoid() {
+        private inner class ParameterSubstitutor : IrLeafTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 val newExpression = super.visitGetValue(expression) as IrGetValue
                 val argument = substituteMap[newExpression.symbol.owner] ?: return newExpression
@@ -548,7 +548,7 @@ open class FunctionInlining(
                     // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
                     inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId)
                 } else {
-                    super.visitExpression(immediateCall)
+                    transformElement(immediateCall)
                 }.doImplicitCastIfNeededTo(irCall.type)
             }
         }

@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.isAssignable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 
-abstract class AbstractValueRemapper : IrElementTransformerVoid() {
+abstract class AbstractValueRemapper : IrLeafTransformerVoid() {
 
     protected abstract fun remapValue(oldValue: IrValueSymbol): IrValueSymbol?
 

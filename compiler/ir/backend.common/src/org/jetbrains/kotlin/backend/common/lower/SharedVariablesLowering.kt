@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isInlineParameter
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -69,12 +69,12 @@ class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
 
         private fun collectSharedVariables() {
             val skippedFunctionsParents = mutableMapOf<IrFunction, IrDeclarationParent>()
-            irBody.accept(object : IrVisitor<Unit, IrDeclarationParent?>() {
+            irBody.accept(object : IrLeafVisitor<Unit, IrDeclarationParent?>() {
                 val relevantVars = HashSet<IrVariable>()
                 val relevantVals = HashSet<IrVariable>()
 
                 override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
-                    element.acceptChildren(this, data)
+                    element.acceptChildren(this, element as? IrDeclarationParent ?: data)
                 }
 
                 override fun visitCall(expression: IrCall, data: IrDeclarationParent?) {
@@ -102,10 +102,6 @@ class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
                     }
                 }
 
-                override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
-                    super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
-                }
-
                 override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {
                     declaration.acceptChildren(this, data)
 
@@ -120,7 +116,7 @@ class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
                     }
                 }
 
-                override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent?) {
+                private fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent?) {
                     expression.acceptChildren(this, data)
 
                     val value = expression.symbol.owner
@@ -129,8 +125,12 @@ class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
                     }
                 }
 
+                override fun visitGetValue(expression: IrGetValue, data: IrDeclarationParent?) {
+                    visitValueAccess(expression, data)
+                }
+
                 override fun visitSetValue(expression: IrSetValue, data: IrDeclarationParent?) {
-                    super.visitSetValue(expression, data)
+                    visitValueAccess(expression, data)
 
                     val variable = expression.symbol.owner
                     if (variable is IrVariable && variable.initializer == null && getRealParent(variable) != data && variable in relevantVals) {
@@ -147,7 +147,7 @@ class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
         private fun rewriteSharedVariables() {
             val transformedSymbols = HashMap<IrValueSymbol, IrVariableSymbol>()
 
-            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            irBody.transformChildrenVoid(object : IrLeafTransformerVoid() {
                 override fun visitVariable(declaration: IrVariable): IrStatement {
                     declaration.transformChildrenVoid(this)
 
@@ -161,7 +161,7 @@ class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
                 }
             })
 
-            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            irBody.transformChildrenVoid(object : IrLeafTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid(this)
 

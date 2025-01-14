@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 /**
@@ -137,7 +137,7 @@ open class IrMangleComputer(
         }
     }
 
-    private inner class Visitor : IrVisitorVoid() {
+    private inner class Visitor : IrLeafVisitorVoid() {
 
         override fun visitElement(element: IrElement) =
             error("unexpected element ${element.render()}")
@@ -157,8 +157,16 @@ open class IrMangleComputer(
             declaration.mangleSimpleDeclaration(className)
         }
 
-        override fun visitPackageFragment(declaration: IrPackageFragment) {
+        private fun visitPackageFragment(declaration: IrPackageFragment) {
             declaration.packageFqName.let { if (!it.isRoot) builder.appendName(it.asString()) }
+        }
+
+        override fun visitFile(declaration: IrFile) {
+            visitPackageFragment(declaration)
+        }
+
+        override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment) {
+            visitPackageFragment(declaration)
         }
 
         override fun visitProperty(declaration: IrProperty) {

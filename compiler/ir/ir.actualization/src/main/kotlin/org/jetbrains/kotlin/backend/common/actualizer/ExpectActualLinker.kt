@@ -141,7 +141,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     override fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration) as IrConstructor
 
-    override fun visitFunction(declaration: IrFunction) =
+    private fun visitFunction(declaration: IrFunction): IrFunction =
         declaration.also {
             if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
             it.returnType = it.returnType.remapType()

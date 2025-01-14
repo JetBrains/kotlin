@@ -9,12 +9,11 @@ import org.jetbrains.kotlin.backend.common.copy
 import org.jetbrains.kotlin.backend.common.forEachBit
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 
@@ -27,7 +26,7 @@ object LivenessAnalysis {
 
     private fun IrElement.getImmediateChildren(): List<IrElement> {
         val result = mutableListOf<IrElement>()
-        acceptChildrenVoid(object : IrVisitorVoid() {
+        acceptChildrenVoid(object : IrLeafVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 result.add(element)
                 // Do not recurse.
@@ -41,7 +40,7 @@ object LivenessAnalysis {
      * this directly translates to the AST traversal from right to left.
      * Each visitXXX takes live variables ~after~ the [element] and returns live variables ~before~ the [element].
      */
-    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrVisitor<BitSet, BitSet>() {
+    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrLeafVisitor<BitSet, BitSet>() {
         private val variables = mutableListOf<IrVariable>()
         private val variableIds = mutableMapOf<IrVariable, Int>()
         private val filteredElementEndsLV = mutableMapOf<IrElement, BitSet>()
@@ -88,9 +87,6 @@ object LivenessAnalysis {
             return compute()
         }
 
-        override fun visitDeclaration(declaration: IrDeclarationBase, data: BitSet) =
-            error("Local declarations should've been popped out by this point")
-
         // Default: traverse the children in the reverse order, propagating live variables from right to left.
         override fun visitElement(element: IrElement, data: BitSet) = saveAndCompute(element, data) {
             val children = element.getImmediateChildren()
@@ -128,10 +124,16 @@ object LivenessAnalysis {
             expression.value.accept(this, liveVariables)
         }
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: BitSet) = saveAndCompute(expression, data) {
-            (expression as? IrReturnableBlock)?.let { returnableBlock ->
-                returnableBlockEndsLV[returnableBlock] = data
-            }
+        override fun visitComposite(expression: IrComposite, data: BitSet): BitSet = saveAndCompute(expression, data) {
+            visitElement(expression, data)
+        }
+
+        override fun visitBlock(expression: IrBlock, data: BitSet): BitSet = saveAndCompute(expression, data) {
+            visitElement(expression, data)
+        }
+
+        override fun visitReturnableBlock(expression: IrReturnableBlock, data: BitSet): BitSet = saveAndCompute(expression, data) {
+            returnableBlockEndsLV[expression] = data
             visitElement(expression, data)
         }
 

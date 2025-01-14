@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -41,7 +41,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
         }
         val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
         // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
-        block.accept(object : IrVisitorVoid() {
+        block.accept(object : IrLeafVisitorVoid() {
             override fun visitElement(element: IrElement) =
                 element.acceptChildren(this, null)
 
@@ -49,7 +49,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
                 throw AssertionError("class in initializer should have been moved out by LocalClassPopupLowering: ${declaration.render()}")
         }, null)
 
-        container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
+        container.body?.transformChildrenVoid(object : IrLeafTransformerVoid() {
             override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression =
                 block.deepCopyWithSymbols(container)
         })

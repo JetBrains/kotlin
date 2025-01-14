@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isTrivial
 import org.jetbrains.kotlin.ir.util.shallowCopy
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -30,9 +30,9 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         irFile.transformChildrenVoid(Transformer())
     }
 
-    private inner class Transformer : IrElementTransformerVoid() {
+    private inner class Transformer : IrLeafTransformerVoid() {
         override fun visitBlock(expression: IrBlock): IrExpression =
-            visitExpression(expression.fuseIfNull())
+            transformElement(expression.fuseIfNull())
 
         // We are looking for the "if-null" expressions:
         //

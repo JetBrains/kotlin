@@ -105,11 +105,17 @@ open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPas
         irBody.transformChildrenVoid(transformer)
 
         // Update references in break/continue.
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
+        irBody.transformChildrenVoid(object : IrLeafTransformerVoid() {
+            private fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
                 oldLoopToNewLoop[jump.loop]?.let { jump.loop = it }
                 return jump
             }
+
+            override fun visitBreak(jump: IrBreak): IrExpression =
+                visitBreakContinue(jump)
+
+            override fun visitContinue(jump: IrContinue): IrExpression =
+                visitBreakContinue(jump)
         })
     }
 }
@@ -117,7 +123,7 @@ open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPas
 /**
  * Abstract class for additional for-loop bodies transformations.
  */
-abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
+abstract class ForLoopBodyTransformer : IrLeafTransformerVoid() {
 
     abstract fun transform(
         context: CommonBackendContext,
@@ -347,7 +353,7 @@ private class RangeLoopTransformer(
         val loopVariableComponentIndices: List<Int>
     )
 
-    private class FindInitializerCallVisitor(private val mainLoopVariable: IrVariable?) : IrVisitorVoid() {
+    private class FindInitializerCallVisitor(private val mainLoopVariable: IrVariable?) : IrLeafVisitorVoid() {
         var initializerCall: IrCall? = null
 
         override fun visitElement(element: IrElement) {

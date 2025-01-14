@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
@@ -158,7 +158,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
     ): IrExpressionBody {
         return this
             .deepCopyWithSymbols(actualFunction) { IrTypeParameterRemapper(expectActualTypeParametersMap) }
-            .transform(object : IrElementTransformerVoid() {
+            .transform(object : IrLeafTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid()
                     return expression.remapSymbolParent(

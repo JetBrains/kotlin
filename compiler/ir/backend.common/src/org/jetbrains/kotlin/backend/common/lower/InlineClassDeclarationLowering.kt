@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -92,7 +93,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                         )
 
                         (body as IrBlockBody).deepCopyWithSymbols(initFunction).statements.forEach { statement ->
-                            +statement.transformStatement(object : IrElementTransformerVoid() {
+                            +statement.transformStatement(object : IrLeafTransformerVoid() {
                                 override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                                     delegatingCtorCall = expression.deepCopyWithSymbols(irConstructor)
                                     return builder.irBlock {}  // Removing delegating constructor call
@@ -306,7 +307,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
     val inlineClassUsageLowering = object : BodyLoweringPass {
 
         override fun lower(irBody: IrBody, container: IrDeclaration) {
-            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            irBody.transformChildrenVoid(object : IrLeafTransformerVoid() {
 
                 override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                     expression.transformChildrenVoid(this)

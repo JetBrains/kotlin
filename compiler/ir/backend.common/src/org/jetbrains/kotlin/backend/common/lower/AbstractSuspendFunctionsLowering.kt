@@ -54,7 +54,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     override fun lower(irFile: IrFile) {
         irFile.transformDeclarationsFlat(::tryTransformSuspendFunction)
-        irFile.acceptVoid(object : IrVisitorVoid() {
+        irFile.acceptVoid(object : IrLeafVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -89,7 +89,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         if (tailSuspendCalls.isEmpty()) return
 
         val irBuilder = context.createIrBuilder(irFunction.symbol)
-        irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irFunction.body!!.transformChildrenVoid(object : IrLeafTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 val shortCut = if (expression.isReturnIfSuspendedCall())
                     expression.arguments[0]!!

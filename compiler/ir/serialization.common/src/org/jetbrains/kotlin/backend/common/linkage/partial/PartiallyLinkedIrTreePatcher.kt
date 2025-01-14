@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -992,7 +992,7 @@ internal class PartiallyLinkedIrTreePatcher(
      * Collects direct children statements up to the first IR p.l. error (everything after the IR p.l. error
      * if effectively dead code and do not need to be kept in the IR tree).
      */
-    private class DirectChildrenStatementsCollector : IrVisitorVoid() {
+    private class DirectChildrenStatementsCollector : IrLeafVisitorVoid() {
         private val children = mutableListOf<IrStatement>()
         private var hasPartialLinkageRuntimeError = false
 

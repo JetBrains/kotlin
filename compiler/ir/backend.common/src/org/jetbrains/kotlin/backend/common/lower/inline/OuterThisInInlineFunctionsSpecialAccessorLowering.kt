@@ -125,18 +125,24 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
         }
     }
 
-    private inner class Transformer(irFile: IrFile) : IrTransformer<TransformerData?>() {
+    private inner class Transformer(irFile: IrFile) : IrLeafTransformer<TransformerData?>() {
         val generatedOuterThisAccessors = irFile::generatedOuterThisAccessors.getOrSetIfNull(::GeneratedOuterThisAccessors)
 
-        override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
+        private fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
             val newData = if (declaration.isInline) TransformerData(declaration) else data
 
             // Wrap it to the stage controller to avoid JS BE failing with not found lowered declaration signature
             // in `IrDeclaration.signatureForJsIC` cache.
             return declaration.factory.stageController.restrictTo(declaration) {
-                super.visitFunction(declaration, newData)
+                transformElement(declaration, newData)
             }
         }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TransformerData?): IrStatement =
+            visitFunction(declaration, data)
+
+        override fun visitConstructor(declaration: IrConstructor, data: TransformerData?): IrStatement =
+            visitFunction(declaration, data)
 
         override fun visitGetValue(expression: IrGetValue, data: TransformerData?): IrExpression {
             if (data == null) {

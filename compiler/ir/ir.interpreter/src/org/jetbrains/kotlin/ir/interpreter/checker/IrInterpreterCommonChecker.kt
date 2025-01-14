@@ -74,7 +74,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker() {
         return arguments.none { it?.accept(this@IrInterpreterCommonChecker, data) == false }
     }
 
-    override fun visitBody(body: IrBody, data: IrInterpreterCheckerData): Boolean {
+    override fun visitBlockBody(body: IrBlockBody, data: IrInterpreterCheckerData): Boolean {
         return visitStatements(body.statements, data)
     }
 

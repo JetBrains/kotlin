@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -266,7 +266,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     protected val skipInline: Boolean = true,
     protected val skipExternalMethods: Boolean = false,
     protected val forceSetOverrideSymbols: Boolean = true,
-) : IrElementTransformerVoid(), BodyLoweringPass {
+) : IrLeafTransformerVoid(), BodyLoweringPass {
 
     private val declarationStack = mutableListOf<IrDeclaration>()
     override fun lower(irBody: IrBody, container: IrDeclaration) {

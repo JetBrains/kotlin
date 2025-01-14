@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -249,7 +249,7 @@ internal fun IrValueParameter.getDefaultWithActualParameters(
     if (expression is IrConst) return expression
 
     val parameterOwner = this.parent as IrFunction
-    val transformer = object : IrElementTransformerVoid() {
+    val transformer = object : IrLeafTransformerVoid() {
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
             if (parameter.parent != parameterOwner) return super.visitGetValue(expression)

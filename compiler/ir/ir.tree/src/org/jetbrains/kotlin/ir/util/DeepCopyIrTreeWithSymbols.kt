@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
@@ -32,7 +32,7 @@ internal inline fun <T : IrElement> T.deepCopyImpl(createTypeRemapper: (SymbolRe
     return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null)
 }
 
-abstract class IrDeepCopyBase : IrElementTransformerVoid() {
+abstract class IrDeepCopyBase : IrLeafTransformerVoid() {
     protected abstract fun IrType.remapType(): IrType
 
     protected open fun <D : IrElement> D.processAttributes(other: IrElement) =

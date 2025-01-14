@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
@@ -64,7 +64,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         override val currentFileSignature: IdSignature.FileSignature?
             get() = currentFileSignatureX
 
-        private val visitor = object : IrVisitorVoid() {
+        private val visitor = object : IrLeafVisitorVoid() {
             override fun visitElement(element: IrElement) =
                 error("Unexpected element ${element.render()}")
 
@@ -72,7 +72,11 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
                 description = renderDeclarationForDescription(declaration)
             }
 
-            override fun visitPackageFragment(declaration: IrPackageFragment) {
+            override fun visitFile(declaration: IrFile) {
+                packageFqn = declaration.packageFqName
+            }
+
+            override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment) {
                 packageFqn = declaration.packageFqName
             }
 
