@@ -800,9 +800,16 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun getProtocols(type: CValue<CXType>): List<ObjCProtocol> {
-        val num = clang_Type_getNumProtocols(type)
+        if (type.kind != CXType_ObjCObjectPointer) return emptyList()
+        val objCObjectType = clang_getPointeeType(type)
+        val num = clang_Type_getNumObjCProtocolRefs(objCObjectType)
+        check(num == clang_Type_getNumProtocols(type)) {
+            "Inconsistent number of protocols for type ${clang_getTypeSpelling(type).convertAndDispose()}: " +
+                    "clang_Type_getNumObjCProtocolRefs() = $num, clang_Type_getNumProtocols() = ${clang_Type_getNumProtocols(type)}"
+        }
         return (0 until num).map { index ->
-            getObjCProtocolAt(clang_Type_getProtocol(type, index))
+            check(clang_Type_getObjCProtocolDecl(objCObjectType, index) == clang_Type_getProtocol(type, index))
+            getObjCProtocolAt(clang_Type_getObjCProtocolDecl(objCObjectType, index))
         }
     }
 
