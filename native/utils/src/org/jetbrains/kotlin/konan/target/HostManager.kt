@@ -151,7 +151,16 @@ open class HostManager() {
             Pair("windows", "x86_64") to MINGW_X64
         )
 
-        val host: KonanTarget = determineHost(hostOs(), hostArchOrNull())
+        val host: KonanTarget get() = determineHost(hostOs(), hostArchOrNull())
+
+        /** Returns [KonanTarget] representing current host
+         *  or `null` if current host is unknown for Kotlin Native */
+        val hostOrNull: KonanTarget?
+            get() = try {
+                host
+            } catch (_: TargetSupportException) {
+                null
+            }
 
         private fun determineHost(os: String, arch: String?): KonanTarget {
             hostMapping[os to arch]?.let {
@@ -170,9 +179,9 @@ open class HostManager() {
         val defaultJvmArgs = listOf("-XX:TieredStopAtLevel=1", "-ea", "-Dfile.encoding=UTF-8")
         val regularJvmArgs = defaultJvmArgs + "-Xmx3G"
 
-        val hostIsMac = (host.family == Family.OSX)
-        val hostIsLinux = (host.family == Family.LINUX)
-        val hostIsMingw = (host.family == Family.MINGW)
+        val hostIsMac get() = hostOrNull?.family == Family.OSX
+        val hostIsLinux get() = hostOrNull?.family == Family.LINUX
+        val hostIsMingw get() = hostOrNull?.family == Family.MINGW
 
         @JvmStatic
         val hostName: String
