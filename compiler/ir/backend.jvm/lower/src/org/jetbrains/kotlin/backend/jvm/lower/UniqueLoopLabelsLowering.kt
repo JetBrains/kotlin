@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 @PhaseDescription(name = "UniqueLoopLabels")
 internal class UniqueLoopLabelsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrVisitorVoid() {
+        irFile.acceptVoid(object : IrLeafVisitorVoid() {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
             private val stack = ArrayList<Name>()
@@ -38,11 +40,19 @@ internal class UniqueLoopLabelsLowering(@Suppress("UNUSED_PARAMETER", "unused") 
                 }
             }
 
-            override fun visitLoop(loop: IrLoop) {
+            private fun visitLoop(loop: IrLoop) {
                 // Give all loops unique labels so that we can generate unambiguous instructions for non-local
                 // `break`/`continue` statements.
                 loop.label = stack.joinToString("$", postfix = (++counter).toString())
-                super.visitLoop(loop)
+                visitElement(loop)
+            }
+
+            override fun visitWhileLoop(loop: IrWhileLoop) {
+                visitLoop(loop)
+            }
+
+            override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
+                visitLoop(loop)
             }
         })
     }

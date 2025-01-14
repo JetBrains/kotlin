@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
@@ -153,7 +153,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
             constructor.body?.statements?.forEach { statement ->
                 +statement
-                    .transformStatement(object : IrElementTransformerVoid() {
+                    .transformStatement(object : IrLeafTransformerVoid() {
                         // Don't recurse under nested class declarations
                         override fun visitClass(declaration: IrClass): IrStatement {
                             return declaration

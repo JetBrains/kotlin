@@ -463,7 +463,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         replacement.body = context.createJvmIrBuilder(replacement.symbol).irBlockBody {
             val thisVar = irTemporary(irType = replacement.returnType, nameHint = "\$this")
             constructor.body?.statements?.forEach { statement ->
-                +statement.transformStatement(object : IrElementTransformerVoid() {
+                +statement.transformStatement(object : IrLeafTransformerVoid() {
                     override fun visitClass(declaration: IrClass): IrStatement = declaration
 
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
@@ -1122,17 +1122,25 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                         standaloneExpressions.add(statement.value)
                         resultVariables.removeLast()
                         block.statements.removeLast()
-                        statement.value.acceptVoid(object : IrVisitorVoid() {
+                        statement.value.acceptVoid(object : IrLeafVisitorVoid() {
                             override fun visitElement(element: IrElement) {
                                 element.acceptChildrenVoid(this)
                             }
 
-                            override fun visitValueAccess(expression: IrValueAccessExpression) {
+                            private fun visitValueAccess(expression: IrValueAccessExpression) {
                                 val valueDeclaration = expression.symbol.owner
                                 if (valueDeclaration is IrVariable && valueDeclaration in variablesSet) {
                                     forbiddenVariables.add(valueDeclaration)
                                 }
-                                super.visitValueAccess(expression)
+                                expression.acceptChildrenVoid(this)
+                            }
+
+                            override fun visitGetValue(expression: IrGetValue) {
+                                visitValueAccess(expression)
+                            }
+
+                            override fun visitSetValue(expression: IrSetValue) {
+                                visitValueAccess(expression)
                             }
                         })
                     }
@@ -1326,7 +1334,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
      */
     private fun IrBody.removeAllExtraBoxes() {
         // data is whether the expression result is used
-        accept(object : IrVisitor<Unit, Boolean>() {
+        accept(object : IrLeafVisitor<Unit, Boolean>() {
             override fun visitElement(element: IrElement, data: Boolean) {
                 element.acceptChildren(this, true) // uses what is inside
             }
@@ -1342,12 +1350,16 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             }
 
             // inner functions will be handled separately, no need to do it now
-            override fun visitFunction(declaration: IrFunction, data: Boolean) = Unit
+            override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Boolean) = Unit
 
             // inner classes will be handled separately, no need to do it now
             override fun visitClass(declaration: IrClass, data: Boolean) = Unit
 
-            override fun visitContainerExpression(expression: IrContainerExpression, data: Boolean) {
+            override fun visitBlock(expression: IrBlock, data: Boolean) {
+                handleStatementContainer(expression, data)
+            }
+
+            override fun visitComposite(expression: IrComposite, data: Boolean) {
                 handleStatementContainer(expression, data)
             }
 
@@ -1418,41 +1430,62 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
     val variableUsages = mutableMapOf<BlockOrBody, MutableSet<IrVariable>>()
     val childrenBlocks = mutableMapOf<BlockOrBody, MutableList<BlockOrBody>>()
 
-    body.element.acceptVoid(object : IrVisitorVoid() {
+    body.element.acceptVoid(object : IrLeafVisitorVoid() {
         private val stack = mutableListOf<BlockOrBody>()
         override fun visitElement(element: IrElement) {
-            element.acceptChildren(this, null)
+            element.acceptChildrenVoid(this)
         }
 
-        override fun visitBody(body: IrBody) {
+        private fun visitBody(body: IrBody) {
             currentStackElement()?.let { childrenBlocks.getOrPut(it) { mutableListOf() }.add(BlockOrBody.Body(body)) }
             stack.add(BlockOrBody.Body(body))
-            super.visitBody(body)
+            body.acceptChildrenVoid(this)
             require(stack.removeLast() == BlockOrBody.Body(body)) { "Invalid stack" }
         }
 
-        override fun visitBlock(expression: IrBlock) {
+        override fun visitBlockBody(body: IrBlockBody) {
+            visitBody(body)
+        }
+
+        override fun visitExpressionBody(body: IrExpressionBody) {
+            visitBody(body)
+        }
+
+        override fun visitSyntheticBody(body: IrSyntheticBody) {
+            visitBody(body)
+        }
+
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
             // This is a workaround.
             // We process IrInlinedFunctionBlock on codegen in a special way by processing composite blocks with arguments evaluation first.
             // Thus, we don't want IrInlinedFunctionBlock to contain variable declarations before this composite blocks.
             // That is why we move variable declarations from IrInlinedFunctionBlock to the outer block.
-            if (expression is IrInlinedFunctionBlock) {
-                return super.visitBlock(expression)
-            }
+            inlinedBlock.acceptChildrenVoid(this)
+        }
+
+        override fun visitBlock(expression: IrBlock) {
             currentStackElement()?.let { childrenBlocks.getOrPut(it) { mutableListOf() }.add(Block(expression)) }
             stack.add(Block(expression))
-            super.visitBlock(expression)
+            expression.acceptChildrenVoid(this)
             require(stack.removeLast() == Block(expression)) { "Invalid stack" }
         }
 
         private fun currentStackElement() = stack.lastOrNull()
 
-        override fun visitValueAccess(expression: IrValueAccessExpression) {
+        private fun visitValueAccess(expression: IrValueAccessExpression) {
             val valueDeclaration = expression.symbol.owner
             if (valueDeclaration is IrVariable && valueDeclaration in variables) {
                 variableUsages.getOrPut(currentStackElement()!!) { mutableSetOf() }.add(valueDeclaration)
             }
-            super.visitValueAccess(expression)
+            expression.acceptChildrenVoid(this)
+        }
+
+        override fun visitGetValue(expression: IrGetValue) {
+            visitValueAccess(expression)
+        }
+
+        override fun visitSetValue(expression: IrSetValue) {
+            visitValueAccess(expression)
         }
     })
 
@@ -1471,18 +1504,26 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
 
 private fun IrStatement.containsUsagesOf(variablesSet: Set<IrVariable>): Boolean {
     var used = false
-    acceptVoid(object : IrVisitorVoid() {
+    acceptVoid(object : IrLeafVisitorVoid() {
         override fun visitElement(element: IrElement) {
             if (!used) {
                 element.acceptChildrenVoid(this)
             }
         }
 
-        override fun visitValueAccess(expression: IrValueAccessExpression) {
+        private fun visitValueAccess(expression: IrValueAccessExpression) {
             if (expression.symbol.owner in variablesSet) {
                 used = true
             }
-            super.visitValueAccess(expression)
+            visitElement(expression)
+        }
+
+        override fun visitGetValue(expression: IrGetValue) {
+            visitValueAccess(expression)
+        }
+
+        override fun visitSetValue(expression: IrSetValue) {
+            visitValueAccess(expression)
         }
     })
     return used
@@ -1502,7 +1543,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
     val containingVariables: Map<BlockOrBody, List<IrVariable>> = nearestBlocks.entries
         .mapNotNull { (k, v) -> if (v != null) k to v else null }
         .groupBy({ (_, v) -> v }, { (k, _) -> k })
-    return element.transform(object : IrElementTransformerVoid() {
+    return element.transform(object : IrLeafTransformerVoid() {
         private fun getFirstInnerStatement(statement: IrStatement): IrStatement? =
             if (statement is IrStatementContainer) statement.statements.first().let(::getFirstInnerStatement) else statement
 
@@ -1588,13 +1629,18 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
 }
 
 private fun BlockOrBody.extractVariablesSettersToOuterPossibleBlock(variables: Set<IrVariable>) {
-    element.acceptVoid(object : IrVisitorVoid() {
+    element.acceptVoid(object : IrLeafVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
 
-        override fun visitContainerExpression(expression: IrContainerExpression) {
-            super.visitContainerExpression(expression)
+        override fun visitBlock(expression: IrBlock) {
+            expression.acceptChildrenVoid(this)
+            visitStatementContainer(expression)
+        }
+
+        override fun visitComposite(expression: IrComposite) {
+            expression.acceptChildrenVoid(this)
             visitStatementContainer(expression)
         }
 

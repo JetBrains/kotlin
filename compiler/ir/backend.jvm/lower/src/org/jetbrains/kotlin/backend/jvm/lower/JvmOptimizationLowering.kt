@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @PhaseDescription(name = "JvmOptimizationLowering")
@@ -78,12 +78,14 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
     private inner class Transformer(
         private val fileEntry: IrFileEntry,
         private val inlineScopeResolver: IrInlineScopeResolver
-    ) : IrTransformer<IrDeclaration?>() {
+    ) : IrLeafTransformer<IrDeclaration?>() {
 
         private val dontTouchTemporaryVals = HashSet<IrVariable>()
 
-        override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?): IrStatement =
-            super.visitDeclaration(declaration, declaration)
+        override fun <E : IrElement> transformElement(element: E, data: IrDeclaration?): E {
+            element.transformChildren(this, element as? IrDeclaration ?: data)
+            return element
+        }
 
         override fun visitCall(expression: IrCall, data: IrDeclaration?): IrExpression {
             expression.transformChildren(this, data)
@@ -290,7 +292,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             return body
         }
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclaration?): IrExpression {
+        private fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclaration?): IrExpression {
             if (expression.origin == IrStatementOrigin.WHEN) {
                 // Don't optimize out 'when' subject initialized with a variable,
                 // otherwise we might get somewhat weird debugging behavior.
@@ -312,6 +314,12 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             removeUnnecessaryTemporaryVariables(expression.statements)
             return expression
         }
+
+        override fun visitBlock(expression: IrBlock, data: IrDeclaration?): IrExpression =
+            visitContainerExpression(expression, data)
+
+        override fun visitComposite(expression: IrComposite, data: IrDeclaration?): IrExpression =
+            visitContainerExpression(expression, data)
 
         private fun reuseLoopVariableAsInductionVariableIfPossible(irForLoopBlock: IrContainerExpression) {
             if (irForLoopBlock.statements.size != 2) return

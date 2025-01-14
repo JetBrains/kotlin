@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
@@ -108,10 +108,10 @@ private fun IrElement.safelyInitializeAllLazyDescendants() {
     // which would throw ConcurrentModificationException.
     // The workaround is to traverse the subtree over snapshots first.
 
-    acceptVoid(object : IrVisitorVoid() {
+    acceptVoid(object : IrLeafVisitorVoid() {
         override fun visitElement(element: IrElement) {
             val directChildrenSnapshot = mutableListOf<IrElement>()
-            element.acceptChildrenVoid(object : IrVisitorVoid() {
+            element.acceptChildrenVoid(object : IrLeafVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     directChildrenSnapshot += element
                 }
@@ -201,7 +201,7 @@ private fun buildFakeOverridesForLocalClasses(
 ) {
     val builder = makeSimpleFakeOverrideBuilder(symbolTable, typeSystemContext, symbolDeserializer)
     toplevel.acceptChildrenVoid(
-        object : IrVisitorVoid() {
+        object : IrLeafVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

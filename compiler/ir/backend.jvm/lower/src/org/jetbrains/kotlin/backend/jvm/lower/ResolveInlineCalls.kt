@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
 /**
  * Statically resolves calls to inline methods to particular implementations.
  */
 @PhaseDescription(name = "ResolveInlineCalls")
-internal class ResolveInlineCalls(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
+internal class ResolveInlineCalls(val context: JvmBackendContext) : IrLeafVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 
     override fun visitElement(element: IrElement) {

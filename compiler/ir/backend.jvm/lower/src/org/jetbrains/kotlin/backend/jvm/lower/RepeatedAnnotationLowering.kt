@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrMutableAnnotationContainer
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -50,23 +50,16 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
  *     fun f() {}
  */
 @PhaseDescription(name = "RepeatedAnnotation")
-internal class RepeatedAnnotationLowering(private val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
+internal class RepeatedAnnotationLowering(private val context: JvmBackendContext) : IrLeafVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)
     }
 
     override fun visitElement(element: IrElement) {
+        if (element is IrMutableAnnotationContainer) {
+            element.annotations = transformAnnotations(element.annotations)
+        }
         element.acceptChildrenVoid(this)
-    }
-
-    override fun visitFile(declaration: IrFile) {
-        declaration.annotations = transformAnnotations(declaration.annotations)
-        super.visitFile(declaration)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase) {
-        declaration.annotations = transformAnnotations(declaration.annotations)
-        super.visitDeclaration(declaration)
     }
 
     override fun visitClass(declaration: IrClass) {
@@ -76,7 +69,8 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
         ) {
             declaration.declarations.add(context.cachedDeclarations.getRepeatedAnnotationSyntheticContainer(declaration))
         }
-        super.visitClass(declaration)
+        declaration.annotations = transformAnnotations(declaration.annotations)
+        declaration.acceptChildrenVoid(this)
     }
 
     private fun transformAnnotations(annotations: List<IrConstructorCall>): List<IrConstructorCall> {

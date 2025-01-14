@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
 /**
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
  * types and return type.
  */
 @PhaseDescription(name = "PolymorphicSignature")
-internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrTransformer<PolymorphicSignatureLowering.Data>(),
+internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrLeafTransformer<PolymorphicSignatureLowering.Data>(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))
@@ -92,7 +92,7 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
         return expression
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression, data: Data): IrExpression {
+    private fun visitContainerExpression(expression: IrContainerExpression, data: Data): IrExpression {
         val statements = expression.statements
         for (i in 0 until statements.size) {
             val newData = if (i == statements.lastIndex) data else Data.NO_COERCION
@@ -100,6 +100,12 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
         }
         return expression
     }
+
+    override fun visitBlock(expression: IrBlock, data: Data): IrExpression =
+        visitContainerExpression(expression, data)
+
+    override fun visitComposite(expression: IrComposite, data: Data): IrExpression =
+        visitContainerExpression(expression, data)
 
     override fun visitCall(expression: IrCall, data: Data): IrElement =
         if (expression.isPolymorphicCall()) {

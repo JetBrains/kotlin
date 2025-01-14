@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImplWithShape
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -53,7 +53,7 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
     }
 }
 
-private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
+private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrLeafTransformerVoid() {
     private fun IrSimpleFunction.accessorBody(delegate: IrPropertyReference, receiverFieldOrExpression: IrStatement?): IrBody =
         context.createIrBuilder(symbol, startOffset, endOffset).run {
             val value = valueParameters.singleOrNull()?.let(::irGet)

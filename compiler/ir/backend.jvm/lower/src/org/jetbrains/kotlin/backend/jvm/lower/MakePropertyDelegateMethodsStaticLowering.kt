@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 /**
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
     name = "MakePropertyDelegateMethodsStatic",
     prerequisite = [PropertyReferenceDelegationLowering::class, JvmLocalDeclarationsLowering::class]
 )
-internal class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+internal class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendContext) : IrLeafTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transform(this, null)
     }

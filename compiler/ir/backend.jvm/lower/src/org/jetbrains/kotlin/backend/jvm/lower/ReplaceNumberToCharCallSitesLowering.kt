@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.isNumber
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 /**
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
  * compiler sees it there because `java.lang.Number` is mapped to `kotlin.Number`.
  */
 @PhaseDescription(name = "ReplaceNumberToCharCallSites")
-internal class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
+internal class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : IrLeafVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildren(this, null)
     }

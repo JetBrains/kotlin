@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isConstantLike
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
@@ -130,7 +130,7 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
         (isBoolean() || isByte() || isShort() || isInt() || isLong() || isChar() || isFloat() || isDouble()) &&
                 !hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
 
-    private inner class Transformer : IrElementTransformerVoid() {
+    private inner class Transformer : IrLeafTransformerVoid() {
         override fun visitBlock(expression: IrBlock): IrExpression {
             expression.transformChildrenVoid()
 
