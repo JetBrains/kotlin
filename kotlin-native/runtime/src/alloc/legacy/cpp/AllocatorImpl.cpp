@@ -79,13 +79,17 @@ alloc::Allocator::Allocator() noexcept : impl_(std::make_unique<Impl>()) {}
 
 alloc::Allocator::~Allocator() = default;
 
-void alloc::Allocator::prepareForGC() noexcept {}
+void alloc::Allocator::prepareForGC() noexcept {
+    RuntimeAssert(!impl_->sweepState().has_value(), "sweepState must be empty");
+    impl_->sweepState().emplace(impl_->objectFactory(), impl_->extraObjectDataFactory());
+    checkMarkCorrectness(impl_->sweepState()->objectFactoryIterable_);
+}
 
 void alloc::Allocator::clearForTests() noexcept {
     stopFinalizerThreadIfRunning();
     impl_->extraObjectDataFactory().ClearForTests();
     impl_->objectFactory().ClearForTests();
-    impl_->pendingFinalizers().reset();
+    impl_->pendingFinalizers() = FinalizerQueue();
 }
 
 void alloc::Allocator::startFinalizerThreadIfNeeded() noexcept {
@@ -110,6 +114,24 @@ bool alloc::Allocator::mainThreadFinalizerProcessorAvailable() noexcept {
     return impl_->finalizerProcessor().mainThreadAvailable();
 }
 
+void alloc::Allocator::sweep(gc::GCHandle gcHandle) noexcept {
+    auto state = std::move(impl_->sweepState());
+    impl_->sweepState() = std::nullopt; // optional does not become empty when it's moved-from.
+    RuntimeAssert(state.has_value(), "state must have value");
+    alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, state->extraObjectFactoryIterable_);
+    auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, state->objectFactoryIterable_);
+    state = std::nullopt; // Release object factory locks.
+    alloc::compactObjectPoolInMainThread();
+    RuntimeAssert(impl_->pendingFinalizers().size() == 0, "pendingFinalizers_ were not empty");
+    impl_->pendingFinalizers() = std::move(finalizerQueue);
+}
+
+void alloc::Allocator::scheduleFinalization(gc::GCHandle gcHandle) noexcept {
+    auto queue = std::move(impl_->pendingFinalizers());
+    gcHandle.finalizersScheduled(queue.size());
+    impl_->finalizerProcessor().schedule(std::move(queue), gcHandle.getEpoch());
+}
+
 gc::GC::ObjectData& alloc::objectDataForObject(ObjHeader* object) noexcept {
     return ObjectFactoryImpl::NodeRef::From(object).ObjectData();
 }
@@ -130,22 +152,3 @@ void alloc::destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
 
 alloc::SweepState::SweepState(alloc::ObjectFactoryImpl& objectFactory, alloc::ExtraObjectDataFactory& extraObjectDataFactory) noexcept :
     extraObjectFactoryIterable_(extraObjectDataFactory.LockForIter()), objectFactoryIterable_(objectFactory.LockForIter()) {}
-
-alloc::SweepState alloc::Allocator::Impl::prepareForSweep() noexcept {
-    alloc::SweepState result{objectFactory_, extraObjectDataFactory_};
-    checkMarkCorrectness(*result.objectFactoryIterable_);
-    return result;
-}
-
-alloc::FinalizerQueue alloc::Allocator::Impl::sweep(gc::GCHandle gcHandle, alloc::SweepState state) noexcept {
-    alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *state.extraObjectFactoryIterable_);
-    state.extraObjectFactoryIterable_ = std::nullopt;
-    auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *state.objectFactoryIterable_);
-    state.objectFactoryIterable_ = std::nullopt;
-    alloc::compactObjectPoolInMainThread();
-    return finalizerQueue;
-}
-
-void alloc::Allocator::Impl::scheduleFinalization(FinalizerQueue queue, int64_t epoch) noexcept {
-    finalizerProcessor_.schedule(std::move(queue), epoch);
-}

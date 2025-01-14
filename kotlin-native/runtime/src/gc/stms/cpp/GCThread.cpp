@@ -6,7 +6,6 @@
 #include "GCThread.hpp"
 
 #include "Allocator.hpp"
-#include "AllocatorImpl.hpp"
 #include "GCScheduler.hpp"
 #include "GCStatistics.hpp"
 #include "Logging.hpp"
@@ -54,18 +53,13 @@ void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
     }
     allocator_.prepareForGC();
 
-    // Taking the locks before the pause is completed. So that any destroying thread
-    // would not publish into the global state at an unexpected time.
-    auto sweepState = allocator_.impl().prepareForSweep();
-
-    auto finalizerQueue = allocator_.impl().sweep(gcHandle, std::move(sweepState));
+    allocator_.sweep(gcHandle);
 
     gcScheduler_.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
 
     resumeTheWorld(gcHandle);
 
     state_.finish(epoch);
-    gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
-    allocator_.impl().scheduleFinalization(std::move(finalizerQueue), epoch);
+    allocator_.scheduleFinalization(gcHandle);
 }

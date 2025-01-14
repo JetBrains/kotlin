@@ -7,6 +7,8 @@
 
 #include "Allocator.hpp"
 
+#include <optional>
+
 #include "ExtraObjectDataFactory.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
@@ -39,11 +41,13 @@ using FinalizerQueueSingle = ObjectFactoryImpl::FinalizerQueue;
 using FinalizerQueue = SegregatedFinalizerQueue<FinalizerQueueSingle>;
 using FinalizerQueueTraits = ObjectFactoryImpl::FinalizerQueueTraits;
 
+// Taking the locks before the pause is completed. So that any destroying thread
+// would not publish into the global state at an unexpected time.
 struct SweepState : private MoveOnly {
     SweepState(ObjectFactoryImpl& objectFactory, ExtraObjectDataFactory& extraObjectDataFactory) noexcept;
 
-    std::optional<ExtraObjectDataFactory::Iterable> extraObjectFactoryIterable_;
-    std::optional<ObjectFactoryImpl::Iterable> objectFactoryIterable_;
+    ExtraObjectDataFactory::Iterable extraObjectFactoryIterable_;
+    ObjectFactoryImpl::Iterable objectFactoryIterable_;
 };
 
 class Allocator::Impl : private Pinned {
@@ -52,15 +56,16 @@ public:
 
     ObjectFactoryImpl& objectFactory() noexcept { return objectFactory_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+    std::optional<SweepState>& sweepState() noexcept { return sweepState_; }
+    FinalizerQueue& pendingFinalizers() noexcept { return pendingFinalizers_; }
     SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits>& finalizerProcessor() noexcept { return finalizerProcessor_; }
-
-    SweepState prepareForSweep() noexcept;
-    FinalizerQueue sweep(gc::GCHandle gcHandle, SweepState state) noexcept;
-    void scheduleFinalization(FinalizerQueue queue, int64_t epoch) noexcept;
 
 private:
     ObjectFactoryImpl objectFactory_;
     ExtraObjectDataFactory extraObjectDataFactory_;
+    std::optional<SweepState> sweepState_;
+    // Preallocated place for finalizers for avoiding memory allocation during GC.
+    FinalizerQueue pendingFinalizers_;
     SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits> finalizerProcessor_;
 };
 
