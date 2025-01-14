@@ -780,8 +780,12 @@ open class LocalDeclarationsLowering(
             )
             newDeclaration.recordTransformedValueParameters(localFunctionContext)
             val parametersMapping = buildMap {
-                oldDeclaration.extensionReceiverParameter?.let { put(it, newDeclaration.extensionReceiverParameter!!) }
-                putAll(oldDeclaration.valueParameters zip newDeclaration.valueParameters.takeLast(oldDeclaration.valueParameters.size))
+                val oldToNewDeclarationParameters = if (oldDeclaration.parameters.any { it.kind == IrParameterKind.ExtensionReceiver }) {
+                    newDeclaration.parameters.take(1) + newDeclaration.parameters.takeLast(oldDeclaration.parameters.size - 1)
+                } else {
+                    newDeclaration.parameters.takeLast(oldDeclaration.parameters.size)
+                }
+                putAll(oldDeclaration.parameters zip oldToNewDeclarationParameters)
             }
             context.remapMultiFieldValueClassStructure(oldDeclaration, newDeclaration, parametersMapping)
 
