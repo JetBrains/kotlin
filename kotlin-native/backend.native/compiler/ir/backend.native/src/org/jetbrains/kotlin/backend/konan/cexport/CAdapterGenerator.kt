@@ -242,11 +242,7 @@ internal class ExportedElement(
             |
             |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
             |static $objectClassC ${cname}_instance_impl(void) {
-            |  Kotlin_initRuntimeIfNeeded();
-            |  ScopedRunnableState stateGuard;
-            |  KObjHolder result_holder;
-            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
-            |  return $objectClassC { .pinned = CreateStablePointer(result)};
+            |  return $objectClassC { .pinned = Kotlin_CExport_createSingleton(${cname}_instance)};
             |}
             """.trimMargin()
         } else ""
@@ -261,11 +257,7 @@ internal class ExportedElement(
         return """
               |extern "C" KObjHeader* $cname(KObjHeader**);
               |static $enumClassC ${cname}_impl(void) {
-              |  Kotlin_initRuntimeIfNeeded();
-              |  ScopedRunnableState stateGuard;
-              |  KObjHolder result_holder;
-              |  KObjHeader* result = $cname(result_holder.slot());
-              |  return $enumClassC { .pinned = CreateStablePointer(result)};
+              |  return $enumClassC { .pinned = Kotlin_CExport_createSingleton($cname)};
               |}
               """.trimMargin()
     }
@@ -276,16 +268,16 @@ internal class ExportedElement(
             typeTranslator.isMappedToString(signatureElement.type) ->
                 if (direction == Direction.C_TO_KOTLIN) {
                     builder.append("  KObjHolder ${name}_holder;\n")
-                    "CreateStringFromCString($name, ${name}_holder.slot())"
+                    "Kotlin_CExport_createStringFromCString($name, ${name}_holder.slot())"
                 } else {
-                    "CreateCStringFromString($name)"
+                    "Kotlin_CExport_createCStringFromString($name)"
                 }
             typeTranslator.isMappedToReference(signatureElement.type) ->
                 if (direction == Direction.C_TO_KOTLIN) {
                     builder.append("  KObjHolder ${name}_holder2;\n")
-                    "DerefStablePointer(${name}.pinned, ${name}_holder2.slot())"
+                    "Kotlin_CExport_derefStablePointer(${name}.pinned, ${name}_holder2.slot())"
                 } else {
-                    "((${typeTranslator.translateType(signatureElement.type)}){ .pinned = CreateStablePointer(${name})})"
+                    "((${typeTranslator.translateType(signatureElement.type)}){ .pinned = Kotlin_CExport_createStablePointer(${name})})"
                 }
             else -> {
                 assert(!signatureElement.type.binaryTypeIsReference()) {
@@ -307,10 +299,7 @@ internal class ExportedElement(
         val builder = StringBuilder()
         builder.append("$visibility ${typeTranslator.translateType(cfunction[0])} ${cnameImpl}(${cfunction.drop(1).
                 mapIndexed { index, it -> "${typeTranslator.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")
-        // TODO: do we really need that in every function?
-        builder.append("  Kotlin_initRuntimeIfNeeded();\n")
-        builder.append("  ScopedRunnableState stateGuard;\n")
-        builder.append("  FrameOverlay* frame = getCurrentFrame();")
+        builder.append("  ScopedBridge bridgeGuard;\n")
         val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
             translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
         })
@@ -327,7 +316,7 @@ internal class ExportedElement(
             builder.append("  KObjHolder result_holder;\n")
             val clazz = scope.elements[0]
             assert(clazz.kind == ElementKind.TYPE)
-            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
+            builder.append("  KObjHeader* result = Kotlin_CExport_allocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
             args.add(0, "result")
         }
         if (!isVoidReturned && !isConstructor) {
@@ -343,8 +332,7 @@ internal class ExportedElement(
             builder.append("  return $result;\n")
         }
         builder.append("   } catch (...) {")
-        builder.append("       SetCurrentFrame(reinterpret_cast<KObjHeader**>(frame));\n")
-        builder.append("       HandleCurrentExceptionWhenLeavingKotlinCode();\n")
+        builder.append("       bridgeGuard.onException();\n")
         builder.append("   } \n")
 
         builder.append("}\n")

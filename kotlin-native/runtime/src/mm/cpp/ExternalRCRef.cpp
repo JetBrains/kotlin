@@ -99,6 +99,10 @@ const TypeInfo* kotlin::mm::externalRCRefType(void* ref) noexcept {
     return mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).typeInfo();
 }
 
+void* kotlin::mm::createRetainedExternalRCRef(KRef obj) noexcept {
+    return Kotlin_native_internal_ref_createRetainedExternalRCRef(obj);
+}
+
 void kotlin::mm::releaseAndDisposeExternalRCRef(void* ref) noexcept {
     if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
         // Nothing to do.
@@ -107,4 +111,14 @@ void kotlin::mm::releaseAndDisposeExternalRCRef(void* ref) noexcept {
     auto objcBackRef = mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref));
     objcBackRef.release();
     std::move(objcBackRef).dispose();
+}
+
+KRef kotlin::mm::dereferenceExternalRCRef(void *ref) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+    if (ref == nullptr)
+        return nullptr;
+    if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
+        return obj;
+    }
+    return *mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref));
 }

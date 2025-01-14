@@ -370,29 +370,6 @@ extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 
-extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
-    if (!object)
-        return nullptr;
-
-    AssertThreadState(ThreadState::kRunnable);
-    return static_cast<mm::RawSpecialRef*>(mm::StableRef::create(object));
-}
-
-extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
-    if (!pointer) return;
-
-    // Can be safely called in any thread state.
-    mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)).dispose();
-}
-
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
-    if (!pointer)
-        RETURN_OBJ(nullptr);
-
-    AssertThreadState(ThreadState::kRunnable);
-    RETURN_OBJ(*mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)));
-}
-
 // it would be inlined manually in RemoveRedundantSafepointsPass
 extern "C" RUNTIME_NOTHROW NO_INLINE void Kotlin_mm_safePointFunctionPrologue() {
     mm::safePoint();

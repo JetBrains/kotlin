@@ -241,12 +241,6 @@ void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
 void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 
-// Creates a stable pointer out of the object.
-void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
-// Disposes a stable pointer to the object.
-void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
-// Translate stable pointer to object reference.
-OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Add TLS object storage, called by the generated code.
 void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.

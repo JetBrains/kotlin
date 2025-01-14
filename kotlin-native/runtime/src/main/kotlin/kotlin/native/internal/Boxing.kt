@@ -49,7 +49,7 @@ import kotlin.native.internal.escapeAnalysis.Escapes
 @GCUnsafeCall("inLongBoxCache")
 @PublishedApi internal external fun inLongBoxCache(value: Long): Boolean
 
-// TODO: functions below are used for ObjCExport and CAdapterGenerator, move and rename them correspondingly.
+// TODO: functions below are used for ObjCExport and CExport, move and rename them correspondingly.
 
 @ExportForCppRuntime("Kotlin_boxBoolean")
 @PublishedApi internal fun boxBoolean(value: Boolean): Boolean? = value
