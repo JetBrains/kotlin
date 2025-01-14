@@ -54,6 +54,11 @@ tasks {
         outputs.upToDateWhen {
             nodeModulesDir.isDirectory
         }
+
+        if (gradle.startParameter.isOffline) {
+            args.add("--offline")
+        }
+
         args.add("--ignore-scripts")
     }
 
