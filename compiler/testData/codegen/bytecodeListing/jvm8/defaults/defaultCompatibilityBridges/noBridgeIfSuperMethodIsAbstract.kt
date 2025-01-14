@@ -15,11 +15,7 @@ open class B : A
 import base.*
 
 interface C : A {
-    override fun f() {}
-}
-
-abstract class D : B() {
     abstract override fun f()
 }
 
-abstract class E : D(), C
+abstract class D : B(), C
