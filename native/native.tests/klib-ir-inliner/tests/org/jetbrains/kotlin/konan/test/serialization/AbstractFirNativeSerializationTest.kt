@@ -112,11 +112,6 @@ open class AbstractFirNativeSerializationTest : AbstractKotlinCompilerWithTarget
             }
         }
     }
-
-    /**
-     * Called directly from test class constructor.
-     */
-    fun register(@TestDataFile testDataFilePath: String, sourceTransformer: ExternalSourceTransformer) {}
 }
 
 @Suppress("reformat")

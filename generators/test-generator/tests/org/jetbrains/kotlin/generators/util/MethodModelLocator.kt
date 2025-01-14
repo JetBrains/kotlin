@@ -29,7 +29,8 @@ fun methodModelLocator(
     checkFilenameStartsLowerCase: Boolean?,
     targetBackend: TargetBackend,
     skipIgnored: Boolean,
-    tags: List<String>
+    tags: List<String>,
+    nativeTestInNonNativeTestInfra: Boolean
 ): List<MethodModel> = SimpleTestMethodModel(
     rootDir,
     file,
@@ -37,7 +38,8 @@ fun methodModelLocator(
     checkFilenameStartsLowerCase,
     targetBackend,
     skipIgnored,
-    tags
+    tags,
+    nativeTestInNonNativeTestInfra
 ).let { methodModel ->
     if (methodModel.containsWithoutJvmInline()) {
         val isWithAnnotationAndIsWithPostfix = when {
