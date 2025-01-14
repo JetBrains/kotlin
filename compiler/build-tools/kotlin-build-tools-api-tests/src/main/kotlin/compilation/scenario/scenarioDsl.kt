@@ -76,6 +76,16 @@ internal abstract class BaseScenarioModule(
                 assertions(this, module, this@BaseScenarioModule)
             })
     }
+
+    override fun executeCompiledCode(
+        mainClassFqn: String,
+        assertions: ExecutionOutcome.() -> Unit
+    ) {
+        module.executeCompiledClass(
+            mainClassFqn,
+            assertions
+        )
+    }
 }
 
 internal class ExternallyTrackedScenarioModuleImpl(

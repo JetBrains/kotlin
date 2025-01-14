@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguratio
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module.Companion.EXECUTION_TIMEOUT_SECONDS
 import java.nio.file.Path
 
 interface Module : Dependency {
@@ -64,4 +65,22 @@ interface Module : Dependency {
         incrementalCompilationConfigAction: (IncrementalJvmCompilationConfiguration<*>) -> Unit = {},
         assertions: CompilationOutcome.(module: Module) -> Unit = {},
     ): CompilationResult
+
+    /**
+     * Executes the currently compiled code in a separate process.
+     * In JVM terms, dependencies are automatically added to classpath, based on module configuration.
+     * Default timeout is [EXECUTION_TIMEOUT_SECONDS]
+     *
+     * [mainClassFqn] is used to select the entry point.
+     *
+     * Use this to assert that the compiled code behaves as expected (no runtime exceptions, correct output)
+     */
+    fun executeCompiledClass(
+        mainClassFqn: String,
+        assertions: ExecutionOutcome.() -> Unit = {},
+    ): ExecutionOutcome
+
+    companion object {
+        const val EXECUTION_TIMEOUT_SECONDS = 10L
+    }
 }

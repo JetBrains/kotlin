@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ExecutionOutcome
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 
@@ -52,5 +53,10 @@ interface ScenarioModule {
     fun compile(
         forceOutput: LogLevel? = null,
         assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit = { _, _ -> },
+    )
+
+    fun executeCompiledCode(
+        mainClassFqn: String,
+        assertions: ExecutionOutcome.() -> Unit = {}
     )
 }

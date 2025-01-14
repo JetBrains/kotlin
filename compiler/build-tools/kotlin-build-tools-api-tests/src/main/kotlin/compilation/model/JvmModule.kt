@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguratio
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.nio.file.Path
@@ -31,14 +30,23 @@ class JvmModule(
     defaultStrategyConfig,
     additionalCompilationArguments,
 ) {
+    private val stdlibLocation: Path =
+        KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
+
+    /**
+     * It won't be a problem to cache [dependencyFiles] and [compileClasspath] currently,
+     * but we might add tests where dependencies change between compilations
+     */
+    private val dependencyFiles: List<Path>
+        get() = dependencies.map { it.location }.plusElement(stdlibLocation)
+    private val compileClasspath: String
+        get() = dependencyFiles.joinToString(File.pathSeparator)
+
     override fun compileImpl(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult {
-        val stdlibLocation =
-            KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
-        val dependencyFiles = dependencies.map { it.location }.plusElement(stdlibLocation)
         val compilationConfig = BaseTest.compilationService.makeJvmCompilationConfiguration()
         compilationConfigAction(compilationConfig)
         compilationConfig.useLogger(kotlinLogger)
@@ -46,7 +54,7 @@ class JvmModule(
             "-no-reflect",
             "-no-stdlib",
             "-d", outputDirectory.absolutePathString(),
-            "-cp", dependencyFiles.joinToString(File.pathSeparator),
+            "-cp", compileClasspath,
             "-module-name", moduleName,
         )
         val allowedExtensions = compilationConfig.kotlinScriptFilenameExtensions + setOf("kt", "kts")
@@ -119,5 +127,36 @@ class JvmModule(
             )
             compilationConfigAction(compilationConfig)
         }, assertions)
+    }
+
+    override fun prepareExecutionProcessBuilder(
+        mainClassFqn: String
+    ): ProcessBuilder {
+        if (additionalCompilationArguments.contains("-cp")) {
+            throw UnsupportedOperationException(
+                "additional classpath support isn't implemented for JvmModule.executeCompiledClass"
+            )
+        }
+
+        val executionClasspath = "$compileClasspath${File.pathSeparator}${outputDirectory}"
+
+        val builder = ProcessBuilder(
+            javaExe.absolutePath, // it is possible to support jdk selection, but we don't need it yet
+            "-cp", executionClasspath,
+            mainClassFqn
+        )
+        builder.directory(outputDirectory.toFile())
+
+        return builder
+    }
+
+    private companion object {
+        val javaExe: File
+            get() {
+                val javaHome = System.getProperty("java.home")
+                return File(javaHome, "bin/java.exe").takeIf(File::exists)
+                    ?: File(javaHome, "bin/java").takeIf(File::exists)
+                    ?: error("Can't find 'java' executable in $javaHome")
+            }
     }
 }
