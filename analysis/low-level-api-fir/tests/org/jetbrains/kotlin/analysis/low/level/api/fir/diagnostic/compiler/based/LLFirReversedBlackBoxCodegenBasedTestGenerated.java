@@ -36845,27 +36845,9 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
-        @TestMetadata("bridgeInInterface2.kt")
-        public void testBridgeInInterface2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterface2.kt");
-        }
-
-        @Test
         @TestMetadata("bridgeInInterfaceWithProperties.kt")
         public void testBridgeInInterfaceWithProperties() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterfaceWithProperties.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeInInterfaceWithProperties2.kt")
-        public void testBridgeInInterfaceWithProperties2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterfaceWithProperties2.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeWithJava.kt")
-        public void testBridgeWithJava() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithJava.kt");
         }
 
         @Test
@@ -37239,27 +37221,9 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
-        @TestMetadata("bridgeInInterface2.kt")
-        public void testBridgeInInterface2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterface2.kt");
-        }
-
-        @Test
         @TestMetadata("bridgeInInterfaceWithProperties.kt")
         public void testBridgeInInterfaceWithProperties() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterfaceWithProperties.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeInInterfaceWithProperties2.kt")
-        public void testBridgeInInterfaceWithProperties2() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterfaceWithProperties2.kt");
-        }
-
-        @Test
-        @TestMetadata("bridgeWithJava.kt")
-        public void testBridgeWithJava() {
-          runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithJava.kt");
         }
 
         @Test

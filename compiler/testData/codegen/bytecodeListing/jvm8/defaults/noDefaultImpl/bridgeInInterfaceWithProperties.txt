@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public interface Test {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public method getTest(p0: java.lang.Object): java.lang.Object
+    public method setTest(p0: java.lang.Object, p1: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public interface Test2 {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public @org.jetbrains.annotations.NotNull method getTest(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic bridge method getTest(p0: java.lang.Object): java.lang.Object
+    public method setTest(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public synthetic bridge method setTest(p0: java.lang.Object, p1: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public method <init>(): void
+}

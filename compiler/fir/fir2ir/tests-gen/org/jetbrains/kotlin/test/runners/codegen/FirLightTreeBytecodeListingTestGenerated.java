@@ -1877,6 +1877,24 @@ public class FirLightTreeBytecodeListingTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("bridgeInInterface.kt")
+        public void testBridgeInInterface() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgeInInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeInInterfaceWithProperties.kt")
+        public void testBridgeInInterfaceWithProperties() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgeInInterfaceWithProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeWithJava.kt")
+        public void testBridgeWithJava() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgeWithJava.kt");
+        }
+
+        @Test
         @TestMetadata("deprecation.kt")
         public void testDeprecation() {
           runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/deprecation.kt");
@@ -1958,6 +1976,24 @@ public class FirLightTreeBytecodeListingTestGenerated extends AbstractFirLightTr
         @Test
         public void testAllFilesPresentInNoDefaultImpl() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("bridgeInInterface.kt")
+        public void testBridgeInInterface() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl/bridgeInInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeInInterfaceWithProperties.kt")
+        public void testBridgeInInterfaceWithProperties() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl/bridgeInInterfaceWithProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeWithJava.kt")
+        public void testBridgeWithJava() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl/bridgeWithJava.kt");
         }
 
         @Test
