@@ -38,18 +38,30 @@ internal data class AbiSignaturesImpl(private val signatureV1: String?, private 
 }
 
 @ExperimentalLibraryAbiReader
+internal class AbiAnnotationListImpl(private val annotations: List<AbiAnnotation>) : AbiAnnotatedEntity {
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"))
+    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotatedWith().any { it.qualifiedName == annotationClassName }
+
+    override fun annotatedWith() = annotations
+
+    companion object {
+        val EMPTY = AbiAnnotationListImpl(emptyList())
+    }
+}
+
+@ExperimentalLibraryAbiReader
+internal data class AbiAnnotationImpl(override val qualifiedName: AbiQualifiedName) : AbiAnnotation
+
+@ExperimentalLibraryAbiReader
 internal class AbiTopLevelDeclarationsImpl(
     override val declarations: List<AbiDeclaration>
 ) : AbiTopLevelDeclarations
 
 @ExperimentalLibraryAbiReader
-internal class AbiAnnotationImpl(override val qualifiedName: AbiQualifiedName) : AbiAnnotation
-
-@ExperimentalLibraryAbiReader
 internal class AbiClassImpl(
     override val qualifiedName: AbiQualifiedName,
     override val signatures: AbiSignatures,
-    private val annotations: Set<AbiQualifiedName>,
+    annotations: AbiAnnotationListImpl,
     modality: AbiModality,
     kind: AbiClassKind,
     isInner: Boolean,
@@ -58,7 +70,7 @@ internal class AbiClassImpl(
     override val superTypes: List<AbiType>,
     override val declarations: List<AbiDeclaration>,
     override val typeParameters: List<AbiTypeParameter>
-) : AbiClass {
+) : AbiClass, AbiAnnotatedEntity by annotations {
     private val flags = IS_INNER.toFlags(isInner) or
             IS_VALUE.toFlags(isValue) or
             IS_FUNCTION.toFlags(isFunction) or
@@ -70,10 +82,6 @@ internal class AbiClassImpl(
     override val isInner get() = IS_INNER.get(flags)
     override val isValue get() = IS_VALUE.get(flags)
     override val isFunction get() = IS_FUNCTION.get(flags)
-
-    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
-    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
-    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
         private val IS_INNER = FlagField.booleanFirst()
@@ -88,21 +96,17 @@ internal class AbiClassImpl(
 internal class AbiEnumEntryImpl(
     override val qualifiedName: AbiQualifiedName,
     override val signatures: AbiSignatures,
-    private val annotations: Set<AbiQualifiedName>
-) : AbiEnumEntry {
-    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
-    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
-    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
-}
+    annotations: AbiAnnotationListImpl
+) : AbiEnumEntry, AbiAnnotatedEntity by annotations
 
 @ExperimentalLibraryAbiReader
 internal class AbiConstructorImpl(
     override val qualifiedName: AbiQualifiedName,
     override val signatures: AbiSignatures,
-    private val annotations: Set<AbiQualifiedName>,
+    annotations: AbiAnnotationListImpl,
     isInline: Boolean,
     override val valueParameters: List<AbiValueParameter>
-) : AbiFunction {
+) : AbiFunction, AbiAnnotatedEntity by annotations {
     private val flags = IS_INLINE.toFlags(isInline)
 
     override val modality get() = AbiModality.FINAL // No need to render modality for constructors.
@@ -118,10 +122,6 @@ internal class AbiConstructorImpl(
     override val returnType get() = null // No need to render return type for constructors.
     override val typeParameters get() = emptyList<AbiTypeParameter>()
 
-    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
-    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
-    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
-
     companion object {
         private val IS_INLINE = FlagField.booleanFirst()
     }
@@ -131,14 +131,14 @@ internal class AbiConstructorImpl(
 internal class AbiFunctionImpl(
     override val qualifiedName: AbiQualifiedName,
     override val signatures: AbiSignatures,
-    private val annotations: Set<AbiQualifiedName>,
+    annotations: AbiAnnotationListImpl,
     modality: AbiModality,
     isInline: Boolean,
     isSuspend: Boolean,
     override val typeParameters: List<AbiTypeParameter>,
     override val valueParameters: List<AbiValueParameter>,
     override val returnType: AbiType?
-) : AbiFunction {
+) : AbiFunction, AbiAnnotatedEntity by annotations {
     private val flags = IS_INLINE.toFlags(isInline) or
             IS_SUSPEND.toFlags(isSuspend) or
             MODALITY.toFlags(modality)
@@ -155,10 +155,6 @@ internal class AbiFunctionImpl(
 
     @Suppress("OVERRIDE_DEPRECATION")
     override val contextReceiverParametersCount get() = valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }
-
-    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
-    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
-    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
         /** JVM allows max 255 parameters for a function. Storing such a number requires just 8 bits. */
@@ -204,21 +200,17 @@ internal class AbiValueParameterImpl(
 internal class AbiPropertyImpl(
     override val qualifiedName: AbiQualifiedName,
     override val signatures: AbiSignatures,
-    private val annotations: Set<AbiQualifiedName>,
+    annotations: AbiAnnotationListImpl,
     modality: AbiModality,
     kind: AbiPropertyKind,
     override val getter: AbiFunction?,
     override val setter: AbiFunction?,
     override val backingField: AbiField?
-) : AbiProperty {
+) : AbiProperty, AbiAnnotatedEntity by annotations {
     private val flags = MODALITY.toFlags(modality) or PROPERTY_KIND.toFlags(kind)
 
     override val modality get() = MODALITY.get(flags)
     override val kind get() = PROPERTY_KIND.get(flags)
-
-    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
-    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
-    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
         private val MODALITY = FlagFieldEx.first<AbiModality>()
@@ -227,11 +219,7 @@ internal class AbiPropertyImpl(
 }
 
 @ExperimentalLibraryAbiReader
-internal class AbiFieldImpl(private val annotations: Set<AbiQualifiedName>) : AbiField {
-    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
-    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
-    override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
-}
+internal class AbiFieldImpl(annotations: AbiAnnotationListImpl) : AbiField, AbiAnnotatedEntity by annotations
 
 @ExperimentalLibraryAbiReader
 internal class AbiTypeParameterImpl(

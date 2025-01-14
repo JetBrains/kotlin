@@ -54,7 +54,7 @@ class AbiTypeArgumentRenderingTest {
         AbiClassImpl(
             qualifiedName = AbiQualifiedName(AbiCompoundName("sample"), AbiCompoundName(name)),
             signatures = AbiSignaturesImpl("signature-v1", "signature-v2"),
-            annotations = emptySet(),
+            annotations = AbiAnnotationListImpl.EMPTY,
             modality = AbiModality.FINAL,
             kind = AbiClassKind.CLASS,
             isInner = false,

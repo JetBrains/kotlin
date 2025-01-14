@@ -108,9 +108,9 @@ private class LibraryDeserializer(
 
     private val interner = IrInterningService()
 
-    private val annotationsInterner = object {
-        private val uniqueAnnotationClassNames = ObjectOpenHashSet<AbiQualifiedName>()
-        fun intern(annotationClassName: AbiQualifiedName): AbiQualifiedName = uniqueAnnotationClassNames.addOrGet(annotationClassName)
+    private val annotationInterner = object {
+        private val uniqueAnnotations = ObjectOpenHashSet<AbiAnnotationImpl>()
+        fun intern(annotation: AbiAnnotationImpl): AbiAnnotationImpl = uniqueAnnotations.addOrGet(annotation)
     }
 
     private val needV1Signatures = AbiSignatureVersions.Supported.V1 in supportedSignatureVersions
@@ -489,8 +489,8 @@ private class LibraryDeserializer(
             )
         }
 
-        private fun deserializeAnnotations(proto: ProtoDeclarationBase): Set<AbiQualifiedName> {
-            fun deserialize(annotation: ProtoConstructorCall): AbiQualifiedName {
+        private fun deserializeAnnotations(proto: ProtoDeclarationBase): AbiAnnotationListImpl {
+            fun deserialize(annotation: ProtoConstructorCall): AbiAnnotation {
                 val idSignature = deserializeIdSignature(annotation.symbol)
                 val annotationClassName = when {
                     idSignature is CommonSignature -> idSignature
@@ -503,20 +503,19 @@ private class LibraryDeserializer(
                     rawRelativeName.substring(0, rawRelativeName.length - INIT_SUFFIX.length)
                 }
 
-                // Avoid duplicated instances of popular signature names:
-                return annotationsInterner.intern(annotationClassName)
+                // Avoid duplicated instances of popular annotations:
+                return annotationInterner.intern(AbiAnnotationImpl(annotationClassName))
             }
 
             return when (proto.annotationCount) {
-                0 -> return emptySet()
-                1 -> return setOf(deserialize(proto.annotationList[0]))
-                else -> proto.annotationList.mapTo(SmartSet.create(), ::deserialize)
+                0 -> return AbiAnnotationListImpl.EMPTY
+                else -> AbiAnnotationListImpl(proto.annotationList.memoryOptimizedMap(::deserialize))
             }
         }
 
         private fun computeVisibilityStatus(
             proto: ProtoDeclarationBase,
-            annotations: Set<AbiQualifiedName>,
+            annotations: AbiAnnotationListImpl,
             containingClassModality: AbiModality?,
             parentPropertyVisibilityStatus: VisibilityStatus? = null
         ): VisibilityStatus = when (ProtoFlags.VISIBILITY.get(proto.flags.toInt())) {
@@ -531,7 +530,7 @@ private class LibraryDeserializer(
 
             ProtoBuf.Visibility.INTERNAL -> when {
                 parentPropertyVisibilityStatus == VisibilityStatus.INTERNAL_PUBLISHED_API -> VisibilityStatus.INTERNAL_PUBLISHED_API
-                PUBLISHED_API_CONSTRUCTOR_QUALIFIED_NAME in annotations -> VisibilityStatus.INTERNAL_PUBLISHED_API
+                @Suppress("DEPRECATION") annotations.hasAnnotation(PUBLISHED_API_CONSTRUCTOR_QUALIFIED_NAME) -> VisibilityStatus.INTERNAL_PUBLISHED_API
                 else -> VisibilityStatus.NON_PUBLIC
             }
 
@@ -573,7 +572,7 @@ private class LibraryDeserializer(
             override fun computeNestedName(simpleName: String) = qualifiedName(className, simpleName)
 
             companion object {
-                val Class?.excludeFakeOverrides: Boolean get() = this?.excludeFakeOverrides ?: false
+                val Class?.excludeFakeOverrides: Boolean get() = this?.excludeFakeOverrides == true
             }
         }
 
