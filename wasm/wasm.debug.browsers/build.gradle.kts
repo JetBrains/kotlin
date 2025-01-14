@@ -54,6 +54,16 @@ tasks {
         outputs.upToDateWhen {
             nodeModulesDir.isDirectory
         }
+
+        val isOffline = gradle.startParameter.isOffline
+        onlyIf {
+            if (isOffline) {
+                !nodeModulesDir.exists()
+            } else {
+                true
+            }
+        }
+
         args.add("--ignore-scripts")
     }
 
