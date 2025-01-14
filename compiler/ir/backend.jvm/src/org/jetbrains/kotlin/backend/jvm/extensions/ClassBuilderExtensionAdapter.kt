@@ -114,9 +114,9 @@ private class DelegatingClassBuilderAdapter(
         generator.newField(origin.unwrapOrigin(), access, name, desc, signature, value)
 
     override fun newMethod(
-        origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
+        origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String?>?
     ): MethodVisitor =
-        generator.newMethod(origin.unwrapOrigin(), access, name, desc, signature, exceptions)
+        generator.newMethod(origin.unwrapOrigin(), access, name, desc, signature, exceptions as Array<out String>?)
 
     override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor =
         generator.newRecordComponent(name, desc, signature)

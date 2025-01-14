@@ -188,7 +188,7 @@ modules:
 - libraries/kotlinx-metadata/metadata-jvm
 - libraries/kotlinx-metadata
 - libraries/kotlinx-metadata/klib
-- benchmarks
+#- benchmarks
 - generators
 - generators/test-generator
 - generators/analysis-api-generator

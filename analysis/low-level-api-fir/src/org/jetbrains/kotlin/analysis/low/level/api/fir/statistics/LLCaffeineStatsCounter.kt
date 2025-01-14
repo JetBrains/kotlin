@@ -35,10 +35,10 @@ internal class LLCaffeineStatsCounter(meter: Meter, scope: LLCaffeineStatisticsS
     override fun recordLoadFailure(loadTime: @NonNegative Long) {
     }
 
-    @Deprecated("Deprecated in Caffeine")
-    override fun recordEviction() {
-        evictionCounter.add(1)
-    }
+//    @Deprecated("Deprecated in Caffeine")
+//    override fun recordEviction() {
+//        evictionCounter.add(1)
+//    }
 
     override fun recordEviction(weight: @NonNegative Int, cause: RemovalCause?) {
         evictionCounter.add(1)

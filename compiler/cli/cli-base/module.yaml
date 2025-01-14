@@ -101,6 +101,7 @@ dependencies:
   - ../../../js/js.parser
   - ../../../js/js.ast
   - ../../../core/compiler.common.web
+  - jdk.tools:jdk.tools:1.8
 
 settings:
   kotlin:
