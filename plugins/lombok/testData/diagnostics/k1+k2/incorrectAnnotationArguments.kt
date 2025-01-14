@@ -18,6 +18,6 @@ public class Klass2 {
 // FILE: test.kt
 
 fun test() {
-    val klassBuilder: Klass.KlassBuilder = Klass.build()
-    val klass2Builder: Klass2.Klass2Builder = Klass2.myBuild()
+    val klassBuilder: Klass.KlassBuilder = Klass.<!UNRESOLVED_REFERENCE!>build<!>()
+    val klass2Builder: Klass2.Klass2Builder = Klass2.<!UNRESOLVED_REFERENCE!>myBuild<!>()
 }

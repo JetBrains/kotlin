@@ -81,6 +81,5 @@ internal fun namedAnnotationArguments(
     sourceFactory: JavaElementSourceFactory,
 ): Collection<JavaAnnotationArgument> = nameValuePairs.convert { psi ->
     val name = psi.name?.let(Name::identifier)
-    val value = psi.value ?: error("Annotation argument value cannot be null: $name")
-    JavaAnnotationArgumentImpl.create(value, name, sourceFactory)
+    JavaAnnotationArgumentImpl.create(psi.value, name, sourceFactory)
 }
