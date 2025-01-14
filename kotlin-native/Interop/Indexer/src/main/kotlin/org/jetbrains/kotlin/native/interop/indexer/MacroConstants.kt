@@ -65,7 +65,7 @@ private fun expandMacros(
         // Ensure libclang reports all errors:
         compilerArgs += "-ferror-limit=0"
 
-        val translationUnit = parseTranslationUnit(index, sourceFile, compilerArgs, options = CXTranslationUnit_DetailedPreprocessingRecord)
+        val translationUnit = parseTranslationUnit(index, sourceFile, compilerArgs, options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_VisitImplicitAttributes)
         try {
             val nameToMacroDef = mutableMapOf<String, MacroDef>()
             val unprocessedMacros = names.toMutableList()
@@ -183,7 +183,7 @@ private fun reparseWithCodeSnippets(library: CompilationWithPCH,
             codeSnippetLines.forEach { writer.appendLine(it) }
         }
     }
-    clang_reparseTranslationUnit(translationUnit, 0, null, CXTranslationUnit_DetailedPreprocessingRecord)
+    clang_reparseTranslationUnit(translationUnit, 0, null, CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_VisitImplicitAttributes)
 }
 
 /**

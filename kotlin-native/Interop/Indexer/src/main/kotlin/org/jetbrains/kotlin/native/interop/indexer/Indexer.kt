@@ -1179,7 +1179,9 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
             if (allowPrecompiledHeaders) it.copyWithArgsForPCH() else it
         }.parse(
                 index,
-                options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,
+                options = CXTranslationUnit_DetailedPreprocessingRecord or
+                        CXTranslationUnit_ForSerialization or
+                        CXTranslationUnit_VisitImplicitAttributes,
                 diagnosticHandler = { if (it.isError()) errors.add(it) }
         )
         try {
