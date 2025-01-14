@@ -88,6 +88,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     private fun createCompilerFacade(
         additionalPaths: List<File> = listOf(),
         forcedFirSetting: Boolean? = null,
+        additionalConfigurationParameters: (CompilerConfiguration) -> Unit = {},
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ) = KotlinCompilerFacade.create(
         testRootDisposable,
@@ -111,6 +112,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 analysisFlags
             )
             updateConfiguration()
+            additionalConfigurationParameters(this)
             addJvmClasspathRoots(additionalPaths)
             addJvmClasspathRoots(defaultClassPath)
 
@@ -143,10 +145,14 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     protected fun compileToIr(
         sourceFiles: List<SourceFile>,
         additionalPaths: List<File> = listOf(),
+        updateConfiguration: (CompilerConfiguration) -> Unit = {},
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ): IrModuleFragment =
-        createCompilerFacade(additionalPaths, registerExtensions = registerExtensions)
-            .compileToIr(sourceFiles)
+        createCompilerFacade(
+            additionalPaths,
+            additionalConfigurationParameters = updateConfiguration,
+            registerExtensions = registerExtensions
+        ).compileToIr(sourceFiles)
 
     protected fun createClassLoader(
         platformSourceFiles: List<SourceFile>,
