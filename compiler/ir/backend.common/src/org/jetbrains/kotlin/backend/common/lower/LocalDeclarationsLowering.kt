@@ -886,7 +886,7 @@ open class LocalDeclarationsLowering(
                 .firstOrNull { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
                 ?.run { throw AssertionError("Local class constructor can't have $kind: ${ir2string(oldDeclaration)}") }
 
-            newDeclaration.valueParameters = newDeclaration.valueParameters memoryOptimizedPlus createTransformedValueParameters(
+            newDeclaration.parameters = newDeclaration.parameters memoryOptimizedPlus createTransformedValueParameters(
                 capturedValues, localClassContext, oldDeclaration, newDeclaration
             )
             newDeclaration.recordTransformedValueParameters(constructorContext)
