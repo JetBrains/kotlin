@@ -200,8 +200,10 @@ To inject a test use `buildScriptInjection` DSL function as follows:
 ```kotlin
 @GradleTest
 fun test(version: GradleVersion) {
-    // Any project can be injected; "buildScriptInjectionGroovy" can be used as a bare template with KGP in build script classpath
-    project("buildScriptInjectionGroovy", version) {
+    // Any project can be injected; "empty" can be used as a bare template
+    project("empty", version) {
+        // Bare template doesn't have KGP in classpath, so it needs to be explicitly added before plugin application 
+        addKgpToBuildScriptCompilationClasspath()
         buildScriptInjection {
             // This code will be executed inside build.gradle(.kts) during project evaluation
             project.applyMultiplatform {
@@ -221,7 +223,7 @@ Injections can capture `java.io.Serializable` variables from the test:
 ```kotlin
 data class PassMe(val foo: String) : java.io.Serializable
 
-project("buildScriptInjectionGroovy", version) {
+project("empty", version) {
     // Instantiate Serializable types as variables in test
     val loveInjectionsTask = "loveInjections"
     val passMe = PassMe("Injections 🥰")
@@ -242,7 +244,8 @@ project("buildScriptInjectionGroovy", version) {
 Injections can also return `Serializable` value from the build script back to the test using `buildScriptReturn` injections:
 
 ```kotlin
-project("buildScriptInjectionGroovy", version) {
+project("empty", version) {
+    addKgpToBuildScriptCompilationClasspath()
     buildScriptInjection {
         project.applyMultiplatform {
             linuxArm64()
@@ -264,7 +267,7 @@ Use injections to capture execution and configuration time failures:
 data class A(val name: String = "A") : Exception()
 val a1 = A("1")
 
-project("buildScriptInjectionGroovy", version) {
+project("empty", version) {
     buildScriptInjection {
         project.tasks.register("throwA") {
             it.doLast { throw a1 }
@@ -279,10 +282,10 @@ project("buildScriptInjectionGroovy", version) {
 }
 ```
 
-Settings build scripts are also be injectable:
+Settings build scripts are also injectable:
 
 ```kotlin
-project("buildScriptInjectionGroovy", version) {
+project("empty", version) {
     settingsBuildScriptInjection {
         settings.dependencyResolutionManagement {
             // ...
@@ -296,7 +299,8 @@ Injections also have access to KGP's internal APIs (IDE currently colors this co
 ```kotlin
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
-project("buildScriptInjectionGroovy", version) {
+project("empty", version) {
+    addKgpToBuildScriptCompilationClasspath()
     buildScriptInjection {
         project.applyMultiplatform {
             linuxArm64()
@@ -306,6 +310,26 @@ project("buildScriptInjectionGroovy", version) {
     buildScriptReturn {
         // Any internal KGP APIs are accessible in the injections
         kotlinMultiplatform.linuxArm64().compilations.getByName("main").internal as InternalKotlinCompilation
+    }
+}
+```
+
+Finally, it is possible to inject the `buildscript` block using injections. Using this type of injections you can add plugins to the build script classpath:
+
+```kotlin
+project("empty", version) {
+    buildScriptBuildscriptBlockInjection {
+        buildscript.repositories.add(repositoryWithKgp)
+        buildscript.configurations.getByName("classpath").dependencies.add(
+            buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        )
+    }
+
+    buildScriptInjection {
+        // Now KGP plugins will apply
+        project.applyMultiplatform {
+            linuxArm64()
+        }
     }
 }
 ```
