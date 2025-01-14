@@ -131,6 +131,24 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
   }
 
   @Test
+  @TestMetadata("intertwinedInline.kt")
+  public void testIntertwinedInline() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/intertwinedInline.kt");
+  }
+
+  @Test
+  @TestMetadata("intertwinedInline2.kt")
+  public void testIntertwinedInline2() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/intertwinedInline2.kt");
+  }
+
+  @Test
+  @TestMetadata("intertwinedInlineCommon.kt")
+  public void testIntertwinedInlineCommon() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/intertwinedInlineCommon.kt");
+  }
+
+  @Test
   @TestMetadata("javaAnnotationWithVararg.kt")
   public void testJavaAnnotationWithVararg() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/javaAnnotationWithVararg.kt");
@@ -215,6 +233,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     @TestMetadata("commonContext.kt")
     public void testCommonContext() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContext.kt");
+    }
+
+    @Test
+    @TestMetadata("commonContextInline.kt")
+    public void testCommonContextInline() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContextInline.kt");
     }
 
     @Test
