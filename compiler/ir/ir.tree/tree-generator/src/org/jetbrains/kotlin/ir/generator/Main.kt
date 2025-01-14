@@ -36,7 +36,8 @@ fun main(args: Array<String>) {
                 irVisitorVoidType to ::VisitorVoidPrinter,
                 irLeafTransformerType to ::LeafTransformerPrinter.bind(model.rootElement),
                 irTransformerType to ::TransformerPrinter,
-                elementTransformerVoidType to ::TransformerVoidPrinter.bind(model.rootElement),
+                irLeafTransformerVoidType to ::LeafTransformerVoidPrinter.bind(model.rootElement),
+                elementTransformerVoidType to ::TransformerVoidPrinter,
                 typeVisitorType to ::TypeVisitorPrinter.bind(model.rootElement),
                 typeVisitorVoidType to ::TypeVisitorVoidPrinter.bind(model.rootElement),
                 deepCopyIrTreeWithSymbolsType to ::DeepCopyIrTreeWithSymbolsPrinter
