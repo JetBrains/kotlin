@@ -293,7 +293,9 @@ private class ClassClsStubBuilder(
                     }
                     return
                 }
-        createClassStub(classBody, classProto, nameResolver, nestedClassId, sourceElement, c)
+        if (nestedClassId == nameResolver.getClassId(classProto.fqName)) {
+            createClassStub(classBody, classProto, nameResolver, nestedClassId, sourceElement, c)
+        }
     }
 
     companion object {
