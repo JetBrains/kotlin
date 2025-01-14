@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -54,7 +54,7 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitProperty(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrElement =
         transformer.visitProperty(this)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -75,7 +75,7 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         backingField = backingField?.transformVoid(transformer) as IrField?
         getter = getter?.transformVoid(transformer) as IrSimpleFunction?
         setter = setter?.transformVoid(transformer) as IrSimpleFunction?

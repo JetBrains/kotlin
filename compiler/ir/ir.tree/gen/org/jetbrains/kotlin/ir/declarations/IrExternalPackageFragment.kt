@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -48,7 +48,7 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitExternalPackageFragment(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrElement =
         transformer.visitExternalPackageFragment(this)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -63,7 +63,7 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
         declarations.transformInPlace(transformer, data)
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         declarations.transformInPlace(transformer)
     }
 }

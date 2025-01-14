@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -32,7 +32,7 @@ abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
         statements.transformInPlace(transformer, data)
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         statements.transformInPlace(transformer)
     }
 }

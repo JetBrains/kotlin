@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -32,6 +32,6 @@ abstract class IrReturnableBlock : IrBlock(), IrSymbolOwner, IrReturnTarget {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitReturnableBlock(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrExpression =
         transformer.visitReturnableBlock(this)
 }

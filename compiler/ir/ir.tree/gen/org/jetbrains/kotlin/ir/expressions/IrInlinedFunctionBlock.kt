@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -43,6 +43,6 @@ abstract class IrInlinedFunctionBlock : IrBlock() {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitInlinedFunctionBlock(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrExpression =
         transformer.visitInlinedFunctionBlock(this)
 }

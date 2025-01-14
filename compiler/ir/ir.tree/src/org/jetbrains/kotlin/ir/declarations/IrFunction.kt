@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -296,7 +297,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
         body = body?.transform(transformer, data)
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         typeParameters = typeParameters.transformIfNeeded(transformer)
         _parameters.transformInPlace(transformer)
         body = body?.transformVoid(transformer)

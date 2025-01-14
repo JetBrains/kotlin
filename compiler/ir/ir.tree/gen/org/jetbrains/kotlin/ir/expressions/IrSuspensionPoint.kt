@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -34,7 +34,7 @@ abstract class IrSuspensionPoint : IrExpression() {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitSuspensionPoint(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrExpression =
         transformer.visitSuspensionPoint(this)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -55,7 +55,7 @@ abstract class IrSuspensionPoint : IrExpression() {
         resumeResult = resumeResult.transform(transformer, data)
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         suspensionPointIdParameter = suspensionPointIdParameter.transformVoid(transformer) as IrVariable
         result = result.transformVoid(transformer)
         resumeResult = resumeResult.transformVoid(transformer)

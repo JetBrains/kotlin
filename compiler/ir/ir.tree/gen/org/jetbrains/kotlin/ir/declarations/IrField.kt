@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -49,7 +49,7 @@ abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitField(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrElement =
         transformer.visitField(this)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -64,7 +64,7 @@ abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
         initializer = initializer?.transform(transformer, data)
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         initializer = initializer?.transformVoid(transformer)
     }
 }

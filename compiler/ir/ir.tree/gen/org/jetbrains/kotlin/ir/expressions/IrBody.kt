@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
@@ -19,5 +19,5 @@ import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 sealed class IrBody : IrElementBase(), IrElement {
     abstract override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrBody
 
-    abstract override fun transformVoid(transformer: IrElementTransformerVoid): IrBody
+    abstract override fun transformVoid(transformer: IrLeafTransformerVoid): IrBody
 }

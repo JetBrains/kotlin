@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -32,7 +32,7 @@ abstract class IrFunctionExpression : IrExpression() {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitFunctionExpression(this, data) as IrExpression
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrExpression =
         transformer.visitFunctionExpression(this) as IrExpression
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -47,7 +47,7 @@ abstract class IrFunctionExpression : IrExpression() {
         function = function.transform(transformer, data) as IrSimpleFunction
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         function = function.transformVoid(transformer) as IrSimpleFunction
     }
 }

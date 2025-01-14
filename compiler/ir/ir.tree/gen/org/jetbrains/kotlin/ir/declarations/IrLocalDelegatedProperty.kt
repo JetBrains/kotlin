@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -47,7 +47,7 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitLocalDelegatedProperty(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrElement =
         transformer.visitLocalDelegatedProperty(this)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -68,7 +68,7 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         delegate = delegate.transformVoid(transformer) as IrVariable
         getter = getter.transformVoid(transformer) as IrSimpleFunction
         setter = setter?.transformVoid(transformer) as IrSimpleFunction?

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -33,7 +33,7 @@ abstract class IrElementBase : IrElement {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         accept(transformer, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrElement =
         transform(transformer, null)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -48,7 +48,7 @@ abstract class IrElementBase : IrElement {
         // No children by default
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         // No children by default
     }
 

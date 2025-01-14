@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 
 inline fun <reified T : IrElement> MutableList<T>.transformInPlace(transformation: (T) -> IrElement) {
     for (i in 0 until size) {
@@ -37,7 +37,7 @@ fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrLeafTransf
     }
 }
 
-fun <T : IrElement> MutableList<T>.transformInPlace(transformer: IrElementTransformerVoid) {
+fun <T : IrElement> MutableList<T>.transformInPlace(transformer: IrLeafTransformerVoid) {
     for (i in 0 until size) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
         @Suppress("UNCHECKED_CAST")
@@ -58,7 +58,7 @@ fun <T : IrElement, D> MutableList<T?>.transformInPlace(transformer: IrLeafTrans
 }
 
 @JvmName("transformInPlaceNullable")
-fun <T : IrElement> MutableList<T?>.transformInPlace(transformer: IrElementTransformerVoid) {
+fun <T : IrElement> MutableList<T?>.transformInPlace(transformer: IrLeafTransformerVoid) {
     for (i in 0 until size) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
         val element = get(i) as IrElementBase?
@@ -80,7 +80,7 @@ fun <T : IrElement, D> Array<T?>.transformInPlace(transformer: IrLeafTransformer
     }
 }
 
-fun <T : IrElement> Array<T?>.transformInPlace(transformer: IrElementTransformerVoid) {
+fun <T : IrElement> Array<T?>.transformInPlace(transformer: IrLeafTransformerVoid) {
     for (i in indices) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
         val element = get(i) as IrElementBase?
@@ -171,7 +171,7 @@ fun <T : IrElement, D> List<T>.transformIfNeeded(transformer: IrLeafTransformer<
 /**
  * Transforms the list of elements with the given void transformer. Return the same List instance if no element instances have changed.
  */
-fun <T : IrElement> List<T>.transformIfNeeded(transformer: IrElementTransformerVoid): List<T> {
+fun <T : IrElement> List<T>.transformIfNeeded(transformer: IrLeafTransformerVoid): List<T> {
     var result: ArrayList<T>? = null
     for ((i, item) in withIndex()) {
         @Suppress("UNCHECKED_CAST")

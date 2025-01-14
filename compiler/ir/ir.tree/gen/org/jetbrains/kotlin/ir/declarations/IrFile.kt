@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -36,7 +36,7 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrFile =
         transformer.visitFile(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrFile =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrFile =
         transformer.visitFile(this)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -51,7 +51,7 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
         declarations.transformInPlace(transformer, data)
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         declarations.transformInPlace(transformer)
     }
 }

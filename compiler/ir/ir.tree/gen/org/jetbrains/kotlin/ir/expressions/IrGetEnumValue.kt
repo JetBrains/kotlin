@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -30,6 +30,6 @@ abstract class IrGetEnumValue : IrGetSingletonValue() {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitGetEnumValue(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrExpression =
         transformer.visitGetEnumValue(this)
 }

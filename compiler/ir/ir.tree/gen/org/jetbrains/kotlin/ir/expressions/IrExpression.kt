@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
@@ -22,5 +22,5 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement {
 
     abstract override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression
 
-    abstract override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression
+    abstract override fun transformVoid(transformer: IrLeafTransformerVoid): IrExpression
 }

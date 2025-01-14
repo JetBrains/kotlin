@@ -174,7 +174,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             }
 
             println()
-            val transformerVoidParameter = FunctionParameter("transformer", elementTransformerVoidType)
+            val transformerVoidParameter = FunctionParameter("transformer", irLeafTransformerVoidType)
             printFunctionDeclaration(
                 name = "transformVoid",
                 parameters = listOf(transformerVoidParameter),
@@ -227,7 +227,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             println()
             printFunctionDeclaration(
                 name = "transformChildrenVoid",
-                parameters = listOf(FunctionParameter("transformer", elementTransformerVoidType)),
+                parameters = listOf(FunctionParameter("transformer", irLeafTransformerVoidType)),
                 returnType = StandardTypes.unit,
                 override = !element.isRootElement,
             )

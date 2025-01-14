@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -30,7 +30,7 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
     override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrSpreadElement =
         transformer.visitSpreadElement(this, data)
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrSpreadElement =
+    override fun transformVoid(transformer: IrLeafTransformerVoid): IrSpreadElement =
         transformer.visitSpreadElement(this)
 
     override fun <D> acceptChildren(visitor: IrLeafVisitor<Unit, D>, data: D) {
@@ -45,7 +45,7 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
         expression = expression.transform(transformer, data)
     }
 
-    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    override fun transformChildrenVoid(transformer: IrLeafTransformerVoid) {
         expression = expression.transformVoid(transformer)
     }
 }

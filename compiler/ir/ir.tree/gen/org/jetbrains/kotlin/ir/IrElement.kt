@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 
@@ -65,7 +65,7 @@ interface IrElement {
      */
     fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement
 
-    fun transformVoid(transformer: IrElementTransformerVoid): IrElement
+    fun transformVoid(transformer: IrLeafTransformerVoid): IrElement
 
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.
@@ -93,5 +93,5 @@ interface IrElement {
      */
     fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D)
 
-    fun transformChildrenVoid(transformer: IrElementTransformerVoid)
+    fun transformChildrenVoid(transformer: IrLeafTransformerVoid)
 }
