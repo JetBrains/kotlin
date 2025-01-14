@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.SuspendableFunctionCallWithoutCoroutineContext
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
 
@@ -43,8 +43,13 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
         val plFile: PLFile by lazy { PLFile.determineFileFor(container) }
 
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitBody(body: IrBody): IrBody {
+        irBody.transformChildrenVoid(object : IrLeafTransformerVoid() {
+            override fun visitBlockBody(body: IrBlockBody): IrBody {
+                // Nested bodies are covered by separate `lower` invocation
+                return body
+            }
+
+            override fun visitExpressionBody(body: IrExpressionBody): IrBody {
                 // Nested bodies are covered by separate `lower` invocation
                 return body
             }

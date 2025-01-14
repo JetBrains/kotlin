@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.util.typeSubstitutionMap
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -43,9 +44,11 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Lower
         get() = context.irFactory
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildren(object : IrTransformer<IrDeclarationParent?>() {
-            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
-                super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+        irBody.transformChildren(object : IrLeafTransformer<IrDeclarationParent?>() {
+            override fun <E : IrElement> transformElement(element: E, data: IrDeclarationParent?): E {
+                element.transformChildren(this, element as? IrDeclarationParent ?: data)
+                return element
+            }
 
             override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent?): IrExpression {
                 expression.transformChildren(this, data)

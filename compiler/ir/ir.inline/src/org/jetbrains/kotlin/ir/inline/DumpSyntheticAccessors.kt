@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -138,16 +139,24 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
     }
 }
 
-private class SyntheticAccessorCollector : IrVisitorVoid() {
+private class SyntheticAccessorCollector : IrLeafVisitorVoid() {
     val accessorSymbols = HashSet<IrFunctionSymbol>()
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitFunction(declaration: IrFunction) {
+    private fun visitFunction(declaration: IrFunction) {
         runIf(declaration.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR) { accessorSymbols += declaration.symbol }
-        super.visitFunction(declaration)
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        visitFunction(declaration)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor) {
+        visitFunction(declaration)
     }
 }
 

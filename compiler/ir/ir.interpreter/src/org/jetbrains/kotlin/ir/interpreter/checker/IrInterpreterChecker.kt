@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.interpreter.checker
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 
-abstract class IrInterpreterChecker : IrVisitor<Boolean, IrInterpreterCheckerData>()
+abstract class IrInterpreterChecker : IrLeafVisitor<Boolean, IrInterpreterCheckerData>()
 
 class IrInterpreterCheckerData(
     val irFile: IrFile,

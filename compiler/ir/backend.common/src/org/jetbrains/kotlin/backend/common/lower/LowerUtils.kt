@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -116,7 +117,7 @@ fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
         arg
     )
 
-open class IrBuildingTransformer(private val context: LoweringContext) : IrElementTransformerVoid() {
+open class IrBuildingTransformer(private val context: LoweringContext) : IrLeafTransformerVoid() {
     private var currentBuilder: IrBuilderWithScope? = null
 
     protected val builder: IrBuilderWithScope
@@ -132,11 +133,17 @@ open class IrBuildingTransformer(private val context: LoweringContext) : IrEleme
         }
     }
 
-    override fun visitFunction(declaration: IrFunction): IrStatement {
+    private fun visitFunction(declaration: IrFunction): IrStatement {
         withBuilder(declaration.symbol) {
-            return super.visitFunction(declaration)
+            return transformElement(declaration)
         }
     }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement =
+        visitFunction(declaration)
+
+    override fun visitConstructor(declaration: IrConstructor): IrStatement =
+        visitFunction(declaration)
 
     override fun visitField(declaration: IrField): IrStatement {
         withBuilder(declaration.symbol) {

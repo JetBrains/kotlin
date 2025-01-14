@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 
 data class TailSuspendCalls(val callSites: Set<IrCall>, val hasNotTailSuspendCalls: Boolean)
 
@@ -31,7 +31,7 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
     val tailSuspendCalls = mutableSetOf<IrCall>()
     val tailReturnableBlocks = mutableSetOf<IrReturnableBlockSymbol>()
 
-    val visitor = object : IrVisitor<Unit, VisitorState>() {
+    val visitor = object : IrLeafVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {
             element.acceptChildren(this, VisitorState(data.insideTryBlock, isTailExpression = false))
         }
@@ -63,10 +63,18 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
         override fun visitBlockBody(body: IrBlockBody, data: VisitorState) =
             visitStatementContainer(body, data)
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: VisitorState) {
+        private fun visitContainerExpression(expression: IrContainerExpression, data: VisitorState) {
             if (expression is IrReturnableBlock && data.isTailExpression)
                 tailReturnableBlocks.add(expression.symbol)
             visitStatementContainer(expression, data)
+        }
+
+        override fun visitBlock(expression: IrBlock, data: VisitorState) {
+            visitContainerExpression(expression, data)
+        }
+
+        override fun visitComposite(expression: IrComposite, data: VisitorState) {
+            visitContainerExpression(expression, data)
         }
 
         private fun visitStatementContainer(expression: IrStatementContainer, data: VisitorState) {

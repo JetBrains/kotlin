@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 
 data class TailCalls(val ir: Set<IrCall>, val fromManyFunctions: Boolean)
 
@@ -49,12 +49,12 @@ fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (
     val isUnitReturn = irFunction.returnType.isUnit()
     val result = mutableSetOf<IrCall>()
     var someCallsAreInOtherFunctions = false
-    val visitor = object : IrVisitor<Unit, VisitorState>() {
+    val visitor = object : IrLeafVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {
             element.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
         }
 
-        override fun visitFunction(declaration: IrFunction, data: VisitorState) {
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: VisitorState) {
             // Ignore local functions.
         }
 
@@ -77,7 +77,10 @@ fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (
         override fun visitBlockBody(body: IrBlockBody, data: VisitorState) =
             visitStatementContainer(body, data)
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: VisitorState) =
+        override fun visitBlock(expression: IrBlock, data: VisitorState) =
+            visitStatementContainer(expression, data)
+
+        override fun visitComposite(expression: IrComposite, data: VisitorState) =
             visitStatementContainer(expression, data)
 
         private fun visitStatementContainer(expression: IrStatementContainer, data: VisitorState) {

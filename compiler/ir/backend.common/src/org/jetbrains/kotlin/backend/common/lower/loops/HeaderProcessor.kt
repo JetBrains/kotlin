@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 
 /**
  * Contains the loop and expression to replace the old loop.
@@ -61,7 +61,7 @@ fun IrStatement.isInductionVariable(context: CommonBackendContext) =
             origin == context.inductionVariableOrigin &&
             name.asString() == inductionVariableName
 
-internal class InitializerCallReplacer(private val replacement: IrExpression) : IrElementTransformerVoid() {
+internal class InitializerCallReplacer(private val replacement: IrExpression) : IrLeafTransformerVoid() {
     var initializerCall: IrCall? = null
 
     override fun visitCall(expression: IrCall): IrExpression {

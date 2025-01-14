@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -24,12 +26,12 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  */
 class ExpressionBodyTransformer(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrVisitorVoid() {
+        irFile.acceptVoid(object : IrLeafVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
-            override fun visitFunction(declaration: IrFunction) {
+            private fun visitFunction(declaration: IrFunction) {
                 declaration.acceptChildrenVoid(this)
 
                 context.createIrBuilder(declaration.symbol, declaration.endOffset, declaration.endOffset).run {
@@ -39,6 +41,14 @@ class ExpressionBodyTransformer(val context: CommonBackendContext) : FileLowerin
                             statements += irReturn(body.expression)
                         }
                 }
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                visitFunction(declaration)
+            }
+
+            override fun visitConstructor(declaration: IrConstructor) {
+                visitFunction(declaration)
             }
         })
     }

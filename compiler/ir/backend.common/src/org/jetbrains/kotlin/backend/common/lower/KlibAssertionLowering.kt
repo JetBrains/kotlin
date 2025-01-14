@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrWhen
@@ -22,8 +20,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -48,9 +46,10 @@ abstract class KlibAssertionWrapperLowering(val context: LoweringContext) : File
         irFile.transformChildren(Transformer(), irFile.symbol)
     }
 
-    private inner class Transformer : IrTransformer<IrSymbol>() {
-        override fun visitDeclaration(declaration: IrDeclarationBase, data: IrSymbol): IrStatement {
-            return super.visitDeclaration(declaration, declaration.symbol)
+    private inner class Transformer : IrLeafTransformer<IrSymbol>() {
+        override fun <E : IrElement> transformElement(element: E, data: IrSymbol): E {
+            element.transformChildren(this, (element as? IrDeclaration)?.symbol ?: data)
+            return element
         }
 
         override fun visitCall(expression: IrCall, data: IrSymbol): IrElement {
@@ -73,7 +72,7 @@ abstract class KlibAssertionRemoverLowering(
     protected abstract val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irFile.transformChildrenVoid(object : IrLeafTransformerVoid() {
             override fun visitWhen(expression: IrWhen): IrExpression {
                 if (expression.branches.size != 1) return super.visitWhen(expression)
 

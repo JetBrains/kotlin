@@ -12,28 +12,35 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.interpreter.createGetField
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import kotlin.math.max
 import kotlin.math.min
 
 internal abstract class IrConstExpressionTransformer(
     private val context: IrConstEvaluationContext,
-) : IrTransformer<IrConstExpressionTransformer.Data>() {
+) : IrLeafTransformer<IrConstExpressionTransformer.Data>() {
     internal data class Data(val inConstantExpression: Boolean = false)
 
-    override fun visitFunction(declaration: IrFunction, data: Data): IrStatement {
+    private fun visitFunction(declaration: IrFunction, data: Data): IrStatement {
         // It is useless to visit default accessor, and if we do that, we could render excess information for `IrGetField`
         if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
 
         // We want to be able to evaluate default arguments of annotation's constructor
         val isAnnotationConstructor = declaration is IrConstructor && declaration.parentClassOrNull?.kind == ClassKind.ANNOTATION_CLASS
-        return super.visitFunction(declaration, data.copy(inConstantExpression = isAnnotationConstructor))
+        return transformElement(declaration, data.copy(inConstantExpression = isAnnotationConstructor))
     }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data): IrStatement =
+        visitFunction(declaration, data)
+
+    override fun visitConstructor(declaration: IrConstructor, data: Data): IrStatement =
+        visitFunction(declaration, data)
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
         if (context.canBeInterpreted(expression)) {

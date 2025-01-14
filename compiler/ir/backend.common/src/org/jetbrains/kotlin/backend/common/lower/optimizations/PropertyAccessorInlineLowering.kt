@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isTopLevel
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 open class PropertyAccessorInlineLowering(
@@ -36,7 +36,7 @@ open class PropertyAccessorInlineLowering(
         isSafeToInlineInClosedWorld()
 
     // TODO: implement general function inlining optimization and replace it with
-    private inner class AccessorInliner(val container: IrDeclaration) : IrElementTransformerVoid() {
+    private inner class AccessorInliner(val container: IrDeclaration) : IrLeafTransformerVoid() {
 
         private val unitType = context.irBuiltIns.unitType
 

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
@@ -304,16 +304,24 @@ private class ExpectActualLinkCollector {
         ExpectActualLinkCollectorVisitor.visitModuleFragment(declaration, data)
     }
 
-    private object ExpectActualLinkCollectorVisitor : IrVisitor<Unit, MatchingContext>() {
+    private object ExpectActualLinkCollectorVisitor : IrLeafVisitor<Unit, MatchingContext>() {
         override fun visitFile(declaration: IrFile, data: MatchingContext) {
             super.visitFile(declaration, data.withNewCurrentFile(declaration))
         }
 
-        override fun visitFunction(declaration: IrFunction, data: MatchingContext) {
+        private fun visitFunction(declaration: IrFunction, data: MatchingContext) {
             if (declaration.isExpect) {
                 // The function is top level because the visitor doesn't visit function/class children recursively
                 matchExpectTopLevelCallable(declaration, declaration.callableId, data)
             }
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: MatchingContext) {
+            visitFunction(declaration, data)
+        }
+
+        override fun visitConstructor(declaration: IrConstructor, data: MatchingContext) {
+            visitFunction(declaration, data)
         }
 
         override fun visitProperty(declaration: IrProperty, data: MatchingContext) {

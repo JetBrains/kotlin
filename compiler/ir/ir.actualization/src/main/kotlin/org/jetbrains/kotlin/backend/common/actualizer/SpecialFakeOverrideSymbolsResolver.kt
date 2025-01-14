@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFunctionFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -133,7 +133,7 @@ class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap)
     }
 
     fun cacheFakeOverridesOfAllClasses(irModuleFragment: IrModuleFragment) {
-        val visitor = object : IrVisitorVoid() {
+        val visitor = object : IrLeafVisitorVoid() {
             override fun visitElement(element: IrElement) {}
 
             override fun visitFile(declaration: IrFile) {
@@ -152,7 +152,7 @@ class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap)
 }
 
 
-class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFakeOverrideSymbolsResolver) : IrVisitorVoid() {
+class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFakeOverrideSymbolsResolver) : IrLeafVisitorVoid() {
     override fun visitElement(element: IrElement) {
         // E.g. annotation can contain fake override of constant property
         if (element is IrAnnotationContainer) {
@@ -223,15 +223,23 @@ class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFak
         visitElement(expression)
     }
 
-    override fun visitFieldAccess(expression: IrFieldAccessExpression) {
+    private fun visitFieldAccess(expression: IrFieldAccessExpression) {
         expression.symbol = expression.symbol.let(resolver::getReferencedField)
         visitElement(expression)
+    }
+
+    override fun visitGetField(expression: IrGetField) {
+        visitFieldAccess(expression)
+    }
+
+    override fun visitSetField(expression: IrSetField) {
+        visitFieldAccess(expression)
     }
 }
 
 class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
     private val expectActualMap: IrExpectActualMap
-) : IrElementTransformerVoid() {
+) : IrLeafTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 

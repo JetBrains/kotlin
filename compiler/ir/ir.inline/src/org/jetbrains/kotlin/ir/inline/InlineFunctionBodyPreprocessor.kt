@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -190,7 +190,7 @@ internal class InlineFunctionBodyPreprocessor(
         }
     }
 
-    inner class TypeOfPostProcessor : IrElementTransformerVoid() {
+    inner class TypeOfPostProcessor : IrLeafTransformerVoid() {
         override fun visitCall(expression: IrCall): IrExpression {
             expression.transformChildrenVoid(this)
             return copier.typeOfNodes[expression]?.let { oldType ->

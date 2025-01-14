@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -76,7 +77,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         private val variableNameData: VariableNameData,
         private val hideParameterNames: Boolean,
         private val options: DumpIrTreeOptions,
-    ) : IrVisitor<String, Nothing?>() {
+    ) : IrLeafVisitor<String, Nothing?>() {
 
         private val flagsRenderer = FlagsRenderer(options.declarationFlagsFilter, isReference = true)
 
@@ -135,7 +136,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 renderDeclaredIn(declaration)
             }
 
-        override fun visitFunction(declaration: IrFunction, data: Nothing?) =
+        private fun visitFunction(declaration: IrFunction, data: Nothing?) =
             buildTrimEnd {
                 append(declaration.visibility)
                 append(' ')
@@ -186,6 +187,12 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
                 renderDeclaredIn(declaration)
             }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
+            visitFunction(declaration, data)
+
+        override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
+            visitFunction(declaration, data)
 
         private fun StringBuilder.renderTypeParameters(declaration: IrTypeParametersContainer) {
             if (declaration.typeParameters.isNotEmpty()) {

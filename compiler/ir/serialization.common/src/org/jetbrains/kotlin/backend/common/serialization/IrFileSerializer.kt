@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.SerializedDeclaration
@@ -1397,30 +1397,37 @@ open class IrFileSerializer(
             }
         } else {
             file.acceptVoid(
-                object : IrVisitorVoid() {
+                object : IrLeafVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
 
-                    override fun visitFunction(declaration: IrFunction) {
+                    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                         if (backendSpecificExplicitRoot(declaration)) {
                             proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
                         }
-                        super.visitDeclaration(declaration)
+                        declaration.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitConstructor(declaration: IrConstructor) {
+                        if (backendSpecificExplicitRoot(declaration)) {
+                            proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
+                        }
+                        declaration.acceptChildrenVoid(this)
                     }
 
                     override fun visitClass(declaration: IrClass) {
                         if (backendSpecificExplicitRoot(declaration)) {
                             proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
                         }
-                        super.visitDeclaration(declaration)
+                        declaration.acceptChildrenVoid(this)
                     }
 
                     override fun visitProperty(declaration: IrProperty) {
                         if (backendSpecificExplicitRoot(declaration)) {
                             proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
                         }
-                        super.visitDeclaration(declaration)
+                        declaration.acceptChildrenVoid(this)
                     }
                 }
             )

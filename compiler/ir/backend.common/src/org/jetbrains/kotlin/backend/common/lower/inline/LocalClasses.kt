@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
-import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -44,9 +43,11 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildren(object : IrTransformer<IrDeclarationParent>() {
-            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) =
-                super.visitDeclaration(declaration, (declaration as? IrDeclarationParent) ?: data)
+        irBody.transformChildren(object : IrLeafTransformer<IrDeclarationParent>() {
+            override fun <E : IrElement> transformElement(element: E, data: IrDeclarationParent): E {
+                element.transformChildren(this, element as? IrDeclarationParent ?: data)
+                return element
+            }
 
             override fun visitCall(expression: IrCall, data: IrDeclarationParent): IrElement {
                 val rootCallee = expression.symbol.owner
@@ -69,7 +70,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
                 val transformer = this
                 for (lambda in inlineLambdas) {
-                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
+                    lambda.acceptChildrenVoid(object : IrLeafVisitorVoid() {
                         override fun visitElement(element: IrElement) {
                             element.acceptChildrenVoid(this)
                         }
@@ -84,10 +85,18 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                             expression.function.acceptChildrenVoid(this)
                         }
 
-                        override fun visitFunction(declaration: IrFunction) {
+                        private fun visitFunction(declaration: IrFunction) {
                             declaration.transformChildren(transformer, declaration)
 
                             localFunctions.add(declaration)
+                        }
+
+                        override fun visitConstructor(declaration: IrConstructor) {
+                            visitFunction(declaration)
+                        }
+
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                            visitFunction(declaration)
                         }
 
                         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
@@ -128,7 +137,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 irBlock.statements.addAll(0, localClasses)
 
                 for (lambda in inlineLambdas) {
-                    lambda.transformChildrenVoid(object : IrElementTransformerVoid() {
+                    lambda.transformChildrenVoid(object : IrLeafTransformerVoid() {
                         override fun visitClass(declaration: IrClass): IrStatement {
                             return IrCompositeImpl(
                                 declaration.startOffset, declaration.endOffset,
@@ -151,7 +160,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
     if (typeParameters.any { it.isReified }) return
 
     val crossinlineParameters = parameters.filter { it.isCrossinline }.toSet()
-    acceptChildrenVoid(object : IrVisitorVoid() {
+    acceptChildrenVoid(object : IrLeafVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -159,7 +168,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
         override fun visitClass(declaration: IrClass) {
             var canExtract = true
             if (crossinlineParameters.isNotEmpty()) {
-                declaration.acceptVoid(object : IrVisitorVoid() {
+                declaration.acceptVoid(object : IrLeafVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

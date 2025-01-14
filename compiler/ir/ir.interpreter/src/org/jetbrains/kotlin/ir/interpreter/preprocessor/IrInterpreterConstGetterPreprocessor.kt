@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.ir.interpreter.preprocessor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
@@ -21,11 +23,17 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
 class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor() {
-    override fun visitFunction(declaration: IrFunction, data: IrInterpreterPreprocessorData): IrStatement {
+    private fun visitFunction(declaration: IrFunction, data: IrInterpreterPreprocessorData): IrStatement {
         // It is useless to visit default accessor, we probably want to leave code there as it is
         if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
-        return super.visitFunction(declaration, data)
+        return transformElement(declaration, data)
     }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrInterpreterPreprocessorData): IrStatement =
+        visitFunction(declaration, data)
+
+    override fun visitConstructor(declaration: IrConstructor, data: IrInterpreterPreprocessorData): IrStatement =
+        visitFunction(declaration, data)
 
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
         val field = expression.correspondingProperty?.backingField ?: return super.visitCall(expression, data)
