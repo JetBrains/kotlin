@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.inlining
 
-import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer.XStatementOrExpression
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -54,11 +52,8 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.junit.jupiter.api.Assumptions.assumeTrue
-import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KProperty1
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
@@ -78,12 +73,6 @@ import org.jetbrains.kotlin.protobuf.MessageLite as ProtoMessage
  * 5. Compare the results of points 3 and 4. They should match.
  */
 open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
-    private val registeredSourceTransformers: MutableMap<File, ReplacingSourceTransformer> = ConcurrentHashMap()
-
-    fun register(@TestDataFile testDataFilePath: String, sourceTransformer: ReplacingSourceTransformer) {
-        registeredSourceTransformers[getAbsoluteFile(testDataFilePath)] = sourceTransformer
-    }
-
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -119,14 +108,6 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
         klibArtifactsHandlersStep {
             useHandlers(::UnboundIrSerializationHandler)
         }
-    }
-
-    override fun runTest(@TestDataFile filePath: String) {
-        val sourceTransformer = registeredSourceTransformers[getAbsoluteFile(filePath)]
-        if (sourceTransformer != null)
-            super.runTest(filePath, sourceTransformer)
-        else
-            super.runTest(filePath)
     }
 }
 
