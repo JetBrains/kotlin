@@ -33,12 +33,12 @@ class OptimizationClassBuilder(private val delegate: ClassBuilder, private val g
         name: String,
         desc: String,
         signature: String?,
-        exceptions: Array<out String>?
+        exceptions: Array<out String?>?
     ): MethodVisitor {
         return OptimizationMethodVisitor(
             super.newMethod(origin, access, name, desc, signature, exceptions),
             origin.originKind == JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN,
-            generationState, access, name, desc, signature, exceptions
+            generationState, access, name, desc, signature, exceptions as Array<String>?
         )
     }
 }

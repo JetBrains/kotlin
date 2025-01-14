@@ -14,4 +14,4 @@ module:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xcontext-receivers, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.analysis.api.KaExperimentalApi,org.jetbrains.kotlin.analysis.api.KaPlatformInterface,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xcontext-receivers, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.analysis.api.KaExperimentalApi,org.jetbrains.kotlin.analysis.api.KaPlatformInterface, -Xskip-prerelease-check, -Xwhen-guards]

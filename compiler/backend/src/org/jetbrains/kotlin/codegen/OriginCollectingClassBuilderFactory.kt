@@ -48,7 +48,7 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
                 name: String,
                 desc: String,
                 signature: String?,
-                exceptions: Array<out String>?
+                exceptions: Array<out String?>?
         ): MethodVisitor {
             val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
             origins[methodNode] = origin

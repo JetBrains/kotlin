@@ -153,4 +153,4 @@ module:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi, -Xskip-prerelease-check, -Xwhen-guards]

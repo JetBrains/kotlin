@@ -33,6 +33,7 @@ abstract class KaBaseSignatureSubstitutor<T : KaSession> : KaBaseSessionComponen
         when (this) {
             is KaFunctionSymbol -> substitute(substitutor)
             is KaVariableSymbol -> substitute(substitutor)
+            else -> throw IllegalArgumentException("Cannot substitute ${this::class} to a callable symbol")
         }
     }
 
@@ -40,6 +41,7 @@ abstract class KaBaseSignatureSubstitutor<T : KaSession> : KaBaseSessionComponen
         return when (this) {
             is KaFunctionSymbol -> asSignature()
             is KaVariableSymbol -> asSignature()
+            else -> throw IllegalArgumentException("Cannot substitute ${this::class} to a callable symbol")
         }
     }
 }

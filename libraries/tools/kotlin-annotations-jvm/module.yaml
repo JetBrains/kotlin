@@ -11,4 +11,4 @@ repositories:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xallow-kotlin-package]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xallow-kotlin-package]

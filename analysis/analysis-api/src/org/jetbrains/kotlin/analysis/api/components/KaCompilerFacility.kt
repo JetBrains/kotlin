@@ -125,10 +125,10 @@ public val KaCompilerTarget.classBuilderFactory: ClassBuilderFactory
 
                         override fun defineClass(
                             psi: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String,
-                            interfaces: Array<out String?>,
+                            interfaces: Array<out String>?,
                         ) {
                             compiledClassHandler.handleClassDefinition(origin.element?.containingFile, name)
-                            super.defineClass(psi, version, access, name, signature, superName, interfaces)
+                            super.defineClass(psi, version, access, name, signature, superName, interfaces as Array<String>)
                         }
                     }
                 }

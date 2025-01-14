@@ -70,4 +70,4 @@ dependencies:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,-opt-in, org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI, -Xskip-prerelease-check, -Xwhen-guards]

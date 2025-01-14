@@ -7,6 +7,7 @@ repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
   - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
   - https://www.jetbrains.com/intellij-repository/releases
+  - https://projects.sse.uni-hildesheim.de/qm/maven/
 
 
 test-dependencies:
@@ -32,6 +33,7 @@ dependencies:
   - org.jetbrains:annotations:13.0
   - io.vavr:vavr-match:0.10.4
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - jdk.tools:jdk.tools:1.8
   - ../frontend.java
   - ../util
   - ../../dependencies/intellij-core
@@ -62,4 +64,4 @@ dependencies:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]

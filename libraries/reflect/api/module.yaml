@@ -35,4 +35,4 @@ module:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xno-new-java-annotation-targets, -Xallow-kotlin-package, -Xdont-warn-on-error-suppression, -opt-in, kotlin.RequiresOptIn,org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xno-new-java-annotation-targets, -Xallow-kotlin-package, -Xdont-warn-on-error-suppression, -opt-in, org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction]
