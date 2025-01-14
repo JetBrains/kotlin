@@ -775,7 +775,7 @@ open class LocalDeclarationsLowering(
             }
             newDeclaration.copyAttributes(oldDeclaration)
 
-            newDeclaration.valueParameters = newDeclaration.valueParameters memoryOptimizedPlus createTransformedValueParameters(
+            newDeclaration.parameters = newDeclaration.parameters memoryOptimizedPlus createTransformedValueParameters(
                 capturedValues, localFunctionContext, oldDeclaration, newDeclaration,
                 isExplicitLocalFunction = oldDeclaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION
             )
