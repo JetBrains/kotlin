@@ -39,17 +39,20 @@ import kotlin.native.internal.NativePtr
 public typealias ExternalRCRef = NativePtr
 
 /**
- * Create a new [ExternalRCRef] for Kotlin object [obj] with the initial reference count of 1.
+ * Create a new [ExternalRCRef] for Kotlin object [obj].
+ * If [obj] is not `null`, the initial reference count of the resulting reference will be 1.
+ * Otherwise, the resulting reference will have a special value `NULL`.
+ * All operations with `NULL` are effectively no-op; it is allowed to dispose such reference, but it is not required.
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_createRetainedExternalRCRef")
 @Escapes(0b01) // obj is stored in the created ref.
-public external fun createRetainedExternalRCRef(obj: Any): ExternalRCRef
+public external fun createRetainedExternalRCRef(obj: Any?): ExternalRCRef
 
 /**
- * Dispose a valid [ExternalRCRef].
+ * Dispose a valid or `NULL` [ExternalRCRef].
  *
- * [ref] becomes invalid to use after this operation.
+ * If [ref] was not `NULL`, it becomes invalid to use after this operation.
  * May only be called if the reference count is 0. Otherwise, the behavior is undefined.
  */
 @InternalForKotlinNative
@@ -59,18 +62,22 @@ public external fun disposeExternalRCRef(ref: ExternalRCRef)
 /**
  * Return the underlying object of this [ExternalRCRef].
  *
- * May only be called if the reference count is >0. Otherwise, the behavior is undefined.
+ * May only be called if the reference count is >0.
+ * Or if [ref] is `NULL` (in which case `null` is returned)
+ * Otherwise, the behavior is undefined.
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_dereferenceExternalRCRef")
 @Escapes(0b10) // The return value is stored in a global.
-public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any
+public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any?
 
 /**
  * Increment the reference count of this [ExternalRCRef].
  *
  * Can be called concurrently with other retain/release operations.
- * May only be called if the reference count is >0. Otherwise, the behavior is undefined.
+ * May only be called if the reference count is >0.
+ * Or if [ref] is `NULL` (in which case nothing happens)
+ * Otherwise, the behavior is undefined.
  *
  * @see tryRetainExternalRCRef
  */
@@ -82,7 +89,9 @@ public external fun retainExternalRCRef(ref: ExternalRCRef)
  * Decrement the reference count of this [ExternalRCRef].
  *
  * Can be called concurrently with other retain/release operations.
- * May only be called if the reference count is >0. Otherwise, the behavior is undefined.
+ * May only be called if the reference count is >0.
+ * Or if [ref] is `NULL` (in which case nothing happens)
+ * Otherwise, the behavior is undefined.
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_releaseExternalRCRef")
@@ -92,6 +101,7 @@ public external fun releaseExternalRCRef(ref: ExternalRCRef)
  * Try to increment the reference count of this [ExternalRCRef].
  *
  * Can be called concurrently with other retain/release operations.
+ * If [ref] is `NULL`, nothing happens and returns `true`.
  * If the reference count is >0, works just like [retainExternalRCRef].
  * If the reference count is 0, will only increment the reference count if the underlying object is not yet collected by the GC.
  *

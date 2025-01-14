@@ -57,6 +57,7 @@ Class computeBestFittingClass(const TypeInfo* typeInfo) noexcept {
 
 Class swiftExportRuntime::bestFittingObjCClassFor(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(compiler::swiftExport(), "Only available in Swift Export");
+    RuntimeAssert(typeInfo != nullptr, "Cannot compute best fitting ObjC class for null TypeInfo");
     AssertThreadState(ThreadState::kNative); // May take some time.
     return computeBestFittingClass(typeInfo);
 }

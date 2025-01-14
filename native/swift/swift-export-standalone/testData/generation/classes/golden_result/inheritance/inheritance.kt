@@ -28,7 +28,7 @@ public fun __root___INHERITANCE_SINGLE_CLASS_init_allocate(): kotlin.native.inte
 
 @ExportedBridge("__root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
 public fun __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, value: Int): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = value
     kotlin.native.internal.initInstance(____kt, INHERITANCE_SINGLE_CLASS(__value))
 }
@@ -47,7 +47,7 @@ public fun __root___OPEN_CLASS_init_allocate(): kotlin.native.internal.NativePtr
 
 @ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, OPEN_CLASS())
 }
 

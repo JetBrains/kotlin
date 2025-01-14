@@ -50,7 +50,7 @@ public fun __root___ClassWithFactoryWithoutParameters_init_allocate(): kotlin.na
 
 @ExportedBridge("__root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
 public fun __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, value: Int): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = value
     kotlin.native.internal.initInstance(____kt, ClassWithFactoryWithoutParameters(__value))
 }
@@ -96,7 +96,7 @@ public fun __root___UtcOffset_init_allocate(): kotlin.native.internal.NativePtr 
 
 @ExportedBridge("__root___UtcOffset_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, UtcOffset())
 }
 
@@ -115,7 +115,7 @@ public fun test_factory_ClassWithFactoryInAPackage_init_allocate(): kotlin.nativ
 
 @ExportedBridge("test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, test.factory.ClassWithFactoryInAPackage())
 }
 
@@ -149,7 +149,7 @@ public fun test_factory_Outer_Nested_init_allocate(): kotlin.native.internal.Nat
 
 @ExportedBridge("test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, test.factory.Outer.Nested())
 }
 
@@ -161,7 +161,7 @@ public fun test_factory_Outer_init_allocate(): kotlin.native.internal.NativePtr 
 
 @ExportedBridge("test_factory_Outer_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun test_factory_Outer_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, test.factory.Outer())
 }
 
