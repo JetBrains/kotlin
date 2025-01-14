@@ -124,7 +124,9 @@
         "dependsOn": [
           "commonMain"
         ],
-        "moduleDependency": [],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib"
+        ],
         "binaryLayout": "klib"
       },
       {
@@ -132,7 +134,9 @@
         "dependsOn": [
           "commonMain"
         ],
-        "moduleDependency": [],
+        "moduleDependency": [
+          "org.jetbrains.kotlin:kotlin-stdlib"
+        ],
         "binaryLayout": "klib"
       },
       {
