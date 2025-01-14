@@ -797,7 +797,9 @@ open class LocalDeclarationsLowering(
             oldDeclaration: IrFunction,
             newDeclaration: IrFunction,
             isExplicitLocalFunction: Boolean = false
-        ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.valueParameters.size).apply {
+        ) = ArrayList<IrValueParameter>(
+            capturedValues.size + oldDeclaration.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+        ).apply {
             val generatedNames = mutableSetOf<String>()
             capturedValues.mapTo(this) { capturedValue ->
                 val p = capturedValue.owner
@@ -805,9 +807,13 @@ open class LocalDeclarationsLowering(
                     startOffset = p.startOffset
                     endOffset = p.endOffset
                     origin =
-                        if (p is IrValueParameter && p.indexInOldValueParameters < 0 && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
+                        if (p is IrValueParameter &&
+                            p.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver) &&
+                            newDeclaration is IrConstructor
+                        ) BOUND_RECEIVER_PARAMETER
                         else BOUND_VALUE_PARAMETER
                     name = suggestNameForCapturedValue(p, generatedNames, isExplicitLocalFunction = isExplicitLocalFunction)
+                    kind = IrParameterKind.Regular
                     type = localFunctionContext.remapType(p.type)
                     isCrossInline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true
                     isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
@@ -816,11 +822,12 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-            oldDeclaration.valueParameters.mapTo(this) { v ->
+            oldDeclaration.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.mapTo(this) { v ->
                 v.copyTo(
                     newDeclaration,
                     type = localFunctionContext.remapType(v.type),
-                    varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) }
+                    varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) },
+                    kind = IrParameterKind.Regular,
                 ).also {
                     newParameterToOld.putAbsentOrSame(it, v)
                 }
