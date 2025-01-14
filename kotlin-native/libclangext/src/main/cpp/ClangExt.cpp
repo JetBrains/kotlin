@@ -195,7 +195,7 @@ extern "C" {
 
   unsigned clang_Cursor_isObjCReturningRetainedMethod(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
-    if (cursor.kind == CXCursor_ObjCInstanceMethodDecl) {
+    if (cursor.kind == CXCursor_ObjCInstanceMethodDecl || cursor.kind == CXCursor_ObjCClassMethodDecl) {
       const Decl *decl = getCursorDecl(cursor);
       if (const ObjCMethodDecl *methodDecl = dyn_cast_or_null<ObjCMethodDecl>(decl)) {
         return methodDecl->hasAttr<NSReturnsRetainedAttr>();
