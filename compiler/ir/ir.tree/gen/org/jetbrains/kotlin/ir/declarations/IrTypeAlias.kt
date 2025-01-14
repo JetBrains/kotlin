@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
@@ -39,7 +39,7 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDecla
         visitor.visitTypeAlias(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitTypeAlias(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
@@ -53,7 +53,7 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDecla
         typeParameters.forEach { it.acceptVoid(visitor) }
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
     }
 

@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.ir.generator.print
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.generators.tree.printer.printAnnotation
-import org.jetbrains.kotlin.generators.util.printBlock
-import org.jetbrains.kotlin.ir.generator.irVisitorType
+import org.jetbrains.kotlin.ir.generator.irLeafTransformerType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.utils.withIndent
@@ -18,11 +16,10 @@ import org.jetbrains.kotlin.utils.withIndent
 internal class TransformerPrinter(
     printer: ImportCollectingPrinter,
     override val visitorType: ClassRef<*>,
-    private val rootElement: Element,
 ) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irVisitorType.withArgs(rootElement, dataTypeVariable))
+        get() = listOf(irLeafTransformerType.withArgs(dataTypeVariable))
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(dataTypeVariable)
@@ -32,42 +29,33 @@ internal class TransformerPrinter(
 
     override fun visitMethodReturnType(element: Element) = element.getTransformExplicitType()
 
-    override fun ImportCollectingPrinter.printAdditionalMethods() {
-        printRootTransformMethodDeclaration(rootElement, Modality.OPEN, hasDataParameter = true)
-        printBlock {
-            println(rootElement.visitorParameterName, ".transformChildren(this, data)")
-            println("return ", rootElement.visitorParameterName)
+    override fun skipElement(element: Element): Boolean = element.isRootElement
+
+    override fun overrideVisitMethod(element: Element): Boolean =
+        element.hasAcceptMethod
+
+    override fun visitMethodModality(element: Element): Modality? =
+        if (overrideVisitMethod(element)) {
+            null
+        } else {
+            Modality.OPEN
         }
-    }
 
     override fun printMethodsForElement(element: Element) {
         printer.run {
             val parent = element.parentInVisitor
             if (element.transformByChildren || parent != null) {
                 println()
-                if (element.isRootElement) {
-                    printAnnotation(
-                        Deprecated(
-                            message = "Call transformElement instead",
-                            replaceWith = ReplaceWith("transformElement(${element.visitorParameterName}, data)"),
-                            level = DeprecationLevel.ERROR,
-                        )
-                    )
-                }
                 printVisitMethodDeclaration(
                     element = element,
-                    // visitElement is final because it's not called from anywhere and thus is not supposed to be overridden.
-                    modality = Modality.FINAL.takeIf { element.isRootElement },
-                    override = true,
+                    modality = visitMethodModality(element),
+                    override = overrideVisitMethod(element),
                 )
-                if (element.transformByChildren) {
-                    println(" =")
-                    withIndent {
+                println(" =")
+                withIndent {
+                    if (element.transformByChildren) {
                         println("transformElement(", element.visitorParameterName, ", data)")
-                    }
-                } else {
-                    println(" =")
-                    withIndent {
+                    } else {
                         println(parent!!.visitFunctionName, "(", element.visitorParameterName, ", data)")
                     }
                 }

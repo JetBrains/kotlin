@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Represents a string template expression.
@@ -38,7 +38,7 @@ abstract class IrStringConcatenation : IrExpression() {
         visitor.visitStringConcatenation(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitStringConcatenation(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
@@ -52,7 +52,7 @@ abstract class IrStringConcatenation : IrExpression() {
         arguments.forEach { it.acceptVoid(visitor) }
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         arguments.transformInPlace(transformer, data)
     }
 

@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 abstract class IrElementBase : IrElement {
     /**
@@ -30,7 +30,7 @@ abstract class IrElementBase : IrElement {
      */
     private var attributeMap: Array<Any?>? = null
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         accept(transformer, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
@@ -44,7 +44,7 @@ abstract class IrElementBase : IrElement {
         // No children by default
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         // No children by default
     }
 

@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Represents a platform-specific low-level reference to a function.
@@ -33,7 +33,7 @@ abstract class IrRawFunctionReference : IrDeclarationReference() {
         visitor.visitRawFunctionReference(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitRawFunctionReference(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =

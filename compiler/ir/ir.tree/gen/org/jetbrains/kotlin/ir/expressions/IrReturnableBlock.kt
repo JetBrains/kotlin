@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.returnableBlock]
@@ -29,7 +29,7 @@ abstract class IrReturnableBlock : IrBlock(), IrSymbolOwner, IrReturnTarget {
         visitor.visitReturnableBlock(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitReturnableBlock(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =

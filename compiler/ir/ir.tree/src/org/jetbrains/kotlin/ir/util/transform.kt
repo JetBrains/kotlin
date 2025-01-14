@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 
 inline fun <reified T : IrElement> MutableList<T>.transformInPlace(transformation: (T) -> IrElement) {
     for (i in 0 until size) {
@@ -29,7 +29,7 @@ inline fun <reified T : IrElement> MutableList<T>.transformInPlace(transformatio
     }
 }
 
-fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrTransformer<D>, data: D) {
+fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrLeafTransformer<D>, data: D) {
     for (i in 0 until size) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
         @Suppress("UNCHECKED_CAST")
@@ -46,7 +46,7 @@ fun <T : IrElement> MutableList<T>.transformInPlace(transformer: IrElementTransf
 }
 
 @JvmName("transformInPlaceNullable")
-fun <T : IrElement, D> MutableList<T?>.transformInPlace(transformer: IrTransformer<D>, data: D) {
+fun <T : IrElement, D> MutableList<T?>.transformInPlace(transformer: IrLeafTransformer<D>, data: D) {
     for (i in 0 until size) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
         val element = get(i) as IrElementBase?
@@ -69,7 +69,7 @@ fun <T : IrElement> MutableList<T?>.transformInPlace(transformer: IrElementTrans
     }
 }
 
-fun <T : IrElement, D> Array<T?>.transformInPlace(transformer: IrTransformer<D>, data: D) {
+fun <T : IrElement, D> Array<T?>.transformInPlace(transformer: IrLeafTransformer<D>, data: D) {
     for (i in indices) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
         val element = get(i) as IrElementBase?
@@ -155,7 +155,7 @@ fun IrDeclarationContainer.transformDeclarationsFlat(transformation: (IrDeclarat
 /**
  * Transforms the list of elements with the given transformer. Return the same List instance if no element instances have changed.
  */
-fun <T : IrElement, D> List<T>.transformIfNeeded(transformer: IrTransformer<D>, data: D): List<T> {
+fun <T : IrElement, D> List<T>.transformIfNeeded(transformer: IrLeafTransformer<D>, data: D): List<T> {
     var result: ArrayList<T>? = null
     for ((i, item) in withIndex()) {
         @Suppress("UNCHECKED_CAST")

@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * This node is intended to unify different ways of handling function reference-like objects in IR.
@@ -152,7 +152,7 @@ abstract class IrRichFunctionReference : IrExpression() {
         visitor.visitRichFunctionReference(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitRichFunctionReference(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
@@ -168,7 +168,7 @@ abstract class IrRichFunctionReference : IrExpression() {
         invokeFunction.acceptVoid(visitor)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         boundValues.transformInPlace(transformer, data)
         invokeFunction = invokeFunction.transform(transformer, data) as IrSimpleFunction
     }

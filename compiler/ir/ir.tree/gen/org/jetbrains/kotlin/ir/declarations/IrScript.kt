@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
@@ -63,7 +63,7 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         visitor.visitScript(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitScript(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
@@ -87,7 +87,7 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         earlierScriptsParameter?.acceptVoid(visitor)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
         explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, data)

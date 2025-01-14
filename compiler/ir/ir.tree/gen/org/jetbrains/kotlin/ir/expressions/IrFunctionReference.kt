@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionReference]
@@ -27,7 +27,7 @@ abstract class IrFunctionReference : IrCallableReference<IrFunctionSymbol>() {
         visitor.visitFunctionReference(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitFunctionReference(this, data) as IrExpression
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =

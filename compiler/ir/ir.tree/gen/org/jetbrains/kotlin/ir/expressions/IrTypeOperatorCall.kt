@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeOperatorCall]
@@ -31,7 +31,7 @@ abstract class IrTypeOperatorCall : IrExpression() {
         visitor.visitTypeOperator(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitTypeOperator(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
@@ -45,7 +45,7 @@ abstract class IrTypeOperatorCall : IrExpression() {
         argument.acceptVoid(visitor)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         argument = argument.transform(transformer, data)
     }
 

@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Represents a single `init {}` block in a Kotlin class.
@@ -40,7 +40,7 @@ abstract class IrAnonymousInitializer : IrDeclarationBase() {
         visitor.visitAnonymousInitializer(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitAnonymousInitializer(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
@@ -54,7 +54,7 @@ abstract class IrAnonymousInitializer : IrDeclarationBase() {
         body.acceptVoid(visitor)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         body = body.transform(transformer, data) as IrBlockBody
     }
 

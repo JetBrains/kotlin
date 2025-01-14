@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * This is a root parent element for external declarations (meaning those that come from
@@ -45,7 +45,7 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
         visitor.visitExternalPackageFragment(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitExternalPackageFragment(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
@@ -59,7 +59,7 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
         declarations.forEach { it.acceptVoid(visitor) }
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         declarations.transformInPlace(transformer, data)
     }
 

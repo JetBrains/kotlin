@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * This node is intended to unify different ways of handling property reference-like objects in IR.
@@ -53,7 +53,7 @@ abstract class IrRichPropertyReference : IrExpression() {
         visitor.visitRichPropertyReference(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrExpression =
         transformer.visitRichPropertyReference(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
@@ -71,7 +71,7 @@ abstract class IrRichPropertyReference : IrExpression() {
         setterFunction?.acceptVoid(visitor)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         boundValues.transformInPlace(transformer, data)
         getterFunction = getterFunction.transform(transformer, data) as IrSimpleFunction
         setterFunction = setterFunction?.transform(transformer, data) as IrSimpleFunction?

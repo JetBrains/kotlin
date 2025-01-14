@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
@@ -139,7 +140,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
         visitor.visitValueParameter(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrValueParameter =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrValueParameter =
         transformer.visitValueParameter(this, data) as IrValueParameter
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrValueParameter =
@@ -153,7 +154,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
         defaultValue?.acceptVoid(visitor)
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         defaultValue = defaultValue?.transform(transformer, data)
     }
 

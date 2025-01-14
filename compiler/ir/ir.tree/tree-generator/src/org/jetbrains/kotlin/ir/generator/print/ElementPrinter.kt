@@ -146,7 +146,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             println()
             val dataTP = TypeVariable("D")
             val dataParameter = FunctionParameter("data", dataTP)
-            val transformerParameter = FunctionParameter("transformer", irTransformerType.withArgs(dataTP))
+            val transformerParameter = FunctionParameter("transformer", irLeafTransformerType.withArgs(dataTP))
             if (element.isRootElement) {
                 printKDoc(transformMethodKDoc(transformerParameter, dataParameter, "IR"))
             }
@@ -218,7 +218,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         if (element.hasTransformChildrenMethod) {
             printTransformChildrenMethod(
                 element = element,
-                transformerClass = irTransformerType,
+                transformerClass = irLeafTransformerType,
                 returnType = StandardTypes.unit,
                 override = !element.isRootElement,
             )

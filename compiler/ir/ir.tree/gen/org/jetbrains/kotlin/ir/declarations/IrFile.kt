@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
@@ -33,7 +33,7 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
         visitor.visitFile(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrFile =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrFile =
         transformer.visitFile(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrFile =
@@ -47,7 +47,7 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
         declarations.forEach { it.acceptVoid(visitor) }
     }
 
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+    override fun <D> transformChildren(transformer: IrLeafTransformer<D>, data: D) {
         declarations.transformInPlace(transformer, data)
     }
 

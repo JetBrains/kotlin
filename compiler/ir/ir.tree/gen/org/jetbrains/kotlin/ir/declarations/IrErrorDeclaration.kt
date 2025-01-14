@@ -11,9 +11,9 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrLeafTransformer
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitor
 import org.jetbrains.kotlin.ir.visitors.IrLeafVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorDeclaration]
@@ -28,7 +28,7 @@ abstract class IrErrorDeclaration : IrDeclarationBase() {
         visitor.visitErrorDeclaration(this)
     }
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+    override fun <D> transform(transformer: IrLeafTransformer<D>, data: D): IrElement =
         transformer.visitErrorDeclaration(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
