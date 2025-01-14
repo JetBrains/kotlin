@@ -239,8 +239,8 @@ fun main() {
                 model("boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
             }
             testClass<AbstractFirNativeSerializationTest> {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline", excludeDirs = k1BoxTestDir)
+                model("box", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
+                model("boxInline", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
             }
         }
 
