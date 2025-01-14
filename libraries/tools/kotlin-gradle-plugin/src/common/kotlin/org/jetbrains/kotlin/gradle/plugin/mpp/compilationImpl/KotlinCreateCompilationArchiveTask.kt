@@ -142,6 +142,9 @@ private fun KotlinJvmCompilation.registerJvmCompilationJarTask(
 ): TaskProvider<Jar> = project.tasks.register(compilation.disambiguateName("jar"), Jar::class.java) { task ->
     task.from(output.allOutputs)
     task.archiveBaseName.convention(compilation.target.disambiguateName(compilation.name))
+
+    task.isPreserveFileTimestamps = false
+    task.isReproducibleFileOrder = true
 }
 
 internal fun KotlinJvmCompilation.registerArchiveTask(
