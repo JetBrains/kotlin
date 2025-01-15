@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
@@ -36,7 +37,10 @@ internal class JsUsefulDeclarationProcessor(
 
             when (expression.symbol) {
                 context.intrinsics.jsBoxIntrinsic -> {
-                    val inlineClass = context.inlineClassesUtils.getInlinedClass(expression.typeArguments[0]!!)!!
+                    val inlineClass = expression.typeArguments[0]?.let {
+                        context.inlineClassesUtils.getRuntimeClassFor(it)
+                    } ?: compilationException("Unexpected type argument in box intrinsic", expression)
+
                     val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
                     constructor.enqueue(data, "intrinsic: jsBoxIntrinsic")
                 }
