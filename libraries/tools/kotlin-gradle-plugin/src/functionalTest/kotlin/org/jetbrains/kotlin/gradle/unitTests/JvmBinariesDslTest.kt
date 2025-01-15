@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.plugins.JavaPluginExtension
 import org.apache.commons.lang3.SystemUtils
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.application.CreateStartScripts
@@ -58,6 +59,36 @@ class JvmBinariesDslTest {
     }
 
     @Test
+    fun createsDefaultRunTaskForTargetWithCustomName() {
+        val project = buildProjectWithMPP {
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+            kotlin {
+                jvm("desktop") {
+                    binaries {
+                        executable {
+                            mainClass.set("foo.MainKt")
+                        }
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runDesktop")
+        assertEquals("foo.MainKt", runTask.mainClass.get())
+        assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
+
+        val mainJvmCompilation = project.multiplatformExtension.jvm("desktop").compilations
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+        runTask.assertClasspathContains(mainJvmCompilation.output.allOutputs)
+        runTask.assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles)
+    }
+
+    @Test
     fun createsDefaultDistribution() {
         val project = buildProjectWithMPP {
             repositories {
@@ -77,15 +108,6 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val scriptsTask = project.tasks.findByName("startScriptsForJvm") as? CreateStartScripts
-        val installTask = project.tasks.findByName("installJvmDist") as? Sync
-        val zipTask = project.tasks.findByName("jvmDistZip") as? Zip
-        val tarTask = project.tasks.findByName("jvmDistTar") as? Tar
-
-        assertNotNull(scriptsTask, "Expected 'startScriptsForJvm' task to be created")
-        assertNotNull(installTask, "Expected 'installJvmDist' task to be created")
-        assertNotNull(zipTask, "Expected 'distZipJvm' task to be created")
-        assertNotNull(tarTask, "Expected 'distTarJvm' task to be created")
         val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvm")
         val installTask = project.assertContainsTaskInstance<Sync>("installJvmDist")
         val zipTask = project.assertContainsTaskInstance<Zip>("jvmDistZip")
@@ -301,6 +323,47 @@ class JvmBinariesDslTest {
     }
 
     @Test
+    fun createRunTaskForTestSuite() {
+        val project = buildProjectWithMPP {
+            plugins.apply("jvm-test-suite")
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+
+            kotlin {
+                jvm {
+                    compilations.create("integrationTest")
+                    binaries {
+                        executable("integrationTest") {
+                            mainClass.set("foo.MainKt")
+                        }
+                    }
+                }
+            }
+
+            testing {
+                suites.register("integrationTest", JvmTestSuite::class.java) {
+                    it.dependencies {
+                        it.implementation.add(it.project())
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvmIntegrationTest")
+        assertEquals("foo.MainKt", runTask.mainClass.get())
+        assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
+        val testCompilation = project.multiplatformExtension.jvm().compilations
+            .getByName("integrationTest") as KotlinJvmCompilation
+        runTask.assertClasspathContains(testCompilation.output.allOutputs)
+        runTask.assertClasspathContains(testCompilation.runtimeDependencyFiles)
+        assertNotNull(project.tasks.findByName("jvmIntegrationTestJar"))
+    }
+
+    @Test
     fun createRunTaskForCustomCompilation() {
         val project = buildProjectWithMPP {
             repositories.mavenLocal()
@@ -388,7 +451,7 @@ class JvmBinariesDslTest {
                             mainClass.set("foo.MainKt")
                         }
 
-                        executable("main", "another") {
+                        executable(KotlinCompilation.MAIN_COMPILATION_NAME, "another") {
                             mainClass.set("foo.MainAnotherKt")
                         }
                     }
@@ -414,6 +477,47 @@ class JvmBinariesDslTest {
         project.evaluate()
 
         assertFalse(project.plugins.hasPlugin("distribution"), "Gradle 'distribution' plugin should not be applied by default")
+    }
+
+    @Test
+    fun possibleToConfigureSeveralBinariesForTheDifferentCompilations() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                jvm {
+                    binaries {
+                        executable {
+                            mainClass.set("foo.MainKt")
+                        }
+
+                        executable(KotlinCompilation.MAIN_COMPILATION_NAME, "another") {
+                            mainClass.set("foo.MainAnotherKt")
+                        }
+
+                        executable(KotlinCompilation.TEST_COMPILATION_NAME) {
+                            mainClass.set("foo.MainTestKt")
+                        }
+
+                        executable(KotlinCompilation.TEST_COMPILATION_NAME, "another") {
+                            mainClass.set("foo.MainAnotherTestKt")
+                        }
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvm")
+        assertEquals("foo.MainKt", runTask.mainClass.get())
+
+        val runTaskAnother = project.assertContainsTaskInstance<JavaExec>("runJvmAnother")
+        assertEquals("foo.MainAnotherKt", runTaskAnother.mainClass.get())
+
+        val runTaskTest = project.assertContainsTaskInstance<JavaExec>("runJvmTest")
+        assertEquals("foo.MainTestKt", runTaskTest.mainClass.get())
+
+        val runTaskTestAnother = project.assertContainsTaskInstance<JavaExec>("runJvmTestAnother")
+        assertEquals("foo.MainAnotherTestKt", runTaskTestAnother.mainClass.get())
     }
 
     private fun JavaExec.assertClasspathContains(
