@@ -44,7 +44,7 @@ RUNTIME_NORETURN void ThrowWorkerAlreadyTerminated();
 RUNTIME_NORETURN void ThrowWrongWorkerOrAlreadyTerminated();
 RUNTIME_NORETURN void ThrowFutureInvalidState();
 KNativePtr WorkerLaunchpadForRegularJob(KNativePtr jobArgument, KNativePtr job);
-OBJ_GETTER(WorkerLaunchpad, KRef);
+void WorkerLaunchpadForExecuteAfterJob(KNativePtr job);
 
 }  // extern "C"
 
@@ -408,7 +408,7 @@ class State {
     return future;
   }
 
-  bool executeJobAfterInWorkerUnlocked(KInt id, KRef operation, KLong afterMicroseconds) {
+  bool executeJobAfterInWorkerUnlocked(KInt id, KNativePtr operation, KLong afterMicroseconds) {
     Worker* worker = nullptr;
     Locker locker(&lock_);
 
@@ -421,7 +421,7 @@ class State {
     worker = it->second;
     Job job;
     job.kind = JOB_EXECUTE_AFTER;
-    job.executeAfter.operation = CreateStablePointer(operation);
+    job.executeAfter.operation = operation;
     if (afterMicroseconds == 0) {
       worker->putJob(job, false);
     } else {
@@ -431,7 +431,7 @@ class State {
     return true;
   }
 
-  bool scheduleJobInWorkerUnlocked(KInt id, KNativePtr operationStablePtr) {
+  bool scheduleJobInWorkerUnlocked(KInt id, KNativePtr operation) {
       Worker* worker = nullptr;
       Locker locker(&lock_);
 
@@ -443,7 +443,7 @@ class State {
 
       Job job;
       job.kind = JOB_EXECUTE_AFTER;
-      job.executeAfter.operation = operationStablePtr;
+      job.executeAfter.operation = operation;
       worker->putJob(job, false);
       return true;
   }
@@ -703,7 +703,7 @@ KInt execute(KInt id, KInt transferMode, KNativePtr jobArgument, KNativePtr jobF
   return future->id();
 }
 
-void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
+void executeAfter(KInt id, KNativePtr job, KLong afterMicroseconds) {
   if (!theState()->executeJobAfterInWorkerUnlocked(id, job, afterMicroseconds))
     ThrowWorkerAlreadyTerminated();
 }
@@ -787,8 +787,8 @@ void WaitNativeWorkerTermination(KInt id) {
     theState()->waitNativeWorkersTerminationUnlocked(false, [id](KInt worker) { return worker == id; });
 }
 
-bool WorkerSchedule(KInt id, KNativePtr jobStablePtr) {
-    return theState()->scheduleJobInWorkerUnlocked(id, jobStablePtr);
+bool WorkerSchedule(KInt id, KNativePtr job) {
+    return theState()->scheduleJobInWorkerUnlocked(id, job);
 }
 
 Worker::~Worker() {
@@ -803,7 +803,7 @@ Worker::~Worker() {
               break;
           case JOB_EXECUTE_AFTER: {
               // TODO: what do we do here? Shall we execute them?
-              DisposeStablePointer(job.executeAfter.operation);
+              mm::releaseAndDisposeExternalRCRef(job.executeAfter.operation);
               break;
           }
           case JOB_TERMINATE: {
@@ -820,7 +820,7 @@ Worker::~Worker() {
 
   for (auto job : delayed_) {
       RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
-      DisposeStablePointer(job.executeAfter.operation);
+      mm::releaseAndDisposeExternalRCRef(job.executeAfter.operation);
   }
 
   mm::releaseAndDisposeExternalRCRef(name_);
@@ -987,11 +987,9 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_EXECUTE_AFTER: {
-      ObjHolder operationHolder, dummyHolder;
-      KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          WorkerLaunchpad(obj, dummyHolder.slot());
+          WorkerLaunchpadForExecuteAfterJob(job.executeAfter.operation);
       } catch(ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
           case WorkerExceptionHandling::kIgnore: break;
@@ -1000,8 +998,6 @@ JobKind Worker::processQueueElement(bool blocking) {
               break;
         }
       }
-
-      DisposeStablePointer(job.executeAfter.operation);
       break;
     }
     case JOB_REGULAR: {
@@ -1049,7 +1045,7 @@ KInt Kotlin_Worker_executeInternal(KInt id, KInt transferMode, KNativePtr jobArg
   return execute(id, transferMode, jobArgument, job);
 }
 
-void Kotlin_Worker_executeAfterInternal(KInt id, KRef job, KLong afterMicroseconds) {
+void Kotlin_Worker_executeAfterInternal(KInt id, KNativePtr job, KLong afterMicroseconds) {
   executeAfter(id, job, afterMicroseconds);
 }
 

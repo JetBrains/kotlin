@@ -133,7 +133,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      */
     public fun executeAfter(afterMicroseconds: Long = 0, operation: () -> Unit): Unit {
         if (afterMicroseconds < 0) throw IllegalArgumentException("Timeout parameter must be non-negative")
-        executeAfterInternal(id, operation, afterMicroseconds)
+        executeAfterInternal(id, createRetainedExternalRCRef(operation), afterMicroseconds)
     }
 
     /**

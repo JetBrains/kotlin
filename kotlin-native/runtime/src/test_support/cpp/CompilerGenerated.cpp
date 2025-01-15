@@ -137,7 +137,7 @@ KNativePtr WorkerLaunchpadForRegularJob(KNativePtr jobArgument, KNativePtr job) 
     throw std::runtime_error("Not implemented for tests");
 }
 
-RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpad, KRef) {
+RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpadForExecuteAfterJob, KNativePtr job) {
     throw std::runtime_error("Not implemented for tests");
 }
 
