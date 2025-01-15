@@ -109,37 +109,6 @@ internal class VolatileLambdaLowering(val generationState: NativeGenerationState
 
 }
 
-/**
- * Transforms a function reference into a subclass of `kotlin.native.internal.KFunctionImpl` and `kotlin.FunctionN`,
- * or `kotlin.native.internal.KSuspendFunctionImpl` and `kotlin.KSuspendFunctionN` (for suspend functions/lambdas),
- * or `Any` (for simple lamdbas), or a custom superclass (in case of SAM conversion).
- *
- * For example, `::bar$lambda$0<BarTP>` in the following code:
- * ```kotlin
- * fun <FooTP> foo(v: FooTP, l: (FooTP) -> String): String {
- *     return l(v)
- * }
- *
- * private fun <T> bar$lambda$0(t: T): String { /* ... */ }
- *
- * fun <BarTP> bar(v: BarTP): String {
- *     return foo(v, ::bar$lambda$0<BarTP>)
- * }
- * ```
- *
- * is lowered into:
- * ```kotlin
- * private class bar$lambda$0$FUNCTION_REFERENCE$0<T> : kotlin.native.internal.KFunctionImpl<String>, kotlin.Function1<T, String> {
- *     override fun invoke(p1: T): String {
- *         return bar$lambda$0<T>(p1)
- *     }
- * }
- *
- * fun <BarTP> bar(v: BarTP): String {
- *     return foo(v, bar$lambda$0$FUNCTION_REFERENCE$0<BarTP>())
- * }
- * ```
- */
 internal class NativeFunctionReferenceLowering(val generationState: NativeGenerationState) : AbstractFunctionReferenceLowering<Context>(generationState.context) {
     companion object {
         private val DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL = IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")

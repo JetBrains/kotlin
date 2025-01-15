@@ -66,6 +66,53 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.collections.plus
 
+/**
+ * This lowering transforms [IrRichFunctionReference] nodes to an anonymous classes.
+ *
+ * The class would have:
+ *   * Constructor capturing all values from [IrRichFunctionReference.boundValues], and storing them to fields
+ *   * A method overriding [IrRichFunctionReference.overriddenFunctionSymbol], with body moved from [IrRichFunctionReference.invokeFunction]
+ *   * [IrRichFunctionReference.type] as a super-interface type (typically [K][Suspend]FunctionN, or fun interface the reference was sam converted to)
+ *
+ * Platforms can customize:
+ *   * Super-class with platform-specific reference implementation details by overriding [getSuperClassType] method
+ *   * Equality/hashCode/toString and other reflection methods implementation by adding methods in overridden [generateExtraMethods] method
+ *   * exact names/origins of generated classes/methods by overriding corresponding methods
+ *
+ * For example, the following code:
+ * ```kotlin
+ * fun foo1(l: () -> String): String {
+ *     return l()
+ * }
+ * fun <FooTP> foo2(v: FooTP, l: (FooTP) -> String): String {
+ *     return l(v)
+ * }
+ *
+ * private fun <T> bar(t: T): String { /* ... */ }
+ *
+ * fun <BarTP> bar(v: BarTP): String {
+ *     return foo1(v::bar/*<T=BarTP>*/) + foo(v) { bar/*<T=BarTP>*/(it) }
+ * }
+ * ```
+ *
+ * is lowered into:
+ * ```kotlin
+ * fun <BarTP> bar(v: BarTP): String {
+ *     class <local-platform-specific-name-1>(p$0: BarTP) : KFunction0<String>, PlatformSpecificSuperType() {
+ *        private val f$0: BarTP = p$0
+ *        override fun invoke() = bar<BarTP>(f$0)
+ *        // some platform specific reflection information
+ *     }
+ *     class <local-platform-specific-name-2> : Function1<BarTP, String>, PlatformSpecificSuperTypeProbablyAny() {
+ *        override fun invoke(p0: BarTP) = bar<BarTP>(p0)
+ *     }
+ *     return foo1(<local-platform-specific-name-1>(v)) + foo2(v, <local-platform-specific-name-2>())
+ * }
+ * ```
+ *
+ * Note that as all these classes are defined as local ones, they don't need to explicitly capture local variables or any type parameters.
+ * But it can happen, that [LocalDeclarationsLowering] would later capture something additional into the classes.
+ */
 abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val context: C) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transform(object : IrTransformer<IrDeclarationParent>() {
