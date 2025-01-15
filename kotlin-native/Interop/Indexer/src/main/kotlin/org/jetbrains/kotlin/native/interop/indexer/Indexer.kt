@@ -656,7 +656,22 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         else -> UnsupportedType
     }
 
-    open fun convertType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>? = null): Type {
+    private fun getTypeAttributes(attributedType: CValue<CXType>, attributes: TypeAttributes?): TypeAttributes {
+        check(attributedType.kind == CXType_Attributed) { attributedType.kind }
+        val objCNullability = when (clang_Type_getNullability(attributedType)) {
+            CXTypeNullability_Nullable -> ObjCPointer.Nullability.Nullable
+            CXTypeNullability_NonNull -> ObjCPointer.Nullability.NonNull
+            else -> ObjCPointer.Nullability.Unspecified
+        }
+        if (objCNullability == ObjCPointer.Nullability.Unspecified && attributes != null) {
+            // FIXME: unspecified is not the same as absent.
+            return attributes
+        }
+
+        return TypeAttributes(objCNullability = objCNullability)
+    }
+
+    open fun convertType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>? = null, attributes: TypeAttributes? = null): Type {
         val primitiveType = convertUnqualifiedPrimitiveType(type)
         if (primitiveType != UnsupportedType) {
             return primitiveType
@@ -683,7 +698,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
 
             CXType_Attributed -> {
-                convertType(clang_Type_getModifiedType(type), typeAttributes)
+                convertType(clang_Type_getModifiedType(type), typeAttributes, getTypeAttributes(type, attributes))
             }
 
             CXType_Void -> VoidType
@@ -694,7 +709,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
                 when {
                     declSpelling == "instancetype" && underlying is ObjCPointer ->
-                        ObjCInstanceType(getNullability(type, typeAttributes))
+                        ObjCInstanceType(getNullability(type, typeAttributes, attributes))
 
                     else -> getTypedef(type)
                 }
@@ -741,7 +756,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             CXType_ObjCObjectPointer -> objCType {
                 val declaration = clang_getTypeDeclaration(clang_getPointeeType(type))
                 val declarationKind = declaration.kind
-                val nullability = getNullability(type, typeAttributes)
+                val nullability = getNullability(type, typeAttributes, attributes)
                 when (declarationKind) {
                     CXCursorKind.CXCursor_NoDeclFound -> ObjCIdType(nullability, getProtocols(type))
 
@@ -762,13 +777,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
             }
 
-            CXType_ObjCId -> objCType { ObjCIdType(getNullability(type, typeAttributes), getProtocols(type)) }
+            CXType_ObjCId -> objCType { ObjCIdType(getNullability(type, typeAttributes, attributes), getProtocols(type)) }
 
-            CXType_ObjCClass -> objCType { ObjCClassPointer(getNullability(type, typeAttributes), getProtocols(type)) }
+            CXType_ObjCClass -> objCType { ObjCClassPointer(getNullability(type, typeAttributes, attributes), getProtocols(type)) }
 
             CXType_ObjCSel -> PointerType(VoidType)
 
-            CXType_BlockPointer -> objCType { convertBlockPointerType(type, typeAttributes) }
+            CXType_BlockPointer -> objCType { convertBlockPointerType(type, typeAttributes, attributes) }
 
             else -> UnsupportedType
         }
@@ -791,15 +806,22 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun getNullability(
-            type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>?
+            type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>?, attributes: TypeAttributes?
     ): ObjCPointer.Nullability {
 
         if (typeAttributes == null) return ObjCPointer.Nullability.Unspecified
+        if (attributes == null) return ObjCPointer.Nullability.Unspecified
 
-        return when (clang_Type_getNullabilityKind(type, typeAttributes)) {
+        val oldNullability = when (clang_Type_getNullabilityKind(type, typeAttributes)) {
             CXNullabilityKind.CXNullabilityKind_Nullable -> ObjCPointer.Nullability.Nullable
             CXNullabilityKind.CXNullabilityKind_NonNull -> ObjCPointer.Nullability.NonNull
             CXNullabilityKind.CXNullabilityKind_Unspecified -> ObjCPointer.Nullability.Unspecified
+        }
+
+        return attributes.objCNullability.also {
+            check(it == oldNullability) {
+                "Nullability mismatch: $oldNullability expected but $it found for type ${clang_getTypeSpelling(type).convertAndDispose()}"
+            }
         }
     }
 
@@ -850,12 +872,12 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
 
-    private fun convertBlockPointerType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>?): ObjCPointer {
+    private fun convertBlockPointerType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>?, attributes: TypeAttributes?): ObjCPointer {
         val kind = type.kind
         assert(kind == CXType_BlockPointer)
 
         val pointee = clang_getPointeeType(type)
-        val nullability = getNullability(type, typeAttributes)
+        val nullability = getNullability(type, typeAttributes, attributes)
 
         // TODO: also use nullability attributes of parameters and return value.
 

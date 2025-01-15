@@ -351,6 +351,8 @@ class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val par
     val fullName: String get() = parentName?.let { "$it::$name" } ?: name
 }
 
+class TypeAttributes(val objCNullability: ObjCPointer.Nullability)
+
 /**
  * C type.
  */
