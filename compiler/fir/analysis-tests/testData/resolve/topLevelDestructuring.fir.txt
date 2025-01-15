@@ -1,2 +1,2 @@
-FILE: topLevelDestruction.kt
+FILE: topLevelDestructuring.kt
     <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
