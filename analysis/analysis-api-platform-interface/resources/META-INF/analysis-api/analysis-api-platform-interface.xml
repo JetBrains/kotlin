@@ -10,8 +10,8 @@
 
   <extensionPoints>
     <extensionPoint
-        qualifiedName="org.jetbrains.kotlin.kotlinResolutionScopeEnlarger"
-        interface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeEnlarger"
+        qualifiedName="org.jetbrains.kotlin.kotlinContentScopeRefiner"
+        interface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner"
         area="IDEA_PROJECT"
         dynamic="true"
     />
