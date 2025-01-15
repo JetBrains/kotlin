@@ -7,11 +7,6 @@ projectTest {
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
 
-    // for some reason if tests are running on ARM MacOS Gradle can take x64 JVM, override it by explicit passing JVM home dir
-    if (System.getProperty("os.arch") == "aarch64") {
-        systemProperty("org.gradle.java.home", System.getProperty("java.home"))
-    }
-
     dependsOnKotlinGradlePluginInstall()
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
