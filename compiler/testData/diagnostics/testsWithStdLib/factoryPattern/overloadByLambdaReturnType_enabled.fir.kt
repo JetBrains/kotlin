@@ -32,7 +32,7 @@ fun test_2() {
 }
 
 fun test_3() {
-    val x = create { <!ARGUMENT_TYPE_MISMATCH!>1.0<!> }
+    val x = create { <!RETURN_TYPE_MISMATCH!>1.0<!> }
 }
 
 @OverloadResolutionByLambdaReturnType

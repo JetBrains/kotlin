@@ -135,6 +135,9 @@ class ArgumentTypeMismatch(
     val actualType: ConeKotlinType,
     val argument: FirExpression,
     val isMismatchDueToNullability: Boolean,
+    // We use argument checking mechanism for return statements of lambdas, too.
+    // Thus, to report proper RETURN_TYPE_MISMATCH we preserve a reference to the lambda
+    val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
 ) : ResolutionDiagnostic(if (isMismatchDueToNullability) UNSAFE_CALL else INAPPLICABLE)
 
 class UnitReturnTypeLambdaContradictsExpectedType(

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -328,7 +329,8 @@ private fun mapInapplicableCandidateError(
                         )
                     },
                     isMismatchDueToNullability = rootCause.isMismatchDueToNullability,
-                    candidate = diagnostic.candidate
+                    candidate = diagnostic.candidate,
+                    rootCause.anonymousFunctionIfReturnExpression,
                 )
             }
 
@@ -477,15 +479,20 @@ private fun diagnosticForArgumentTypeMismatch(
     actualType: ConeKotlinType,
     isMismatchDueToNullability: Boolean,
     candidate: AbstractCallCandidate<*>,
+    /**
+     * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
+     */
+    anonymousFunctionIfReturnExpression: FirAnonymousFunction?,
 ): KtDiagnostic {
     val symbol = candidate.symbol as FirCallableSymbol
     val receiverType = (candidate.chosenExtensionReceiver ?: candidate.dispatchReceiver)?.expression?.resolvedType
 
     return when {
-        expectedType is ConeCapturedType && expectedType.isBasedOnStarOrOut() && receiverType != null &&
-                // Ensure we report an actual argument type mismatch of the candidate and not a lambda return expression
-                candidate.argumentMapping.keys.any { it.expression.source == source }
-            ->
+        anonymousFunctionIfReturnExpression != null ->
+            FirErrors.RETURN_TYPE_MISMATCH.createOn(
+                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability
+            )
+        expectedType is ConeCapturedType && expectedType.isBasedOnStarOrOut() && receiverType != null ->
             FirErrors.MEMBER_PROJECTED_OUT.createOn(
                 source,
                 receiverType,
@@ -591,7 +598,8 @@ private fun ConstraintSystemError.toDiagnostic(
                     expectedType = lowerConeType.substituteTypeVariableTypes(candidate, typeContext),
                     actualType = upperConeType.substituteTypeVariableTypes(candidate, typeContext),
                     isMismatchDueToNullability = typeMismatchDueToNullability,
-                    candidate = candidate
+                    candidate = candidate,
+                    anonymousFunctionIfReturnExpression = (position as? ConeLambdaArgumentConstraintPosition)?.lambda,
                 )
             }
 

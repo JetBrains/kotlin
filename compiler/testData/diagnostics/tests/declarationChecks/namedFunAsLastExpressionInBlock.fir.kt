@@ -7,8 +7,8 @@ fun test() {
     val x = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named1<!>(x: Int): Int { return 1 }
     x <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Function1<Int, Int><!>>() }
 
-    foo { <!ARGUMENT_TYPE_MISMATCH!>fun named2(): Int {return 1}<!> }
-    foo({ <!ARGUMENT_TYPE_MISMATCH!>fun named3() = 1<!> })
+    foo { <!RETURN_TYPE_MISMATCH!>fun named2(): Int {return 1}<!> }
+    foo({ <!RETURN_TYPE_MISMATCH!>fun named3() = 1<!> })
 
     val x1 =
     if (1 == 1)

@@ -4,7 +4,7 @@ fun text() {
     "direct:a" on {it.body == "<hello/>"} to "mock:a"
     "direct:a" on {it -> it.body == "<hello/>"} to "mock:a"
     bar <!ARGUMENT_TYPE_MISMATCH!>{1}<!>
-    bar <!ARGUMENT_TYPE_MISMATCH!>{<!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>it<!> + 1<!>}<!>
+    bar <!ARGUMENT_TYPE_MISMATCH!>{<!RETURN_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>it<!> + 1<!>}<!>
     bar {it, it1 -> it}
 
     bar1 {1}

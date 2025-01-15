@@ -27,7 +27,7 @@ fun test1(): Map<Int, Int> = run {
 }
 
 fun test2(): Map<Int, Int> = run {
-    <!ARGUMENT_TYPE_MISMATCH!>try {
+    <!RETURN_TYPE_MISMATCH!>try {
         emptyMap()
     } catch (e: ExcA) {
         mapOf("" to "")

@@ -62,7 +62,7 @@ fun testWithString(box: Inv<String>) {
     topLevelOverload({ "hello" }, (box))
     topLevelOverload1(box) { "hello" }
     topLevelOverload2(box) { "hello" }
-    topLevelOverload2(box) { <!ARGUMENT_TYPE_MISMATCH!>1<!> }
+    topLevelOverload2(box) { <!RETURN_TYPE_MISMATCH!>1<!> }
     topLevelOverload3(box) { param: String -> }
 
     FunHolder().classMemberOverload({ "hello" }, (box))
