@@ -15,18 +15,22 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.lipoCreate
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileInputStream
 import kotlin.test.assertEquals
 
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
+@ClassicPipeline()
+@Tag("frontend-classic")
 class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
 
     @Test

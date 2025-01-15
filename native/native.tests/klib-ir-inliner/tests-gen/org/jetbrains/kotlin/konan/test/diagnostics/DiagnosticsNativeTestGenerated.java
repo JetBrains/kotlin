@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.test.diagnostics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/nativeTests")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("frontend-classic")
+@ClassicPipeline()
 public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTest {
   @Test
   public void testAllFilesPresentInNativeTests() {
@@ -207,6 +211,8 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/nativeTests/multiplatform")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {

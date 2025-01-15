@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,8 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @Nested
   @TestMetadata("native/native.tests/testData/CInterop/simple/simpleDefs")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class SimpleDefs {
     @Test
     public void testAllFilesPresentInSimpleDefs() {
@@ -96,6 +100,8 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @Nested
   @TestMetadata("native/native.tests/testData/CInterop/framework/frameworkDefs")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class FrameworkDefs {
     @Test
     public void testAllFilesPresentInFrameworkDefs() {
@@ -214,6 +220,8 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @Nested
   @TestMetadata("native/native.tests/testData/CInterop/framework.macros/macrosDefs")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class MacrosDefs {
     @Test
     public void testAllFilesPresentInMacrosDefs() {
@@ -236,6 +244,8 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @Nested
   @TestMetadata("native/native.tests/testData/CInterop/builtins/builtinsDefs")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class BuiltinsDefs {
     @Test
     public void testAllFilesPresentInBuiltinsDefs() {

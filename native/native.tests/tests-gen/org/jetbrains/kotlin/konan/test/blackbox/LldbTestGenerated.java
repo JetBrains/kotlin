@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCas
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,8 @@ import java.util.regex.Pattern;
 @UseStandardTestCaseGroupProvider()
 @EnforcedProperty(property = ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
 @EnforcedHostTarget()
+@Tag("frontend-classic")
+@ClassicPipeline()
 public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInLldb() {

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.test.irText;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +21,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/ir/irText")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("frontend-classic")
+@ClassicPipeline()
 public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextTest {
   @Test
   public void testAllFilesPresentInIrText() {
@@ -28,6 +32,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Classes {
     @Test
     @TestMetadata("47424.kt")
@@ -313,6 +319,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/classes/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class DataClasses {
       @Test
       public void testAllFilesPresentInDataClasses() {
@@ -378,6 +386,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/declarations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Declarations {
     @Test
     public void testAllFilesPresentInDeclarations() {
@@ -549,6 +559,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/annotations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
@@ -775,6 +787,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/contextParameters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
@@ -791,6 +805,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class ContextReceivers {
       @Test
       public void testAllFilesPresentInContextReceivers() {
@@ -938,6 +954,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       @Nested
       @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-classic")
+      @ClassicPipeline()
       public class FromKEEP {
         @Test
         public void testAllFilesPresentInFromKEEP() {
@@ -979,6 +997,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/delegate")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Delegate {
       @Test
       public void testAllFilesPresentInDelegate() {
@@ -1001,6 +1021,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/jvmRecord")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class JvmRecord {
       @Test
       public void testAllFilesPresentInJvmRecord() {
@@ -1011,6 +1033,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
@@ -1020,6 +1044,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       @Nested
       @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k2")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-classic")
+      @ClassicPipeline()
       public class K2 {
         @Test
         public void testAllFilesPresentInK2() {
@@ -1067,6 +1093,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/parameters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Parameters {
       @Test
       public void testAllFilesPresentInParameters() {
@@ -1155,6 +1183,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/provideDelegate")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class ProvideDelegate {
       @Test
       public void testAllFilesPresentInProvideDelegate() {
@@ -1202,6 +1232,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/errors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Errors {
     @Test
     public void testAllFilesPresentInErrors() {
@@ -1224,6 +1256,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/expressions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Expressions {
     @Test
     public void testAllFilesPresentInExpressions() {
@@ -2139,6 +2173,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class CallableReferences {
       @Test
       @TestMetadata("adaptedExtensionFunctions.kt")
@@ -2269,6 +2305,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class FloatingPointComparisons {
       @Test
       public void testAllFilesPresentInFloatingPointComparisons() {
@@ -2345,6 +2383,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/funInterface")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class FunInterface {
       @Test
       public void testAllFilesPresentInFunInterface() {
@@ -2409,6 +2449,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/sam")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
@@ -2420,6 +2462,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/fakeOverrides")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class FakeOverrides {
     @Test
     public void testAllFilesPresentInFakeOverrides() {
@@ -2441,6 +2485,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/annotations")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
@@ -2451,6 +2497,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/charsequence")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Charsequence {
       @Test
       public void testAllFilesPresentInCharsequence() {
@@ -2461,6 +2509,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Collections {
       @Test
       public void testAllFilesPresentInCollections() {
@@ -2470,6 +2520,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       @Nested
       @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/list")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-classic")
+      @ClassicPipeline()
       public class List {
         @Test
         public void testAllFilesPresentInList() {
@@ -2480,6 +2532,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       @Nested
       @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/map")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-classic")
+      @ClassicPipeline()
       public class Map {
         @Test
         public void testAllFilesPresentInMap() {
@@ -2490,6 +2544,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       @Nested
       @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/set")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-classic")
+      @ClassicPipeline()
       public class Set {
         @Test
         public void testAllFilesPresentInSet() {
@@ -2501,6 +2557,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/dataclass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Dataclass {
       @Test
       public void testAllFilesPresentInDataclass() {
@@ -2511,6 +2569,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/enum")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Enum {
       @Test
       public void testAllFilesPresentInEnum() {
@@ -2521,6 +2581,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Fieldmodifiers {
       @Test
       public void testAllFilesPresentInFieldmodifiers() {
@@ -2531,6 +2593,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/generics")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Generics {
       @Test
       public void testAllFilesPresentInGenerics() {
@@ -2541,6 +2605,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/gettersetter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Gettersetter {
       @Test
       public void testAllFilesPresentInGettersetter() {
@@ -2551,6 +2617,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/java21")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Java21 {
       @Test
       public void testAllFilesPresentInJava21() {
@@ -2561,6 +2629,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/javastatic")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Javastatic {
       @Test
       public void testAllFilesPresentInJavastatic() {
@@ -2571,6 +2641,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/kotlinextensions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Kotlinextensions {
       @Test
       public void testAllFilesPresentInKotlinextensions() {
@@ -2581,6 +2653,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodmodifiers")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Methodmodifiers {
       @Test
       public void testAllFilesPresentInMethodmodifiers() {
@@ -2591,6 +2665,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodparameters")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Methodparameters {
       @Test
       public void testAllFilesPresentInMethodparameters() {
@@ -2601,6 +2677,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/number")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Number {
       @Test
       public void testAllFilesPresentInNumber() {
@@ -2611,6 +2689,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/operators")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Operators {
       @Test
       public void testAllFilesPresentInOperators() {
@@ -2621,6 +2701,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/platformtypes")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Platformtypes {
       @Test
       public void testAllFilesPresentInPlatformtypes() {
@@ -2631,6 +2713,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/typenothing")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Typenothing {
       @Test
       public void testAllFilesPresentInTypenothing() {
@@ -2641,6 +2725,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/vararg")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Vararg {
       @Test
       public void testAllFilesPresentInVararg() {
@@ -2651,6 +2737,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/visibility")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Visibility {
       @Test
       public void testAllFilesPresentInVisibility() {
@@ -2661,6 +2749,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/void")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Void {
       @Test
       public void testAllFilesPresentInVoid() {
@@ -2672,6 +2762,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/firProblems")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class FirProblems {
     @Test
     public void testAllFilesPresentInFirProblems() {
@@ -2940,6 +3032,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/js")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Js {
     @Test
     public void testAllFilesPresentInJs() {
@@ -2949,6 +3043,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/js/dynamic")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Dynamic {
       @Test
       public void testAllFilesPresentInDynamic() {
@@ -2959,6 +3055,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/js/external")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class External {
       @Test
       public void testAllFilesPresentInExternal() {
@@ -2969,6 +3067,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/js/native")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class Native {
       @Test
       public void testAllFilesPresentInNative() {
@@ -2980,6 +3080,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/lambdas")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Lambdas {
     @Test
     public void testAllFilesPresentInLambdas() {
@@ -3032,6 +3134,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/properties")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Properties {
     @Test
     public void testAllFilesPresentInProperties() {
@@ -3053,6 +3157,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/properties/backingField")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class BackingField {
       @Test
       public void testAllFilesPresentInBackingField() {
@@ -3088,6 +3194,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/regressions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Regressions {
     @Test
     public void testAllFilesPresentInRegressions() {
@@ -3134,6 +3242,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/singletons")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Singletons {
     @Test
     public void testAllFilesPresentInSingletons() {
@@ -3162,6 +3272,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/stubs")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Stubs {
     @Test
     public void testAllFilesPresentInStubs() {
@@ -3190,6 +3302,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
   @Nested
   @TestMetadata("compiler/testData/ir/irText/types")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-classic")
+  @ClassicPipeline()
   public class Types {
     @Test
     @TestMetadata("abbreviatedTypes.kt")
@@ -3349,6 +3463,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     @Nested
     @TestMetadata("compiler/testData/ir/irText/types/nullChecks")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-classic")
+    @ClassicPipeline()
     public class NullChecks {
       @Test
       public void testAllFilesPresentInNullChecks() {
@@ -3358,6 +3474,8 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
       @Nested
       @TestMetadata("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult")
       @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-classic")
+      @ClassicPipeline()
       public class NullCheckOnLambdaResult {
         @Test
         public void testAllFilesPresentInNullCheckOnLambdaResult() {
