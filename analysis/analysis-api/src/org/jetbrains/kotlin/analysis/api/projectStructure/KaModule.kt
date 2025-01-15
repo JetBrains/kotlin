@@ -76,8 +76,16 @@ public interface KaModule {
     public val directFriendDependencies: List<KaModule>
 
     /**
-     * A [GlobalSearchScope] which determines all the files that are contained in the module.
+     * A base content scope of the module,
+     * which is not yet refined by extension and restriction scopes provided by [KotlinContentScopeRefiner].
      */
+    public val baseContentScope: GlobalSearchScope
+
+    /**
+     * A [GlobalSearchScope] which determines all the files that are contained in the module.
+     * This scope is lazily built from [baseContentScope] using [KotlinContentScopeRefiner] extension points.
+     */
+    @KaPlatformInterface
     public val contentScope: GlobalSearchScope
 
     /**

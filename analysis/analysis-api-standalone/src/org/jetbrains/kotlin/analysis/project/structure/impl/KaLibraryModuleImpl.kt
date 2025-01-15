@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -22,7 +23,7 @@ internal class KaLibraryModuleImpl(
     override val directRegularDependencies: List<KaModule>,
     override val directDependsOnDependencies: List<KaModule>,
     override val directFriendDependencies: List<KaModule>,
-    override val contentScope: GlobalSearchScope,
+    override val baseContentScope: GlobalSearchScope,
     override val targetPlatform: TargetPlatform,
     override val project: Project,
     override val binaryRoots: Collection<Path>,
@@ -33,6 +34,10 @@ internal class KaLibraryModuleImpl(
     @KaPlatformInterface
     override val isSdk: Boolean,
 ) : KaLibraryModule, KtModuleWithPlatform {
+    override val contentScope: GlobalSearchScope by lazy {
+        KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
+    }
+
     override val transitiveDependsOnDependencies: List<KaModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
@@ -30,6 +31,10 @@ internal class KaScriptModuleImpl(
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
 
-    override val contentScope: GlobalSearchScope
+    override val baseContentScope: GlobalSearchScope
         get() = GlobalSearchScope.fileScope(file)
+
+    override val contentScope: GlobalSearchScope by lazy {
+        KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
+    }
 }

@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -19,11 +20,15 @@ class KaSourceModuleImpl(
     override val targetPlatform: TargetPlatform,
     override val languageVersionSettings: LanguageVersionSettings,
     override val project: Project,
-    override val contentScope: GlobalSearchScope,
+    override val baseContentScope: GlobalSearchScope,
 ) : KtModuleWithModifiableDependencies(), KaSourceModule {
     override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
     override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
+
+    override val contentScope: GlobalSearchScope by lazy {
+        KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
+    }
 
     override fun toString(): String = name
 
