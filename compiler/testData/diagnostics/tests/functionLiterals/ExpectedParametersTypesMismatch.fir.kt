@@ -26,7 +26,7 @@ fun test1() {
         x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> ""
     }<!>
     foo1 <!ARGUMENT_TYPE_MISMATCH!>{
-        -> <!ARGUMENT_TYPE_MISMATCH!>42<!>
+        -> <!RETURN_TYPE_MISMATCH!>42<!>
     }<!>
 
 
@@ -40,6 +40,6 @@ fun test1() {
         x -> ""
     }<!>
     foo2 <!ARGUMENT_TYPE_MISMATCH!>{
-         -> <!ARGUMENT_TYPE_MISMATCH!>42<!>
+         -> <!RETURN_TYPE_MISMATCH!>42<!>
     }<!>
 }

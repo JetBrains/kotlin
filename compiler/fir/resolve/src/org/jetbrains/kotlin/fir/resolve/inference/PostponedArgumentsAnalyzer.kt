@@ -278,7 +278,8 @@ class PostponedArgumentsAnalyzer(
                     checkerSink,
                     context = resolutionContext,
                     isReceiver = false,
-                    isDispatch = false
+                    isDispatch = false,
+                    anonymousFunctionIfReturnExpression = lambda.anonymousFunction,
                 )
             }
         }

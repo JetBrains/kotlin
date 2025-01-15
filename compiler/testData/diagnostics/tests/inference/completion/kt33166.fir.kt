@@ -31,7 +31,7 @@ fun f1(future: OurFuture<String>, e: Either.Left<String>) {
             true -> OurFuture.createOurFuture(e)
             else -> throw Exception()
         }
-        <!ARGUMENT_TYPE_MISMATCH!>x<!>
+        <!RETURN_TYPE_MISMATCH!>x<!>
     }
 }
 

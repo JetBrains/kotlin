@@ -38,6 +38,6 @@ class B {
 }
 
 fun foo3(x: B) = {
-    x += { <!ARGUMENT_TYPE_MISMATCH!>""<!> }
-    x += id { <!ARGUMENT_TYPE_MISMATCH!>""<!> }
+    x += { <!RETURN_TYPE_MISMATCH!>""<!> }
+    x += id { <!RETURN_TYPE_MISMATCH!>""<!> }
 }
