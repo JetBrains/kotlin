@@ -36,9 +36,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
+import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
@@ -48,6 +50,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KProperty
 import kotlin.test.*
 
@@ -1181,6 +1184,82 @@ class IrValidatorTest {
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
             )
+        )
+    }
+
+    @Test
+    fun `dispatch receivers with dynamic type are reported`() {
+        val file = createIrFile()
+        val dynamicType: IrDynamicType = IrDynamicTypeImpl(
+            annotations = emptyList(),
+            variance = Variance.INVARIANT
+        )
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        function.addValueParameter {
+            name = Name.identifier("v")
+            type = dynamicType
+        }.also {
+            it.kind = IrParameterKind.DispatchReceiver
+        }
+
+        val functionReference = IrFunctionReferenceImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = function.symbol,
+            typeArgumentsCount = 0
+        )
+
+        val functionCall = IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, function.symbol,
+            typeArgumentsCount = 0,
+        )
+
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(functionReference)
+        body.statements.add(functionCall)
+        function.body = body
+        file.addChild(function)
+
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
+                    FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null reflectionTarget=<same>
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> (${'$'}this:dynamic) returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
+                    CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Unit origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> (${'$'}this:dynamic) returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
+                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:dynamic) returnType:kotlin.Unit
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+            ),
         )
     }
 }
