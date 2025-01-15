@@ -1247,7 +1247,10 @@ open class PsiRawFirBuilder(
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
                             is KtScript -> convertScriptOrSnippets(declaration, this@buildFile)
-                            is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
+                            is KtDestructuringDeclaration -> {
+                                val initializer = declaration.toInitializerExpression()
+                                buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement(), initializer)
+                            }
                             else -> declaration.convert()
                         }
                     }

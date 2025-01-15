@@ -932,7 +932,10 @@ class LightTreeRawFirDeclarationBuilder(
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper) //anonymousInitializer
                 SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
                 MODIFIER_LIST -> modifierLists += node
-                DESTRUCTURING_DECLARATION -> container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
+                DESTRUCTURING_DECLARATION -> {
+
+                    container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
+                }
             }
         }
 
