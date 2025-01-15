@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
 import org.jetbrains.kotlin.backend.common.ir.isJvmBuiltin
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase
-import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.EnumEntriesIntrinsicMappingsCacheImpl
@@ -66,6 +64,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class JvmIrCodegenFactory(
     configuration: CompilerConfiguration,
@@ -367,17 +368,28 @@ class JvmIrCodegenFactory(
 
         if (hasErrors()) return
 
+        val nThreads = context.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
+        val executor = if (nThreads > 1) Executors.newFixedThreadPool(nThreads) else null
+
         // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
         // when serializing metadata in the multifile parts.
         // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
         for (generateMultifileFacades in listOf(true, false)) {
-            val codegen = createSimpleNamedCompilerPhase(
-                "Codegen",
-                outputIfNotEnabled = { _, _, _, it -> it },
-                op = generateFile(generateMultifileFacades)
-            )
-            PerformByIrFilePhase(listOf(codegen), supportParallel = true).invokeToplevel(PhaseConfig(), context, module)
+            if (executor != null) {
+                val taskPerFile = module.files.map { irFile ->
+                    CompletableFuture.runAsync( {
+                        generateFile(context, irFile, generateMultifileFacades)
+                    }, executor)
+                }
+                CompletableFuture.allOf(*taskPerFile.toTypedArray()).get()
+            } else {
+                for (irFile in module.files) {
+                    generateFile(context, irFile, generateMultifileFacades)
+                }
+            }
         }
+        executor?.shutdown()
+        executor?.awaitTermination(1, TimeUnit.DAYS) // Wait long enough
 
         context.enumEntriesIntrinsicMappingsCache.generateMappingsClasses()
 
@@ -396,7 +408,7 @@ class JvmIrCodegenFactory(
         state.factory.done()
     }
 
-    private fun generateFile(generateMultifileFacades: Boolean) = fun(context: JvmBackendContext, file: IrFile): IrFile {
+    private fun generateFile(context: JvmBackendContext, file: IrFile, generateMultifileFacades: Boolean): IrFile {
         val isMultifileFacade = file.fileEntry is MultifileFacadeFileEntry
         if (isMultifileFacade == generateMultifileFacades) {
             for (loweredClass in file.declarations) {
