@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcard
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.isValid
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
@@ -56,7 +54,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     }
 
     private val _name: String by lazyPub {
-        if (method is SymbolLightAnnotationsMethod) "p0" else AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
+        AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
     }
 
     override fun getNameIdentifier(): PsiIdentifier? = null
@@ -71,9 +69,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        if (method is SymbolLightAnnotationsMethod)
-            SymbolLightClassModifierList(containingDeclaration = this)
-        else SymbolLightClassModifierList(
+        SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
@@ -92,24 +88,13 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
             val ktType = receiver.returnType
-            val psiType = ktType.asPsiType(
+            ktType.asPsiType(
                 this@SymbolLightParameterForReceiver,
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
                 allowNonJvmPlatforms = true,
             )
-
-            if (method is SymbolLightAnnotationsMethod) {
-                val erased = TypeConversionUtil.erasure(psiType)
-                val name = erased.canonicalText
-                method.getPropertyTypeParameters()
-                    .firstOrNull { it.name == name }
-                    ?.superTypes
-                    ?.firstOrNull()
-                    ?.let { TypeConversionUtil.erasure(it) }
-                    ?: erased
-            } else psiType
         } ?: nonExistentType()
     }
 

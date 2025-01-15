@@ -34,9 +34,6 @@ object JvmAnalysisFlags {
     val useIR by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val generatePropertyAnnotationsMethods by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val outputBuiltinsMetadata by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

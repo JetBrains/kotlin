@@ -1,5 +1,4 @@
 // Test
-// GENERATE_PROPERTY_ANNOTATIONS_METHODS
 annotation class MyAnnotation
 annotation class MyAnnotation2
 annotation class MyAnnotation3

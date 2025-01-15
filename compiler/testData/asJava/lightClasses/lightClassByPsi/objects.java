@@ -29,10 +29,6 @@ public final class C /* C*/ {
 }
 
 public static final class Companion /* C.Companion*/ {
-  @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
-  public static void getX$annotations();//  getX$annotations()
-
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I);//  getC(@org.jetbrains.annotations.NotNull() I)
@@ -152,10 +148,6 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Obj INSTANCE;
-
-  @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
-  public static void getX$annotations();//  getX$annotations()
 
   @java.lang.Override()
   public void run();//  run()

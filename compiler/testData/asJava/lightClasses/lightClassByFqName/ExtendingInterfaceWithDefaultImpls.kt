@@ -1,5 +1,4 @@
 // p.C
-// GENERATE_PROPERTY_ANNOTATIONS_METHODS
 package p
 
 annotation class Anno

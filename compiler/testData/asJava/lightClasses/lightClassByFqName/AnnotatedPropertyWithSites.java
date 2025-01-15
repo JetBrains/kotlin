@@ -10,10 +10,6 @@ public final class Test /* Test*/ {
   @MyAnnotation2()
   public final void setBar(@MyAnnotation3() @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setBar(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @MyAnnotation4()
-  @java.lang.Deprecated()
-  public static void getBar$annotations();//  getBar$annotations()
-
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() kotlin.Unit getFooP(@MyAnnotation7() @MyAnnotation8() int);//  getFooP(@MyAnnotation8() int)
 
