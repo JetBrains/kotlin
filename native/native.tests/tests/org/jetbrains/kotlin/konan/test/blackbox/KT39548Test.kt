@@ -19,11 +19,9 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 class ClassicKT39548Test : KT39548TestBase()
 
 @FirPipeline
-@Tag("frontend-fir")
 class FirClassicKT39548Test : KT39548TestBase()
 
 abstract class KT39548TestBase : AbstractNativeSimpleTest() {

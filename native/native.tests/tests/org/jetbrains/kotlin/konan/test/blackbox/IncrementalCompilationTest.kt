@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 @FirPipeline
-@Tag("frontend-fir")
 @Tag("caches")
 @EnforcedHostTarget
 @TestMetadata(TEST_SUITE_PATH)

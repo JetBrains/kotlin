@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("gc")
 @UseStandardTestCaseGroupProvider()
-@Tag("frontend-classic")
 @ClassicPipeline()
 public class NativeGCTestGenerated extends AbstractNativeBlackBoxTest {
   @Test

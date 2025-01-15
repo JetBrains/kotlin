@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("atomicfu-native")
 @EnforcedHostTarget()
-@Tag("frontend-classic")
 @ClassicPipeline()
 @UseExtTestCaseGroupProvider()
 public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
@@ -39,7 +38,6 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-classic")
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomic_extensions {
@@ -114,7 +112,6 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-classic")
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomics_basic {
@@ -213,7 +210,6 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-classic")
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Delegated {
@@ -234,7 +230,6 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-classic")
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Locks {
@@ -261,7 +256,6 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-classic")
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Top_level {
@@ -288,7 +282,6 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-classic")
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Trace {

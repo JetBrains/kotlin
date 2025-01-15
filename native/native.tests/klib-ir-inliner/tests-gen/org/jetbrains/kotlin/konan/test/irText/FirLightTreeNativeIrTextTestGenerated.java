@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.irText;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -21,7 +20,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/ir/irText")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("frontend-classic")
 @ClassicPipeline()
 public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeNativeIrTextTest {
   @Test
@@ -32,7 +30,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/classes")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Classes {
     @Test
@@ -319,7 +316,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/classes/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class DataClasses {
       @Test
@@ -386,7 +382,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/declarations")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Declarations {
     @Test
@@ -559,7 +554,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Annotations {
       @Test
@@ -787,7 +781,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class ContextReceivers {
       @Test
@@ -936,7 +929,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
       @Nested
       @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-classic")
       @ClassicPipeline()
       public class FromKEEP {
         @Test
@@ -979,7 +971,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/delegate")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Delegate {
       @Test
@@ -1003,7 +994,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/jvmRecord")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class JvmRecord {
       @Test
@@ -1015,7 +1005,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Multiplatform {
       @Test
@@ -1026,7 +1015,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
       @Nested
       @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k2")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-classic")
       @ClassicPipeline()
       public class K2 {
         @Test
@@ -1075,7 +1063,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/parameters")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Parameters {
       @Test
@@ -1165,7 +1152,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/provideDelegate")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class ProvideDelegate {
       @Test
@@ -1214,7 +1200,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/errors")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Errors {
     @Test
@@ -1238,7 +1223,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/expressions")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Expressions {
     @Test
@@ -2155,7 +2139,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class CallableReferences {
       @Test
@@ -2287,7 +2270,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class FloatingPointComparisons {
       @Test
@@ -2365,7 +2347,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/funInterface")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class FunInterface {
       @Test
@@ -2431,7 +2412,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions/sam")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Sam {
       @Test
@@ -2444,7 +2424,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/fakeOverrides")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class FakeOverrides {
     @Test
@@ -2467,7 +2446,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Annotations {
       @Test
@@ -2479,7 +2457,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/charsequence")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Charsequence {
       @Test
@@ -2491,7 +2468,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Collections {
       @Test
@@ -2502,7 +2478,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
       @Nested
       @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/list")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-classic")
       @ClassicPipeline()
       public class List {
         @Test
@@ -2514,7 +2489,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
       @Nested
       @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/map")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-classic")
       @ClassicPipeline()
       public class Map {
         @Test
@@ -2526,7 +2500,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
       @Nested
       @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/set")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-classic")
       @ClassicPipeline()
       public class Set {
         @Test
@@ -2539,7 +2512,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/dataclass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Dataclass {
       @Test
@@ -2551,7 +2523,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/enum")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Enum {
       @Test
@@ -2563,7 +2534,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Fieldmodifiers {
       @Test
@@ -2575,7 +2545,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/generics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Generics {
       @Test
@@ -2587,7 +2556,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/gettersetter")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Gettersetter {
       @Test
@@ -2599,7 +2567,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/java21")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Java21 {
       @Test
@@ -2611,7 +2578,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/javastatic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Javastatic {
       @Test
@@ -2623,7 +2589,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/kotlinextensions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Kotlinextensions {
       @Test
@@ -2635,7 +2600,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodmodifiers")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Methodmodifiers {
       @Test
@@ -2647,7 +2611,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodparameters")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Methodparameters {
       @Test
@@ -2659,7 +2622,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/number")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Number {
       @Test
@@ -2671,7 +2633,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/operators")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Operators {
       @Test
@@ -2683,7 +2644,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/platformtypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Platformtypes {
       @Test
@@ -2695,7 +2655,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/typenothing")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Typenothing {
       @Test
@@ -2707,7 +2666,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/vararg")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Vararg {
       @Test
@@ -2719,7 +2677,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/visibility")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Visibility {
       @Test
@@ -2731,7 +2688,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/void")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Void {
       @Test
@@ -2744,7 +2700,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/firProblems")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class FirProblems {
     @Test
@@ -3014,7 +2969,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/js")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Js {
     @Test
@@ -3025,7 +2979,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/js/dynamic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Dynamic {
       @Test
@@ -3037,7 +2990,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/js/external")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class External {
       @Test
@@ -3049,7 +3001,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/js/native")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class Native {
       @Test
@@ -3062,7 +3013,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/lambdas")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Lambdas {
     @Test
@@ -3116,7 +3066,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/properties")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Properties {
     @Test
@@ -3139,7 +3088,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/properties/backingField")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class BackingField {
       @Test
@@ -3176,7 +3124,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/regressions")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Regressions {
     @Test
@@ -3224,7 +3171,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/singletons")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Singletons {
     @Test
@@ -3254,7 +3200,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/stubs")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Stubs {
     @Test
@@ -3284,7 +3229,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
   @Nested
   @TestMetadata("compiler/testData/ir/irText/types")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Types {
     @Test
@@ -3445,7 +3389,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     @Nested
     @TestMetadata("compiler/testData/ir/irText/types/nullChecks")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class NullChecks {
       @Test
@@ -3456,7 +3399,6 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
       @Nested
       @TestMetadata("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-classic")
       @ClassicPipeline()
       public class NullCheckOnLambdaResult {
         @Test

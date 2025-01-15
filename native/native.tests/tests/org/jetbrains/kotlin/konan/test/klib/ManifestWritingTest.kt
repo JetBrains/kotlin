@@ -149,12 +149,10 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
 }
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class ClassicFEManifestWritingTest : ManifestWritingTest()
 
 @FirPipeline
-@Tag("frontend-fir")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class FirFEManifestWritingTest : ManifestWritingTest() {
 }

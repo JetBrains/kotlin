@@ -20,7 +20,6 @@ import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
 
 @Tag("stdlib")
-@Tag("frontend-fir")
 @PredefinedTestCases(
     TC(
         name = "default",

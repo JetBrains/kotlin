@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -27,7 +26,6 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
 @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
 @UseExtTestCaseGroupProvider()
-@Tag("frontend-fir")
 @FirPipeline()
 public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNativeKlibSyntheticAccessorInPhase2Test {
   @Test
@@ -41,7 +39,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class OuterThis {
     @Test
@@ -55,7 +52,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class CrossFileLeak {
       @Test
@@ -136,7 +132,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class CrossModuleLeak {
       @Test
@@ -217,7 +212,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class SingleFile {
       @Test
@@ -299,7 +293,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class PrivateMember {
     @Test
@@ -313,7 +306,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class CrossFilePrivateLeak {
       @Test
@@ -616,7 +608,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class CrossModulePrivateLeak {
       @Test
@@ -919,7 +910,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class SingleFile {
       @Test
@@ -1097,7 +1087,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class TopLevelPrivate {
     @Test
@@ -1111,7 +1100,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class CrossFilePrivateLeak {
       @Test
@@ -1294,7 +1282,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class CrossModulePrivateLeak {
       @Test
@@ -1477,7 +1464,6 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
     @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
     @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
-    @Tag("frontend-fir")
     @FirPipeline()
     public class SingleFile {
       @Test

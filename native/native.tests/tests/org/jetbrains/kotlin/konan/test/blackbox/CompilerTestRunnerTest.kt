@@ -283,12 +283,10 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
 
 @Suppress("JUnitTestCaseWithNoTests")
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicCompilerTestRunnerTest : CompilerTestRunnerTestBase()
 
 @Suppress("JUnitTestCaseWithNoTests")
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirCompilerTestRunnerTest : CompilerTestRunnerTestBase()

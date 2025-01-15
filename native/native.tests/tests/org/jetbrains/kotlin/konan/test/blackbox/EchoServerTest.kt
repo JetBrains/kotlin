@@ -25,13 +25,11 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestMetadata("native/native.tests/testData/echoServer")
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicEchoServerTest : EchoServerBaseTest()
 
 @FirPipeline
-@Tag("frontend-fir")
 @TestMetadata("native/native.tests/testData/echoServer")
 @TestDataPath("\$PROJECT_ROOT")
 class FirEchoServerTest : EchoServerBaseTest()

@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 @Tag("litmuskt-native")
 @UseStandardTestCaseGroupProvider()
 @EnforcedHostTarget()
-@Tag("frontend-fir")
 @FirPipeline()
 public class FirLitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   @Test

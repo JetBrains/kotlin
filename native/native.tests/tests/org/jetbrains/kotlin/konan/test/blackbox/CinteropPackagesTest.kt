@@ -35,7 +35,6 @@ import kotlin.test.assertTrue
 // It could be another less obvious approach: to run same tests under new test system 1) with renaming and 2) without,
 // while CInteropPackagesTest is simple and straightforward, and also allows to validate new test system's package rename approach.
 @FirPipeline
-@Tag("frontend-fir")
 class CInteropPackagesTest : AbstractNativeSimpleTest() {
     @Test
     fun testAllTestSourcesInCinteropPackages() {

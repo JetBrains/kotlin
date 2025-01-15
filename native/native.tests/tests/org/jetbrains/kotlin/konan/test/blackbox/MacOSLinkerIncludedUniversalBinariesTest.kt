@@ -30,7 +30,6 @@ import kotlin.test.assertEquals
 
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @ClassicPipeline()
-@Tag("frontend-classic")
 class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
 
     @Test

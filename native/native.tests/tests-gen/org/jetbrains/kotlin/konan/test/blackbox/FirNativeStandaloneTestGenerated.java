@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 @Tag("standalone")
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
 @UseStandardTestCaseGroupProvider()
-@Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
@@ -58,7 +57,6 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class Checkers {
     @Test
@@ -151,7 +149,6 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class Console {
     @Test
@@ -226,7 +223,6 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class EntryPoint {
     @Test
@@ -283,7 +279,6 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class RuntimeLogging {
     @Test
@@ -310,7 +305,6 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("frontend-fir")
   @FirPipeline()
   public class Termination {
     @Test

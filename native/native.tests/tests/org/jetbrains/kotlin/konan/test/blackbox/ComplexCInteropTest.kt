@@ -35,12 +35,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicComplexCInteropTest : ComplexCInteropTestBase()
 
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirComplexCInteropTest : ComplexCInteropTestBase()
 

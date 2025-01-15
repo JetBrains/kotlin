@@ -24,7 +24,6 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("native/native.tests/testData/samples")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("infrastructure")
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseStandardTestCaseGroupProvider()
   public class Samples {
@@ -301,7 +300,6 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
     @TestMetadata("native/native.tests/testData/samples/inner")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("infrastructure")
-    @Tag("frontend-fir")
     @FirPipeline()
     @UseStandardTestCaseGroupProvider()
     public class Inner {
@@ -322,7 +320,6 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("native/native.tests/testData/samples2")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("infrastructure")
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseStandardTestCaseGroupProvider()
   public class Samples2 {

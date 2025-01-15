@@ -328,12 +328,10 @@ fun main() {
 }
 
 fun frontendFir() = arrayOf(
-    annotation(Tag::class.java, "frontend-fir"),
     annotation(FirPipeline::class.java)
 )
 
 fun frontendClassic() = arrayOf(
-    annotation(Tag::class.java, "frontend-classic"),
     annotation(ClassicPipeline::class.java)
 )
 

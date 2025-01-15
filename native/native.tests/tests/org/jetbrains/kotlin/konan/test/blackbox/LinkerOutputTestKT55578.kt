@@ -22,7 +22,6 @@ import kotlin.test.assertTrue
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @ClassicPipeline()
-@Tag("frontend-classic")
 class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
     private val defaultCompilerArguments = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
 

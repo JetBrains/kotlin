@@ -27,12 +27,10 @@ import java.io.File
 import kotlin.time.Duration
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicFrameworkTest : FrameworkTestBase()
 
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirFrameworkTest : FrameworkTestBase()
 

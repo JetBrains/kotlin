@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.konan.file.File as KFile
  * The control over the working directory in performed in the [runWithCustomWorkingDir] function.
  */
 @FirPipeline
-@Tag("frontend-fir")
 @Tag("klib")
 @Isolated // Run this test class in isolation from other test classes.
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.

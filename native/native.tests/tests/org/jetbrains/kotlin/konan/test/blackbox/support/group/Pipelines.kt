@@ -4,8 +4,12 @@
  */
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
+import org.junit.jupiter.api.Tag
+
 @Target(AnnotationTarget.CLASS)
+@Tag("frontend-fir")
 annotation class FirPipeline
 
 @Target(AnnotationTarget.CLASS)
+@Tag("frontend-classic")
 annotation class ClassicPipeline
