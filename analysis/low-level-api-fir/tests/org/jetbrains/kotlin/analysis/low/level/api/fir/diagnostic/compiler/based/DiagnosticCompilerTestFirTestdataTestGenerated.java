@@ -681,9 +681,9 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     }
 
     @Test
-    @TestMetadata("topLevelDestruction.kt")
-    public void testTopLevelDestruction() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestruction.kt");
+    @TestMetadata("topLevelDestructuring.kt")
+    public void testTopLevelDestructuring() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestructuring.kt");
     }
 
     @Test
