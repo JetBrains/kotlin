@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 class KaBuiltinsModuleImpl(
     override val targetPlatform: TargetPlatform,
     override val project: Project,
-) : KaBuiltinsModule {
-    override val contentScope: GlobalSearchScope
+) : KaBuiltinsModule, KaModuleBase() {
+    override val baseContentScope: GlobalSearchScope
         get() = BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project)
 
     override fun equals(other: Any?): Boolean = other is KaBuiltinsModule && this.targetPlatform == other.targetPlatform

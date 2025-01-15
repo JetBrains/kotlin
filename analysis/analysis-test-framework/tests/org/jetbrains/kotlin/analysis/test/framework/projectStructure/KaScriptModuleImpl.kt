@@ -19,7 +19,7 @@ class KaScriptModuleImpl(
     override val languageVersionSettings: LanguageVersionSettings,
     override val project: Project,
 ) : KtModuleWithModifiableDependencies(), KaScriptModule {
-    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
+    override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
     override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
     override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
