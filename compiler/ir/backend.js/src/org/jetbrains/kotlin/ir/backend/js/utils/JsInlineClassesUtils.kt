@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsCommonInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -13,6 +14,8 @@ import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.isInterface
 
 class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClassesUtils {
 
@@ -50,4 +53,6 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
 
     override val unboxIntrinsic: IrSimpleFunctionSymbol
         get() = context.intrinsics.jsUnboxIntrinsic
+
+    fun getRuntimeClassFor(type: IrType): IrClass? = type.erasedUpperBound.takeIf { !it.isInterface }
 }

@@ -48849,9 +48849,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/valueClasses/tryExpressions.kt");
     }
 
-    @TestMetadata("uLongInValueClass.kt")
-    public void testULongInValueClass() {
-      runTest("compiler/testData/codegen/box/valueClasses/uLongInValueClass.kt");
+    @TestMetadata("valueClassInValueClass.kt")
+    public void testValueClassInValueClass() {
+      runTest("compiler/testData/codegen/box/valueClasses/valueClassInValueClass.kt");
     }
 
     @TestMetadata("visibility.kt")

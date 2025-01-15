@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
@@ -181,7 +183,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsBoxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = icUtils.getInlinedClass(call.typeArguments[0]!!)!!
+                val inlineClass = call.typeArguments[0]?.let { icUtils.getRuntimeClassFor(it) }
+                    ?: compilationException("Unexpected type argument in box intrinsic", call)
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
 
                 JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
