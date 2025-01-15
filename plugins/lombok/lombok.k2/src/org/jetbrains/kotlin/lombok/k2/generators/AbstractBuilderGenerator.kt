@@ -90,7 +90,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected abstract fun constructBuilderType(builderClassId: ClassId): ConeClassLikeType
 
-    protected abstract fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType
+    protected abstract fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType?
 
     protected abstract fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
         builder: T,
@@ -313,11 +313,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     ) {
         val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
+        val builderType = getBuilderType(builderSymbol) ?: return
         addIfNonClashing(setterName, existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
                 valueParameters = listOf(ConeLombokValueParameter(fieldName, item.returnTypeRef)),
-                returnTypeRef = getBuilderType(builderSymbol).toFirResolvedTypeRef(),
+                returnTypeRef = builderType.toFirResolvedTypeRef(),
                 modality = Modality.FINAL,
                 visibility = builder.visibility.toVisibility()
             )
@@ -393,7 +394,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             else -> return
         }
 
-        val builderType = getBuilderType(builderSymbol).toFirResolvedTypeRef()
+        val builderType = getBuilderType(builderSymbol)?.toFirResolvedTypeRef() ?: return
         val visibility = builder.visibility.toVisibility()
 
         addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
