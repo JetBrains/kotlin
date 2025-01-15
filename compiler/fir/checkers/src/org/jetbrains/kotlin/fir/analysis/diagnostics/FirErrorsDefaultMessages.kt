@@ -427,6 +427,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_SUSPEND_AN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
@@ -1213,6 +1214,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "See https://youtrack.jetbrains.com/issue/KT-73255 for more details. " +
                     "To remove this warning, use the ''@param:'' annotation target.",
             TO_STRING,
+        )
+        map.put(
+            ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE,
+            "Annotations on block-level expressions are parsed differently depending on the presence of a new line. " +
+                    "Add a new line after the annotations to annotate the entire expression."
         )
 
         // OptIn

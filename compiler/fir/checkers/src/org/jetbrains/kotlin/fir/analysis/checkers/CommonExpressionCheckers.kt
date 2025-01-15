@@ -23,6 +23,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirRecursiveProblemChecker,
             FirOptInUsageAccessChecker,
             FirPrefixAndSuffixSyntaxChecker,
+            FirAnnotatedBinaryExpressionChecker,
             FirExpressionWithErrorTypeChecker,
         )
 

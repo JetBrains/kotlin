@@ -994,6 +994,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val useSiteDescription: String
     }
 
+    interface AnnotationsOnBlockLevelExpressionOnTheSameLine : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = AnnotationsOnBlockLevelExpressionOnTheSameLine::class
+    }
+
     interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JsModuleProhibitedOnVar::class
     }

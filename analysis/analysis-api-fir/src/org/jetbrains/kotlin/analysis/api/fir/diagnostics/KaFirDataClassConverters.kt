@@ -1384,6 +1384,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE) { firDiagnostic ->
+        AnnotationsOnBlockLevelExpressionOnTheSameLineImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
         JsModuleProhibitedOnVarImpl(
             firDiagnostic as KtPsiDiagnostic,

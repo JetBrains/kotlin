@@ -1192,6 +1192,11 @@ internal class AnnotationWillBeAppliedAlsoToPropertyOrFieldImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationWillBeAppliedAlsoToPropertyOrField
 
+internal class AnnotationsOnBlockLevelExpressionOnTheSameLineImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AnnotationsOnBlockLevelExpressionOnTheSameLine
+
 internal class JsModuleProhibitedOnVarImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

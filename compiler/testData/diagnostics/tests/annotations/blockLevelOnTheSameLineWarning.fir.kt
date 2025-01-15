@@ -41,18 +41,18 @@ fun foo(y: IntArray) {
 
     @Ann1() (x * x)
     var z = 1
-    @Ann1 x + z
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x + z<!>
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>@Ann1 x<!> = x + 2
-    @Ann1 x <!UNRESOLVED_REFERENCE!>+=<!> z + 2
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!><!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>@Ann1 x<!> = x + 2<!>
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x <!UNRESOLVED_REFERENCE!>+=<!> z + 2<!>
 
-    @Ann1 x + 6 * 2 > 0
-    @Ann1 x * 6 + 2 > 0
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x + 6 * 2<!> > 0
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x * 6<!> + 2 > 0
 
-    @Ann1 object { operator fun plus(x: Int) = 1 } + 1
-    @Ann1 object { operator fun plus(x: Int) = 1 } + 1 * 4 > 0
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 object { operator fun plus(x: Int) = 1 } + 1<!>
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 object { operator fun plus(x: Int) = 1 } + 1 * 4<!> > 0
 
-    @Ann1 x foo z + 8
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x foo z + 8<!>
 
     1 + @Ann1 x
     1 + @Ann1 x * z + 8

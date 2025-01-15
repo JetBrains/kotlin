@@ -458,6 +458,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD by warning<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }
+        val ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE by warning<PsiElement>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
