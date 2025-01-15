@@ -93,11 +93,10 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             if (reportProblems) {
                 try {
                     println(classFileFactory.createText())
-                } catch (_: Throwable) {
-                    // In FIR we have factory which can't print bytecode
-                    //   and it throws exception otherwise. So we need
-                    //   ignore that exception to report original one
-                    // TODO: fix original problem
+                } catch (e1: Throwable) {
+                    System.err.println("Exception thrown while trying to generate text:")
+                    e1.printStackTrace()
+                    System.err.println("---")
                 }
             }
             throw e

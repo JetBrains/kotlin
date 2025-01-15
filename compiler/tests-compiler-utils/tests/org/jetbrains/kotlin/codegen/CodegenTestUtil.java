@@ -168,10 +168,9 @@ public class CodegenTestUtil {
                         System.err.println(file.asText());
                         System.err.println(classNode.name + "::" + method.name + method.desc);
                     } catch (Throwable ex) {
-                        // In FIR we have factory which can't print bytecode
-                        //   and it throws exception otherwise. So we need
-                        //   ignore that exception to report original one
-                        // TODO: fix original problem
+                        System.err.println("Exception thrown while trying to generate text:");
+                        ex.printStackTrace();
+                        System.err.println("---");
                     }
 
                     //noinspection InstanceofCatchParameter

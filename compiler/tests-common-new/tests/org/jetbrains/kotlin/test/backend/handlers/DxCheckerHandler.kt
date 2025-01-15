@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.D8Checker
-import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
@@ -30,15 +29,11 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
                 !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
             ) {
                 try {
-                    info.classFileFactory.getClassFiles().forEach {
-                        println(" * ${it.relativePath}")
-                    }
                     println(info.classFileFactory.createText())
-                } catch (_: Throwable) {
-                    // In FIR we have factory which can't print bytecode
-                    //   and it throws exception otherwise. So we need
-                    //   ignore that exception to report original one
-                    // TODO: fix original problem
+                } catch (e1: Throwable) {
+                    System.err.println("Exception thrown while trying to generate text:")
+                    e1.printStackTrace()
+                    System.err.println("---")
                 }
             }
             throw e
