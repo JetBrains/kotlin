@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClass
-import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClassExcludingMembers
-import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotField
-import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotMethod
-import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.sortClassMembers
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
-import org.jetbrains.kotlin.incremental.SelectiveClassVisitor
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
-import org.jetbrains.kotlin.incremental.hashToLong
+import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClass
+import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClassExcludingMembers
+import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotField
+import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
+import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
+import org.jetbrains.kotlin.incremental.impl.SelectiveClassVisitor
+import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
