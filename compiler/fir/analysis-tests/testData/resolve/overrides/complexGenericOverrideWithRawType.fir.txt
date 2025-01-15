@@ -1,0 +1,7 @@
+FILE: test.kt
+    public final class MySubject : R|StackJava.SubjectClass| {
+        public constructor(): R|MySubject| {
+            super<R|StackJava.SubjectClass|>()
+        }
+
+    }
