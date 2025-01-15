@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -155,7 +156,7 @@ internal class KaFe10SymbolRelationProvider(
             }
         } ?: TODO(descriptor::class.java.name)
         val libraryPath = Paths.get(library)
-        return object : KaLibraryModule {
+        return object : KaLibraryModule, KaModuleBase() {
             override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
             override val librarySources: KaLibrarySourceModule? = null
             override val isSdk: Boolean = false
@@ -167,7 +168,7 @@ internal class KaFe10SymbolRelationProvider(
             override val directDependsOnDependencies: List<KaModule> = emptyList()
             override val transitiveDependsOnDependencies: List<KaModule> = emptyList()
             override val directFriendDependencies: List<KaModule> = emptyList()
-            override val contentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
+            override val baseContentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
             override val targetPlatform: TargetPlatform
                 get() = descriptor.platform!!
             override val project: Project

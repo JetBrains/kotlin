@@ -19,7 +19,7 @@ class KaSourceModuleImpl(
     override val targetPlatform: TargetPlatform,
     override val languageVersionSettings: LanguageVersionSettings,
     override val project: Project,
-    override val contentScope: GlobalSearchScope,
+    override val baseContentScope: GlobalSearchScope,
 ) : KtModuleWithModifiableDependencies(), KaSourceModule {
     override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
     override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()

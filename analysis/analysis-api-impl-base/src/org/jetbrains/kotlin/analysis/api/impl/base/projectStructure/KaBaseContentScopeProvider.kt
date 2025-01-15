@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 internal class KaBaseContentScopeProvider : KaContentScopeProvider {
     @OptIn(KaPlatformInterface::class)
     override fun getRefinedContentScope(module: KaModule): GlobalSearchScope {
-        val baseContentScope = module.contentScope
+        val baseContentScope = module.baseContentScope
 
         val refiners = KotlinContentScopeRefiner.getRefiners(module.project).ifEmpty {
             return baseContentScope

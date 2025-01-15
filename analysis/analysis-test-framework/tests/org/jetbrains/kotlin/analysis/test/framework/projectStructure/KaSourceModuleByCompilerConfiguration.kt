@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -34,18 +34,18 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 abstract class KtModuleByCompilerConfiguration(
-    val project: Project,
+    override val project: Project,
     val testModule: TestModule,
     val psiFiles: List<PsiFile>,
     val testServices: TestServices,
-) {
+) : KaModuleBase() {
     private val compilerConfigurationProvider = testServices.compilerConfigurationProvider
     private val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
 
     val name: String
         get() = testModule.name
 
-    val directRegularDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val directRegularDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
             testModule.allDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
             addAll(computeLibraryDependencies())
@@ -89,15 +89,14 @@ abstract class KtModuleByCompilerConfiguration(
         )
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // used for overrides in subclasses
+    @Suppress("MemberVisibilityCanBePrivate")
+    override // used for overrides in subclasses
     val directDependsOnDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         testModule.dependsOnDependencies
             .map { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
     }
 
-    val transitiveDependsOnDependencies: List<KaModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
-
-    val directFriendDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val directFriendDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
             testModule.friendDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
             addAll(
@@ -113,7 +112,7 @@ abstract class KtModuleByCompilerConfiguration(
     val languageVersionSettings: LanguageVersionSettings
         get() = testModule.languageVersionSettings
 
-    val targetPlatform: TargetPlatform
+    override val targetPlatform: TargetPlatform
         get() = testModule.targetPlatform(testServices)
 }
 
@@ -125,7 +124,7 @@ class KaSourceModuleByCompilerConfiguration(
 ) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KaSourceModule {
     override val ktModule: KaModule get() = this
 
-    override val contentScope: GlobalSearchScope =
+    override val baseContentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
     @KaExperimentalApi
@@ -140,7 +139,7 @@ class KaScriptModuleByCompilerConfiguration(
     testServices: TestServices,
 ) : KtModuleByCompilerConfiguration(project, testModule, listOf(file), testServices), KaScriptModule {
     override val ktModule: KaModule get() = this
-    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
+    override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
 }
 
 class KaLibraryModuleByCompilerConfiguration(
@@ -156,7 +155,7 @@ class KaLibraryModuleByCompilerConfiguration(
     override val isSdk: Boolean get() = false
     override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
 
-    override val contentScope: GlobalSearchScope =
+    override val baseContentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 }
 
@@ -168,7 +167,7 @@ class KaLibrarySourceModuleByCompilerConfiguration(
     override val binaryLibrary: KaLibraryModule,
 ) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KaLibrarySourceModule {
     override val ktModule: KaModule get() = this
-    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
+    override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
     override val libraryName: String get() = testModule.name
 }
@@ -178,8 +177,8 @@ private class LibraryByRoots(
     private val parentModule: KaModule,
     override val project: Project,
     testServices: TestServices,
-) : KaLibraryModule {
-    override val contentScope: GlobalSearchScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+) : KaLibraryModule, KaModuleBase() {
+    override val baseContentScope: GlobalSearchScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
         roots,
         emptyList(),
         testServices.environmentManager.getApplicationEnvironment(),
