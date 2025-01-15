@@ -127,7 +127,6 @@ public interface KaSession : KaLifetimeOwner,
     KaResolveExtensionInfoProvider,
     KaCompilerPluginGeneratedDeclarationsProvider,
     KaCompilerFacility,
-    KaMetadataCalculator,
     KaSubstitutorProvider,
     KaDataFlowProvider,
     KaSourceProvider

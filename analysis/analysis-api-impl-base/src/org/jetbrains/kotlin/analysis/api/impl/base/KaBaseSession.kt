@@ -40,7 +40,6 @@ abstract class KaBaseSession(
     resolveExtensionInfoProvider: KaResolveExtensionInfoProvider,
     compilerPluginGeneratedDeclarationsProvider: KaCompilerPluginGeneratedDeclarationsProvider,
     compilerFacility: KaCompilerFacility,
-    metadataCalculator: KaMetadataCalculator,
     substitutorProvider: KaSubstitutorProvider,
     dataFlowProvider: KaDataFlowProvider,
     sourceProvider: KaSourceProvider,
@@ -70,7 +69,6 @@ abstract class KaBaseSession(
     KaResolveExtensionInfoProvider by resolveExtensionInfoProvider,
     KaCompilerPluginGeneratedDeclarationsProvider by compilerPluginGeneratedDeclarationsProvider,
     KaCompilerFacility by compilerFacility,
-    KaMetadataCalculator by metadataCalculator,
     KaSubstitutorProvider by substitutorProvider,
     KaDataFlowProvider by dataFlowProvider,
     KaSourceProvider by sourceProvider

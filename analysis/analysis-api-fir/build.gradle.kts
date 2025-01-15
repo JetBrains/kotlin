@@ -95,8 +95,6 @@ allprojects {
 val generatorClasspath by configurations.creating
 
 dependencies {
-    implementation(project(":compiler:fir:fir-serialization"))
-    implementation(project(":compiler:backend"))
     generatorClasspath(project(":analysis:analysis-api-fir:analysis-api-fir-generator"))
 }
 
