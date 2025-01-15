@@ -42,7 +42,7 @@ TEST(ExceptionTest, ProcessUnhandledException_WithHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -58,7 +58,7 @@ TEST(ExceptionDeathTest, ProcessUnhandledException_NoHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -78,10 +78,10 @@ TEST(ExceptionDeathTest, ProcessUnhandledException_WithFailingHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         Object hookException(typeHolder.typeInfo());
-        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         hookException->value = 13;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -100,10 +100,10 @@ TEST(ExceptionDeathTest, ProcessUnhandledException_WithTerminatingFailingHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         Object hookException(typeHolder.typeInfo());
-        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         hookException->value = 13;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -122,7 +122,7 @@ TEST(ExceptionDeathTest, TerminateWithUnhandledException) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -139,7 +139,7 @@ TEST(ExceptionDeathTest, TerminateWithUnhandledException) {
 TEST(ExceptionDeathTest, TerminateHandler_WithHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     Object exception(typeHolder.typeInfo());
-    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     exception->value = 42;
     auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
     auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -179,7 +179,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithHook) {
 TEST(ExceptionDeathTest, TerminateHandler_NoHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     Object exception(typeHolder.typeInfo());
-    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     exception->value = 42;
     auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
     auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -221,10 +221,10 @@ TEST(ExceptionDeathTest, TerminateHandler_NoHook) {
 TEST(ExceptionDeathTest, TerminateHandler_WithFailingHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     Object exception(typeHolder.typeInfo());
-    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     exception->value = 42;
     Object hookException(typeHolder.typeInfo());
-    hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     hookException->value = 13;
     auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
     auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();

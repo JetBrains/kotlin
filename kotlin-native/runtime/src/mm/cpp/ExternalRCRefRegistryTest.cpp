@@ -53,7 +53,7 @@ struct HeapObject : test_support::Object<Payload> {
 
 struct PermanentObject : test_support::Object<Payload> {
     PermanentObject() noexcept : Object(typeInfoHolder.typeInfo()) {
-        header()->typeInfoOrMeta_ = setPointerBits(header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        header()->typeInfoOrMeta_ = setPointerBits(header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         RuntimeAssert(header()->permanent(), "Must be permanent");
     }
 };

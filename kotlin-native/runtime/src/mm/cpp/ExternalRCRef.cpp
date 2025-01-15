@@ -71,7 +71,7 @@ mm::ExternalRCRefImpl::ExternalRCRefImpl(mm::ExternalRCRefRegistry& registry, KR
     RuntimeAssert(obj != nullptr, "Creating ExternalRCRefImpl for null object");
     RuntimeAssert(rc >= 0, "Creating ExternalRCRefImpl with negative rc %d", rc);
     // Runtime tests occasionally use sentinel values under 8 for opaque objects
-    RuntimeAssert(reinterpret_cast<uintptr_t>(obj) < 8u || !obj->local(), "Creating ExternalRCRefImpl to a stack-allocated object %p", obj);
+    RuntimeAssert(reinterpret_cast<uintptr_t>(obj) < 8u || !obj->stack(), "Creating ExternalRCRefImpl to a stack-allocated object %p", obj);
 
     if (rc > 0) {
         registry.insertIntoRootsHead(*this);

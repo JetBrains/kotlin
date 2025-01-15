@@ -28,11 +28,11 @@
 #include "Utils.hpp"
 
 typedef enum {
-  // Must match to permTag() in Kotlin.
-  OBJECT_TAG_PERMANENT_CONTAINER = 1 << 0,
-  OBJECT_TAG_NONTRIVIAL_CONTAINER = 1 << 1,
-  // Keep in sync with immTypeInfoMask in Kotlin.
-  OBJECT_TAG_MASK = (1 << 2) - 1
+    OBJECT_TAG_HEAP = 0,
+    OBJECT_TAG_PERMANENT = 1, // Must match to permanentTag() in Kotlin.
+    OBJECT_TAG_STACK = 3,
+    // Keep in sync with immTypeInfoMask in Kotlin.
+    OBJECT_TAG_MASK = (1 << 2) - 1
 } ObjectTag;
 
 struct ArrayHeader;
@@ -96,10 +96,8 @@ struct ObjHeader {
   void* CasAssociatedObject(void* expectedObj, void* obj);
 #endif
 
-  inline bool local() const {
-    unsigned bits = getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK);
-    return (bits & (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER)) ==
-        (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER);
+  inline bool stack() const {
+    return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_STACK;
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!
@@ -108,10 +106,12 @@ struct ObjHeader {
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 
   inline bool permanent() const {
-    return hasPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_PERMANENT_CONTAINER);
+    return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_PERMANENT;
   }
 
-  inline bool heap() const { return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == 0; }
+  inline bool heap() const {
+    return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_HEAP;
+  }
 
   static MetaObjHeader* createMetaObject(ObjHeader* object);
   static void destroyMetaObject(ObjHeader* object);

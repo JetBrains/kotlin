@@ -197,7 +197,7 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     size_t arraySize = headerSize + count * sizeof(char16_t);
 
     auto header = (ObjHeader*)std::calloc(arraySize, 1);
-    header->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT_CONTAINER);
+    header->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT);
     header->array()->count_ = count;
     utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, StringUtf16Data(header));
     return header;

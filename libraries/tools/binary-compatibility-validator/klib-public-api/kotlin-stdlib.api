@@ -12123,10 +12123,10 @@ final fun (kotlin/Any).kotlin.native.concurrent/ensureNeverFrozen() // kotlin.na
 final fun (kotlin/Any).kotlin.native.internal/collectReferenceFieldValues(): kotlin.collections/List<kotlin/Any> // kotlin.native.internal/collectReferenceFieldValues|collectReferenceFieldValues@kotlin.Any(){}[0]
 
 // Targets: [native]
-final fun (kotlin/Any).kotlin.native.internal/isLocal(): kotlin/Boolean // kotlin.native.internal/isLocal|isLocal@kotlin.Any(){}[0]
+final fun (kotlin/Any).kotlin.native.internal/isPermanent(): kotlin/Boolean // kotlin.native.internal/isPermanent|isPermanent@kotlin.Any(){}[0]
 
 // Targets: [native]
-final fun (kotlin/Any).kotlin.native.internal/isPermanent(): kotlin/Boolean // kotlin.native.internal/isPermanent|isPermanent@kotlin.Any(){}[0]
+final fun (kotlin/Any).kotlin.native.internal/isStack(): kotlin/Boolean // kotlin.native.internal/isStack|isStack@kotlin.Any(){}[0]
 
 // Targets: [native]
 final fun (kotlin/Any?).kotlin.native/identityHashCode(): kotlin/Int // kotlin.native/identityHashCode|identityHashCode@kotlin.Any?(){}[0]

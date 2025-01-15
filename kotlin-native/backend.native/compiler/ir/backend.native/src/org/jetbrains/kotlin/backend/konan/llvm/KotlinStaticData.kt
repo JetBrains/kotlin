@@ -22,7 +22,7 @@ private fun ConstPointer.addBits(llvm: CodegenLlvmHelpers, type: LLVMTypeRef, bi
 internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: CodegenLlvmHelpers, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
     private val stringLiterals = mutableMapOf<String, ConstPointer>()
 
-    // Must match OBJECT_TAG_PERMANENT_CONTAINER in C++.
+    // Must match OBJECT_TAG_PERMANENT in C++.
     private fun permanentTag(typeInfo: ConstPointer): ConstPointer {
         return typeInfo.addBits(llvm, kTypeInfoPtr, 1)
     }

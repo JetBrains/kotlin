@@ -33,7 +33,7 @@ void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexce
     }
     if constexpr (!Traits::kAllowHeapToStackRefs) {
         if (object->heap()) {
-            RuntimeAssert(!field->local(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
+            RuntimeAssert(!field->stack(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
         }
     }
 }
@@ -76,8 +76,8 @@ template <typename Traits>
 void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
     if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
-                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d local=%d", object,
-                weakReference, weakReference->permanent(), weakReference->local());
+                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d stack=%d", object,
+                weakReference, weakReference->permanent(), weakReference->stack());
         // Do not schedule RegularWeakReferenceImpl but process it right away.
         // This will skip markQueue interaction.
         if (Traits::tryMark(weakReference)) {
