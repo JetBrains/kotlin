@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -39,6 +42,74 @@ class JvmBinariesDslIT : KGPBaseTest() {
 
             build("runJvm") {
                 assertTasksExecuted(":multiplatform:runJvm")
+            }
+        }
+    }
+
+    @DisplayName("It is possible to change JDK for executable run task")
+    @GradleTest
+    fun customJdkForExecutableRunTask(gradleVersion: GradleVersion) {
+        project("mppRunJvm", gradleVersion) {
+            subProject("multiplatform").buildScriptInjection {
+                kotlinMultiplatform.jvm {
+                    binaries {
+                        val jvmRun = executable {
+                            mainClass.set("JvmMainKt")
+                        }
+                        jvmRun.configure {
+                            val toolchainService = it.project.extensions.getByType(JavaToolchainService::class.java)
+                            val toolchain = toolchainService.launcherFor {
+                                it.languageVersion.set(JavaLanguageVersion.of(21))
+                            }
+                            it.javaLauncher.set(toolchain)
+                        }
+                    }
+                }
+            }
+
+            build("runJvm") {
+                assertTasksExecuted(":multiplatform:runJvm")
+                val jdk21path = Jvm.forHome(File(System.getProperty("jdk21Home"))).javaExecutable.absolutePath
+                assertOutputContains(
+                    "Successfully started process 'command '${jdk21path}''"
+                )
+            }
+        }
+    }
+
+    @DisplayName("Additional srcDir is included into binary")
+    @GradleTest
+    fun additionalSrcDir(gradleVersion: GradleVersion) {
+        project("mppRunJvm", gradleVersion) {
+            with(subProject("multiplatform")) {
+                buildScriptInjection {
+                    kotlinMultiplatform.jvm {
+                        binaries {
+                            executable {
+                                mainClass.set("JvmExtraKt")
+                            }
+                        }
+                    }
+                    kotlinMultiplatform.sourceSets.named("jvmMain") {
+                        it.kotlin.srcDir("src/jvmExtra/kotlin")
+                    }
+                }
+
+                val jvmExtraDir = kotlinSourcesDir("jvmExtra")
+                jvmExtraDir.createDirectories()
+                jvmExtraDir.resolve("JvmExtra.kt").writeText(
+                    //language=kotlin
+                    """
+                    |fun main() {
+                    |   println("Hello from JvmExtra!")
+                    |}
+                    """.trimMargin()
+                )
+            }
+
+            build("runJvm") {
+                assertTasksExecuted(":multiplatform:runJvm")
+                assertOutputContains("Hello from JvmExtra!")
             }
         }
     }
