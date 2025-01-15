@@ -11,7 +11,7 @@ import java.io.IOException
 import kotlin.io.path.*
 
 object GeneratorsFileUtil {
-    val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
+    private val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
     val GENERATED_MESSAGE = """
     /*
