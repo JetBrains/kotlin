@@ -1,0 +1,11 @@
+Index: 1, Size: 0
+java.lang.IndexOutOfBoundsException: Index: 1, Size: 0
+	at java.util.ArrayList.rangeCheck(ArrayList.java:659)
+	at java.util.ArrayList.get(ArrayList.java:435)
+	at org.jetbrains.kotlin.lombok.k2.generators.SuperBuilderGenerator.addSpecialBuilderMethods(SuperBuilderGenerator.kt:71)
+	at org.jetbrains.kotlin.lombok.k2.generators.SuperBuilderGenerator.addSpecialBuilderMethods(SuperBuilderGenerator.kt:36)
+	at org.jetbrains.kotlin.lombok.k2.generators.AbstractBuilderGenerator.addBuilderMethods(AbstractBuilderGenerator.kt:289)
+	at org.jetbrains.kotlin.lombok.k2.generators.AbstractBuilderGenerator.addBuilderMethods(AbstractBuilderGenerator.kt:157)
+	at org.jetbrains.kotlin.lombok.k2.generators.AbstractBuilderGenerator.createFunctions(AbstractBuilderGenerator.kt:132)
+	at org.jetbrains.kotlin.lombok.k2.generators.AbstractBuilderGenerator.access$createFunctions(AbstractBuilderGenerator.kt:66)
+	...

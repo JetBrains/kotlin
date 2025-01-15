@@ -37,6 +37,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("superBuilderAccessTypeParameterBoundsSafely.kt")
+  public void testSuperBuilderAccessTypeParameterBoundsSafely() {
+    runTest("plugins/lombok/testData/diagnostics/superBuilderAccessTypeParameterBoundsSafely.kt");
+  }
+
+  @Test
   @TestMetadata("superBuilderAnnotationArguments.kt")
   public void testSuperBuilderAnnotationArguments() {
     runTest("plugins/lombok/testData/diagnostics/superBuilderAnnotationArguments.kt");
