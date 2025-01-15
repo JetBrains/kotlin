@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +25,8 @@ import java.util.regex.Pattern;
 @Tag("stress")
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "15m")
 @UseStandardTestCaseGroupProvider()
+@Tag("frontend-classic")
+@ClassicPipeline()
 public class NativeStressTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInTestData() {

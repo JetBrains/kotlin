@@ -6,3 +6,6 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
 @Target(AnnotationTarget.CLASS)
 annotation class FirPipeline
+
+@Target(AnnotationTarget.CLASS)
+annotation class ClassicPipeline

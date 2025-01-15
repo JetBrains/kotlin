@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode.WithStaticCache
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 @Tag("partial-linkage")
 @EnforcedHostTarget
 @UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
+@ClassicPipeline()
+@Tag("frontend-classic")
 class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     // This test relies on static caches. So, run it along with other PL tests but only when caches are enabled.
     @BeforeEach
