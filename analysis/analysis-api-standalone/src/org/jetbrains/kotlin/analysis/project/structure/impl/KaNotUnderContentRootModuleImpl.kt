@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
@@ -25,11 +26,11 @@ internal class KaNotUnderContentRootModuleImpl(
     override val file: PsiFile? = null,
     override val moduleDescription: String,
     override val project: Project,
-) : KaNotUnderContentRootModule, KtModuleWithPlatform {
+) : KaNotUnderContentRootModule, KtModuleWithPlatform, KaModuleBase() {
     override val transitiveDependsOnDependencies: List<KaModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
 
-    override val contentScope: GlobalSearchScope =
+    override val baseContentScope: GlobalSearchScope =
         if (file != null) GlobalSearchScope.fileScope(file) else GlobalSearchScope.EMPTY_SCOPE
 }

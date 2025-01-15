@@ -6,20 +6,21 @@
 package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
-abstract class KtModuleWithModifiableDependencies {
-    abstract val project: Project
+abstract class KtModuleWithModifiableDependencies : KaModuleBase() {
+    abstract override val project: Project
 
-    abstract val directRegularDependencies: MutableList<KaModule>
-    abstract val directDependsOnDependencies: MutableList<KaModule>
-    abstract val directFriendDependencies: MutableList<KaModule>
+    abstract override val directRegularDependencies: MutableList<KaModule>
+    abstract override val directDependsOnDependencies: MutableList<KaModule>
+    abstract override val directFriendDependencies: MutableList<KaModule>
 
     /**
      * When dependencies are modifiable, transitive `dependsOn` dependencies must be recomputed each time as [directDependsOnDependencies]
      * may have been mutated.
      */
-    val transitiveDependsOnDependencies: List<KaModule>
+    override val transitiveDependsOnDependencies: List<KaModule>
         get() = computeTransitiveDependsOnDependencies(directDependsOnDependencies)
 }
