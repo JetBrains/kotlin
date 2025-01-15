@@ -24,7 +24,6 @@ import kotlin.time.Duration.Companion.seconds
 
 @Tag("program-name")
 @ClassicPipeline()
-@Tag("frontend-classic")
 class ProgramNameTest : AbstractNativeSimpleTest() {
 
     @Test

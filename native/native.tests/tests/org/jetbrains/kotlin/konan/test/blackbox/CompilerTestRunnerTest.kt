@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.Outp
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertContains
@@ -283,12 +282,10 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
 
 @Suppress("JUnitTestCaseWithNoTests")
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicCompilerTestRunnerTest : CompilerTestRunnerTestBase()
 
 @Suppress("JUnitTestCaseWithNoTests")
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirCompilerTestRunnerTest : CompilerTestRunnerTestBase()

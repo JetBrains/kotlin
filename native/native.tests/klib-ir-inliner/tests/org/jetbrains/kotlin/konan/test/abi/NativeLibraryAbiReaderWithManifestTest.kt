@@ -18,12 +18,10 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @FirPipeline
-@Tag("frontend-fir")
 @Tag("klib")
 class FirNativeLibraryAbiReaderWithManifestTest : NativeLibraryAbiReaderWithManifestTest()
 
 @ClassicPipeline
-@Tag("frontend-classic")
 @Tag("klib")
 class ClassicNativeLibraryAbiReaderWithManifestTest : NativeLibraryAbiReaderWithManifestTest()
 

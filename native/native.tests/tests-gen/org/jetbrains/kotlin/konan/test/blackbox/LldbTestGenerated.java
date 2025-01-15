@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 @UseStandardTestCaseGroupProvider()
 @EnforcedProperty(property = ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
 @EnforcedHostTarget()
-@Tag("frontend-classic")
 @ClassicPipeline()
 public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
   @Test

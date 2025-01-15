@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertIs
@@ -264,14 +263,12 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
 @Suppress("JUnitTestCaseWithNoTests")
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class ClassicCompilerOutputTest : CompilerOutputTestBase()
 
 @Suppress("JUnitTestCaseWithNoTests")
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class FirCompilerOutputTest : CompilerOutputTestBase()

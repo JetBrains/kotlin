@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.net.Socket
@@ -25,13 +24,11 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestMetadata("native/native.tests/testData/echoServer")
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicEchoServerTest : EchoServerBaseTest()
 
 @FirPipeline
-@Tag("frontend-fir")
 @TestMetadata("native/native.tests/testData/echoServer")
 @TestDataPath("\$PROJECT_ROOT")
 class FirEchoServerTest : EchoServerBaseTest()

@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("atomicfu-native")
 @EnforcedHostTarget()
-@Tag("frontend-fir")
 @FirPipeline()
 @UseExtTestCaseGroupProvider()
 public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest {
@@ -39,7 +38,6 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomic_extensions {
@@ -114,7 +112,6 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomics_basic {
@@ -213,7 +210,6 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Delegated {
@@ -234,7 +230,6 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Locks {
@@ -261,7 +256,6 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Top_level {
@@ -288,7 +282,6 @@ public class AtomicfuNativeFirTestGenerated extends AbstractNativeCodegenBoxTest
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget()
-  @Tag("frontend-fir")
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Trace {

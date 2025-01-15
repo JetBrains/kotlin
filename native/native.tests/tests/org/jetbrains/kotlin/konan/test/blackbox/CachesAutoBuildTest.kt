@@ -29,7 +29,6 @@ import java.io.File
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
 @FirPipeline
-@Tag("frontend-fir")
 class CachesAutoBuildTest : AbstractNativeSimpleTest() {
 
     @BeforeEach

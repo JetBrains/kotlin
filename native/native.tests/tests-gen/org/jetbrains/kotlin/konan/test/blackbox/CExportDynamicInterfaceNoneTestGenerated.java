@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "DYNAMIC")
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "NONE")
-@Tag("frontend-classic")
 @ClassicPipeline()
 public class CExportDynamicInterfaceNoneTestGenerated extends AbstractNativeCExportTest {
   @Test

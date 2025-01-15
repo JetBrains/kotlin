@@ -28,19 +28,16 @@ import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicComplexCInteropTest : ComplexCInteropTestBase()
 
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirComplexCInteropTest : ComplexCInteropTestBase()
 

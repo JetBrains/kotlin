@@ -98,13 +98,11 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
 }
 
 @ClassicPipeline()
-@Tag("frontend-classic")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @EnforcedProperty(ClassLevelProperty.TEST_TARGET, "ios_arm64")
 class ClassicFEKlibCrossCompilationOutputTest : KlibCrossCompilationOutputTest()
 
 @FirPipeline
-@Tag("frontend-fir")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @EnforcedProperty(ClassLevelProperty.TEST_TARGET, "ios_arm64")
 class FirKlibCrossCompilationOutputTest : KlibCrossCompilationOutputTest()

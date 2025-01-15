@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.lipoCreate
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileInputStream
@@ -30,7 +29,6 @@ import kotlin.test.assertEquals
 
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @ClassicPipeline()
-@Tag("frontend-classic")
 class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
 
     @Test

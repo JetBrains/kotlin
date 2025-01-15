@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 @Tag("litmuskt-native")
 @UseStandardTestCaseGroupProvider()
 @EnforcedHostTarget()
-@Tag("frontend-classic")
 @ClassicPipeline()
 public class LitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   @Test

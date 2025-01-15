@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 @EnforcedHostTarget
 @UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
 @ClassicPipeline()
-@Tag("frontend-classic")
 class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     // This test relies on static caches. So, run it along with other PL tests but only when caches are enabled.
     @BeforeEach

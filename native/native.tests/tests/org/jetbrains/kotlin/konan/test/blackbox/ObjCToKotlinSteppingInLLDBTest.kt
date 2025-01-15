@@ -23,13 +23,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 
 
 @FirPipeline
-@Tag("frontend-fir")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 // FIXME: With -opt these tests can't set a breakpoint in inlined "fun bar()"
 @EnforcedProperty(ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")

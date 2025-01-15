@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.dump;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +19,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/dump-metadata")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("frontend-classic")
 @ClassicPipeline()
 public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpMetadataTest {
   @Test
@@ -145,7 +143,6 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
   @Nested
   @TestMetadata("native/native.tests/testData/klib/dump-metadata/builtinsSerializer")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class BuiltinsSerializer {
     @Test
@@ -216,7 +213,6 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
     @Nested
     @TestMetadata("native/native.tests/testData/klib/dump-metadata/builtinsSerializer/annotationArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-classic")
     @ClassicPipeline()
     public class AnnotationArguments {
       @Test
@@ -265,7 +261,6 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
   @Nested
   @TestMetadata("native/native.tests/testData/klib/dump-metadata/klib")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-classic")
   @ClassicPipeline()
   public class Klib {
     @Test
