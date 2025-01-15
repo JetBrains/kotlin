@@ -37,7 +37,7 @@ internal class KaFirSyntheticPropertySetterSymbol(
     }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { firSymbol.findPsi() }
+        get() = withValidityAssertion { findPsi() }
 
     override val isDefault: Boolean
         get() = withValidityAssertion { false }

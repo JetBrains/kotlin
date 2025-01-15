@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.ProjectScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -21,31 +21,31 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 //todo introduce LibraryModificationTracker based cache?
 internal object FirSyntheticFunctionInterfaceSourceProvider {
-    fun findPsi(fir: FirDeclaration): PsiElement? {
+    fun findPsi(fir: FirDeclaration, scope: GlobalSearchScope): PsiElement? {
         return when (fir) {
-            is FirSimpleFunction -> provideSourceForInvokeFunction(fir)
-            is FirClass -> provideSourceForFunctionClass(fir)
+            is FirSimpleFunction -> provideSourceForInvokeFunction(fir, scope)
+            is FirClass -> provideSourceForFunctionClass(fir, scope)
             else -> null
         }
     }
 
-    private fun provideSourceForInvokeFunction(function: FirSimpleFunction): PsiElement? {
+    private fun provideSourceForInvokeFunction(function: FirSimpleFunction, scope: GlobalSearchScope): PsiElement? {
         val classId = function.containingClassLookupTag()?.classId ?: return null
-        val classOrObject = classByClassId(classId, function.llFirSession.ktModule) ?: return null
+        val classOrObject = classByClassId(classId, scope, function.llFirSession.ktModule) ?: return null
         return classOrObject.declarations.singleOrNull()
     }
 
-    private fun provideSourceForFunctionClass(klass: FirClass): PsiElement? {
-        return classByClassId(klass.symbol.classId, klass.llFirSession.ktModule)
+    private fun provideSourceForFunctionClass(klass: FirClass, scope: GlobalSearchScope): PsiElement? {
+        return classByClassId(klass.symbol.classId, scope, klass.llFirSession.ktModule)
     }
 
-    private fun classByClassId(classId: ClassId, ktModule: KaModule): KtClassOrObject? {
+    private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, ktModule: KaModule): KtClassOrObject? {
         val project = ktModule.project
         val correctedClassId = classIdMapping[classId] ?: return null
         require(ktModule is KaBuiltinsModule) {
             "Expected builtin module but found $ktModule"
         }
-        return project.createDeclarationProvider(ProjectScope.getLibrariesScope(project), ktModule)
+        return project.createDeclarationProvider(scope, ktModule)
             .getAllClassesByClassId(correctedClassId)
             .firstOrNull { it.containingKtFile.isCompiled }
     }

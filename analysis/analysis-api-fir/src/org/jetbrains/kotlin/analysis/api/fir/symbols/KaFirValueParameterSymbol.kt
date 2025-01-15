@@ -49,7 +49,7 @@ internal class KaFirValueParameterSymbol private constructor(
     )
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+        get() = withValidityAssertion { backingPsi ?: findPsi() }
 
     override val name: Name
         get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }

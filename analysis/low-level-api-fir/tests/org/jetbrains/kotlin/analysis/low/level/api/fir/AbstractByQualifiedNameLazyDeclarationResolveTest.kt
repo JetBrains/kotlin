@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.ClassId
@@ -33,7 +32,7 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
         val psiFile = mainFile ?: mainModule.files.first()
         val classId = testServices.moduleStructure.allDirectives.singleValue(Directives.CLASS_ID).let(ClassId::fromString)
         val resolveSession = LLFirResolveSessionService.getInstance(psiFile.project).getFirResolveSession(mainModule.ktModule)
-        val classDeclaration = findRegularClass(classId, mainModule.ktModule, resolveSession).findPsi() as KtClassOrObject
+        val classDeclaration = findRegularClass(classId, mainModule.ktModule, resolveSession).findPsi(mainModule.ktModule.contentScope) as KtClassOrObject
         val file = classDeclaration.containingFile as KtFile
 
         doLazyResolveTest(file, testServices, outputRenderingMode) { firSession ->

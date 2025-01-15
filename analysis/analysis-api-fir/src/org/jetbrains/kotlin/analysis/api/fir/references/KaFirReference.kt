@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findReferencePsi
@@ -84,10 +85,10 @@ internal fun KaSession.getPsiDeclarations(symbol: KaFirSymbol<*>): Collection<Ps
         symbol.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KaCallableSymbol -> symbol.intersectionOverriddenSymbols
         else -> listOf(symbol)
     }
-    return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.findPsiForReferenceResolve() }
+    return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.findPsiForReferenceResolve(analysisScope) }
 }
 
-private fun KaSymbol.findPsiForReferenceResolve(): PsiElement? {
+private fun KaSymbol.findPsiForReferenceResolve(scope: GlobalSearchScope): PsiElement? {
     require(this is KaFirSymbol<*>)
-    return firSymbol.fir.findReferencePsi()
+    return firSymbol.fir.findReferencePsi(scope)
 }

@@ -63,7 +63,7 @@ internal class KaFirPropertySetterSymbol(
     }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+        get() = withValidityAssertion { backingPsi ?: findPsi() }
 
     override val isExpect: Boolean
         get() = withValidityAssertion {
