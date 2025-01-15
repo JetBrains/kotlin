@@ -53787,6 +53787,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestDataPath("$PROJECT_ROOT")
     public class Overrides {
       @Test
+      @TestMetadata("complexGenericOverrideWithRawType.kt")
+      public void testComplexGenericOverrideWithRawType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawType.kt");
+      }
+
+      @Test
       @TestMetadata("complexGenericOverrideWithRawTypeInField.kt")
       public void testComplexGenericOverrideWithRawTypeInField() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeInField.kt");
