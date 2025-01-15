@@ -2739,8 +2739,12 @@ internal class CodeGeneratorVisitor(
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
                         val files = when (dependency.kind) {
-                            is DependenciesTracker.DependencyKind.WholeModule ->
-                                context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds
+                            is DependenciesTracker.DependencyKind.WholeModule -> {
+                                val fileIdProvider: FileIdProvider = context.moduleDeserializerProvider.getDeserializerOrNull(library)
+                                        ?.let { FileIdProvider(it) }
+                                        ?: error("Can't find deserializer for ${library.libraryFile}")
+                                fileIdProvider.sortedFileIds
+                            }
                             is DependenciesTracker.DependencyKind.CertainFiles ->
                                 dependency.kind.files
                         }

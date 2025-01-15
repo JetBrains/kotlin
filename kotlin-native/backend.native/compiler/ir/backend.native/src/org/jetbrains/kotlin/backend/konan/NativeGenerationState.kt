@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
@@ -49,15 +50,15 @@ internal class BitcodePostProcessingContextImpl(
 }
 
 internal class NativeGenerationState(
-        config: KonanConfig,
+    config: KonanConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
-        val context: Context,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
-        val dependenciesTracker: DependenciesTracker,
-        val llvmModuleSpecification: LlvmModuleSpecification,
-        val outputFiles: OutputFiles,
-        val llvmModuleName: String,
+    val context: Context,
+    val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+    val dependenciesTracker: DependenciesTracker,
+    val llvmModuleSpecification: LlvmModuleSpecification,
+    val outputFiles: OutputFiles,
+    val llvmModuleName: String,
 ) : BasicPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 

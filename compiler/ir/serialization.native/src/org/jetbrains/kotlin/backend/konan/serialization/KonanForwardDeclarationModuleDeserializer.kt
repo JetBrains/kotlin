@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,20 +30,20 @@ internal class KonanForwardDeclarationModuleDeserializer(
     moduleDescriptor: ModuleDescriptor,
     private val linker: KotlinIrLinker,
     private val stubGenerator: DeclarationStubGenerator,
-) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.Companion.CURRENT) {
     init {
         require(moduleDescriptor.isForwardDeclarationModule)
     }
 
     companion object {
-        private val FORWARD_DECLARATION_ORIGIN by IrDeclarationOriginImpl
+        private val FORWARD_DECLARATION_ORIGIN by IrDeclarationOriginImpl.Companion
     }
 
     private val declaredDeclaration = mutableMapOf<IdSignature, IrClass>()
 
     private fun IdSignature.isForwardDeclarationSignature(): Boolean {
         if (isPubliclyVisible) {
-            return packageFqName() in NativeForwardDeclarationKind.packageFqNameToKind
+            return packageFqName() in NativeForwardDeclarationKind.Companion.packageFqNameToKind
         }
 
         return false

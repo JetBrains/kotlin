@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.utilities
 
-import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.CacheSupport
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys

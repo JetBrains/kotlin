@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.serialization.CachedEagerInitializedFiles
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -83,7 +85,7 @@ internal class DependenciesTrackerImpl(
     private fun findStdlibFile(fqName: FqName, fileName: String): LibraryFile {
         val stdlib = (context.standardLlvmSymbolsOrigin as? DeserializedKlibModuleOrigin)?.library
                 ?: error("Can't find stdlib")
-        val stdlibDeserializer = context.irLinker.moduleDeserializers[context.stdlibModule]
+        val stdlibDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(stdlib)
                 ?: error("No deserializer for stdlib")
         val file = stdlibDeserializer.files.atMostOne { it.packageFqName == fqName && it.name == fileName }
                 ?: error("Can't find $fqName:$fileName in stdlib")
@@ -105,7 +107,7 @@ internal class DependenciesTrackerImpl(
 
     override fun add(declaration: IrDeclaration, onlyBitcode: Boolean): Unit =
             add(computeFileOrigin(declaration.getPackageFragment()) {
-                context.irLinker.getExternalDeclarationFileName(declaration)
+                context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(declaration)
             }, onlyBitcode)
 
     override fun addNativeRuntime(onlyBitcode: Boolean) =
@@ -171,7 +173,6 @@ internal class DependenciesTrackerImpl(
         init {
             val immediateBitcodeDependencies = topSortedLibraries
                     .filter { (!it.isDefault && !context.config.purgeUserLibs) || bitcodeIsUsed(it) }
-            val moduleDeserializers = context.irLinker.moduleDeserializers.values.associateBy { it.klib }
             for (library in immediateBitcodeDependencies) {
                 if (library == context.config.libraryToCache?.klib) continue
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
@@ -181,11 +182,13 @@ internal class DependenciesTrackerImpl(
                         usedBitcode[library]?.forEach {
                             add(CacheSupport.cacheFileId(it.fqName, it.filePath))
                         }
-                        val moduleDeserializer = moduleDeserializers[library]
+                        val moduleDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(library)
                         if (moduleDeserializer == null) {
                             require(library.isCInteropLibrary()) { "No module deserializer for cached library ${library.uniqueName}" }
                         } else {
-                            moduleDeserializer.eagerInitializedFiles.forEach {
+                            val eagerInitializedFiles = CachedEagerInitializedFiles(context.config.cachedLibraries, library, moduleDeserializer)
+                                    .eagerInitializedFiles
+                            eagerInitializedFiles.forEach {
                                 add(CacheSupport.cacheFileId(it.packageFqName.asString(), it.path))
                             }
                         }

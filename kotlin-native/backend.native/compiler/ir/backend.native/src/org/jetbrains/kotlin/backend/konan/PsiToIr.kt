@@ -154,8 +154,6 @@ internal fun PsiToIrContext.psiToIr(
                         builtIns = generatorContext.irBuiltIns,
                         messageCollector = messageCollector
                 ),
-                cachedLibraries = config.cachedLibraries,
-                lazyIrForCaches = config.lazyIrForCaches,
                 libraryBeingCached = config.libraryToCache,
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,
                 externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionDeserializer
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -29,9 +30,7 @@ internal class NativeInlineFunctionResolver(
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
         if (function.body != null) return function
-
-        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function) ?: return null
-        moduleDeserializer.deserializeInlineFunction(function)
+        generationState.context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
         lower(function)
 
         return function
