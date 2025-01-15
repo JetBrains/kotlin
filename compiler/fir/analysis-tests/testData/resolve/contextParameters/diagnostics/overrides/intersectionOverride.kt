@@ -18,7 +18,18 @@ interface Second {
     val b: String
 }
 
+interface Third {
+    context(a: A)
+    fun foo()
+
+    context(a: A)
+    val b: String
+}
+
+
 interface IntersectionInterface: First, Second
+
+interface IntersectionInterfaceWithSameContext: First, Third
 
 class IntersectionClass : First, Second {
     context(a: A)
@@ -36,11 +47,24 @@ class IntersectionClass : First, Second {
         get() = ""
 }
 
-fun usage(a: IntersectionInterface) {
+class IntersectionClassWithSameContext : First, Third {
+    context(a: A)
+    override fun foo() { }
+
+    context(a: A)
+    override val b: String
+        get() = ""
+}
+
+fun usage(a: IntersectionInterface, b: IntersectionInterfaceWithSameContext) {
     with<A, Unit>(A()) {
         a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
         a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>b<!>
         IntersectionClass().<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
         IntersectionClass().<!OVERLOAD_RESOLUTION_AMBIGUITY!>b<!>
+        b.foo()
+        b.b
+        IntersectionClassWithSameContext().foo()
+        IntersectionClassWithSameContext().b
     }
 }

@@ -106,9 +106,33 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     }
 
     @Test
+    @TestMetadata("intersectionContextValueJava.kt")
+    public void testIntersectionContextValueJava() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/intersectionContextValueJava.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionExtensionValueContext.kt")
+    public void testIntersectionExtensionValueContext() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/intersectionExtensionValueContext.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionExtensionValueContextJava.kt")
+    public void testIntersectionExtensionValueContextJava() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/intersectionExtensionValueContextJava.kt");
+    }
+
+    @Test
     @TestMetadata("valueAndContextParameter.kt")
     public void testValueAndContextParameter() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/valueAndContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("valueAndContextParametersWithJava.kt")
+    public void testValueAndContextParametersWithJava() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/valueAndContextParametersWithJava.kt");
     }
   }
 

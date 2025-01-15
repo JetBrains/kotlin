@@ -1,0 +1,25 @@
+MODULE main
+	CLASS TestKt$box$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function1<Ljava/lang/Integer;Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function2<Ljava/lang/Integer;Lkotlin/coroutines/Continuation<-Lkotlin/Unit;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		Property: class.superClassInternalName
+			K1
+				kotlin/jvm/internal/FunctionReferenceImpl
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[kotlin/jvm/functions/Function1]
+			K2
+				[kotlin/coroutines/jvm/internal/SuspendFunction, kotlin/jvm/functions/Function2]
+		K1
+			invoke(Ljava/lang/Integer;)V [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]

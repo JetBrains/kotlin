@@ -3176,6 +3176,54 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("contextFunctionAdaptedReferences.kt")
+        public void testContextFunctionAdaptedReferences() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAdaptedReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithDefaultValue.kt")
+        public void testContextFunctionWithDefaultValue() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithDefaultValue.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithExtensionProperty.kt")
+        public void testContextFunctionWithExtensionProperty() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithExtensionProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithPassedSuperType.kt")
+        public void testContextFunctionWithPassedSuperType() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithPassedSuperType.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithSam.kt")
+        public void testContextFunctionWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithSam.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithVararg.kt")
+        public void testContextFunctionWithVararg() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("contextPropertyWithSam.kt")
+        public void testContextPropertyWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextPropertyWithSam.kt");
+        }
+
+        @Test
+        @TestMetadata("contextTypeWithSam.kt")
+        public void testContextTypeWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextTypeWithSam.kt");
+        }
+
+        @Test
         @TestMetadata("defaultAfterVararg.kt")
         public void testDefaultAfterVararg() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/defaultAfterVararg.kt");
@@ -7765,6 +7813,18 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("companionObjectInContext.kt")
+      public void testCompanionObjectInContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/companionObjectInContext.kt");
+      }
+
+      @Test
+      @TestMetadata("contextFunInSam.kt")
+      public void testContextFunInSam() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextFunInSam.kt");
+      }
+
+      @Test
       @TestMetadata("contextParameterToDefaultArgument.kt")
       public void testContextParameterToDefaultArgument() {
         runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
@@ -7810,6 +7870,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("sameNameWithPropertyName.kt")
       public void testSameNameWithPropertyName() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
+      }
+
+      @Test
+      @TestMetadata("typealiasOnTypeWithContext.kt")
+      public void testTypealiasOnTypeWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/typealiasOnTypeWithContext.kt");
       }
 
       @Test

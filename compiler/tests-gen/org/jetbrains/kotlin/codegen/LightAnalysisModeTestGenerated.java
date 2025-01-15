@@ -3810,6 +3810,61 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/boundReferences.kt");
       }
 
+      @TestMetadata("contextAndExtensionWithJavaFunction.kt")
+      public void testContextAndExtensionWithJavaFunction() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextAndExtensionWithJavaFunction.kt");
+      }
+
+      @TestMetadata("contextFunctionAdaptedReferences.kt")
+      public void testContextFunctionAdaptedReferences() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAdaptedReferences.kt");
+      }
+
+      @TestMetadata("contextFunctionWithDefaultValue.kt")
+      public void testContextFunctionWithDefaultValue() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithDefaultValue.kt");
+      }
+
+      @TestMetadata("contextFunctionWithExtensionProperty.kt")
+      public void testContextFunctionWithExtensionProperty() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithExtensionProperty.kt");
+      }
+
+      @TestMetadata("contextFunctionWithJavaFunction.kt")
+      public void testContextFunctionWithJavaFunction() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithJavaFunction.kt");
+      }
+
+      @TestMetadata("contextFunctionWithPassedSuperType.kt")
+      public void testContextFunctionWithPassedSuperType() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithPassedSuperType.kt");
+      }
+
+      @TestMetadata("contextFunctionWithSam.kt")
+      public void testContextFunctionWithSam() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithSam.kt");
+      }
+
+      @TestMetadata("contextFunctionWithVararg.kt")
+      public void testContextFunctionWithVararg() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithVararg.kt");
+      }
+
+      @TestMetadata("contextPropertyWithSam.kt")
+      public void testContextPropertyWithSam() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextPropertyWithSam.kt");
+      }
+
+      @TestMetadata("contextTypeWithJavaSam.kt")
+      public void testContextTypeWithJavaSam() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextTypeWithJavaSam.kt");
+      }
+
+      @TestMetadata("contextTypeWithSam.kt")
+      public void testContextTypeWithSam() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextTypeWithSam.kt");
+      }
+
       @TestMetadata("defaultAfterVararg.kt")
       public void testDefaultAfterVararg() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/defaultAfterVararg.kt");
@@ -4170,6 +4225,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/simple.kt");
+        }
+
+        @TestMetadata("withContextParameterAndJavaStatic.kt")
+        public void testWithContextParameterAndJavaStatic() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParameterAndJavaStatic.kt");
         }
 
         @TestMetadata("withContextParameterAsAPropertyType.kt")
@@ -8001,9 +8061,39 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelWithContext.kt");
     }
 
+    @TestMetadata("companionObjectInContext.kt")
+    public void testCompanionObjectInContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/companionObjectInContext.kt");
+    }
+
+    @TestMetadata("contextAndExtensionOverrideInJava.kt")
+    public void testContextAndExtensionOverrideInJava() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextAndExtensionOverrideInJava.kt");
+    }
+
+    @TestMetadata("contextFunInSam.kt")
+    public void testContextFunInSam() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextFunInSam.kt");
+    }
+
+    @TestMetadata("contextFunOverrideInJava.kt")
+    public void testContextFunOverrideInJava() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextFunOverrideInJava.kt");
+    }
+
+    @TestMetadata("contextFunctionWithJvmStatic.kt")
+    public void testContextFunctionWithJvmStatic() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextFunctionWithJvmStatic.kt");
+    }
+
     @TestMetadata("contextParameterToDefaultArgument.kt")
     public void testContextParameterToDefaultArgument() {
       runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+    }
+
+    @TestMetadata("contextTypeOverrideInJava.kt")
+    public void testContextTypeOverrideInJava() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextTypeOverrideInJava.kt");
     }
 
     @TestMetadata("propertyWithContextAndWithout.kt")
@@ -8044,6 +8134,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/box/contextParameters/simple.kt");
+    }
+
+    @TestMetadata("typealiasOnTypeWithContext.kt")
+    public void testTypealiasOnTypeWithContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/typealiasOnTypeWithContext.kt");
     }
 
     @TestMetadata("withExtensionReceiverAndThis.kt")

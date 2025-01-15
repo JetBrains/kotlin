@@ -1,0 +1,32 @@
+FILE: usageOfTypeWithContext.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun funWithContextAndValueType(x: R|@ContextFunctionTypeParams (A, kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(R|/A.A|(), Int(1))
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|, Int(2))
+        }
+        )
+    }
+    public final fun funWithContextAndExtensionType(x: R|@ContextFunctionTypeParams A.(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(R|/A.A|(), Int(1))
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|, Int(2))
+            R|<local>/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|, Int(3))
+        }
+        )
+    }
+    public final fun funWithContextsType(x: R|@ContextFunctionTypeParams (A, kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(R|/A.A|(), Int(1))
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|kotlin/Int|, R|kotlin/Unit|>(Int(1), <L> = with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|<local>/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|, this@R|special/anonymous|)
+            }
+            )
+        }
+        )
+    }

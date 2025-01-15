@@ -1,0 +1,41 @@
+FILE: multipleDslMarkers.kt
+    @R|kotlin/DslMarker|() public final annotation class Dsl : R|kotlin/Annotation| {
+        public constructor(): R|Dsl| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Dsl|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Dsl|() public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun withContext(block: R|@ContextFunctionTypeParams (A, B) -> kotlin/Unit|): R|kotlin/Unit| {
+        ^withContext Null(null)!!
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun bar(): R|kotlin/Unit| {
+    }
+    context(a: R|A|, b: R|B|)
+    public final val property: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final fun usage(): R|kotlin/Unit| {
+        R|/withContext|(<L> = withContext@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo<Inapplicable(RESOLVED_WITH_ERROR): /foo>#|()
+            R|/bar<Inapplicable(RESOLVED_WITH_ERROR): /bar>#|()
+            R|/property<Inapplicable(RESOLVED_WITH_ERROR): /property>#|
+        }
+        )
+    }

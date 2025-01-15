@@ -1,0 +1,14 @@
+fun String.b(a: String) {
+}
+
+fun bar(a: @JavaTypeAnnotation String) {
+}
+
+fun foo(@JavaParameterAnnotation a: String) {
+}
+
+val b: String
+  @JavaAnnotation
+  get(a: String): String {
+    return ""
+  }

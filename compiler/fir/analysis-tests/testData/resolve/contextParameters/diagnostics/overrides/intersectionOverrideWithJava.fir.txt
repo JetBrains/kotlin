@@ -1,0 +1,60 @@
+FILE: KotlinContextInterface.kt
+    public abstract interface KotlinContextInterface : R|kotlin/Any| {
+        context(a: R|kotlin/String|)
+        public abstract fun foo(b: R|kotlin/String|): R|kotlin/Unit|
+
+        context(a: R|kotlin/String|)
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        context(a: R|kotlin/String|)
+        public abstract fun R|kotlin/String|.bar(b: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+FILE: test.kt
+    public abstract interface Intersection : R|KotlinContextInterface|, R|JavaInterface| {
+    }
+    public final class IntersectionImpl : R|Intersection| {
+        public constructor(): R|IntersectionImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|kotlin/String|)
+        public open override fun foo(b: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        context(a: R|kotlin/String|)
+        public open override fun R|kotlin/String|.bar(b: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        context(a: R|kotlin/String|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+        public open override fun foo(a: R|kotlin/Any?|, b: R|kotlin/Any?|): R|kotlin/Unit| {
+        }
+
+        public open override fun getB(a: R|kotlin/Any?|): R|kotlin/Any?| {
+            ^getB String()
+        }
+
+        public open override fun bar(a: R|kotlin/Any?|, b: R|kotlin/Any?|, c: R|kotlin/Any?|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun usage(a: R|Intersection|): R|kotlin/Unit| {
+        R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(context), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a|.R|/KotlinContextInterface.foo|(String(value))
+            R|<local>/a|.R|/KotlinContextInterface.b|
+            R|kotlin/with|<R|Intersection|, R|kotlin/Unit|>(R|<local>/a|, <L> = with@fun R|Intersection|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                (this@R|special/anonymous|, String(receiver)).R|/KotlinContextInterface.bar|(String(value))
+            }
+            )
+        }
+        )
+        R|<local>/a|.R|/JavaInterface.foo|(String(context), String(value))
+        R|<local>/a|.R|/JavaInterface.getB|(String(context))
+        R|<local>/a|.R|/JavaInterface.bar|(String(context), String(receiver), String(value))
+    }

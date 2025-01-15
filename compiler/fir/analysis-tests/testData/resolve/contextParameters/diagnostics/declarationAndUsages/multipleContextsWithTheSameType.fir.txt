@@ -13,10 +13,14 @@ FILE: multipleContextsWithTheSameType.kt
     public final fun <T> implicit(): R|T| {
         ^implicit R|<local>/ctx|
     }
+    context(a: R|A|)
+    public final fun foo(): R|kotlin/Unit| {
+    }
     context(a: R|A|, a2: R|A|)
     public final fun test(): R|kotlin/Unit| {
         R|<local>/a|.R|/A.foo|(String())
         R|<local>/a2|.R|/A.foo|(String())
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
         R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|A|>().R|/A.foo|(String())
     }
     context(a: R|A|, a2: R|A|)
@@ -24,14 +28,16 @@ FILE: multipleContextsWithTheSameType.kt
         public get(): R|kotlin/String| {
             R|<local>/a|.R|/A.foo|(String())
             R|<local>/a2|.R|/A.foo|(String())
+            R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
             ^ R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|A|>().R|/A.foo|(String())
         }
     public final fun inTypePosition(a: R|@ContextFunctionTypeParams (A, A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun usage(): R|kotlin/Unit| {
-        R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|/test|()
-            ^ R|/property|
+            R|/property|
+            R|/foo|()
         }
         )
         R|/inTypePosition|(<L> = inTypePosition@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {

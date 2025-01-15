@@ -1,0 +1,45 @@
+FILE: contextInCompanionObject.kt
+    public final class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Named : R|kotlin/Any| {
+            private constructor(): R|Test.Named| {
+                super<R|kotlin/Any|>()
+            }
+
+            context(c: R|Test.Named|)
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+            context(a: R|Test.Named|)
+            public final val b: R|kotlin/String|
+                public get(): R|kotlin/String| {
+                    ^ String()
+                }
+
+        }
+
+        public final fun usage(): R|kotlin/Unit| {
+            this@R|/Test.Named|.R|/Test.Named.foo|()
+            this@R|/Test.Named|.R|/Test.Named.b|
+        }
+
+    }
+    public final fun usageOutside(): R|kotlin/Unit| {
+        R|/context|<R|Test.Named|, R|kotlin/String|>(Q|Test.Named|, <L> = context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            Q|Test.Named|.R|/Test.Named.foo|()
+            Q|Test|.R|/Test.Named.foo|()
+            Q|Test.Named|.R|/Test.Named.b|
+            ^ Q|Test|.R|/Test.Named.b|
+        }
+        )
+        Q|Test.Named|.R|/Test.Named.foo<Inapplicable(INAPPLICABLE): /Test.Named.foo>#|()
+        Q|Test|.R|/Test.Named.foo<Inapplicable(INAPPLICABLE): /Test.Named.foo>#|()
+        Q|Test.Named|.R|/Test.Named.b<Inapplicable(INAPPLICABLE): /Test.Named.b>#|
+        Q|Test|.R|/Test.Named.b<Inapplicable(INAPPLICABLE): /Test.Named.b>#|
+    }
+    public final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams (A) -> R|): R|R| {
+        ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
+    }

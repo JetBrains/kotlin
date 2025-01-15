@@ -1,0 +1,15 @@
+FILE: KotlinContextInterface.kt
+    package org
+
+    public abstract interface KotlinContextInterface : R|kotlin/Any| {
+        context(a: R|kotlin/String|)
+        public abstract fun foo(b: R|kotlin/String|): R|kotlin/String|
+
+    }
+FILE: test.kt
+    public final class KJK : R|JavaClass| {
+        public constructor(): R|KJK| {
+            super<R|JavaClass|>()
+        }
+
+    }

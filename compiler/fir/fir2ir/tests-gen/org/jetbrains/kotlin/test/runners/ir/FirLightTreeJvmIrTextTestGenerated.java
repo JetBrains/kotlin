@@ -894,6 +894,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
       public void testContextWithAnnotation() {
         runTest("compiler/testData/ir/irText/declarations/contextParameters/contextWithAnnotation.kt");
       }
+
+      @Test
+      @TestMetadata("contextWithJavaAnnotation.kt")
+      public void testContextWithJavaAnnotation() {
+        runTest("compiler/testData/ir/irText/declarations/contextParameters/contextWithJavaAnnotation.kt");
+      }
     }
 
     @Nested

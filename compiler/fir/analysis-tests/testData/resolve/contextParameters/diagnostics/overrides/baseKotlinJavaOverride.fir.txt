@@ -1,0 +1,17 @@
+FILE: test.kt
+    public abstract interface KotlinContextInterface : R|kotlin/Any| {
+        context(a: R|kotlin/String|)
+        public abstract fun foo(b: R|kotlin/Int|): R|kotlin/String|
+
+    }
+    public final fun usage(a: R|JavaWithOverride|, b: R|JavaWithFakeOverride|): R|kotlin/Unit| {
+        R|<local>/a|.R|/KotlinContextInterface.foo<Inapplicable(INAPPLICABLE): /KotlinContextInterface.foo>#|(Int(1))
+        R|<local>/b|.R|/KotlinContextInterface.foo<Inapplicable(INAPPLICABLE): /KotlinContextInterface.foo>#|(Int(1))
+        R|<local>/a|.R|/JavaWithOverride.foo|(String(), Int(1))
+        R|<local>/b|.R|/KotlinContextInterface.foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /KotlinContextInterface.foo>#|(Int(1), String())
+        R|kotlin/with|<R|kotlin/String|, R|kotlin/String|>(String(OK), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a|.R|/KotlinContextInterface.foo|(Int(1))
+            ^ R|<local>/b|.R|/KotlinContextInterface.foo|(Int(1))
+        }
+        )
+    }
