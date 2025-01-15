@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
-import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
@@ -543,12 +542,36 @@ open class IrFileSerializer(
 
     private fun serializeMemberAccessCommon(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommon {
         val proto = ProtoMemberAccessCommon.newBuilder()
+
+        // It is not possible to use the new parameter API in this code, because there the call doesn't
+        // store an information about its arguments' kinds. Only the function does, but here the callee's
+        // symbol may be unbound, so it's not possible to obtain that function.
+        if (call.dispatchReceiver != null) {
+            proto.dispatchReceiver = serializeExpression(call.dispatchReceiver!!)
+        }
         if (call.extensionReceiver != null) {
             proto.extensionReceiver = serializeExpression(call.extensionReceiver!!)
         }
+        for (index in 0 until call.valueArgumentsCount) {
+            val arg = call.getValueArgument(index)
+            val argProto = arg?.let { serializeExpression(it) }
+            val argOrNullProto = ProtoNullableIrExpression.newBuilder()
+            if (arg == null) {
+                // Am I observing an IR generation regression?
+                // I see a lack of arg for an empty vararg,
+                // rather than an empty vararg node.
 
-        if (call.dispatchReceiver != null) {
-            proto.dispatchReceiver = serializeExpression(call.dispatchReceiver!!)
+                // TODO: how do we assert that without descriptor?
+                //assert(it.varargElementType != null || it.hasDefaultValue())
+            } else {
+                argOrNullProto.expression = argProto
+            }
+
+            if (index < call.contextArgumentsCount) {
+                proto.addContextArgument(argOrNullProto)
+            } else {
+                proto.addRegularArgument(argOrNullProto)
+            }
         }
 
         for (typeArg in call.typeArguments) {
@@ -557,21 +580,6 @@ open class IrFileSerializer(
             proto.addTypeArgument(typeArgumentIndex)
         }
 
-        for (index in 0 until call.valueArgumentsCount) {
-            val actual = call.getValueArgument(index)
-            val argOrNull = ProtoNullableIrExpression.newBuilder()
-            if (actual == null) {
-                // Am I observing an IR generation regression?
-                // I see a lack of arg for an empty vararg,
-                // rather than an empty vararg node.
-
-                // TODO: how do we assert that without descriptor?
-                //assert(it.varargElementType != null || it.hasDefaultValue())
-            } else {
-                argOrNull.expression = serializeExpression(actual)
-            }
-            proto.addValueArgument(argOrNull)
-        }
         return proto.build()
     }
 
@@ -1166,20 +1174,20 @@ open class IrFileSerializer(
         function.typeParameters.forEach {
             proto.addTypeParameter(serializeIrTypeParameter(it))
         }
-        function.dispatchReceiverParameter?.let { proto.setDispatchReceiver(serializeIrValueParameter(it)) }
-        function.extensionReceiverParameter?.let { proto.setExtensionReceiver(serializeIrValueParameter(it)) }
-        val contextReceiverParametersCount = function.contextReceiverParametersCount
-        if (contextReceiverParametersCount > 0) {
-            proto.contextReceiverParametersCount = contextReceiverParametersCount
-        }
-
-        function.valueParameters.forEach {
+        for (parameter in function.parameters) {
             if (((function as? IrConstructor)?.returnType?.classifierOrNull as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS) {
-                require(it.isValidConstantAnnotationArgument()) {
-                    "This is a compiler bug, please report it to https://kotl.in/issue : default value of annotation construction parameter must have const initializer:\n${it.render()}"
+                require(parameter.isValidConstantAnnotationArgument()) {
+                    "This is a compiler bug, please report it to https://kotl.in/issue : default value of annotation construction parameter must have const initializer:\n${parameter.render()}"
                 }
             }
-            proto.addValueParameter(serializeIrValueParameter(it))
+
+            val parameterProto = serializeIrValueParameter(parameter)
+            when (parameter.kind) {
+                IrParameterKind.DispatchReceiver -> proto.setDispatchReceiver(parameterProto)
+                IrParameterKind.Context -> proto.addContextParameter(parameterProto)
+                IrParameterKind.ExtensionReceiver -> proto.setExtensionReceiver(parameterProto)
+                IrParameterKind.Regular -> proto.addRegularParameter(parameterProto)
+            }
         }
 
         if (!settings.bodiesOnlyForInlines || function.isInline || (settings.publicAbiOnly && isInsideInline)) {

@@ -193,23 +193,23 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
-
-        proto.valueArgumentList.forEachIndexed { i, arg ->
-            if (arg.hasExpression()) {
-                val expr = deserializeExpression(arg.expression)
-                access.putValueArgument(i, expr)
-            }
+        var vpi = 0
+        if (proto.hasDispatchReceiver()) {
+            access.arguments[vpi++] = deserializeExpression(proto.dispatchReceiver)
+        }
+        for (arg in proto.contextArgumentList) {
+            require(arg.hasExpression()) { "Context parameters do not support default values, at least in this version of the compiler." }
+            access.arguments[vpi++] = deserializeExpression(arg.expression)
+        }
+        if (proto.hasExtensionReceiver()) {
+            access.arguments[vpi++] = deserializeExpression(proto.extensionReceiver)
+        }
+        for (arg in proto.regularArgumentList) {
+            access.arguments[vpi++] = if (arg.hasExpression()) deserializeExpression(arg.expression) else null
         }
 
         proto.typeArgumentList.forEachIndexed { i, arg ->
             access.typeArguments[i] = declarationDeserializer.deserializeNullableIrType(arg)
-        }
-
-        if (proto.hasDispatchReceiver()) {
-            access.dispatchReceiver = deserializeExpression(proto.dispatchReceiver)
-        }
-        if (proto.hasExtensionReceiver()) {
-            access.extensionReceiver = deserializeExpression(proto.extensionReceiver)
         }
     }
 
@@ -296,8 +296,8 @@ class IrBodyDeserializer(
             start, end, type,
             symbol, typeArgumentsCount = proto.memberAccess.typeArgumentCount,
             constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount,
-            valueArgumentsCount = proto.memberAccess.valueArgumentCount,
-            contextParameterCount = 0,
+            valueArgumentsCount = proto.memberAccess.regularArgumentList.size + proto.memberAccess.contextArgumentList.size,
+            contextParameterCount = proto.memberAccess.contextArgumentList.size,
             hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
             hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
             origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
@@ -316,8 +316,8 @@ class IrBodyDeserializer(
             IrCallImplWithShape(
                 start, end, type,
                 symbol, proto.memberAccess.typeArgumentCount,
-                proto.memberAccess.valueArgumentList.size,
-                contextParameterCount = 0,
+                valueArgumentsCount = proto.memberAccess.regularArgumentList.size + proto.memberAccess.contextArgumentList.size,
+                contextParameterCount = proto.memberAccess.contextArgumentList.size,
                 hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
                 hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
                 origin,
@@ -350,8 +350,8 @@ class IrBodyDeserializer(
             builtIns.unitType,
             symbol,
             proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount,
-            contextParameterCount = 0,
+            valueArgumentsCount = proto.memberAccess.regularArgumentList.size + proto.memberAccess.contextArgumentList.size,
+            contextParameterCount = proto.memberAccess.contextArgumentList.size,
             hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
             hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
         )
@@ -373,8 +373,8 @@ class IrBodyDeserializer(
             builtIns.unitType,
             symbol,
             proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount,
-            contextParameterCount = 0,
+            valueArgumentsCount = proto.memberAccess.regularArgumentList.size + proto.memberAccess.contextArgumentList.size,
+            contextParameterCount = proto.memberAccess.contextArgumentList.size,
             hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
             hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
         )
@@ -489,8 +489,8 @@ class IrBodyDeserializer(
             type,
             symbol,
             proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount,
-            contextParameterCount = 0,
+            valueArgumentsCount = proto.memberAccess.regularArgumentList.size + proto.memberAccess.contextArgumentList.size,
+            contextParameterCount = proto.memberAccess.contextArgumentList.size,
             hasDispatchReceiver = proto.memberAccess.hasDispatchReceiver(),
             hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
             reflectionTarget,

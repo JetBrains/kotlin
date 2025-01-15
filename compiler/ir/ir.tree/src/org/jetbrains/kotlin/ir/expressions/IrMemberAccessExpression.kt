@@ -439,6 +439,13 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                 (if (targetHasExtensionReceiver && index >= targetContextParameterCount) 1 else 0) +
                 index
 
+    @DeprecatedCompilerApi(
+        CompilerVersionOfApiDeprecation._2_2_0,
+        "This is an old-API way hack to complement getting function's shape without a bound symbol."
+    )
+    val contextArgumentsCount: Int
+        get() = targetContextParameterCount
+
 
     abstract val typeArguments: MutableList<IrType?>
 

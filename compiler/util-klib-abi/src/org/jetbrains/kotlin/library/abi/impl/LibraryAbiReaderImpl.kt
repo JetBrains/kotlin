@@ -360,10 +360,9 @@ private class LibraryDeserializer(
                 )
             else
                 null
-            val contextParametersCount = if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
 
             val allValueParameters = ArrayList<AbiValueParameter>()
-            proto.valueParameterList.take(contextParametersCount).mapTo(allValueParameters) { contextParameterProto ->
+            proto.contextParameterList.mapTo(allValueParameters) { contextParameterProto ->
                 deserializeValueParameter(
                     proto = contextParameterProto,
                     kind = AbiValueParameterKind.CONTEXT,
@@ -371,7 +370,7 @@ private class LibraryDeserializer(
                 )
             }
             allValueParameters.addIfNotNull(extensionReceiver)
-            proto.valueParameterList.drop(contextParametersCount).mapTo(allValueParameters) { regularParameterProto ->
+            proto.regularParameterList.mapTo(allValueParameters) { regularParameterProto ->
                 deserializeValueParameter(
                     proto = regularParameterProto,
                     kind = AbiValueParameterKind.REGULAR,

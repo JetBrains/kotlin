@@ -159,8 +159,11 @@ message IrInlinedFunctionBlock {
 
 message MemberAccessCommon {
   optional IrExpression dispatch_receiver = 1;
+  // Context parameters cannot have default values but we use NullableIrExpression here just in case
+  // that will be allowed in the future, to help with compatibility.
+  repeated NullableIrExpression context_argument = 5;
   optional IrExpression extension_receiver = 2;
-  repeated NullableIrExpression value_argument = 3;
+  repeated NullableIrExpression regular_argument = 3;
   repeated int32 type_argument = 4 [packed=true];
 }
 
@@ -517,10 +520,11 @@ message IrFunctionBase {
   required int64 name_type = 2;
   repeated IrTypeParameter type_parameter = 3;
   optional IrValueParameter dispatch_receiver = 4;
+  repeated IrValueParameter context_parameter = 9;
   optional IrValueParameter extension_receiver = 5;
-  optional int32 context_receiver_parameters_count = 8;
-  repeated IrValueParameter value_parameter = 6;
+  repeated IrValueParameter regular_parameter = 6;
   optional int32 body = 7;
+  //optional int32 context_receiver_parameters_count = 8;
 }
 
 message IrFunction {

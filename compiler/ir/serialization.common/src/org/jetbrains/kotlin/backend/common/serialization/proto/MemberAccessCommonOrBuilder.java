@@ -17,6 +17,35 @@ public interface MemberAccessCommonOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getDispatchReceiver();
 
   /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
+   *
+   * <pre>
+   * Context parameters cannot have default values but we use NullableIrExpression here just in case
+   * that will be allowed in the future, to help with compatibility.
+   * </pre>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> 
+      getContextArgumentList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
+   *
+   * <pre>
+   * Context parameters cannot have default values but we use NullableIrExpression here just in case
+   * that will be allowed in the future, to help with compatibility.
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getContextArgument(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
+   *
+   * <pre>
+   * Context parameters cannot have default values but we use NullableIrExpression here just in case
+   * that will be allowed in the future, to help with compatibility.
+   * </pre>
+   */
+  int getContextArgumentCount();
+
+  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression extension_receiver = 2;</code>
    */
   boolean hasExtensionReceiver();
@@ -26,18 +55,18 @@ public interface MemberAccessCommonOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExtensionReceiver();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value_argument = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> 
-      getValueArgumentList();
+      getRegularArgumentList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value_argument = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getValueArgument(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getRegularArgument(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value_argument = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
    */
-  int getValueArgumentCount();
+  int getRegularArgumentCount();
 
   /**
    * <code>repeated int32 type_argument = 4 [packed = true];</code>

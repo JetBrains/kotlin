@@ -7287,6 +7287,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Tag("klib")
     public class ContextParameters {
       @Test
+      @TestMetadata("classMemberAndTopLevelExtensionWithContext.kt")
+      public void testClassMemberAndTopLevelExtensionWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelExtensionWithContext.kt");
+      }
+
+      @Test
       @TestMetadata("classMemberAndTopLevelWithContext.kt")
       public void testClassMemberAndTopLevelWithContext() {
         runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelWithContext.kt");
@@ -7302,6 +7308,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("propertyWithContextAndWithout.kt")
       public void testPropertyWithContextAndWithout() {
         runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
+      }
+
+      @Test
+      @TestMetadata("sameExtensionContextAndDispatchReceiver.kt")
+      public void testSameExtensionContextAndDispatchReceiver() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameExtensionContextAndDispatchReceiver.kt");
       }
 
       @Test

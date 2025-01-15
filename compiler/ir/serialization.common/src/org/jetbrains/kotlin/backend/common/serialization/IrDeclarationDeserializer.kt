@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
@@ -289,7 +290,7 @@ class IrDeclarationDeserializer(
         return result
     }
 
-    private fun deserializeIrValueParameter(proto: ProtoValueParameter, setParent: Boolean = true): IrValueParameter =
+    private fun deserializeIrValueParameter(proto: ProtoValueParameter, kind: IrParameterKind, setParent: Boolean = true): IrValueParameter =
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = ValueParameterFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
@@ -297,6 +298,7 @@ class IrDeclarationDeserializer(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
+                kind = kind,
                 name = deserializeName(nameAndType.nameIndex),
                 type = deserializeIrType(nameAndType.typeIndex),
                 isAssignable = flags.isAssignable,
@@ -356,9 +358,7 @@ class IrDeclarationDeserializer(
                         .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto).takeIf { it !in oldDeclarations } }
                 }
 
-                thisReceiver = deserializeIrValueParameter(proto.thisReceiver).also {
-                    it.kind = IrParameterKind.DispatchReceiver
-                }
+                thisReceiver = deserializeIrValueParameter(proto.thisReceiver, IrParameterKind.DispatchReceiver)
 
                 valueClassRepresentation = when {
                     !flags.isValue -> null
@@ -436,10 +436,6 @@ class IrDeclarationDeserializer(
                 superTypes = proto.superTypeList.memoryOptimizedMap { deserializeIrType(it) }
             }
         }
-    }
-
-    private fun deserializeValueParameters(protos: List<ProtoValueParameter>): List<IrValueParameter> {
-        return protos.memoryOptimizedMap { proto -> deserializeIrValueParameter(proto) }
     }
 
     /**
@@ -538,15 +534,20 @@ class IrDeclarationDeserializer(
                 returnType = deserializeIrType(nameType.typeIndex)
 
                 withBodyGuard {
-                    valueParameters = deserializeValueParameters(proto.valueParameterList)
-                    dispatchReceiverParameter =
-                        if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver)
-                        else null
-                    extensionReceiverParameter =
-                        if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver)
-                        else null
-                    contextReceiverParametersCount =
-                        if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
+                    parameters = buildList {
+                        if (proto.hasDispatchReceiver()) {
+                            add(deserializeIrValueParameter(proto.dispatchReceiver, IrParameterKind.DispatchReceiver))
+                        }
+                        proto.contextParameterList.mapTo(this) { proto ->
+                            deserializeIrValueParameter(proto, IrParameterKind.Context)
+                        }
+                        if (proto.hasExtensionReceiver()) {
+                            add(deserializeIrValueParameter(proto.extensionReceiver, IrParameterKind.ExtensionReceiver))
+                        }
+                        proto.regularParameterList.mapTo(this) { proto ->
+                            deserializeIrValueParameter(proto, IrParameterKind.Regular)
+                        }
+                    }.compactIfPossible()
                     body =
                         if (proto.hasBody()) deserializeStatementBody(proto.body) as IrBody?
                         else null

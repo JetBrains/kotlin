@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
+import org.jetbrains.kotlin.codegen.StringConcatGenerator.Item.Companion.parameter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.FqName
 import kotlin.collections.set
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoParameter
 
 private const val INVALID_INDEX = -1
 
@@ -84,24 +86,32 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
         (0 until protoFunction.base.typeParameterCount).mapTo(typeParameterSigs) {
             BinarySymbolData.decode(protoFunction.base.getTypeParameter(it).base.symbol).signatureId
         }
-        val defaultValues = mutableListOf<Int>()
-        val valueParameterSigs = (0 until protoFunction.base.valueParameterCount).map {
-            val valueParameter = protoFunction.base.getValueParameter(it)
-            defaultValues.add(if (valueParameter.hasDefaultValue()) valueParameter.defaultValue else INVALID_INDEX)
-            BinarySymbolData.decode(valueParameter.base.symbol).signatureId
+
+        fun serializeValueParameter(parameter: ProtoParameter): Int =
+                BinarySymbolData.decode(parameter.base.symbol).signatureId
+
+        val dispatchReceiverSig = if (protoFunction.base.hasDispatchReceiver()) {
+            serializeValueParameter(protoFunction.base.extensionReceiver)
+        } else INVALID_INDEX
+        val contextParameterSigs = protoFunction.base.contextParameterList.map { param ->
+            serializeValueParameter(param)
         }
-        val extensionReceiverSig = irFunction.extensionReceiverParameter?.let {
-            BinarySymbolData.decode(protoFunction.base.extensionReceiver.base.symbol).signatureId
-        } ?: INVALID_INDEX
-        val dispatchReceiverSig = irFunction.dispatchReceiverParameter?.let {
-            BinarySymbolData.decode(protoFunction.base.dispatchReceiver.base.symbol).signatureId
-        } ?: INVALID_INDEX
+        val extensionReceiverSig = if (protoFunction.base.hasExtensionReceiver()) {
+            serializeValueParameter(protoFunction.base.extensionReceiver)
+        } else INVALID_INDEX
+        val regularParameterSigs = protoFunction.base.regularParameterList.map { param ->
+            serializeValueParameter(param)
+        }
+        val defaultValues = protoFunction.base.regularParameterList.map { param ->
+            if (param.hasDefaultValue()) param.defaultValue else INVALID_INDEX
+        }
 
         return SerializedInlineFunctionReference(
                 SerializedFileReference(fileDeserializationState.file),
                 functionSignature, protoFunction.base.body, irFunction.startOffset, irFunction.endOffset,
                 extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
-                valueParameterSigs.toIntArray(), typeParameterSigs.toIntArray(), defaultValues.toIntArray()
+                contextParameterSigs.toIntArray(), regularParameterSigs.toIntArray(),
+                typeParameterSigs.toIntArray(), defaultValues.toIntArray()
         )
     }
 }
@@ -156,20 +166,23 @@ internal class InlineFunctionDeserializer(
                 val sigIndex = inlineFunctionReference.typeParameterSigs[endToEndTypeParameterIndex++]
                 deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
-            function.valueParameters.forEachIndexed { index, parameter ->
-                val sigIndex = inlineFunctionReference.valueParameterSigs[index]
+
+            var contextParamIndex = 0
+            var regularParamIndex = 0
+            function.parameters.forEach { parameter ->
+                val sigIndex = when (parameter.kind) {
+                    IrParameterKind.DispatchReceiver -> inlineFunctionReference.dispatchReceiverSig
+                    IrParameterKind.Context -> inlineFunctionReference.contextParameterSigs[contextParamIndex++]
+                    IrParameterKind.ExtensionReceiver -> inlineFunctionReference.extensionReceiverSig
+                    IrParameterKind.Regular -> inlineFunctionReference.regularParameterSigs[regularParamIndex++]
+                }
+                if (parameter.kind != IrParameterKind.Regular) {
+                    require(sigIndex != INVALID_INDEX) { "Expected a valid sig reference to ${parameter.kind} parameter for ${function.render()}" }
+                }
+
                 deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
-            function.extensionReceiverParameter?.let { parameter ->
-                val sigIndex = inlineFunctionReference.extensionReceiverSig
-                require(sigIndex != INVALID_INDEX) { "Expected a valid sig reference to the extension receiver for ${function.render()}" }
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-            }
-            function.dispatchReceiverParameter?.let { parameter ->
-                val sigIndex = inlineFunctionReference.dispatchReceiverSig
-                require(sigIndex != INVALID_INDEX) { "Expected a valid sig reference to the dispatch receiver for ${function.render()}" }
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-            }
+
             for (index in 0 until outerClasses.size - 1) {
                 val sigIndex = inlineFunctionReference.outerReceiverSigs[index]
                 deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, outerClasses[index].thisReceiver!!.symbol)
@@ -179,7 +192,7 @@ internal class InlineFunctionDeserializer(
         with(declarationDeserializer) {
             function.withDeserializeBodies {
                 body = (deserializeStatementBody(inlineFunctionReference.body) as IrBody)
-                valueParameters.forEachIndexed { index, parameter ->
+                parameters.filter { it.kind == IrParameterKind.Regular }.forEachIndexed { index, parameter ->
                     val defaultValueIndex = inlineFunctionReference.defaultValues[index]
                     if (defaultValueIndex != INVALID_INDEX)
                         parameter.defaultValue = deserializeExpressionBody(defaultValueIndex)
@@ -416,7 +429,7 @@ private val IrClass.firstNonClassParent: IrDeclarationParent
 class SerializedInlineFunctionReference(val file: SerializedFileReference, val functionSignature: Int, val body: Int,
                                         val startOffset: Int, val endOffset: Int,
                                         val extensionReceiverSig: Int, val dispatchReceiverSig: Int, val outerReceiverSigs: IntArray,
-                                        val valueParameterSigs: IntArray, val typeParameterSigs: IntArray,
+                                        val contextParameterSigs: IntArray, val regularParameterSigs: IntArray, val typeParameterSigs: IntArray,
                                         val defaultValues: IntArray)
 
 internal object InlineFunctionBodyReferenceSerializer {
@@ -428,7 +441,8 @@ internal object InlineFunctionBodyReferenceSerializer {
             }
         }
         val size = stringTable.sizeBytes + bodies.sumOf {
-            Int.SIZE_BYTES * (12 + it.outerReceiverSigs.size + it.valueParameterSigs.size + it.typeParameterSigs.size + it.defaultValues.size)
+            Int.SIZE_BYTES * (13 + it.outerReceiverSigs.size + it.contextParameterSigs.size + it.regularParameterSigs.size +
+                    it.typeParameterSigs.size + it.defaultValues.size)
         }
         val stream = ByteArrayStream(ByteArray(size))
         stringTable.serialize(stream)
@@ -442,7 +456,8 @@ internal object InlineFunctionBodyReferenceSerializer {
             stream.writeInt(it.extensionReceiverSig)
             stream.writeInt(it.dispatchReceiverSig)
             stream.writeIntArray(it.outerReceiverSigs)
-            stream.writeIntArray(it.valueParameterSigs)
+            stream.writeIntArray(it.contextParameterSigs)
+            stream.writeIntArray(it.regularParameterSigs)
             stream.writeIntArray(it.typeParameterSigs)
             stream.writeIntArray(it.defaultValues)
         }
@@ -462,12 +477,13 @@ internal object InlineFunctionBodyReferenceSerializer {
             val extensionReceiverSig = stream.readInt()
             val dispatchReceiverSig = stream.readInt()
             val outerReceiverSigs = stream.readIntArray()
-            val valueParameterSigs = stream.readIntArray()
+            val contextParameterSigs = stream.readIntArray()
+            val regularParameterSigs = stream.readIntArray()
             val typeParameterSigs = stream.readIntArray()
             val defaultValues = stream.readIntArray()
             result.add(SerializedInlineFunctionReference(
                     SerializedFileReference(fileFqName, filePath), functionSignature, body, startOffset, endOffset,
-                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, valueParameterSigs,
+                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, contextParameterSigs, regularParameterSigs,
                     typeParameterSigs, defaultValues)
             )
         }
