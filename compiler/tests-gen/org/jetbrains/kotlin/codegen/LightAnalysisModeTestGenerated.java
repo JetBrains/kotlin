@@ -18927,6 +18927,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class FunInterface extends AbstractLightAnalysisModeTest {
+    @TestMetadata("inheritProperty.kt")
+    public void ignoreInheritProperty() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritProperty.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
@@ -19003,6 +19008,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("implIsNotFunction.kt")
     public void testImplIsNotFunction() {
       runTest("compiler/testData/codegen/box/funInterface/implIsNotFunction.kt");
+    }
+
+    @TestMetadata("inheritPropertyJvmDefaultAll.kt")
+    public void testInheritPropertyJvmDefaultAll() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAll.kt");
+    }
+
+    @TestMetadata("inheritPropertyJvmDefaultAllCompatibility.kt")
+    public void testInheritPropertyJvmDefaultAllCompatibility() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAllCompatibility.kt");
     }
 
     @TestMetadata("inlinedSamWrapper.kt")

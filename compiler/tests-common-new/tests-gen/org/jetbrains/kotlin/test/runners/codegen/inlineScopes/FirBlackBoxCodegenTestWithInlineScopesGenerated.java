@@ -22792,6 +22792,24 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("inheritProperty.kt")
+    public void testInheritProperty() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritPropertyJvmDefaultAll.kt")
+    public void testInheritPropertyJvmDefaultAll() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAll.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritPropertyJvmDefaultAllCompatibility.kt")
+    public void testInheritPropertyJvmDefaultAllCompatibility() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAllCompatibility.kt");
+    }
+
+    @Test
     @TestMetadata("inlinedSamWrapper.kt")
     public void testInlinedSamWrapper() {
       runTest("compiler/testData/codegen/box/funInterface/inlinedSamWrapper.kt");

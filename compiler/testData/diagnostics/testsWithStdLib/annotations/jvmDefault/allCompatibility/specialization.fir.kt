@@ -57,14 +57,3 @@ private class Outer {
 fun local() {
     object : Foo<String> {}
 }
-
-fun interface F : Foo<String> {
-    fun invoke(o: String): String
-}
-
-fun test(): String {
-    if (F { o -> o + "K" }.invoke("O") != "OK") return "Fail"
-
-    val lambda: (String) -> String = { o -> o + "K" }
-    return F(lambda).invoke("O")
-}
