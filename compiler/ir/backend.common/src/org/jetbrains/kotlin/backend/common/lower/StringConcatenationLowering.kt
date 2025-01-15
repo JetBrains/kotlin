@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isStringClassType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
@@ -52,21 +52,24 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
 
     //TODO: calculate and pass string length to the constructor.
     private val constructor = stringBuilder.constructors.single {
-        it.valueParameters.isEmpty()
+        it.hasShape()
     }
 
     private val defaultAppendFunction = stringBuilder.functions.single {
         it.name == nameAppend &&
-                it.valueParameters.size == 1 &&
-                it.valueParameters.single().type.isNullableAny()
+                it.hasShape(
+                    dispatchReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(null, context.irBuiltIns.anyType.makeNullable())
+                )
     }
 
     private val appendFunctions: Map<IrType, IrSimpleFunction?> =
-        typesWithSpecialAppendFunction.map { type ->
+        typesWithSpecialAppendFunction.associate { type ->
             type to stringBuilder.functions.toList().atMostOne {
-                it.name == nameAppend && it.valueParameters.singleOrNull()?.type == type
+                it.name == nameAppend && it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, type))
             }
-        }.toMap()
+        }
 
     private fun typeToAppendFunction(type: IrType): IrSimpleFunction {
         return appendFunctions[type] ?: defaultAppendFunction
@@ -82,38 +85,35 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
 
             arguments.size == 1 -> {
                 val argument = arguments[0]
-                if (argument.type.isNullable())
-                    builder.irCall(symbols.extensionToString).apply {
-                        extensionReceiver = argument
-                    }
-                else builder.irCall(symbols.memberToString).apply {
-                    dispatchReceiver = argument
+                val functionSymbol =
+                    if (argument.type.isNullable()) symbols.extensionToString
+                    else symbols.memberToString
+                builder.irCall(functionSymbol).apply {
+                    this.arguments[0] = argument
                 }
             }
 
-            arguments.size == 2 && arguments[0].type.isStringClassType() ->
-                if (arguments[0].type.isNullable())
-                    builder.irCall(symbols.extensionStringPlus).apply {
-                        extensionReceiver = arguments[0]
-                        putValueArgument(0, arguments[1])
-                    }
-                else
-                    builder.irCall(symbols.memberStringPlus).apply {
-                        dispatchReceiver = arguments[0]
-                        putValueArgument(0, arguments[1])
-                    }
+            arguments.size == 2 && arguments[0].type.isStringClassType() -> {
+                val functionSymbol =
+                    if (arguments[0].type.isNullable()) symbols.extensionStringPlus
+                    else symbols.memberStringPlus
+                builder.irCall(functionSymbol).apply {
+                    this.arguments[0] = arguments[0]
+                    this.arguments[1] = arguments[1]
+                }
+            }
 
             else -> builder.irBlock(expression) {
                 val stringBuilderImpl = createTmpVariable(irCall(constructor))
                 expression.arguments.forEach { arg ->
                     val appendFunction = typeToAppendFunction(arg.type)
                     +irCall(appendFunction).apply {
-                        dispatchReceiver = irGet(stringBuilderImpl)
-                        putValueArgument(0, arg)
+                        this.arguments[0] = irGet(stringBuilderImpl)
+                        this.arguments[1] = arg
                     }
                 }
                 +irCall(symbols.memberToString).apply {
-                    dispatchReceiver = irGet(stringBuilderImpl)
+                    this.arguments[0] = irGet(stringBuilderImpl)
                 }
             }
         }
