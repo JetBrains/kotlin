@@ -687,6 +687,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     }
 
     @Test
+    @TestMetadata("topLevelDestructuring2.kt")
+    public void testTopLevelDestructuring2() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestructuring2.kt");
+    }
+
+    @Test
     @TestMetadata("treeSet.kt")
     public void testTreeSet() {
       runTest("compiler/fir/analysis-tests/testData/resolve/treeSet.kt");
