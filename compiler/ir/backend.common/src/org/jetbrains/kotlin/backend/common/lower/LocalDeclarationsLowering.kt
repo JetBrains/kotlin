@@ -811,7 +811,7 @@ open class LocalDeclarationsLowering(
                     endOffset = p.endOffset
                     origin =
                         if (p is IrValueParameter &&
-                            p.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver) &&
+                            p.kind == IrParameterKind.ExtensionReceiver &&
                             newDeclaration is IrConstructor
                         ) BOUND_RECEIVER_PARAMETER
                         else BOUND_VALUE_PARAMETER
