@@ -357,7 +357,6 @@ enum class LanguageFeature(
 
     // 2.2
 
-    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_2, kind = BUG_FIX), // KT-11914 Deprecation phase 2
     BreakContinueInInlineLambdas(KOTLIN_2_2), // KT-1436
     UnstableSmartcastOnDelegatedProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-57417
     ReferencesToSyntheticJavaProperties(KOTLIN_2_2), // KT-8575
@@ -382,6 +381,7 @@ enum class LanguageFeature(
     ForbidCompanionInLocalInnerClass(KOTLIN_2_3, kind = BUG_FIX),
     ForbidImplementationByDelegationWithDifferentGenericSignature(KOTLIN_2_3, kind = BUG_FIX), // KT-72140
     ForbidJvmSerializableLambdaOnInlinedFunctionLiterals(KOTLIN_2_3, kind = BUG_FIX), // KT-71906
+    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_3, kind = BUG_FIX), // KT-11914 Deprecation phase 2
 
     // End of 2.* language features --------------------------------------------------
 
