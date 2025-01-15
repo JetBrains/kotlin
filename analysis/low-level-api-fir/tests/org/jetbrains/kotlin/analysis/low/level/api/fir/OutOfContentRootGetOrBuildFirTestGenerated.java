@@ -1174,9 +1174,27 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("destructuringNonLocal2.kt")
+    public void testDestructuringNonLocal2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/destructuringNonLocal2.kt");
+    }
+
+    @Test
     @TestMetadata("destructuringNonLocalBeforeInitBlock.kt")
     public void testDestructuringNonLocalBeforeInitBlock() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/destructuringNonLocalBeforeInitBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTopLevel.kt")
+    public void testDestructuringTopLevel() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/destructuringTopLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTopLevel2.kt")
+    public void testDestructuringTopLevel2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/destructuringTopLevel2.kt");
     }
 
     @Test

@@ -1,0 +1,9 @@
+FILE: topLevelDestructuring2.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+    }
