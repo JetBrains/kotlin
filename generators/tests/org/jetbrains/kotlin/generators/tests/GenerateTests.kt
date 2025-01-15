@@ -40,12 +40,7 @@ import org.jetbrains.kotlin.plugin.sandbox.AbstractFirPsiPluginDiagnosticTest
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.samWithReceiver.*
-import org.jetbrains.kotlin.scripting.test.AbstractReplViaApiDiagnosticsTest
-import org.jetbrains.kotlin.scripting.test.AbstractReplViaApiEvaluationTest
-import org.jetbrains.kotlin.scripting.test.AbstractReplWithTestExtensionsCodegenTest
-import org.jetbrains.kotlin.scripting.test.AbstractReplWithTestExtensionsDiagnosticsTest
-import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
-import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefDiagnosticsTestBase
+import org.jetbrains.kotlin.scripting.test.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
 import org.jetbrains.kotlinx.atomicfu.runners.*
@@ -370,9 +365,6 @@ fun main(args: Array<String>) {
             testClass<AbstractKaptStubConverterTest> {
                 model("converter")
             }
-        }
-
-        testGroup("plugins/kapt4/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
             testClass<AbstractFirKaptStubConverterTest> {
                 model("converter")
             }
