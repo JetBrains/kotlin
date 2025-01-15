@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.renderer.ConeIdFullRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
@@ -105,6 +106,12 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTe
                 scopeSession: ScopeSession,
                 memberRequiredPhase: FirResolvePhase?,
             ): FirTypeScope = shouldNotBeCalled()
+
+            override fun getTypealiasConstructorScope(
+                typeAlias: FirTypeAlias,
+                useSiteSession: FirSession,
+                scopeSession: ScopeSession,
+            ): FirScope = shouldNotBeCalled()
 
             override fun getStaticCallableMemberScope(
                 klass: FirClass,
