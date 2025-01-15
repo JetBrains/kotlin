@@ -203,9 +203,8 @@ internal class LLFirImplicitBodyTargetResolver(
                     target is FirAnonymousInitializer ||
                     target is FirDanglingModifierList ||
                     target is FirEnumEntry ||
-                    target is FirErrorProperty ||
                     target is FirScript
-            -> {
+                -> {
                 // No implicit bodies here
             }
             else -> throwUnexpectedFirElementError(target)
