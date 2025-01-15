@@ -756,20 +756,6 @@ KInt versionToken() {
   return theState()->versionToken();
 }
 
-OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
-  RETURN_RESULT_OF(AdoptStablePointer, stable);
-}
-
-KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
-   ObjHolder result;
-   WorkerLaunchpad(producer, result.slot());
-   if (result.obj() != nullptr) {
-     return transfer(&result, transferMode);
-   } else {
-     return nullptr;
-   }
-}
-
 KULong platformThreadId(KInt id) {
     return theState()->getWorkerPlatformThreadIdUnlocked(id);
 }
@@ -1117,14 +1103,6 @@ KBoolean Kotlin_Worker_waitForAnyFuture(KInt versionToken, KInt millis) {
 
 KInt Kotlin_Worker_versionToken() {
   return versionToken();
-}
-
-OBJ_GETTER(Kotlin_Worker_attachObjectGraphInternal, KNativePtr stable) {
-  RETURN_RESULT_OF(attachObjectGraphInternal, stable);
-}
-
-KNativePtr Kotlin_Worker_detachObjectGraphInternal(KInt transferMode, KRef producer) {
-  return detachObjectGraphInternal(transferMode, producer);
 }
 
 void Kotlin_Worker_waitTermination(KInt id) {

@@ -11,6 +11,7 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.native.internal.*
+import kotlin.native.internal.ref.*
 
 // Implementation details.
 
@@ -95,14 +96,19 @@ internal fun ThrowWorkerUnsupported(): Unit =
 internal fun WorkerLaunchpad(function: () -> Any?) = function()
 
 @PublishedApi
-@GCUnsafeCall("Kotlin_Worker_detachObjectGraphInternal")
 @ObsoleteWorkersApi
-external internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr
+internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr {
+    return createRetainedExternalRCRef(producer())
+}
 
 @PublishedApi
-@GCUnsafeCall("Kotlin_Worker_attachObjectGraphInternal")
 @ObsoleteWorkersApi
-external internal fun attachObjectGraphInternal(stable: NativePtr): Any?
+internal fun attachObjectGraphInternal(stable: NativePtr): Any? {
+    val result = dereferenceExternalRCRef(stable)
+    releaseExternalRCRef(stable)
+    disposeExternalRCRef(stable)
+    return result
+}
 
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_Worker_waitTermination")
