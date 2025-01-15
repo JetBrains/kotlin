@@ -682,6 +682,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
             }
 
+            CXType_Attributed -> {
+                convertType(clang_Type_getModifiedType(type), typeAttributes)
+            }
+
             CXType_Void -> VoidType
 
             CXType_Typedef -> {
@@ -801,7 +805,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     private fun getProtocols(type: CValue<CXType>): List<ObjCProtocol> {
         if (type.kind != CXType_ObjCObjectPointer) return emptyList()
-        val objCObjectType = clang_getPointeeType(type)
+        val objCObjectType = clang_getPointeeType(type).let {
+            // FIXME: do we need to unwrap twice if there are two attributes?
+            if (it.kind == CXType_Attributed) clang_Type_getModifiedType(it) else it
+        }
         val num = clang_Type_getNumObjCProtocolRefs(objCObjectType)
         check(num == clang_Type_getNumProtocols(type)) {
             "Inconsistent number of protocols for type ${clang_getTypeSpelling(type).convertAndDispose()}: " +

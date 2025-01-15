@@ -105,7 +105,7 @@ internal fun parseTranslationUnit(
                 sourceFile.absolutePath,
                 compilerArgs.toNativeStringArray(memScope), compilerArgs.size,
                 null, 0,
-                options,
+                options or CXTranslationUnit_IncludeAttributedTypes, // FIXME: extract.
                 resultVar.ptr
         )
 

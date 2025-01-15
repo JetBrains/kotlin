@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.indexer.AnonymousInnerRecord
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class AnonymousStructIndexingTests : IndexerTestsBase() {
@@ -66,6 +68,25 @@ class AnonymousStructIndexingTests : IndexerTestsBase() {
         // ^ This also checks that the nested struct is not even a StructDecl.
         assertFalse(struct.isAnonymous)
         assertEquals("struct S", struct.spelling)
+        // FIXME: check fields or members
+    }
+
+    @Test
+    fun `nested anonymous struct with type attribute`() {
+        val struct = indexStruct("""
+            struct S {
+                struct __attribute__((enforce_read_only_placement)) {
+                    int x;
+                };
+            };
+        """.trimIndent())
+        // ^ This also checks that the nested struct is not even a StructDecl.
+        assertFalse(struct.isAnonymous)
+        assertEquals("struct S", struct.spelling)
+        val member = struct.def?.members?.singleOrNull()
+        assertIs<AnonymousInnerRecord>(member,
+                "Expected anonymous inner record, got members = ${struct.def?.members}"
+        )
     }
 
     @Test
