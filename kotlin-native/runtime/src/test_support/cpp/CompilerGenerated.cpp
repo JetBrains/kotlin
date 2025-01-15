@@ -133,6 +133,10 @@ void checkRangeIndexes(KInt from, KInt to, KInt size) {
     }
 }
 
+KNativePtr WorkerLaunchpadForRegularJob(KNativePtr jobArgument, KNativePtr job) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpad, KRef) {
     throw std::runtime_error("Not implemented for tests");
 }

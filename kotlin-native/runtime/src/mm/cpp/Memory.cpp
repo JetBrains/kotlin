@@ -393,18 +393,6 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
     RETURN_OBJ(*mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)));
 }
 
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
-    if (!pointer)
-        RETURN_OBJ(nullptr);
-
-    AssertThreadState(ThreadState::kRunnable);
-    mm::StableRef stableRef(static_cast<mm::RawSpecialRef*>(pointer));
-    auto* obj = *stableRef;
-    UpdateStackRef(OBJ_RESULT, obj);
-    std::move(stableRef).dispose();
-    return obj;
-}
-
 // it would be inlined manually in RemoveRedundantSafepointsPass
 extern "C" RUNTIME_NOTHROW NO_INLINE void Kotlin_mm_safePointFunctionPrologue() {
     mm::safePoint();

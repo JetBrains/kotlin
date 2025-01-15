@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "Memory.h"
 #include "Types.h"
 
 namespace kotlin::mm {
@@ -20,5 +19,7 @@ void* permanentObjectAsExternalRCRef(KRef obj) noexcept;
 
 // TypeInfo of the given kotlin.native.internal.ref.ExternalRCRef.
 const TypeInfo* externalRCRefType(void* ref) noexcept;
+
+void releaseAndDisposeExternalRCRef(void* ref) noexcept;
 
 }
