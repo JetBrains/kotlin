@@ -72,6 +72,12 @@ fun Project.assertContainsNoTaskWithName(taskName: String) {
     }
 }
 
+inline fun <reified T : Task> Project.assertContainsTaskInstance(taskName: String): T {
+    assertContainsTaskWithName(taskName)
+    val task = tasks.getByName(taskName)
+    return assertIsInstance<T>(task)
+}
+
 fun Project.assertContainsDependencies(configurationName: String, vararg dependencyNotations: Any, exhaustive: Boolean = false) {
     val configuration = configurations.getByName(configurationName)
     val expectedDependencies = dependencyNotations.map { dependencies.create(it) }.toMutableSet()

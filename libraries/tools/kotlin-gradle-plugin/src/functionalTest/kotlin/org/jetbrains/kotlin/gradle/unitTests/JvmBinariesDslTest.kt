@@ -47,8 +47,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.findByName("runJvm") as? JavaExec
-        assertNotNull(runTask, "Expected 'runJvm' task to be created")
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvm")
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
 
@@ -87,6 +86,10 @@ class JvmBinariesDslTest {
         assertNotNull(installTask, "Expected 'installJvmDist' task to be created")
         assertNotNull(zipTask, "Expected 'distZipJvm' task to be created")
         assertNotNull(tarTask, "Expected 'distTarJvm' task to be created")
+        val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvm")
+        val installTask = project.assertContainsTaskInstance<Sync>("installJvmDist")
+        val zipTask = project.assertContainsTaskInstance<Zip>("jvmDistZip")
+        val tarTask = project.assertContainsTaskInstance<Tar>("jvmDistTar")
 
         val mainJvmCompilation = project.multiplatformExtension
             .jvm()
@@ -148,23 +151,19 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val scriptsTask = project.tasks.findByName("startScriptsForJvm") as? CreateStartScripts
-        assertNotNull(scriptsTask, "Expected 'startScriptsForJvm' task to be created")
+        val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvm")
         assertEquals("foo", scriptsTask.applicationName)
 
-        val installTask = project.tasks.findByName("installJvmDist") as? Sync
-        assertNotNull(installTask, "Expected 'installJvmDist' task to be created")
+        val installTask = project.assertContainsTaskInstance<Sync>("installJvmDist")
         assertEquals(project.projectDir.resolve("build/install/foo-jvm"), installTask.destinationDir)
 
-        val zipTask = project.tasks.findByName("jvmDistZip") as? Zip
-        assertNotNull(zipTask, "Expected 'distZipJvm' task to be created")
+        val zipTask = project.assertContainsTaskInstance<Zip>("jvmDistZip")
         assertEquals(
             project.projectDir.resolve("build/distributions/foo-jvm.zip"),
             zipTask.archiveFile.get().asFile
         )
 
-        val tarTask = project.tasks.findByName("jvmDistTar") as? Tar
-        assertNotNull(tarTask, "Expected 'distTarJvm' task to be created")
+        val tarTask = project.assertContainsTaskInstance<Tar>("jvmDistTar")
         assertEquals(
             project.projectDir.resolve("build/distributions/foo-jvm.tar"),
             tarTask.archiveFile.get().asFile
@@ -192,8 +191,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val scriptsTask = project.tasks.findByName("startScriptsForJvm") as? CreateStartScripts
-        assertNotNull(scriptsTask, "Expected 'startScriptsForJvm' task to be created")
+        val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvm")
         assertEquals("anotherBin", scriptsTask.executableDir)
     }
 
@@ -219,8 +217,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val scriptsTask = project.tasks.findByName("startScriptsForJvm") as? CreateStartScripts
-        assertNotNull(scriptsTask, "Expected 'startScriptsForJvm' task to be created")
+        val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvm")
         assertEquals(listOf("-Xmx512m", "-Dfoo.bar=baz"), scriptsTask.defaultJvmOpts)
     }
 
@@ -253,44 +250,23 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val scriptsTask = project.tasks.findByName("startScriptsForJvm") as? CreateStartScripts
-        assertNotNull(scriptsTask, "Expected 'startScriptsForJvm' task to be created")
+        val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvm")
         assertEquals(project.name, scriptsTask.applicationName)
+        project.assertContainsTaskInstance<Sync>("installJvmDist")
+        project.assertContainsTaskInstance<Zip>("jvmDistZip")
+        project.assertContainsTaskInstance<Tar>("jvmDistTar")
 
-        val installTask = project.tasks.findByName("installJvmDist") as? Sync
-        assertNotNull(installTask, "Expected 'installJvmDist' task to be created")
-
-        val zipTask = project.tasks.findByName("jvmDistZip") as? Zip
-        assertNotNull(zipTask, "Expected 'jvmDistZip' task to be created")
-
-        val tarTask = project.tasks.findByName("jvmDistTar") as? Tar
-        assertNotNull(tarTask, "Expected 'jvmDistTar' task to be created")
-
-        val scriptsTaskMainFoo = project.tasks.findByName("startScriptsForJvmFoo") as? CreateStartScripts
-        assertNotNull(scriptsTaskMainFoo, "Expected 'startScriptsForJvmFoo' task to be created")
+        val scriptsTaskMainFoo = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvmFoo")
         assertEquals("foo", scriptsTaskMainFoo.applicationName)
+        project.assertContainsTaskInstance<Sync>("installJvmFooDist")
+        project.assertContainsTaskInstance<Zip>("jvmFooDistZip")
+        project.assertContainsTaskInstance<Tar>("jvmFooDistTar")
 
-        val installTaskMainFoo = project.tasks.findByName("installJvmFooDist") as? Sync
-        assertNotNull(installTaskMainFoo, "Expected 'installJvmFooDist' task to be created")
-
-        val zipTaskMainFoo = project.tasks.findByName("jvmFooDistZip") as? Zip
-        assertNotNull(zipTaskMainFoo, "Expected 'jvmFooDistZip' task to be created")
-
-        val tarTaskMainFoo = project.tasks.findByName("jvmFooDistTar") as? Tar
-        assertNotNull(tarTaskMainFoo, "Expected 'jvmFooDistTar' task to be created")
-
-        val scriptsTaskTest = project.tasks.findByName("startScriptsForJvmTest") as? CreateStartScripts
-        assertNotNull(scriptsTaskTest, "Expected 'startScriptsForJvmTest' task to be created")
+        val scriptsTaskTest = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvmTest")
         assertEquals(project.name, scriptsTaskTest.applicationName)
-
-        val installTaskTest = project.tasks.findByName("installJvmTestDist") as? Sync
-        assertNotNull(installTaskTest, "Expected 'installJvmTestDist' task to be created")
-
-        val zipTaskTest = project.tasks.findByName("jvmTestDistZip") as? Zip
-        assertNotNull(zipTaskTest, "Expected 'jvmTestDistZip' task to be created")
-
-        val tarTaskTest = project.tasks.findByName("jvmTestDistTar") as? Tar
-        assertNotNull(tarTaskTest, "Expected 'jvmTestDistTar' task to be created")
+        project.assertContainsTaskInstance<Sync>("installJvmTestDist")
+        project.assertContainsTaskInstance<Zip>("jvmTestDistZip")
+        project.assertContainsTaskInstance<Tar>("jvmTestDistTar")
     }
 
     @Test
@@ -314,8 +290,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.findByName("runJvmTest") as? JavaExec
-        assertNotNull(runTask, "Expected 'runJvmTest' task to be created")
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvmTest")
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
         val testCompilation = project.multiplatformExtension.jvm().compilations
@@ -344,8 +319,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.findByName("runJvmCustom") as? JavaExec
-        assertNotNull(runTask, "Expected 'runJvmCustom' task to be created")
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvmCustom")
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals(true, runTask.javaLauncher.get().metadata.isCurrentJvm)
         assertNotNull(project.tasks.findByName("jvmCustomJar"))
@@ -371,7 +345,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.getByName("runJvm") as JavaExec
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvm")
         assertEquals("21", runTask.javaLauncher.get().metadata.jvmVersion.substringBefore('.'))
     }
 
@@ -397,7 +371,7 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.getByName("runJvm") as JavaExec
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvm")
         assertEquals("foo.MainKt", runTask.mainClass.get())
         assertEquals("foo.main", runTask.mainModule.get())
         assertEquals(true, runTask.modularity.inferModulePath.get())
@@ -424,12 +398,10 @@ class JvmBinariesDslTest {
 
         project.evaluate()
 
-        val runTask = project.tasks.findByName("runJvm") as? JavaExec
-        assertNotNull(runTask, "Expected 'runJvm' task to be created")
+        val runTask = project.assertContainsTaskInstance<JavaExec>("runJvm")
         assertEquals("foo.MainKt", runTask.mainClass.get())
 
-        val runTaskAnother = project.tasks.findByName("runJvmAnother") as? JavaExec
-        assertNotNull(runTaskAnother, "Expected 'runJvmMainAnother' task to be created")
+        val runTaskAnother = project.assertContainsTaskInstance<JavaExec>("runJvmAnother")
         assertEquals("foo.MainAnotherKt", runTaskAnother.mainClass.get())
     }
 
