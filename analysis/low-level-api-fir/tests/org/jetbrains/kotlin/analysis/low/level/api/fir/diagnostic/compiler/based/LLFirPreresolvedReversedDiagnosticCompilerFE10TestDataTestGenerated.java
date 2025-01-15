@@ -59,6 +59,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("abstractSuperCallMissing.kt")
+    public void testAbstractSuperCallMissing() {
+      runTest("compiler/testData/diagnostics/tests/abstractSuperCallMissing.kt");
+    }
+
+    @Test
     @TestMetadata("addTestForFalsePositiveDuplicateLabelInWhen.kt")
     public void testAddTestForFalsePositiveDuplicateLabelInWhen() {
       runTest("compiler/testData/diagnostics/tests/addTestForFalsePositiveDuplicateLabelInWhen.kt");
