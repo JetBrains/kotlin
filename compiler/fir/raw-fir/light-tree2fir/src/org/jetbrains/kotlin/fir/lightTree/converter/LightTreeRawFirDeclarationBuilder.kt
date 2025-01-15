@@ -101,7 +101,14 @@ class LightTreeRawFirDeclarationBuilder(
                 KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
-                DESTRUCTURING_DECLARATION -> firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement())
+                DESTRUCTURING_DECLARATION -> {
+                    val initializer = child.getChildExpression().takeUnless { it?.tokenType == PROPERTY_DELEGATE }
+                    val firExpression = expressionConverter.getAsFirExpression<FirExpression>(
+                        initializer,
+                        "Initializer required for destructuring declaration"
+                    )
+                    firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement(), firExpression)
+                }
                 SCRIPT -> {
                     // TODO: scripts aren't supported yet
                 }
@@ -933,8 +940,12 @@ class LightTreeRawFirDeclarationBuilder(
                 SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
                 MODIFIER_LIST -> modifierLists += node
                 DESTRUCTURING_DECLARATION -> {
-
-                    container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
+                    val initializer = node.getChildExpression().takeUnless { it?.tokenType == PROPERTY_DELEGATE }
+                    val firExpression = expressionConverter.getAsFirExpression<FirExpression>(
+                        initializer,
+                        "Initializer required for destructuring declaration"
+                    )
+                    container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement(), firExpression)
                 }
             }
         }
