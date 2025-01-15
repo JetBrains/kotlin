@@ -57,8 +57,6 @@ import java.io.File
 /**
  * This extension implements K2 kapt in the same way as K1 kapt: invoke the compiler in the "skip bodies" / suppress-errors mode,
  * and translate the resulting in-memory class files, correcting error types.
- * It is supposed to replace the old AA-based implementation ([Kapt4AnalysisHandlerExtension]) once we ensure that there are no critical
- * problems with it.
  */
 @OptIn(LegacyK2CliPipeline::class)
 open class FirKaptAnalysisHandlerExtension(
