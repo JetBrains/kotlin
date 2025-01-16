@@ -1,0 +1,10 @@
+FILE: test.kt
+    public final class D : R|C| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(t: R|kotlin/Any?|): R|kotlin/Unit| {
+        }
+
+    }

@@ -1,0 +1,7 @@
+FILE: test.kt
+    public final class D : R|C| {
+        public constructor(): R|D| {
+            super<R|C|>()
+        }
+
+    }

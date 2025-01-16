@@ -53689,6 +53689,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("genericOverrideWithRawType.kt")
+      public void testGenericOverrideWithRawType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/genericOverrideWithRawType.kt");
+      }
+
+      @Test
+      @TestMetadata("genericOverrideWithRawType2.kt")
+      public void testGenericOverrideWithRawType2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/genericOverrideWithRawType2.kt");
+      }
+
+      @Test
       @TestMetadata("generics.kt")
       public void testGenerics() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/generics.kt");
