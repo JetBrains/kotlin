@@ -504,7 +504,10 @@ internal class KaFirCompilerFacility(
 
                 // Synthetic classes often don't have a source element attached, so judging whether the class should stay is hard
                 if (chunk.mainFile == null || file == chunk.mainFile) {
-                    matchingClassNames.add(className)
+                    // If any nested class matches the filter, the outer class should also match it.
+                    // We can meet false positives here: it's OK as it's better than to filter out a required class by a mistake.
+                    val topLevelClassName = className.substringBefore('$')
+                    matchingClassNames.add(topLevelClassName)
                 }
             }
         )
