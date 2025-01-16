@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.createSyntheticForwardDeclarationClass
+import org.jetbrains.kotlin.fir.session.mayBeForwardDeclarationClassId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -64,7 +65,10 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
             }
         )
 
-    override fun hasPackage(fqName: FqName): Boolean = packageProvider.doesKotlinOnlyPackageExist(fqName)
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        if (!classId.mayBeForwardDeclarationClassId()) return null
+        return classCache.getValue(classId, context = null)
+    }
 
     @FirSymbolProviderInternals
     override fun getClassLikeSymbolByClassId(
@@ -74,9 +78,7 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
         return classCache.getValue(classId, classLikeDeclaration)
     }
 
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        return classCache.getValue(classId, null)
-    }
+    override fun hasPackage(fqName: FqName): Boolean = packageProvider.doesKotlinOnlyPackageExist(fqName)
 
     // Region: no-op overrides for symbols that don't exist in K/N forward declarations
 
@@ -137,6 +139,8 @@ fun createNativeForwardDeclarationsSymbolProvider(session: LLFirSession): FirSym
     if (packageProvider == null || declarationProvider == null) return null
 
     return LLNativeForwardDeclarationsSymbolProvider(
-        session, declarationProvider, packageProvider,
+        session,
+        declarationProvider,
+        packageProvider,
     )
 }
