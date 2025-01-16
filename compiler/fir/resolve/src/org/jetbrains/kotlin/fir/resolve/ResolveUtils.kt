@@ -59,8 +59,8 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
-    isLambda && returnStatements.any { it is FirUnitExpression }
+fun FirAnonymousFunction.lambdaWithExplicitEmptyReturns(returnStatements: Collection<FirExpression>): Boolean =
+    isLambda && returnStatements.any { it is FirUnitExpression && it.source?.kind == KtFakeSourceElementKind.ImplicitUnit.Return }
 
 /**
  * Infers the return type of an anonymous function from return expressions in its body.
