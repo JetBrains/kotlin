@@ -25,6 +25,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("complexWithTypeParameter.kt")
+  public void testComplexWithTypeParameter() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/complexWithTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("copy.kt")
   public void testCopy() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/copy.kt");
