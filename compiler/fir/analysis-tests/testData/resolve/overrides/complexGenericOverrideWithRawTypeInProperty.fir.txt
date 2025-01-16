@@ -16,7 +16,7 @@ FILE: test.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            lval x: R|AnyGeneric<kotlin/String>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.x: R|ft<@EnhancedNullability Raw type AnyGeneric<kotlin/Any?>, @EnhancedNullability AnyGeneric<*>>|>|
+            lval x: R|AnyGeneric<kotlin/String>| = this@R|/MySubject|.R|/StackJava.KeyFace.x|
             lval y: R|AnyGeneric<kotlin/String>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.y: R|ft<@EnhancedNullability Raw type AnyGeneric<kotlin/Any?>, @EnhancedNullability AnyGeneric<*>>|>|
         }
 

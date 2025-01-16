@@ -9,14 +9,18 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
+import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.ConeSubstitutionScopeKey
 import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
@@ -41,6 +45,14 @@ class FirClassSubstitutionScope(
     private val skipPrivateMembers: Boolean,
     private val makeExpect: Boolean = false,
     private val derivedClassLookupTag: ConeClassLikeLookupTag,
+    /**
+     * Not-null here implies [substitutor] is [org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor].
+     * In this case, this symbol points to the basic class of the corresponding raw type, like
+     * (Java) class SomeJavaType extends SomeGenericType (no type arguments) {}
+     * SomeJavaType().foo() -- we create substitution scope for SomeGenericType,
+     * and [rawClassSymbol] points to SomeGenericType class.
+     */
+    private val rawClassSymbol: FirClassSymbol<*>?,
     private val origin: FirDeclarationOrigin.SubstitutionOverride,
 ) : FirTypeScope() {
 
@@ -49,12 +61,28 @@ class FirClassSubstitutionScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-            val function = substitutionOverrideCache.overridesForFunctions.getValue(original, this)
+            val function = if (rawClassSymbol != null && !original.dependsOnRawClassSymbol()) {
+                original
+            } else {
+                substitutionOverrideCache.overridesForFunctions.getValue(original, this)
+            }
             processor(function)
         }
 
         return super.processFunctionsByName(name, processor)
     }
+
+    private fun FirCallableSymbol<*>.dependsOnRawClassSymbol(): Boolean {
+        var containingClassLookupTag = this.containingClassLookupTag()
+        while (containingClassLookupTag != null) {
+            if (containingClassLookupTag.classId == rawClassSymbol?.classId) return true
+            val symbol = containingClassLookupTag.toSymbol(session) ?: return false
+            if (!symbol.isInner) return false
+            containingClassLookupTag = symbol.getContainingClassLookupTag()
+        }
+        return false
+    }
+
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
@@ -87,7 +115,9 @@ class FirClassSubstitutionScope(
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
-            val symbol = if (original is FirPropertySymbol || original is FirFieldSymbol) {
+            val symbol = if (rawClassSymbol != null && !original.dependsOnRawClassSymbol()) {
+                original
+            } else if (original is FirPropertySymbol || original is FirFieldSymbol) {
                 substitutionOverrideCache.overridesForVariables.getValue(original, this)
             } else {
                 original
@@ -376,6 +406,7 @@ class FirClassSubstitutionScope(
             skipPrivateMembers,
             makeExpect,
             derivedClassLookupTag,
+            rawClassSymbol,
             origin
         )
     }

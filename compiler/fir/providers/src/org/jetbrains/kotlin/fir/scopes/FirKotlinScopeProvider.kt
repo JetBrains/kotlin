@@ -317,6 +317,7 @@ private fun FirClass.scopeForClassImpl(
             skipPrivateMembers,
             makeExpect = isFromExpectClass,
             memberOwnerLookupTag ?: classFirDispatchReceiver.symbol.toLookupTag(),
+            rawClassSymbol = symbol.takeIf { substitutor is ConeRawScopeSubstitutor },
             origin = if (classFirDispatchReceiver != this) {
                 FirDeclarationOrigin.SubstitutionOverride.DeclarationSite
             } else {

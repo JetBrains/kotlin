@@ -1,0 +1,8 @@
+D:
+  [Source]: public open override fun foo(t: R|kotlin/Any?|): R|kotlin/Unit| from Use site scope of /D [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(t: R|kotlin/Any!|): R|kotlin/Unit| from Java enhancement scope for /C [id: 1]
+      [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(t: R|kotlin/Any!|): R|kotlin/Unit| from Substitution scope for [Java enhancement scope for /B] for type C [id: 1]
+        [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(t: R|E!|): R|kotlin/Unit| from Java enhancement scope for /B [id: 2]
+          [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(t: R|E!|): R|kotlin/Unit| from Substitution scope for [Java enhancement scope for /A] for type B<E> [id: 2]
+            [Enhancement]: public abstract fun foo(t: R|T!|): R|kotlin/Unit| from Java enhancement scope for /A [id: 3]
+

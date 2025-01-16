@@ -15,4 +15,4 @@ public class StackJava {
 }
 
 // FILE: test.kt
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MySubject<!> : StackJava.SubjectClass()
+class MySubject : StackJava.SubjectClass()

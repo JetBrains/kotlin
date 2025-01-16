@@ -27,7 +27,7 @@ public class StackJava {
 // FILE: test.kt
 class MySubject : StackJava.SubjectClass() {
     fun foo() {
-        val x: AnyGeneric<String> = <!INITIALIZER_TYPE_MISMATCH!>this.x<!>
+        val x: AnyGeneric<String> = this.x
         val y: AnyGeneric<String> = <!INITIALIZER_TYPE_MISMATCH!>this.y<!>
     }
 }

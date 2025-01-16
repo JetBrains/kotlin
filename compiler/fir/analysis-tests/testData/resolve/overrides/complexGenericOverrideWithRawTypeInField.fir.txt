@@ -5,7 +5,7 @@ FILE: test.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            lval sf: R|ft<Raw type StackJava.AnyGeneric<kotlin/Any!>, StackJava.AnyGeneric<*>?>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.someField>|
+            lval sf: R|ft<StackJava.AnyGeneric<kotlin/String!>, StackJava.AnyGeneric<kotlin/String!>?>| = this@R|/MySubject|.R|/StackJava.KeyFace.someField|
             lval af: R|ft<Raw type StackJava.AnyGeneric<kotlin/Any!>, StackJava.AnyGeneric<*>?>| = this@R|/MySubject|.R|SubstitutionOverride</StackJava.SubjectClass.anotherField>|
         }
 
