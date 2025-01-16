@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -26,7 +24,9 @@ import org.jetbrains.kotlin.psi.KtProperty
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider
  */
-internal abstract class LLKotlinSymbolProvider(session: FirSession) : FirSymbolProvider(session) {
+internal abstract class LLKotlinSymbolProvider(session: FirSession) :
+    FirSymbolProvider(session),
+    LLKnownClassDeclarationSymbolProvider<KtClassLikeDeclaration> {
     abstract val declarationProvider: KotlinDeclarationProvider
 
     abstract val packageProvider: KotlinPackageProvider
@@ -36,23 +36,6 @@ internal abstract class LLKotlinSymbolProvider(session: FirSession) : FirSymbolP
      * source sessions, unless the `allowKotlinPackage` flag is enabled in the session's `languageVersionSettings`.
      */
     abstract val allowKotlinPackage: Boolean
-
-    /**
-     * Returns the [FirClassLikeSymbol] with the given [classId] for a known [classLikeDeclaration].
-     *
-     * As [classLikeDeclaration] is already known, this function is optimized to avoid declaration provider accesses. However, the given
-     * declaration has to be one of the [classes][KotlinDeclarationProvider.getAllClassesByClassId] or [type aliases][KotlinDeclarationProvider.getAllTypeAliasesByClassId]
-     * provided by the [declarationProvider].
-     *
-     * Furthermore, the function does not guarantee that a symbol for exactly [classLikeDeclaration] will be returned, as this parameter is
-     * only used for optimization. This is in line with the contracts of [FirSymbolProvider.getClassLikeSymbolByClassId], which only
-     * considers the [ClassId] itself and operates on a first-come, first-serve basis. The first [KtClassLikeDeclaration] passed to this
-     * function or fetched with [KotlinDeclarationProvider.getClassLikeDeclarationByClassId] (which does not guarantee a stable result
-     * either) becomes the basis of the class-like symbol for that class ID.
-     *
-     * To get a symbol for an exact class-like declaration, [getClassLikeSymbolByPsi] should be used instead.
-     */
-    abstract fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>?
 
     /**
      * Maps the [FirCallableSymbol]s with the given [callableId] for known [callables] to [destination].
