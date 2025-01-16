@@ -31,7 +31,7 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, ::MainFunctionForBlackBoxTestsSourceProvider)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider)
 
         configureClassicFrontendHandlersStep {
             useHandlers(

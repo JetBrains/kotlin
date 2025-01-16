@@ -54,7 +54,12 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         }
 
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, ::MainFunctionForBlackBoxTestsSourceProvider)
+        commonConfigurationForTest(
+            targetFrontend,
+            frontendFacade,
+            frontendToBackendConverter,
+            additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider
+        )
 
         configureClassicFrontendHandlersStep {
             useHandlers(

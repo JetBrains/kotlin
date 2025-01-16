@@ -31,7 +31,12 @@ abstract class AbstractSteppingTestBase<R : ResultingArtifact.FrontendOutput<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, ::MainFunctionForDebugTestsSourceProvider)
+        commonConfigurationForTest(
+            targetFrontend,
+            frontendFacade,
+            frontendToBackendConverter,
+            additionalSourceProvider = ::MainFunctionForDebugTestsSourceProvider
+        )
 
         commonHandlersForCodegenTest()
         configureJvmArtifactsHandlersStep {

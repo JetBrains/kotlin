@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.HandlersStepBuilder
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxInlinerCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -51,6 +52,7 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     targetFrontend: FrontendKind<F>,
     frontendFacade: Constructor<FrontendFacade<F>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
+    backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>> = ::JvmIrBackendFacade,
     additionalSourceProvider: Constructor<AdditionalSourceProvider>? = null,
 ) {
     commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
@@ -60,7 +62,7 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     firHandlersStep()
     facadeStep(frontendToBackendConverter)
     irHandlersStep(init = {})
-    facadeStep(::JvmIrBackendFacade)
+    facadeStep(backendFacade)
     jvmArtifactsHandlersStep(init = {})
 }
 
