@@ -1278,6 +1278,160 @@ class IrValidatorTest {
         )
     }
 
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    @Test
+    fun `functions with incorrect parameter index are reported`() {
+        val file = createIrFile()
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        function.addValueParameter {
+            name = Name.identifier("x")
+            type = TestIrBuiltins.anyType
+        }
+        function.addTypeParameter {
+            name = Name.identifier("T")
+        }
+        function.parameters[0].indexInOldValueParameters = 1
+        function.parameters[0].indexInParameters = 1
+        function.typeParameters[0].index = 1
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Inconsistent index (old API) of value parameter 1 != 0
+                    FUN name:foo visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Inconsistent index (new API) of value parameter 1 != 0
+                    FUN name:foo visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Inconsistent index of type parameter 1 != 0
+                    FUN name:foo visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+            )
+        )
+    }
+
+    @Test
+    fun `functions with incorrect parameters order are reported`() {
+        val file = createIrFile()
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        repeat(4) { i ->
+            function.addValueParameter {
+                name = Name.identifier("x$i")
+                type = TestIrBuiltins.anyType
+            }
+        }
+        function.parameters[0].kind = IrParameterKind.Regular
+        function.parameters[1].kind = IrParameterKind.ExtensionReceiver
+        function.parameters[2].kind = IrParameterKind.Context
+        function.parameters[3].kind = IrParameterKind.DispatchReceiver
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Invalid order of function parameters: ExtensionReceiver is placed after Regular.
+                    Parameters must follow a strict order: [dispatch receiver, context parameters, extension receiver, regular parameters].
+                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any, x0:kotlin.Any, x2:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Invalid order of function parameters: Context is placed after ExtensionReceiver.
+                    Parameters must follow a strict order: [dispatch receiver, context parameters, extension receiver, regular parameters].
+                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any, x0:kotlin.Any, x2:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Invalid order of function parameters: DispatchReceiver is placed after Context.
+                    Parameters must follow a strict order: [dispatch receiver, context parameters, extension receiver, regular parameters].
+                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any, x0:kotlin.Any, x2:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+            )
+        )
+    }
+
+    @Test
+    fun `functions with multiple receiver parameters are reported`() {
+        val file = createIrFile()
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        repeat(4) { i ->
+            function.addValueParameter {
+                name = Name.identifier("x$i")
+                type = TestIrBuiltins.anyType
+            }
+        }
+        function.parameters[0].kind = IrParameterKind.DispatchReceiver
+        function.parameters[1].kind = IrParameterKind.DispatchReceiver
+        function.parameters[2].kind = IrParameterKind.ExtensionReceiver
+        function.parameters[3].kind = IrParameterKind.ExtensionReceiver
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Function may have only one DispatchReceiver parameter
+                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Function may have only one ExtensionReceiver parameter
+                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                )
+            )
+        )
+    }
+
     @Test
     fun `assignments to value parameters not marked assignable are reported`() {
         val file = createIrFile("test.kt")
