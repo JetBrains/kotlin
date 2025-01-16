@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createForwardDeclarationProvider
@@ -41,7 +42,7 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
     session: LLFirSession,
     override val declarationProvider: KotlinDeclarationProvider,
     override val packageProvider: KotlinPackageProvider,
-) : LLKotlinSymbolProvider(session) {
+) : LLKotlinSymbolProvider(session), LLPsiAwareSymbolProvider {
     private val moduleData: LLFirModuleData get() = session.llFirModuleData
 
     /**
@@ -74,8 +75,16 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
     override fun getClassLikeSymbolByClassId(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
-    ): FirClassLikeSymbol<*>? {
-        return classCache.getValue(classId, classLikeDeclaration)
+    ): FirClassLikeSymbol<*>? =
+        classCache.getValue(classId, classLikeDeclaration)
+
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
+        if (declaration !is KtClassLikeDeclaration) return null
+
+        // We cannot use `getClassLikeSymbolByClassId(classId, declaration)` here. We don't know whether `declaration` is in the scope of
+        // this symbol provider, and thus shouldn't blindly generate a forward declaration class for it. It's possible to add a scope check
+        // later if the performance becomes a problem.
+        return getClassLikeSymbolByClassId(classId)?.takeIf { it.hasPsi(declaration) }
     }
 
     override fun hasPackage(fqName: FqName): Boolean = packageProvider.doesKotlinOnlyPackageExist(fqName)
