@@ -40,11 +40,19 @@ sealed interface WasmOptimizer {
 
                 val processBuilder = ProcessBuilder(*(command + listOf("-o", savedOutput.absolutePath, savedInput.absolutePath)))
                     .redirectErrorStream(true)
-                val exitValue = processBuilder.start().waitFor()
+                val process = processBuilder.start()
+
+                val output = StringBuilder()
+                val reader = process.inputStream.bufferedReader()
+                while (process.isAlive) {
+                    output.append(reader.readText())
+                }
+
+                val exitValue = process.exitValue()
 
                 if (exitValue != 0) {
-                    val commandString = command.joinToString(" ") { escapeShellArgument(it) }
-                    fail("Command \"$commandString\" terminated with exit code $exitValue")
+                    val commandString = processBuilder.command().joinToString(" ") { escapeShellArgument(it) }
+                    fail("Command \"$commandString\" terminated with exit code $exitValue\nOUTPUT:\n$output")
                 }
 
                 return savedOutput.readBytes()
