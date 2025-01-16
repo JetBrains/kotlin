@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -26,7 +24,9 @@ import org.jetbrains.kotlin.psi.KtProperty
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider
  */
-internal abstract class LLKotlinSymbolProvider(session: FirSession) : FirSymbolProvider(session) {
+internal abstract class LLKotlinSymbolProvider(session: FirSession) :
+    FirSymbolProvider(session),
+    LLKnownClassDeclarationSymbolProvider<KtClassLikeDeclaration> {
     abstract val declarationProvider: KotlinDeclarationProvider
 
     abstract val packageProvider: KotlinPackageProvider
@@ -36,19 +36,6 @@ internal abstract class LLKotlinSymbolProvider(session: FirSession) : FirSymbolP
      * source sessions, unless the `allowKotlinPackage` flag is enabled in the session's `languageVersionSettings`.
      */
     abstract val allowKotlinPackage: Boolean
-
-    /**
-     * Returns the [FirClassLikeSymbol] with the given [classId] for a known [classLikeDeclaration].
-     *
-     * As [classLikeDeclaration] is already known, this function is optimized to avoid declaration provider accesses. However, the given
-     * class declaration has to be coherent with [KotlinDeclarationProvider.getClassLikeDeclarationByClassId]. In other words, the
-     * declaration must be chosen such that the resulting [FirClassLikeSymbol] is the same as the result of [getClassLikeSymbolByClassId]
-     * without a known declaration.
-     *
-     * In case of [ClassId] ambiguities, passing a different [classLikeDeclaration] *does not* change the result. Such behavior violates the
-     * coherence constraint above and is prohibited.
-     */
-    abstract fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>?
 
     /**
      * Maps the [FirCallableSymbol]s with the given [callableId] for known [callables] to [destination].
