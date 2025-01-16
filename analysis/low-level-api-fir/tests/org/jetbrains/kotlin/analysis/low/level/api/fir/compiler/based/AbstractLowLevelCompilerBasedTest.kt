@@ -115,6 +115,7 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
             return FirOutputPartForDependsOnModule(
                 module,
                 firResolveSession.useSiteFirSession,
+                analyzerFacade.scopeSession,
                 analyzerFacade,
                 analyzerFacade.allFirFiles
             )

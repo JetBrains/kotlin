@@ -329,7 +329,13 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             .onEach { assert(it.first.name == it.second.name) }
             .toMap()
 
-        return FirOutputPartForDependsOnModule(module, moduleBasedSession, firAnalyzerFacade, filesMap)
+        return FirOutputPartForDependsOnModule(
+            module,
+            moduleBasedSession,
+            firAnalyzerFacade.scopeSession,
+            firAnalyzerFacade,
+            filesMap
+        )
     }
 
     private fun createModuleBasedSession(

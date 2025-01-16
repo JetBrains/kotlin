@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestFile
@@ -17,7 +18,8 @@ import org.jetbrains.kotlin.test.model.TestModule
 data class FirOutputPartForDependsOnModule(
     val module: TestModule,
     val session: FirSession,
-    val firAnalyzerFacade: AbstractFirAnalyzerFacade,
+    val scopeSession: ScopeSession,
+    val firAnalyzerFacade: AbstractFirAnalyzerFacade?, // used only in AA tests
     val firFiles: Map<TestFile, FirFile>
 )
 
