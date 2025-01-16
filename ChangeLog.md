@@ -1,3 +1,16 @@
+## 2.1.10-RC2
+
+### Compiler
+
+- [`KT-73858`](https://youtrack.jetbrains.com/issue/KT-73858) Compose  / iOS: NullPointerException on building
+- [`KT-74040`](https://youtrack.jetbrains.com/issue/KT-74040) Compilation of inner class usage does not check the visibility of parent class during compilation in different rounds
+
+### Compose compiler
+
+- [`b/381407900`](https://issuetracker.google.com/issues/381407900) Avoid adding Compose annotations on synthetic classes
+- [`CMP-5680`](https://youtrack.jetbrains.com/issue/CMP-5680) Compose compiler: unexpected stability warnings for classes compiled with 2.0.10
+
+
 ## 2.1.10-RC
 
 ### Compiler
