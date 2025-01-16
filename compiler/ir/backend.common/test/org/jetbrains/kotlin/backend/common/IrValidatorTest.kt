@@ -161,6 +161,7 @@ class IrValidatorTest {
                     phaseName = "IrValidatorTest",
                     IrValidatorConfig(
                         checkTypes = true,
+                        checkProperties = true,
                         checkValueScopes = true,
                         checkTypeParameterScopes = true,
                         checkCrossFileFieldUsage = true,
@@ -1424,6 +1425,82 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Function may have only one ExtensionReceiver parameter
                     FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any) returnType:kotlin.Any
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Orphaned property getter or setter are reported`() {
+        val file = createIrFile()
+        val property = IrFactoryImpl.buildProperty {
+            name = Name.identifier("p")
+        }
+
+        val correctPropertyGetter = IrFactoryImpl.buildFun {
+            name = Name.identifier("bar")
+            returnType = TestIrBuiltins.anyType
+        }
+        correctPropertyGetter.correspondingPropertySymbol = property.symbol
+        property.getter = correctPropertyGetter
+
+        val orphanedPropertyFunction = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+        orphanedPropertyFunction.correspondingPropertySymbol = property.symbol
+
+        val orphanedPropertyFunctionCall = IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, orphanedPropertyFunction.symbol,
+            typeArgumentsCount = 0,
+        )
+
+        val orphanedPropertyFunctionReference = IrFunctionReferenceImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, orphanedPropertyFunction.symbol,
+            typeArgumentsCount = 0
+        )
+
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(orphanedPropertyFunctionCall)
+        body.statements.add(orphanedPropertyFunctionReference)
+        orphanedPropertyFunction.body = body
+
+        file.addChild(property)
+        file.addChild(orphanedPropertyFunction)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Orphaned property getter/setter FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                    CALL 'public final fun foo (): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Orphaned property getter/setter FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                    FUNCTION_REFERENCE 'public final fun foo (): kotlin.Any declared in org.sample' type=kotlin.Any origin=null reflectionTarget=<same>
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Orphaned property getter/setter FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                    FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
