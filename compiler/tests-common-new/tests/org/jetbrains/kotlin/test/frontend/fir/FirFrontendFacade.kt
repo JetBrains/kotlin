@@ -65,15 +65,7 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.nio.file.Paths
 import org.jetbrains.kotlin.konan.file.File as KFile
 
-open class FirFrontendFacade(
-    testServices: TestServices,
-    private val additionalSessionConfiguration: SessionConfiguration?
-) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
-    // Separate constructor is needed for creating callable references to it
-    constructor(testServices: TestServices) : this(testServices, additionalSessionConfiguration = null)
-
-    fun interface SessionConfiguration : (FirSessionConfigurator) -> Unit
-
+open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(
             service(::FirModuleInfoProvider),
@@ -303,7 +295,6 @@ open class FirFrontendFacade(
             if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
                 registerExperimentalCheckers()
             }
-            additionalSessionConfiguration?.invoke(this)
         }
 
         val moduleBasedSession = createModuleBasedSession(
