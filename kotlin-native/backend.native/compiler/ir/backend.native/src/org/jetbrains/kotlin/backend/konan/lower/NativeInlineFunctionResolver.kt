@@ -30,7 +30,7 @@ internal class NativeInlineFunctionResolver(
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
         if (function.body != null) return function
-        generationState.context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
+        context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
         lower(function)
 
         return function
