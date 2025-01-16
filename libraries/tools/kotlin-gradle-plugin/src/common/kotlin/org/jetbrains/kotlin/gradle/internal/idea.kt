@@ -40,6 +40,6 @@ private abstract class IsInIdeaSyncValueSource : ValueSource<Boolean, ValueSourc
     }
 }
 
-private abstract class IsInIdeaEnvironmentValueSource : ConfigurationCacheOpaqueValueSource<Boolean>() {
+private abstract class IsInIdeaEnvironmentValueSource : ConfigurationCacheOpaqueValueSource<Boolean>("isInIdeaEnvironment") {
     override fun obtainValue(): Boolean = System.getProperty("idea.version") != null
 }

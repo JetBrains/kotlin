@@ -12,18 +12,20 @@ import org.gradle.api.provider.ValueSourceParameters
  * [Value sources][ValueSource] implementing this abstract class makes their value of type [T] be opaque to Configuration Cache.
  * i.e. Gradle will ignore any changes of [T] when checking configuration cache up-to-date state
  */
-internal abstract class ConfigurationCacheOpaqueValueSource<T> : ValueSource<ConfigurationCacheOpaqueValue<T>, ValueSourceParameters.None> {
+internal abstract class ConfigurationCacheOpaqueValueSource<T>(
+    private val valueSourceId: String
+) : ValueSource<ConfigurationCacheOpaqueValue<T>, ValueSourceParameters.None> {
     abstract fun obtainValue(): T
 
     final override fun obtain(): ConfigurationCacheOpaqueValue<T> = ConfigurationCacheOpaqueValue(
         value = obtainValue(),
-        builtBy = this.javaClass
+        valueSourceId = valueSourceId
     )
 }
 
 internal class ConfigurationCacheOpaqueValue<T>(
     val value: T,
-    private val builtBy: Class<*>
+    private val valueSourceId: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -31,11 +33,10 @@ internal class ConfigurationCacheOpaqueValue<T>(
 
         other as ConfigurationCacheOpaqueValue<*>
 
-        return builtBy == other.builtBy
+        return valueSourceId == other.valueSourceId
     }
 
     override fun hashCode(): Int {
-        var result = builtBy.hashCode()
-        return result
+        return valueSourceId.hashCode()
     }
 }
