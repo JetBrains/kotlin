@@ -5,6 +5,7 @@
 package org.jetbrains.kotlinx.jspo.compiler.backend
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -31,7 +32,6 @@ import kotlin.math.abs
 
 private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val context: IrPluginContext) : DeclarationTransformer {
     private val EXPECTED_ORIGIN = IrDeclarationOrigin.GeneratedByPlugin(JsPlainObjectsPluginKey)
-
     private val jsFunction = context.referenceFunctions(StandardIds.JS_FUNCTION_ID).single()
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -40,34 +40,38 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
 
         if (parent == null || declaration !is IrSimpleFunction || declaration.origin != EXPECTED_ORIGIN) return null
 
-        val proxyFunction = declaration.createFunctionContainingTheLogic(parent).also(file::addChild)
-        declaration.body = declaration.generateBodyWithTheProxyFunctionCall(proxyFunction)
+        val proxyFunction = createFunctionContainingTheLogic(declaration, parent).also(file::addChild)
+        declaration.body = generateBodyWithTheProxyFunctionCall(declaration, proxyFunction)
 
         return null
     }
 
-    private fun IrSimpleFunction.createFunctionContainingTheLogic(parent: IrClass): IrSimpleFunction {
-        val declaration = this
+    private fun IrSimpleFunction.makeUniqueName(parent: IrClass): Name {
+        val fqName = parent.fqNameWhenAvailable ?: compilationException("Parent class must have a FQ name", parent)
+        val replacedWithUnderscoreFqn = sanitizeName(fqName.asString()).replace(".", "_")
+        return Name.identifier(replacedWithUnderscoreFqn + "_" + sanitizeName(name.asString()))
+    }
 
+    private fun createFunctionContainingTheLogic(originalFunction: IrSimpleFunction, parent: IrClass): IrSimpleFunction {
         return context.irFactory.buildFun {
-            updateFrom(declaration)
-            name = declaration.name
-            returnType = declaration.returnType
-            origin = declaration.origin
+            updateFrom(originalFunction)
+            name = originalFunction.makeUniqueName(parent)
+            returnType = originalFunction.returnType
+            origin = originalFunction.origin
             isInline = true
             isExternal = false
         }.apply {
-            copyTypeParametersFrom(declaration)
+            copyTypeParametersFrom(originalFunction)
 
             val substitutionMap = HashMap<IrTypeParameterSymbol, IrType>()
-            substitutionMap.putAll(makeTypeParameterSubstitutionMap(declaration, this))
+            substitutionMap.putAll(makeTypeParameterSubstitutionMap(originalFunction, this))
 
             if (!parent.isCompanion) {
                 copyTypeParametersFrom(parent)
                 substitutionMap.putAll(makeTypeParameterSubstitutionMap(parent, this))
             }
 
-            copyParametersFrom(declaration, substitutionMap)
+            copyParametersFrom(originalFunction, substitutionMap)
 
 
             returnType = returnType.substitute(substitutionMap)
@@ -78,37 +82,44 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 dispatchReceiverParameter?.kind = IrParameterKind.ExtensionReceiver
             }
 
-            body = when (declaration.name) {
-                StandardNames.DATA_CLASS_COPY -> generateBodyForCopyFunction()
-                OperatorNameConventions.INVOKE -> generateBodyForFactoryFunction()
-                else -> error("Unexpected function with name `${declaration.name.identifier}`")
+            body = when (originalFunction.name) {
+                StandardNames.DATA_CLASS_COPY -> generateBodyForCopyFunction(this)
+                OperatorNameConventions.INVOKE -> generateBodyForFactoryFunction(this)
+                else -> compilationException("Unexpected function with name `${originalFunction.name.identifier}`", originalFunction)
             }
         }
     }
 
-    private fun IrSimpleFunction.generateBodyWithTheProxyFunctionCall(proxyFunction: IrSimpleFunction): IrBlockBody {
-        val declaration = this
-        return context.irFactory.createBlockBody(startOffset, declaration.endOffset).apply {
+    private fun generateBodyWithTheProxyFunctionCall(originalFunction: IrSimpleFunction, proxyFunction: IrSimpleFunction): IrBlockBody {
+        return context.irFactory.createBlockBody(originalFunction.startOffset, originalFunction.endOffset).apply {
             statements += IrReturnImpl(
-                declaration.startOffset,
-                declaration.endOffset,
-                declaration.returnType,
-                declaration.symbol,
+                originalFunction.startOffset,
+                originalFunction.endOffset,
+                originalFunction.returnType,
+                originalFunction.symbol,
                 IrCallImpl(
-                    declaration.startOffset,
-                    declaration.endOffset,
-                    declaration.returnType,
+                    originalFunction.startOffset,
+                    originalFunction.endOffset,
+                    originalFunction.returnType,
                     proxyFunction.symbol,
                     proxyFunction.typeParameters.size,
                 ).apply {
-                    declaration.dispatchReceiverParameter.takeIf { declaration.parentClassOrNull?.isCompanion != true }?.let {
-                        extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
+                    var extensionReceiverOffset = -1
+
+                    originalFunction.dispatchReceiverParameter.takeIf { originalFunction.parentClassOrNull?.isCompanion != true }?.let {
+                        val extensionReceiverIndex = proxyFunction.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
+                        if (extensionReceiverIndex == -1) compilationException("Extension receiver not found", originalFunction)
+                        arguments[extensionReceiverIndex] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
+                        extensionReceiverOffset = 0
                     }
 
-                    for ((index, parameter) in declaration.valueParameters.withIndex()) {
-                        putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol))
+                    for ((index, parameter) in originalFunction.parameters.withIndex()) {
+                        if (parameter.kind != IrParameterKind.Regular) continue
+                        arguments[index + extensionReceiverOffset] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol)
                     }
-                    for ((index, type) in declaration.typeParameters.withIndex()) {
+
+                    val typeParameters = originalFunction.typeParameters.ifEmpty { originalFunction.parentAsClass.typeParameters }
+                    for ((index, type) in typeParameters.withIndex()) {
                         typeArguments[index] = type.defaultType
                     }
                 }
@@ -116,22 +127,22 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
         }
     }
 
-    private fun IrSimpleFunction.generateBodyForFactoryFunction(): IrBlockBody {
-        val declaration = this
-        return context.irFactory.createBlockBody(startOffset, declaration.endOffset).apply {
+    private fun generateBodyForFactoryFunction(proxyFunction: IrSimpleFunction): IrBlockBody {
+        return context.irFactory.createBlockBody(proxyFunction.startOffset, proxyFunction.endOffset).apply {
             statements += IrReturnImpl(
-                declaration.startOffset,
-                declaration.endOffset,
-                declaration.returnType,
-                declaration.symbol,
+                proxyFunction.startOffset,
+                proxyFunction.endOffset,
+                proxyFunction.returnType,
+                proxyFunction.symbol,
                 IrCallImpl(
-                    declaration.startOffset,
-                    declaration.endOffset,
-                    declaration.returnType,
+                    proxyFunction.startOffset,
+                    proxyFunction.endOffset,
+                    proxyFunction.returnType,
                     jsFunction,
                     0,
                 ).apply {
-                    putValueArgument(0, createValueParametersObject(declaration.valueParameters).toIrConst(context.irBuiltIns.stringType))
+                    val proxyFunctionRegularParameters = proxyFunction.parameters.filter { it.kind == IrParameterKind.Regular }
+                    arguments[0] = createValueParametersObject(proxyFunctionRegularParameters).toIrConst(context.irBuiltIns.stringType)
                 }
             )
         }
@@ -157,13 +168,12 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
     private inline fun Char.mangleIfNot(predicate: Char.() -> Boolean) =
         if (predicate()) this else '_'
 
-    private fun IrSimpleFunction.generateBodyForCopyFunction(): IrBlockBody {
-        val declaration = this
-        return context.irFactory.createBlockBody(startOffset, declaration.endOffset).apply {
+    private fun generateBodyForCopyFunction(proxyFunction: IrSimpleFunction): IrBlockBody {
+        return context.irFactory.createBlockBody(proxyFunction.startOffset, proxyFunction.endOffset).apply {
             val selfName = Name.identifier("${"$$"}tmp_self${"$$"}")
             statements += IrVariableImpl(
-                declaration.startOffset,
-                declaration.endOffset,
+                proxyFunction.startOffset,
+                proxyFunction.endOffset,
                 IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
                 IrVariableSymbolImpl(),
                 selfName,
@@ -172,27 +182,28 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 isConst = false,
                 isLateinit = false
             ).apply {
-                parent = declaration
+                parent = proxyFunction
                 initializer = IrGetValueImpl(
-                    declaration.startOffset,
-                    declaration.endOffset,
-                    declaration.extensionReceiverParameter!!.symbol
+                    proxyFunction.startOffset,
+                    proxyFunction.endOffset,
+                    proxyFunction.parameters.first { it.kind == IrParameterKind.ExtensionReceiver }.symbol
                 )
             }
             statements += IrReturnImpl(
-                declaration.startOffset,
-                declaration.endOffset,
-                declaration.returnType,
-                declaration.symbol,
+                proxyFunction.startOffset,
+                proxyFunction.endOffset,
+                proxyFunction.returnType,
+                proxyFunction.symbol,
                 IrCallImpl(
-                    declaration.startOffset,
-                    declaration.endOffset,
-                    declaration.returnType,
+                    proxyFunction.startOffset,
+                    proxyFunction.endOffset,
+                    proxyFunction.returnType,
                     jsFunction,
                     0,
                 ).apply {
+                    val proxyFunctionRegularParameters = proxyFunction.parameters.filter { it.kind == IrParameterKind.Regular }
                     val objectAssignCall =
-                        "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(declaration.parameters.filter { it.kind == IrParameterKind.Regular })})"
+                        "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(proxyFunctionRegularParameters)})"
                     arguments[0] = objectAssignCall.toIrConst(context.irBuiltIns.stringType)
                 }
             )

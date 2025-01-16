@@ -13,7 +13,6 @@ external interface ExtendedUser : User {
     val email: String
 }
 
-
 fun box(): String {
     val user = ExtendedUser(name = "Name", age = 10, email = "test@test")
 
@@ -24,6 +23,10 @@ fun box(): String {
     val json = js("JSON.stringify(user)")
     if (json != "{\"age\":10,\"name\":\"Name\",\"email\":\"test@test\"}") return "Fail: got the next json: $json"
 
+    val copy = user.copy()
+    val copiedJson = js("JSON.stringify(copy)")
+    if (copiedJson != "{\"age\":10,\"name\":\"Name\",\"email\":\"test@test\"}") return "Fail: got the next json: $copiedJson"
+
     val simpleUser = User(name = "Name", age = 10)
 
     if (simpleUser.name != "Name") return "Fail: problem with `name` property"
@@ -31,6 +34,10 @@ fun box(): String {
 
     val anotherJson = js("JSON.stringify(simpleUser)")
     if (anotherJson != "{\"age\":10,\"name\":\"Name\"}") return "Fail: got the next json: $anotherJson"
+
+    val anotherCopy = simpleUser.copy()
+    val anotherCopiedJson = js("JSON.stringify(anotherCopy)")
+    if (anotherCopiedJson != "{\"age\":10,\"name\":\"Name\"}") return "Fail: got the next json: $anotherCopiedJson"
 
     return "OK"
 }
