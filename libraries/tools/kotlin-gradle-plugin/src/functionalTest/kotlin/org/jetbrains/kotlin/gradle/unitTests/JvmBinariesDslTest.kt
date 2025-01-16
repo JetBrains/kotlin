@@ -417,6 +417,7 @@ class JvmBinariesDslTest {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                     binaries {
                         executable {

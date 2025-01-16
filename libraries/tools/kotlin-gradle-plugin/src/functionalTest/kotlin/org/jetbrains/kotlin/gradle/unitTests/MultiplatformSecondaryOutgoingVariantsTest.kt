@@ -96,6 +96,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         val project = buildProjectWithMPPAndJvmClassesVariant {
             with(multiplatformExtension) {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
                 applyDefaultHierarchyTemplate()
@@ -114,6 +115,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
             with(multiplatformExtension) {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
                 applyDefaultHierarchyTemplate()
@@ -132,6 +134,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
             with(multiplatformExtension) {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
                 applyDefaultHierarchyTemplate()
