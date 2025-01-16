@@ -53005,12 +53005,6 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Operators {
         @Test
-        @TestMetadata("binaryOpIntStackOverflow.nkt")
-        public void testBinaryOpIntStackOverflow() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpIntStackOverflow.nkt");
-        }
-
-        @Test
         @TestMetadata("plus.kt")
         public void testPlus() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");
