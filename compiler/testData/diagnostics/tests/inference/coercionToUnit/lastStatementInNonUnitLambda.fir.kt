@@ -3,7 +3,7 @@
 
 fun foo(x: () -> String) {}
 fun main(a: Array<String>) {
-    foo <!ARGUMENT_TYPE_MISMATCH!>{
-        a[0] = ""
-    }<!>
+    foo {
+        <!RETURN_TYPE_MISMATCH!>a[0] = ""<!>
+    }
 }
