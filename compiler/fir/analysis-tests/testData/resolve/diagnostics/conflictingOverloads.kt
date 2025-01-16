@@ -34,8 +34,8 @@ enum class <!CLASSIFIER_REDECLARATION!>B<!>
 val <!REDECLARATION!>u<!> = 10
 val <!REDECLARATION!>u<!> = 20
 
-val <!SYNTAX!>(a,b)<!> = 30 to 40
-val <!SYNTAX!>(c,d)<!> = 50 to 60
+val <!SYNTAX!>(a,b)<!> = 30 <!UNRESOLVED_REFERENCE!>to<!> 40
+val <!SYNTAX!>(c,d)<!> = 50 <!UNRESOLVED_REFERENCE!>to<!> 60
 
 typealias <!CLASSIFIER_REDECLARATION!>TA<!> = A
 typealias <!CLASSIFIER_REDECLARATION!>TA<!> = B
