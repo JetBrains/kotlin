@@ -71,6 +71,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.registerDefaultVariantImplementations()
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
+        BuildFinishedListenerService.registerIfAbsent(project)
 
         val buildUidService = BuildUidService.registerIfAbsent(project)
         if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {

@@ -584,19 +584,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/BuildEventsListenerRegistr
 	public final fun getInstance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/BuildEventsListenerRegistryHolder;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/BuildFinishedListenerService : java/lang/AutoCloseable, org/gradle/api/services/BuildService {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/BuildFinishedListenerService$Companion;
-	public fun <init> ()V
-	public fun close ()V
-	public final fun onClose (Lkotlin/jvm/functions/Function0;)V
-	public final fun onCloseOnceByKey (Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/BuildFinishedListenerService$Companion {
-	public final fun getInstance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/BuildFinishedListenerService;
-	public final fun registerIfAbsent (Lorg/gradle/api/Project;)Lorg/gradle/api/provider/Provider;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/DefaultKotlinBasePlugin : org/jetbrains/kotlin/gradle/plugin/KotlinBasePlugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
