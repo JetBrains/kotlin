@@ -48,9 +48,11 @@ import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
@@ -353,7 +355,8 @@ internal constructor(
             // For KT-66452 we need to get rid of invocation of 'Task.project'.
             // That is why we moved setting this property to task registration
             // and added convention for backwards compatibility.
-            NoopKotlinNativeProvider(project))
+            chooseKotlinNativeProvider(konanTarget.enabledOnCurrentHostForBinariesCompilation(), konanTarget)
+        )
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
@@ -427,7 +430,17 @@ internal constructor(
     internal val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel> = objectFactory
         .propertyWithConvention(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
-    private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
+    @get:Input
+    internal val nativeHomeDirectory = kotlinNativeProvider.flatMap {
+        when (it) {
+            is NoopKotlinNativeProvider -> project.nativeProperties.actualNativeHomeDirectory
+            is KotlinNativeFromToolchainProvider -> {
+                it.bundleDirectory.asFile
+            }
+        }
+
+    }
+
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
@@ -440,7 +453,7 @@ internal constructor(
             forceDisableRunningInProcess,
             useXcodeMessageStyle,
             useEmbeddableCompilerJar,
-            actualNativeHomeDirectory,
+            nativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService,
             buildFusService
