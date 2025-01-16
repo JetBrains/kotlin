@@ -767,11 +767,6 @@ open class LocalDeclarationsLowering(
 
             newDeclaration.parent = ownerParent
             newDeclaration.returnType = localFunctionContext.remapType(oldDeclaration.returnType)
-            oldDeclaration.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.run {
-                newDeclaration.parameters += copyTo(newDeclaration, type = localFunctionContext.remapType(this.type)).also {
-                    newParameterToOld.putAbsentOrSame(it, this)
-                }
-            }
             newDeclaration.copyAttributes(oldDeclaration)
 
             newDeclaration.parameters = newDeclaration.parameters memoryOptimizedPlus createTransformedValueParameters(
@@ -780,12 +775,7 @@ open class LocalDeclarationsLowering(
             )
             newDeclaration.recordTransformedValueParameters(localFunctionContext)
             val parametersMapping = buildMap {
-                val oldToNewDeclarationParameters = if (oldDeclaration.parameters.any { it.kind == IrParameterKind.ExtensionReceiver }) {
-                    newDeclaration.parameters.take(1) + newDeclaration.parameters.takeLast(oldDeclaration.parameters.size - 1)
-                } else {
-                    newDeclaration.parameters.takeLast(oldDeclaration.parameters.size)
-                }
-                putAll(oldDeclaration.parameters zip oldToNewDeclarationParameters)
+                putAll(oldDeclaration.parameters zip newDeclaration.parameters)
             }
             context.remapMultiFieldValueClassStructure(oldDeclaration, newDeclaration, parametersMapping)
 
@@ -801,9 +791,20 @@ open class LocalDeclarationsLowering(
             newDeclaration: IrFunction,
             isExplicitLocalFunction: Boolean = false
         ) = ArrayList<IrValueParameter>(
-            capturedValues.size + oldDeclaration.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+            capturedValues.size + oldDeclaration.parameters.size
         ).apply {
             val generatedNames = mutableSetOf<String>()
+
+            oldDeclaration.parameters.mapTo(this) { v ->
+                v.copyTo(
+                    newDeclaration,
+                    type = localFunctionContext.remapType(v.type),
+                    varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) },
+                ).also {
+                    newParameterToOld.putAbsentOrSame(it, v)
+                }
+            }
+
             capturedValues.mapTo(this) { capturedValue ->
                 val p = capturedValue.owner
                 buildValueParameter(newDeclaration) {
@@ -822,17 +823,6 @@ open class LocalDeclarationsLowering(
                     isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
                 }.also {
                     newParameterToCaptured[it] = capturedValue
-                }
-            }
-
-            oldDeclaration.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.mapTo(this) { v ->
-                v.copyTo(
-                    newDeclaration,
-                    type = localFunctionContext.remapType(v.type),
-                    varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) },
-                    kind = IrParameterKind.Regular,
-                ).also {
-                    newParameterToOld.putAbsentOrSame(it, v)
                 }
             }
         }
