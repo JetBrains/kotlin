@@ -1,0 +1,11 @@
+// RUN_PIPELINE_TILL: BACKEND
+// ISSUE: KT-74478
+
+fun foo(x: () -> String) {}
+
+fun bar(a: MutableList<String>, b: Boolean) {
+    foo {
+        if (b) return@foo ""
+        a[0] = "" // should be an error here
+    }
+}
