@@ -219,6 +219,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("trainsientLateinit.kt")
+    public void testTrainsientLateinit() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/trainsientLateinit.kt");
+    }
+
+    @Test
     @TestMetadata("Transients.kt")
     public void testTransients() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/Transients.kt");

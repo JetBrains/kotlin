@@ -4289,6 +4289,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("transientLateinitProperty.kt")
+      public void testTransientLateinitProperty() {
+        runTest("compiler/testData/diagnostics/tests/backingField/transientLateinitProperty.kt");
+      }
+
+      @Test
       @TestMetadata("ValDeferredInitInFinalClass.kt")
       public void testValDeferredInitInFinalClass() {
         runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClass.kt");
