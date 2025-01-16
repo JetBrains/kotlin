@@ -33,7 +33,11 @@ public interface CompilationService {
      * @param classpathEntry path to existent classpath entry
      * @param granularity determines granularity of tracking.
      */
-    public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        parseInlinedLocalClasses: Boolean = false
+    ): ClasspathEntrySnapshot
 
     /**
      * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.

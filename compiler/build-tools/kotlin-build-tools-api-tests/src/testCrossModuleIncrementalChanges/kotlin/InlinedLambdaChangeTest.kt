@@ -72,6 +72,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
+    //TODO must test the single-module version of this mess (for real life purposes)
+
     private companion object {
         const val INITIAL_OUTPUT = "42"
         const val WITH_NEW_LAMBDA_BODY = "45"

@@ -72,7 +72,8 @@ class JvmModule(
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
         val snapshot = BaseTest.compilationService.calculateClasspathSnapshot(
             dependency.location.toFile(),
-            ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+            ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
+            parseInlinedLocalClasses = true, //TODO(KT-62555) how do we configure such params in bta test api?
         )
         val hash = snapshot.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()

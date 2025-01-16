@@ -634,8 +634,7 @@ sealed class ChangeInfo(val fqName: FqName) {
     }
 }
 
-fun ByteArray.md5(): Long {
-    val d = MessageDigest.getInstance("MD5").digest(this)!!
+internal fun digestedByteArrayToLong(d: ByteArray): Long {
     return ((d[0].toLong() and 0xFFL)
             or ((d[1].toLong() and 0xFFL) shl 8)
             or ((d[2].toLong() and 0xFFL) shl 16)
@@ -645,6 +644,11 @@ fun ByteArray.md5(): Long {
             or ((d[6].toLong() and 0xFFL) shl 48)
             or ((d[7].toLong() and 0xFFL) shl 56)
             )
+}
+
+fun ByteArray.md5(): Long {
+    val d = MessageDigest.getInstance("MD5").digest(this)!!
+    return digestedByteArrayToLong(d)
 }
 
 @TestOnly

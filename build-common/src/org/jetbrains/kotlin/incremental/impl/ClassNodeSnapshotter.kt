@@ -46,6 +46,7 @@ object ClassNodeSnapshotter {
         val classNode = emptyClass()
         classNode.version = classVersion // Class version is required when working with methods (without it, ASM may fail -- see KT-38857)
         classNode.methods.add(methodNode)
+        //TODO check that im not using a trace method visitor of some kind - just make sure that everything is visited
         return snapshotClass(classNode)
     }
 
