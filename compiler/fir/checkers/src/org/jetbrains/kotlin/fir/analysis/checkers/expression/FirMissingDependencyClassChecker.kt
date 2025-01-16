@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependenc
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
@@ -65,11 +65,14 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
                 considerType(it, missingTypesFromExpression, context)
             }
         }
-        (symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.forEach {
-            val type = it.resolvedReturnTypeRef.coneType
-            considerType(type, missingTypes, context)
-            type.forEachType {
-                considerType(it, missingTypesFromExpression, context)
+        if (expression is FirFunctionCall) {
+            val argumentList = expression.argumentList as? FirResolvedArgumentList
+            argumentList?.mapping?.forEach { (_, parameter) ->
+                val type = parameter.returnTypeRef.coneType
+                considerType(type, missingTypes, context)
+                type.forEachType {
+                    considerType(it, missingTypesFromExpression, context)
+                }
             }
         }
         reportMissingTypes(

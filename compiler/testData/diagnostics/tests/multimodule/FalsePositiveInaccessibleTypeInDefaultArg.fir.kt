@@ -19,25 +19,25 @@ class Another(val s: String, val f: (Base) -> Boolean = { true })
 // FILE: use.kt
 
 fun foo(s: String) {
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Short<!>(s)
+    Short(s)
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Short<!>(s) { null }
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Short<!>(s) { Derived() }
 
-    <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s)
+    Impl(s)
     <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, null)
     <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, Derived())
     <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, null) { null }
-    <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, f = { null })
-    <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, f = { Derived() })
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Impl<!>(s, f = { null })
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Impl<!>(s, f = { Derived() })
 
-    <!MISSING_DEPENDENCY_CLASS!>impl<!>(s)
+    impl(s)
     <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, null)
     <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, Derived())
     <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, null) { null }
-    <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, f = { null })
-    <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, f = { Derived() })
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>impl<!>(s, f = { null })
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>impl<!>(s, f = { Derived() })
 
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s)
+    Another(s)
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ false }<!>
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!> == <!MISSING_DEPENDENCY_CLASS!>it<!> }<!>
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>() == 0 }<!>
