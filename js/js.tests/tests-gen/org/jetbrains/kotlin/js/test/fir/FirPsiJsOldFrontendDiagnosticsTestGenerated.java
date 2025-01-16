@@ -110,6 +110,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
   }
 
   @Test
+  @TestMetadata("moreThanOneOverriddenExternals.kt")
+  public void testMoreThanOneOverriddenExternals() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/moreThanOneOverriddenExternals.kt");
+  }
+
+  @Test
   @TestMetadata("noImpl.kt")
   public void testNoImpl() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/noImpl.kt");

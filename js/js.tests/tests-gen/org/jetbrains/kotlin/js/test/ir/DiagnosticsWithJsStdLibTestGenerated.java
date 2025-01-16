@@ -112,6 +112,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("moreThanOneOverriddenExternals.kt")
+  public void testMoreThanOneOverriddenExternals() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/moreThanOneOverriddenExternals.kt");
+  }
+
+  @Test
   @TestMetadata("noImpl.kt")
   public void testNoImpl() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/noImpl.kt");
