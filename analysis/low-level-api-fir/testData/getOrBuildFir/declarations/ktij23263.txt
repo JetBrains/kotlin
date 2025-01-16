@@ -1,9 +1,9 @@
 KT element: KtStringTemplateExpression
-FIR element: FirErrorPropertyImpl
+FIR element: FirLiteralExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-<ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+String(First property)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] ktij23263.kt
