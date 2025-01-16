@@ -1,3 +1,5 @@
+Captured values:
 Local[name: o; isMutated: false; displayText: o]
     lval o: R|kotlin/Any|
     R|kotlin/Any|
+No captured files

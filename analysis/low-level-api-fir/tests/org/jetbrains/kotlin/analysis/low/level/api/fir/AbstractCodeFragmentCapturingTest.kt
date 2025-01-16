@@ -45,25 +45,36 @@ abstract class AbstractCodeFragmentCapturingTest : AbstractAnalysisApiBasedTest(
             frontendErrors
         }
 
-        val capturedSymbols = CodeFragmentCapturedValueAnalyzer.analyze(resolveSession, firCodeFragment).symbols
+        val capturedValueData = CodeFragmentCapturedValueAnalyzer.analyze(resolveSession, firCodeFragment)
 
-        val actualText = capturedSymbols.joinToString("\n") { capturedSymbol ->
-            val firRenderer = FirRenderer(
-                bodyRenderer = null,
-                classMemberRenderer = null,
-                contractRenderer = null,
-                modifierRenderer = null
-            )
 
-            buildString {
-                append(capturedSymbol.value)
-                appendLine().append(firRenderer.renderElementAsString(capturedSymbol.symbol.fir).indented(4))
-                appendLine().append(capturedSymbol.typeRef.render().indented(4))
+        val actualText = buildString {
+            if (capturedValueData.symbols.isNotEmpty()) {
+                append(capturedValueData.symbols.joinToString(prefix = "Captured values:\n", separator = "\n") { capturedSymbol ->
+                    val firRenderer = FirRenderer(
+                        bodyRenderer = null,
+                        classMemberRenderer = null,
+                        contractRenderer = null,
+                        modifierRenderer = null
+                    )
+                    buildString {
+                        append(capturedSymbol.value)
+                        appendLine().append(firRenderer.renderElementAsString(capturedSymbol.symbol.fir).indented(4))
+                        appendLine().append(capturedSymbol.typeRef.render().indented(4))
+                    }
+                })
+            } else {
+                append("No captured values")
+            }
+            if (capturedValueData.files.isNotEmpty()) {
+                append(capturedValueData.files.joinToString(prefix = "\nCaptured files:\n", separator = "\n") { it.name })
+            } else {
+                appendLine().append("No captured files")
             }
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(
-            actual = actualText.ifEmpty { "No captured values" },
+            actual = actualText,
             extension = ".capturing.txt"
         )
     }

@@ -1,3 +1,5 @@
+Captured values:
 Local[name: x; isMutated: true; displayText: x]
     lvar x: R|kotlin/Int|
     R|kotlin/Int|
+No captured files

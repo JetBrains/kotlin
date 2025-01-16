@@ -1,3 +1,5 @@
+Captured values:
 Local[name: a; isMutated: false; displayText: a]
     a: R|A|
     R|A|
+No captured files

@@ -1,6 +1,8 @@
+Captured values:
 ExtensionReceiver[name: with; isMutated: false; displayText: this@with]
     <explicit receiver parameter>: R|kotlin/String|
     R|kotlin/String|
 ExtensionReceiver[name: with; isMutated: false; displayText: this@with]
     <explicit receiver parameter>: R|Foo|
     R|Foo|
+No captured files

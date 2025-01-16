@@ -1,6 +1,8 @@
+Captured values:
 ContextReceiver[name: Ctx1; isMutated: false; displayText: this@Ctx1]
     R|Ctx1|
     R|Ctx1|
 ContextReceiver[name: Ctx2; isMutated: false; displayText: this@Ctx2]
     R|Ctx2|
     R|Ctx2|
+No captured files

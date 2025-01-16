@@ -1,3 +1,5 @@
+Captured values:
 ExtensionReceiver[name: ext; isMutated: false; displayText: this@ext]
     <explicit receiver parameter>: R|kotlin/Int|
     R|kotlin/Int|
+No captured files
