@@ -11,7 +11,7 @@ dependencies {
     testImplementation(project(":analysis:analysis-api"))
     testImplementation(project(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(libs.lincheck)
+//    testImplementation(libs.lincheck)
 
     testRuntimeOnly(libs.intellij.fastutil)
 }

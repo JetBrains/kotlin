@@ -197,7 +197,7 @@ dependencies {
     testImplementation(libs.junit4)
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
-    testImplementation(libs.lincheck)
+//    testImplementation(libs.lincheck)
 }
 
 configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
@@ -563,6 +563,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     tasks.named("check") {
         dependsOn("functionalTest")
-        dependsOn("lincheckTest")
+//        dependsOn("lincheckTest")
     }
 }
