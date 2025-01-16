@@ -215,6 +215,7 @@ object StandardClassIds {
 
         val jvmStatic = "JvmStatic".jvmId()
         val jvmName = "JvmName".jvmId()
+        val Transient = "Transient".jvmId()
 
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()

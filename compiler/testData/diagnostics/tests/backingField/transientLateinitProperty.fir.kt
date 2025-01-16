@@ -4,7 +4,7 @@
 
 class Bar {
     @kotlin.jvm.Transient
-    <!UNNECESSARY_LATEINIT!>lateinit<!> var foo: String
+    lateinit var foo: String
 
     constructor(foo: String) {
         this.foo = foo
