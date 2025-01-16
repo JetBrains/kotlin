@@ -23,7 +23,8 @@ internal val KotlinCreateLifecycleTasksSideEffect = KotlinCompilationSideEffect 
             compilation.compileKotlinTaskProvider.map { it.outputs.files }
         })
 
-        if (compilation is KotlinJvmCompilation && compilation.target.withJavaEnabled == true) {
+        @Suppress("DEPRECATION")
+        if (compilation is KotlinJvmCompilation && compilation.target.withJavaEnabled) {
             it.inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
         }
 

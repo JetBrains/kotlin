@@ -25,6 +25,7 @@ class KT31459JvmMainClassesTest {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
             }

@@ -34,7 +34,12 @@ class TestFixturesTest {
             projectBuilder = {
                 withName("KT-68278")
             }) {
-            kotlin { jvm() { withJava() } }
+            kotlin {
+                jvm {
+                    @Suppress("DEPRECATION")
+                    withJava()
+                }
+            }
         },
         "jvm"
     )

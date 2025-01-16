@@ -306,6 +306,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
 
             subProject("multiplatform").buildScriptInjection {
                 kotlinMultiplatform.jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                     binaries {
                         executable {

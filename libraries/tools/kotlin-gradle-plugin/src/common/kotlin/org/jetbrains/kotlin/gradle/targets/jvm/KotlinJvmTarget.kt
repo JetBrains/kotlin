@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.gradle.utils.future
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
+private const val WITH_JAVA_DEPRECATION_MESSAGE =
+    "Kotlin Multiplatform JVM target compiles Java sources by default. Please remove `withJava()` call."
+
 abstract class KotlinJvmTarget @Inject constructor(
     project: Project,
 ) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
@@ -120,15 +123,26 @@ abstract class KotlinJvmTarget @Inject constructor(
         configure.execute(binariesDsl)
     }
 
+    @Deprecated(
+        message = WITH_JAVA_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING
+    )
     var withJavaEnabled = false
         private set
 
-    @Suppress("unused") // user DSL
+    @Deprecated(
+        message = WITH_JAVA_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING
+    )
     fun withJava() {
+        @Suppress("DEPRECATION")
         if (withJavaEnabled)
             return
 
-        project.multiplatformExtension.targets.find { it is KotlinJvmTarget && it.withJavaEnabled }
+        project.multiplatformExtension.targets.find {
+            @Suppress("DEPRECATION")
+            it is KotlinJvmTarget && it.withJavaEnabled
+        }
             ?.let { existingJavaTarget ->
                 throw InvalidUserCodeException(
                     "Only one of the JVM targets can be configured to work with Java. The target '${existingJavaTarget.name}' is " +
@@ -155,6 +169,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             project.reportDiagnostic(KotlinToolingDiagnostics.JvmWithJavaIsIncompatibleWithAndroid(androidPluginId, trace))
         }
 
+        @Suppress("DEPRECATION")
         withJavaEnabled = true
 
         project.plugins.apply(JavaBasePlugin::class.java)

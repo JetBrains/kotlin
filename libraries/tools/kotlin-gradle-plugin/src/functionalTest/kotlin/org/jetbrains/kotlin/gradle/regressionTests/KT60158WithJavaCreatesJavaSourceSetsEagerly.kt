@@ -26,6 +26,7 @@ class KT60158WithJavaCreatesJavaSourceSetsEagerly {
             "Expected no java source set 'main' to be created without 'withJava()'"
         )
 
+        @Suppress("DEPRECATION")
         multiplatformExtension.jvm().withJava()
         assertNotNull(
             javaSourceSets.findByName("main"),

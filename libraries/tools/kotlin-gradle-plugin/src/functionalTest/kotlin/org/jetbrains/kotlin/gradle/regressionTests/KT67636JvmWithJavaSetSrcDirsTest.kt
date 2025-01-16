@@ -34,6 +34,7 @@ class KT67636JvmWithJavaSetSrcDirsTest {
                 )
 
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
             }
@@ -50,6 +51,7 @@ class KT67636JvmWithJavaSetSrcDirsTest {
 
                     jvm {
                         compilations.getByName("main").defaultSourceSet.resources.srcDir(prop)
+                        @Suppress("DEPRECATION")
                         withJava()
                     }
 

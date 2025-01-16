@@ -317,6 +317,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     }
 
                     jvm("jvmWithJava") {
+                        @Suppress("DEPRECATION")
                         withJava()
                         attributes { attribute(disambiguationAttribute, "jvmWithJava") }
                     }
