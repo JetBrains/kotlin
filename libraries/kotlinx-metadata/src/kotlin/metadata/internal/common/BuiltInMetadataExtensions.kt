@@ -80,7 +80,7 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext) {
-        for (annotation in extension { kmClass.annotations }) {
+        for (annotation in extension { kmClass.builtinsAnnotations }) {
             proto.addExtension(BuiltInsProtoBuf.classAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
@@ -97,19 +97,19 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function.Builder, c: WriteContext) {
-        for (annotation in extension { kmFunction.annotations }) {
+        for (annotation in extension { kmFunction.builtinsAnnotations }) {
             proto.addExtension(BuiltInsProtoBuf.functionAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
 
     override fun writePropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext) {
-        for (annotation in extension { kmProperty.annotations }) {
+        for (annotation in extension { kmProperty.builtinsAnnotations }) {
             proto.addExtension(BuiltInsProtoBuf.propertyAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
 
     override fun writeConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext) {
-        for (annotation in extension { kmConstructor.annotations }) {
+        for (annotation in extension { kmConstructor.builtinsAnnotations }) {
             proto.addExtension(BuiltInsProtoBuf.constructorAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
@@ -130,7 +130,7 @@ public class BuiltInsMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeValueParameterExtensions(valueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext) {
-        for (annotation in extension { valueParameter.annotations }) {
+        for (annotation in extension { valueParameter.builtinsAnnotations }) {
             proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }

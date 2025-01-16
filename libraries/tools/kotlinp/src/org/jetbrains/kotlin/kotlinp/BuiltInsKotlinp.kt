@@ -26,15 +26,15 @@ class BuiltInsKotlinp(settings: Settings) : Kotlinp(settings) {
         }
     }
 
-    override fun getAnnotations(clazz: KmClass) = extension { clazz.annotations }
-    override fun getAnnotations(constructor: KmConstructor) = extension { constructor.annotations }
-    override fun getAnnotations(function: KmFunction) = extension { function.annotations }
-    override fun getAnnotations(property: KmProperty) = extension { property.annotations }
-    override fun getGetterAnnotations(property: KmProperty) = extension { property.getterAnnotations }
-    override fun getSetterAnnotations(property: KmProperty) = extension { property.setterAnnotations }
+    override fun getAnnotations(clazz: KmClass) = extension { clazz.builtinsAnnotations }
+    override fun getAnnotations(constructor: KmConstructor) = extension { constructor.builtinsAnnotations }
+    override fun getAnnotations(function: KmFunction) = extension { function.builtinsAnnotations }
+    override fun getAnnotations(property: KmProperty) = extension { property.builtinsAnnotations }
+    override fun getGetterAnnotations(property: KmProperty) = extension { property.builtinsGetterAnnotations }
+    override fun getSetterAnnotations(property: KmProperty) = extension { property.builtinsSetterAnnotations }
     override fun getAnnotations(typeParameter: KmTypeParameter) = extension { typeParameter.annotations }
     override fun getAnnotations(type: KmType) = extension { type.annotations }
-    override fun getAnnotations(valueParameter: KmValueParameter) = extension { valueParameter.annotations }
+    override fun getAnnotations(valueParameter: KmValueParameter) = extension { valueParameter.builtinsAnnotations }
 
     override fun sortConstructors(constructors: List<KmConstructor>): List<KmConstructor> =
         constructors.sortedBy { render(it, ::renderConstructor) }

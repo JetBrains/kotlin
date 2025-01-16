@@ -11,7 +11,7 @@ import kotlin.metadata.*
  * This object serves as an internal accessor for extensions that are available only when metadata is loaded from .kotlin_builtins file.
  */
 public object BuiltInExtensionsAccessor {
-    public val KmClass.annotations: MutableList<KmAnnotation>
+    public val KmClass.builtinsAnnotations: MutableList<KmAnnotation>
         get() = builtins.annotations
 
     public var KmPackage.fqName: String?
@@ -20,16 +20,16 @@ public object BuiltInExtensionsAccessor {
             builtins.fqName = value
         }
 
-    public val KmFunction.annotations: MutableList<KmAnnotation>
+    public val KmFunction.builtinsAnnotations: MutableList<KmAnnotation>
         get() = builtins.annotations
 
-    public val KmProperty.annotations: MutableList<KmAnnotation>
+    public val KmProperty.builtinsAnnotations: MutableList<KmAnnotation>
         get() = builtins.annotations
 
-    public val KmProperty.setterAnnotations: MutableList<KmAnnotation>
+    public val KmProperty.builtinsSetterAnnotations: MutableList<KmAnnotation>
         get() = builtins.setterAnnotations
 
-    public val KmProperty.getterAnnotations: MutableList<KmAnnotation>
+    public val KmProperty.builtinsGetterAnnotations: MutableList<KmAnnotation>
         get() = builtins.getterAnnotations
 
     public var KmProperty.compileTimeValue: KmAnnotationArgument?
@@ -38,10 +38,10 @@ public object BuiltInExtensionsAccessor {
             builtins.compileTimeValue = value
         }
 
-    public val KmConstructor.annotations: MutableList<KmAnnotation>
+    public val KmConstructor.builtinsAnnotations: MutableList<KmAnnotation>
         get() = builtins.annotations
 
-    public val KmValueParameter.annotations: MutableList<KmAnnotation>
+    public val KmValueParameter.builtinsAnnotations: MutableList<KmAnnotation>
         get() = builtins.annotations
 
     public val KmTypeParameter.annotations: MutableList<KmAnnotation>
