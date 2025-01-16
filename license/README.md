@@ -145,6 +145,10 @@ the Kotlin IntelliJ IDEA plugin:
    - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
    - Origin: Derived from boost hash functions, Copyright 2005-2014 Daniel James
 
+ - Path: prepare/compiler/
+    - License: Apache 2 ([license/third_party/opentelemetry_license.txt][opentelemetry])
+    - Origin: Copyright The OpenTelemetry Authors
+
 ## Kotlin Test Data
 
 The following source code is used for testing the Kotlin compiler and/or plugin and is not incorporated into
@@ -295,3 +299,4 @@ any distributions of the compiler, libraries or plugin:
 [spring]: third_party/testdata/spring_license.txt
 [sun]: third_party/sun_license.txt
 [threetenbp]: third_party/threetenbp_license.txt
+[opentelemetry]: third_party/opentelemetry_license.txt
