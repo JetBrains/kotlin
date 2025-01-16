@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor.SuppressionChecker
 import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -25,9 +26,9 @@ import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.PsiLightTreeMetaInfoProcessor
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhaseLabel
+import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -63,6 +64,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
         useAfterAnalysisCheckers(::PhasedPipelineChecker)
         enableMetaInfoHandler()
+        useAdditionalService<SuppressionChecker>(::SuppressionChecker.bind(null))
     }
 }
 
