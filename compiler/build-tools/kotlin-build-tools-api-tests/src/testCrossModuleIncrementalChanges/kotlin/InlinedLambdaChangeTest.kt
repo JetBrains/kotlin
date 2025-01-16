@@ -14,54 +14,85 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
+//TODO there was some heavy junie usage, check descriptions and comments at cleanup stage
 class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Assert status-quo: changes of inlined lambda's body does not trigger compilation of its users")
-    @TestMetadata("ic-scenarios/jvm-inline-lib")
-    fun testStatusQuo(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    @DisplayName("When inlined lambda's body changes, its call site is recompiled")
+    @TestMetadata("ic-scenarios/inline-local-class/lambda-body-change/lib")
+    fun testMainCase(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
-            val lib = module("ic-scenarios/jvm-inline-lib")
-            val app = module("ic-scenarios/jvm-inline-app", dependencies = listOf(lib))
+            val lib = module("ic-scenarios/inline-local-class/lambda-body-change/lib")
+            val app = module("ic-scenarios/inline-local-class/lambda-body-change/app", dependencies = listOf(lib))
 
-            app.executeCompiledCode("CallSiteKt") {
+            app.executeCompiledCode("com.example.ictest.CallSiteKt") {
                 assertExactOutput(INITIAL_OUTPUT)
             }
 
-            lib.replaceFileWithVersion("inlinedLambda.kt", "changeLambdaBody")
+            lib.replaceFileWithVersion("com/example/ictest/inlinedLambda.kt", "changeLambdaBody")
 
             lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLambda.kt")
+                assertCompiledSources(module, "com/example/ictest/inlinedLambda.kt")
             }
             app.compile { module, scenarioModule ->
-                //assertCompiledSources(module, "callSite.kt")
-                assertCompiledSources(module, emptySet())
+                assertCompiledSources(module, "com/example/ictest/callSite.kt")
             }
-            app.executeCompiledCode("CallSiteKt") {
-                // this is why KT-62555 is a bug - the call site now has inlined the old version of the code,
-                // and incremental build did not pick it up
-                assertExactOutput(INITIAL_OUTPUT)
+            app.executeCompiledCode("com.example.ictest.CallSiteKt") {
+                assertExactOutput(WITH_NEW_LAMBDA_BODY)
             }
 
-            lib.replaceFileWithVersion("inlinedLambda.kt", "changeFunctionBody")
+            lib.replaceFileWithVersion("com/example/ictest/inlinedLambda.kt", "changeFunctionBody")
 
             lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLambda.kt")
+                assertCompiledSources(module, "com/example/ictest/inlinedLambda.kt")
             }
             app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "callSite.kt")
+                assertCompiledSources(module, "com/example/ictest/callSite.kt")
             }
-            app.executeCompiledCode("CallSiteKt") {
+            app.executeCompiledCode("com.example.ictest.CallSiteKt") {
                 assertExactOutput(WITH_BOTH_CHANGES)
             }
+        }
+    }
 
-            /**
-             * Bonus round: now we go back to the second step. Reverse change of lambda body forces the recompilation
-             * of call site. And now the updated lambda code would be inlined
-             */
-            lib.replaceFileWithVersion("inlinedLambda.kt", "changeLambdaBody")
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Single-module version of inlined lambda changes")
+    @TestMetadata("ic-scenarios/inline-local-class/single-module/app")
+    fun testSingleModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val app = module("ic-scenarios/inline-local-class/single-module/app")
+
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)
+            }
+
+            app.replaceFileWithVersion("inlinedLambda.kt", "changeLambdaBody")
+
+            app.compile { module, scenarioModule ->
+                assertCompiledSources(module, "inlinedLambda.kt")
+                //interestingly, in this version we don't recompile the call site, but the build works.
+            }
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(WITH_NEW_LAMBDA_BODY)
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Changes in local class inside inlined local class")
+    @TestMetadata("ic-scenarios/inline-local-class/local-in-local/lib")
+    fun testLocalClassInLocal(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/local-in-local/lib")
+            val app = module("ic-scenarios/inline-local-class/local-in-local/app", dependencies = listOf(lib))
+
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)
+            }
+
+            lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
 
             lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLambda.kt")
+                assertCompiledSources(module, "inlinedLocalClass.kt")
             }
             app.compile { module, scenarioModule ->
                 assertCompiledSources(module, "callSite.kt")
@@ -72,9 +103,114 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Changes in unused code should not trigger recompilation of call site")
+    @TestMetadata("ic-scenarios/inline-local-class/no-recompile/lib")
+    fun testNoRecompilationNeeded(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/no-recompile/lib")
+            val app = module("ic-scenarios/inline-local-class/no-recompile/app", dependencies = listOf(lib))
+
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)
+            }
+
+            lib.replaceFileWithVersion("inlinedFunction.kt", "changeUnusedCode")
+
+            lib.compile { module, scenarioModule ->
+                assertCompiledSources(module, "inlinedFunction.kt")
+            }
+            app.compile { module, scenarioModule ->
+                assertCompiledSources(module)  // No files should be recompiled
+            }
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)  // Output should remain the same
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Changes in lambda inside inline function B affect call site of inline function A that calls B")
+    @TestMetadata("ic-scenarios/inline-local-class/nested-inline/lib")
+    fun testNestedInlineFunctions(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/nested-inline/lib")
+            val app = module("ic-scenarios/inline-local-class/nested-inline/app", dependencies = listOf(lib))
+
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)
+            }
+
+            lib.replaceFileWithVersion("inlinedB.kt", "changeLambdaInB")
+
+            lib.compile { module, scenarioModule ->
+                assertCompiledSources(module, "inlinedB.kt", "inlinedA.kt")
+            }
+            app.compile { module, scenarioModule ->
+                assertCompiledSources(module, "callSite.kt")  // Call site of A should be recompiled
+            }
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(WITH_NEW_LAMBDA_BODY)
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Changes in lambda inside inline property getter trigger recompilation")
+    @TestMetadata("ic-scenarios/inline-local-class/inline-property/lib")
+    fun testInlineProperty(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/inline-property/lib")
+            val app = module("ic-scenarios/inline-local-class/inline-property/app", dependencies = listOf(lib))
+
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)
+            }
+
+            lib.replaceFileWithVersion("inlinedProperty.kt", "changeLambdaBody")
+
+            lib.compile { module, scenarioModule ->
+                assertCompiledSources(module, "inlinedProperty.kt")
+            }
+            app.compile { module, scenarioModule ->
+                assertCompiledSources(module, "callSite.kt")
+            }
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(PROPERTY_LAMBDA_CHANGED)
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Changes in multiple unused lambdas should not trigger recompilation")
+    @TestMetadata("ic-scenarios/inline-local-class/no-recompile-lambdas/lib")
+    fun testMultipleUnusedLambdas(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/no-recompile-lambdas/lib")
+            val app = module("ic-scenarios/inline-local-class/no-recompile-lambdas/app", dependencies = listOf(lib))
+
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)
+            }
+
+            lib.replaceFileWithVersion("inlinedFunction.kt", "changeUnusedLambdas")
+
+            lib.compile { module, scenarioModule ->
+                assertCompiledSources(module, "inlinedFunction.kt")
+            }
+            app.compile { module, scenarioModule ->
+                assertCompiledSources(module)  // No files should be recompiled
+            }
+            app.executeCompiledCode("CallSiteKt") {
+                assertExactOutput(INITIAL_OUTPUT)  // Output should remain the same
+            }
+        }
+    }
+
     private companion object {
         const val INITIAL_OUTPUT = "42"
         const val WITH_NEW_LAMBDA_BODY = "45"
         const val WITH_BOTH_CHANGES = "48"
+        const val PROPERTY_LAMBDA_CHANGED = "45"
     }
 }

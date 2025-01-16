@@ -25,8 +25,9 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
+
 internal object ExtraClassInfoGenerator {
-    fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray): ExtraInfo {
+    fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray, context: ClassInfoGeneratorContext): ExtraInfo {
         val inlineFunctionsAndAccessors: Map<JvmMemberSignature.Method, InlineFunctionOrAccessor> =
             inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true).associateBy { it.jvmMethodSignature }
 
@@ -41,7 +42,12 @@ internal object ExtraClassInfoGenerator {
         //        + Do not filter out method bodies
         val classReader = ClassReader(classContents)
         val selectiveClassVisitor = SelectiveClassVisitor(
-            classNode,
+            cv = when (context) {
+                is DefaultClassInfoGeneratorContext -> classNode
+                is ClassInfoGeneratorContextWithLocalClassSnapshotting -> {
+                    InlineFunctionSnapshotter.getAccessibleClassVisitor(classNode, context)
+                }
+            },
             shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, isConstant: Boolean ->
                 !isPrivate && isConstant
             },
@@ -86,7 +92,17 @@ internal object ExtraClassInfoGenerator {
             //     class metadata (also in the source file), but not in the bytecode. However, we can safely ignore those
             //     inline functions/accessors because they are not declared in the bytecode and therefore can't be referenced.
             val methodSignature = JvmMemberSignature.Method(name = methodNode.name, desc = methodNode.desc)
-            inlineFunctionsAndAccessors[methodSignature]!! to snapshotMethod(methodNode, classNode.version)
+            var methodHash = snapshotMethod(methodNode, classNode.version)
+            if (context is ClassInfoGeneratorContextWithLocalClassSnapshotting) {
+                val methodKey = ClassInfoGeneratorContextWithLocalClassSnapshotting.MethodWithOwner(
+                    classNode.name, JvmMemberSignature.Method(methodNode.name, methodNode.desc)
+                )
+                val usedInstances = context.methodToUsedClassesMap.get(methodKey) ?: mutableSetOf()
+                for (instanceFqName in usedInstances) {
+                    methodHash = methodHash xor context.localClassHashProvider(instanceFqName)
+                }
+            }
+            inlineFunctionsAndAccessors[methodSignature]!! to methodHash
         }
 
         return ExtraInfo(classSnapshotExcludingMembers, constantSnapshots, inlineFunctionOrAccessorSnapshots)

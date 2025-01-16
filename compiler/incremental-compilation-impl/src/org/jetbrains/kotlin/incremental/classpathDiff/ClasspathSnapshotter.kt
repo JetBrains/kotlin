@@ -8,20 +8,25 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
-import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.incremental.impl.ClassInfoGeneratorContext
+import org.jetbrains.kotlin.incremental.impl.ClassInfoGeneratorContextWithLocalClassSnapshotting
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClass
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClassExcludingMembers
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotField
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
+import org.jetbrains.kotlin.incremental.impl.DefaultClassInfoGeneratorContext
+import org.jetbrains.kotlin.incremental.impl.InlineFunctionSnapshotter
+import org.jetbrains.kotlin.incremental.impl.KotlinClassInfoGenerator
 import org.jetbrains.kotlin.incremental.impl.SelectiveClassVisitor
 import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -32,6 +37,11 @@ import java.util.zip.ZipFile
 /** Computes a [ClasspathEntrySnapshot] of a classpath entry (directory or jar). */
 object ClasspathEntrySnapshotter {
 
+    data class Settings(
+        val granularity: ClassSnapshotGranularity,
+        val parseInlinedLocalClasses: Boolean
+    )
+
     private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
         !isDirectory
                 && unixStyleRelativePath.endsWith(".class", ignoreCase = true)
@@ -41,7 +51,7 @@ object ClasspathEntrySnapshotter {
 
     fun snapshot(
         classpathEntry: File,
-        granularity: ClassSnapshotGranularity,
+        settings: Settings,
         metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
     ): ClasspathEntrySnapshot {
         DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
@@ -54,7 +64,7 @@ object ClasspathEntrySnapshotter {
                 }
             }
             val snapshots = metrics.measure(GradleBuildTime.SNAPSHOT_CLASSES) {
-                ClassSnapshotter.snapshot(classes, granularity, metrics)
+                ClassSnapshotter(classes, settings, metrics).snapshot()
             }
             return ClasspathEntrySnapshot(
                 classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
@@ -63,50 +73,94 @@ object ClasspathEntrySnapshotter {
     }
 }
 
-/** Computes [ClassSnapshot]s of classes. */
-object ClassSnapshotter {
+/**
+ * Computes [ClassSnapshot]s of classes.
+ */
+class ClassSnapshotter(
+    private val classes: List<ClassFileWithContentsProvider>,
+    private val settings: ClasspathEntrySnapshotter.Settings,
+    private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
+) {
+    private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
+    private val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
+    private val classFileToFullHashMap = mutableMapOf<ClassFileWithContentsProvider, Long>()
 
-    fun snapshot(
-        classes: List<ClassFileWithContentsProvider>,
-        granularity: ClassSnapshotGranularity,
-        metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
-    ): List<ClassSnapshot> {
-        fun ClassFile.getClassName(): JvmClassName {
-            check(unixStyleRelativePath.endsWith(".class", ignoreCase = true))
-            return JvmClassName.byInternalName(unixStyleRelativePath.dropLast(".class".length))
-        }
+    //TODO remove these amazing notes (or reword as a kdoc)
+    // the general implementation idea is as follows:
+    // 1. do normal pass, detect local class accesses in inline functions. [context holds two-level Map "class ->> fun ->> used lambda instances"]
+    // 2. (we already have classNameToClassFileMap) on Snapshotter level, do extra bytecode-reading pass on the required local classes.
+    //    I think we can hash pretty much everything, future tests will confirm or deny that
+    // 3. update the extraInfo with affected inline functions
+    // P.S. if some of the used local classes are from the external modules, we could not use them for updating the extraInfo.
+    //      it's a limitation but it's not too bad for the initial solution //TODO (KT-62555) ??? is it not too bad?
+    private val generatorContext: ClassInfoGeneratorContext = if (settings.parseInlinedLocalClasses) {
+        ClassInfoGeneratorContextWithLocalClassSnapshotting(
+            localClassHashProvider = { className: FqName -> //TODO(core) fix my types, it's internal name actually!!!!
+                val jvmClassName = JvmClassName.byInternalName(className.toString())
+                classNameToClassFileMap[jvmClassName]?.let { hashClass(it) } ?: 0L
+            }
+        )
+    } else {
+        DefaultClassInfoGeneratorContext
+    }
+    val generator = KotlinClassInfoGenerator(generatorContext)
 
-        val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
-        val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
-
-        fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
-            return classFileToSnapshotMap.getOrPut(classFile) {
-                val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
-                    classFile.loadContents()
+    private fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
+        return classFileToSnapshotMap.getOrPut(classFile) {
+            val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
+                classFile.loadContents()
+            }
+            // Snapshot outer class first as we need this info to determine whether a class is transitively inaccessible (see below)
+            val outerClassSnapshot = clazz.classInfo.classId.outerClassId?.let { outerClassId ->
+                val outerClassFile = classNameToClassFileMap[JvmClassName.byClassId(outerClassId)]
+                // It's possible that the outer class is not found in the given classes (it could happen with faulty jars)
+                outerClassFile?.let { snapshotClass(it) }
+            }
+            when {
+                // We don't need to snapshot (directly or transitively) inaccessible classes.
+                // A class is transitively inaccessible if its outer class is inaccessible.
+                clazz.classInfo.isInaccessible() || outerClassSnapshot is InaccessibleClassSnapshot -> {
+                    InaccessibleClassSnapshot
                 }
-                // Snapshot outer class first as we need this info to determine whether a class is transitively inaccessible (see below)
-                val outerClassSnapshot = clazz.classInfo.classId.outerClassId?.let { outerClassId ->
-                    val outerClassFile = classNameToClassFileMap[JvmClassName.byClassId(outerClassId)]
-                    // It's possible that the outer class is not found in the given classes (it could happen with faulty jars)
-                    outerClassFile?.let { snapshotClass(it) }
+                clazz.classInfo.isKotlinClass -> metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
+                    snapshotKotlinClass(clazz, settings.granularity, classInfoGenerator = generator)
                 }
-                when {
-                    // We don't need to snapshot (directly or transitively) inaccessible classes.
-                    // A class is transitively inaccessible if its outer class is inaccessible.
-                    clazz.classInfo.isInaccessible() || outerClassSnapshot is InaccessibleClassSnapshot -> {
-                        InaccessibleClassSnapshot
-                    }
-                    clazz.classInfo.isKotlinClass -> metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
-                        snapshotKotlinClass(clazz, granularity)
-                    }
-                    else -> metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {
-                        snapshotJavaClass(clazz, granularity)
-                    }
+                else -> metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {
+                    snapshotJavaClass(clazz, settings.granularity)
                 }
             }
         }
+    }
 
+    /**
+     * The idea is that local classes are "small", so if we read them twice in a secondary snapshotter configuration, it's not a big deal
+     *
+     * We also don't really want to keep all loadContents() in memory, because it would increase the risk of ooms
+     *
+     * One possible approach is to keep only inaccessible classes in memory, or to compute hashes of all inaccesible classes (both are bad)
+     * //TODO discuss our options
+     */
+    private fun hashClass(classFile: ClassFileWithContentsProvider): Long {
+        return classFileToFullHashMap.getOrPut(classFile) {
+            if (snapshotClass(classFile) !is InaccessibleClassSnapshot) {
+                // currently the heuristic for "oh we might be using a local class" is using its INSTANCE
+                // so we can have a false positive and try to hash the whole implementation of a singleton, which is not ideal
+                // TODO: check what happens if we use an accessible class in the inline fun
+                return@getOrPut 0L
+            }
+            //TODO do some manual tests and see the diff in the metric
+            val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
+                classFile.loadContents()
+            }
+            InlineFunctionSnapshotter.getFullClassSnapshot(clazz.contents)
+        }
+    }
+
+    fun snapshot(): List<ClassSnapshot> {
         return classes.map { snapshotClass(it) }
+
+        // TODO: check that it works with package hierarchy inside of the module (foo/bar/clas.class etc)
+        //TODO metrics are a MUST as i now realizes
     }
 
     /**
@@ -127,9 +181,13 @@ object ClassSnapshotter {
     }
 
     /** Computes a [KotlinClassSnapshot] of the given Kotlin class. */
-    private fun snapshotKotlinClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): KotlinClassSnapshot {
-        val kotlinClassInfo =
-            KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
+    private fun snapshotKotlinClass(
+        classFile: ClassFileWithContents,
+        granularity: ClassSnapshotGranularity,
+        classInfoGenerator: KotlinClassInfoGenerator
+    ): KotlinClassSnapshot {
+        val kotlinClassInfo = classInfoGenerator
+            .createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
         val classId = kotlinClassInfo.classId
         val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).hashToLong()
         val classMemberLevelSnapshot = kotlinClassInfo.takeIf { granularity == CLASS_MEMBER_LEVEL }
@@ -209,6 +267,10 @@ object ClassSnapshotter {
         )
     }
 
+    private fun ClassFile.getClassName(): JvmClassName {
+        check(unixStyleRelativePath.endsWith(".class", ignoreCase = true))
+        return JvmClassName.byInternalName(unixStyleRelativePath.dropLast(".class".length))
+    }
 }
 
 private sealed interface DirectoryOrJarReader : Closeable {
