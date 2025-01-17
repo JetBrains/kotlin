@@ -238,6 +238,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
       }
 
       @Test
+      @TestMetadata("kt73412_jsr305.kt")
+      public void testKt73412_jsr305() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/kt73412_jsr305.kt");
+      }
+
+      @Test
       @TestMetadata("nonNullNever.kt")
       public void testNonNullNever() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nonNullNever.kt");
@@ -830,6 +836,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         @TestMetadata("kt48261.kt")
         public void testKt48261() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt48261.kt");
+        }
+
+        @Test
+        @TestMetadata("kt73412_jspecify.kt")
+        public void testKt73412_jspecify() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt73412_jspecify.kt");
         }
 
         @Test
