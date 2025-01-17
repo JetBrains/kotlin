@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.analysis.api.getAllLibraryModules
@@ -35,6 +36,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@FirPipeline
 class KlibScopeTests : AbstractNativeSimpleTest() {
 
     @Test
