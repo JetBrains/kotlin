@@ -45,7 +45,7 @@ fun typeRef(body: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit): <!C
     val x: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit = body
     val y = body
     val z: suspend <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) B.() -> Unit = {}
-    val w: (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit, <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) -> (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) = <!CONTEXT_RECEIVERS_DEPRECATED!>{ a, b -> { } }<!>
+    val w: (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit, <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) -> (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) = { a, b -> { } }
     return {}
 }
 

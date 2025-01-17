@@ -1249,7 +1249,7 @@ open class FirDeclarationsResolveTransformer(
                 // It will be anyway reported on a value parameter
                 returnType !is ConeErrorType ||
                         (returnType.diagnostic as? ConeSimpleDiagnostic)?.kind != DiagnosticKind.ValueParameterWithNoTypeAnnotation
-            }
+            }?.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType)
         )
     }
 
