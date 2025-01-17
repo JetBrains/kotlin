@@ -17,6 +17,8 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
     abstract fun loadJsIrModule(cacheInfo: T): JsIrModule
     abstract fun commitCompiledJsCode(cacheInfo: T, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs
 
+    open fun commitOnyTypeScriptFiles(cacheInfo: T): Boolean = false
+
     protected fun File.writeIfNotNull(data: String?) {
         if (data != null) {
             parentFile?.mkdirs()

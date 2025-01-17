@@ -165,7 +165,8 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
             moduleArtifact: JsModuleArtifact,
             fileArtifact: JsSrcFileArtifact,
             moduleHeader: JsIrModuleHeader? = null,
-            var tsDeclarationsHash: Long? = null
+            var tsDeclarationsHash: Long? = null,
+            var onlyDtsWereChanged: Boolean = false
         ) : SerializableCachedFileInfo(moduleArtifact, fileArtifact, moduleHeader) {
             val jsFileArtifact by lazy(LazyThreadSafetyMode.NONE) { getArtifactWithName(CACHED_EXPORT_FILE_JS) }
             val dtsFileArtifact by lazy(LazyThreadSafetyMode.NONE) { getArtifactWithName(CACHED_FILE_D_TS) }
@@ -359,14 +360,20 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
         }
 
         if (headers.exportHeader != null) {
-            val tsDeclarationsHash = headers.exportHeader.associatedModule?.fragments?.single()?.dts?.raw?.cityHash64()
             val cachedExportFileInfo = mainCachedFileInfo.readModuleHeaderCache { fetchFileInfoForExportedPart(mainCachedFileInfo) }
-            mainCachedFileInfo.exportFileCachedInfo = if (cachedExportFileInfo?.tsDeclarationsHash != tsDeclarationsHash) {
+            val isSomethingChangedInExportFile = cachedExportFileInfo == null ||
+                    cachedExportFileInfo.jsIrHeader.areNameBindingsChanged(headers.exportHeader)
+
+            mainCachedFileInfo.exportFileCachedInfo = if (
+                isSomethingChangedInExportFile ||
+                cachedExportFileInfo.tsDeclarationsHash != headers.tsDeclarationsHash
+            ) {
                 CachedFileInfo.ExportFileCachedInfo(
                     this,
                     fileArtifact,
                     headers.exportHeader,
-                    tsDeclarationsHash,
+                    headers.tsDeclarationsHash,
+                    onlyDtsWereChanged = !isSomethingChangedInExportFile
                 )
             } else {
                 cachedExportFileInfo
@@ -374,6 +381,17 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
         }
 
         return mainCachedFileInfo
+    }
+
+    private fun JsIrModuleHeader.areNameBindingsChanged(other: JsIrModuleHeader): Boolean {
+        if (nameBindings.size != other.nameBindings.size) return true
+
+        for ((name, tag) in nameBindings) {
+            val otherTag = other.nameBindings[name] ?: return true
+            if (tag != otherTag) return true
+        }
+
+        return false
     }
 
     private val CachedFileInfo.cachedFiles: CachedFileArtifacts?
@@ -388,6 +406,12 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
             jsCodeFile.ifExists { this }
                 ?.let { CompilationOutputsCached(it, sourceMapFile?.ifExists { this }, tsDeclarationsFile?.ifExists { this }) }
         }
+
+    override fun commitOnyTypeScriptFiles(cacheInfo: CachedFileInfo): Boolean {
+        if (cacheInfo !is CachedFileInfo.ExportFileCachedInfo || !cacheInfo.onlyDtsWereChanged) return false
+        cacheInfo.dtsFileArtifact?.writeIfNotNull(cacheInfo.jsIrHeader.associatedModule?.fragments?.single()?.dts?.raw)
+        return true
+    }
 
     override fun commitCompiledJsCode(cacheInfo: CachedFileInfo, compilationOutputs: CompilationOutputsBuilt) =
         cacheInfo.cachedFiles?.let { (jsCodeFile, jsMapFile, tsDeclarationsFile) ->
@@ -472,5 +496,9 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
         val mainFunctionTag: String?,
         val mainHeader: JsIrModuleHeader,
         val exportHeader: JsIrModuleHeader?
-    )
+    ) {
+        val tsDeclarationsHash: Long? by lazy(LazyThreadSafetyMode.NONE) {
+            exportHeader?.associatedModule?.fragments?.single()?.dts?.raw?.cityHash64()
+        }
+    }
 }

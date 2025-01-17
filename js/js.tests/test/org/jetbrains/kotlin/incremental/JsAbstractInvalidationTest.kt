@@ -107,6 +107,7 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
+                    .apply { put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions) }
 
                 val dirtyData = when (granularity) {
                     JsGenerationGranularity.PER_FILE -> projStep.dirtyJsFiles
@@ -149,7 +150,10 @@ abstract class JsAbstractInvalidationTest(
 
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, dirtyData)
                 verifyJsCode(projStep.id, mainModuleName, writtenFiles)
-                verifyDTS(projStep.id, testInfo)
+
+                if (projectInfo.checkTypeScriptDefinitions) {
+                    verifyDTS(projStep.id, testInfo)
+                }
             }
         }
 

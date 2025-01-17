@@ -67,7 +67,7 @@ class JsExecutableProducer(
         jsMultiArtifactCache.loadRequiredJsIrModules(crossModuleReferences)
 
         fun CacheInfo.compileModule(moduleName: String, isMainModule: Boolean): CompilationOutputs {
-            if (jsIrHeader.associatedModule == null) {
+            if (jsIrHeader.associatedModule == null || jsMultiArtifactCache.commitOnyTypeScriptFiles(this)) {
                 stopwatch.startNext("Fetching cached JS code")
                 val compilationOutputs = jsMultiArtifactCache.fetchCompiledJsCode(this)
                 if (compilationOutputs != null) {

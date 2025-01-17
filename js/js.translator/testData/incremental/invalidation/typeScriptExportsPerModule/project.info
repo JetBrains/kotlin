@@ -1,4 +1,5 @@
 IGNORE_PER_FILE: true
+TYPESCRIPT_DEFINITIONS: true
 
 MODULES: lib1, lib2, main
 

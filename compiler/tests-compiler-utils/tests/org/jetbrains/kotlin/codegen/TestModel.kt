@@ -18,7 +18,8 @@ class ProjectInfo(
     val muted: Boolean,
     val moduleKind: ModuleKind,
     val ignoredGranularities: Set<JsGenerationGranularity>,
-    val callMain: Boolean
+    val callMain: Boolean,
+    val checkTypeScriptDefinitions: Boolean
 ) {
 
     class ProjectBuildStep(
@@ -88,6 +89,7 @@ private const val DIRTY_JS_MODULES_LIST = "dirty js modules"
 private const val LANGUAGE = "language"
 private const val IGNORE_PER_FILE = "IGNORE_PER_FILE"
 private const val IGNORE_PER_MODULE = "IGNORE_PER_MODULE"
+private const val TYPESCRIPT_DEFINITIONS = "TYPESCRIPT_DEFINITIONS"
 
 const val MODULE_INFO_FILE = "module.info"
 private const val DEPENDENCIES = "dependencies"
@@ -195,6 +197,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
         val ignoredGranularities = mutableSetOf<JsGenerationGranularity>()
         var muted = false
         var callMain = false
+        var checkTypeScriptDefinitions = false
         var moduleKind = ModuleKind.ES
 
         loop { line ->
@@ -218,6 +221,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
                 op == CALL_MAIN && split[1].trim() == "true" -> callMain = true
                 op == IGNORE_PER_FILE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_FILE
                 op == IGNORE_PER_MODULE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_MODULE
+                op == TYPESCRIPT_DEFINITIONS && split[1].trim() == "true" -> checkTypeScriptDefinitions = true
                 op == MODULES_KIND -> moduleKind = split[1].trim()
                     .ifEmpty { error("Module kind value should be provided if MODULE_KIND pragma was specified") }
                     .let { moduleKindMap[it] ?: error("Unknown MODULE_KIND value '$it'") }
@@ -247,7 +251,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
             false
         }
 
-        return ProjectInfo(entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain)
+        return ProjectInfo(entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain, checkTypeScriptDefinitions)
     }
 }
 
