@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.types.Variance
 
 open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
     val annotations: MutableList<LighterASTNode> = mutableListOf()
+    var contextList: LighterASTNode? = null
 
     fun addModifier(modifier: LighterASTNode, isInClass: Boolean = false) {
         when (val tokenType = modifier.tokenType) {

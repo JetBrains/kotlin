@@ -43,12 +43,12 @@ operator fun Any.setValue(thiz: Any?, metadata: Any?, value: String): Any = this
 operator fun Any.provideDelegate(thiz: Any?, metadata: Any?): Any = this
 
 var x: String = ""
-    context(_: String) <!SYNTAX!>get<!>
-    context(_: String) <!SYNTAX!>set<!>
+    <!UNSUPPORTED!>context(_: String)<!> get
+    <!UNSUPPORTED!>context(_: String)<!> set
 
-var y: String = ""
-    context(_: String) <!SYNTAX!>get<!><!SYNTAX!>(<!><!SYNTAX!>)<!> <!SYNTAX!>=<!> <!SYNTAX!>"<!><!SYNTAX!>"<!>
-    context(_: String) <!SYNTAX!>set<!><!SYNTAX!>(<!><!SYNTAX!>v<!><!SYNTAX!>)<!> <!FUNCTION_DECLARATION_WITH_NO_NAME!><!SYNTAX!><!>{}<!>
+var y: String = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>""<!>
+    <!UNSUPPORTED!>context(_: String)<!> get() = ""
+    <!UNSUPPORTED!>context(_: String)<!> set(v) {}
 
 <!UNSUPPORTED!>context(_: String)<!>
 var Any.d <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> ""
@@ -68,9 +68,9 @@ fun contextReceiverSyntax() {}
 context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>, _: Int)
 fun mixedSyntax() {}
 
-<!UNSUPPORTED!>context(String)<!>
+<!UNSUPPORTED!>context(<!CONTEXT_PARAMETER_WITHOUT_NAME, CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)<!>
 class ClassWithContextReceiverSyntax {
-    <!UNSUPPORTED!>context(String)<!>
+    <!UNSUPPORTED!>context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)<!>
     constructor() {}
 }
 

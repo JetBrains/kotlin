@@ -9,11 +9,15 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.findChildByType
-import org.jetbrains.kotlin.diagnostics.findDescendantByType
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtContextReceiverList
+import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 
@@ -31,21 +35,25 @@ fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
 }
 
 /**
- * Locates first [CONTEXT_RECEIVER_LIST] and returns position in source.
+ * Locates first [KtNodeTypes.CONTEXT_RECEIVER_LIST] and returns position in source.
  */
-fun KtSourceElement.findContextReceiverListSource(): KtLightSourceElement? {
-    if (this.lighterASTNode.tokenType == KtNodeTypes.CONTEXT_RECEIVER_LIST)
-        return this.lighterASTNode.toKtLightSourceElement(treeStructure)
-
-    if (this.lighterASTNode.tokenType == KtNodeTypes.TYPE_REFERENCE) {
-        return treeStructure.findChildByType(lighterASTNode, KtNodeTypes.FUNCTION_TYPE)
-            ?.let { treeStructure.findChildByType(it, KtNodeTypes.CONTEXT_RECEIVER_LIST) }
-            ?.toKtLightSourceElement(treeStructure)
+fun KtSourceElement.findContextReceiverListSource(): KtSourceElement? {
+    return when (this) {
+        is KtPsiSourceElement -> when (val psi = psi) {
+            is KtContextReceiverList -> this
+            is KtTypeReference -> (psi.typeElement as? KtFunctionType)?.contextReceiverList?.toKtPsiSourceElement()
+            else -> psi.getChildOfType<KtModifierList>()?.contextReceiverList?.toKtPsiSourceElement()
+        }
+        is KtLightSourceElement -> when (lighterASTNode.tokenType) {
+            KtNodeTypes.CONTEXT_RECEIVER_LIST -> this
+            KtNodeTypes.TYPE_REFERENCE -> treeStructure.findChildByType(lighterASTNode, KtNodeTypes.FUNCTION_TYPE)
+                ?.let { treeStructure.findChildByType(it, KtNodeTypes.CONTEXT_RECEIVER_LIST) }
+                ?.toKtLightSourceElement(treeStructure)
+            else -> treeStructure.findChildByType(lighterASTNode, KtNodeTypes.MODIFIER_LIST)
+                ?.let { treeStructure.findChildByType(it, KtNodeTypes.CONTEXT_RECEIVER_LIST) }
+                ?.toKtLightSourceElement(treeStructure)
+        }
     }
-
-    return treeStructure
-        .findChildByType(lighterASTNode, KtNodeTypes.CONTEXT_RECEIVER_LIST)
-        ?.toKtLightSourceElement(treeStructure)
 }
 
 internal fun KtSourceElement.delegatedPropertySourceOrThis(context: CheckerContext): KtSourceElement {

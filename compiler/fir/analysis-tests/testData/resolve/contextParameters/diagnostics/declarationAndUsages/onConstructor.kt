@@ -4,7 +4,7 @@
 open class Base
 class A
 
-class Test1 <!UNSUPPORTED!>context(c: A)<!> <!SYNTAX!>constructor<!><!SYNTAX!>(<!><!SYNTAX!>firstName<!><!SYNTAX!>:<!> <!SYNTAX!>String<!><!SYNTAX!>)<!>
+class Test1 <!UNSUPPORTED!>context(c: A)<!> constructor(firstName: String)
 
 class Test2 {
     <!UNSUPPORTED!>context(c: A)<!>

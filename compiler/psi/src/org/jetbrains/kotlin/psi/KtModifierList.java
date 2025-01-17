@@ -49,6 +49,14 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
         return getStubOrPsiChildrenAsList(KtStubElementTypes.ANNOTATION);
     }
 
+    /**
+     * Experimental context parameter API.
+     */
+    @Nullable
+    public KtContextReceiverList getContextReceiverList() {
+        return getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+    }
+
     @NotNull
     public List<KtAnnotationEntry> getAnnotationEntries() {
         return KtPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);

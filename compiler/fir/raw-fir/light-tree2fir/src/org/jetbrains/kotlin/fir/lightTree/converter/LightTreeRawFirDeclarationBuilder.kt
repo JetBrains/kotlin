@@ -312,6 +312,8 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 ANNOTATION -> annotations += it
                 ANNOTATION_ENTRY -> annotations += it
+                // We only collect the first context receiver list. A checker reports an error if there is more than one.
+                CONTEXT_RECEIVER_LIST if (contextList == null) -> contextList = it
                 is KtModifierKeywordToken -> addModifier(it, isInClass)
             }
         }
@@ -586,8 +588,8 @@ class LightTreeRawFirDeclarationBuilder(
                         )
                         //parse primary constructor
                         val primaryConstructorWrapper = convertPrimaryConstructor(
-                            classNode,
                             primaryConstructor,
+                            modifiers?.contextList,
                             selfType.source,
                             classWrapper,
                             delegatedConstructorSource,
@@ -670,7 +672,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         initCompanionObjectSymbolAttr()
 
-                        contextParameters.addContextParameters(classNode, classSymbol)
+                        contextParameters.addContextParameters(modifiers?.contextList, classSymbol)
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
                     }
@@ -756,8 +758,8 @@ class LightTreeRawFirDeclarationBuilder(
                     )
                     //parse primary constructor
                     convertPrimaryConstructor(
-                        objectDeclaration,
                         primaryConstructor,
+                        modifiers?.contextList,
                         delegatedSelfType.source,
                         classWrapper,
                         delegatedConstructorSource,
@@ -860,8 +862,8 @@ class LightTreeRawFirDeclarationBuilder(
                             )
                             superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
                             convertPrimaryConstructor(
-                                enumEntry,
                                 null,
+                                modifiers?.contextList,
                                 enumEntry.toFirSourceElement(),
                                 enumClassWrapper,
                                 superTypeCallEntry?.toFirSourceElement(),
@@ -944,8 +946,8 @@ class LightTreeRawFirDeclarationBuilder(
      * primaryConstructor branch
      */
     private fun convertPrimaryConstructor(
-        classNode: LighterASTNode,
         primaryConstructor: LighterASTNode?,
+        classContextReceiverList: LighterASTNode?,
         selfTypeSource: KtSourceElement?,
         classWrapper: ClassWrapper,
         delegatedConstructorSource: KtLightSourceElement?,
@@ -1065,7 +1067,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
-                this.contextParameters.addContextParameters(classNode, constructorSymbol)
+                this.contextParameters.addContextParameters(classContextReceiverList, constructorSymbol)
             }
 
             return PrimaryConstructor(
@@ -1173,9 +1175,9 @@ class LightTreeRawFirDeclarationBuilder(
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
-                this.contextParameters.addContextParameters(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol)
+                this.contextParameters.addContextParameters(classWrapper.modifiers.contextList, constructorSymbol)
                 if (contextParameterEnabled) {
-                    this.contextParameters.addContextParameters(secondaryConstructor, constructorSymbol)
+                    this.contextParameters.addContextParameters(modifiers?.contextList, constructorSymbol)
                 }
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
@@ -1488,7 +1490,7 @@ class LightTreeRawFirDeclarationBuilder(
                     else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                 }
 
-                contextParameters.addContextParameters(property, propertySymbol)
+                contextParameters.addContextParameters(modifiers?.contextList, propertySymbol)
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
@@ -1919,7 +1921,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
                     dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
-                    contextParameters.addContextParameters(functionDeclaration, functionSymbol)
+                    contextParameters.addContextParameters(modifiers?.contextList, functionSymbol)
                 }
             }
 
@@ -2275,7 +2277,7 @@ class LightTreeRawFirDeclarationBuilder(
                 MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
                 USER_TYPE -> firType = convertUserType(typeRefSource, it)
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
-                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isSuspend = allTypeModifiers.hasSuspend())
+                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
                     source = typeRefSource
                     isMarkedNullable = false
@@ -2299,8 +2301,6 @@ class LightTreeRawFirDeclarationBuilder(
         }
         return calculatedFirType
     }
-
-    private fun Collection<Modifier>.hasSuspend() = any { it.hasSuspend() }
 
     private fun convertIntersectionType(typeRefSource: KtSourceElement, intersectionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
         val children = arrayListOf<FirTypeRef>()
@@ -2353,7 +2353,7 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 MODIFIER_LIST -> allTypeModifiers += convertModifierList(it)
                 USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
-                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
+                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, allTypeModifiers, isNullable)
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
                     source = typeRefSource
@@ -2471,17 +2471,19 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertFunctionType(
         typeRefSource: KtSourceElement,
         functionType: LighterASTNode,
+        allTypeModifiers: List<Modifier>,
         isNullable: Boolean = false,
-        isSuspend: Boolean = false
     ): FirTypeRef {
         var receiverTypeReference: FirTypeRef? = null
         lateinit var returnTypeReference: FirTypeRef
         val parameters = mutableListOf<FirFunctionTypeParameter>()
+        var contextList: LighterASTNode? = null
         functionType.forEachChildren {
             when (it.tokenType) {
                 FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
                 VALUE_PARAMETER_LIST -> parameters += convertFunctionTypeParameters(it)
                 TYPE_REFERENCE -> returnTypeReference = convertType(it)
+                CONTEXT_RECEIVER_LIST -> contextList = it
             }
         }
 
@@ -2491,12 +2493,12 @@ class LightTreeRawFirDeclarationBuilder(
             receiverTypeRef = receiverTypeReference
             returnTypeRef = returnTypeReference
             this.parameters += parameters
-            this.isSuspend = isSuspend
-            this.contextParameterTypeRefs.addAll(
-                functionType.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER)?.mapNotNull { it ->
-                    it.getChildNodeByType(TYPE_REFERENCE)?.let(::convertType)
-                }.orEmpty()
-            )
+            isSuspend = allTypeModifiers.any { it.hasSuspend() }
+
+            if (contextList != null) {
+                buildList { addContextParameters(contextList, context.containerSymbol) }
+                    .forEach { contextParameterTypeRefs.add(it.returnTypeRef) }
+            }
         }
     }
 
@@ -2631,12 +2633,10 @@ class LightTreeRawFirDeclarationBuilder(
     }
 
     private fun MutableList<FirValueParameter>.addContextParameters(
-        container: LighterASTNode,
+        contextList: LighterASTNode?,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ) {
-        val contextList = container.getChildNodeByType(CONTEXT_RECEIVER_LIST) ?: return
-
-        contextList.getChildNodesByType(VALUE_PARAMETER).mapTo(this) { contextParameterElement ->
+        contextList?.getChildNodesByType(VALUE_PARAMETER)?.mapTo(this) { contextParameterElement ->
             convertValueParameter(
                 valueParameter = contextParameterElement,
                 containingDeclarationSymbol = containingDeclarationSymbol,
@@ -2645,7 +2645,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         // Legacy context receivers
-        contextList.getChildNodesByType(CONTEXT_RECEIVER).mapTo(this) { contextReceiverElement ->
+        contextList?.getChildNodesByType(CONTEXT_RECEIVER)?.mapTo(this) { contextReceiverElement ->
             buildValueParameter {
                 this.source = contextReceiverElement.toFirSourceElement()
                 this.moduleData = baseModuleData

@@ -59,7 +59,6 @@ private class ClassClsStubBuilder(
     private val c = outerContext.child(
         classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
     )
-    private val contextReceiversListStubBuilder = ContextReceiversListStubBuilder(c)
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
@@ -88,8 +87,8 @@ private class ClassClsStubBuilder(
 
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
         val classOrObjectStub = doCreateClassOrObjectStub()
-        contextReceiversListStubBuilder.createContextReceiverStubs(classOrObjectStub, classProto.contextReceiverTypes(c.typeTable))
         val modifierList = createModifierListForClass(classOrObjectStub)
+        typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
         if (Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
             createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
         }

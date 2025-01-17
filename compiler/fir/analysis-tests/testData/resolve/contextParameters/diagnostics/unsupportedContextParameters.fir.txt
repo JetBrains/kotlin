@@ -73,10 +73,11 @@ FILE: unsupportedContextParameters.kt
         public get(): R|kotlin/String|
         public set(value: R|kotlin/String|): R|kotlin/Unit|
     public final var y: R|kotlin/String| = String()
-        public get(): R|kotlin/String|
-        public set(value: R|kotlin/String|): R|kotlin/Unit|
-    public final fun <no name provided>(): R|kotlin/Unit| {
-    }
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+        public set(v: R|kotlin/String|): R|kotlin/Unit| {
+        }
     context(<unused var>: R|kotlin/String|)
     public final var R|kotlin/Any|.d: R|kotlin/Any|by String()
         public get(): R|kotlin/Any| {

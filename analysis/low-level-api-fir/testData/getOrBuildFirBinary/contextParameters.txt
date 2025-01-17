@@ -5,12 +5,16 @@ public final class C public constructor() {
         public final get
 
     context(kotlin.String) public final fun foo(): kotlin.Unit { /* compiled code */ }
+
+    public final fun baz(l1: context(kotlin.String) () -> kotlin.Unit, l2: @A context(kotlin.String) () -> kotlin.Unit, l3: @A() (context(kotlin.String) () -> kotlin.Unit)?, l4: suspend context(kotlin.String) () -> kotlin.Unit, l5: @A suspend context(kotlin.String) () -> kotlin.Unit, l6: (@A suspend context(kotlin.String) () -> kotlin.Unit)?): kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class C : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun baz([ResolvedTo(BODY_RESOLVE)] l1: R|() -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l2: R|@R|A|()  () -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l3: R|@R|A|()  (() -> kotlin/Unit)?|, [ResolvedTo(BODY_RESOLVE)] l4: R|suspend () -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l5: R|@R|A|()  suspend () -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l6: R|(suspend () -> kotlin/Unit)?|): R|kotlin/Unit|
+
     context([ResolvedTo(BODY_RESOLVE)] <unused var>@R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 

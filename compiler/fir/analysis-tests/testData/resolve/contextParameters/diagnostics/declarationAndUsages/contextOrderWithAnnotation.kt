@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-51258
 // LANGUAGE: +ContextParameters
 
@@ -11,7 +11,7 @@ fun foo(): String {
 }
 
 @Ann
-<!SYNTAX!>context<!><!SYNTAX!>(<!><!SYNTAX!>a<!><!SYNTAX!>:<!> <!SYNTAX!>String<!><!SYNTAX!>)<!>
+context(a: String)
 fun bar() { }
 
 context(a: String)
@@ -20,6 +20,6 @@ val qux : String
     get() = ""
 
 @Ann
-<!SYNTAX!>context<!><!SYNTAX!>(<!><!SYNTAX!>a<!><!SYNTAX!>:<!> <!SYNTAX!>String<!><!SYNTAX!>)<!>
+context(a: String)
 val buz : String
     get() = ""

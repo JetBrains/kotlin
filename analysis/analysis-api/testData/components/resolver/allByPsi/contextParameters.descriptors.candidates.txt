@@ -71,6 +71,9 @@ KtClassBody(80,409): '{'
 KtNamedFunction(86,164): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(86,99): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(86,99): 'context(a: A)'
   NO_CANDIDATES
 
@@ -290,6 +293,9 @@ KtStringTemplateExpression(155,157): '""'
   NO_CANDIDATES
 
 KtProperty(170,292): 'context(a: A)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(170,183): 'context(a: A)'
   NO_CANDIDATES
 
 KtContextReceiverList(170,183): 'context(a: A)'
@@ -526,6 +532,9 @@ KtStringTemplateExpression(279,281): '""'
   NO_CANDIDATES
 
 KtNamedFunction(298,389): 'context(a: A)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(298,311): 'context(a: A)'
   NO_CANDIDATES
 
 KtContextReceiverList(298,311): 'context(a: A)'

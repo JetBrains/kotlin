@@ -12,7 +12,7 @@ FILE: onConstructor.kt
 
     }
     public final class Test1 : R|kotlin/Any| {
-        public constructor(): R|Test1| {
+        public constructor(firstName: R|kotlin/String|): R|Test1| {
             super<R|kotlin/Any|>()
         }
 
@@ -36,6 +36,8 @@ FILE: onConstructor.kt
             super<R|Base|>()
         }
 
+        <DANGLING MODIFIER: Top level declaration expected>
+        <DANGLING MODIFIER: Top level declaration expected>
     }
     public final class Test4 : R|kotlin/Any| {
         public constructor(a: R|@ContextFunctionTypeParams (A) -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {

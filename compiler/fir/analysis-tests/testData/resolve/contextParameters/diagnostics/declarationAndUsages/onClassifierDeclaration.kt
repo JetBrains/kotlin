@@ -26,8 +26,8 @@ data object Test6 {}
 
 <!UNSUPPORTED!>context(c: A)<!>
 enum class Test7 {
-    context(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>c<!><!SYNTAX!>: A<!>)<!SYNTAX!><!>
-    <!SYNTAX!>FIRST<!>
+    <!UNSUPPORTED!>context(c: A)<!>
+    FIRST
 }
 
 <!UNSUPPORTED!>context(c: A)<!>

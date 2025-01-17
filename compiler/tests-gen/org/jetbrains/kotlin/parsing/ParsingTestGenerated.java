@@ -146,6 +146,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/Constructors.kt");
     }
 
+    @TestMetadata("contextParametersAndAnnotations.kt")
+    public void testContextParametersAndAnnotations() {
+      runTest("compiler/testData/psi/contextParametersAndAnnotations.kt");
+    }
+
     @TestMetadata("ControlStructures.kt")
     public void testControlStructures() {
       runTest("compiler/testData/psi/ControlStructures.kt");

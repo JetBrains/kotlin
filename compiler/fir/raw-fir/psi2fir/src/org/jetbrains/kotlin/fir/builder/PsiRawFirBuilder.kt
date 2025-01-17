@@ -2188,7 +2188,7 @@ open class PsiRawFirBuilder(
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                     contextParameters.addContextParameters(owner.contextReceiverList, symbol)
                     if (contextParameterEnabled) {
-                        contextParameters.addContextParameters(this@toFirConstructor.getChildOfType(), symbol)
+                        contextParameters.addContextParameters(this@toFirConstructor.modifierList?.getChildOfType(), symbol)
                     }
                     if (!owner.hasModifier(EXTERNAL_KEYWORD) && !status.isExpect || isExplicitDelegationCall()) {
                         delegatedConstructor = buildOrLazyDelegatedConstructorCall(
@@ -2558,11 +2558,13 @@ open class PsiRawFirBuilder(
                             }
                         }
 
-                        contextParameterTypeRefs.addAll(
-                            unwrappedElement.contextReceiversTypeReferences.mapNotNull {
-                                it.toFirType()
-                            }
-                        )
+                        val contextReceiverList = unwrappedElement.contextReceiverList
+                        contextReceiverList?.contextReceivers()?.mapNotNullTo(contextParameterTypeRefs) {
+                            it.typeReference()?.toFirType()
+                        }
+                        contextReceiverList?.contextParameters()?.mapNotNullTo(contextParameterTypeRefs) {
+                            it.typeReference?.toFirType()
+                        }
                     }
                 }
                 is KtIntersectionType -> FirIntersectionTypeRefBuilder().apply {

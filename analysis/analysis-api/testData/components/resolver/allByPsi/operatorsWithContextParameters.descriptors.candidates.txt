@@ -13,6 +13,9 @@ KtClass(0,7): 'class A'
 KtNamedFunction(9,52): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(9,31): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(9,22): 'context(a: A)'
   NO_CANDIDATES
 
@@ -26,9 +29,6 @@ KtUserType(20,21): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(20,21): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(23,31): 'operator'
   NO_CANDIDATES
 
 KtTypeReference(36,37): 'A'
@@ -49,6 +49,9 @@ KtBlockExpression(50,52): '{}'
 KtNamedFunction(54,98): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(54,76): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(54,67): 'context(a: A)'
   NO_CANDIDATES
 
@@ -62,9 +65,6 @@ KtUserType(65,66): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(65,66): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(68,76): 'operator'
   NO_CANDIDATES
 
 KtTypeReference(81,82): 'A'
@@ -97,6 +97,9 @@ KtBlockExpression(96,98): '{}'
 KtNamedFunction(100,143): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(100,122): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(100,113): 'context(a: A)'
   NO_CANDIDATES
 
@@ -110,9 +113,6 @@ KtUserType(111,112): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(111,112): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(114,122): 'operator'
   NO_CANDIDATES
 
 KtTypeReference(127,128): 'A'
@@ -145,6 +145,9 @@ KtBlockExpression(141,143): '{}'
 KtNamedFunction(145,194): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(145,167): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(145,158): 'context(a: A)'
   NO_CANDIDATES
 
@@ -158,9 +161,6 @@ KtUserType(156,157): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(156,157): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(159,167): 'operator'
   NO_CANDIDATES
 
 KtTypeReference(172,173): 'A'
@@ -205,6 +205,9 @@ KtBlockExpression(192,194): '{}'
 KtNamedFunction(196,236): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(196,218): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(196,209): 'context(a: A)'
   NO_CANDIDATES
 
@@ -218,9 +221,6 @@ KtUserType(207,208): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(207,208): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(210,218): 'operator'
   NO_CANDIDATES
 
 KtTypeReference(223,224): 'A'
@@ -241,6 +241,9 @@ KtBlockExpression(234,236): '{}'
 KtNamedFunction(238,288): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(238,260): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(238,251): 'context(a: A)'
   NO_CANDIDATES
 
@@ -254,9 +257,6 @@ KtUserType(249,250): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(249,250): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(252,260): 'operator'
   NO_CANDIDATES
 
 KtTypeReference(265,266): 'A'
@@ -289,6 +289,9 @@ KtBlockExpression(286,288): '{}'
 KtNamedFunction(290,343): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(290,312): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(290,303): 'context(a: A)'
   NO_CANDIDATES
 
@@ -302,9 +305,6 @@ KtUserType(301,302): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(301,302): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(304,312): 'operator'
   NO_CANDIDATES
 
 KtTypeReference(317,318): 'A'
@@ -366,6 +366,9 @@ KtClassBody(367,777): '{'
 KtNamedFunction(373,418): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(373,399): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(373,386): 'context(a: A)'
   NO_CANDIDATES
 
@@ -381,9 +384,6 @@ KtUserType(384,385): 'A'
 KtNameReferenceExpression(384,385): 'A'
   NO_CANDIDATES
 
-KtDeclarationModifierList(391,399): 'operator'
-  NO_CANDIDATES
-
 KtParameterList(413,415): '()'
   NO_CANDIDATES
 
@@ -391,6 +391,9 @@ KtBlockExpression(416,418): '{}'
   NO_CANDIDATES
 
 KtNamedFunction(424,470): 'context(a: A)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(424,450): 'context(a: A)'
   NO_CANDIDATES
 
 KtContextReceiverList(424,437): 'context(a: A)'
@@ -406,9 +409,6 @@ KtUserType(435,436): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(435,436): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(442,450): 'operator'
   NO_CANDIDATES
 
 KtParameterList(459,467): '(b: Int)'
@@ -432,6 +432,9 @@ KtBlockExpression(468,470): '{}'
 KtNamedFunction(476,521): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(476,502): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(476,489): 'context(a: A)'
   NO_CANDIDATES
 
@@ -445,9 +448,6 @@ KtUserType(487,488): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(487,488): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(494,502): 'operator'
   NO_CANDIDATES
 
 KtParameterList(510,518): '(b: Int)'
@@ -471,6 +471,9 @@ KtBlockExpression(519,521): '{}'
 KtNamedFunction(527,578): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(527,553): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(527,540): 'context(a: A)'
   NO_CANDIDATES
 
@@ -484,9 +487,6 @@ KtUserType(538,539): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(538,539): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(545,553): 'operator'
   NO_CANDIDATES
 
 KtParameterList(561,575): '(b: Int, x: A)'
@@ -522,6 +522,9 @@ KtBlockExpression(576,578): '{}'
 KtNamedFunction(584,626): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(584,610): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(584,597): 'context(a: A)'
   NO_CANDIDATES
 
@@ -537,9 +540,6 @@ KtUserType(595,596): 'A'
 KtNameReferenceExpression(595,596): 'A'
   NO_CANDIDATES
 
-KtDeclarationModifierList(602,610): 'operator'
-  NO_CANDIDATES
-
 KtParameterList(621,623): '()'
   NO_CANDIDATES
 
@@ -547,6 +547,9 @@ KtBlockExpression(624,626): '{}'
   NO_CANDIDATES
 
 KtNamedFunction(632,684): 'context(a: A)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(632,658): 'context(a: A)'
   NO_CANDIDATES
 
 KtContextReceiverList(632,645): 'context(a: A)'
@@ -562,9 +565,6 @@ KtUserType(643,644): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(643,644): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(650,658): 'operator'
   NO_CANDIDATES
 
 KtParameterList(673,681): '(b: Int)'
@@ -588,6 +588,9 @@ KtBlockExpression(682,684): '{}'
 KtNamedFunction(690,775): 'context(a: A)'
   NO_CANDIDATES
 
+KtDeclarationModifierList(690,716): 'context(a: A)'
+  NO_CANDIDATES
+
 KtContextReceiverList(690,703): 'context(a: A)'
   NO_CANDIDATES
 
@@ -601,9 +604,6 @@ KtUserType(701,702): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(701,702): 'A'
-  NO_CANDIDATES
-
-KtDeclarationModifierList(708,716): 'operator'
   NO_CANDIDATES
 
 KtParameterList(724,726): '()'

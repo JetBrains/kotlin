@@ -54,13 +54,7 @@ FILE: onClassifierDeclaration.kt
             super<R|kotlin/Enum<Test7>|>()
         }
 
-        public final static enum entry context: R|Test7| = object : R|Test7| {
-            private constructor(): R|<anonymous>| {
-                super<R|Test7|>(<Unresolved name: c>#)
-            }
-
-        }
-
+        public final static enum entry FIRST: R|Test7|
         public final static fun values(): R|kotlin/Array<Test7>| {
         }
 
