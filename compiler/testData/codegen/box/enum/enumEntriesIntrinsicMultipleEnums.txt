@@ -19,12 +19,12 @@ public synthetic final class BoxKt$EntriesIntrinsicMappings {
     public synthetic final static field entries$1: kotlin.enums.EnumEntries
     public synthetic final static field entries$2: kotlin.enums.EnumEntries
     static method <clinit>(): void
-    public synthetic inner class BoxKt$EntriesIntrinsicMappings
+    public synthetic final inner class BoxKt$EntriesIntrinsicMappings
 }
 
 @kotlin.Metadata
 public final class BoxKt {
     // source: 'box.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic inner class BoxKt$EntriesIntrinsicMappings
+    public synthetic final inner class BoxKt$EntriesIntrinsicMappings
 }
