@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
@@ -95,7 +95,7 @@ internal object DevirtualizationAnalysis {
         // At this point all function references are lowered except those leaking to the native world.
         // Conservatively assume them belonging of the root set.
         val leakingThroughFunctionReferences = mutableListOf<DataFlowIR.FunctionSymbol>()
-        irModule.acceptChildrenVoid(object : IrVisitorVoid() {
+        irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -380,7 +380,7 @@ internal object DevirtualizationAnalysis {
 
         // To properly place devirtualized call sites to IR call sites and use them after inlining.
         private fun resetCallSitesAttributeOwnerIds() {
-            irModule.acceptChildrenVoid(object : IrVisitorVoid() {
+            irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

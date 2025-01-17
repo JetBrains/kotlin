@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -54,7 +54,7 @@ private fun IrField.isConstant(): Boolean =
     correspondingPropertySymbol?.owner?.isConst ?: false
 
 private fun IrDeclaration.addRootsTo(
-    nestedVisitor: IrVisitorVoid,
+    nestedVisitor: IrElementVisitorVoid,
     context: JsIrBackendContext
 ) {
     when {
@@ -101,7 +101,7 @@ private fun buildRoots(
     context: JsIrBackendContext,
     moduleKind: ModuleKind
 ): List<IrDeclaration> = buildList {
-    val declarationsCollector = object : IrVisitorVoid() {
+    val declarationsCollector = object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement): Unit = element.acceptChildrenVoid(this)
         override fun visitBody(body: IrBody): Unit = Unit // Skip
 

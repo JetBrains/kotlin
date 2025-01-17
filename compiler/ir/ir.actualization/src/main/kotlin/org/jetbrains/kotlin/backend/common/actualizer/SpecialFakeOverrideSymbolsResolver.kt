@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFunctionFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -133,7 +133,7 @@ class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap)
     }
 
     fun cacheFakeOverridesOfAllClasses(irModuleFragment: IrModuleFragment) {
-        val visitor = object : IrVisitorVoid() {
+        val visitor = object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {}
 
             override fun visitFile(declaration: IrFile) {
@@ -152,7 +152,7 @@ class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap)
 }
 
 
-class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFakeOverrideSymbolsResolver) : IrVisitorVoid() {
+class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFakeOverrideSymbolsResolver) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         // E.g. annotation can contain fake override of constant property
         if (element is IrAnnotationContainer) {

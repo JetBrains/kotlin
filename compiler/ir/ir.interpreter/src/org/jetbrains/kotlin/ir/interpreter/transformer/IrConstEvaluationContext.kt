@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCheckerData
 import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
@@ -110,7 +110,7 @@ internal class IrConstEvaluationContext(
     }
 
     private fun reportInlinedJavaConst(expression: IrExpression, result: IrConst) {
-        expression.acceptVoid(object : IrVisitorVoid() {
+        expression.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

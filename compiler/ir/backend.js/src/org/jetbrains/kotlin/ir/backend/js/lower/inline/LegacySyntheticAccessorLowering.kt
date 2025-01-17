@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
  */
 class LegacySyntheticAccessorLowering(private val context: LoweringContext) : BodyLoweringPass {
 
-    private class CandidatesCollector(val candidates: MutableCollection<IrSimpleFunction>) : IrVisitorVoid() {
+    private class CandidatesCollector(val candidates: MutableCollection<IrSimpleFunction>) : IrElementVisitorVoid {
 
         private fun IrSimpleFunction.isTopLevelPrivate(): Boolean {
             if (visibility != DescriptorVisibilities.PRIVATE) return false

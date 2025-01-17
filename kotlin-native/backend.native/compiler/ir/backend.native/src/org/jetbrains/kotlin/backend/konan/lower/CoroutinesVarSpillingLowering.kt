@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl("COROUTINE_VAR_SPILLING")
@@ -124,7 +124,7 @@ internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGen
     }
 
     private fun computeVisibleVariablesAtSuspensionPoints(body: IrBody) {
-        body.acceptChildrenVoid(object : IrVisitorVoid() {
+        body.acceptChildrenVoid(object : IrElementVisitorVoid {
             val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
 
             override fun visitElement(element: IrElement) {

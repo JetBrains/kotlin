@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
@@ -138,7 +138,7 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
     }
 }
 
-private class SyntheticAccessorCollector : IrVisitorVoid() {
+private class SyntheticAccessorCollector : IrElementVisitorVoid {
     val accessorSymbols = HashSet<IrFunctionSymbol>()
 
     override fun visitElement(element: IrElement) {
@@ -154,7 +154,7 @@ private class SyntheticAccessorCollector : IrVisitorVoid() {
 private class SyntheticAccessorsDumper(
     private val accessorSymbols: Set<IrFunctionSymbol>,
     private val accessorTargetSymbols: Set<IrSymbol>
-) : IrVisitorVoid() {
+) : IrElementVisitorVoid {
     private val stack = ArrayList<StackFrame>()
     private val dump = StringBuilder()
 

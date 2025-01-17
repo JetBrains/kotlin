@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isKFunction
 import org.jetbrains.kotlin.ir.util.isKSuspendFunction
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  */
 @PhaseDescription(name = "ReplaceKFunctionInvokeWithFunctionInvoke")
 internal class ReplaceKFunctionInvokeWithFunctionInvoke(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) :
-    IrVisitorVoid(), FileLoweringPass {
+    FileLoweringPass, IrElementVisitorVoid {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(this)
     }

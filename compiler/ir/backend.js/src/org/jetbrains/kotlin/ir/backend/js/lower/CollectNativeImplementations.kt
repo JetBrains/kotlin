@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
 fun collectNativeImplementations(context: JsIrBackendContext, moduleFragment: IrModuleFragment) =
     CollectNativeImplementationsVisitor(context).let { collector ->
         moduleFragment.files.forEach { it.accept(collector, null) }
     }
 
-class CollectNativeImplementationsVisitor(private val context: JsIrBackendContext) : IrVisitorVoid() {
+class CollectNativeImplementationsVisitor(private val context: JsIrBackendContext) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {}
 
     override fun visitFile(declaration: IrFile) {

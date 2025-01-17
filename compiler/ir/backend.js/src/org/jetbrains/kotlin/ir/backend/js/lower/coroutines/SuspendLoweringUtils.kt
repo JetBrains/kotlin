@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.*
 
-open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<IrElement>) : IrVisitorVoid() {
+open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<IrElement>) : IrElementVisitorVoid {
 
     private var hasSuspendableChildren = false
 

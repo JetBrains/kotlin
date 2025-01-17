@@ -224,7 +224,7 @@ open class FunctionInlining(
 
     private fun IrBlock.markAsRegenerated(): IrBlock {
         if (!regenerateInlinedAnonymousObjects) return this
-        acceptVoid(object : IrVisitorVoid() {
+        acceptVoid(object : IrElementVisitorVoid {
             private fun IrElement.setUpCorrectAttributeOwner() {
                 if (this.attributeOwnerId == this) return
                 this.originalBeforeInline = this.attributeOwnerId

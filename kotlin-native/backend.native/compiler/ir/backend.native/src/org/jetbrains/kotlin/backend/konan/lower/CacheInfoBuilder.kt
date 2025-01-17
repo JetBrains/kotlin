@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.impl.javaFile
 
@@ -33,7 +33,7 @@ internal class CacheInfoBuilder(
         irModule.files.forEach { irFile ->
             var hasEagerlyInitializedProperties = false
 
-            irFile.acceptChildrenVoid(object : IrVisitorVoid() {
+            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -87,7 +87,7 @@ internal class CacheInfoBuilder(
         if (irFunction in visitedInlineFunctions) return
         visitedInlineFunctions += irFunction
 
-        irFunction.acceptChildrenVoid(object : IrVisitorVoid() {
+        irFunction.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

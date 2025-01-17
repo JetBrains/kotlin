@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 /**
@@ -135,7 +135,7 @@ open class IrMangleComputer(
         }
     }
 
-    private inner class Visitor : IrVisitorVoid() {
+    private inner class Visitor : IrElementVisitorVoid {
 
         override fun visitElement(element: IrElement) =
             error("unexpected element ${element.render()}")

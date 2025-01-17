@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -133,7 +133,7 @@ class JsCodeOutliningLowering(
 
 private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
     var result = false
-    acceptChildrenVoid(object : IrVisitorVoid() {
+    acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             if (result) return
             element.acceptChildrenVoid(this)

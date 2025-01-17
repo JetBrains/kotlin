@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -27,7 +27,7 @@ internal object ValueScopeUpdater : ContextUpdater {
     private class ValueScopeVisitor(
         private val context: CheckerContext,
         private val block: () -> Unit
-    ) : IrVisitorVoid() {
+    ) : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             block()
         }

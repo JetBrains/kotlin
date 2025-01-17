@@ -86,7 +86,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
@@ -732,7 +732,7 @@ internal class KaFirCompilerFacility(
     }
 }
 
-private class IrDeclarationMappingCollectingVisitor : IrVisitorVoid() {
+private class IrDeclarationMappingCollectingVisitor : IrElementVisitorVoid {
     private val collectedMappings = HashMap<FirDeclaration, IrDeclaration>()
 
     val mappings: Map<FirDeclaration, IrDeclaration>
@@ -757,7 +757,7 @@ private class IrDeclarationMappingCollectingVisitor : IrVisitorVoid() {
     }
 }
 
-private class IrDeclarationPatchingVisitor(private val mapping: Map<FirDeclaration, IrDeclaration>) : IrVisitorVoid() {
+private class IrDeclarationPatchingVisitor(private val mapping: Map<FirDeclaration, IrDeclaration>) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

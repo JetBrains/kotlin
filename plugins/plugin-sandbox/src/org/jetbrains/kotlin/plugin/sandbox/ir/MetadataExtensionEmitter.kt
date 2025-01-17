@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.toIrConst
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import java.nio.ByteBuffer
 
 const val pluginId = "org.jetbrains.kotlin.plugin.sandbox"
 
-class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
+class MetadataExtensionEmitter(val context: IrPluginContext) : IrElementVisitorVoid {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.EmitMetadata")
     }
@@ -54,7 +54,7 @@ class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
     }
 }
 
-class MetadataExtensionExtractor(val context: IrPluginContext) : IrVisitorVoid() {
+class MetadataExtensionExtractor(val context: IrPluginContext) : IrElementVisitorVoid {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.GenerateBodyUsingEmittedMetadata")
     }

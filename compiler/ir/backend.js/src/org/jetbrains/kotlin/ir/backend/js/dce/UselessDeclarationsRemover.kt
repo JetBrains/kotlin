@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
@@ -32,7 +32,7 @@ class UselessDeclarationsRemover(
     private val usefulDeclarations: Set<IrDeclaration>,
     private val context: JsIrBackendContext,
     private val dceRuntimeDiagnostic: RuntimeDiagnostic?,
-) : IrVisitorVoid() {
+) : IrElementVisitorVoid {
     private val savedTypesCache = hashMapOf<IrClassSymbol, Set<IrClassSymbol>>()
 
     override fun visitElement(element: IrElement) {

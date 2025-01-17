@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -46,7 +46,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
     }
 
     private fun copyDefaultArgumentsFromExpectToActual(declaration: IrDeclaration) {
-        declaration.acceptVoid(object : IrVisitorVoid() {
+        declaration.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

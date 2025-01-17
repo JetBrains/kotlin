@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -74,7 +74,7 @@ internal class InsertImplicitCasts(
 
     private fun postprocessReturnExpressions(element: IrElement) {
         // We need to re-create type parameter context for casts of postprocessed return values.
-        element.acceptChildrenVoid(object : IrVisitorVoid() {
+        element.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitReturn(expression: IrReturn) {
                 super.visitReturn(expression)
                 val expectedReturnType = expectedFunctionExpressionReturnType[expression.returnTargetSymbol.descriptor] ?: return

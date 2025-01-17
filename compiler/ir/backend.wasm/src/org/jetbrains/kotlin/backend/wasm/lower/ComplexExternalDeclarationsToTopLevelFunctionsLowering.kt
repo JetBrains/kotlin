@@ -63,7 +63,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun processExternalDeclaration(declaration: IrDeclaration) {
-        declaration.acceptVoid(object : IrVisitorVoid() {
+        declaration.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 error("Unknown external element ${element::class}")
             }
@@ -487,7 +487,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
         irFile.acceptVoid(declarationTransformer)
     }
 
-    private val declarationTransformer = object : IrVisitorVoid() {
+    private val declarationTransformer = object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

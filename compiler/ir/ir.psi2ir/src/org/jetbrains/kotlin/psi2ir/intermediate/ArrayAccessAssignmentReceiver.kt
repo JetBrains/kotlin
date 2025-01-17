@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.inlineStatement
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi.KtExpression
@@ -151,7 +151,7 @@ internal class ArrayAccessAssignmentReceiver(
 
     private class SamConversionsCollector(
         private val compoundAssignmentInfo: CompoundAssignmentInfo
-    ) : IrVisitorVoid() {
+    ) : IrElementVisitorVoid {
         val samConversionsPerVariable = HashMap<IrVariable, MutableList<IrTypeOperatorCall>>()
 
         override fun visitElement(element: IrElement) {

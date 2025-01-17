@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -67,7 +67,7 @@ private var IrField.lazyInitializerExpression: IrExpression? by irAttribute(foll
 private fun foldString(expression: IrExpression): String? {
     val builder = StringBuilder()
     var foldingFailed = false
-    expression.acceptVoid(object : IrVisitorVoid() {
+    expression.acceptVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             foldingFailed = true
         }
@@ -134,7 +134,7 @@ private fun foldString(expression: IrExpression): String? {
     return builder.toString()
 }
 
-private class InitFunVisitor : IrVisitorVoid() {
+private class InitFunVisitor : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

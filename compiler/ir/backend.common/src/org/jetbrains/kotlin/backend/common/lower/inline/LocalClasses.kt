@@ -73,7 +73,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
                 val transformer = this
                 for (lambda in inlineLambdas) {
-                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
+                    lambda.acceptChildrenVoid(object : IrElementVisitorVoid {
                         override fun visitElement(element: IrElement) {
                             element.acceptChildrenVoid(this)
                         }
@@ -166,7 +166,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
     if (typeParameters.any { it.isReified }) return
 
     val crossinlineParameters = parameters.filter { it.isCrossinline }.toSet()
-    acceptChildrenVoid(object : IrVisitorVoid() {
+    acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -174,7 +174,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
         override fun visitClass(declaration: IrClass) {
             var canExtract = true
             if (crossinlineParameters.isNotEmpty()) {
-                declaration.acceptVoid(object : IrVisitorVoid() {
+                declaration.acceptVoid(object : IrElementVisitorVoid {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
