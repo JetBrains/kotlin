@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumConstructorCall]
@@ -19,4 +20,8 @@ abstract class IrEnumConstructorCall : IrFunctionAccessExpression() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitEnumConstructorCall(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitEnumConstructorCall(this)
+    }
 }

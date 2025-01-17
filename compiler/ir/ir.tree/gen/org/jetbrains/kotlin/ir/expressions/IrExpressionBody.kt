@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expressionBody]
@@ -20,11 +21,19 @@ abstract class IrExpressionBody : IrBody() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitExpressionBody(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitExpressionBody(this)
+    }
+
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpressionBody =
         accept(transformer, data) as IrExpressionBody
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        expression.acceptVoid(visitor)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {

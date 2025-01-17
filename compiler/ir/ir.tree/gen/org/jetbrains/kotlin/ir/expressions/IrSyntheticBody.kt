@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody]
@@ -18,4 +19,8 @@ abstract class IrSyntheticBody : IrBody() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitSyntheticBody(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitSyntheticBody(this)
+    }
 }

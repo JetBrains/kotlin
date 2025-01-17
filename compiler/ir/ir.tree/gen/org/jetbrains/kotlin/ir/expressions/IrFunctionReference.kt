@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionReference]
@@ -19,4 +20,8 @@ abstract class IrFunctionReference : IrCallableReference<IrFunctionSymbol>() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitFunctionReference(this)
+    }
 }

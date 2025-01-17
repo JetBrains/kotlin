@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantObject]
@@ -27,8 +28,16 @@ abstract class IrConstantObject : IrConstantValue() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitConstantObject(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitConstantObject(this)
+    }
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         valueArguments.forEach { it.accept(visitor, data) }
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        valueArguments.forEach { it.acceptVoid(visitor) }
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {

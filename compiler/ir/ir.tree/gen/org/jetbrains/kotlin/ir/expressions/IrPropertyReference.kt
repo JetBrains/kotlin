@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyReference]
@@ -25,4 +26,8 @@ abstract class IrPropertyReference : IrCallableReference<IrPropertySymbol>() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitPropertyReference(this)
+    }
 }

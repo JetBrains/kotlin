@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getValue]
@@ -16,4 +17,8 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 abstract class IrGetValue : IrValueAccessExpression() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitGetValue(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitGetValue(this)
+    }
 }

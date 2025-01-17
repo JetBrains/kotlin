@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructor]
@@ -26,4 +27,8 @@ abstract class IrConstructor : IrFunction() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitConstructor(this)
+    }
 }

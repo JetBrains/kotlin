@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -35,6 +36,10 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitTypeParameter(this)
+    }
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrTypeParameter =
         accept(transformer, data) as IrTypeParameter

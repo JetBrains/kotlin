@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty]
@@ -37,10 +38,20 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedProperty(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitLocalDelegatedProperty(this)
+    }
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         delegate.accept(visitor, data)
         getter.accept(visitor, data)
         setter?.accept(visitor, data)
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        delegate.acceptVoid(visitor)
+        getter.acceptVoid(visitor)
+        setter?.acceptVoid(visitor)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {

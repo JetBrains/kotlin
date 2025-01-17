@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Represents a string template expression.
@@ -32,8 +33,16 @@ abstract class IrStringConcatenation : IrExpression() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitStringConcatenation(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitStringConcatenation(this)
+    }
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         arguments.forEach { it.accept(visitor, data) }
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        arguments.forEach { it.acceptVoid(visitor) }
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {

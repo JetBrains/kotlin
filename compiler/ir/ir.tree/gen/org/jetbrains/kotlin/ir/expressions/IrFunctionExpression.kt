@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionExpression]
@@ -23,8 +24,16 @@ abstract class IrFunctionExpression : IrExpression() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitFunctionExpression(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitFunctionExpression(this)
+    }
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         function.accept(visitor, data)
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        function.acceptVoid(visitor)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {

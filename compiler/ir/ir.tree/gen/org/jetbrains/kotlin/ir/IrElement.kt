@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * The root interface of the IR tree. Each IR node implements this interface.
@@ -52,6 +53,8 @@ interface IrElement {
      */
     fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R
 
+    fun acceptVoid(visitor: IrVisitorVoid)
+
     /**
      * Runs the provided [transformer] on the IR subtree with the root at this node.
      *
@@ -72,6 +75,8 @@ interface IrElement {
      * @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
      */
     fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D)
+
+    fun acceptChildrenVoid(visitor: IrVisitorVoid)
 
     /**
      * Recursively transforms this node's children *in place* using [transformer].

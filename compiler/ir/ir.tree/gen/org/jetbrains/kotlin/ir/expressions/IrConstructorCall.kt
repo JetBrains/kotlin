@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.types.model.AnnotationMarker
 
 /**
@@ -25,4 +26,8 @@ abstract class IrConstructorCall : IrFunctionAccessExpression(), AnnotationMarke
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitConstructorCall(this)
+    }
 }

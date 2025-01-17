@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.variable]
@@ -35,8 +36,16 @@ abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitVariable(this)
+    }
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         initializer?.accept(visitor, data)
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        initializer?.acceptVoid(visitor)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {

@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.const]
@@ -20,4 +21,8 @@ abstract class IrConst : IrExpression() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitConst(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitConst(this)
+    }
 }

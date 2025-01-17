@@ -8,17 +8,21 @@ package org.jetbrains.kotlin.ir.generator.print
 import org.jetbrains.kotlin.generators.tree.AbstractElementPrinter
 import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
 import org.jetbrains.kotlin.generators.tree.StandardTypes
+import org.jetbrains.kotlin.generators.tree.TypeVariable
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.nullable
 import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.irTransformerType
 import org.jetbrains.kotlin.ir.generator.irVisitorType
+import org.jetbrains.kotlin.ir.generator.irVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
+import org.jetbrains.kotlin.utils.withIndent
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 private val transformIfNeeded = ArbitraryImportable("$BASE_PACKAGE.util", "transformIfNeeded")
@@ -38,6 +42,36 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
     override fun filterFields(element: Element): Collection<Field> =
         element.fields
 
+    private fun ImportCollectingPrinter.printAcceptChildrenMethodImplementation(element: Element, hasData: Boolean) {
+        if (!element.isRootElement) {
+            printBlock {
+                for (child in element.walkableChildren) {
+                    print(child.name, child.call())
+                    when (child) {
+                        is SimpleField -> if (hasData) {
+                            println("accept(visitor, data)")
+                        } else {
+                            println("acceptVoid(visitor)")
+                        }
+                        is ListField -> {
+                            print("forEach { it")
+                            if (child.baseType.nullable) {
+                                print("?")
+                            }
+                            if (hasData) {
+                                println(".accept(visitor, data) }")
+                            } else {
+                                println(".acceptVoid(visitor) }")
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            println()
+        }
+    }
+
     override fun ImportCollectingPrinter.printAdditionalMethods(element: Element) {
         element.generationCallback?.invoke(this)
 
@@ -47,6 +81,24 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             hasImplementation = !element.isRootElement,
             treeName = "IR",
         )
+
+        if (element.hasAcceptMethod) {
+            println()
+            val visitorParameter = FunctionParameter("visitor", irVisitorVoidType)
+            printFunctionDeclaration(
+                name = "acceptVoid",
+                parameters = listOf(visitorParameter),
+                returnType = StandardTypes.unit,
+                override = !element.isRootElement,
+            )
+            if (!element.isRootElement) {
+                printBlock {
+                    println(visitorParameter.name, ".", element.visitFunctionName, "(this)")
+                }
+            } else {
+                println()
+            }
+        }
 
         printTransformMethod(
             element = element,
@@ -63,26 +115,18 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 visitorResultType = StandardTypes.unit,
                 override = !element.isRootElement,
             )
+            printAcceptChildrenMethodImplementation(element, hasData = true)
 
-            if (!element.isRootElement) {
-                printBlock {
-                    for (child in element.walkableChildren) {
-                        print(child.name, child.call())
-                        when (child) {
-                            is SimpleField -> println("accept(visitor, data)")
-                            is ListField -> {
-                                print("forEach { it")
-                                if (child.baseType.nullable) {
-                                    print("?")
-                                }
-                                println(".accept(visitor, data) }")
-                            }
-                        }
-                    }
-                }
-            } else {
-                println()
-            }
+            println()
+            val visitorParameter = FunctionParameter("visitor", irVisitorVoidType)
+            printFunctionDeclaration(
+                name = "acceptChildrenVoid",
+                parameters = listOf(visitorParameter),
+                returnType = StandardTypes.unit,
+                typeParameters = emptyList(),
+                override = !element.isRootElement,
+            )
+            printAcceptChildrenMethodImplementation(element, hasData = false)
         }
 
         if (element.hasTransformChildrenMethod) {

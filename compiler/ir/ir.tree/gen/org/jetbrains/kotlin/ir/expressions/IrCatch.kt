@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.catch]
@@ -27,12 +28,21 @@ abstract class IrCatch : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitCatch(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitCatch(this)
+    }
+
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrCatch =
         accept(transformer, data) as IrCatch
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         catchParameter.accept(visitor, data)
         result.accept(visitor, data)
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        catchParameter.acceptVoid(visitor)
+        result.acceptVoid(visitor)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {

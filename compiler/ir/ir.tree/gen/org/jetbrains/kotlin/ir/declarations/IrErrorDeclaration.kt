@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorDeclaration]
@@ -19,4 +20,8 @@ abstract class IrErrorDeclaration : IrDeclarationBase() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitErrorDeclaration(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) {
+        visitor.visitErrorDeclaration(this)
+    }
 }
