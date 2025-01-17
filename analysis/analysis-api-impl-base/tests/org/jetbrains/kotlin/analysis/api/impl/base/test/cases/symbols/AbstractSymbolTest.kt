@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
@@ -251,12 +252,26 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             assertions.assertEqualsToTestDataFileSibling(actual = actual, extension = extension)
         } else {
             val expectedFile = getTestDataSibling(extension).toFile()
-            if (!assertions.doesEqualToFile(expectedFile, actual)) {
-                throw AssertionFailedError(
-                    /* message = */ "Non-PSI version doesn't equal to the PSI-based variation",
-                    /* expected = */ expectedFile.readText(),
-                    /* actual = */ actual,
-                )
+            val nonPsiExpectedFile = getTestDataSibling("nonPsi.$extension").toFile()
+            when {
+                assertions.doesEqualToFile(expectedFile, actual) -> {
+                    if (nonPsiExpectedFile.exists() && configurator.frontendKind == FrontendKind.Fir) {
+                        throw AssertionError("'${nonPsiExpectedFile.path}' should be removed as the actual output is the same as '${expectedFile.path}'")
+                    }
+                }
+
+                else -> {
+                    if (nonPsiExpectedFile.exists() && configurator.frontendKind == FrontendKind.Fir) {
+                        assertions.assertEqualsToFile(nonPsiExpectedFile, actual)
+                        return
+                    }
+
+                    throw AssertionFailedError(
+                        /* message = */ "Non-PSI version doesn't equal to the PSI-based variation",
+                        /* expected = */ expectedFile.readText(),
+                        /* actual = */ actual,
+                    )
+                }
             }
         }
     }

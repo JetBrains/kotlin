@@ -329,6 +329,52 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContextParameters {
+    @Test
+    public void testAllFilesPresentInContextParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("annotatedContextParameterOnFunction.kt")
+    public void testAnnotatedContextParameterOnFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedContextParameterOnProperty.kt")
+    public void testAnnotatedContextParameterOnProperty() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnFunction.kt")
+    public void testContextParameterOnFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/contextParameterOnFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnProperty.kt")
+    public void testContextParameterOnProperty() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/contextParameterOnProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithContextParameters.kt")
+    public void testFunctionWithContextParameters() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/functionWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithContextParameters.kt")
+    public void testPropertyWithContextParameters() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/propertyWithContextParameters.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
   @TestDataPath("$PROJECT_ROOT")
   public class Contracts {
