@@ -237,5 +237,12 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             SerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
             "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
         )
+
+        MAP.put(
+            SerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED,
+            "Value specified in annotation @ProtoNumber on the field ''{0}'' duplicates field numbers of fields: {1}",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
+        )
     }
 }

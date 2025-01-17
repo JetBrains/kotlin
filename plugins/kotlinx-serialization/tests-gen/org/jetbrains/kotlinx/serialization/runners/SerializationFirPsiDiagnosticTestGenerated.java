@@ -171,6 +171,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("ProtobufFieldNumbers.kt")
+    public void testProtobufFieldNumbers() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/ProtobufFieldNumbers.kt");
+    }
+
+    @Test
     @TestMetadata("repeatableSerialInfo.kt")
     public void testRepeatableSerialInfo() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/repeatableSerialInfo.kt");

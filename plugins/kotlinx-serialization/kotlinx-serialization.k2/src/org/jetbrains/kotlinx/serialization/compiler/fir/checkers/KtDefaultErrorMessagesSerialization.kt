@@ -222,6 +222,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
             "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
         )
+        put(
+            FirSerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED,
+            "Value specified in annotation @ProtoNumber on the field ''{0}'' duplicates field numbers of fields: {1}",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
+        )
 
         put(
             FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,

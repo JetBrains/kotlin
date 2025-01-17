@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.RuntimeVersions
@@ -40,6 +41,8 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializatio
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoNumberAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -62,6 +65,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
             val properties = buildSerializableProperties(classSymbol, reporter) ?: return
             checkCorrectTransientAnnotationIsUsed(classSymbol, properties.serializableProperties, reporter)
+            checkProtobufProperties(properties.serializableProperties, reporter)
             checkTransients(classSymbol, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
             checkInheritedAnnotations(classSymbol, reporter)
@@ -283,6 +287,98 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                     this
                 )
             }
+        }
+    }
+
+    private fun CheckerContext.checkProtobufProperties(
+        properties: List<FirSerializableProperty>,
+        reporter: DiagnosticReporter,
+    ) {
+        /*
+        IMPORTANT! In protobuf filed numbers starts with 1
+        Therefore, for correct calculations, we assume that the fields in the class are also numbered from 1
+
+        The following notation is used in the comments:
+        proto number - field number used when encoding with protobuf
+        origin number - sequence number of field in the class, starts with 1
+        custom number - redefined by @ProtoNumber annotation value of proto number
+
+        Target proto number is origin number or if @ProtoNumber is specified a custom number
+         */
+
+        // origin number -> custom number
+        val originToCustom = mutableMapOf<Int, Int>()
+
+        properties.forEachIndexed { index, property ->
+
+            val annotation =
+                property.propertySymbol.resolvedAnnotationsWithArguments.getAnnotationByClassId(protoNumberAnnotationClassId, session)
+                    ?: return@forEachIndexed
+
+            // TODO should we throw error if there is no `number` argument or there is evaluation error
+            val argument = annotation.findArgumentByName(Name.identifier("number")) ?: return@forEachIndexed
+            val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return@forEachIndexed
+            val customNumber = literal.value as? Long ?: return@forEachIndexed
+
+            // use +1 to follow the rule that fields are numbered from 1
+            originToCustom[index + 1] = customNumber.toInt()
+        }
+
+        // there is no ProtoNumber annotation
+        if (originToCustom.isEmpty()) return
+
+        // origin number -> proto number
+        // proto id = null if there is no override annotation
+        val originToProto = mutableMapOf<Int, Int?>()
+        for (number in 1..properties.size) {
+            // use -1 to follow the rule that fields are numbered from 1
+            if (properties[number - 1].propertySymbol.getAnnotationByClassId(protoOneOfAnnotationClassId, session) != null) {
+                // if property marked with ProtoOneOf annotation we should skip check field number for it
+                // because filed number will be specified in heirs
+                continue
+            }
+
+            originToProto[number] = originToCustom[number]
+        }
+
+        // proto id -> [list of origin fields numbers that uses it, null there is no annotation on a field]
+        val duplicates = mutableMapOf<Int, MutableList<Int?>>()
+        originToProto.forEach { (originNumber, protoNumber) ->
+            if (protoNumber != null) {
+                duplicates.getOrPut(protoNumber) { mutableListOf() }.add(originNumber)
+            } else {
+                duplicates.getOrPut(originNumber) { mutableListOf() }.add(null)
+            }
+        }
+
+        originToProto.forEach { (originNumber, protoNumber) ->
+            // skip fields without ProtoNumber annotation
+            if (protoNumber == null) return@forEach
+
+            val duplicates = duplicates.getValue(protoNumber)
+            if (duplicates.size < 2) return@forEach
+
+            // use -1 to follow the rule that fields are numbered from 1
+            val property = properties[originNumber - 1]
+            val annotation =
+                property.propertySymbol.resolvedAnnotationsWithArguments.getAnnotationByClassId(protoNumberAnnotationClassId, session)
+
+            val duplicateFieldsNames = duplicates.asSequence()
+                // if fieldNumber == null it's mean that there is no custom annotation and proto number is an origin field number
+                .map { number -> number ?: protoNumber }
+                .filter { number -> number != originNumber }
+                // use -1 to follow the rule that fields are numbered from 1
+                .map { number -> properties[number - 1].propertySymbol.name }
+                .joinToString()
+
+            reporter.reportOn(
+                source = annotation?.source,
+                FirSerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED,
+                property.propertySymbol.name.asString(),
+                duplicateFieldsNames,
+                this
+            )
+
         }
     }
 

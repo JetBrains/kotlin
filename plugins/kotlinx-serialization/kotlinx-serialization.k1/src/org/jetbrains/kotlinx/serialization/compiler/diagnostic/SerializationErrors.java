@@ -71,6 +71,7 @@ public interface SerializationErrors {
     DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_USELESS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory2<KtAnnotationEntry, String, String> PROTOBUF_PROTO_NUM_DUPLICATED = DiagnosticFactory2.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
