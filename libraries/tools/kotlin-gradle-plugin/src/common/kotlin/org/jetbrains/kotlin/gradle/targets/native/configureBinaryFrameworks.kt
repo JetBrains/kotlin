@@ -89,14 +89,12 @@ private fun Configuration.applyBinaryFrameworkGroupAttributes(
 }
 
 private fun Project.addFrameworkArtifact(configuration: Configuration, artifactFile: Provider<File>) {
-    val frameworkArtifact = artifacts.add(configuration.name, artifactFile) { artifact ->
+    artifacts.add(configuration.name, artifactFile) { artifact ->
         artifact.name = name
         artifact.extension = "framework"
         artifact.type = "binary"
         artifact.classifier = "framework"
     }
-    project.extensions.getByType(org.gradle.api.internal.plugins.DefaultArtifactPublicationSet::class.java)
-        .addCandidate(frameworkArtifact)
 }
 
 private fun Project.createFatFramework(groupDescription: FrameworkGroupDescription, frameworks: List<Framework>) {
