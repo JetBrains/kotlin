@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
@@ -23,6 +22,6 @@ class SourceAvailableImpl {
     fun foo() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias SourceAvailable = SourceAvailableImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias SourceAvailable = SourceAvailableImpl
 
 actual typealias FromLib = kotlin.SinceKotlin

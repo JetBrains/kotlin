@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // This test is for the case when expect annotation is FirAnnotationCall and actual annotation is not FirAnnotationCall
 // MODULE: common

@@ -1,7 +1,6 @@
 // LL_FIR_DIVERGENCE
 // Not a real LL divergence, it's just tiered runners reporting errors from `BACKEND`
 // LL_FIR_DIVERGENCE
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // RENDER_IR_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1-common

@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
@@ -27,7 +26,7 @@ expect fun differentArgumentsOrder()
 actual class AnnotationOrder
 
 @Ann3(2, 1)
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class ValuesOrderInsideAnnotationArgument
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class ValuesOrderInsideAnnotationArgument
 
 @Ann4(arg2 = "2", arg1 = "1")
 actual fun differentArgumentsOrder() {}

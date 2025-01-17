@@ -1,26 +1,26 @@
-/jvm.kt:(95,101): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(94,100): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `OnClass` must be present with the same arguments on actual `OnClass`, otherwise they might behave incorrectly.
 
-/jvm.kt:(145,151): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(144,150): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `OnMember.onMember` must be present with the same arguments on actual `OnMember.onMember`, otherwise they might behave incorrectly.
 
-/jvm.kt:(197,203): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(196,202): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `ViaTypealias` must be present with the same arguments on actual `ViaTypealiasImpl`, otherwise they might behave incorrectly.
 
-/jvm.kt:(302,308): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(301,307): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `MemberScopeViaTypealias.foo` must be present with the same arguments on actual `MemberScopeViaTypealiasImpl.foo`, otherwise they might behave incorrectly.
 
-/jvm.kt:(396,402): warning: Annotation `@WithArg(s = "str")` has different arguments on actual declaration: `@WithArg(s = "other str")`.
+/jvm.kt:(395,401): warning: Annotation `@WithArg(s = "str")` has different arguments on actual declaration: `@WithArg(s = "other str")`.
 All annotations from expect `withDifferentArg` must be present with the same arguments on actual `withDifferentArg`, otherwise they might behave incorrectly.
 
-/jvm.kt:(430,436): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(429,435): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `inValueParam` must be present with the same arguments on actual `inValueParam`, otherwise they might behave incorrectly.
 
-/jvm.kt:(471,477): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(470,476): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `inTypeParam` must be present with the same arguments on actual `inTypeParam`, otherwise they might behave incorrectly.
 
-/jvm.kt:(504,510): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(503,509): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `<get-onGetter>` must be present with the same arguments on actual `<get-onGetter>`, otherwise they might behave incorrectly.
 
-/jvm.kt:(538,544): warning: Annotation `@Ann` is missing on actual declaration.
+/jvm.kt:(537,543): warning: Annotation `@Ann` is missing on actual declaration.
 All annotations from expect `onType` must be present with the same arguments on actual `onType`, otherwise they might behave incorrectly.
