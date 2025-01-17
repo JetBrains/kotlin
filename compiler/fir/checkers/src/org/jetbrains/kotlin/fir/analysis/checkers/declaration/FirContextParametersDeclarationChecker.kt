@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
+object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 

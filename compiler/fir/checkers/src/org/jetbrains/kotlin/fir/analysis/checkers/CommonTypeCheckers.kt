@@ -22,7 +22,7 @@ object CommonTypeCheckers : TypeCheckers() {
         FirDuplicateParameterNameInFunctionTypeChecker,
         FirOptionalExpectationTypeChecker,
         FirIncompatibleClassTypeChecker,
-        FirContextReceiversTypeChecker,
+        FirContextualFunctionTypeChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinTypeChecker,
         FirProjectionRelationChecker,
         FirCommonAtomicReferenceToPrimitiveTypeChecker,

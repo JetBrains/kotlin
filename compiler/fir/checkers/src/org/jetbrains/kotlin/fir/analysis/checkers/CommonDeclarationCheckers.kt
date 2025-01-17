@@ -34,7 +34,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExpectConsistencyChecker,
             FirOptionalExpectationDeclarationChecker,
             FirMissingDependencySupertypeInDeclarationsChecker,
-            FirContextReceiversDeclarationChecker,
+            FirContextParametersDeclarationChecker,
         )
 
     override val classLikeCheckers: Set<FirClassLikeChecker>
@@ -90,7 +90,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             ContractSyntaxV2PropertyChecker,
             FirVolatileAnnotationChecker,
             FirInlinePropertyChecker,
-            FirContextReceiversPropertyBackingFieldChecker
+            FirContextualPropertyWithBackingFieldChecker
         )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker>

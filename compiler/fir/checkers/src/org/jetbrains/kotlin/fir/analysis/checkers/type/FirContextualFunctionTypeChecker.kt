@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextReceiversDeclarationChecker.checkSubTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextParametersDeclarationChecker.checkSubTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.contextParameterTypes
 import org.jetbrains.kotlin.fir.types.hasContextParameters
 
-object FirContextReceiversTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
+object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef.source?.kind is KtFakeSourceElementKind) return
         if (!typeRef.coneType.hasContextParameters) return

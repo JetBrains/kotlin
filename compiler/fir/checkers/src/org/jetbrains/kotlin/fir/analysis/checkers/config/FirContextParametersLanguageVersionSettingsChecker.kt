@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
-object FirContextReceiversLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
+object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
     private val shouldSuggestContextParameters: Boolean = LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_2
 
     val CONTEXT_RECEIVER_MESSAGE: String = if (shouldSuggestContextParameters) {
