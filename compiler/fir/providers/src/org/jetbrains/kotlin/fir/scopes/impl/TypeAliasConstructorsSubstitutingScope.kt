@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
@@ -40,6 +43,15 @@ var <T : FirFunction> T.typeAliasConstructorInfo: TypeAliasConstructorInfo<T>? b
 val FirConstructorSymbol.typeAliasConstructorInfo: TypeAliasConstructorInfo<*>?
     get() = fir.typeAliasConstructorInfo
 
+class FirTypealiasConstructorStorage(val session: FirSession) : FirSessionComponent {
+    private val cachesFactory = session.firCachesFactory
+
+    val cachedConstructors: FirCache<Pair<FirTypeAliasSymbol, FirConstructorSymbol>, FirConstructorSymbol, TypeAliasConstructorsSubstitutingScope> =
+        cachesFactory.createCache { original, scope -> scope.createTypealiasConstructor(original.second) }
+}
+
+private val FirSession.typealiasConstructorsStorage: FirTypealiasConstructorStorage by FirSession.sessionComponentAccessor()
+
 class TypeAliasConstructorsSubstitutingScope private constructor(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
@@ -71,19 +83,19 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
         .languageVersionSettings
         .getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)
 
-    private val constructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
+    private val typealiasConstructorStorage = session.typealiasConstructorsStorage
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
-            val typealiasConstructor = constructors.getOrPut(originalConstructorSymbol) {
-                createTypealiasConstructor(originalConstructorSymbol)
-            }
-
+        delegatingScope.processDeclaredConstructors { originalConstructorSymbol ->
+            val typealiasConstructor = typealiasConstructorStorage.cachedConstructors.getValue(
+                typeAliasSymbol to originalConstructorSymbol,
+                this
+            )
             processor(typealiasConstructor)
         }
     }
 
-    private fun createTypealiasConstructor(originalConstructorSymbol: FirConstructorSymbol): FirConstructorSymbol {
+    fun createTypealiasConstructor(originalConstructorSymbol: FirConstructorSymbol): FirConstructorSymbol {
         val originalConstructor = originalConstructorSymbol.fir
         val newConstructorSymbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
 
