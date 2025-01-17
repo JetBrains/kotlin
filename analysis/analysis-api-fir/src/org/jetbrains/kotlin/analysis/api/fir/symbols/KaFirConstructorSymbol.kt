@@ -127,24 +127,10 @@ internal class KaFirConstructorSymbol private constructor(
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-
-        if (!lazyFirSymbol.isInitialized() || !firSymbol.isTypeAliasedConstructor) {
-            return psiOrSymbolEquals(other)
-        }
-
-        if (other !is KaFirConstructorSymbol) return false
-
-        // TODO remove manual comparison when KT-72929 is fixed
-        return typeAliasedConstructorsEqual(firSymbol, other.firSymbol)
+        return psiOrSymbolEquals(other)
     }
 
     override fun hashCode(): Int {
-        if (!lazyFirSymbol.isInitialized() || !firSymbol.isTypeAliasedConstructor) {
-            return psiOrSymbolHashCode()
-        }
-
-        // TODO remove explicit hashing when KT-72929 is fixed
-        return firSymbol.hashCodeForTypeAliasedConstructor()
+        return psiOrSymbolHashCode()
     }
 }
