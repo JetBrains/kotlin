@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 inline fun <reified T : IrElement> MutableList<T>.transformInPlace(transformation: (T) -> IrElement) {
@@ -36,6 +37,14 @@ fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrTransforme
     }
 }
 
+fun <T : IrElement> MutableList<T>.transformInPlace(transformer: IrElementTransformerVoid) {
+    for (i in 0 until size) {
+        // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
+        @Suppress("UNCHECKED_CAST")
+        set(i, (get(i) as IrElementBase).transformVoid(transformer) as T)
+    }
+}
+
 @JvmName("transformInPlaceNullable")
 fun <T : IrElement, D> MutableList<T?>.transformInPlace(transformer: IrTransformer<D>, data: D) {
     for (i in 0 until size) {
@@ -48,6 +57,18 @@ fun <T : IrElement, D> MutableList<T?>.transformInPlace(transformer: IrTransform
     }
 }
 
+@JvmName("transformInPlaceNullable")
+fun <T : IrElement> MutableList<T?>.transformInPlace(transformer: IrElementTransformerVoid) {
+    for (i in 0 until size) {
+        // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
+        val element = get(i) as IrElementBase?
+        if (element != null) {
+            @Suppress("UNCHECKED_CAST")
+            set(i, element.transformVoid(transformer) as T)
+        }
+    }
+}
+
 fun <T : IrElement, D> Array<T?>.transformInPlace(transformer: IrTransformer<D>, data: D) {
     for (i in indices) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
@@ -55,6 +76,17 @@ fun <T : IrElement, D> Array<T?>.transformInPlace(transformer: IrTransformer<D>,
         if (element != null) {
             @Suppress("UNCHECKED_CAST")
             set(i, element.transform(transformer, data) as T)
+        }
+    }
+}
+
+fun <T : IrElement> Array<T?>.transformInPlace(transformer: IrElementTransformerVoid) {
+    for (i in indices) {
+        // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
+        val element = get(i) as IrElementBase?
+        if (element != null) {
+            @Suppress("UNCHECKED_CAST")
+            set(i, element.transformVoid(transformer) as T)
         }
     }
 }
@@ -128,6 +160,22 @@ fun <T : IrElement, D> List<T>.transformIfNeeded(transformer: IrTransformer<D>, 
     for ((i, item) in withIndex()) {
         @Suppress("UNCHECKED_CAST")
         val transformed = item.transform(transformer, data) as T
+        if (transformed !== item && result == null) {
+            result = ArrayList(this)
+        }
+        result?.set(i, transformed)
+    }
+    return result ?: this
+}
+
+/**
+ * Transforms the list of elements with the given void transformer. Return the same List instance if no element instances have changed.
+ */
+fun <T : IrElement> List<T>.transformIfNeeded(transformer: IrElementTransformerVoid): List<T> {
+    var result: ArrayList<T>? = null
+    for ((i, item) in withIndex()) {
+        @Suppress("UNCHECKED_CAST")
+        val transformed = item.transformVoid(transformer) as T
         if (transformed !== item && result == null) {
             result = ArrayList(this)
         }

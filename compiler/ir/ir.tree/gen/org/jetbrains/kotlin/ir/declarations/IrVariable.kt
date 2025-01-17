@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -50,5 +51,9 @@ abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         initializer = initializer?.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        initializer = initializer?.transformVoid(transformer)
     }
 }

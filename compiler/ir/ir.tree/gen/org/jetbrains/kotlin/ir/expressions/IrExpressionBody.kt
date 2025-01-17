@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -28,6 +29,9 @@ abstract class IrExpressionBody : IrBody() {
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpressionBody =
         accept(transformer, data) as IrExpressionBody
 
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpressionBody =
+        transform(transformer, null) as IrExpressionBody
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
     }
@@ -38,5 +42,9 @@ abstract class IrExpressionBody : IrBody() {
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         expression = expression.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        expression = expression.transformVoid(transformer)
     }
 }

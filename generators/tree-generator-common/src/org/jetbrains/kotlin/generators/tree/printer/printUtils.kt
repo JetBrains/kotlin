@@ -357,7 +357,7 @@ fun ImportCollectingPrinter.printAcceptMethod(
     println()
 }
 
-private fun transformMethodKDoc(
+fun transformMethodKDoc(
     transformerParameter: FunctionParameter,
     dataParameter: FunctionParameter?,
     treeName: String,

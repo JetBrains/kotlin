@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -65,5 +66,11 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
         backingField = backingField?.transform(transformer, data) as IrField?
         getter = getter?.transform(transformer, data) as IrSimpleFunction?
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        backingField = backingField?.transformVoid(transformer) as IrField?
+        getter = getter?.transformVoid(transformer) as IrSimpleFunction?
+        setter = setter?.transformVoid(transformer) as IrSimpleFunction?
     }
 }

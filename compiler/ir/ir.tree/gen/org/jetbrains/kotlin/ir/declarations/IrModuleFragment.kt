@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -37,6 +38,9 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrModuleFragment =
         accept(transformer, data) as IrModuleFragment
 
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrModuleFragment =
+        transform(transformer, null)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         files.forEach { it.accept(visitor, data) }
     }
@@ -47,5 +51,9 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         files.transformInPlace(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        files.transformInPlace(transformer)
     }
 }

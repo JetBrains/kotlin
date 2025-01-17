@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -92,5 +93,11 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        typeParameters = typeParameters.transformIfNeeded(transformer)
+        declarations.transformInPlace(transformer)
+        thisReceiver = thisReceiver?.transformVoid(transformer)
     }
 }

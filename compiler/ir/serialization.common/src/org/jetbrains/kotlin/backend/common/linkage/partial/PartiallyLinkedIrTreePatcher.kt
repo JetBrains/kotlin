@@ -100,10 +100,6 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
-    private fun IrElement.transformVoid(transformer: IrElementTransformerVoid) {
-        transform(transformer, null)
-    }
-
     private sealed class DeclarationTransformerContext {
         private val scheduledForRemoval = HashSet<IrDeclaration>()
 

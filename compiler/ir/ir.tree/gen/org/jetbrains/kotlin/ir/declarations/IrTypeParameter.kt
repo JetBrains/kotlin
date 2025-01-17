@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -43,4 +44,7 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrTypeParameter =
         accept(transformer, data) as IrTypeParameter
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrTypeParameter =
+        transform(transformer, null) as IrTypeParameter
 }

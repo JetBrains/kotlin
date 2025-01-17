@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -58,5 +59,11 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
         delegate = delegate.transform(transformer, data) as IrVariable
         getter = getter.transform(transformer, data) as IrSimpleFunction
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        delegate = delegate.transformVoid(transformer) as IrVariable
+        getter = getter.transformVoid(transformer) as IrSimpleFunction
+        setter = setter?.transformVoid(transformer) as IrSimpleFunction?
     }
 }

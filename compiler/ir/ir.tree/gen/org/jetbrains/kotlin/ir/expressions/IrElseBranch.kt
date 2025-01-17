@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -25,4 +26,7 @@ abstract class IrElseBranch : IrBranch() {
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElseBranch =
         accept(transformer, data) as IrElseBranch
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrElseBranch =
+        transform(transformer, null)
 }

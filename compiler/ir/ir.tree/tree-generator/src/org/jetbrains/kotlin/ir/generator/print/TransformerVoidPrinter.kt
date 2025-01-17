@@ -123,20 +123,4 @@ internal class TransformerVoidPrinter(
             }
         }
     }
-
-    override fun printVisitor(elements: List<Element>) {
-        super.printVisitor(elements)
-        printer.run {
-            println()
-            val transformerParameter = FunctionParameter("transformer", visitorType)
-            printFunctionWithBlockBody(
-                name = "transformChildrenVoid",
-                parameters = listOf(transformerParameter),
-                returnType = StandardTypes.unit,
-                extensionReceiver = IrTree.rootElement,
-            ) {
-                println("transformChildren(", transformerParameter.name, ", null)")
-            }
-        }
-    }
 }

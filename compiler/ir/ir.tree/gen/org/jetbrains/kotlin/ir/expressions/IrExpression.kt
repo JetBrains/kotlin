@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
@@ -21,4 +22,7 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement {
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
         accept(transformer, data) as IrExpression
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transform(transformer, null)
 }

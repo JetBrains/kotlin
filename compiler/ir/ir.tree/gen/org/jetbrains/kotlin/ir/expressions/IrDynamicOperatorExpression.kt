@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -43,5 +44,10 @@ abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiver = receiver.transform(transformer, data)
         arguments.transformInPlace(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        receiver = receiver.transformVoid(transformer)
+        arguments.transformInPlace(transformer)
     }
 }

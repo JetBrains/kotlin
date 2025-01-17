@@ -552,7 +552,3 @@ abstract class IrElementTransformerVoid : IrTransformer<Nothing?>() {
     final override fun visitElseBranch(branch: IrElseBranch, data: Nothing?): IrElseBranch =
         visitElseBranch(branch)
 }
-
-fun IrElement.transformChildrenVoid(transformer: IrElementTransformerVoid) {
-    transformChildren(transformer, null)
-}

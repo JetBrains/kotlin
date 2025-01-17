@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -46,5 +47,11 @@ abstract class IrTry : IrExpression() {
         tryResult = tryResult.transform(transformer, data)
         catches.transformInPlace(transformer, data)
         finallyExpression = finallyExpression?.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        tryResult = tryResult.transformVoid(transformer)
+        catches.transformInPlace(transformer)
+        finallyExpression = finallyExpression?.transformVoid(transformer)
     }
 }

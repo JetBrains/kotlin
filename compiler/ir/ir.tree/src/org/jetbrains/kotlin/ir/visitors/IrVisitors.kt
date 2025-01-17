@@ -14,3 +14,8 @@ fun IrElement.acceptVoid(visitor: IrTypeVisitorVoid) {
 fun IrElement.acceptChildrenVoid(visitor: IrTypeVisitorVoid) {
     acceptChildren(visitor, null)
 }
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // TODO: Delete this method
+fun IrElement.transformChildrenVoid(transformer: IrElementTransformerVoid) {
+    transformChildren(transformer, null)
+}

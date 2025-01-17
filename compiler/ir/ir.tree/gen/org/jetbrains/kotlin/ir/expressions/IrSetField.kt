@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -38,5 +39,10 @@ abstract class IrSetField : IrFieldAccessExpression() {
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiver = receiver?.transform(transformer, data)
         value = value.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        receiver = receiver?.transformVoid(transformer)
+        value = value.transformVoid(transformer)
     }
 }

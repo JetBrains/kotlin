@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.ir.generator.elementTransformerVoidType
 import org.jetbrains.kotlin.ir.generator.irTransformerType
 import org.jetbrains.kotlin.ir.generator.irVisitorType
 import org.jetbrains.kotlin.ir.generator.irVisitorVoidType
@@ -72,6 +73,48 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         }
     }
 
+    private fun ImportCollectingPrinter.printTransformChildrenMethodImplementation(element: Element, hasData: Boolean) {
+        if (!element.isRootElement) {
+            printBlock {
+                for (child in element.transformableChildren) {
+                    print(child.name)
+                    when (child) {
+                        is SimpleField -> {
+                            print(" = ", child.name, child.call())
+                            if (hasData) {
+                                print("transform(transformer, data)")
+                            } else {
+                                print("transformVoid(transformer)")
+                            }
+                            val elementRef = child.typeRef as GenericElementRef<*>
+                            if (!elementRef.element.hasTransformMethod) {
+                                print(" as ", elementRef.render())
+                            }
+                            println()
+                        }
+                        is ListField -> {
+                            if (child.isMutable) {
+                                print(" = ", child.name, child.call())
+                                addImport(transformIfNeeded)
+                                print("transformIfNeeded(transformer")
+                            } else {
+                                addImport(transformInPlace)
+                                print(child.call())
+                                print("transformInPlace(transformer")
+                            }
+                            if (hasData) {
+                                print(", data")
+                            }
+                            println(")")
+                        }
+                    }
+                }
+            }
+        } else {
+            println()
+        }
+    }
+
     override fun ImportCollectingPrinter.printAdditionalMethods(element: Element) {
         element.generationCallback?.invoke(this)
 
@@ -100,13 +143,48 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             }
         }
 
-        printTransformMethod(
-            element = element,
-            transformerClass = irTransformerType,
-            implementation = "accept(transformer, data)".takeIf { !element.isRootElement },
-            returnType = element,
-            treeName = "IR",
-        )
+        if (element.hasTransformMethod) {
+            println()
+            val dataTP = TypeVariable("D")
+            val dataParameter = FunctionParameter("data", dataTP)
+            val transformerParameter = FunctionParameter("transformer", irTransformerType.withArgs(dataTP))
+            if (element.isRootElement) {
+                printKDoc(transformMethodKDoc(transformerParameter, dataParameter, "IR"))
+            }
+            printFunctionDeclaration(
+                name = "transform",
+                parameters = listOf(transformerParameter, dataParameter),
+                returnType = element,
+                typeParameters = listOf(dataTP),
+                override = !element.isRootElement,
+            )
+            if (!element.isRootElement) {
+                println(" =")
+                withIndent {
+                    print("accept(transformer, data)")
+                    print(" as ", element.render())
+                }
+            }
+            println()
+            println()
+            val transformerVoidParameter = FunctionParameter("transformer", elementTransformerVoidType)
+            printFunctionDeclaration(
+                name = "transformVoid",
+                parameters = listOf(transformerVoidParameter),
+                returnType = element,
+                override = !element.isRootElement,
+            )
+            if (!element.isRootElement) {
+                println(" =")
+                withIndent {
+                    print("transform(transformer, null)")
+                    if (element.getTransformExplicitType() != element) {
+                        print(" as ", element.render())
+                    }
+                }
+            }
+            println()
+        }
 
         if (element.hasAcceptChildrenMethod) {
             printAcceptChildrenMethod(
@@ -136,37 +214,16 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 returnType = StandardTypes.unit,
                 override = !element.isRootElement,
             )
-            if (!element.isRootElement) {
-                printBlock {
-                    for (child in element.transformableChildren) {
-                        print(child.name)
-                        when (child) {
-                            is SimpleField -> {
-                                print(" = ", child.name, child.call())
-                                print("transform(transformer, data)")
-                                val elementRef = child.typeRef as GenericElementRef<*>
-                                if (!elementRef.element.hasTransformMethod) {
-                                    print(" as ", elementRef.render())
-                                }
-                                println()
-                            }
-                            is ListField -> {
-                                if (child.isMutable) {
-                                    print(" = ", child.name, child.call())
-                                    addImport(transformIfNeeded)
-                                    println("transformIfNeeded(transformer, data)")
-                                } else {
-                                    addImport(transformInPlace)
-                                    print(child.call())
-                                    println("transformInPlace(transformer, data)")
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                println()
-            }
+            printTransformChildrenMethodImplementation(element, hasData = true)
+
+            println()
+            printFunctionDeclaration(
+                name = "transformChildrenVoid",
+                parameters = listOf(FunctionParameter("transformer", elementTransformerVoidType)),
+                returnType = StandardTypes.unit,
+                override = !element.isRootElement,
+            )
+            printTransformChildrenMethodImplementation(element, hasData = false)
         }
     }
 }

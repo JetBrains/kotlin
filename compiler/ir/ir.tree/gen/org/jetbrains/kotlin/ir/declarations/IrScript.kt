@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -86,5 +87,14 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer, data)
         providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer, data)
         earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        statements.transformInPlace(transformer)
+        thisReceiver = thisReceiver?.transformVoid(transformer)
+        explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer)
+        implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer)
+        providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer)
+        earlierScriptsParameter = earlierScriptsParameter?.transformVoid(transformer)
     }
 }

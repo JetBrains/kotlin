@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -38,5 +39,9 @@ abstract class IrWhen : IrExpression() {
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         branches.transformInPlace(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        branches.transformInPlace(transformer)
     }
 }

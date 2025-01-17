@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -35,5 +36,9 @@ abstract class IrThrow : IrExpression() {
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         value = value.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        value = value.transformVoid(transformer)
     }
 }

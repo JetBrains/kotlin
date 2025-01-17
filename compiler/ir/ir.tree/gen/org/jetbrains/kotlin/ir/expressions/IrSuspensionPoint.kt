@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -46,5 +47,11 @@ abstract class IrSuspensionPoint : IrExpression() {
         suspensionPointIdParameter = suspensionPointIdParameter.transform(transformer, data) as IrVariable
         result = result.transform(transformer, data)
         resumeResult = resumeResult.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        suspensionPointIdParameter = suspensionPointIdParameter.transformVoid(transformer) as IrVariable
+        result = result.transformVoid(transformer)
+        resumeResult = resumeResult.transformVoid(transformer)
     }
 }

@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -40,5 +41,10 @@ abstract class IrSuspendableExpression : IrExpression() {
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         suspensionPointId = suspensionPointId.transform(transformer, data)
         result = result.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        suspensionPointId = suspensionPointId.transformVoid(transformer)
+        result = result.transformVoid(transformer)
     }
 }

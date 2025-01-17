@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -36,5 +37,10 @@ abstract class IrDoWhileLoop : IrLoop() {
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         body = body?.transform(transformer, data)
         condition = condition.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        body = body?.transformVoid(transformer)
+        condition = condition.transformVoid(transformer)
     }
 }

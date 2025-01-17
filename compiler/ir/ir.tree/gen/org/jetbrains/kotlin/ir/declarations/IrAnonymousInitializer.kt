@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -48,5 +49,9 @@ abstract class IrAnonymousInitializer : IrDeclarationBase() {
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         body = body.transform(transformer, data) as IrBlockBody
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        body = body.transformVoid(transformer) as IrBlockBody
     }
 }
