@@ -1,5 +1,5 @@
 CONTRACTS:
-TARGET: @R|java/lang/Override|() public open [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DelegatingDeferredReturnTypeWithSubstitution(deferredCalc=Deferred for Enhancement (Overriddens with Implicit Types), substitutor={T -> T})] fun <[ResolvedTo(BODY_RESOLVE)] T : R|ft<kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>, kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>?>|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@EnhancedNullability @R|Anno|(value = Int(3))  kotlin/String>|): <implicit>
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DelegatingDeferredReturnTypeWithSubstitution(deferredCalc=Deferred for Enhancement (Overriddens with Implicit Types), substitutor={T -> T})] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any!|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/MutableList<@EnhancedNullability @R|Anno|(value = Int(3))  T>|): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConst: R|kotlin/Int| = Int(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
-        public open [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> defaultMethod([ResolvedTo(STATUS)] p: R|kotlin/collections/List<T>|): <implicit> { LAZY_BLOCK }
+        public open [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> defaultMethod([ResolvedTo(STATUS)] p: R|kotlin/collections/MutableList<T>|): <implicit> { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: @R|java/lang/Override|() public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|ft<kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>, kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>?>|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@EnhancedNullability @R|Anno|(value = Int(3))  kotlin/String>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>|
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any!|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/MutableList<@EnhancedNullability @R|Anno|(value = Int(3))  T>|): R|@EnhancedNullability kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConst: R|kotlin/Int| = Int(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/MutableList<T>|): R|kotlin/collections/MutableList<T>| {
             ^defaultMethod R|<local>/p|
         }
 
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     }
 
 CONSTANT_EVALUATION:
-TARGET: @R|java/lang/Override|() public open [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|ft<kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>, kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>?>|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@EnhancedNullability @R|Anno|(value = Int(3))  kotlin/String>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>|
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any!|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/MutableList<@EnhancedNullability @R|Anno|(value = Int(3))  T>|): R|@EnhancedNullability kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConst: R|kotlin/Int| = Int(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/MutableList<T>|): R|kotlin/collections/MutableList<T>| {
             ^defaultMethod R|<local>/p|
         }
 
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: @R|java/lang/Override|() public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|ft<kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>, kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>?>|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@EnhancedNullability @R|Anno|(value = Int(3))  kotlin/String>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>|
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any!|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/MutableList<@EnhancedNullability @R|Anno|(value = Int(3))  T>|): R|@EnhancedNullability kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConst: R|kotlin/Int| = Int(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/MutableList<T>|): R|kotlin/collections/MutableList<T>| {
             ^defaultMethod R|<local>/p|
         }
 
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     }
 
 BODY_RESOLVE:
-TARGET: @R|java/lang/Override|() public open [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|ft<kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>, kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>?>|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@EnhancedNullability @R|Anno|(value = Int(3))  kotlin/String>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(value = Int(3))  kotlin/String!>|
+TARGET: @R|java/lang/Override|() public open [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any!|> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/MutableList<@EnhancedNullability @R|Anno|(value = Int(3))  T>|): R|@EnhancedNullability kotlin/collections/MutableList<@R|Anno|(value = Int(3))  kotlin/String!>|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConst: R|kotlin/Int| = Int(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface : R|kotlin/Any| {
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/MutableList<T>|): R|kotlin/collections/MutableList<T>| {
             ^defaultMethod R|<local>/p|
         }
 
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2)] val secondConst: R|kotlin/Int| = Int(2)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract [ResolvedTo(BODY_RESOLVE)] interface BaseKotlinInterface : R|kotlin/Any| {
-        public open [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/collections/MutableList<T>|): R|kotlin/collections/MutableList<T>| {
             ^defaultMethod R|<local>/p|
         }
 

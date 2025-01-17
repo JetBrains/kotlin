@@ -9,7 +9,7 @@ const val firstConst = 1
 const val secondConst = 2
 
 interface BaseKotlinInterface {
-    fun <T> defaultMethod(p: List<T>)/*: List<T>*/ = p;
+    fun <T> defaultMethod(p: MutableList<T>)/*: MutableList<T>*/ = p;
 }
 
 class LeafKotlin<caret>Class : JavaExtension
@@ -21,5 +21,5 @@ import static MainKt.firstConst;
 import static MainKt.secondConst;
 
 public interface JavaExtension extends BaseKotlinInterface {
-    @Override default <T extends List<@Anno(firstConst + secondConst) String>> List<@Anno(firstConst + secondConst) String> defaultMethod(List<@Anno(firstConst + secondConst) String> p) { return null; }
+    @Override default <T> List<@Anno(firstConst + secondConst) String> defaultMethod(List<@Anno(firstConst + secondConst) T> p) { return null; }
 }
