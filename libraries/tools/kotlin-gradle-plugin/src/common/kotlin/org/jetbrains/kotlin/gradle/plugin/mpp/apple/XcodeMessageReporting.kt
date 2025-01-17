@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
-import com.intellij.util.containers.orNull
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
@@ -73,7 +72,7 @@ internal class XcodeBuildFinishedAction : FlowAction<XcodeBuildFinishedAction.Pa
     }
 
     override fun execute(parameters: Parameters) {
-        reportBuildError(parameters.failure.get().orNull())
+        reportBuildError(parameters.failure.get().orElse(null))
     }
 }
 
