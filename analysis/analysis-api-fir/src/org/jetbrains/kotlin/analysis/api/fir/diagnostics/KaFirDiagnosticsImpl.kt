@@ -1887,6 +1887,11 @@ internal class NameForAmbiguousParameterImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtValueArgument>(firDiagnostic, token), KaFirDiagnostic.NameForAmbiguousParameter
 
+internal class MixingNamedAndPositionalArgumentsImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MixingNamedAndPositionalArguments
+
 internal class AssignmentTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,

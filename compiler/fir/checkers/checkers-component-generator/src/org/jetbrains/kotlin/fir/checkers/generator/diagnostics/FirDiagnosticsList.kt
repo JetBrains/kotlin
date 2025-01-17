@@ -698,6 +698,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("name")
         }
         val NAME_FOR_AMBIGUOUS_PARAMETER by error<KtValueArgument>(PositioningStrategy.NAME_OF_NAMED_ARGUMENT)
+        val MIXING_NAMED_AND_POSITIONAL_ARGUMENTS by error<PsiElement>()
 
         val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression> {
             parameter<ConeKotlinType>("expectedType")

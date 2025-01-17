@@ -307,6 +307,10 @@ private fun mapInapplicableCandidateError(
                 rootCause.forbiddenNamedArgumentsTarget
             )
 
+            is MixingNamedAndPositionArguments -> FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS.createOn(
+                rootCause.argument.source,
+            )
+
             is ArgumentTypeMismatch -> {
                 diagnosticForArgumentTypeMismatch(
                     source = rootCause.argument.source ?: source,

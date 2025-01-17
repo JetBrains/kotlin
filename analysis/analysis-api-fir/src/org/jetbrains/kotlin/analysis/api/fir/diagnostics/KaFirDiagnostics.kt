@@ -1575,6 +1575,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NameForAmbiguousParameter::class
     }
 
+    interface MixingNamedAndPositionalArguments : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MixingNamedAndPositionalArguments::class
+    }
+
     interface AssignmentTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = AssignmentTypeMismatch::class
         val expectedType: KaType
