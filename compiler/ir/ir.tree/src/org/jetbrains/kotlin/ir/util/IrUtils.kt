@@ -175,6 +175,31 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
 private fun Boolean.toInt(): Int = if (this) 1 else 0
+
+data class FunctionParameterShape(
+    val hasDispatchReceiver: Boolean,
+    val hasExtensionReceiver: Boolean,
+    val contextParameterCount: Int,
+    val regularParameterCount: Int,
+)
+
+fun IrFunction.getShapeOfParameters(): FunctionParameterShape {
+    var hasDispatchReceiver = false
+    var hasExtensionReceiver = false
+    var contextParameterCount = 0
+    var regularParameterCount = 0
+    for (param in parameters) {
+        when (param.kind) {
+            IrParameterKind.DispatchReceiver -> hasDispatchReceiver = true
+            IrParameterKind.ExtensionReceiver -> hasExtensionReceiver = true
+            IrParameterKind.Context -> contextParameterCount++
+            IrParameterKind.Regular -> regularParameterCount++
+        }
+    }
+
+    return FunctionParameterShape(hasDispatchReceiver, hasExtensionReceiver, contextParameterCount, regularParameterCount)
+}
+
 /**
  * [IrFunction.parameters], except [IrFunction.dispatchReceiverParameter], if present.
  */
@@ -1369,23 +1394,11 @@ fun IrFunction.hasShape(
     regularParameters: Int = 0,
     parameterTypes: List<IrType?> = emptyList(),
 ): Boolean {
-    var actuallyHasDispatchReceiver = false
-    var actuallyHasExtensionReceiver = false
-    var actualContextParameters = 0
-    var actualRegularParameters = 0
-    for (param in parameters) {
-        when (param.kind) {
-            IrParameterKind.DispatchReceiver -> actuallyHasDispatchReceiver = true
-            IrParameterKind.ExtensionReceiver -> actuallyHasExtensionReceiver = true
-            IrParameterKind.Context -> actualContextParameters++
-            IrParameterKind.Regular -> actualRegularParameters++
-        }
-    }
-
-    if (actuallyHasDispatchReceiver != dispatchReceiver) return false
-    if (actuallyHasExtensionReceiver != extensionReceiver) return false
-    if (actualContextParameters != contextParameters) return false
-    if (actualRegularParameters != regularParameters) return false
+    val actualShape = getShapeOfParameters()
+    if (actualShape.hasDispatchReceiver != dispatchReceiver) return false
+    if (actualShape.hasExtensionReceiver != extensionReceiver) return false
+    if (actualShape.contextParameterCount != contextParameters) return false
+    if (actualShape.regularParameterCount != regularParameters) return false
 
     for ((param, expectedType) in parameters zip parameterTypes) {
         if (expectedType != null && param.type != expectedType) return false
