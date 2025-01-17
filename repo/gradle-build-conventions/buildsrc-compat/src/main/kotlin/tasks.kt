@@ -214,6 +214,12 @@ fun Project.projectTest(
                     }
                 }
             }
+
+            // jvmArgs("-Djunit.listener=org.jetbrains.kotlin.test.MuteWithDatabaseListener") Doesn't work...
+            jvmArgs(
+                "-javaagent:${classpath.find { it.name.contains("junit-foundation") }?.absolutePath ?: 
+                    error("junit-foundation not found in ${classpath.joinToString("\n")}")}"
+            )
         }
 
         if (shouldInstrument) {

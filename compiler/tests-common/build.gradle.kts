@@ -55,6 +55,7 @@ dependencies {
     testApi(commonDependency("com.android.tools:r8"))
     testApi(project(":analysis:analysis-internal-utils"))
     testApi(project(":compiler:tests-mutes:mutes-junit4"))
+    testApi("com.nordstrom.tools:junit-foundation:17.0.3")
     testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testCompileOnly(toolsJarApi())
     testCompileOnly(intellijCore())
