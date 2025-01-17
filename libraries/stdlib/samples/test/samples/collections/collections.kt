@@ -84,6 +84,64 @@ class Collections {
             val array = collection.toTypedArray()
             assertPrints(array.contentToString(), "[1, 2, 3]")
         }
+
+        @Sample
+        fun collectionSize() {
+            assertEquals(3, listOf(1, 2, 3).size)
+            assertEquals(0, emptySet<Int>().size)
+            assertEquals(2, mapOf(1 to "one", 2 to "two").size)
+        }
+
+        @Sample
+        fun collectionIsEmpty() {
+            val collection: MutableCollection<Int> = mutableListOf(1, 2, 3)
+
+            assertPrints(collection.size, "3")
+            assertFalse(collection.isEmpty())
+
+            collection.clear()
+            assertPrints(collection.size, "0")
+            assertTrue(collection.isEmpty())
+        }
+
+        @Sample
+        fun collectionContains() {
+            val collection: Collection<Int> = listOf(1, 2, 3)
+
+            assertTrue(collection.contains(1))
+            assertFalse(collection.contains(4))
+
+            // Ref does not override equals, so instances compared by reference
+            class Ref<T>(val value: T)
+
+            val r0 = Ref(42)
+            val refCollection: Collection<Ref<Int>> = listOf(r0)
+
+            assertTrue(refCollection.contains(r0))
+            // Ref(42) is a new instance
+            assertFalse(refCollection.contains(Ref(42)))
+        }
+
+        @Sample
+        fun retainAll() {
+            val collection: MutableCollection<Char> = mutableSetOf('a', 'b', 'c')
+
+            // Nothing was removed
+            assertFalse(collection.retainAll(listOf('a', 'b', 'c')))
+            assertPrints(collection, "[a, b, c]")
+
+            assertTrue(collection.retainAll(listOf('a', 'e', 'i', 'o')))
+            assertPrints(collection, "[a]")
+        }
+
+        @Sample
+        fun clear() {
+            val collection: MutableCollection<Char> = mutableSetOf('a', 'b', 'c')
+            assertPrints(collection, "[a, b, c]")
+
+            collection.clear()
+            assertPrints(collection, "[]")
+        }
     }
 
     class Lists {
@@ -272,6 +330,133 @@ class Collections {
                 println("Box with value=$valueToFind was not found")
             }
         }
+
+        @Sample
+        fun add() {
+            val list = mutableListOf('a', 'b', 'c')
+            assertTrue(list.add('c'))
+            assertPrints(list, "[a, b, c, c]")
+        }
+
+        @Sample
+        fun addAt() {
+            val list = mutableListOf('a', 'b', 'c')
+
+            list.add(1, 'c')
+            assertPrints(list, "[a, c, b, c]")
+
+            list.add(4, 'a')
+            assertPrints(list, "[a, c, b, c, a]")
+
+            assertFailsWith<IndexOutOfBoundsException> { list.add(100500, 'a') }
+        }
+
+        @Sample
+        fun addAll() {
+            val list = mutableListOf('a', 'b', 'c')
+            assertTrue(list.addAll(listOf('a', 'b', 'c')))
+            assertPrints(list, "[a, b, c, a, b, c]")
+        }
+
+        @Sample
+        fun addAllAt() {
+            val list = mutableListOf('a', 'b', 'c')
+
+            list.addAll(1, listOf('x', 'y', 'z'))
+            assertPrints(list, "[a, x, y, z, b, c]")
+
+            list.addAll(6, listOf('h', 'i'))
+            assertPrints(list, "[a, x, y, z, b, c, h, i]")
+
+            assertFailsWith<IndexOutOfBoundsException> { list.addAll(100500, listOf('z')) }
+        }
+
+        @Sample
+        fun remove() {
+            val list = mutableListOf('a', 'b', 'c')
+
+            assertTrue(list.remove('a'))
+            assertPrints(list, "[b, c]")
+
+            // There are no more 'a's to remove
+            assertFalse(list.remove('a'))
+            assertPrints(list, "[b, c]")
+        }
+
+        @Sample
+        fun removeAll() {
+            val list = mutableListOf('a', 'b', 'c')
+
+            assertTrue(list.removeAll(listOf('a', 'c')))
+            assertPrints(list, "[b]")
+
+            // There are no more 'a's and 'c's to remove
+            assertFalse(list.removeAll(listOf('a', 'c')))
+            assertPrints(list, "[b]")
+        }
+
+        @Sample
+        fun removeAt() {
+            val list = mutableListOf('a', 'b', 'c')
+
+            list.removeAt(1)
+            assertPrints(list, "[a, c]")
+
+            list.removeAt(0)
+            assertPrints(list, "[c]")
+
+            assertFailsWith<IndexOutOfBoundsException> { list.removeAt(1) }
+        }
+
+        @Sample
+        fun get() {
+            val list = listOf(1, 2, 3)
+
+            assertEquals(1, list[0])
+            assertEquals(3, list[2])
+            assertFailsWith<IndexOutOfBoundsException> { list[3] }
+        }
+
+        @Sample
+        fun set() {
+            val list = mutableListOf(1, 2, 3)
+
+            list[1] = 42
+            assertPrints(list, "[1, 42, 3]")
+
+            assertFailsWith<IndexOutOfBoundsException> { list[4] = 4 }
+        }
+
+        @Sample
+        fun subList() {
+            val list = listOf(1, 2, 3, 4, 5)
+            assertPrints(list.subList(2, 4), "[3, 4]")
+
+            val mutableList = mutableListOf(1, 2, 3, 4, 5)
+            val subList = mutableList.subList(2, 4)
+            assertPrints(subList, "[3, 4]")
+
+            mutableList[3] = -1
+            assertPrints(subList, "[3, -1]")
+
+            assertFailsWith<IndexOutOfBoundsException> { list.subList(0, 100) }
+        }
+
+        @Sample
+        fun indexOf() {
+            val list = listOf('a', 'b', 'c', 'a')
+            assertEquals(0, list.indexOf('a'))
+            assertEquals(1, list.indexOf('b'))
+            assertEquals(-1, list.indexOf('e'))
+        }
+
+        @Sample
+        fun lastIndexOf() {
+            val list = listOf('a', 'b', 'c', 'a')
+            assertEquals(3, list.lastIndexOf('a'))
+            assertEquals(1, list.lastIndexOf('b'))
+            assertEquals(-1, list.lastIndexOf('e'))
+        }
     }
 
     class Sets {
@@ -363,6 +548,48 @@ class Collections {
             set.remove(3)
             set += listOf(5, 4)
             assertPrints(set, "[1, 2, 5, 4]")
+        }
+
+        @Sample
+        fun add() {
+            val set = mutableSetOf('a', 'b', 'c')
+            // Sets do not support duplicates, so there is no way to add yet another 'c'
+            assertFalse(set.add('c'))
+            assertPrints(set, "[a, b, c]")
+        }
+
+        @Sample
+        fun addAll() {
+            val set = mutableSetOf('a', 'b', 'c')
+            // All three elements are in set, nothing will be added
+            assertFalse(set.addAll(listOf('a', 'b', 'c')))
+            // At least one element will be added, 'd'
+            assertTrue(set.addAll(listOf('a', 'b', 'c', 'd')))
+            assertPrints(set, "[a, b, c, d]")
+        }
+
+        @Sample
+        fun remove() {
+            val set = mutableSetOf('a', 'b', 'c')
+
+            assertTrue(set.remove('a'))
+            assertPrints(set, "[b, c]")
+
+            // There are no more 'a's to remove
+            assertFalse(set.remove('a'))
+            assertPrints(set, "[b, c]")
+        }
+
+        @Sample
+        fun removeAll() {
+            val set = mutableSetOf('a', 'b', 'c')
+
+            assertTrue(set.removeAll(listOf('a', 'c')))
+            assertPrints(set, "[b]")
+
+            // There are no more 'a's and 'c's to remove
+            assertFalse(set.removeAll(listOf('a', 'c')))
+            assertPrints(set, "[b]")
         }
     }
 

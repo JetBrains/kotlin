@@ -66,16 +66,22 @@ public expect interface Collection<out E> : Iterable<E> {
      * If a collection contains more than [Int.MAX_VALUE] elements, the value of this property is undefined.
      * For implementations allowing to have more than [Int.MAX_VALUE] elements,
      * it is recommended to explicitly document behavior of this property.
+     *
+     * @sample samples.collections.Collections.Collections.collectionSize
      */
     public val size: Int
 
     /**
      * Returns `true` if the collection is empty (contains no elements), `false` otherwise.
+     *
+     * @sample samples.collections.Collections.Collections.collectionIsEmpty
      */
     public fun isEmpty(): Boolean
 
     /**
      * Checks if the specified element is contained in this collection.
+     *
+     * @sample samples.collections.Collections.Collections.collectionContains
      */
     public operator fun contains(element: @UnsafeVariance E): Boolean
 
@@ -84,6 +90,8 @@ public expect interface Collection<out E> : Iterable<E> {
     // Bulk Operations
     /**
      * Checks if all elements in the specified collection are contained in this collection.
+     *
+     * @sample samples.collections.Collections.Collections.collectionContainsAll
      */
     public fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 }
@@ -116,6 +124,9 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      *
      * @return `true` if the element has been added, `false` if the collection does not support duplicates
      * and the element is already contained in the collection.
+     *
+     * @sample samples.collections.Collections.Lists.add
+     * @sample samples.collections.Collections.Sets.add
      */
     public fun add(element: E): Boolean
 
@@ -124,6 +135,9 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * collection, if the collection contains it.
      *
      * @return `true` if the element has been successfully removed; `false` if it was not contained in the collection.
+     *
+     * @sample samples.collections.Collections.Lists.remove
+     * @sample samples.collections.Collections.Sets.remove
      */
     public fun remove(element: E): Boolean
 
@@ -132,6 +146,9 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * Adds all of the elements of the specified collection to this collection.
      *
      * @return `true` if any of the specified elements was added to the collection, `false` if the collection was not modified.
+     *
+     * @sample samples.collections.Collections.Lists.addAll
+     * @sample samples.collections.Collections.Sets.addAll
      */
     public fun addAll(elements: Collection<E>): Boolean
 
@@ -139,6 +156,9 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * Removes all of this collection's elements that are also contained in the specified collection.
      *
      * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
+     *
+     * @sample samples.collections.Collections.Lists.removeAll
+     * @sample samples.collections.Collections.Sets.removeAll
      */
     public fun removeAll(elements: Collection<E>): Boolean
 
@@ -146,11 +166,15 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * Retains only the elements in this collection that are contained in the specified collection.
      *
      * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
+     *
+     * @sample samples.collections.Collections.Collections.retainAll
      */
     public fun retainAll(elements: Collection<E>): Boolean
 
     /**
      * Removes all elements from this collection.
+     *
+     * @sample samples.collections.Collections.Collections.clear
      */
     public fun clear(): Unit
 }
@@ -201,6 +225,8 @@ public expect interface List<out E> : Collection<E> {
      * Returns the element at the specified index in the list.
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than or equal to [size] of this list.
+     *
+     * @sample samples.collections.Collections.Lists.get
      */
     public operator fun get(index: Int): E
 
@@ -210,6 +236,8 @@ public expect interface List<out E> : Collection<E> {
      * element is not contained in the list.
      *
      * For lists containing more than [Int.MAX_VALUE] elements, a result of this function is undefined.
+     *
+     * @sample samples.collections.Collections.Lists.indexOf
      */
     public fun indexOf(element: @UnsafeVariance E): Int
 
@@ -218,6 +246,8 @@ public expect interface List<out E> : Collection<E> {
      * element is not contained in the list.
      *
      * For lists containing more than [Int.MAX_VALUE] elements, a result of this function is undefined.
+     *
+     * @sample samples.collections.Collections.Lists.lastIndexOf
      */
     public fun lastIndexOf(element: @UnsafeVariance E): Int
 
@@ -243,6 +273,8 @@ public expect interface List<out E> : Collection<E> {
      *
      * @throws IndexOutOfBoundsException if [fromIndex] less than zero or [toIndex] greater than [size] of this list.
      * @throws IllegalArgumentException of [fromIndex] is greater than [toIndex].
+     *
+     * @sample samples.collections.Collections.Lists.subList
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 }
@@ -271,6 +303,8 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      * Adds the specified element to the end of this list.
      *
      * @return `true` because the list is always modified as the result of this operation.
+     *
+     * @sample samples.collections.Collections.Lists.add
      */
     override fun add(element: E): Boolean
 
@@ -283,6 +317,8 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      * The elements are appended in the order they appear in the [elements] collection.
      *
      * @return `true` if the list was changed as the result of the operation.
+     *
+     * @sample samples.collections.Collections.Lists.addAll
      */
     override fun addAll(elements: Collection<E>): Boolean
 
@@ -298,6 +334,8 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      * @return `true` if the list was changed as the result of the operation.
      *
      * @throws IndexOutOfBoundsException if [index] less than zero or greater than [size] of this list.
+     *
+     * @sample samples.collections.Collections.Lists.addAllAt
      */
     public fun addAll(index: Int, elements: Collection<E>): Boolean
 
@@ -312,6 +350,8 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      * @return the element previously at the specified position.
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than or equal to [size] of this list.
+     *
+     * @sample samples.collections.Collections.Lists.set
      */
     public operator fun set(index: Int, element: E): E
 
@@ -323,6 +363,8 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      * If [index] is equal to [size], [element] will be appended to this list.
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than [size] of this list.
+     *
+     * @sample samples.collections.Collections.Lists.addAt
      */
     public fun add(index: Int, element: E): Unit
 
@@ -334,6 +376,8 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      * @return the element that has been removed.
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than or equal to [size] of this list.
+     *
+     * @sample samples.collections.Collections.Lists.removeAt
      */
     public fun removeAt(index: Int): E
 
@@ -351,6 +395,8 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @throws IndexOutOfBoundsException if [fromIndex] less than zero or [toIndex] greater than [size] of this list.
      * @throws IllegalArgumentException of [fromIndex] is greater than [toIndex].
+     *
+     * @sample samples.collections.Collections.Lists.subList
      */
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
 }
@@ -426,6 +472,8 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
      * Adds the specified element to the set.
      *
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
+     *
+     * @sample samples.collections.Collections.Sets.add
      */
     override fun add(element: E): Boolean
 
@@ -483,21 +531,29 @@ public expect interface Map<K, out V> {
      * If a map contains more than [Int.MAX_VALUE] elements, the value of this property is undefined.
      * For implementations allowing to have more than [Int.MAX_VALUE] elements,
      * it is recommended to explicitly document behavior of this property.
+     *
+     * @sample samples.collections.Maps.CoreApi.size
      */
     public val size: Int
 
     /**
      * Returns `true` if the map is empty (contains no elements), `false` otherwise.
+     *
+     * @sample samples.collections.Maps.CoreApi.isEmpty
      */
     public fun isEmpty(): Boolean
 
     /**
      * Returns `true` if the map contains the specified [key].
+     *
+     * @sample samples.collections.Maps.CoreApi.containsKey
      */
     public fun containsKey(key: K): Boolean
 
     /**
      * Returns `true` if the map maps one or more keys to the specified [value].
+     *
+     * @sample samples.collections.Maps.CoreApi.containsValue
      */
     public fun containsValue(value: @UnsafeVariance V): Boolean
 
@@ -506,22 +562,30 @@ public expect interface Map<K, out V> {
      *
      * Note that for maps supporting `null` values, `null` value associated with the [key] is indistinguishable from the missing [key],
      * so [containsKey] should be used to check if the map actually contains the [key].
+     *
+     * @sample samples.collections.Maps.CoreApi.get
      */
     public operator fun get(key: K): V?
 
     // Views
     /**
      * Returns a read-only [Set] of all keys in this map.
+     *
+     * @sample samples.collections.Maps.CoreApi.keySet
      */
     public val keys: Set<K>
 
     /**
      * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
+     *
+     * @sample samples.collections.Maps.CoreApi.valueSet
      */
     public val values: Collection<V>
 
     /**
      * Returns a read-only [Set] of all key/value pairs in this map.
+     *
+     * @sample samples.collections.Maps.CoreApi.entrySet
      */
     public val entries: Set<Map.Entry<K, V>>
 
@@ -570,6 +634,8 @@ public expect interface MutableMap<K, V> : Map<K, V> {
      * Associates the specified [value] with the specified [key] in the map.
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
+     *
+     * @sample samples.collections.Maps.CoreApi.put
      */
     public fun put(key: K, value: V): V?
 
@@ -577,33 +643,45 @@ public expect interface MutableMap<K, V> : Map<K, V> {
      * Removes the specified key and its corresponding value from this map.
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
+     *
+     * @sample samples.collections.Maps.CoreApi.remove
      */
     public fun remove(key: K): V?
 
     // Bulk Modification Operations
     /**
      * Updates this map with key/value pairs from the specified map [from].
+     *
+     * @sample samples.collections.Maps.CoreApi.putAll
      */
     public fun putAll(from: Map<out K, V>): Unit
 
     /**
      * Removes all elements from this map.
+     *
+     * @sample samples.collections.Maps.CoreApi.clear
      */
     public fun clear(): Unit
 
     // Views
     /**
      * Returns a [MutableSet] of all keys in this map.
+     *
+     * @sample samples.collections.Maps.CoreApi.keySetMutable
      */
     public override val keys: MutableSet<K>
 
     /**
      * Returns a [MutableCollection] of all values in this map. Note that this collection may contain duplicate values.
+     *
+     * @sample samples.collections.Maps.CoreApi.valueSetMutable
      */
     public override val values: MutableCollection<V>
 
     /**
      * Returns a [MutableSet] of all key/value pairs in this map.
+     *
+     * @sample samples.collections.Maps.CoreApi.entrySetMutable
      */
     public override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 
