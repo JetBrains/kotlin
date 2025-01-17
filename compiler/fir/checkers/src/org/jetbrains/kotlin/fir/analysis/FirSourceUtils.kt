@@ -36,12 +36,12 @@ fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: In
 }
 
 /**
- * Iterates recursively over all children up to the given depth.
+ * Iterates recursively over all children up to the given [depth] or indefinitely if [depth] is -1.
  * `processChild` is invoked for each child having a type in the `types` set.
  */
 inline fun KtSourceElement.forEachChildOfType(
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     processChild: (KtSourceElement) -> Unit,
 ) = when (this) {
@@ -58,7 +58,7 @@ inline fun KtSourceElement.forEachChildOfType(
  */
 inline fun PsiElement.forEachChildOfType(
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     processChild: (PsiElement) -> Unit,
 ) = forEachChildOfType(
@@ -73,7 +73,7 @@ inline fun PsiElement.forEachChildOfType(
  */
 inline fun LighterASTNode.forEachChildOfType(
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
     processChild: (LighterASTNode) -> Unit,
@@ -87,7 +87,7 @@ inline fun LighterASTNode.forEachChildOfType(
 inline fun <T> forEachChildOfType(
     root: T,
     types: Set<IElementType>,
-    depth: Int = -1,
+    depth: Int,
     reverse: Boolean = false,
     getElementType: (T) -> IElementType,
     getChildren: (T) -> List<T>,

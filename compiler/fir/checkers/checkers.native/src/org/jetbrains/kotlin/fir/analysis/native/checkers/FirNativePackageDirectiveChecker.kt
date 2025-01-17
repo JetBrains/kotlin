@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.text
 
 object FirNativePackageDirectiveChecker : FirFileChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
-        declaration.packageDirective.source?.forEachChildOfType(setOf(REFERENCE_EXPRESSION)) {
+        declaration.packageDirective.source?.forEachChildOfType(setOf(REFERENCE_EXPRESSION), depth = -1) {
             checkNameAndReport(
                 Name.identifier(it.text.toString()),
                 it,
