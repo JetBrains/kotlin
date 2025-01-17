@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import java.io.File
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.fail
+import kotlin.test.*
 
 @MppGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
@@ -261,10 +259,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         )
     }
 
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.MAX_SUPPORTED,
-    )
-    @GradleTest
+    @Test
     fun testPrependToOrCreateBuildscriptBlock() {
         assertEquals(
             """
