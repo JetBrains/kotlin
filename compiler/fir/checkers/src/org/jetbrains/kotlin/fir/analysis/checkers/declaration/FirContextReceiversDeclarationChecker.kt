@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.types.*
@@ -26,29 +27,39 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
 
         val source = declaration.source?.findContextReceiverListSource() ?: return
 
-        if (declaration is FirTypeAlias) {
-            reporter.reportOn(
-                source,
-                FirErrors.UNSUPPORTED,
-                "Context parameters on type aliases are unsupported.",
-                context
-            )
+        val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+        val contextParametersEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
+
+        val errorMessage = when (declaration) {
+            // Stuff that was never supported
+            is FirTypeAlias -> "Context parameters on type aliases are unsupported."
+            is FirAnonymousInitializer -> "Context parameters on initializers are unsupported."
+            is FirEnumEntry -> "Context parameters on enum entries are unsupported."
+            is FirPropertyAccessor -> "Context parameters on property accessors are unsupported."
+            is FirBackingField -> "Context parameters on backing fields are unsupported."
+            is FirPrimaryConstructor -> "Context parameters on primary constructors are unsupported."
+            // Stuff that is unsupported with context parameters
+            is FirConstructor -> "Context parameters on constructors are unsupported.".takeIf { contextParametersEnabled }
+            is FirClass -> "Context parameters on classes are unsupported.".takeIf { contextParametersEnabled }
+            is FirCallableDeclaration if declaration.isDelegationOperator() -> "Context parameters on delegation operators are unsupported.".takeIf { contextParametersEnabled }
+            is FirProperty if declaration.delegate != null -> "Context parameters on delegated properties are unsupported.".takeIf { contextParametersEnabled }
+            // Only valid positions
+            is FirSimpleFunction, is FirProperty -> null
+            // Fallback if we forgot something.
+            else -> "Context parameters are unsupported in this position."
         }
 
-        if (declaration is FirAnonymousInitializer) {
+        if (errorMessage != null) {
             reporter.reportOn(
                 source,
                 FirErrors.UNSUPPORTED,
-                "Context parameters on initializers are unsupported.",
+                errorMessage,
                 context
             )
         }
 
         val contextParameters = declaration.getContextParameters()
         if (contextParameters.isEmpty()) return
-
-        val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
-        val contextParametersEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
 
         if (!contextReceiversEnabled && !contextParametersEnabled) {
             reporter.reportOn(
@@ -68,47 +79,6 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                     context
                 )
             }
-        }
-
-        if (contextParametersEnabled) {
-            when (declaration) {
-                is FirClass -> reporter.reportOn(
-                    source,
-                    FirErrors.UNSUPPORTED,
-                    "Context parameters on classes are unsupported.",
-                    context
-                )
-                is FirConstructor -> reporter.reportOn(
-                    source,
-                    FirErrors.UNSUPPORTED,
-                    "Context parameters on constructors are unsupported.",
-                    context
-                )
-                is FirCallableDeclaration if declaration.isDelegationOperator() -> reporter.reportOn(
-                    source,
-                    FirErrors.UNSUPPORTED,
-                    "Context parameters on delegation operators are unsupported.",
-                    context
-                )
-                is FirProperty if declaration.delegate != null -> reporter.reportOn(
-                    source,
-                    FirErrors.UNSUPPORTED,
-                    "Context parameters on delegated properties are unsupported.",
-                    context
-                )
-                else -> for (parameter in contextParameters) {
-                    if (parameter.isLegacyContextReceiver()) {
-                        reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME, context)
-                    }
-
-                    parameter.source?.getModifierList()?.modifiers?.forEach { modifier ->
-                        reporter.reportOn(modifier.source, FirErrors.WRONG_MODIFIER_TARGET, modifier.token, "context parameter", context)
-                    }
-
-                    FirFunctionParameterChecker.checkValOrVar(parameter, reporter, context)
-                }
-            }
-        } else {
             for (parameter in contextParameters) {
                 if (!parameter.isLegacyContextReceiver()) {
                     reporter.reportOn(
@@ -118,6 +88,20 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                         context
                     )
                 }
+            }
+        }
+
+        if (contextParametersEnabled) {
+            for (parameter in contextParameters) {
+                if (parameter.isLegacyContextReceiver()) {
+                    reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME, context)
+                }
+
+                parameter.source?.getModifierList()?.modifiers?.forEach { modifier ->
+                    reporter.reportOn(modifier.source, FirErrors.WRONG_MODIFIER_TARGET, modifier.token, "context parameter", context)
+                }
+
+                FirFunctionParameterChecker.checkValOrVar(parameter, reporter, context)
             }
         }
     }
@@ -133,39 +117,41 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
             else -> emptyList()
         }
     }
-}
 
-/**
- * Simplified checking of subtype relation used in context receiver checkers.
- * It converts type parameters to star projections and top level type parameters to its supertypes. Then it checks the relation.
- */
-fun checkSubTypes(types: List<ConeKotlinType>, context: CheckerContext): Boolean {
-    fun replaceTypeParametersByStarProjections(type: ConeClassLikeType): ConeClassLikeType {
-        return type.withArguments(type.typeArguments.map {
-            when {
-                it.isStarProjection -> it
-                it.type!! is ConeTypeParameterType -> ConeStarProjection
-                it.type!! is ConeClassLikeType -> replaceTypeParametersByStarProjections(it.type as ConeClassLikeType)
-                else -> it
+
+    /**
+     * Simplified checking of subtype relation used in context receiver checkers.
+     * It converts type parameters to star projections and top level type parameters to its supertypes. Then it checks the relation.
+     */
+    fun checkSubTypes(types: List<ConeKotlinType>, context: CheckerContext): Boolean {
+        fun replaceTypeParametersByStarProjections(type: ConeClassLikeType): ConeClassLikeType {
+            return type.withArguments(type.typeArguments.map {
+                when {
+                    it.isStarProjection -> it
+                    it.type!! is ConeTypeParameterType -> ConeStarProjection
+                    it.type!! is ConeClassLikeType -> replaceTypeParametersByStarProjections(it.type as ConeClassLikeType)
+                    else -> it
+                }
+            }.toTypedArray())
+        }
+
+        val replacedTypeParameters = types.flatMap { r ->
+            when (r) {
+                is ConeTypeParameterType -> r.lookupTag.typeParameterSymbol.resolvedBounds.map { it.coneType }
+                is ConeClassLikeType -> listOf(replaceTypeParametersByStarProjections(r))
+                else -> listOf(r)
             }
-        }.toTypedArray())
-    }
-
-    val replacedTypeParameters = types.flatMap { r ->
-        when (r) {
-            is ConeTypeParameterType -> r.lookupTag.typeParameterSymbol.resolvedBounds.map { it.coneType }
-            is ConeClassLikeType -> listOf(replaceTypeParametersByStarProjections(r))
-            else -> listOf(r)
-        }
-    }
-
-    for (i in replacedTypeParameters.indices)
-        for (j in i + 1..<replacedTypeParameters.size) {
-            if (replacedTypeParameters[i].isSubtypeOf(replacedTypeParameters[j], context.session)
-                || replacedTypeParameters[j].isSubtypeOf(replacedTypeParameters[i], context.session)
-            )
-                return true
         }
 
-    return false
+        for (i in replacedTypeParameters.indices)
+            for (j in i + 1..<replacedTypeParameters.size) {
+                if (replacedTypeParameters[i].isSubtypeOf(replacedTypeParameters[j], context.session)
+                    || replacedTypeParameters[j].isSubtypeOf(replacedTypeParameters[i], context.session)
+                )
+                    return true
+            }
+
+        return false
+    }
 }
+

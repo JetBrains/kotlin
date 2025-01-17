@@ -6,7 +6,7 @@ class A {
 }
 
 <!MUST_BE_INITIALIZED!>val a: String<!>
-    context(c: A)
+    <!UNSUPPORTED!>context(c: A)<!>
     <!SYNTAX!>get<!><!SYNTAX!>(<!><!SYNTAX!>)<!> <!SYNTAX!>=<!> <!SYNTAX!>"<!><!SYNTAX!>"<!>
 
 <!MUST_BE_INITIALIZED!>var b: String<!>
