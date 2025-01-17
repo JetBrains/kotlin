@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -39,7 +39,7 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
      * Corresponding to export policy of klib ABI >= 1.6.0.
      * In that case any non-local declaration (including type parameter and field) is exportable and could be navigated between modules
      */
-    private class Checker : IrVisitor<Boolean, Nothing?>() {
+    private class Checker : IrElementVisitor<Boolean, Nothing?> {
         override fun visitElement(element: IrElement, data: Nothing?): Boolean {
             error("Should bot reach here ${element.render()}")
         }
@@ -84,7 +84,7 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
      *
      * Is used to link libraries with ABI level <= 1.5.0
      */
-    private inner class CompatibleChecker : IrVisitor<Boolean, Nothing?>() {
+    private inner class CompatibleChecker : IrElementVisitor<Boolean, Nothing?> {
         private fun IrDeclaration.isExported(annotations: List<IrConstructorCall>, visibility: DescriptorVisibility?): Boolean {
             val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()
 

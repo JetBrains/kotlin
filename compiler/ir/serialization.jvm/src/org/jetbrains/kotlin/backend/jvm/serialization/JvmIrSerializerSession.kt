@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 
@@ -91,7 +91,7 @@ private fun forEveryDeclarationToSerialize(topDeclaration: IrDeclaration, mode: 
     }
 }
 
-private object ForVisibleInlineFunctionsVisitor : IrVisitor<Unit, (IrDeclaration) -> Unit>() {
+private object ForVisibleInlineFunctionsVisitor : IrElementVisitor<Unit, (IrDeclaration) -> Unit> {
     override fun visitElement(element: IrElement, data: (IrDeclaration) -> Unit) {
         error("Visitor only for nonlocal declarations")
     }

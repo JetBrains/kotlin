@@ -1326,7 +1326,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
      */
     private fun IrBody.removeAllExtraBoxes() {
         // data is whether the expression result is used
-        accept(object : IrVisitor<Unit, Boolean>() {
+        accept(object : IrElementVisitor<Unit, Boolean> {
             override fun visitElement(element: IrElement, data: Boolean) {
                 element.acceptChildren(this, true) // uses what is inside
             }

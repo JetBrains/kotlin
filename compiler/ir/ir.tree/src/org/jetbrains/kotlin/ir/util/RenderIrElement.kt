@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -32,7 +32,7 @@ fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
     accept(RenderIrElementVisitor(options), null)
 
 open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTreeOptions()) :
-    IrVisitor<String, Nothing?>() {
+    IrElementVisitor<String, Nothing?> {
 
     private val flagsRenderer = FlagsRenderer(options.declarationFlagsFilter, isReference = false)
     private val variableNameData = VariableNameData(options.normalizeNames)
@@ -76,7 +76,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         private val variableNameData: VariableNameData,
         private val hideParameterNames: Boolean,
         private val options: DumpIrTreeOptions,
-    ) : IrVisitor<String, Nothing?>() {
+    ) : IrElementVisitor<String, Nothing?> {
 
         private val flagsRenderer = FlagsRenderer(options.declarationFlagsFilter, isReference = true)
 

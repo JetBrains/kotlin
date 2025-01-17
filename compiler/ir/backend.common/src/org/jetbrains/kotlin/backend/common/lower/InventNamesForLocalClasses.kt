@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
@@ -86,7 +86,7 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
         }
     }
 
-    private inner class NameInventor : IrVisitor<Unit, NameBuilder>() {
+    private inner class NameInventor : IrElementVisitor<Unit, NameBuilder> {
         private val anonymousClassesCount = mutableMapOf<String, Int>()
         private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -152,7 +152,7 @@ internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
 class DumpIrTreeVisitor(
     out: Appendable,
     private val options: DumpIrTreeOptions = DumpIrTreeOptions(),
-) : IrVisitor<Unit, String>() {
+) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "  ")
     private val elementRenderer = RenderIrElementVisitor(options)

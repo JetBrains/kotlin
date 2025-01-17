@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.CustomKotlinLikeDumpStrategy.Modifiers
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 
@@ -183,7 +183,7 @@ interface CustomKotlinLikeDumpStrategy {
     * wrap/escape invalid identifiers with "`", like "$$delegate"
  */
 
-private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrVisitor<Unit, IrDeclaration?>() {
+private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
     private val variableNameData = VariableNameData(options.normalizeNames)
     private var currentWhenStmt: IrWhen? = null
 
@@ -1016,7 +1016,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             BodyPrintingStrategy.NO_BODIES -> {}
             BodyPrintingStrategy.PRINT_ONLY_LOCAL_CLASSES_AND_FUNCTIONS -> body.acceptChildren(
                 // Don't print bodies, but print local classes and functions declared in those bodies
-                object : IrVisitor<Unit, IrDeclaration?>() {
+                object : IrElementVisitor<Unit, IrDeclaration?> {
                     override fun visitElement(element: IrElement, data: IrDeclaration?) {
                         element.acceptChildren(this, data)
                     }

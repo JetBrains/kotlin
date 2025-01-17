@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 data class TailSuspendCalls(val callSites: Set<IrCall>, val hasNotTailSuspendCalls: Boolean)
 
@@ -31,7 +31,7 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
     val tailSuspendCalls = mutableSetOf<IrCall>()
     val tailReturnableBlocks = mutableSetOf<IrReturnableBlockSymbol>()
 
-    val visitor = object : IrVisitor<Unit, VisitorState>() {
+    val visitor = object : IrElementVisitor<Unit, VisitorState> {
         override fun visitElement(element: IrElement, data: VisitorState) {
             element.acceptChildren(this, VisitorState(data.insideTryBlock, isTailExpression = false))
         }

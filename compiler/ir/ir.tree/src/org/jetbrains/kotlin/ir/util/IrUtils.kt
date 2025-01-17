@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
@@ -1040,7 +1040,7 @@ fun <T : IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
     return this
 }
 
-object SetDeclarationsParentVisitor : IrVisitor<Unit, IrDeclarationParent>() {
+object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
     override fun visitElement(element: IrElement, data: IrDeclarationParent) {
         if (element !is IrDeclarationParent) {
             element.acceptChildren(this, data)
