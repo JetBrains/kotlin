@@ -276,6 +276,7 @@ open class IncrementalFirJvmCompilerRunner(
                 projectEnvironment.project,
                 configuration,
                 messageCollector,
+                hasPendingErrors = false,
                 listOf(codegenOutput.generationState),
                 mainClassFqName
             )

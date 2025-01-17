@@ -138,10 +138,18 @@ object KotlinToJVMBytecodeCompiler {
                 diagnosticsReporter,
                 compilerConfiguration,
                 reportGenerationFinished = true,
+                reportDiagnosticsToMessageCollector = true,
             )
         }
 
-        return writeOutputsIfNeeded(project, compilerConfiguration, messageCollector, outputs, mainClassFqName)
+        return writeOutputsIfNeeded(
+            project,
+            compilerConfiguration,
+            messageCollector,
+            hasPendingErrors = false,
+            outputs,
+            mainClassFqName
+        )
     }
 
     private fun runFrontendAndGenerateIrUsingClassicFrontend(
@@ -255,6 +263,7 @@ object KotlinToJVMBytecodeCompiler {
             diagnosticsReporter,
             environment.configuration,
             reportGenerationFinished = true,
+            reportDiagnosticsToMessageCollector = true,
         )
     }
 
@@ -403,7 +412,8 @@ object KotlinToJVMBytecodeCompiler {
         codegenFactory: JvmIrCodegenFactory,
         diagnosticsReporter: BaseDiagnosticsCollector,
         configuration: CompilerConfiguration,
-        reportGenerationFinished: Boolean
+        reportGenerationFinished: Boolean,
+        reportDiagnosticsToMessageCollector: Boolean,
     ): GenerationState {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -419,11 +429,13 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-            diagnosticsReporter,
-            configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
-            configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        )
+        if (reportDiagnosticsToMessageCollector) {
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+                diagnosticsReporter,
+                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
+                configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            )
+        }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return state

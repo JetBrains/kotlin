@@ -102,11 +102,19 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
                 diagnosticCollector,
                 input.state.configuration,
                 reportGenerationFinished = false,
+                reportDiagnosticsToMessageCollector = false, // diagnostics will be reported in CheckCompilationErrors.CheckDiagnosticCollector
             )
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        val success = writeOutputsIfNeeded(project, configuration, configuration.messageCollector, outputs, mainClassFqName)
+        val success = writeOutputsIfNeeded(
+            project,
+            configuration,
+            configuration.messageCollector,
+            hasPendingErrors = diagnosticCollector.hasErrors,
+            outputs,
+            mainClassFqName
+        )
 
         if (!success) return null
 

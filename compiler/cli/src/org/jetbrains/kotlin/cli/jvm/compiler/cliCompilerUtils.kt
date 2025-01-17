@@ -120,10 +120,11 @@ fun writeOutputsIfNeeded(
     project: Project,
     configuration: CompilerConfiguration,
     messageCollector: MessageCollector,
+    hasPendingErrors: Boolean,
     outputs: Collection<GenerationState>,
     mainClassFqName: FqName?
 ): Boolean {
-    if (messageCollector.hasErrors()) {
+    if (hasPendingErrors || messageCollector.hasErrors()) {
         return false
     }
 
