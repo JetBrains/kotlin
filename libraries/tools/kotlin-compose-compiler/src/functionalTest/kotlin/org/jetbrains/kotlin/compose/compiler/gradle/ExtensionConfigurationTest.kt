@@ -106,13 +106,13 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun notIncludeSourceInformationOnAgpPresence() {
+    fun doesIncludeSourceInformationOnAgpPresence() {
         testComposeOptions(
             { _, project ->
                 project.simulateAgpPresence()
             }
         ) { options, _ ->
-            assertFalse(
+            assertTrue(
                 options.map { it.first }.contains("sourceInformation")
             )
         }

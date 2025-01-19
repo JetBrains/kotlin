@@ -43,6 +43,9 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         suites {
             val test by getting(JvmTestSuite::class) {
                 useJUnitJupiter(libs.versions.junit5)
+                dependencies {
+                    implementation(project(":kotlin-test"))
+                }
             }
 
             register<JvmTestSuite>("functionalTest") {
