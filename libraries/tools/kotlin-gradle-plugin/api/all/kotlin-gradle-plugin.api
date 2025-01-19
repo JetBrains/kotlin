@@ -563,6 +563,11 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetCon
 public final class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetConfigurator$Companion {
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/AndroidGradlePluginVersion$Companion {
+	public final fun getCurrent ()Lorg/jetbrains/kotlin/gradle/plugin/AndroidGradlePluginVersion;
+	public final fun getCurrentOrNull ()Lorg/jetbrains/kotlin/gradle/plugin/AndroidGradlePluginVersion;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/AndroidTestedVariantArtifactsFilter : java/io/Serializable, org/gradle/api/specs/Spec {
 	public fun <init> (Lorg/gradle/api/artifacts/ArtifactCollection;ZLjava/lang/String;)V
 	public fun isSatisfiedBy (Ljava/io/File;)Z

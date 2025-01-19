@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.compose.compiler.gradle.internal.ComposeWithAgpConfig
 import org.jetbrains.kotlin.compose.compiler.gradle.model.builder.ComposeCompilerModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
@@ -47,11 +48,12 @@ class ComposeCompilerGradleSubplugin
         kotlinCompilation: KotlinCompilation<*>,
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
+        val composeWithAgpConfig = ComposeWithAgpConfig(project)
 
         // It is ok to check AGP existence without using `plugins.withId` wrapper as `applyToCompilation` will be called in `afterEvaluate`
-        if (project.isAgpComposeEnabled) {
+        if (composeWithAgpConfig.isAgpComposeEnabled) {
             project.logger.log(LogLevel.INFO, "Detected Android Gradle Plugin compose compiler configuration")
-            project.agpComposeConfiguration?.resolutionStrategy?.dependencySubstitution {
+            composeWithAgpConfig.agpComposeConfiguration?.resolutionStrategy?.dependencySubstitution {
                 // entry.key is in the form of "group:module" (without a version), and
                 // Gradle accepts that form.
                 it.substitute(it.module("androidx.compose.compiler:compiler"))
@@ -71,7 +73,7 @@ class ComposeCompilerGradleSubplugin
                     if (value) SubpluginOption("generateFunctionKeyMetaClasses", value.toString())
                     else EMPTY_OPTION
                 })
-                if (!project.isAgpComposeEnabled) {
+                if (!composeWithAgpConfig.isDisableIncludeSourceInformationForAgp) {
                     add(composeExtension.includeSourceInformation.map {
                         SubpluginOption("sourceInformation", it.toString())
                     })
@@ -133,9 +135,6 @@ class ComposeCompilerGradleSubplugin
                 pluginOptions.filter { it != EMPTY_OPTION }
             })
     }
-
-    private val Project.agpComposeConfiguration get() = configurations.findByName("kotlin-extension")
-    private val Project.isAgpComposeEnabled get() = agpComposeConfiguration != null
 
     /** Get ID of the Kotlin Compiler plugin */
     override fun getCompilerPluginId() = "androidx.compose.compiler.plugins.kotlin"
