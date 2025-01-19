@@ -24,5 +24,10 @@ class ControlFlow {
         repeat(0) {
             error("We should not get here!")
         }
+
+        // greets with type long.
+        repeat(3L) {
+            println("Hello, type long")
+        }
     }
 }
