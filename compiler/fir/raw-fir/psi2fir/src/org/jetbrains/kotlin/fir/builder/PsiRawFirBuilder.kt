@@ -1245,7 +1245,7 @@ open class PsiRawFirBuilder(
                 } else {
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
-                            is KtScript -> convertScriptOrSnippets(declaration, this@buildFile)
+                            is KtScript -> convertScriptOrSnippets(declaration, this@buildFile.sourceFile, this@buildFile)
                             is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
                             else -> declaration.convert()
                         }
@@ -1258,47 +1258,57 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun convertScriptOrSnippets(declaration: KtScript, fileBuilder: FirFileBuilder): FirDeclaration {
+        private fun convertScriptOrSnippets(
+            declaration: KtScript,
+            sourceFile: KtSourceFile?,
+            fileBuilder: FirFileBuilder?
+        ): FirDeclaration {
             val file = declaration.parent as? KtFile
+
             requireWithAttachment(
                 file?.declarations?.size == 1,
                 message = { "Expect the script to be the only declaration in the file ${file?.name}" },
             ) {
-                withEntry("fileName", fileBuilder.name)
+                withEntry("fileName", sourceFile?.name ?: fileBuilder?.sourceFile?.name)
             }
+            val sourceFileName = sourceFile?.name ?: fileBuilder?.sourceFile?.name ?: file.name
 
             val scriptSource = declaration.toFirSourceElement()
 
             val repSnippetConfigurator =
                 baseSession.extensionService.replSnippetConfigurators.filter {
-                    it.isReplSnippetsSource(fileBuilder.sourceFile, scriptSource)
+                    it.isReplSnippetsSource(sourceFile, scriptSource)
                 }.let {
                     requireWithAttachment(
                         it.size <= 1,
                         message = { "More than one REPL snippet configurator is found for the file" },
                     ) {
-                        withEntry("fileName", fileBuilder.name)
+                        withEntry("fileName", sourceFileName)
                         withEntry("configurators", it.joinToString { "${it::class.java.name}" })
                     }
                     it.firstOrNull()
                 }
 
             return if (repSnippetConfigurator != null) {
-                convertReplSnippet(declaration, scriptSource, fileBuilder.name) {
-                    with (repSnippetConfigurator) {
-                        configureContainingFile(fileBuilder)
-                        configure(fileBuilder.sourceFile, context)
+                convertReplSnippet(declaration, scriptSource, sourceFileName) {
+                    with(repSnippetConfigurator) {
+                        if (fileBuilder != null) {
+                            configureContainingFile(fileBuilder)
+                        }
+                        configure(sourceFile, context)
                     }
                 }
             } else {
                 val scriptConfigurator =
-                    baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(fileBuilder.sourceFile, scriptSource) }
+                    baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(sourceFile, scriptSource) }
 
-                convertScript(declaration, scriptSource, fileBuilder.name) {
+                convertScript(declaration, scriptSource, sourceFileName) {
                     if (scriptConfigurator != null) {
                         with(scriptConfigurator) {
-                            configureContainingFile(fileBuilder)
-                            configure(fileBuilder.sourceFile, context)
+                            if (fileBuilder != null) {
+                                configureContainingFile(fileBuilder)
+                            }
+                            configure(sourceFile, context)
                         }
                     }
                 }
@@ -1427,28 +1437,34 @@ open class PsiRawFirBuilder(
                 name = snippetName
                 symbol = snippetSymbol
 
-                var lastStatement: Any? = null // Unclear how to get this from the LazyFirL
+                var lastStatement: FirStatement? = null // Unclear how to get this from the LazyFirL
                 body = buildOrLazyBlock {
                     withContainerSymbol(snippetSymbol, isLocal = true) {
                         buildBlock {
-                            script.declarations.forEach { declaration ->
-                                ;
+                            val declarationsIter = script.declarations.listIterator()
+                            while (declarationsIter.hasNext()) {
+                                val declaration = declarationsIter.next()
+                                val isLast = !declarationsIter.hasNext()
+
                                 when (declaration) {
                                     is KtScriptInitializer -> {
                                         val initializer = buildAnonymousInitializer(
                                             initializer = declaration,
                                             containingDeclarationSymbol = snippetSymbol,
-                                            allowLazyBody = true,
-                                            isLocal = true,
+                                            allowLazyBody = !isLast,
+                                            isLocal = isLast,
                                         )
 
-                                        statements.addAll(initializer.body!!.statements)
-                                        lastStatement = initializer.body!!.statements.lastOrNull()
+                                        val bodyStatements = initializer.body!!.statements
+                                        if (isLast) {
+                                            lastStatement = bodyStatements.lastOrNull()
+                                        }
+
+                                        statements.addAll(bodyStatements)
                                     }
                                     is KtDestructuringDeclaration -> {
                                         val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
                                         statements.add(destructuringContainerVar)
-                                        lastStatement = destructuringContainerVar
 
                                         addDestructuringVariables(
                                             statements,
@@ -1470,13 +1486,13 @@ open class PsiRawFirBuilder(
                                         val firStatement = declaration.toFirStatement()
                                         if (firStatement is FirDeclaration) {
                                             statements.add(firStatement)
-                                            lastStatement = firStatement
                                         } else {
                                             error("unexpected declaration type in script")
                                         }
                                     }
                                 }
                             }
+                            lastStatement = statements.lastOrNull()
                         }
                     }
                 }
@@ -1549,17 +1565,13 @@ open class PsiRawFirBuilder(
 
         override fun visitScript(script: KtScript, data: FirElement?): FirElement {
             val ktFile = script.containingKtFile
-            val fileName = ktFile.name
             val sourceFile = KtPsiSourceFile((data as? FirScript)?.psi?.containingFile as? KtFile ?: ktFile)
-            val scriptSource = script.toFirSourceElement()
-            val scriptConfigurator =
-                baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(sourceFile, scriptSource) }
-            return convertScript(script, scriptSource, fileName) {
-                scriptConfigurator?.run {
+            return when (data) {
+                is FirScript, is FirReplSnippet -> {
                     // TODO: looks like we may loose the implicit imports here, find out whether and how the file could be configured too (KT-73847)
-//                    configureContainingFile(fileBuilder)
-                    configure(sourceFile, context)
+                    convertScriptOrSnippets(script, sourceFile, null)
                 }
+                else -> error("Unexpected FIR declaration present")
             }
         }
 
