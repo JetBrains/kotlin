@@ -61,10 +61,20 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
         if (helper.contentsAreEquals(originalFile, testDataFile)) {
             helper.deleteFirFile(testDataFile)
             testServices.assertions.assertAll(
-                { helper.removeDirectiveFromClassicFileAndAssert(originalFile, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message) },
-                {
-                    if (additionalFile != null) {
-                        helper.removeDirectiveFromClassicFileAndAssert(additionalFile, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message)
+                buildList {
+                    listOf(
+                        originalFile.originalTestDataFile,
+                        originalFile.firTestDataFile,
+                        originalFile.llFirTestDataFile,
+                        originalFile.reversedTestDataFile
+                    ).filter { it.exists() }
+                        .mapTo(this) { file ->
+                            { helper.removeDirectiveFromClassicFileAndAssert(file, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message) }
+                        }
+                    add {
+                        if (additionalFile != null) {
+                            helper.removeDirectiveFromClassicFileAndAssert(additionalFile, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message)
+                        }
                     }
                 }
             )
