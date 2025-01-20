@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
+// LATEST_LV_DIFFERENCE
 
 interface B<T>
 interface G<T>: B<T>

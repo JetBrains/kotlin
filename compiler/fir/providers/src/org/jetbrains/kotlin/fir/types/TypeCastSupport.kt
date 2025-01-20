@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 /**
  * Exists because the CS system is otherwise not accessible to checkers.
@@ -37,6 +38,34 @@ interface TypeCastSupport : FirSessionComponent {
         type: ConeKotlinType,
         session: FirSession,
     ): Boolean
+
+    /**
+     * Returns the approximation of the safest downcast from [supertype] to [subTypeClassSymbol]
+     * (the actual safest downcast may require more complex relations between arguments than those
+     * representable in the form of a single `ConeKotlinType`).
+     *
+     * Example 1:
+     * - [supertype] = `Collection<String>`
+     * - [subTypeClassSymbol] = `List`
+     * - result = `List<String>`, all arguments are inferred
+     *
+     * Example 2:
+     * - [supertype] = `Any`
+     * - [subTypeClassSymbol] = `List`
+     * - result = `List<*>`, some arguments were not inferred, replaced with '*'
+     *
+     * Example 3:
+     * - [supertype] = `List<String>`
+     * - [subTypeClassSymbol] = `MutableList`
+     * - result = `MutableList<out String>`, all arguments are inferred
+     */
+    fun findStaticallyKnownSubtype(
+        supertype: ConeKotlinType,
+        subTypeClassSymbol: FirRegularClassSymbol,
+        isSubTypeMarkedNullable: Boolean,
+        attributes: ConeAttributes,
+        session: FirSession,
+    ): ConeKotlinType?
 }
 
 val FirSession.typeCastSupport: TypeCastSupport by FirSession.sessionComponentAccessor()

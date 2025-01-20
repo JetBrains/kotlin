@@ -20,7 +20,7 @@ fun <E> foo(x: Any, y: Any) : Any {
     }
 
     // bare type
-    if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer<!>) {
+    if (y is <!CANNOT_CHECK_FOR_ERASED!>Outer<!>) {
         return y
     }
 
@@ -28,7 +28,7 @@ fun <E> foo(x: Any, y: Any) : Any {
         return y
     }
 
-    if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer.Inner<!>) {
+    if (y is <!CANNOT_CHECK_FOR_ERASED!>Outer.Inner<!>) {
         return y
     }
 
@@ -37,10 +37,10 @@ fun <E> foo(x: Any, y: Any) : Any {
     }
 
     y <!UNCHECKED_CAST!>as Outer<*><!>
-    y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer<!>
+    y as Outer
 
     y <!CAST_NEVER_SUCCEEDS!>as<!> Outer<*>.Inner
-    y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer.Inner<!>
+    y as Outer.Inner
 
     return C()
 }

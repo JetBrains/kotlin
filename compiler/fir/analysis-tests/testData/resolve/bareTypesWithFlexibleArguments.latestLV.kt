@@ -4,8 +4,8 @@
 // FULL_JDK
 
 fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
-    if (this is <!CANNOT_CHECK_FOR_ERASED!>LinkedHashSet<!>) {
-        addAll(collection)
+    if (this is LinkedHashSet) {
+        addAll(<!ARGUMENT_TYPE_MISMATCH!>collection<!>)
         return this
     }
     return this

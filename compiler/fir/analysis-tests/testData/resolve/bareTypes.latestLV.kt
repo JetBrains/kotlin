@@ -9,8 +9,8 @@ interface MutableA<T> : A<T> {
 interface MutableString : MutableA<String>
 
 fun test(a: A<String>) {
-    (a <!UNCHECKED_CAST!>as? MutableA<!>)?.add("")
-    (a <!UNCHECKED_CAST!>as MutableA<!>).add("")
+    (a as? MutableA)?.add(<!MEMBER_PROJECTED_OUT!>""<!>)
+    (a as MutableA).add(<!MEMBER_PROJECTED_OUT!>""<!>)
 }
 
 fun test2(a: A<String>) {
@@ -19,7 +19,7 @@ fun test2(a: A<String>) {
 }
 
 fun test3(a: A<String>) {
-    if (a is <!CANNOT_CHECK_FOR_ERASED!>MutableA<!>) {
-        a.add("")
+    if (a is MutableA) {
+        a.add(<!MEMBER_PROJECTED_OUT!>""<!>)
     }
 }
