@@ -617,6 +617,9 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             StorageComponentContainerContributor.registerExtension(
                 ComposableTargetChecker()
             )
+            StorageComponentContainerContributor.registerExtension(
+                ComposableAnnotationChecker()
+            )
             DiagnosticSuppressor.registerExtension(ComposeDiagnosticSuppressor())
             @Suppress("OPT_IN_USAGE_ERROR")
             TypeResolutionInterceptor.registerExtension(

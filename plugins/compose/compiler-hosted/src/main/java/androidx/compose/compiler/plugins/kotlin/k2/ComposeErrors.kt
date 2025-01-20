@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtTryExpression
@@ -80,6 +81,8 @@ object ComposeErrors {
     val MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL by error0<PsiElement>(
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
+
+    val COMPOSABLE_INAPPLICABLE_TYPE by error1<PsiElement, ConeKotlinType>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(ComposeErrorMessages)

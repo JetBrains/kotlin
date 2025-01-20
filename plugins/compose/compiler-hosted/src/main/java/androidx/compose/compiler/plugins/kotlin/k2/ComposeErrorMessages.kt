@@ -101,5 +101,11 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
             ComposeErrors.MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL,
             "Mismatched @Composable annotation between expect and actual declaration"
         )
+
+        map.put(
+            ComposeErrors.COMPOSABLE_INAPPLICABLE_TYPE,
+            "@Composable annotation is not applicable to {0}",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
     }
 }

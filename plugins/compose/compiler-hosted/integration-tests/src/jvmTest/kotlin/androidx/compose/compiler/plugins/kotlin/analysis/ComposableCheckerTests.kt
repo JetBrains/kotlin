@@ -1710,4 +1710,33 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             """
         )
     }
+
+    @Test
+    fun testComposableTypes() {
+        // Type mismatch is reported by K1 because it matches the annotation on type with inferred one.
+        // K2 uses annotation to infer function kind instead, so no error is reported.
+        fun typeMismatch(expression: String) =
+            if (!useFir) "<!TYPE_MISMATCH!>$expression<!>" else expression
+
+        check(
+            """
+                import androidx.compose.runtime.Composable
+
+                class A
+                typealias B = () -> Unit
+
+                fun Test() {
+                    val a: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> A = ${typeMismatch("A()")}
+                    val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B = {}
+                    val c: @Composable () -> Unit = {}
+                    val s: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> String = ${typeMismatch("\"\"")}
+                    
+                    println(a)
+                    println(b)
+                    println(c)
+                    println(s)
+                }
+            """
+        )
+    }
 }
