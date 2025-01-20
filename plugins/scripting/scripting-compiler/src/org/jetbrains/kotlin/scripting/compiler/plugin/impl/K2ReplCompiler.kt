@@ -165,7 +165,7 @@ class K2ReplCompilationState(
     internal val compilerContext: SharedScriptCompilationContext,
     internal val packagePartProvider: PackagePartProvider,
 ) {
-    internal var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
+    var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
 }
 
 class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider() {
