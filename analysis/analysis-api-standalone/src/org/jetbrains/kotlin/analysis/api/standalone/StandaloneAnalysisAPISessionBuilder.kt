@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProv
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaBaseContentScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.KotlinStandalonePlatformSettings
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneAnnotationsResolverFactory
@@ -140,7 +142,6 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(KotlinGlobalModificationService::class.java, KotlinStandaloneGlobalModificationService::class.java)
 
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStandaloneAnnotationsResolverFactory(this, sourceKtFiles))
-            registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
             registerService(KaContentScopeProvider::class.java, KaBaseContentScopeProvider::class.java)
             val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
                 this,
