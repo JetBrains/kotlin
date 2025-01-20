@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForReceiverParameter
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
@@ -91,7 +91,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
             if (backingPsi?.hasAnnotation(AnnotationUseSiteTarget.RECEIVER) == false)
                 KaBaseEmptyAnnotationList(token)
             else
-                KaFirAnnotationListForReceiverParameter.create(owningKaSymbol.firSymbol, builder = analysisSession.firSymbolBuilder)
+                KaFirAnnotationListForDeclaration.create(firSymbol = firSymbol, builder = analysisSession.firSymbolBuilder)
         }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
