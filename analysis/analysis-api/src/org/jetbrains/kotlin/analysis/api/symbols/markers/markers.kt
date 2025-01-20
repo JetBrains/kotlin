@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.symbols.markers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -34,6 +35,8 @@ public interface KaNamedSymbol : KaSymbol {
      * is `foo/bar/baz`.
      */
     public val name: Name
+
+    override fun createPointer(): KaSymbolPointer<KaNamedSymbol>
 }
 
 /**
@@ -47,4 +50,6 @@ public interface KaNamedSymbol : KaSymbol {
 @KaImplementationDetail
 public interface KaTypeParameterOwnerSymbol : KaSymbol {
     public val typeParameters: List<KaTypeParameterSymbol>
+
+    override fun createPointer(): KaSymbolPointer<KaTypeParameterOwnerSymbol>
 }

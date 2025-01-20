@@ -824,6 +824,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbolKt 
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassInitializerSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol {
 	public fun <init> ()V
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun isActual ()Z
@@ -861,6 +862,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol : 
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol {
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 }
 
@@ -877,6 +879,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaConstructorSym
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaAnnotatedSymbol {
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public abstract fun isActual ()Z
@@ -894,6 +897,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaDestructuringD
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaEnumEntryInitializerSymbol : org/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol {
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaEnumEntrySymbol : org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol {
@@ -1209,12 +1213,15 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaAnnotatedSymbol : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated, org/jetbrains/kotlin/analysis/api/symbols/KaSymbol {
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaDeclarationContainerSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol {
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol {
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 }
 

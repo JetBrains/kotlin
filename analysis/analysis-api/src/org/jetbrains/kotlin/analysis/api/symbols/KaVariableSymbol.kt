@@ -151,7 +151,9 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
  * The initializer of `A` declares a member `x: Int`, which is inaccessible outside the initializer. Still, the corresponding
  * [KaEnumEntryInitializerSymbol] can be used to get a declared member scope that contains `x`.
  */
-public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol
+public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
+    override fun createPointer(): KaSymbolPointer<KaEnumEntryInitializerSymbol>
+}
 
 /**
  * [KaJavaFieldSymbol] represents a [Java field declaration](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3).
