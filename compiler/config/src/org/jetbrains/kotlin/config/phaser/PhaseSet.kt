@@ -20,6 +20,7 @@ sealed class PhaseSet {
 
         override fun plus(phaseSet: PhaseSet): PhaseSet = when (phaseSet) {
             ALL -> ALL
+            Empty -> this
             is Enum -> Enum(phases + phaseSet.phases)
         }
     }
@@ -29,5 +30,12 @@ sealed class PhaseSet {
             true
 
         override fun plus(phaseSet: PhaseSet): PhaseSet = ALL
+    }
+
+    object Empty : PhaseSet() {
+        override fun contains(phase: AnyNamedPhase): Boolean =
+            false
+
+        override fun plus(phaseSet: PhaseSet): PhaseSet = phaseSet
     }
 }
