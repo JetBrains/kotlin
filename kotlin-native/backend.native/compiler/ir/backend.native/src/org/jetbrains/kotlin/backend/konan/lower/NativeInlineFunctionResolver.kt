@@ -39,7 +39,7 @@ internal class NativeInlineFunctionResolver(
     private fun lower(function: IrFunction) {
         val body = function.body ?: return
 
-        val doubleInliningEnabled = !context.config.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
+        val doubleInliningEnabled = !false
 
         UpgradeCallableReferences(context).lower(function)
 

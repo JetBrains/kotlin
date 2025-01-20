@@ -42,7 +42,7 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
      * - To work around this we shall generate public "outer this" accessors if [SyntheticAccessorLowering]
      *   is not enabled.
      */
-    private val generatePublicAccessors: Boolean = context.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
+    private val generatePublicAccessors: Boolean = false
 
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
