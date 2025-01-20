@@ -471,8 +471,13 @@ object SessionConstructionUtils {
             val dependencies = hmppModuleStructure.dependenciesMap[module]
                 ?.map { moduleDataForHmppModule.getValue(it) }
                 .orEmpty()
+            val moduleName = if (index == hmppModuleStructure.modules.lastIndex) {
+                rootModuleName
+            } else {
+                Name.special("<${module.name}>")
+            }
             val moduleData = FirModuleDataImpl(
-                rootModuleName,
+                moduleName,
                 libraryList.regularDependencies,
                 dependsOnDependencies = dependencies,
                 libraryList.friendsDependencies,
