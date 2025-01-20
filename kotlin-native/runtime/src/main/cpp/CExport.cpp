@@ -63,6 +63,8 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(Kotlin_CExport_allocInstance, const TypeIn
         return Kotlin_unbox ## name(result); \
     }
 PRIMITIVE_TYPES(GENERATE_CEXPORT_BOX_UNBOX)
+#undef GENERATE_CEXPORT_BOX_UNBOX
+#undef PRIMITIVE_TYPES
 
 extern "C" OBJ_GETTER0(Kotlin_boxUnit);
 extern "C" KNativePtr Kotlin_CExport_boxUnit() {

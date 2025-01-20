@@ -337,13 +337,11 @@ internal class CAdapterApiExporter(
             assert(!it.isNothing())
             val nullableIt = it.makeNullable()
             val needArgument = !it.isUnit()
-            val (parameter, maybeComma) = if (needArgument)
-                ("${typeTranslator.translateType(it)} value" to ",") else ("" to "")
+            val parameter = if (needArgument) "${typeTranslator.translateType(it)} value" else ""
             val argument = if (needArgument) "value" else ""
             output("extern \"C\" ${prefix}_KNativePtr Kotlin_CExport_box${it.shortNameForPredefinedType}($parameter);")
             output("static ${typeTranslator.translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
-            output("${prefix}_KNativePtr result = Kotlin_CExport_box${it.shortNameForPredefinedType}($argument);", 1)
-            output("return ${typeTranslator.translateType(nullableIt)} { .pinned = result };", 1)
+            output("return ${typeTranslator.translateType(nullableIt)} { .pinned = Kotlin_CExport_box${it.shortNameForPredefinedType}($argument) };", 1)
             output("}")
 
             if (!it.isUnit()) {

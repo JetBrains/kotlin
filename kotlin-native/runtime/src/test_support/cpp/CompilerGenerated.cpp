@@ -375,5 +375,26 @@ KInt Kotlin_CleanerImpl_createCleanerWorker() {
     return createCleanerWorkerMock->Call();
 }
 
+#define PRIMITIVE_TYPES(X) \
+    X(Boolean) \
+    X(Char) \
+    X(Byte) \
+    X(Short) \
+    X(Int) \
+    X(Long) \
+    X(UByte) \
+    X(UShort) \
+    X(UInt) \
+    X(ULong) \
+    X(Float) \
+    X(Double)
+
+#define GENERATE_CEXPORT_BOX_UNBOX(name) \
+    OBJ_GETTER(Kotlin_box ## name, K ## name value); \
+    K ## name Kotlin_unbox ## name(KRef value); \
+PRIMITIVE_TYPES(GENERATE_CEXPORT_BOX_UNBOX)
+#undef GENERATE_CEXPORT_BOX_UNBOX
+#undef PRIMITIVE_TYPES
+
 } // extern "C"
 

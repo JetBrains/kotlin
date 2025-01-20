@@ -268,9 +268,9 @@ internal class ExportedElement(
             typeTranslator.isMappedToString(signatureElement.type) ->
                 if (direction == Direction.C_TO_KOTLIN) {
                     builder.append("  KObjHolder ${name}_holder;\n")
-                    "Kotlin_CExport_createStringFromCString($name, ${name}_holder.slot())"
+                    "Kotlin_CExport_createKotlinStringFromCString($name, ${name}_holder.slot())"
                 } else {
-                    "Kotlin_CExport_createCStringFromString($name)"
+                    "Kotlin_CExport_createCStringFromKotlinString($name)"
                 }
             typeTranslator.isMappedToReference(signatureElement.type) ->
                 if (direction == Direction.C_TO_KOTLIN) {
