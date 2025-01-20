@@ -1333,6 +1333,34 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       }
     }
 
+    @TestMetadata("compiler/testData/psi/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ContextParameters extends AbstractParsingTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInContextParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contextParameters"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+      }
+
+      @TestMetadata("functions.kt")
+      public void testFunctions() {
+        runTest("compiler/testData/psi/contextParameters/functions.kt");
+      }
+
+      @TestMetadata("properties.kt")
+      public void testProperties() {
+        runTest("compiler/testData/psi/contextParameters/properties.kt");
+      }
+
+      @TestMetadata("unnamed.kt")
+      public void testUnnamed() {
+        runTest("compiler/testData/psi/contextParameters/unnamed.kt");
+      }
+    }
+
     @TestMetadata("compiler/testData/psi/contracts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
