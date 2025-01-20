@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
@@ -21,7 +21,7 @@ class KaGlobalSearchScope(
     private val useSiteModule: KaModule,
 ) : GlobalSearchScope() {
     val baseScope: GlobalSearchScope
-        get() = KotlinResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
+        get() = KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
 
     override fun getProject(): Project? {
         return baseScope.project

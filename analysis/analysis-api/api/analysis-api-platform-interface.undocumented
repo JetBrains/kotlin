@@ -95,9 +95,10 @@ projectStructure/KaContentScopeProvider.kt:KaContentScopeProvider
 projectStructure/KaDanglingFileModuleImpl.kt:KaDanglingFileModuleImpl
 projectStructure/KaDanglingFileModuleImpl.kt:KaDanglingFileModuleImpl:null
 projectStructure/KaModuleBase.kt:abstract KaModuleBase
+projectStructure/KaResolutionScopeProvider.kt:Companion:getInstance(Project)
+projectStructure/KaResolutionScopeProvider.kt:KaResolutionScopeProvider
 projectStructure/KotlinAnchorModuleProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinAnchorModuleProvider.kt:KotlinAnchorModuleProvider:getAnchorModule(KaLibraryModule)
-projectStructure/KotlinByModulesResolutionScopeProvider.kt:KotlinByModulesResolutionScopeProvider
 projectStructure/KotlinCompilerPluginsProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinCompilerPluginsProvider.kt:KotlinCompilerPluginsProvider:enum CompilerPluginType
 projectStructure/KotlinContentScopeRefiner.kt:Companion:EP_NAME
@@ -111,8 +112,6 @@ projectStructure/KotlinProjectStructureProvider.kt:Companion:getModule(Project, 
 projectStructure/KotlinProjectStructureProvider.kt:KotlinProjectStructureProvider:getImplementingModules(KaModule)
 projectStructure/KotlinProjectStructureProviderBase.kt:@OptIn(KaExperimentalApi::class) @Deprecated("Use 'explicitModule' instead.") forcedSpecialModule
 projectStructure/KotlinProjectStructureProviderBase.kt:abstract KotlinProjectStructureProviderBase
-projectStructure/KotlinResolutionScopeProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinResolutionScopeProvider.kt:KotlinResolutionScopeProvider
 projectStructure/utils.kt:@OptIn(KaExperimentalApi::class) asDebugString(Int)
 resolution/KaResolutionActivityTracker.kt:Companion:getInstance()
 restrictedAnalysis/KotlinRestrictedAnalysisService.kt:Companion:getInstance(Project)

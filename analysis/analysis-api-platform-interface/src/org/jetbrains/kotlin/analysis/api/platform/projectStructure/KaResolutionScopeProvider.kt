@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
+import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
-public interface KotlinResolutionScopeProvider : KotlinPlatformComponent {
+public interface KaResolutionScopeProvider : KaEngineService {
     /**
      * Returns a [GlobalSearchScope] which covers the resolvable content of [module].
      */
     public fun getResolutionScope(module: KaModule): GlobalSearchScope
 
     public companion object {
-        public fun getInstance(project: Project): KotlinResolutionScopeProvider = project.service()
+        public fun getInstance(project: Project): KaResolutionScopeProvider = project.service()
     }
 }
