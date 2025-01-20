@@ -381,7 +381,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: false
     }
 
-    internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
+    private fun collectRuntimeModules(): List<String> = buildList {
         if (debug) add("debug.bc")
         add("runtime.bc")
         add("mm.bc")
@@ -442,8 +442,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             true -> add("impl_externalCallsChecker.bc")
             false -> add("noop_externalCallsChecker.bc")
         }
-    }.map {
-        File(distribution.defaultNatives(target)).child(it).absolutePath
+        if (produceCInterface) {
+            add("cexport.bc")
+        }
+    }
+
+    internal val runtimeNativeLibraries: List<String> by lazy {
+        collectRuntimeModules().map {
+            File(distribution.defaultNatives(target)).child(it).absolutePath
+        }
     }
 
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
