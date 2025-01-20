@@ -216,11 +216,6 @@ private val localClassesExtractionFromInlineFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(localClassesInInlineFunctionsPhase)
 )
 
-private val legacySyntheticAccessorLoweringPhase = makeIrModulePhase(
-    ::LegacySyntheticAccessorLowering,
-    name = "LegacySyntheticAccessorLowering",
-)
-
 private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeIrModulePhase(
     ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
     name = "WrapInlineDeclarationsWithReifiedTypeParametersLowering",
