@@ -176,8 +176,10 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
+    auto externalRCRef = reinterpret_cast<kotlin::mm::RawExternalRCRef*>(ref);
+
     Class bestFittingClass =
-            kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::externalRCRefType(reinterpret_cast<void*>(ref)));
+            kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::dereferenceExternalRCRef(externalRCRef)->type_info());
     if ([self class] != bestFittingClass) {
         if ([[self class] isSubclassOfClass:bestFittingClass]) {
             konan::consoleErrorf(
@@ -193,7 +195,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
         return [[bestFittingClass alloc] initWithExternalRCRef:ref];
     }
 
-    permanent = refHolder.initWithExternalRCRef(reinterpret_cast<void*>(ref));
+    permanent = refHolder.initWithExternalRCRef(externalRCRef);
     if (permanent) {
         // Cannot attach associated objects to permanent objects.
         return self;

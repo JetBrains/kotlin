@@ -12,20 +12,21 @@
 
 using namespace kotlin;
 
-extern "C" RUNTIME_NOTHROW void* Kotlin_CExport_createStablePointer(KRef obj) {
+extern "C" RUNTIME_NOTHROW mm::RawExternalRCRef* Kotlin_CExport_createStablePointer(KRef obj) {
     return mm::createRetainedExternalRCRef(obj);
 }
 
-extern "C" RUNTIME_NOTHROW void Kotlin_CExport_disposeStablePointer(void* ref) {
+extern "C" RUNTIME_NOTHROW void Kotlin_CExport_disposeStablePointer(mm::RawExternalRCRef* ref) {
     mm::releaseAndDisposeExternalRCRef(ref);
 }
 
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(Kotlin_CExport_derefStablePointer, void* ref) {
+extern "C" RUNTIME_NOTHROW OBJ_GETTER(Kotlin_CExport_derefStablePointer, mm::RawExternalRCRef* ref) {
+    AssertThreadState(ThreadState::kRunnable);
     RETURN_OBJ(mm::dereferenceExternalRCRef(ref));
 }
 
-extern "C" RUNTIME_NOTHROW KBoolean Kotlin_CExport_isInstance(void* ref, const TypeInfo* typeInfo) {
-    auto refTypeInfo = mm::externalRCRefType(ref);
+extern "C" RUNTIME_NOTHROW KBoolean Kotlin_CExport_isInstance(mm::RawExternalRCRef* ref, const TypeInfo* typeInfo) {
+    auto refTypeInfo = mm::dereferenceExternalRCRef(ref)->type_info();
     return IsSubtype(refTypeInfo, typeInfo);
 }
 
@@ -50,13 +51,13 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(Kotlin_CExport_allocInstance, const TypeIn
 #define GENERATE_CEXPORT_BOX_UNBOX(name) \
     extern "C" OBJ_GETTER(Kotlin_box ## name, K ## name value); \
     extern "C" K ## name Kotlin_unbox ## name(KRef value); \
-    extern "C" KNativePtr Kotlin_CExport_box ## name(K ## name value) { \
+    extern "C" mm::RawExternalRCRef* Kotlin_CExport_box ## name(K ## name value) { \
         CalledFromNativeGuard guard; \
         ObjHolder holder; \
         auto result = Kotlin_box ## name(value, holder.slot()); \
         return Kotlin_CExport_createStablePointer(result); \
     } \
-    extern "C" K ## name Kotlin_CExport_unbox ## name(KNativePtr value) { \
+    extern "C" K ## name Kotlin_CExport_unbox ## name(mm::RawExternalRCRef* value) { \
         CalledFromNativeGuard guard; \
         ObjHolder holder; \
         auto result = Kotlin_CExport_derefStablePointer(value, holder.slot()); \

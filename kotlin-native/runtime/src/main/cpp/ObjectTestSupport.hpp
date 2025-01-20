@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "ExternalRCRef.hpp"
 #include "KAssert.h"
 #include "Memory.h"
 #include "ReferenceOps.hpp"
@@ -356,7 +357,7 @@ public:
 };
 
 struct RegularWeakReferenceImplPayload {
-    void* weakRef;
+    mm::RawExternalRCRef* weakRef;
     void* referred;
 
     static constexpr test_support::NoRefFields<RegularWeakReferenceImplPayload> kFields{};

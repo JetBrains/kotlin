@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "ExternalRCRef.hpp"
 #include "Memory.h"
 #include "RawPtr.hpp"
 #include "SpecialRefRegistry.hpp"
@@ -22,10 +23,10 @@ public:
     WeakRef() noexcept = default;
 
     // Cast raw ref into a weak reference.
-    explicit WeakRef(RawSpecialRef* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
+    explicit WeakRef(RawExternalRCRef* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
 
     // Cast weak reference into raw ref.
-    [[nodiscard("must be manually disposed")]] explicit operator RawSpecialRef*() && noexcept {
+    [[nodiscard("must be manually disposed")]] explicit operator RawExternalRCRef*() && noexcept {
         // Make sure to move out from node_.
         auto node = std::move(node_);
         return node->asRaw();
@@ -51,9 +52,9 @@ public:
         RETURN_RESULT_OF0(node_->tryRef);
     }
 
-    static WeakRef& reinterpret(RawSpecialRef*& raw) noexcept { return reinterpret_cast<WeakRef&>(raw); }
+    static WeakRef& reinterpret(RawExternalRCRef*& raw) noexcept { return reinterpret_cast<WeakRef&>(raw); }
 
-    static const WeakRef& reinterpret(RawSpecialRef* const& raw) noexcept { return reinterpret_cast<const WeakRef&>(raw); }
+    static const WeakRef& reinterpret(RawExternalRCRef* const& raw) noexcept { return reinterpret_cast<const WeakRef&>(raw); }
 
 private:
     raw_ptr<SpecialRefRegistry::Node> node_;

@@ -6,8 +6,10 @@
 #include "ExternalRCRef.hpp"
 
 #include "Memory.h"
-#include "ObjCBackRef.hpp"
 #include "PointerBits.h"
+#include "SpecialRefRegistry.hpp"
+#include "ThreadData.hpp"
+#include "ThreadRegistry.hpp"
 
 using namespace kotlin;
 
@@ -19,7 +21,54 @@ constexpr unsigned kPermanentTag = 1;
 
 }
 
-RUNTIME_NOTHROW extern "C" void* Kotlin_native_internal_ref_createRetainedExternalRCRef(KRef obj) {
+RUNTIME_NOTHROW extern "C" mm::RawExternalRCRef* Kotlin_native_internal_ref_createRetainedExternalRCRef(KRef obj) {
+    return mm::createRetainedExternalRCRef(obj);
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_disposeExternalRCRef(mm::RawExternalRCRef* ref) {
+    mm::disposeExternalRCRef(ref);
+}
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_native_internal_ref_dereferenceExternalRCRef, mm::RawExternalRCRef* ref) {
+    AssertThreadState(ThreadState::kRunnable);
+    RETURN_OBJ(mm::dereferenceExternalRCRef(ref));
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_retainExternalRCRef(mm::RawExternalRCRef* ref) {
+    mm::retainExternalRCRef(ref);
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_releaseExternalRCRef(mm::RawExternalRCRef* ref) {
+    mm::releaseExternalRCRef(ref);
+}
+
+RUNTIME_NOTHROW extern "C" bool Kotlin_native_internal_ref_tryRetainExternalRCRef(mm::RawExternalRCRef* ref) {
+    AssertThreadState(ThreadState::kRunnable);
+    ObjHolder holder;
+    if (mm::tryRefExternalRCRef(ref, holder.slot())) {
+        mm::retainExternalRCRef(ref);
+        return true;
+    }
+    return false;
+}
+
+KRef kotlin::mm::externalRCRefAsPermanentObject(mm::RawExternalRCRef* ref) noexcept {
+    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
+    if (hasPointerBits(ref, kPermanentTag)) {
+        auto obj = reinterpret_cast<KRef>(clearPointerBits(ref, kPermanentTag));
+        RuntimeAssert(obj == nullptr || obj->permanent(), "Permanent ExternalRCRef for non-permanent object %p", obj);
+        return obj;
+    }
+    return nullptr;
+}
+
+mm::RawExternalRCRef* kotlin::mm::permanentObjectAsExternalRCRef(KRef obj) noexcept {
+    RuntimeAssert(obj != nullptr, "Cannot handle nullptr");
+    RuntimeAssert(obj->permanent(), "Object %p must be permanent", obj);
+    return setPointerBits(reinterpret_cast<mm::RawExternalRCRef*>(obj), kPermanentTag);
+}
+
+mm::RawExternalRCRef* kotlin::mm::createRetainedExternalRCRef(KRef obj) noexcept {
     AssertThreadState(ThreadState::kRunnable);
 
     if (obj == nullptr)
@@ -28,97 +77,72 @@ RUNTIME_NOTHROW extern "C" void* Kotlin_native_internal_ref_createRetainedExtern
     if (obj->permanent()) {
         return mm::permanentObjectAsExternalRCRef(obj);
     }
-    return static_cast<mm::RawSpecialRef*>(mm::ObjCBackRef::create(obj));
+
+    return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createRef(obj, 1);
 }
 
-RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_disposeExternalRCRef(void* ref) {
+mm::RawExternalRCRef* kotlin::mm::createUnretainedExternalRCRef(KRef obj) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+
+    if (obj == nullptr)
+        return nullptr;
+
+    if (obj->permanent()) {
+        return mm::permanentObjectAsExternalRCRef(obj);
+    }
+
+    return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createRef(obj, 0);
+}
+
+void kotlin::mm::retainExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
     if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
         // Nothing to do.
         return;
     }
-    mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).dispose();
+    mm::SpecialRefRegistry::Node::fromRaw(ref)->retainRef();
 }
 
-RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_native_internal_ref_dereferenceExternalRCRef, void* ref) {
+void kotlin::mm::releaseExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
+    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
+        // Nothing to do.
+        return;
+    }
+    mm::SpecialRefRegistry::Node::fromRaw(ref)->releaseRef();
+}
+
+void kotlin::mm::disposeExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
+    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
+        // Nothing to do.
+        return;
+    }
+    mm::SpecialRefRegistry::Node::fromRaw(ref)->dispose();
+}
+
+void kotlin::mm::releaseAndDisposeExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
+    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
+        // Nothing to do.
+        return;
+    }
+    auto node = mm::SpecialRefRegistry::Node::fromRaw(ref);
+    node->releaseRef();
+    node->dispose();
+}
+
+KRef kotlin::mm::dereferenceExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
+    if (ref == nullptr)
+        return nullptr;
+    if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
+        return obj;
+    }
+    return mm::SpecialRefRegistry::Node::fromRaw(ref)->ref();
+}
+
+OBJ_GETTER(kotlin::mm::tryRefExternalRCRef, RawExternalRCRef *ref) noexcept {
     AssertThreadState(ThreadState::kRunnable);
     if (ref == nullptr)
         RETURN_OBJ(nullptr);
     if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
         RETURN_OBJ(obj);
     }
-    RETURN_OBJ(*mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)));
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_retainExternalRCRef(void* ref) {
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        // Nothing to do.
-        return;
-    }
-    mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).retain();
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_releaseExternalRCRef(void* ref) {
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        // Nothing to do.
-        return;
-    }
-    mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).release();
-}
-
-RUNTIME_NOTHROW extern "C" bool Kotlin_native_internal_ref_tryRetainExternalRCRef(void* ref) {
-    AssertThreadState(ThreadState::kRunnable);
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        return true;
-    }
-    return mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).tryRetain();
-}
-
-KRef kotlin::mm::externalRCRefAsPermanentObject(void* ref) noexcept {
-    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
-    if (hasPointerBits(ref, kPermanentTag)) {
-        auto obj = clearPointerBits(static_cast<KRef>(ref), kPermanentTag);
-        RuntimeAssert(obj == nullptr || obj->permanent(), "Permanent ExternalRCRef for non-permanent object %p", obj);
-        return obj;
-    }
-    return nullptr;
-}
-
-void* kotlin::mm::permanentObjectAsExternalRCRef(KRef obj) noexcept {
-    RuntimeAssert(obj != nullptr, "Cannot handle nullptr");
-    RuntimeAssert(obj->permanent(), "Object %p must be permanent", obj);
-    return setPointerBits(obj, kPermanentTag);
-}
-
-const TypeInfo* kotlin::mm::externalRCRefType(void* ref) noexcept {
-    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
-    if (hasPointerBits(ref, kPermanentTag)) {
-        auto obj = clearPointerBits(static_cast<KRef>(ref), kPermanentTag);
-        RuntimeAssert(obj->permanent(), "Permanent ExternalRCRef for non-permanent object %p", obj);
-        return obj->type_info();
-    }
-    return mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).typeInfo();
-}
-
-void* kotlin::mm::createRetainedExternalRCRef(KRef obj) noexcept {
-    return Kotlin_native_internal_ref_createRetainedExternalRCRef(obj);
-}
-
-void kotlin::mm::releaseAndDisposeExternalRCRef(void* ref) noexcept {
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        // Nothing to do.
-        return;
-    }
-    auto objcBackRef = mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref));
-    objcBackRef.release();
-    std::move(objcBackRef).dispose();
-}
-
-KRef kotlin::mm::dereferenceExternalRCRef(void *ref) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    if (ref == nullptr)
-        return nullptr;
-    if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
-        return obj;
-    }
-    return *mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref));
+    RETURN_RESULT_OF0(mm::SpecialRefRegistry::Node::fromRaw(ref)->tryRef);
 }

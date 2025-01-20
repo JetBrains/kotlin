@@ -9,18 +9,14 @@
 #include <list>
 #include <optional>
 
+#include "ExternalRCRef.hpp"
 #include "GC.hpp"
 #include "Memory.h"
 #include "ReferenceOps.hpp"
 #include "RawPtr.hpp"
 #include "ReferenceOps.hpp"
-#include "ThreadRegistry.hpp"
 
 namespace kotlin::mm {
-
-class ObjCBackRef;
-class StableRef;
-class WeakRef;
 
 // Registry for all special references to objects:
 // * stable references (i.e. always part of the root set)
@@ -56,6 +52,7 @@ class SpecialRefRegistry : private Pinned {
     // TODO: Consider using a real mutex.
     using Mutex = SpinLock;
 
+public:
     class Node : private Pinned {
     public:
         using Rc = int32_t;
@@ -63,10 +60,10 @@ class SpecialRefRegistry : private Pinned {
         static_assert(disposedMarker < 0, "disposedMarker must be an impossible Rc value");
 
         Node(SpecialRefRegistry& registry, ObjHeader* obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
-            RuntimeAssert(obj != nullptr, "Creating StableRef for null object");
-            RuntimeAssert(rc >= 0, "Creating StableRef with negative rc %d", rc);
+            RuntimeAssert(obj != nullptr, "Creating ExternalRCRef for null object");
+            RuntimeAssert(rc >= 0, "Creating ExternalRCRef with negative rc %d", rc);
             // Runtime tests occasionally use sentinel values under 8 for opaque objects
-            RuntimeAssert(reinterpret_cast<uintptr_t>(obj) < 8u || !obj->local(), "Creating StableRef to a stack-allocated object %p", obj);
+            RuntimeAssert(reinterpret_cast<uintptr_t>(obj) < 8u || !obj->local(), "Creating ExternalRCRef to a stack-allocated object %p", obj);
 
             if (rc > 0) {
                 registry.insertIntoRootsHead(*this);
@@ -78,7 +75,7 @@ class SpecialRefRegistry : private Pinned {
         ~Node() {
             if (compiler::runtimeAssertsEnabled()) {
                 auto rc = rc_.load(std::memory_order_relaxed);
-                RuntimeAssert(rc == disposedMarker, "Deleting StableRef@%p with rc %d", this, rc);
+                RuntimeAssert(rc == disposedMarker, "Deleting ExternalRCRef@%p with rc %d", this, rc);
             }
         }
 
@@ -96,9 +93,9 @@ class SpecialRefRegistry : private Pinned {
                     // subsequent this->release().
                     // However, since this happens in dealloc, the stored object must
                     // have been cleared already.
-                    RuntimeAssert(obj == nullptr, "Disposing StableRef@%p with rc %d and uncleaned object %p", this, rc, obj);
+                    RuntimeAssert(obj == nullptr, "Disposing ExternalRCRef@%p with rc %d and uncleaned object %p", this, rc, obj);
                 }
-                RuntimeAssert(rc >= 0, "Disposing StableRef@%p with rc %d", this, rc);
+                RuntimeAssert(rc >= 0, "Disposing ExternalRCRef@%p with rc %d", this, rc);
             }
         }
 
@@ -106,7 +103,7 @@ class SpecialRefRegistry : private Pinned {
             if (compiler::runtimeAssertsEnabled()) {
                 AssertThreadState(ThreadState::kRunnable);
                 auto rc = rc_.load(std::memory_order_relaxed);
-                RuntimeAssert(rc >= 0, "Dereferencing StableRef@%p with rc %d", this, rc);
+                RuntimeAssert(rc >= 0, "Dereferencing ExternalRCRef@%p with rc %d", this, rc);
             }
             return objAtomic().load(std::memory_order_relaxed);
         }
@@ -114,7 +111,7 @@ class SpecialRefRegistry : private Pinned {
         [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept {
             if (compiler::runtimeAssertsEnabled()) {
                 auto rc = rc_.load(std::memory_order_relaxed);
-                RuntimeAssert(rc > 0, "Getting typeInfo of StableRef@%p with rc %d", this, rc);
+                RuntimeAssert(rc > 0, "Getting typeInfo of ExternalRCRef@%p with rc %d", this, rc);
             }
             return objAtomic().load(std::memory_order_relaxed)->type_info();
         }
@@ -126,7 +123,7 @@ class SpecialRefRegistry : private Pinned {
 
         void retainRef() noexcept {
             auto rc = rc_.fetch_add(1, std::memory_order_relaxed);
-            RuntimeAssert(rc >= 0, "Retaining StableRef@%p with rc %d", this, rc);
+            RuntimeAssert(rc >= 0, "Retaining ExternalRCRef@%p with rc %d", this, rc);
             if (rc == 0) {
                 if (!objAtomic().load(std::memory_order_relaxed)) {
                     // In objc export if ObjCClass extends from KtClass
@@ -163,7 +160,7 @@ class SpecialRefRegistry : private Pinned {
         void releaseRef() noexcept {
             if (gc::barriers::SpecialRefReleaseGuard::isNoop()) {
                 auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
-                RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p(%p %s) with rc %d", this, obj_, obj_->type_info()->fqName().c_str(), rcBefore);
+                RuntimeAssert(rcBefore > 0, "Releasing ExternalRCRef@%p(%p %s) with rc %d", this, obj_, obj_->type_info()->fqName().c_str(), rcBefore);
             } else {
                 // A 1->0 release is potentially a removal from global root set.
                 // The CMS GC scans global root set concurrently. A guard is required.
@@ -180,12 +177,12 @@ class SpecialRefRegistry : private Pinned {
                     if (rc_.compare_exchange_strong(rcBefore, rcBefore - 1, std::memory_order_relaxed)) break;
                 }
 
-                RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p(%p %s) with rc %d", this, obj_, obj_->type_info()->fqName().c_str(), rcBefore);
+                RuntimeAssert(rcBefore > 0, "Releasing ExternalRCRef@%p(%p %s) with rc %d", this, obj_, obj_->type_info()->fqName().c_str(), rcBefore);
             }
         }
 
-        RawSpecialRef* asRaw() noexcept { return reinterpret_cast<RawSpecialRef*>(this); }
-        static Node* fromRaw(RawSpecialRef* ref) noexcept { return reinterpret_cast<Node*>(ref); }
+        RawExternalRCRef* asRaw() noexcept { return reinterpret_cast<RawExternalRCRef*>(this); }
+        static Node* fromRaw(RawExternalRCRef* ref) noexcept { return reinterpret_cast<Node*>(ref); }
 
     private:
         friend class SpecialRefRegistry;
@@ -212,7 +209,6 @@ class SpecialRefRegistry : private Pinned {
         std::atomic<Node*> nextRoot_ = nullptr;
     };
 
-public:
     class ThreadQueue : private Pinned {
     public:
         explicit ThreadQueue(SpecialRefRegistry& registry) : owner_(registry) {}
@@ -232,15 +228,14 @@ public:
             queue_.clear();
         }
 
-        [[nodiscard("must be manually disposed")]] StableRef createStableRef(ObjHeader* object) noexcept;
-        [[nodiscard("must be manually disposed")]] WeakRef createWeakRef(ObjHeader* object) noexcept;
-        [[nodiscard("must be manually disposed")]] ObjCBackRef createObjCBackRef(ObjHeader* object) noexcept;
+        [[nodiscard("must be manually disposed")]] mm::RawExternalRCRef* createRef(ObjHeader* object, Node::Rc initialRc) noexcept {
+            return registerNode(object, initialRc).asRaw();
+        }
 
     private:
-        friend class StableRef;
         friend class SpecialRefRegistryTest;
 
-        [[nodiscard("must be manually disposed")]] Node& registerNode(ObjHeader* obj, Node::Rc rc, bool allowFastDeletion) noexcept {
+        [[nodiscard("must be manually disposed")]] Node& registerNode(ObjHeader* obj, Node::Rc rc) noexcept {
             RuntimeAssert(obj != nullptr, "Creating node for null object");
             queue_.emplace_back(owner_, obj, rc);
             auto& node = queue_.back();
@@ -351,9 +346,6 @@ public:
     Iterable lockForIter() noexcept { return Iterable(*this); }
 
 private:
-    friend class ObjCBackRef;
-    friend class StableRef;
-    friend class WeakRef;
     friend class SpecialRefRegistryTest;
 
     Node* nextRoot(Node* current) noexcept;

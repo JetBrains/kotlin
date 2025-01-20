@@ -24,10 +24,10 @@ public:
     StableRef() noexcept = default;
 
     // Cast raw ref into a stable reference.
-    explicit StableRef(RawSpecialRef* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
+    explicit StableRef(RawExternalRCRef* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
 
     // Cast stable reference into raw ref.
-    [[nodiscard("must be manually disposed")]] explicit operator RawSpecialRef*() && noexcept {
+    [[nodiscard("must be manually disposed")]] explicit operator RawExternalRCRef*() && noexcept {
         // Make sure to move out from node_.
         auto node = std::move(node_);
         return node->asRaw();
@@ -54,9 +54,9 @@ public:
         return node_->typeInfo();
     }
 
-    static StableRef& reinterpret(RawSpecialRef*& raw) noexcept { return reinterpret_cast<StableRef&>(raw); }
+    static StableRef& reinterpret(RawExternalRCRef*& raw) noexcept { return reinterpret_cast<StableRef&>(raw); }
 
-    static const StableRef& reinterpret(RawSpecialRef* const& raw) noexcept { return reinterpret_cast<const StableRef&>(raw); }
+    static const StableRef& reinterpret(RawExternalRCRef* const& raw) noexcept { return reinterpret_cast<const StableRef&>(raw); }
 
 private:
     raw_ptr<SpecialRefRegistry::Node> disposeImpl() && noexcept {

@@ -12,5 +12,5 @@ using namespace kotlin;
 // static
 mm::ObjCBackRef mm::ObjCBackRef::create(ObjHeader* obj) noexcept {
     RuntimeAssert(obj != nullptr, "Creating ObjCBackRef for null object");
-    return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createObjCBackRef(obj);
+    return mm::ObjCBackRef(mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createRef(obj, 1));
 }

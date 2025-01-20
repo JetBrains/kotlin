@@ -39,7 +39,7 @@ OBJ_GETTER(mm::createRegularWeakReferenceImpl, ObjHeader* object) noexcept {
         RETURN_OBJ(weakRef);
     }
     ObjHolder holder;
-    auto* weakRef = makeRegularWeakReferenceImpl(static_cast<mm::RawSpecialRef*>(mm::WeakRef::create(object)), object, holder.slot());
+    auto* weakRef = makeRegularWeakReferenceImpl(static_cast<mm::RawExternalRCRef*>(mm::WeakRef::create(object)), object, holder.slot());
     auto* setWeakRef = extraObject.GetOrSetRegularWeakReferenceImpl(object, weakRef);
     RETURN_OBJ(setWeakRef);
 }

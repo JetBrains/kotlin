@@ -6,26 +6,8 @@
 #include "SpecialRefRegistry.hpp"
 
 #include "GlobalData.hpp"
-#include "MemoryPrivate.hpp"
-#include "ObjCBackRef.hpp"
-#include "StableRef.hpp"
-#include "ThreadData.hpp"
-#include "ThreadState.hpp"
-#include "WeakRef.hpp"
 
 using namespace kotlin;
-
-mm::StableRef mm::SpecialRefRegistry::ThreadQueue::createStableRef(ObjHeader* object) noexcept {
-    return mm::StableRef(registerNode(object, 1, true).asRaw());
-}
-
-mm::WeakRef mm::SpecialRefRegistry::ThreadQueue::createWeakRef(ObjHeader* object) noexcept {
-    return mm::WeakRef(registerNode(object, 0, false).asRaw());
-}
-
-mm::ObjCBackRef mm::SpecialRefRegistry::ThreadQueue::createObjCBackRef(ObjHeader* object) noexcept {
-    return mm::ObjCBackRef(registerNode(object, 1, false).asRaw());
-}
 
 // static
 mm::SpecialRefRegistry& mm::SpecialRefRegistry::instance() noexcept {
