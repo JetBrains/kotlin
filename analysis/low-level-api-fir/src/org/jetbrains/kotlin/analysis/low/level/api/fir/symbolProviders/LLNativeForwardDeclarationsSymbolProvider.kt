@@ -42,7 +42,7 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
     session: LLFirSession,
     override val declarationProvider: KotlinDeclarationProvider,
     override val packageProvider: KotlinPackageProvider,
-) : LLKotlinSymbolProvider(session), LLPsiAwareSymbolProvider {
+) : LLKotlinSymbolProvider(session) {
     private val moduleData: LLFirModuleData get() = session.llFirModuleData
 
     /**

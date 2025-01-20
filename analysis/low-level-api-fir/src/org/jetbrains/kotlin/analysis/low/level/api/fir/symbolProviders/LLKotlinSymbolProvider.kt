@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.psi.KtProperty
  */
 internal abstract class LLKotlinSymbolProvider(session: FirSession) :
     FirSymbolProvider(session),
-    LLKnownClassDeclarationSymbolProvider<KtClassLikeDeclaration> {
+    LLKnownClassDeclarationSymbolProvider<KtClassLikeDeclaration>,
+    LLPsiAwareSymbolProvider {
     abstract val declarationProvider: KotlinDeclarationProvider
 
     abstract val packageProvider: KotlinPackageProvider
