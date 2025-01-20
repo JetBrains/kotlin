@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -35,6 +36,8 @@ class DefaultTypeCastSupport : TypeCastSupport {
         val classSymbol = targetType.toRegularClassSymbol(session) ?: return false
         val (constraintSystem, parametersToFreshVariables) = prepareConstraintsSystemForSubtypeArgumentsInference(
             type, classSymbol, session,
+            // We're going to continue using the same CS
+            addBoundsFromParameters = true,
         )
 
         // We haven't yet added any `targetType`-specific information into the CS, so a contradiction
@@ -122,6 +125,10 @@ class DefaultTypeCastSupport : TypeCastSupport {
     ): Array<ConeTypeProjection>? {
         val (constraintSystem, parametersToFreshVariables) = prepareConstraintsSystemForSubtypeArgumentsInference(
             supertype, subTypeClassSymbol, session,
+            // We're going to try "un-substituting" variables back, and recursive
+            // constraints could lead to infinite recursion in substitution.
+            // See: bareTypesWithStarProjections.kt
+            addBoundsFromParameters = false,
         )
 
         if (constraintSystem.hasContradiction) {
@@ -164,6 +171,7 @@ class DefaultTypeCastSupport : TypeCastSupport {
         supertype: ConeKotlinType,
         subTypeClassSymbol: FirRegularClassSymbol,
         session: FirSession,
+        addBoundsFromParameters: Boolean,
     ): SubtypeArgumentsInferenceData {
         val constraintSystem = session.inferenceComponents.createConstraintSystem()
 
@@ -172,6 +180,19 @@ class DefaultTypeCastSupport : TypeCastSupport {
         }
         val parametersToVariableTypes = parametersToFreshVariables.mapValues { it.value.defaultType }
         val subType = subTypeClassSymbol.constructType(parametersToVariableTypes.values.toTypedArray())
+        val parametersToVariablesSubstitutor = substitutorByMap(parametersToVariableTypes, session)
+
+        // Additional constraints from bounds may lead to more precise types and
+        // signal contradictions earlier, but because they may be recursive, we
+        // may not be able to "un-substitute" variables back in the end.
+        if (addBoundsFromParameters) {
+            for ((parameter, variable) in parametersToFreshVariables) {
+                for (bound in parameter.resolvedBounds) {
+                    val boundWithVariables = parametersToVariablesSubstitutor.substituteOrSelf(bound.coneType)
+                    constraintSystem.addSubtypeConstraint(variable.defaultType, boundWithVariables, SimpleConstraintSystemConstraintPosition)
+                }
+            }
+        }
 
         val supertypeComponents = when {
             supertype is ConeIntersectionType -> supertype.intersectedTypes
