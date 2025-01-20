@@ -122,7 +122,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::SpecialAccessLowering,
 )
 
-val jvmLoweringPhases = buildModuleLoweringsPhase(
+val jvmLoweringPhases = createModulePhases(
     ::ExternalPackageParentPatcherLowering,
     ::FragmentSharedVariablesLowering,
     ::JvmIrValidationBeforeLoweringPhase,
@@ -140,9 +140,7 @@ val jvmLoweringPhases = buildModuleLoweringsPhase(
     ::MarkNecessaryInlinedClassesAsRegeneratedLowering,
     ::InlinedClassReferencesBoxingLowering,
     ::RestoreInlineLambda,
-).then(
-    performByIrFile(jvmFilePhases)
-) then buildModuleLoweringsPhase(
+) + PerformByIrFilePhase(jvmFilePhases) + createModulePhases(
     ::GenerateMultifileFacades,
     ::ResolveInlineCalls,
     ::JvmIrValidationAfterLoweringPhase

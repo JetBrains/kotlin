@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-fun <Context : LoweringContext> performByIrFile(
-    lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
-): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> = PerformByIrFilePhase(lower)
-
 class PerformByIrFilePhase<Context : LoweringContext>(
     private val lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
 ) : SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>(name = "PerformByIrFilePhase") {
