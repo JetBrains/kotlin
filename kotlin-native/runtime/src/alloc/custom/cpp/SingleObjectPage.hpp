@@ -13,8 +13,9 @@
 #include "AnyPage.hpp"
 #include "AllocationSize.hpp"
 #include "AtomicStack.hpp"
-#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "CustomLogging.hpp"
+#include "CustomFinalizerProcessor.hpp"
 
 namespace kotlin::alloc {
 
@@ -22,19 +23,30 @@ class SingleObjectPage;
 
 class alignas(kPageAlignment) SingleObjectPage : public AnyPage<SingleObjectPage> {
 public:
-    using GCSweepScope = gc::GCHandle::GCSweepScope;
-
-    static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
 
     static SingleObjectPage* Create(uint64_t cellCount) noexcept;
-
-    void Destroy() noexcept;
 
     uint8_t* Data() noexcept;
 
     uint8_t* Allocate() noexcept;
 
-    bool SweepAndDestroy(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+    template<typename SweepTraits>
+    bool SweepAndDestroy(typename SweepTraits::GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
+        CustomAllocDebug("SingleObjectPage@%p::SweepAndDestroy()", this);
+        if (!SweepTraits::trySweepElement(Data(), finalizerQueue, sweepHandle)) {
+            return true;
+        }
+
+        Destroy<SweepTraits>();
+
+        return false;
+    }
+
+    template<typename SweepTraits>
+    void Destroy() noexcept {
+        auto objectSize = SweepTraits::elementSize(data_);
+        destroyImpl(objectSize);
+    }
 
     template <typename F>
     void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
@@ -47,6 +59,8 @@ private:
     explicit SingleObjectPage(AllocationSize objectSize) noexcept;
 
     static AllocationSize pageSize(AllocationSize objectSize) noexcept;
+
+    void destroyImpl(AllocationSize objectSize) noexcept;
 
     // Testing method
     std::vector<uint8_t*> GetAllocatedBlocks() noexcept;

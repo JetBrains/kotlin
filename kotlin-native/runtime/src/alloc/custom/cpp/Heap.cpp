@@ -15,7 +15,6 @@
 #include "AtomicStack.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
-#include "ExtraObjectPage.hpp"
 #include "GCApi.hpp"
 #include "Memory.h"
 #include "ThreadRegistry.hpp"
@@ -72,9 +71,10 @@ SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& 
     return singleObjectPages_.NewPage(cellCount);
 }
 
-ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept {
+FixedBlockPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("CustomAllocator::GetExtraObjectPage()");
-    return extraObjectPages_.GetPage(0, finalizerQueue, concurrentSweepersCount_);
+    auto cellCount = AllocationSize::bytesExactly(sizeof(ExtraObjectCell)).inCells();
+    return extraObjectPages_.GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);
 }
 
 void Heap::AddToFinalizerQueue(FinalizerQueue queue) noexcept {

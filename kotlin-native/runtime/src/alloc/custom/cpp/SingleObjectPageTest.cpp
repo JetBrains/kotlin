@@ -9,59 +9,44 @@
 #include "CustomAllocatorTestSupport.hpp"
 #include "gtest/gtest.h"
 
-#include "ExtraObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "SingleObjectPage.hpp"
 #include "TypeInfo.h"
+#include "GCApi.hpp"
+
+using namespace kotlin::alloc::test_support;
 
 using testing::_;
 
 namespace {
 
-using SingleObjectPage = typename kotlin::alloc::SingleObjectPage;
+constexpr auto kMinBlockSize = kotlin::alloc::NextFitPage::cellCount(); // FIXME??
 
-TypeInfo fakeType = {.typeInfo_ = &fakeType, .flags_ = 0}; // a type without a finalizer
-
-#define MIN_BLOCK_SIZE kotlin::alloc::NextFitPage::cellCount()
-
-void mark(void* obj) {
-    reinterpret_cast<uint64_t*>(obj)[0] = 1;
-}
-
-SingleObjectPage* alloc(uint64_t blockSize) {
-    SingleObjectPage* page = SingleObjectPage::Create(blockSize);
+auto alloc(uint64_t blockSize) {
+    auto* page = kotlin::alloc::SingleObjectPage::Create(blockSize);
     uint8_t* ptr = page->Allocate();
     EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, blockSize * 8 - 1) == 0);
-    reinterpret_cast<uint64_t*>(ptr)[1] = reinterpret_cast<uint64_t>(&fakeType);
-    return page;
+    auto objSize = kotlin::alloc::AllocationSize::cells(blockSize);
+    FakeObjectHeader* obj = new(ptr) FakeObjectHeader(objSize.inBytes());
+    return std::make_pair(page, obj);
 }
 
-TEST(CustomAllocTest, SingleObjectPageSweepEmptyPage) {
-    SingleObjectPage* page = alloc(MIN_BLOCK_SIZE);
-    EXPECT_TRUE(page);
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
-    EXPECT_FALSE(page->SweepAndDestroy(gcScope, finalizerQueue));
 }
 
-TEST(CustomAllocTest, SingleObjectPageSweepFullPage) {
-    SingleObjectPage* page = alloc(MIN_BLOCK_SIZE);
-    EXPECT_TRUE(page);
-    EXPECT_TRUE(page->Data());
-    mark(page->Data());
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
-    EXPECT_TRUE(page->SweepAndDestroy(gcScope, finalizerQueue));
+TEST_F(CustomAllocatorTest, SingleObjectPageSweepEmptyPage) {
+    auto [page, obj] = alloc(kMinBlockSize);
+    EXPECT_FALSE(page->SweepAndDestroy<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
+}
+
+TEST_F(CustomAllocatorTest, SingleObjectPageSweepFullPage) {
+    auto [page, obj] = alloc(kMinBlockSize);
+    obj->mark();
+    EXPECT_TRUE(page->SweepAndDestroy<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
 }
 
 TEST(CustomAllocTest, SingleObjectPageSchedulerNotification) {
     kotlin::alloc::test_support::WithSchedulerNotificationHook hookHandle;
     EXPECT_CALL(hookHandle.hook(), Call(_));
-    alloc(MIN_BLOCK_SIZE);
+    alloc(kMinBlockSize);
     testing::Mock::VerifyAndClearExpectations(&hookHandle.hook());
 }
-
-#undef MIN_BLOCK_SIZE
-} // namespace

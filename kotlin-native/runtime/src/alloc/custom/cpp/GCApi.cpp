@@ -19,7 +19,6 @@
 #include "CustomAllocator.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
-#include "ExtraObjectPage.hpp"
 #include "FinalizerHooks.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
@@ -27,20 +26,16 @@
 #include "Memory.h"
 
 namespace {
-
 std::atomic<size_t> allocatedBytesCounter;
-
 }
 
-namespace kotlin::alloc {
-
-bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
+bool kotlin::alloc::ObjectSweepTraits::trySweepElement(uint8_t* object, FinalizerQueue& finalizerQueue, ObjectSweepTraits::GCSweepScope& gcHandle) noexcept {
     auto* heapObject = reinterpret_cast<CustomHeapObject*>(object);
     auto size = CustomAllocator::GetAllocatedHeapSize(heapObject->object());
     if (gc::tryResetMark(heapObject->heapHeader())) {
         CustomAllocDebug("SweepObject(%p): still alive", heapObject);
         gcHandle.addKeptObject(size);
-        return true;
+        return false;
     }
     auto* extraObject = mm::ExtraObjectData::Get(heapObject->object());
     if (extraObject) {
@@ -59,47 +54,57 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
                 // The object must survive until the finalizers for it are finished.
                 gcHandle.addMarkedObject();
                 gcHandle.addKeptObject(size);
-                return true;
+                return false;
             }
             // The object has a finalizer, but all the data for it resides in `ExtraObjectData`. So, detach the object from it, and free it.
             extraObject->UnlinkFromBaseObject();
             CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObject);
             gcHandle.addSweptObject();
-            return false;
+            return true;
         }
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
             CustomAllocDebug("SweepObject(%p): already waiting to be finalized", heapObject);
             gcHandle.addMarkedObject();
             gcHandle.addKeptObject(size);
-            return true;
+            return false;
         }
         extraObject->UnlinkFromBaseObject();
         extraObject->setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }
     CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObject);
     gcHandle.addSweptObject();
-    return false;
-}
-
-bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExtraObjectsScope& gcHandle) noexcept {
-    if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE)) {
-        gcHandle.addSweptObject();
-        CustomAllocDebug("SweepExtraObject(%p): can be reclaimed", extraObject);
-        return false;
-    }
-    gcHandle.addKeptObject(sizeof(mm::ExtraObjectData));
-    CustomAllocDebug("SweepExtraObject(%p): is still needed", extraObject);
     return true;
 }
 
-void* SafeAlloc(uint64_t size) noexcept {
+kotlin::alloc::AllocationSize kotlin::alloc::ObjectSweepTraits::elementSize(uint8_t* data) {
+    auto* object = reinterpret_cast<kotlin::alloc::CustomHeapObject*>(data)->object();
+    return AllocationSize::bytesAtLeast(CustomAllocator::GetAllocatedHeapSize(object));
+}
+
+bool kotlin::alloc::ExtraDataSweepTraits::trySweepElement(uint8_t* element, FinalizerQueue&, ExtraDataSweepTraits::GCSweepScope& gcHandle) noexcept {
+    auto* extraObject = (reinterpret_cast<ExtraObjectCell*>(element))->Data();
+    if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE)) {
+        gcHandle.addSweptObject();
+        CustomAllocDebug("SweepExtraObject(%p): can be reclaimed", extraObject);
+        return true;
+    }
+    gcHandle.addKeptObject(sizeof(mm::ExtraObjectData));
+    CustomAllocDebug("SweepExtraObject(%p): is still needed", extraObject);
+    return false;
+}
+
+kotlin::alloc::AllocationSize kotlin::alloc::ExtraDataSweepTraits::elementSize(uint8_t*) {
+    return AllocationSize::bytesExactly(sizeof(ExtraObjectCell));
+}
+
+void* kotlin::alloc::SafeAlloc(uint64_t size) noexcept {
     if (size > std::numeric_limits<size_t>::max()) {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes. Aborting.\n", size);
         std::abort();
     }
     void* memory;
     bool error;
-    if (compiler::disableMmap()) {
+    if (kotlin::compiler::disableMmap()) {
         memory = calloc(size, 1);
         error = memory == nullptr;
     } else {
@@ -122,9 +127,9 @@ void* SafeAlloc(uint64_t size) noexcept {
     return memory;
 }
 
-void Free(void* ptr, size_t size) noexcept {
+void kotlin::alloc::Free(void* ptr, size_t size) noexcept {
     CustomAllocDebug("Free(%p, %zu)", ptr, size);
-    if (compiler::disableMmap()) {
+    if (kotlin::compiler::disableMmap()) {
         free(ptr);
     } else {
 #if KONAN_WINDOWS
@@ -137,8 +142,6 @@ void Free(void* ptr, size_t size) noexcept {
     allocatedBytesCounter.fetch_sub(static_cast<size_t>(size), std::memory_order_relaxed);
 }
 
-size_t GetAllocatedBytes() noexcept {
+size_t kotlin::alloc::GetAllocatedBytes() noexcept {
     return allocatedBytesCounter.load(std::memory_order_relaxed);
 }
-
-} // namespace kotlin::alloc

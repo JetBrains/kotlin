@@ -12,9 +12,7 @@
 
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
-#include "ExtraObjectPage.hpp"
 #include "KAssert.h"
-#include "SingleObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "Memory.h"
 #include "FixedBlockPage.hpp"
@@ -38,8 +36,8 @@ ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     auto& heapObject = *descriptor.construct(Allocate(size));
     ObjHeader* object = heapObject.object();
     if (typeInfo->flags_ & TF_HAS_FINALIZER) {
-        auto* extraObject = CreateExtraObject();
-        object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(new (extraObject) mm::ExtraObjectData(object, typeInfo));
+        auto* extraObject = CreateExtraObjectDataForObject(object, typeInfo);
+        object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(extraObject);
         CustomAllocDebug("CustomAllocator: %p gets extraObject %p", object, extraObject);
         CustomAllocDebug("CustomAllocator: %p->BaseObject == %p", extraObject, extraObject->GetBaseObject());
     } else {
@@ -60,32 +58,9 @@ ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t cou
     return array;
 }
 
-mm::ExtraObjectData* CustomAllocator::CreateExtraObject() noexcept {
-    CustomAllocDebug("CustomAllocator::CreateExtraObject()");
-    ExtraObjectPage* page = extraObjectPage_;
-    if (page) {
-        mm::ExtraObjectData* block = page->TryAllocate();
-        if (block) {
-            memset(block, 0, sizeof(mm::ExtraObjectData));
-            return block;
-        }
-    }
-    CustomAllocDebug("Failed to allocate in current ExtraObjectPage");
-    while ((page = heap_.GetExtraObjectPage(finalizerQueue_))) {
-        mm::ExtraObjectData* block = page->TryAllocate();
-        if (block) {
-            extraObjectPage_ = page;
-            memset(block, 0, sizeof(mm::ExtraObjectData));
-            return block;
-        }
-    }
-    return nullptr;
-}
-
-mm::ExtraObjectData& CustomAllocator::CreateExtraObjectDataForObject(
-        ObjHeader* baseObject, const TypeInfo* info) noexcept {
-    mm::ExtraObjectData* extraObject = CreateExtraObject();
-    return *new (extraObject) mm::ExtraObjectData(baseObject, info);
+mm::ExtraObjectData* CustomAllocator::CreateExtraObjectDataForObject(ObjHeader* baseObject, const TypeInfo* type) noexcept {
+    auto* extraObjectMemory = AllocateExtraObjectData();
+    return new (extraObjectMemory->data_) mm::ExtraObjectData(baseObject, type);
 }
 
 FinalizerQueue CustomAllocator::ExtractFinalizerQueue() noexcept {
@@ -149,6 +124,25 @@ uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept 
         uint8_t* block = page->TryAllocate();
         if (block) {
             fixedBlockPages_[cellCount] = page;
+            return block;
+        }
+    }
+    return nullptr;
+}
+
+ExtraObjectCell* CustomAllocator::AllocateExtraObjectData() noexcept {
+    CustomAllocDebug("CustomAllocator::AllocateExtraObjectData()");
+    auto* page = extraObjectPage_;
+    if (page) {
+        ExtraObjectCell* block = reinterpret_cast<ExtraObjectCell*>(page->TryAllocate());
+        if (block) return block;
+    }
+
+    CustomAllocDebug("Failed to allocate in current ExtraObjectPage");
+    while ((page = heap_.GetExtraObjectPage(finalizerQueue_))) {
+        ExtraObjectCell* block = reinterpret_cast<ExtraObjectCell*>(page->TryAllocate());
+        if (block) {
+            extraObjectPage_ = page;
             return block;
         }
     }

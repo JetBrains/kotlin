@@ -24,3 +24,18 @@ kotlin::alloc::test_support::WithSchedulerNotificationHook::~WithSchedulerNotifi
     setSchedulerNotificationHook(nullptr);
     mock = nullptr;
 }
+
+kotlin::alloc::ExtraObjectCell* kotlin::alloc::test_support::initExtraObjectCell(uint8_t* ptr) {
+    EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, kExtraObjCellSize.inBytes() - 1) == 0);
+    auto* extraObjCell = new(ptr) ExtraObjectCell();
+    new(extraObjCell->data_) kotlin::mm::ExtraObjectData(nullptr, nullptr);
+    return extraObjCell;
+}
+
+kotlin::alloc::ExtraObjectCell* kotlin::alloc::test_support::allocExtraObjectCell(kotlin::alloc::FixedBlockPage* page) {
+    uint8_t* ptr = page->TryAllocate();
+    if (ptr) {
+        return initExtraObjectCell(ptr);
+    }
+    return nullptr;
+}
