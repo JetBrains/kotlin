@@ -5,23 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLAmbiguousClassLikeSymbolCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -69,7 +72,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     extensionTool: LLFirResolveExtensionTool?,
     canContainKotlinPackage: Boolean,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
-) : LLKotlinSymbolProvider(session) {
+) : LLKotlinSymbolProvider(session), LLPsiAwareSymbolProvider {
     constructor(
         session: LLFirSession,
         moduleComponents: LLFirModuleResolveComponents,
@@ -107,21 +110,14 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         return getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration = null)
     }
 
-    override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
-        return getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration)
-    }
-
-    private val classifierCache: FirCache<ClassId, FirClassLikeSymbol<*>?, KtClassLikeDeclaration?> =
-        session.firCachesFactory.createCache { classId, context ->
-            computeClassLikeSymbolByClassId(classId, context)
-        }
+    override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
+        getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration)
 
     private fun getClassLikeSymbolByClassIdAndDeclaration(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration?,
     ): FirClassLikeSymbol<*>? {
-        if (classId.isLocal) return null
-        if (!allowKotlinPackage && classId.isKotlinPackage()) return null
+        if (!classId.isAccepted()) return null
         return classifierCache.getNotNullValueForNotNullContext(classId, classLikeDeclaration) { classId, context ->
             // To find out more about KT-62339, we're adding information about whether the declaration for the given class ID can *now* be
             // found by the declaration provider (or is still `null`), and whether the given context element is actually in the scope of the
@@ -139,16 +135,47 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         }
     }
 
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
+        if (!classId.isAccepted()) return null
+
+        return ambiguousClassLikeSymbolCache.getClassLikeSymbolByPsi<KtClassLikeDeclaration>(classId, declaration)
+    }
+
+    private fun ClassId.isAccepted(): Boolean = !isLocal && (allowKotlinPackage || !isKotlinPackage())
+
+    private val classifierCache: FirCache<ClassId, FirClassLikeSymbol<*>?, KtClassLikeDeclaration?> =
+        session.firCachesFactory.createCache { classId, context ->
+            computeClassLikeSymbolByClassId(classId, context)
+        }
+
     private fun computeClassLikeSymbolByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeSymbol<*>? {
         require(context == null || context.isPhysical)
         val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
 
         if (ktClass.getClassId() == null) return null
-        val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
-        return FirElementFinder.findClassifierWithClassId(firFile, classId)?.symbol
+        return findClassLikeSymbol(classId, ktClass) { FirElementFinder.findClassifierWithClassId(it, classId) }
+    }
+
+    private val ambiguousClassLikeSymbolCache =
+        LLAmbiguousClassLikeSymbolCache.withoutContext(this, moduleComponents.module.contentScope) { declaration ->
+            val classId = declaration.getClassId() ?: return@withoutContext null
+
+            findClassLikeSymbol(classId, declaration) { file ->
+                FirElementFinder.findDeclaration(file, declaration) as? FirClassLikeDeclaration
+            }
+        }
+
+    private inline fun findClassLikeSymbol(
+        classId: ClassId,
+        declaration: KtClassLikeDeclaration,
+        findFirElement: (FirFile) -> FirClassLikeDeclaration?,
+    ): FirClassLikeSymbol<*> {
+        val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(declaration.containingKtFile)
+        return findFirElement(firFile)?.symbol
             ?: errorWithAttachment("Classifier was found in KtFile but was not found in FirFile") {
                 withEntry("classifierClassId", classId) { it.asString() }
-                withVirtualFileEntry("virtualFile", ktClass.containingKtFile.virtualFile)
+                withPsiEntry("classifier", declaration, session.llFirModuleData.ktModule)
+                withVirtualFileEntry("virtualFile", declaration.containingKtFile.virtualFile)
             }
     }
 
