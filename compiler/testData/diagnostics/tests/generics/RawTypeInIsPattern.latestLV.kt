@@ -7,7 +7,7 @@ public fun foo(a: Any, b: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>) {
         is Map<out Any?, Any?> -> {}
         is <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>Map<*, *><!> -> {}
         is Map<<!SYNTAX!><!>> -> {}
-        is List<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>> -> {}
+        is <!CANNOT_CHECK_FOR_ERASED!>List<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>><!> -> {}
         is List -> {}
         is Int -> {}
         else -> {}

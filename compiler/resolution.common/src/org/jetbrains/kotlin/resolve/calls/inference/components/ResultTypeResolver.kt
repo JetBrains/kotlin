@@ -362,8 +362,11 @@ class ResultTypeResolver(
         return constraints.singleOrNull { it.kind.isLower() }?.isNullabilityConstraint ?: false
     }
 
-    private fun Context.findSubType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
-        val lowerConstraintTypes = prepareLowerConstraints(variableWithConstraints.constraints)
+    fun Context.findSubType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
+        findSubType(variableWithConstraints.constraints)
+
+    fun Context.findSubType(constraints: List<Constraint>): KotlinTypeMarker? {
+        val lowerConstraintTypes = prepareLowerConstraints(constraints)
 
         if (lowerConstraintTypes.isNotEmpty()) {
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
@@ -474,9 +477,12 @@ class ResultTypeResolver(
         }
     }
 
-    private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+    fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
+        findSuperType(variableWithConstraints.constraints)
+
+    fun Context.findSuperType(constraints: List<Constraint>): KotlinTypeMarker? {
         val upperConstraints =
-            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
+            constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
 
         if (upperConstraints.isNotEmpty()) {
             return computeUpperType(upperConstraints)
@@ -484,6 +490,7 @@ class ResultTypeResolver(
 
         return null
     }
+
 
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
         isProperTypeForFixation(type, notFixedTypeVariables.keys) { isProperType(it) }

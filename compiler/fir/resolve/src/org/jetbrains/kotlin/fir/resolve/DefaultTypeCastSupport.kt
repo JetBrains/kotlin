@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -46,7 +49,7 @@ class DefaultTypeCastSupport : TypeCastSupport {
         }
 
         for ((_, constraintsWithVariable) in constraintSystem.currentStorage().notFixedTypeVariables) {
-            val variable = constraintsWithVariable.typeVariable
+            val variable = constraintsWithVariable.typeVariable as ConeTypeVariable
             val variableIndex = parametersToFreshVariables.values.indexOf(variable)
             val argument = targetType.typeArguments[variableIndex]
             // The trivial constraints are always there, and we want to check the presence of those that may not be
@@ -70,11 +73,15 @@ class DefaultTypeCastSupport : TypeCastSupport {
                 }
                 TypeVariance.OUT -> {
                     val itType = equalityType ?: constraints.combinedUpperBound(session)
-                    constraintSystem.addSubtypeConstraint(itType, argumentType, SimpleConstraintSystemConstraintPosition)
+                    // "Fix" the variable to its own upper bound
+                    constraintSystem.addSubtypeConstraint(itType, variable.defaultType, SimpleConstraintSystemConstraintPosition)
+                    constraintSystem.addSubtypeConstraint(variable.defaultType, argumentType, SimpleConstraintSystemConstraintPosition)
                 }
                 TypeVariance.IN -> {
                     val itType = equalityType ?: constraints.combinedLowerBound(session)
-                    constraintSystem.addSubtypeConstraint(argumentType, itType, SimpleConstraintSystemConstraintPosition)
+                    // "Fix" the variable to its own lower bound
+                    constraintSystem.addSubtypeConstraint(variable.defaultType, itType, SimpleConstraintSystemConstraintPosition)
+                    constraintSystem.addSubtypeConstraint(argumentType, variable.defaultType, SimpleConstraintSystemConstraintPosition)
                 }
             }
 
@@ -130,6 +137,10 @@ class DefaultTypeCastSupport : TypeCastSupport {
         }
 
         val substitutorMap = mutableMapOf<TypeVariableMarker, ConeTypeProjection>()
+        val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(session.typeContext)
+        val resultTypeResolver = ResultTypeResolver(
+            session.typeApproximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings,
+        )
 
         for ((_, constraintsWithVariable) in constraintSystem.currentStorage().notFixedTypeVariables) {
             val variable = constraintsWithVariable.typeVariable
@@ -145,24 +156,24 @@ class DefaultTypeCastSupport : TypeCastSupport {
                 continue
             }
 
+            val combinedUpperBound = with(resultTypeResolver) { constraintSystem.findSuperType(constraints) }
+            val combinedLowerBound = with(resultTypeResolver) { constraintSystem.findSubType(constraints) }
             val (upperConstraints, lowerConstraints) = constraints.partition { it.kind == ConstraintKind.UPPER }
 
             substitutorMap[variable] = when {
-                upperConstraints.isNotEmpty() && lowerConstraints.isEmpty() -> {
-                    val combinedBound = session.typeContext.intersectTypes(upperConstraints.map { it.type })
-                    val satisfiesOtherBounds = upperConstraints.all { combinedBound.isSubtypeOf(session.typeContext, it.type) }
+                combinedUpperBound != null && combinedLowerBound == null -> {
+                    val satisfiesOtherBounds = upperConstraints.all { combinedUpperBound.isSubtypeOf(session.typeContext, it.type) }
 
                     when {
-                        satisfiesOtherBounds -> ConeKotlinTypeProjectionOut(combinedBound)
+                        satisfiesOtherBounds -> ConeKotlinTypeProjectionOut(combinedUpperBound as ConeKotlinType)
                         else -> ConeStarProjection
                     }
                 }
-                upperConstraints.isEmpty() && lowerConstraints.isNotEmpty() -> {
-                    val combinedBound = session.typeContext.commonSuperType(lowerConstraints.map { it.type })
-                    val satisfiesOtherBounds = lowerConstraints.all { it.type.isSubtypeOf(session.typeContext, combinedBound) }
+                combinedUpperBound == null && combinedLowerBound != null -> {
+                    val satisfiesOtherBounds = lowerConstraints.all { it.type.isSubtypeOf(session.typeContext, combinedLowerBound) }
 
                     when {
-                        satisfiesOtherBounds -> ConeKotlinTypeProjectionIn(combinedBound as ConeKotlinType)
+                        satisfiesOtherBounds -> ConeKotlinTypeProjectionIn(combinedLowerBound as ConeKotlinType)
                         else -> ConeStarProjection
                     }
                 }

@@ -8,7 +8,7 @@ public fun foo(a: Any) {
     a is Map<out Any?, Any?>
     a is Map<*, *>
     a is Map<<!SYNTAX!><!>>
-    a is List<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>>
+    a is <!CANNOT_CHECK_FOR_ERASED!>List<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>><!>
     a is List
     a is Int
 
