@@ -2158,6 +2158,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/kdoc/Simple.kt");
       }
 
+      @TestMetadata("TextLinkWithNewLine.kt")
+      public void testTextLinkWithNewLine() {
+        runTest("compiler/testData/psi/kdoc/TextLinkWithNewLine.kt");
+      }
+
       @TestMetadata("TextRightAfterLeadAsterisks.kt")
       public void testTextRightAfterLeadAsterisks() {
         runTest("compiler/testData/psi/kdoc/TextRightAfterLeadAsterisks.kt");

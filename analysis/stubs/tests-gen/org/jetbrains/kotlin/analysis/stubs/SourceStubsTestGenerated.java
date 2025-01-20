@@ -2432,6 +2432,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("TextLinkWithNewLine.kt")
+    public void testTextLinkWithNewLine() {
+      runTest("compiler/testData/psi/kdoc/TextLinkWithNewLine.kt");
+    }
+
+    @Test
     @TestMetadata("TextRightAfterLeadAsterisks.kt")
     public void testTextRightAfterLeadAsterisks() {
       runTest("compiler/testData/psi/kdoc/TextRightAfterLeadAsterisks.kt");
