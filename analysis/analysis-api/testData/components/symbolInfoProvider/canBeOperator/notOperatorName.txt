@@ -3,6 +3,7 @@ FUNCTION:
   annotations: []
   callableId: /A.something
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

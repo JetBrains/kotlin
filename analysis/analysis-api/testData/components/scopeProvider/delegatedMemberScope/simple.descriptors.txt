@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.zoo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -260,6 +261,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /I.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -301,6 +303,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /I.smth
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -389,6 +392,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -489,6 +493,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -678,6 +683,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.doo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

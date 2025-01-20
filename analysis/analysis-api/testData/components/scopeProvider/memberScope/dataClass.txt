@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Abc.firstProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -126,6 +127,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Abc.secondProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -226,6 +228,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Abc.thirdProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -302,6 +305,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.check
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -367,6 +371,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Abc.bodyProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -485,6 +490,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.component1
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -526,6 +532,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.component2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -567,6 +574,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.component3
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -608,6 +616,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.copy
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -737,6 +746,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.equals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -808,6 +818,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.hashCode
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -849,6 +860,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Abc.toString
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -940,6 +952,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Abc.firstProperty
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -1067,6 +1080,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Abc.secondProperty
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -1194,6 +1208,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Abc.thirdProperty
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []

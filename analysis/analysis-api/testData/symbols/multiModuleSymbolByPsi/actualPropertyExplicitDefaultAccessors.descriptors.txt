@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /variable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

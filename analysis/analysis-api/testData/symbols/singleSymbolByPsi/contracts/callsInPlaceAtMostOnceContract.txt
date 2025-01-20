@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /atMostOnceContract
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
     KaContractCallsInPlaceContractEffectDeclaration:

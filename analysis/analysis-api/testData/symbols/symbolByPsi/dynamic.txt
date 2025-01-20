@@ -25,6 +25,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Foo.p
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -122,6 +123,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /Foo.f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

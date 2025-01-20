@@ -52,6 +52,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /MyColor.x
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -179,6 +180,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /MyColor.y
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -306,6 +308,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /MyColor.z
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -490,6 +493,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Some.delegate
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -619,6 +623,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Some.lambda
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -729,6 +734,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Some.nonLazy
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

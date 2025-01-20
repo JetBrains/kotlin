@@ -5,6 +5,7 @@ callables: 1
     annotations: []
     callableId: /dummyTest
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true

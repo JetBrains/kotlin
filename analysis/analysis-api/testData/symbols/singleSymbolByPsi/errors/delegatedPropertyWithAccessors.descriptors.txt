@@ -25,6 +25,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /lazyProp
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

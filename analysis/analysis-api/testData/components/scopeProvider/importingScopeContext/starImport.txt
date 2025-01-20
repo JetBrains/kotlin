@@ -46,6 +46,7 @@ scopes:
         annotations: []
         callableId: other/b
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

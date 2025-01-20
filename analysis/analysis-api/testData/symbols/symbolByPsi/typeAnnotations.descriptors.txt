@@ -188,6 +188,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Anno5.s
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -358,6 +359,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /X.f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -462,6 +464,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /X.x
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -599,6 +602,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -699,6 +703,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -90,8 +91,8 @@ public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol
  * [KaNamedFunctionSymbol] represents a named [function declaration](https://kotlinlang.org/docs/functions.html), such as a top-level
  * function, a class method, or a named local function.
  */
-@OptIn(KaImplementationDetail::class)
-public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol, KaContextParameterOwnerSymbol {
     /**
      * Whether the function is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions).
      */

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
@@ -283,7 +284,8 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
 /**
  * [KaKotlinPropertySymbol] represents a *Kotlin* property symbol, in contrast to [KaSyntheticJavaPropertySymbol].
  */
-public abstract class KaKotlinPropertySymbol : KaPropertySymbol() {
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+public abstract class KaKotlinPropertySymbol : KaPropertySymbol(), KaContextParameterOwnerSymbol {
     /**
      * Whether the property is a [late-initialized property](https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables).
      */
@@ -402,10 +404,11 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
 }
 
 /**
- * [KaParameterSymbol] represents a value parameter or receiver parameter.
+ * [KaParameterSymbol] represents a value parameter, context parameter, or receiver parameter.
  *
  * @see KaValueParameterSymbol
  * @see KaReceiverParameterSymbol
+ * @see KaContextParameterSymbol
  */
 public sealed class KaParameterSymbol : KaVariableSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
@@ -422,6 +425,27 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     abstract override fun createPointer(): KaSymbolPointer<KaParameterSymbol>
+}
+
+/**
+ * [KaContextParameterSymbol] represents a context parameter of a [KaNamedFunctionSymbol] or [KaKotlinPropertySymbol].
+ *
+ * See [KEEP-367](https://github.com/Kotlin/KEEP/issues/367) for more details.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * context(stringContext: String)
+ * fun foo() { ... }
+ * ```
+ *
+ * The `stringContext` context parameter of `foo` would be represented by [KaContextParameterSymbol].
+ *
+ * @see KaCallableSymbol.contextParameters
+ */
+@KaExperimentalApi
+public abstract class KaContextParameterSymbol : KaParameterSymbol() {
+    abstract override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol>
 }
 
 /**

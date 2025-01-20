@@ -33,6 +33,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

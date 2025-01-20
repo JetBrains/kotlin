@@ -79,6 +79,7 @@ scopes:
           visibility: PRIVATE
         callableId: null
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -134,6 +135,7 @@ scopes:
         annotations: []
         callableId: null
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -165,6 +167,7 @@ scopes:
         annotations: []
         callableId: kotlin/Enum.clone
         compilerVisibility: Protected
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -196,6 +199,7 @@ scopes:
         annotations: []
         callableId: /E.compareTo
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -253,6 +257,7 @@ scopes:
         annotations: []
         callableId: kotlin/Enum.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -310,6 +315,7 @@ scopes:
         annotations: []
         callableId: kotlin/Enum.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -341,6 +347,7 @@ scopes:
         annotations: []
         callableId: kotlin/Enum.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -395,6 +402,7 @@ scopes:
           visibility: PRIVATE
         callableId: kotlin/Enum.name
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -470,6 +478,7 @@ scopes:
           visibility: PRIVATE
         callableId: kotlin/Enum.ordinal
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -525,6 +534,7 @@ scopes:
         annotations: []
         callableId: /E.getDeclaringClass
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -555,6 +565,7 @@ scopes:
         annotations: []
         callableId: kotlin/Enum.finalize
         compilerVisibility: ProtectedAndPackage
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -634,6 +645,7 @@ scopes:
         annotations: []
         callableId: /E.values
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -670,6 +682,7 @@ scopes:
         annotations: []
         callableId: /E.valueOf
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -728,6 +741,7 @@ scopes:
         backingFieldSymbol: null
         callableId: /E.entries
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -831,6 +845,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -888,6 +903,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -919,6 +935,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

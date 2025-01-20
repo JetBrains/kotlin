@@ -3,6 +3,7 @@ FUNCTION:
   annotations: []
   callableId: /A.plus
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

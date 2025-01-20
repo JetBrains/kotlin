@@ -31,6 +31,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

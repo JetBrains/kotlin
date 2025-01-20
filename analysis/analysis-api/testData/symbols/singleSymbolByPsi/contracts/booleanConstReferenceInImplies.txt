@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /booleanConstReferenceInImplies
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
     KaContractConditionalContractEffectDeclaration:

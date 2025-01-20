@@ -31,6 +31,7 @@ KaValueParameterSymbol:
       deprecationStatus: null
     callableId: pack/Anno.value
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []

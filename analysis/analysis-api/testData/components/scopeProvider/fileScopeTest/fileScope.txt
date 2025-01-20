@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /function
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -42,6 +43,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /functionWithDefault
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -133,6 +135,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /testVal
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -225,6 +228,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /initializedVariable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -402,6 +406,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /unitializedVariable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -579,6 +584,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /lateinitVariable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -756,6 +762,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /variableWithBackingField
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -933,6 +940,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /privateSetter
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -1113,6 +1121,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /jvmNameOnSetter
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -1293,6 +1302,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /customGetter
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -1388,6 +1398,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /jvmNameOnGetter
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -1483,6 +1494,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /propertyWithReceiver
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -1621,6 +1633,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /propertyWithGenericReceiver
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -1774,6 +1787,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /constant
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -1869,6 +1883,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /jvmField
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

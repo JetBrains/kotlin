@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /common
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -99,6 +100,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /value
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -175,6 +177,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /common
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -251,6 +254,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /value
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

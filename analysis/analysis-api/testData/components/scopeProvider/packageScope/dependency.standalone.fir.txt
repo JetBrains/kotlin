@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/fooApi3
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -39,6 +40,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalFooApi3
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -76,6 +78,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateFooApi3
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -113,6 +116,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/barApi3
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -173,6 +177,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalBarApi3
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -233,6 +238,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateBarApi3
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -293,6 +299,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/fooApi1
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -330,6 +337,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalFooApi1
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -367,6 +375,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateFooApi1
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -404,6 +413,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/barApi1
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -464,6 +474,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalBarApi1
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -524,6 +535,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateBarApi1
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -584,6 +596,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/fooApi2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -621,6 +634,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalFooApi2
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -658,6 +672,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateFooApi2
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -695,6 +710,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/barApi2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -755,6 +771,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalBarApi2
   compilerVisibility: Internal
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -815,6 +832,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateBarApi2
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

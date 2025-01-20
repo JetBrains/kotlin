@@ -107,6 +107,9 @@ internal class KaFe10PsiNamedFunctionSymbol(
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
 
+    override val contextParameters: List<KaContextParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
+
     override val isExtension: Boolean
         get() = withValidityAssertion { psi.isExtensionDeclaration() }
 

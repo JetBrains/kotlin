@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
@@ -44,3 +46,11 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
  */
 public val KaCallableSymbol.receiverType: KaType?
     get() = receiverParameter?.returnType
+
+/**
+ * @return a list of [KaContextParameterSymbol]s directly declared in the symbol.
+ */
+@KaExperimentalApi
+public val KaCallableSymbol.contextParameters: List<KaContextParameterSymbol>
+    @OptIn(KaImplementationDetail::class)
+    get() = (this as? KaContextParameterOwnerSymbol)?.contextParameters.orEmpty()

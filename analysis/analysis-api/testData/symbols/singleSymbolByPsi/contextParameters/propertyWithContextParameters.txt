@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: [
     KaContextReceiver:
       label: parameter1

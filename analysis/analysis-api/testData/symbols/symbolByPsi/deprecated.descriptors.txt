@@ -29,6 +29,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /i
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -121,6 +122,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /i2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -216,6 +218,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /i3
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -396,6 +399,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /i4
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -558,6 +562,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -656,6 +661,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /Foo.i2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -735,6 +741,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /Foo.f2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -834,6 +841,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /j
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -929,6 +937,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /j2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -1024,6 +1033,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /j3
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

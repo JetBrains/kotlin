@@ -66,6 +66,7 @@ scopes:
           visibility: PRIVATE
         callableId: test/Child.constructorProp
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -121,6 +122,7 @@ scopes:
         annotations: []
         callableId: test/Child.childMember
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -172,6 +174,7 @@ scopes:
           visibility: PRIVATE
         callableId: test/Child.childProp
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -247,6 +250,7 @@ scopes:
           visibility: PRIVATE
         callableId: test/Base.value
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -302,6 +306,7 @@ scopes:
         annotations: []
         callableId: test/Base.baseMember
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -353,6 +358,7 @@ scopes:
           visibility: PRIVATE
         callableId: test/Base.baseProp
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -408,6 +414,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -465,6 +472,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -496,6 +504,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -574,6 +583,7 @@ scopes:
                 visibility: PRIVATE
               callableId: test/Child.constructorProp
               compilerVisibility: Public
+              contextParameters: []
               contextReceivers: []
               getter: KaPropertyGetterSymbol:
                 annotations: []

@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.property
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -126,6 +127,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.constProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -229,6 +231,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.staticProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -332,6 +335,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.fieldProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -432,6 +436,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.variable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -624,6 +629,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.staticVariable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -816,6 +822,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.fieldVariable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
