@@ -41,6 +41,7 @@ internal class FirErrorPropertyImpl(
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
     override val name: Name,
+    override var initializer: FirExpression?,
     override var backingField: FirBackingField?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val diagnostic: ConeDiagnostic,
@@ -51,8 +52,6 @@ internal class FirErrorPropertyImpl(
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)
     override val receiverParameter: FirReceiverParameter?
-        get() = null
-    override val initializer: FirExpression?
         get() = null
     override val delegate: FirExpression?
         get() = null
@@ -74,6 +73,7 @@ internal class FirErrorPropertyImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         contextParameters.forEach { it.accept(visitor, data) }
+        initializer?.accept(visitor, data)
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
@@ -82,6 +82,7 @@ internal class FirErrorPropertyImpl(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformContextParameters(transformer, data)
+        transformInitializer(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -111,6 +112,7 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
+        initializer = initializer?.transform(transformer, data)
         return this
     }
 
@@ -159,7 +161,9 @@ internal class FirErrorPropertyImpl(
         contextParameters = newContextParameters.toMutableOrEmpty()
     }
 
-    override fun replaceInitializer(newInitializer: FirExpression?) {}
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        initializer = newInitializer
+    }
 
     override fun replaceDelegate(newDelegate: FirExpression?) {}
 

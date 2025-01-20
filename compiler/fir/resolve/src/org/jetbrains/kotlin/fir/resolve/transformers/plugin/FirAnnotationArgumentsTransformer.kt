@@ -294,6 +294,23 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
         return property
     }
 
+    @OptIn(PrivateForInline::class)
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: ResolutionMode): FirErrorProperty {
+        context.withContainer(errorProperty) {
+            errorProperty
+                .transformTypeParameters(transformer, data)
+                .transformAnnotations(transformer, data)
+                .transformReceiverParameter(transformer, data)
+                .transformReturnTypeRef(transformer, data)
+                .transformGetter(transformer, data)
+                .transformSetter(transformer, data)
+                .transformBackingField(transformer, data)
+                .transformContextParameters(transformer, data)
+        }
+
+        return errorProperty
+    }
+
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: ResolutionMode

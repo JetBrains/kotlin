@@ -128,6 +128,24 @@ open class FirDeclarationsResolveTransformer(
         return danglingModifierList
     }
 
+    @OptIn(PrivateForInline::class)
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: ResolutionMode): FirErrorProperty {
+        if (implicitTypeOnly) return errorProperty // ???
+
+        val returnTypeRefBeforeResolve = errorProperty.returnTypeRef
+        return withFullBodyResolve {
+            context.withContainer(errorProperty) {
+                context.forPropertyInitializer {
+                    val resolutionMode = withExpectedType(returnTypeRefBeforeResolve)
+                    errorProperty.transformReturnTypeRef(transformer, resolutionMode)
+                        .transformInitializer(transformer, resolutionMode)
+                }
+            }
+
+            errorProperty
+        }
+    }
+
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(session, property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
 

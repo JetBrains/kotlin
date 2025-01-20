@@ -238,6 +238,13 @@ private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     }
 }
 
+private fun calculateLazyBodyForErrorProperty(designation: FirDesignation) {
+    val errorProperty = designation.target as FirErrorProperty
+    require(needCalculatingLazyBodyForErrorProperty(errorProperty))
+    val recreatedErrorProperty = revive<FirErrorProperty>(designation, errorProperty.originalPsi)
+    replaceLazyInitializer(errorProperty, recreatedErrorProperty)
+}
+
 private fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designation: FirDesignation) {
     val newInitializer = revive<FirAnonymousInitializer>(designation)
     val body = newInitializer.body
@@ -632,6 +639,9 @@ private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolea
             || firProperty.delegate is FirLazyExpression
             || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
 
+private fun needCalculatingLazyBodyForErrorProperty(errorProperty: FirErrorProperty): Boolean =
+    errorProperty.initializer is FirLazyExpression
+
 private fun calculateLazyBodyForCodeFragment(designation: FirDesignation) {
     val codeFragment = designation.target as FirCodeFragment
     require(codeFragment.block is FirLazyBlock)
@@ -723,6 +733,15 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
         }
 
         return property
+    }
+
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: PersistentList<FirDeclaration>): FirErrorProperty {
+        if (needCalculatingLazyBodyForErrorProperty(errorProperty)) {
+            val designation = FirDesignation(data, errorProperty)
+            calculateLazyBodyForErrorProperty(designation)
+        }
+
+        return errorProperty
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
