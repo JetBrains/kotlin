@@ -13,7 +13,7 @@ class Outer<E> {
             x.prop.checkType { _<E>() }
         }
 
-        if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) return
+        if (y is Inner) return
 
         if (z is Inner) {
             z.prop.checkType { _<Any?>() }
@@ -27,7 +27,7 @@ class Outer<E> {
 
     fun bar(x: InnerBase<String>, y: Any?, z: Outer<*>.InnerBase<String>) {
         x as Inner
-        y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>
+        y as Inner
         z as Inner
     }
 }

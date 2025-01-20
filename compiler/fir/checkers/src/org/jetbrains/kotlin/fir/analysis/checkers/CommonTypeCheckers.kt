@@ -25,6 +25,7 @@ object CommonTypeCheckers : TypeCheckers() {
         FirContextReceiversTypeChecker,
         FirContextReceiversDeprecatedTypeChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinTypeChecker,
+        FirUnsafeDowncastWrtVarianceTypeChecker,
         FirProjectionRelationChecker,
         FirCommonAtomicReferenceToPrimitiveTypeChecker,
         FirArrayOfNothingTypeChecker,

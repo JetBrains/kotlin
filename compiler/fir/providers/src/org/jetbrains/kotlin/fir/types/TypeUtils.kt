@@ -207,6 +207,8 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
     } as T
 }
 
+fun <T : ConeKotlinType> T.withAdditionalAttribute(attribute: ConeAttribute<*>): T = withAttributes(attributes.add(attribute))
+
 /**
  * Adds or replaces an `AbbreviatedTypeAttribute`.
  */

@@ -707,6 +707,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_DOWNCAST_WRT_VARIANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_CALL
@@ -2598,6 +2599,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING,
             "This check for instance of erased type ''{0}'' will be prohibited in future releases.",
+            RENDER_TYPE,
+        )
+        map.put(
+            UNSAFE_DOWNCAST_WRT_VARIANCE,
+            "This type is currently considered as ''{0}'' but will become ''{1}'' in future releases.",
+            RENDER_TYPE,
             RENDER_TYPE,
         )
         map.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed.")

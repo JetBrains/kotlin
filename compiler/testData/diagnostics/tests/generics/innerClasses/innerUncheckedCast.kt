@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
+// LATEST_LV_DIFFERENCE
 
 class Outer<E> {
     inner open class InnerBase<F>

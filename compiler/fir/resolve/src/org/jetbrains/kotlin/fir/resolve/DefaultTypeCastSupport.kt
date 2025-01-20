@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker.effectiveVariance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.TypeVariance
 
 /**
@@ -98,6 +99,65 @@ class DefaultTypeCastSupport : TypeCastSupport {
             filtered.isNotEmpty() -> session.typeContext.commonSuperType(filtered)
             else -> session.builtinTypes.nothingType.coneType
         }
+    }
+
+    override fun findStaticallyKnownSubtype(
+        supertype: ConeKotlinType,
+        subTypeClassSymbol: FirRegularClassSymbol,
+        isSubTypeMarkedNullable: Boolean,
+        attributes: ConeAttributes,
+        session: FirSession,
+    ): ConeKotlinType? {
+        return subTypeClassSymbol.constructType(
+            typeArguments = approximateStaticallyKnownSubtypeArguments(supertype, subTypeClassSymbol, session) ?: return null,
+            isMarkedNullable = isSubTypeMarkedNullable,
+            attributes = attributes,
+        )
+    }
+
+    private fun approximateStaticallyKnownSubtypeArguments(
+        supertype: ConeKotlinType,
+        subTypeClassSymbol: FirRegularClassSymbol,
+        session: FirSession,
+    ): Array<ConeTypeProjection>? {
+        val (constraintSystem, parametersToFreshVariables) = prepareConstraintsSystemForSubtypeArgumentsInference(
+            supertype, subTypeClassSymbol, session,
+        )
+
+        if (constraintSystem.hasContradiction) {
+            return null
+        }
+
+        val substitutorMap = mutableMapOf<TypeVariableMarker, ConeTypeProjection>()
+
+        for ((_, constraintsWithVariable) in constraintSystem.currentStorage().notFixedTypeVariables) {
+            val variable = constraintsWithVariable.typeVariable
+            // The trivial constraints are always there, and we want to check the presence of those that may not be
+            val constraints = constraintsWithVariable.constraints.filterNot(constraintSystem::isTrivial)
+
+            constraints.firstOrNull { it.kind == ConstraintKind.EQUALITY }?.let {
+                substitutorMap[variable] = it.type as ConeKotlinType
+                continue
+            }
+
+            val (upperConstraints, lowerConstraints) = constraints.partition { it.kind == ConstraintKind.UPPER }
+
+            when {
+                upperConstraints.isNotEmpty() && lowerConstraints.isEmpty() -> substitutorMap[variable] = session.typeContext
+                    .intersectTypes(upperConstraints.map { it.type })
+                    .let { ConeKotlinTypeProjectionOut(it) }
+                upperConstraints.isEmpty() && lowerConstraints.isNotEmpty() -> substitutorMap[variable] = session.typeContext
+                    .commonSuperType(lowerConstraints.map { it.type })
+                    .let { ConeKotlinTypeProjectionIn(it as ConeKotlinType) }
+                // If both are empty, then this is correct, if both are not, then there's no
+                // obvious way how we should fix the variable, so we choose to be conservative.
+                else -> substitutorMap[variable] = ConeStarProjection
+            }
+        }
+
+        return parametersToFreshVariables.values
+            .map { substitutorMap[it] ?: error("Variable $it has not been fixed to anything") }
+            .toTypedArray()
     }
 
     private fun prepareConstraintsSystemForSubtypeArgumentsInference(

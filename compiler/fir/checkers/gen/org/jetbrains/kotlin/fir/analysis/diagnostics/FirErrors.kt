@@ -806,6 +806,7 @@ object FirErrors {
 
     // Casts and is-checks
     val CANNOT_CHECK_FOR_ERASED: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("CANNOT_CHECK_FOR_ERASED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val UNSAFE_DOWNCAST_WRT_VARIANCE: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UNSAFE_DOWNCAST_WRT_VARIANCE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val CAST_NEVER_SUCCEEDS: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAST_NEVER_SUCCEEDS", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class)
     val USELESS_CAST: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_CAST", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class)

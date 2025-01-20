@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -34,14 +36,21 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
         return computeRepresentativeTypeForBareType(type, it)
     }
 
-    val originalClassLookupTag = originalType.fullyExpandedType(session).classLikeLookupTagIfAny ?: return null
-
     val castTypeAlias = type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toTypeAliasSymbol(session)?.fir
     if (castTypeAlias != null && !canBeUsedAsBareType(castTypeAlias)) return null
 
     val expandedCastType = type.fullyExpandedType(session)
     val castClass = expandedCastType.lookupTag.toRegularClassSymbol(session)?.fir ?: return null
 
+    val properStaticallyKnownType = session.typeCastSupport.findStaticallyKnownSubtype(
+        originalType, castClass.symbol, expandedCastType.isMarkedNullable, expandedCastType.attributes, session
+    )
+
+    if (session.languageVersionSettings.supportsFeature(LanguageFeature.SaferGenericDowncastsWrtVariance)) {
+        return properStaticallyKnownType
+    }
+
+    val originalClassLookupTag = originalType.fullyExpandedType(session).classLikeLookupTagIfAny ?: return null
     val superTypeWithParameters = with(session.typeContext) {
         val correspondingSupertype = AbstractTypeChecker.findCorrespondingSupertypes(
             newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
@@ -59,7 +68,16 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     if (!session.doUnify(originalType, superTypeWithParameters, typeParameters, substitution)) return null
 
     val newArguments = castClass.typeParameters.map { substitution[it.symbol] ?: return@computeRepresentativeTypeForBareType null }
-    return expandedCastType.withArguments(newArguments.toTypedArray())
+    val staticallyKnownType = expandedCastType.withArguments(newArguments.toTypedArray())
+
+    fun areEquivalent(a: ConeKotlinType, b: ConeKotlinType) =
+        a.isSubtypeOf(session.typeContext, b) && b.isSubtypeOf(session.typeContext, a)
+
+    return when {
+        properStaticallyKnownType == null -> staticallyKnownType
+        areEquivalent(staticallyKnownType, properStaticallyKnownType) -> staticallyKnownType
+        else -> staticallyKnownType.withAdditionalAttribute(UnsafeDowncastWrtVarianceAttribute(properStaticallyKnownType))
+    }
 }
 
 private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
