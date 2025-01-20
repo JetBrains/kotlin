@@ -354,7 +354,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @NativeGradlePluginTests
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
-//    @Disabled("[KT-66423](http://youtrack.jetbrains.com/issue/KT-66423): ignore test until source-value changes are made")
+    @Disabled("[KT-66423](http://youtrack.jetbrains.com/issue/KT-66423): ignore test until source-value changes are made")
     fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
         nativeProject(
             "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
