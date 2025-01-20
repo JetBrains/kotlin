@@ -398,9 +398,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 result = newType.unusableClassifier
             }
 
-            dispatchReceiverParameter?.fixType() // The dispatcher (aka this) is intentionally the first one.
-            extensionReceiverParameter?.fixType()
-            valueParameters.forEach { it.fixType() }
+            parameters.forEach { it.fixType() }
 
             returnType.toPartiallyLinkedMarkerTypeOrNull()?.let { newReturnType ->
                 returnType = newReturnType
@@ -633,9 +631,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 else -> when (symbol) {
                     is IrFunctionSymbol -> with(symbol.owner) {
-                        dispatchReceiverParameter?.type?.precalculatedUnusableClassifier()
-                            ?: extensionReceiverParameter?.type?.precalculatedUnusableClassifier()
-                            ?: valueParameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
+                        parameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
                             ?: returnType.precalculatedUnusableClassifier()
                             ?: typeParameters.firstNotNullOfOrNull { it.superTypes.precalculatedUnusableClassifier() }
                     }
@@ -1088,9 +1084,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext
                 if (!function.isInline && !function.isInlineArrayConstructor()) return@withContext oldContext
 
-                fun IrValueParameter?.canHaveNonLocalReturns(): Boolean = this != null && !isCrossinline && !isNoinline
-
-                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.valueParameters.size + 1)
+                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.parameters.size + 1)
 
                 fun IrExpression?.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns() {
                     // TODO drop this `if` after KT-72441 and KT-72777 are fixed
@@ -1106,13 +1100,11 @@ internal class PartiallyLinkedIrTreePatcher(
                         }
                     )
                 }
-
-                if (function.extensionReceiverParameter.canHaveNonLocalReturns())
-                    expression.extensionReceiver.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
-
-                function.valueParameters.forEachIndexed { index, valueParameter ->
-                    if (valueParameter.canHaveNonLocalReturns())
-                        expression.getValueArgument(index).countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                for (param in function.parameters) {
+                    if (!param.isCrossinline && !param.isNoinline) {
+                        // the argument can have non-local returns
+                        expression.arguments[param].countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                    }
                 }
 
                 if (inlinedLambdaArgumentsWithPermittedNonLocalReturns.isEmpty())

@@ -315,8 +315,8 @@ open class IrFileSerializer(
     // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
         annotations.map {
-            for (index in 0 until it.valueArgumentsCount) {
-                it.getValueArgument(index)?.let { param ->
+            for (param in it.arguments) {
+                if (param != null) {
                     require(param.isValidConstantAnnotationArgument()) {
                         "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${param.render()}"
                     }
@@ -1554,5 +1554,4 @@ open class IrFileSerializer(
 internal fun IrElement.isValidConstantAnnotationArgument(): Boolean =
     this is IrConst || this is IrGetEnumValue || this is IrClassReference ||
             (this is IrVararg && elements.all { it.isValidConstantAnnotationArgument() }) ||
-            (this is IrConstructorCall &&
-                    (0 until valueArgumentsCount).all { getValueArgument(it)?.isValidConstantAnnotationArgument() ?: true })
+            (this is IrConstructorCall && arguments.all { it?.isValidConstantAnnotationArgument() ?: true })

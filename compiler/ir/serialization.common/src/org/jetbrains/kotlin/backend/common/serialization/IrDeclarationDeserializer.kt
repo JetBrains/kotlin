@@ -395,7 +395,7 @@ class IrDeclarationDeserializer(
         // This code will be unnecessary as soon as klibs compiled with Kotlin 1.5.20 are no longer supported.
         val ctor = irClass.primaryConstructor ?: error("Inline class has no primary constructor: ${irClass.render()}")
         val parameter =
-            ctor.valueParameters.singleOrNull() ?: error("Failed to get single parameter of inline class constructor: ${ctor.render()}")
+            ctor.parameters.singleOrNull() ?: error("Failed to get single parameter of inline class constructor: ${ctor.render()}")
         return InlineClassRepresentation(parameter.name, parameter.type as IrSimpleType)
     }
 

@@ -83,7 +83,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         val deserializedBody: IrBody? = deserializedFunction.body
         check(deserializedBody != null) { "Deserialized inline function has no body: $functionSignature" }
 
-        val deserializedDefaultValues: List<IrExpressionBody?> = deserializedFunction.valueParameters.map(IrValueParameter::defaultValue)
+        val deserializedDefaultValues: List<IrExpressionBody?> = deserializedFunction.parameters.map(IrValueParameter::defaultValue)
 
         // Collect value parameter symbols that are referenced inside the deserialized function body, but point to value parameters
         // of the deserialized function or one of it's containing classes (i.e., instance receiver value parameter).
@@ -124,7 +124,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         defaultValuesWithRemappedSymbols.forEach { it?.patchDeclarationParents(function) }
 
         function.body = bodyWithRemappedSymbols
-        function.valueParameters.forEachIndexed { index, parameter -> parameter.defaultValue = defaultValuesWithRemappedSymbols[index] }
+        function.parameters.forEachIndexed { index, parameter -> parameter.defaultValue = defaultValuesWithRemappedSymbols[index] }
     }
 
     private fun referencePublicSymbol(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
@@ -206,12 +206,7 @@ private fun collectExternalValueParameterSymbolsToRemap(
 ): Map<IrValueParameterSymbol, IrValueParameterSymbol> {
     class ValueParameterSymbolsToRemapForSingleDeclaration(val declaration: IrDeclaration) {
         val symbols = when (declaration) {
-            is IrFunction -> buildList {
-                // TODO: replace by `declaration.parameters.map { it.symbol }`
-                addIfNotNull(declaration.dispatchReceiverParameter?.symbol)
-                addIfNotNull(declaration.extensionReceiverParameter?.symbol)
-                declaration.valueParameters.mapTo(this) { it.symbol }
-            }
+            is IrFunction -> declaration.parameters.map { it.symbol }
             is IrClass -> listOfNotNull(declaration.thisReceiver?.symbol)
             else -> emptyList()
         }

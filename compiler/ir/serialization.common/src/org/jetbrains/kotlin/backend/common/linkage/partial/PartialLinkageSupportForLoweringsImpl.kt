@@ -72,7 +72,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
             typeArgumentsCount = 0,
             origin = IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
         ).apply {
-            putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage))
+            arguments[0] = IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage)
         }
     }
 

@@ -155,7 +155,7 @@ internal class ClassifierExplorer(
     }
 
     private fun IrConstructor.exploreAnnotationConstructor(visitedSymbols: MutableSet<IrClassifierSymbol>): Unusable? {
-        return valueParameters.firstUnusable { valueParameter ->
+        return parameters.firstUnusable { valueParameter ->
             valueParameter.type.exploreType(visitedSymbols).asUnusable()
                 ?: valueParameter.exploreAnnotationConstructorParameter(visitedSymbols, annotationClass = parentAsClass)
         }
