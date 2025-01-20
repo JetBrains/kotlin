@@ -47,7 +47,9 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
     fun processModule(module: TestModule) {
         if (!processedModules.add(module)) return
         for (testFile in module.files) {
-            val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"] ?: continue
+            val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"]
+                ?: ktDiagnosticReporter.diagnosticsByFilePath[testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile).canonicalPath]
+                ?: continue
             ktDiagnostics.forEach {
                 if (diagnosticsService.shouldRenderDiagnostic(module, it.factoryName, it.severity)) {
                     val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)

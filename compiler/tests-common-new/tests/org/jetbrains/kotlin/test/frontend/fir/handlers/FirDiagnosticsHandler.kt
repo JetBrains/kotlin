@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
+import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedJvmOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -73,6 +74,7 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.io.File
 
 class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
@@ -637,20 +639,40 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module)
             val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-            result += platformPart.session.runCheckers(
-                platformPart.scopeSession,
-                allFiles,
-                DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                mppCheckerKind = MppCheckerKind.Platform
-            ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+            when (info) {
+                is FirCliBasedJvmOutputArtifact -> {
+                    val diagnosticsCollector = info.cliArtifact.diagnosticCollector
+                    val diagnosticsPerFirFile = buildMap {
+                        for ((filePath, diagnostics) in diagnosticsCollector.diagnosticsByFilePath) {
+                            if (filePath == null) continue
+                            val firFile = allFiles.first { it.sourceFile?.path == filePath }
+                            put(firFile, diagnostics)
+                        }
+                    }
+                    result += diagnosticsPerFirFile.convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                }
+                else -> {
+                    result += platformPart.session.runCheckers(
+                        platformPart.scopeSession,
+                        allFiles,
+                        DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                        mppCheckerKind = MppCheckerKind.Platform
+                    ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
 
-            for (part in info.partsForDependsOnModules) {
-                result += part.session.runCheckers(
-                    part.scopeSession,
-                    part.firFiles.values,
-                    DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                    mppCheckerKind = MppCheckerKind.Common
-                ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                    for (part in info.partsForDependsOnModules) {
+                        result += part.session.runCheckers(
+                            part.scopeSession,
+                            part.firFiles.values,
+                            DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                            mppCheckerKind = MppCheckerKind.Common
+                        ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                    }
+
+
+                    for (part in info.partsForDependsOnModules) {
+                        collectSyntaxDiagnostics(part, result)
+                    }
+                }
             }
 
             for (part in info.partsForDependsOnModules.dropLast(1)) {
@@ -662,10 +684,6 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         mppCheckerKind = MppCheckerKind.Platform
                     ).convertToTestDiagnostics(KmpCompilationMode.METADATA)
                 }
-            }
-
-            for (part in info.partsForDependsOnModules) {
-                collectSyntaxDiagnostics(part, result)
             }
 
             val lostDiagnostics = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()

@@ -34,6 +34,7 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
             val lightTreeEnabled = currentModule.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
             for (file in currentModule.files) {
                 val diagnostics = diagnosticsByFilePath["/" + file.relativePath]
+                    ?: diagnosticsByFilePath[testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file).canonicalPath]
                 if (diagnostics != null && diagnostics.isNotEmpty()) {
                     val diagnosticsMetadataInfos =
                         diagnostics.diagnosticCodeMetaInfos(

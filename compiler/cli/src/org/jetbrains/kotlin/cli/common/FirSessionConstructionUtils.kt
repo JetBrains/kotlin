@@ -311,7 +311,11 @@ object SessionConstructionUtils {
         createSourceSession: FirSessionProducer<F>,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings
-        val (scripts, nonScriptFiles) = files.partition(isScript)
+        val (scripts, nonScriptFiles) = when (configuration.dontCreateSeparateSessionForScripts) {
+            false -> files.partition(isScript)
+            // only in tests mode
+            true -> emptyList<F>() to files
+        }
 
         val isMppEnabled = languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
         val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)

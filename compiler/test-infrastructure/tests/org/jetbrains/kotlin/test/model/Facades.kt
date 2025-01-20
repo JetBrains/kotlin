@@ -40,9 +40,9 @@ abstract class FrontendFacade<FrontendOutputArtifact>(
         return testServices.defaultsProvider.frontendKind == outputKind
     }
 
-    abstract fun analyze(module: TestModule): FrontendOutputArtifact
+    abstract fun analyze(module: TestModule): FrontendOutputArtifact?
 
-    final override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): FrontendOutputArtifact {
+    final override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): FrontendOutputArtifact? {
         // TODO: pass sources
         return analyze(module)
     }

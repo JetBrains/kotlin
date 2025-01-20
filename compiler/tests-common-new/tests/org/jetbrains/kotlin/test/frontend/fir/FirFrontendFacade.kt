@@ -459,7 +459,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             }
         }
 
-        private fun shouldRunFirFrontendFacade(
+        fun shouldRunFirFrontendFacade(
             module: TestModule,
             testServices: TestServices,
         ): Boolean {

@@ -9,6 +9,11 @@ import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.moduleChunk
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -16,6 +21,8 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.platform.isMultiPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -245,6 +252,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
 
+        setupK2CliConfiguration(module, configuration)
+
         val javaFiles = module.javaFiles.ifEmpty { return }
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
         val javaModuleInfoFiles = javaFiles.filter { it.name == MODULE_INFO_FILE }
@@ -275,6 +284,34 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                         assertions = JUnit5Assertions,
                         useJava11 = registeredDirectives[JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11,
                     )
+                )
+            }
+        }
+    }
+
+    private fun setupK2CliConfiguration(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
+        if (!testServices.cliBasedFacadesEnabled) return
+        val outputDir = testServices.compiledClassesManager.getOutputDirForModule(module)
+        configuration.moduleChunk = ModuleChunk(
+            listOf(
+                ModuleBuilder(
+                    name = module.name,
+                    outputDir = outputDir.canonicalPath,
+                    type = "test-module",
+                )
+            )
+        )
+        configuration.outputDirectory = outputDir
+
+        val isMppCompilation = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+        for (mppModule in module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)) {
+            for (file in mppModule.kotlinFiles) {
+                configuration.addKotlinSourceRoot(
+                    path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file).canonicalPath,
+                    hmppModuleName = runIf(isMppCompilation) { mppModule.name }
                 )
             }
         }

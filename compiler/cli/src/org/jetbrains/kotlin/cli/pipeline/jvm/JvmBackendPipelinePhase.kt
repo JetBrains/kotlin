@@ -40,6 +40,10 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
     )
 ) {
     override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBinaryPipelineArtifact? {
+        return executePhase(input, ignoreErrors = false)
+    }
+
+    fun executePhase(input: JvmFir2IrPipelineArtifact, ignoreErrors: Boolean): JvmBinaryPipelineArtifact? {
         val (fir2IrResult, configuration, environment, diagnosticCollector, allSourceFiles, mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val project = environment.project
@@ -116,8 +120,6 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
             mainClassFqName
         )
 
-        if (!success) return null
-
-        return JvmBinaryPipelineArtifact(outputs)
+        return JvmBinaryPipelineArtifact(outputs).takeIf { success || ignoreErrors }
     }
 }

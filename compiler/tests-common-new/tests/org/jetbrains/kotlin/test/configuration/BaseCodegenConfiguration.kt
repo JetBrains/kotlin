@@ -198,12 +198,14 @@ fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersF
 /**
  * Add JVM artifact handlers usually used in codegen tests
  */
-fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest() {
+fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
     useHandlers(
         ::JvmBackendDiagnosticsHandler,
-        ::NoJvmSpecificCompilationErrorsHandler,
         ::DxCheckerHandler,
     )
+    if (includeNoCompilationErrorsHandler) {
+        useHandlers(::NoJvmSpecificCompilationErrorsHandler)
+    }
 }
 
 /**
