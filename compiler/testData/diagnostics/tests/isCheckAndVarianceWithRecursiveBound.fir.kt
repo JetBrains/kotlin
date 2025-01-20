@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-7972
 // WITH_STDLIB
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
@@ -6,7 +6,7 @@
 interface RecList<E : List<E>>
 interface Box<T : List<T>> : RecList<T>
 
-fun f2(a: RecList<*>) = a is <!CANNOT_CHECK_FOR_ERASED!>Box<out List<Int>><!>
+fun f2(a: RecList<*>) = a is Box<out List<Int>>
 
 // For a new fresh variable `Var(S)` such that `Box<Var(S)> <: RecList<K>` (`K` from capturing),
 // postilating `Var(S_ub) <: List<out Int>` may fail if
