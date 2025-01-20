@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.config.LanguageFeature
+
 /**
  * [NoMutableState] annotation means that annotated class has no mutable state
  *   and it's safe to use it concurrent environment (e.g. as session component)
@@ -36,3 +38,11 @@ annotation class PrivateSessionConstructor
 @RequiresOptIn
 annotation class SessionConfiguration
 
+/**
+ * Declarations that are only being used in case some default language features are disabled: mostly likely due to using not the latest
+ * language version.
+ *
+ * Let's try to have a convention to use a relevant language feature name as a side comment.
+ */
+@RequiresOptIn
+annotation class OnlyForDefaultLanguageFeatureDisabled(val languageFeature: LanguageFeature)

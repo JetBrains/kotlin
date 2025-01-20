@@ -22,19 +22,18 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
-import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -56,9 +55,11 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ArrayFqNames
+import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.safeSubstitute
 
 class FirSyntheticCallGenerator(
     private val components: BodyResolveComponents
@@ -243,6 +244,92 @@ class FirSyntheticCallGenerator(
         return session.symbolProvider
             .getTopLevelFunctionSymbols(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, arrayOfName)
             .firstOrNull() // TODO: it should be single() after KTIJ-26465 is fixed
+    }
+
+    fun resolveAnonymousFunctionExpressionWithSyntheticOuterCall(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        expectedTypeData: ResolutionMode.WithExpectedType?,
+        context: ResolutionContext,
+    ): FirExpression {
+        val argumentList = buildUnaryArgumentList(anonymousFunctionExpression)
+
+        val reference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+            anonymousFunctionExpression,
+            argumentList,
+            expectedTypeData?.expectedType,
+            context,
+        )
+
+        val fakeCall = buildFunctionCall {
+            calleeReference = reference
+            this.argumentList = argumentList
+        }
+
+        components.dataFlowAnalyzer.enterCallArguments(fakeCall, argumentList.arguments)
+        components.dataFlowAnalyzer.enterAnonymousFunctionExpression(anonymousFunctionExpression)
+        components.dataFlowAnalyzer.exitCallArguments()
+
+        val resultingCall = components.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
+
+        components.dataFlowAnalyzer.exitFunctionCall(fakeCall, callCompleted = true)
+
+        val resolvedArgument = resultingCall.arguments[0]
+
+        (resultingCall.calleeReference as? FirResolvedErrorReference)?.let {
+            val diagnostic = it.diagnostic
+
+            if (!anonymousFunctionExpression.adaptForTrivialTypeMismatchToBeReportedInChecker(diagnostic, expectedTypeData)) {
+                // Frankly speaking, all the diagnostics reported further should be transformed into some YT issue
+                // with the `kotlin-error-message` tag.
+                //
+                // Generally, all the diagnostics we have might be replaced with some checker diagnostic, but
+                // there are still known cases like KT-74912 when it doesn't work like this, and it's hard to make sure that there are
+                // no other cases.
+                return buildErrorExpression(
+                    anonymousFunctionExpression.source?.fakeElement(KtFakeSourceElementKind.ErrorExpressionForTopLevelLambda),
+                    diagnostic,
+                    resolvedArgument
+                )
+            }
+        }
+
+        return resolvedArgument
+    }
+
+    /**
+     * After resolution of a top-level lambda via synthetic call, we have some diagnostic, which in most of the cases says
+     * that the type of the lambda can't be passed to the given expected type.
+     *
+     * But the thing is that in
+     * [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.transformAnonymousFunction]
+     * even for red code we set the whole lambda expression type to the expected type,
+     * so here, to report the proper diagnostic, we set it back.
+     *
+     * @return true if the error is expected to be reported by some checker.
+     */
+    private fun FirAnonymousFunctionExpression.adaptForTrivialTypeMismatchToBeReportedInChecker(
+        diagnostic: ConeDiagnostic,
+        expectedTypeData: ResolutionMode.WithExpectedType?,
+    ): Boolean {
+        if (expectedTypeData?.expectedTypeMismatchIsReportedInChecker != true) return false
+        if (diagnostic !is ConeInapplicableCandidateError) return false
+
+        val candidate = diagnostic.candidate as Candidate
+
+        val argumentTypeMismatchOnWholeLambda = candidate.diagnostics.singleOrNull {
+            it is ArgumentTypeMismatch && it.argument == this
+        } as ArgumentTypeMismatch? ?: return false
+
+        val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
+        val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
+
+        anonymousFunction.replaceTypeRef(
+            anonymousFunction.typeRef.withReplacedConeType(
+                substitutor.safeSubstitute(components.session.typeContext, argumentTypeMismatchOnWholeLambda.actualType) as ConeKotlinType
+            )
+        )
+
+        return true
     }
 
     fun resolveCallableReferenceWithSyntheticOuterCall(

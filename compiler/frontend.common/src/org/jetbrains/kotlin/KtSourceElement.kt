@@ -504,6 +504,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * For plugin-generated things
      */
     object PluginGenerated : KtFakeSourceElementKind()
+
+    /**
+     * To store some diagnostic for erroneously resolved top-level lambda
+     * See [org.jetbrains.kotlin.config.LanguageFeature.ResolveTopLevelLambdasAsSyntheticCallArgument] and its usages
+     */
+    object ErrorExpressionForTopLevelLambda : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
