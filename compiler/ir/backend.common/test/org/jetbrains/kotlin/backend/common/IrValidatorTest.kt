@@ -1573,6 +1573,93 @@ class IrValidatorTest {
             ),
         )
     }
+
+    @Test
+    fun `loops, breaks and continues with incorrect type are reported`() {
+        val file = createIrFile("test.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            statements = listOf()
+        )
+
+        val incorrectLoop = IrWhileLoopImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, null).apply {
+            condition = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)
+        }
+        val correctLoop = IrWhileLoopImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, null).apply {
+            condition = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)
+        }
+        val incorrectBreak = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, incorrectLoop)
+        val incorrectContinue = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, incorrectLoop)
+        val correctBreak = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.nothingType, incorrectLoop)
+        val correctContinue = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.nothingType, incorrectLoop)
+
+        incorrectLoop.body = IrBlockImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.unitType,
+            origin = null,
+            statements = listOf(incorrectBreak, incorrectContinue)
+        )
+        correctLoop.body = IrBlockImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.unitType,
+            origin = null,
+            statements = listOf(correctBreak, correctContinue)
+        )
+
+        body.statements.addAll(listOf(incorrectLoop, correctLoop))
+        function.body = body
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Nothing, got kotlin.Any
+                    BREAK label=null loop.label=null
+                      inside BLOCK type=kotlin.Unit origin=null
+                        inside WHILE label=null origin=null
+                          inside BLOCK_BODY
+                            inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Nothing, got kotlin.Any
+                    CONTINUE label=null loop.label=null
+                      inside BLOCK type=kotlin.Unit origin=null
+                        inside WHILE label=null origin=null
+                          inside BLOCK_BODY
+                            inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                              inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
+                    WHILE label=null origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+            ),
+        )
+    }
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
