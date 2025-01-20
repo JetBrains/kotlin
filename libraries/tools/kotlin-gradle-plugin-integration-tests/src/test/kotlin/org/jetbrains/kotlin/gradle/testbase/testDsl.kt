@@ -302,22 +302,24 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(overridingEnvironm
         fail(
             buildString {
                 appendLine()
-                appendLine("⚠ withDebug failed to connect to test that was overriding environment variables created:")
-                overridingEnvironmentVariablesInstantiationBacktrace.backtrace().lineSequence().drop(1).forEach {
-                    appendLine("  ${it}")
-                }
-                appendLine()
-                appendLine("Connecting to target jvm at ${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS} failed with:")
-                appendLine(jvmPing)
-                appendLine()
                 appendLine(
                     """
+                    ⚠ withDebug failed to connect to test that was overriding environment variables
+                    
                     To debug a test that runs with environment variables:
                         1. Create run configuration "Remote JVM Debug". Select Debugger Mode: "Listen to remote JVM" and check "Auto restart"
                         2. Specify Host: ${EnableGradleDebug.LOOPBACK_IP} and Port: ${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}
                         3. Run this run configuration and then run the test under debugger
                     """.trimIndent()
                 )
+                appendLine()
+                appendLine("JVM connection check failed at ${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS} with:")
+                appendLine(jvmPing)
+                appendLine()
+                appendLine("Environment variables instantiated at:")
+                overridingEnvironmentVariablesInstantiationBacktrace.backtrace().lineSequence().drop(1).forEach {
+                    appendLine("  ${it}")
+                }
                 appendLine()
             }
         )
