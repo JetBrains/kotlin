@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -458,16 +458,34 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-composite-build/kt65315_with_resources_in_metadata_klib")
     @GradleTest
     fun `KT-65315 composite project with resources in metadata klib`(gradleVersion: GradleVersion) {
-        val producer = project("mpp-composite-build/kt65315_with_resources_in_metadata_klib/producer", gradleVersion)
+        val defaultKotlinNativeVersion = defaultBuildOptions.nativeOptions.version
+        val producerKotlinVersion = "1.9.23" // In this version resources were published inside metadata klibs
+
+        val buildOptions = defaultBuildOptions.copy(
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(version = null)
+        )
+
+        val producer = project("mpp-composite-build/kt65315_with_resources_in_metadata_klib/producer", gradleVersion) {
+            settingsGradleKts.modify {
+                it.replace("kotlin_version", "old_kotlin_version")
+            }
+            gradleProperties.appendText(
+                """
+                old_kotlin_version=$producerKotlinVersion
+                kotlin.native.version=$producerKotlinVersion
+                """.trimIndent())
+        }
 
         project(
             "mpp-composite-build/kt65315_with_resources_in_metadata_klib/consumer",
             gradleVersion,
-            buildOptions = defaultBuildOptions.disableKmpIsolatedProjectSupport() // old version of kotlin is involved in this test
+            buildOptions = buildOptions.disableKmpIsolatedProjectSupport(), // old version of kotlin is involved in this test
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }
 
             build(":consumerA:assemble") {
                 // Check that producer has resources in its metadata
@@ -477,7 +495,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
                 if (OperatingSystem.current().isMacOsX) {
                     // Check that producer has resources in its metadata
-                    val hostSpecificMetadataJar = producer.projectPath.resolve("producerA/build/libs/producerA-iosx64-1.0.0-SNAPSHOT-metadata.jar")
+                    val hostSpecificMetadataJar =
+                        producer.projectPath.resolve("producerA/build/libs/producerA-iosx64-1.0.0-SNAPSHOT-metadata.jar")
                     hostSpecificMetadataJar.assertZipFileContains(listOf("appleMain/toot-toot.txt"))
                     assertTasksExecuted(":consumerA:compileAppleMainKotlinMetadata")
                 }
@@ -509,23 +528,34 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-composite-build/sample0")
     @GradleTest
     fun `test included build of older version works correctly`(gradleVersion: GradleVersion) {
+        val defaultKotlinNativeVersion = defaultBuildOptions.nativeOptions.version
+        val oldKotlinVersion = "1.9.24"
+
+        val buildOptions = defaultBuildOptions.copy(
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(version = null)
+        )
+
         val producer = project(
             "mpp-composite-build/sample0/producerBuild",
-            gradleVersion = gradleVersion,
+            gradleVersion = gradleVersion
         ) {
             settingsGradleKts.modify {
                 it.replace("kotlin_version", "old_kotlin_version")
             }
-            gradleProperties.appendText("\nold_kotlin_version=1.9.24")
+            gradleProperties.appendText("\nold_kotlin_version=$oldKotlinVersion")
+            gradleProperties.appendText("\nkotlin.native.version=$oldKotlinVersion")
         }
 
         project(
             "mpp-composite-build/sample0/consumerBuild",
-            gradleVersion
+            gradleVersion,
+            buildOptions = buildOptions,
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }
 
             build("assemble") {
                 assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
