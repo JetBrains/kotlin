@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -192,6 +193,23 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
 
                 return true
             }
+
+            is FirReplSnippet -> {
+                if (target.resolvePhase >= resolverPhase) return true
+
+                performCustomResolveUnderLock(target) {
+                    val firDesignation = FirDesignation(containingDeclarations, target)
+                    // Just calculate the body and CFG
+                    resolveWithKeeper(
+                        target,
+                        firDesignation,
+                        BodyStateKeepers.REPL_SNIPPET,
+                        { FirLazyBodiesCalculator.calculateBodies(firDesignation) }) {
+                        calculateControlFlowGraph(target)
+                    }
+                }
+                return true
+            }
         }
 
         return false
@@ -247,6 +265,24 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         val controlFlowGraph = dataFlowAnalyzer.exitFile()
             ?: errorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
                 withFirEntry("firFile", target)
+            }
+
+        target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+    }
+
+    private fun calculateControlFlowGraph(target: FirReplSnippet) {
+        checkWithAttachment(
+            target.controlFlowGraphReference == null,
+            { "'controlFlowGraphReference' should be 'null' if the snippet phase < $resolverPhase)" },
+        ) {
+            withFirEntry("firReplSnippet", target)
+        }
+
+        val dataFlowAnalyzer = transformer.declarationsTransformer.dataFlowAnalyzer
+        dataFlowAnalyzer.enterReplSnippet(target, buildGraph = true)
+        val controlFlowGraph = dataFlowAnalyzer.exitReplSnippet()
+            ?: errorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
+                withFirEntry("firReplSnippet", target)
             }
 
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
@@ -366,6 +402,11 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
 internal object BodyStateKeepers {
     val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignation> = stateKeeper { builder, _, _ ->
         builder.add(FirCodeFragment::block, FirCodeFragment::replaceBlock, ::blockGuard)
+    }
+
+    val REPL_SNIPPET: StateKeeper<FirReplSnippet, FirDesignation> = stateKeeper { builder, _, _ ->
+        builder.add(FirReplSnippet::body, FirReplSnippet::replaceBody, ::blockGuard)
+        builder.add(FirReplSnippet::resultTypeRef, FirReplSnippet::replaceResultTypeRef)
     }
 
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignation> = stateKeeper { builder, _, _ ->

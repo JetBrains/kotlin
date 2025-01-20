@@ -640,6 +640,14 @@ private fun calculateLazyBodyForCodeFragment(designation: FirDesignation) {
     codeFragment.replaceBlock(newCodeFragment.block)
 }
 
+private fun calculateLazyBodyForReplSnippet(designation: FirDesignation) {
+    val replSnippet = designation.target as FirReplSnippet
+    require(replSnippet.body is FirLazyBlock)
+
+    val newReplSnippet = revive<FirReplSnippet>(designation)
+    replSnippet.replaceBody(newReplSnippet.body)
+}
+
 /**
  * This object is supposed to be used only for tests.
  *
@@ -753,6 +761,18 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
         }
 
         return codeFragment
+    }
+
+    override fun transformReplSnippet(
+        replSnippet: FirReplSnippet,
+        data: PersistentList<FirDeclaration>,
+    ): FirReplSnippet {
+        if (replSnippet.body is FirLazyBlock) {
+            val designation = FirDesignation(data, replSnippet)
+            calculateLazyBodyForReplSnippet(designation)
+        }
+
+        return replSnippet
     }
 }
 

@@ -180,7 +180,7 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
                 }
             }
 
-            target is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            target is FirScript || target is FirReplSnippet -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
             target is FirFile -> transformer.declarationsTransformer.withFile(target) {
                 target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
             }
