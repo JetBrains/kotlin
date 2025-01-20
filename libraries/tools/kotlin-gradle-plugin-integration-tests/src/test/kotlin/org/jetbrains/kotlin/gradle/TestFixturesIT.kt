@@ -33,6 +33,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test fixtures can access internals of the main JVM source set in KMP projects")
     @MppGradlePluginTests
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testInternalAccessInMppProjectWithJava(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -51,6 +52,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test fixtures can access internals of the main JVM source set in Kotlin MPP projects")
     @MppGradlePluginTests
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testInternalAccessInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -93,6 +95,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("JVM test code can access internals of the test fixtures source set in Kotlin MPP projects")
     @MppGradlePluginTests
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testInternalAccessFromTestsInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -118,6 +121,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in JVM project")
     @MppGradlePluginTests
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testTestFixturesAndFunctionalTestsInJvmProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -133,6 +137,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in Multiplatform project")
     @MppGradlePluginTests
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testTestFixturesAndFunctionalTestsInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)

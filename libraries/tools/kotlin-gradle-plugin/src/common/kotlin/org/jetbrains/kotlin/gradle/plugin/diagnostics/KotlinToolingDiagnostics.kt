@@ -1502,11 +1502,11 @@ object KotlinToolingDiagnostics {
         }
     }
 
+    private val KMP_WITH_JAVA_COMPATIBILITY_ERROR_SINCE_GRADLE = GradleVersion.version("8.7")
+    
     object KMPJavaPluginsIncompatibilityDiagnostic : ToolingDiagnosticFactory(
         predefinedSeverity = null // will be defined in diagnostic builder
     ) {
-        private val errorSinceGradleVersion = GradleVersion.version("8.7")
-
         operator fun invoke(
             pluginId: String,
         ): ToolingDiagnostic {
@@ -1517,7 +1517,7 @@ object KotlinToolingDiagnostics {
             }
 
             return build(
-                severity = if (GradleVersion.current() >= errorSinceGradleVersion) ERROR else WARNING,
+                severity = if (GradleVersion.current() >= KMP_WITH_JAVA_COMPATIBILITY_ERROR_SINCE_GRADLE) ERROR else WARNING,
             ) {
                 name {
                     "'$pluginId' Plugin Incompatible with 'org.jetbrains.kotlin.multiplatform' Plugin"
@@ -1530,6 +1530,23 @@ object KotlinToolingDiagnostics {
                 }
             }
         }
+    }
+
+    internal object KMPWithJavaErrorDiagnostic : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(): ToolingDiagnostic? =
+            if (GradleVersion.current() >= KMP_WITH_JAVA_COMPATIBILITY_ERROR_SINCE_GRADLE) {
+                build {
+                    name { "'org.jetbrains.kotlin.multiplatform' plugin 'withJava()' configuration error." }
+                    message {
+                        "Kotlin multiplatform plugin since Gradle 8.7 is not compatible with Gradle Java plugins (except 'java-base')."
+                    }
+                    solution {
+                        "Consider adding a new subproject with required Java plugin where the KMP project is added as a dependency."
+                    }
+                }
+            } else {
+                null
+            }
     }
 
     object XcodeUserScriptSandboxingDiagnostic : ToolingDiagnosticFactory(FATAL) {

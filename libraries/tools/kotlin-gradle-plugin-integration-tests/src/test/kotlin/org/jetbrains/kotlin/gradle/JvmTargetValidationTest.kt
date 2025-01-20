@@ -413,6 +413,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("Validation should show error for MPP JVM target withJava")
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     internal fun mppWithJavaFailValidation(gradleVersion: GradleVersion) {
         project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
             gradleProperties.append(
@@ -443,6 +444,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("Validation should not run MPP JVM target without withJava")
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     internal fun mppJvmNotFailValidation(gradleVersion: GradleVersion) {
         project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
             gradleProperties.append(

@@ -230,6 +230,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
 
     @DisplayName("Default binary with JPMS is runnable")
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun defaultBinaryWithJpmsIsRunnable(gradleVersion: GradleVersion) {
         project("mppRunJvm", gradleVersion) {
             val jvmModuleInfoFile = subProject("jvm").javaSourcesDir().resolve("module-info.java")

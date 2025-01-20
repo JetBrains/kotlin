@@ -80,6 +80,7 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("Build metrics produces valid report for mpp-jvm")
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_6,
     )
     @GradleTest
     fun testBuildMetricsForMppJvm(gradleVersion: GradleVersion) {

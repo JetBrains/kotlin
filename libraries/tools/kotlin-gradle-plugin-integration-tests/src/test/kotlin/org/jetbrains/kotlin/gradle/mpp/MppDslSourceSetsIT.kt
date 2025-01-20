@@ -37,6 +37,7 @@ class MppDslSourceSetsIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "mpp-empty-sources")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testPublishEmptySourceSets(gradleVersion: GradleVersion) {
         project(
             projectName = "mpp-empty-sources",

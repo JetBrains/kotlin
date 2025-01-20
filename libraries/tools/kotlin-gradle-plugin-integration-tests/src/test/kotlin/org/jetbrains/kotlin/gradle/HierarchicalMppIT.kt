@@ -330,6 +330,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     @GradleTest
     @DisplayName("KT-48370: Multiplatform Gradle build fails for Native targets with \"we cannot choose between the following variants of project\"")
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
@@ -352,6 +353,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     @GradleTest
     @DisplayName("Test that disambiguation attribute of Kotlin JVM Target is propagated to Java configurations")
     fun testMultipleJvmTargetsWithJavaAndDisambiguationAttributeKt31468(gradleVersion: GradleVersion) {

@@ -51,6 +51,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("MPP")
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun inputsMpp(gradleVersion: GradleVersion) {
         project("hierarchical-mpp-multi-modules", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
