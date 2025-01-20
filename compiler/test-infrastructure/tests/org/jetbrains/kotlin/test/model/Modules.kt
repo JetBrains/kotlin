@@ -54,6 +54,15 @@ class TestFile(
     val name: String = relativePath.split("/").last()
 
     override fun toString(): String = relativePath
+
+    fun copy(): TestFile = TestFile(
+        relativePath,
+        originalContent,
+        originalFile,
+        startLineNumberInOriginalFile,
+        isAdditional,
+        directives
+    )
 }
 
 val TestFile.nameWithoutExtension: String

@@ -46,7 +46,7 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
 
         val secondModule = TestModule(
             name = "main",
-            files = listOf(secondModuleFile) + additionalFiles,
+            files = listOf(secondModuleFile) + additionalFiles.map { it.copy() },
             allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),
             RegisteredDirectivesBuilder(module.directives).apply {
                 -CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
