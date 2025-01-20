@@ -70,12 +70,9 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     val newArguments = castClass.typeParameters.map { substitution[it.symbol] ?: return@computeRepresentativeTypeForBareType null }
     val staticallyKnownType = expandedCastType.withArguments(newArguments.toTypedArray())
 
-    fun areEquivalent(a: ConeKotlinType, b: ConeKotlinType) =
-        a.isSubtypeOf(session.typeContext, b) && b.isSubtypeOf(session.typeContext, a)
-
     return when {
         properStaticallyKnownType == null -> staticallyKnownType
-        areEquivalent(staticallyKnownType, properStaticallyKnownType) -> staticallyKnownType
+        staticallyKnownType.equalTypes(properStaticallyKnownType, session) -> staticallyKnownType
         else -> staticallyKnownType.withAdditionalAttribute(UnsafeDowncastWrtVarianceAttribute(properStaticallyKnownType))
     }
 }
