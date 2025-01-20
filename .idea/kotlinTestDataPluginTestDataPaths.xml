@@ -185,11 +185,29 @@
             </array>
           </value>
         </entry>
+        <entry key="FirJs.*WithInl.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="JS"/>
+              <option value="Klib"/>
+            </array>
+          </value>
+        </entry>
         <entry key="FirNative.*Codegen.*">
           <value>
             <array>
               <option value="FIR"/>
               <option value="Native"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="FirNative.*WithInlined.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="Native"/>
+              <option value="Klib"/>
             </array>
           </value>
         </entry>
@@ -316,6 +334,83 @@
             <array>
               <option value="FIR"/>
               <option value="JVM"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="NativeUnboundIrSerialization.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="Native"/>
+              <option value="Klib"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="FirNativeSerialization.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="Native"/>
+              <option value="Klib"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="FirJsIrDeserialization.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="JS"/>
+              <option value="Klib"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Fir.*BlackBoxInlineCodegenWithIrInliner.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="JVM"/>
+              <option value="IR Inline"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Fir.*BlackBoxInlineCodegenWithBytecodeInliner.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+              <option value="JVM"/>
+              <option value="Bytecode Inline"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Ir.*BlackBoxInlineCodegenWithIrInliner.*">
+          <value>
+            <array>
+              <option value="K1"/>
+              <option value="JVM"/>
+              <option value="IR Inline"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Ir.*BlackBoxInlineCodegenWithBytecodeInliner.*">
+          <value>
+            <array>
+              <option value="K1"/>
+              <option value="JVM"/>
+              <option value="Bytecode Inline"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Fir.*CompileKotlinAgainstInline.*">
+          <value>
+            <array>
+              <option value="FIR"/>
+            </array>
+          </value>
+        </entry>
+        <entry key="Ir.*CompileKotlinAgainstInline.*">
+          <value>
+            <array>
+              <option value="K1"/>
             </array>
           </value>
         </entry>
