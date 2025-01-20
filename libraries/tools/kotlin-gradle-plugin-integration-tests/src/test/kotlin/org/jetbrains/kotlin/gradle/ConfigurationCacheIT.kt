@@ -302,6 +302,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @MppGradlePluginTests
     @DisplayName("works in MPP withJava project")
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testJvmWithJavaConfigurationCache(gradleVersion: GradleVersion) {
         project("mppJvmWithJava", gradleVersion) {
             build("jvmWithJavaJar")

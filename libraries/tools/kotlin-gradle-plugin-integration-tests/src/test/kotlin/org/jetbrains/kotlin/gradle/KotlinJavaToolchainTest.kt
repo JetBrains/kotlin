@@ -13,6 +13,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -295,13 +296,31 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm targets")
+    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm with 'withJava()' targets")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
+    @GradleTest
+    internal fun toolchainCorrectlySupportedInMPPluginWithJava(gradleVersion: GradleVersion) {
+        project(
+            projectName = "mppJvmWithJava".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            useToolchainToCompile(11)
+
+            build("assemble") {
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm with 'withJava()' targets")
     @GradleTest
     internal fun toolchainCorrectlySupportedInMPPlugin(gradleVersion: GradleVersion) {
         project(
             projectName = "mppJvmWithJava".fullProjectName,
             gradleVersion = gradleVersion
         ) {
+            buildGradle.replaceText("withJava()", "")
             useToolchainToCompile(11)
 
             build("assemble") {

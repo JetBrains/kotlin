@@ -1035,6 +1035,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt with MPP/Jvm")
     @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testMPPKaptPresence(gradleVersion: GradleVersion) {
         project(
             "mpp-kapt-presence".withPrefix,
