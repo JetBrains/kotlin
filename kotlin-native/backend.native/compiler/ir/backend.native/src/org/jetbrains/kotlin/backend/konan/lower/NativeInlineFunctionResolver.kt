@@ -39,8 +39,6 @@ internal class NativeInlineFunctionResolver(
     private fun lower(function: IrFunction) {
         val body = function.body ?: return
 
-        val doubleInliningEnabled = !false
-
         UpgradeCallableReferences(context).lower(function)
 
         NativeAssertionWrapperLowering(context).lower(function)
@@ -58,10 +56,8 @@ internal class NativeInlineFunctionResolver(
 
         ArrayConstructorLowering(context).lower(body, function)
 
-        if (doubleInliningEnabled) {
-            NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
-            SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
-        }
+        NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+        SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
     }
 
     private fun DeclarationTransformer.lowerWithLocalDeclarations(function: IrFunction) {

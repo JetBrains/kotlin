@@ -175,13 +175,7 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringP
 )
 
 private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
-        { context, irFile ->
-            LocalClassesInInlineLambdasLowering(context).lower(irFile)
-            if (!context.config.produce.isCache && false) {
-                LocalClassesInInlineFunctionsLowering(context).lower(irFile)
-                LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
-            }
-        },
+        ::LocalClassesInInlineLambdasLowering,
         name = "ExtractLocalClassesFromInlineBodies",
         prerequisite = setOf(sharedVariablesPhase),
 )
@@ -561,8 +555,8 @@ internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): Lower
     outerThisSpecialAccessorInInlineFunctionsPhase,
     extractLocalClassesFromInlineBodies,
     arrayConstructorPhase,
-    inlineOnlyPrivateFunctionsPhase.takeUnless { false },
-    syntheticAccessorGenerationPhase.takeUnless { false },
+    inlineOnlyPrivateFunctionsPhase,
+    syntheticAccessorGenerationPhase,
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(

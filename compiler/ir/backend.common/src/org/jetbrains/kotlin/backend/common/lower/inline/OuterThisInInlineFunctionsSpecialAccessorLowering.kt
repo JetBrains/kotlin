@@ -29,21 +29,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  */
 @PhaseDescription("OuterThisInInlineFunctionsSpecialAccessorLowering")
 class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext) : FileLoweringPass {
-    /**
-     * This key is a temporary workaround for static caches in Kotlin/Native:
-     * - The "outer this" accessors are supposed to be _private_ and non-static.
-     * - It is supposed that another layer of _public_ static accessors should be generated
-     *   to wrap "outer this" accessor calls. This should be done in [SyntheticAccessorLowering].
-     * - However, at the moment [SyntheticAccessorLowering] is only enabled with double-inlining.
-     * - After stabilization, [SyntheticAccessorLowering] should be enabled by default.
-     * - But until then we can have a situation when _private_ accessor is generated and _public_ one
-     *   is not, so that _private_ accessor leaks to another IR file or even module. This could lead
-     *   to unexpected crashes in Kotlin/Native backend while building static caches.
-     * - To work around this we shall generate public "outer this" accessors if [SyntheticAccessorLowering]
-     *   is not enabled.
-     */
-    private val generatePublicAccessors: Boolean = false
-
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
     override fun lower(irFile: IrFile) {
@@ -161,9 +146,6 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
                 outerThisValueParameter = maybeOuterThisValueParameter,
                 innerClass = innerClass
             )
-
-            if (generatePublicAccessors)
-                accessor.visibility = PUBLIC
 
             generatedOuterThisAccessors.memoize(accessor)
 

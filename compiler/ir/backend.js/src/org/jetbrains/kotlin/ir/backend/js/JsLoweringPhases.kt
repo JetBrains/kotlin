@@ -761,22 +761,16 @@ fun getJsLowerings(
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase.takeIf { false },
-    localClassesExtractionFromInlineFunctionsPhase.takeIf { false },
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
-    legacySyntheticAccessorLoweringPhase.takeIf { false },
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    inlineOnlyPrivateFunctionsPhase.takeUnless { false },
-    syntheticAccessorGenerationPhase.takeUnless { false },
+    inlineOnlyPrivateFunctionsPhase,
+    syntheticAccessorGenerationPhase,
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
-    validateIrAfterInliningOnlyPrivateFunctions.takeUnless { false },
+    validateIrAfterInliningOnlyPrivateFunctions,
     inlineAllFunctionsPhase,
-    dumpSyntheticAccessorsPhase.takeIf {
-        !false &&
-                configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
-    },
+    dumpSyntheticAccessorsPhase.takeIf { configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null },
     validateIrAfterInliningAllFunctions,
     // END: Common Native/JS/Wasm prefix.
 
