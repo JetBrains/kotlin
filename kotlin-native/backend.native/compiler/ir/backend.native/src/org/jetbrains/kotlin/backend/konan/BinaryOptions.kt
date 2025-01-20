@@ -100,6 +100,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val debugCompilationDir by stringOption()
 
     val pagedAllocator by booleanOption()
+
+    val latin1Strings by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

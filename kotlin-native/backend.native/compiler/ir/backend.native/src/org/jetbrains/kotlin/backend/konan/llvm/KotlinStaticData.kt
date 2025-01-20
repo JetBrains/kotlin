@@ -46,7 +46,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
-        val (encodingFlag, encoded) = if (value.all { it.code in 0..255 }) {
+        val (encodingFlag, encoded) = if (generationState.config.latin1Strings && value.all { it.code in 0..255 }) {
             // Technically it's not *really* Latin-1 because real Latin-1 has unassigned codepoints,
             // so `toByteArray(Charsets.ISO_8859_1)` does not produce the same result - it can replace
             // some of the characters with placeholders.

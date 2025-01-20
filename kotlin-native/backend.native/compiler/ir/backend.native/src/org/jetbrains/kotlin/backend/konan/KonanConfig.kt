@@ -285,6 +285,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val enableDebugTransparentStepping: Boolean
         get() = target.family.isAppleFamily && (configuration.get(BinaryOptions.enableDebugTransparentStepping) ?: true)
 
+    val latin1Strings: Boolean
+        get() = configuration.get(BinaryOptions.latin1Strings) ?: false
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {

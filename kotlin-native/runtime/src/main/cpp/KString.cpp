@@ -21,6 +21,7 @@
 #include <string>
 #include <optional>
 
+#include "CompilerConstants.hpp"
 #include "KAssert.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -123,7 +124,7 @@ OBJ_GETTER(createString, uint32_t lengthUnits, F&& initializer) {
 OBJ_GETTER(createStringFromUTF8, const char* utf8, uint32_t lengthBytes, bool ensureValid) {
     if (utf8 == nullptr) RETURN_OBJ(nullptr);
     if (lengthBytes == 0) RETURN_RESULT_OF0(TheEmptyString);
-    if (utf8StringIsASCII(utf8, lengthBytes)) {
+    if (kotlin::compiler::latin1Strings() && utf8StringIsASCII(utf8, lengthBytes)) {
         RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, lengthBytes,
             [=](uint8_t* out) { std::copy_n(utf8, lengthBytes, out); })
     }
@@ -209,7 +210,7 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
     auto sizeInBytes = strlen(nullTerminatedUTF8);
-    if (utf8StringIsASCII(nullTerminatedUTF8, sizeInBytes)) {
+    if (kotlin::compiler::latin1Strings() && utf8StringIsASCII(nullTerminatedUTF8, sizeInBytes)) {
         auto result = allocatePermanentString(StringEncoding::kLatin1, sizeInBytes);
         std::copy_n(nullTerminatedUTF8, sizeInBytes, StringHeader::of(result)->data());
         return result;
@@ -244,8 +245,10 @@ extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thizPtr, KChar oldChar, K
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
-    if (StringHeader::of(thiz)->size() == 0) RETURN_OBJ(const_cast<KRef>(other));
-    if (StringHeader::of(other)->size() == 0) RETURN_OBJ(const_cast<KRef>(thiz));
+    if (kotlin::compiler::latin1Strings()) {
+        if (StringHeader::of(thiz)->size() == 0) RETURN_OBJ(const_cast<KRef>(other));
+        if (StringHeader::of(other)->size() == 0) RETURN_OBJ(const_cast<KRef>(thiz));
+    }
     return encodingAware(thiz, other, [=](auto thiz, auto other) {
         RuntimeAssert(thiz.sizeInChars() <= MAX_STRING_SIZE, "this cannot be this large");
         RuntimeAssert(other.sizeInChars() <= MAX_STRING_SIZE, "other cannot be this large");
@@ -274,7 +277,7 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
 
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, KInt start, KInt size) {
     RuntimeAssert(thiz->type_info() == theCharArrayTypeInfo, "Must use a char array");
-    if (utf16StringIsLatin1(CharArrayAddressOfElementAt(thiz->array(), start), size)) {
+    if (kotlin::compiler::latin1Strings() && utf16StringIsLatin1(CharArrayAddressOfElementAt(thiz->array(), start), size)) {
         RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, size,
             [=](uint8_t* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
     }
