@@ -1142,18 +1142,11 @@ JNIEXPORT jint JNICALL Java_clang_clang_kniBridge342 (JNIEnv* jniEnv, jclass jcl
     return (jint)clang_Type_getNullabilityKind(*(CXType*)p0, *(CXTypeAttributes*)p1);
 }
 JNIEXPORT jint JNICALL Java_clang_clang_kniBridge343 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
-    return (jint)clang_Type_getNumProtocols(*(CXType*)p0);
-}
-JNIEXPORT void JNICALL Java_clang_clang_kniBridge344 (JNIEnv* jniEnv, jclass jclss, jlong p0, jint p1, jlong p2) {
-    CXCursor kniStructResult = clang_Type_getProtocol(*(CXType*)p0, p1);
-    memcpy((void*) p2, &kniStructResult, sizeof(kniStructResult));
-}
-JNIEXPORT jint JNICALL Java_clang_clang_kniBridge345 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
     return (jint)clang_Cursor_isObjCInitMethod(*(CXCursor*)p0);
 }
-JNIEXPORT jint JNICALL Java_clang_clang_kniBridge346 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge344 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
     return (jint)clang_Cursor_isObjCReturningRetainedMethod(*(CXCursor*)p0);
 }
-JNIEXPORT jint JNICALL Java_clang_clang_kniBridge347 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge345 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
     return (jint)clang_Cursor_isObjCConsumingSelfMethod(*(CXCursor*)p0);
 }

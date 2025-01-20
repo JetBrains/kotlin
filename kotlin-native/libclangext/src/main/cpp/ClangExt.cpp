@@ -155,32 +155,6 @@ extern "C" {
 #endif
   }
 
-  unsigned clang_Type_getNumProtocols(CXType type) {
-#if LIBCLANGEXT_ENABLE
-    QualType qualType = unwrapCXType(type);
-    if (auto objCObjectPointerType = qualType->getAs<ObjCObjectPointerType>()) {
-      return objCObjectPointerType->getObjectType()->getNumProtocols();
-    }
-#endif
-    return 0;
-  }
-
-  CXCursor clang_Type_getProtocol(CXType type, unsigned index) {
-#if LIBCLANGEXT_ENABLE
-    QualType qualType = unwrapCXType(type);
-    if (auto objCObjectPointerType = qualType->getAs<ObjCObjectPointerType>()) {
-      auto objectType = objCObjectPointerType->getObjectType();
-      unsigned n = objectType->getNumProtocols();
-      if (index < n) {
-        auto protocolDecl = objectType->getProtocol(index);
-        auto kind = CXCursor_ObjCProtocolDecl;
-        return makeObjCProtocolDeclCXCursor(protocolDecl, getTranslationUnit(type));
-      }
-    }
-#endif
-    return clang_getNullCursor();
-  }
-
   unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
     if (cursor.kind == CXCursor_ObjCInstanceMethodDecl) {

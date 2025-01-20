@@ -4490,41 +4490,23 @@ fun clang_Type_getNullabilityKind(type: CValue<CXType>, attributes: CValue<CXTyp
 }
 
 @ExperimentalForeignApi
-fun clang_Type_getNumProtocols(type: CValue<CXType>): Int {
-    memScoped {
-        return kniBridge343(type.getPointer(memScope).rawValue)
-    }
-}
-
-@ExperimentalForeignApi
-fun clang_Type_getProtocol(type: CValue<CXType>, index: Int): CValue<CXCursor> {
-    memScoped {
-        val kniRetVal = nativeHeap.alloc<CXCursor>()
-        try {
-            kniBridge344(type.getPointer(memScope).rawValue, index, kniRetVal.rawPtr)
-            return kniRetVal.readValue()
-        } finally { nativeHeap.free(kniRetVal) }
-    }
-}
-
-@ExperimentalForeignApi
 fun clang_Cursor_isObjCInitMethod(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge345(cursor.getPointer(memScope).rawValue)
+        return kniBridge343(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isObjCReturningRetainedMethod(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge346(cursor.getPointer(memScope).rawValue)
+        return kniBridge344(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isObjCConsumingSelfMethod(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge347(cursor.getPointer(memScope).rawValue)
+        return kniBridge345(cursor.getPointer(memScope).rawValue)
     }
 }
 
@@ -5686,8 +5668,6 @@ private external fun kniBridge340(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge341(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge342(p0: NativePtr, p1: NativePtr): Int
 private external fun kniBridge343(p0: NativePtr): Int
-private external fun kniBridge344(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge344(p0: NativePtr): Int
 private external fun kniBridge345(p0: NativePtr): Int
-private external fun kniBridge346(p0: NativePtr): Int
-private external fun kniBridge347(p0: NativePtr): Int
 private val loadLibrary = loadKonanLibrary("clangstubs")
