@@ -55,6 +55,6 @@ fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
 
 private fun createPhaseSetFromArguments(names: Array<String>?): PhaseSet = when {
     names == null -> PhaseSet.Empty
-    "all" in names.map { it.toLowerCaseAsciiOnly() } -> PhaseSet.ALL
+    "all" in names.map { it.toLowerCaseAsciiOnly() } -> PhaseSet.All
     else -> PhaseSet.Enum(names.toSet())
 }

@@ -210,7 +210,7 @@ abstract class JsAbstractInvalidationTest(
             }
 
             return PhaseConfig(
-                toDumpStateAfter = PhaseSet.ALL,
+                toDumpStateAfter = PhaseSet.All,
                 dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path
             )
         }

@@ -55,7 +55,7 @@ class WasmLoweringFacade(
             val dumpOutputDir = File(outputDirBase, "irdump")
             println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
             PhaseConfig(
-                toDumpStateAfter = PhaseSet.ALL,
+                toDumpStateAfter = PhaseSet.All,
                 dumpToDirectory = dumpOutputDir.path,
             )
         } else {
