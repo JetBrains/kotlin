@@ -254,7 +254,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.klibNormalizeAbsolutePath = arguments.normalizeAbsolutePath
         configuration.produceKlibSignaturesClashChecks = arguments.enableSignatureClashChecks
 
-        configuration.noDoubleInlining = arguments.noDoubleInlining
         configuration.duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.parseOrDefault(
             arguments.duplicatedUniqueNameStrategy,
             default = DuplicatedUniqueNameStrategy.DENY

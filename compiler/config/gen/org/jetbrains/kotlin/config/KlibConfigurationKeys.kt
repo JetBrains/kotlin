@@ -24,9 +24,6 @@ object KlibConfigurationKeys {
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS = CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
 
     @JvmField
-    val NO_DOUBLE_INLINING = CompilerConfigurationKey.create<Boolean>("Turns off double-inlining mode")
-
-    @JvmField
     val SYNTHETIC_ACCESSORS_DUMP_DIR = CompilerConfigurationKey.create<String>("Path to a directory to dump synthetic accessors and their use sites")
 
     @JvmField
@@ -48,10 +45,6 @@ var CompilerConfiguration.klibNormalizeAbsolutePath: Boolean
 var CompilerConfiguration.produceKlibSignaturesClashChecks: Boolean
     get() = getBoolean(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
     set(value) { put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, value) }
-
-var CompilerConfiguration.noDoubleInlining: Boolean
-    get() = getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
-    set(value) { put(KlibConfigurationKeys.NO_DOUBLE_INLINING, value) }
 
 var CompilerConfiguration.syntheticAccessorsDumpDir: String?
     get() = get(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR)

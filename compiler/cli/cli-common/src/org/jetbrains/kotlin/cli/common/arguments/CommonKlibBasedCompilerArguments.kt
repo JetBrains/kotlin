@@ -62,16 +62,6 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xklib-no-double-inlining",
-        description = "Turn off double-inlining mode."
-    )
-    var noDoubleInlining = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xklib-duplicated-unique-name-strategy",
         valueDescription = "{${DuplicatedUniqueNameStrategy.ALL_ALIASES}}",
         description = "Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value."
