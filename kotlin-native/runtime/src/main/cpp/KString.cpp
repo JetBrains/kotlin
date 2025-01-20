@@ -193,6 +193,18 @@ extern "C" OBJ_GETTER(CreateUninitializedString, StringEncoding encoding, uint32
     });
 }
 
+extern "C" OBJ_GETTER(ConvertStringToUtf16, KRef kstringPtr) {
+    return encodingAware(kstringPtr, [=](auto kstring) {
+        if constexpr (kstring.encoding == StringEncoding::kUTF16) {
+            RETURN_OBJ(kstringPtr);
+        } else {
+            auto length = kstring.sizeInChars();
+            RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, length,
+                [&](KChar* out) { std::copy_n(kstring.begin(), length, out); });
+        }
+    });
+}
+
 extern "C" char* CreateCStringFromString(KConstRef kref) {
     if (kref == nullptr) return nullptr;
     std::string utf8 = kotlin::to_string<KStringConversionMode::UNCHECKED>(kref);

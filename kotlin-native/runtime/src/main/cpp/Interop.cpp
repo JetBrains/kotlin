@@ -49,4 +49,11 @@ OBJ_GETTER(Kotlin_CString_toKStringFromUtf8Impl, const char* cstring) {
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
+OBJ_GETTER(Kotlin_Interop_pinnable, KRef any) {
+    if (any != nullptr && any->type_info() == theStringTypeInfo) {
+        RETURN_RESULT_OF(ConvertStringToUtf16, any);
+    }
+    RETURN_OBJ(any);
+}
+
 }
