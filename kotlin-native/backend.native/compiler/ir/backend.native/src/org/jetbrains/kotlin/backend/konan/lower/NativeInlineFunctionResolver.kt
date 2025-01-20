@@ -61,13 +61,12 @@ internal class NativeInlineFunctionResolver(
 
         SharedVariablesLowering(context).lower(body, function)
 
-        OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
-
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
         ArrayConstructorLowering(context).lower(body, function)
 
         NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+        OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
     }
 

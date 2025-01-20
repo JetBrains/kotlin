@@ -148,24 +148,25 @@ private val localClassesInInlineLambdasPhase = makeIrModulePhase(
     name = "LocalClassesInInlineLambdasPhase",
 )
 
-private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
-    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
-)
-
 /**
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
     ::WasmFunctionInlining.bind(InlineMode.PRIVATE_INLINE_FUNCTIONS),
     name = "InlineOnlyPrivateFunctions",
-    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
+    prerequisite = setOf(wrapInlineDeclarationsWithReifiedTypeParametersLowering, arrayConstructorPhase)
+)
+
+private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
+    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
+    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
 )
 
 internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
     lowering = ::SyntheticAccessorLowering,
     name = "SyntheticAccessorGeneration",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase),
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase),
 )
 
 private val inlineAllFunctionsPhase = makeIrModulePhase(
@@ -596,12 +597,12 @@ fun getWasmLowerings(
         validateIrBeforeLowering,
         lateinitPhase,
         sharedVariablesLoweringPhase,
-        outerThisSpecialAccessorInInlineFunctionsPhase,
         localClassesInInlineLambdasPhase,
         inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlineOnlyPrivateFunctionsPhase,
+        outerThisSpecialAccessorInInlineFunctionsPhase,
         syntheticAccessorGenerationPhase,
         // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
         // just because it goes so in Native.

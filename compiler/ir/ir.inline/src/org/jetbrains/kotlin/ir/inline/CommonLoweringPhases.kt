@@ -30,11 +30,6 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(lateinitPhase)
 )
 
-private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
-    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
-)
-
 private val localClassesInInlineLambdasPhase = makeIrModulePhase(
     ::LocalClassesInInlineLambdasLowering,
     name = "LocalClassesInInlineLambdasPhase",
@@ -73,7 +68,13 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
         )
     },
     name = "InlineOnlyPrivateFunctions",
-    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
+    prerequisite = setOf(wrapInlineDeclarationsWithReifiedTypeParametersLowering, arrayConstructorPhase)
+)
+
+private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
+    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
+    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
 )
 
 private val syntheticAccessorGenerationPhase = makeIrModulePhase(
@@ -119,12 +120,12 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
 val loweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
     lateinitPhase,
     sharedVariablesLoweringPhase,
-    outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     inlineOnlyPrivateFunctionsPhase,
+    outerThisSpecialAccessorInInlineFunctionsPhase,
     syntheticAccessorGenerationPhase,
     validateIrAfterInliningOnlyPrivateFunctions,
 //         TODO KT-72441 add public inlining to this list
