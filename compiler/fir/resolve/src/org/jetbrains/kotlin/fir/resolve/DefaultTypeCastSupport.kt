@@ -36,8 +36,6 @@ class DefaultTypeCastSupport : TypeCastSupport {
         val classSymbol = targetType.toRegularClassSymbol(session) ?: return false
         val (constraintSystem, parametersToFreshVariables) = prepareConstraintsSystemForSubtypeArgumentsInference(
             type, classSymbol, session,
-            // We're going to continue using the same CS
-            addBoundsFromParameters = true,
         )
 
         // We haven't yet added any `targetType`-specific information into the CS, so a contradiction
@@ -125,10 +123,6 @@ class DefaultTypeCastSupport : TypeCastSupport {
     ): Array<ConeTypeProjection>? {
         val (constraintSystem, parametersToFreshVariables) = prepareConstraintsSystemForSubtypeArgumentsInference(
             supertype, subTypeClassSymbol, session,
-            // We're going to try "un-substituting" variables back, and recursive
-            // constraints could lead to infinite recursion in substitution.
-            // See: bareTypesWithStarProjections.kt
-            addBoundsFromParameters = false,
         )
 
         if (constraintSystem.hasContradiction) {
@@ -139,8 +133,12 @@ class DefaultTypeCastSupport : TypeCastSupport {
 
         for ((_, constraintsWithVariable) in constraintSystem.currentStorage().notFixedTypeVariables) {
             val variable = constraintsWithVariable.typeVariable
-            // The trivial constraints are always there, and we want to check the presence of those that may not be
-            val constraints = constraintsWithVariable.constraints.filterNot(constraintSystem::isTrivial)
+            // The trivial constraints are always there, and we want to check the presence of those that may not be.
+            // Non-proper constraints may contain type variables, and they will cause problems during the final
+            // substitution
+            val constraints = constraintsWithVariable.constraints.filter {
+                !constraintSystem.isTrivial(it) && constraintSystem.isProperType(it.type)
+            }
 
             constraints.firstOrNull { it.kind == ConstraintKind.EQUALITY }?.let {
                 substitutorMap[variable] = it.type as ConeKotlinType
@@ -149,16 +147,28 @@ class DefaultTypeCastSupport : TypeCastSupport {
 
             val (upperConstraints, lowerConstraints) = constraints.partition { it.kind == ConstraintKind.UPPER }
 
-            when {
-                upperConstraints.isNotEmpty() && lowerConstraints.isEmpty() -> substitutorMap[variable] = session.typeContext
-                    .intersectTypes(upperConstraints.map { it.type })
-                    .let { ConeKotlinTypeProjectionOut(it) }
-                upperConstraints.isEmpty() && lowerConstraints.isNotEmpty() -> substitutorMap[variable] = session.typeContext
-                    .commonSuperType(lowerConstraints.map { it.type })
-                    .let { ConeKotlinTypeProjectionIn(it as ConeKotlinType) }
+            substitutorMap[variable] = when {
+                upperConstraints.isNotEmpty() && lowerConstraints.isEmpty() -> {
+                    val combinedBound = session.typeContext.intersectTypes(upperConstraints.map { it.type })
+                    val satisfiesOtherBounds = upperConstraints.all { combinedBound.isSubtypeOf(session.typeContext, it.type) }
+
+                    when {
+                        satisfiesOtherBounds -> ConeKotlinTypeProjectionOut(combinedBound)
+                        else -> ConeStarProjection
+                    }
+                }
+                upperConstraints.isEmpty() && lowerConstraints.isNotEmpty() -> {
+                    val combinedBound = session.typeContext.commonSuperType(lowerConstraints.map { it.type })
+                    val satisfiesOtherBounds = lowerConstraints.all { it.type.isSubtypeOf(session.typeContext, combinedBound) }
+
+                    when {
+                        satisfiesOtherBounds -> ConeKotlinTypeProjectionIn(combinedBound as ConeKotlinType)
+                        else -> ConeStarProjection
+                    }
+                }
                 // If both are empty, then this is correct, if both are not, then there's no
                 // obvious way how we should fix the variable, so we choose to be conservative.
-                else -> substitutorMap[variable] = ConeStarProjection
+                else -> ConeStarProjection
             }
         }
 
@@ -171,7 +181,6 @@ class DefaultTypeCastSupport : TypeCastSupport {
         supertype: ConeKotlinType,
         subTypeClassSymbol: FirRegularClassSymbol,
         session: FirSession,
-        addBoundsFromParameters: Boolean,
     ): SubtypeArgumentsInferenceData {
         val constraintSystem = session.inferenceComponents.createConstraintSystem()
 
@@ -182,15 +191,10 @@ class DefaultTypeCastSupport : TypeCastSupport {
         val subType = subTypeClassSymbol.constructType(parametersToVariableTypes.values.toTypedArray())
         val parametersToVariablesSubstitutor = substitutorByMap(parametersToVariableTypes, session)
 
-        // Additional constraints from bounds may lead to more precise types and
-        // signal contradictions earlier, but because they may be recursive, we
-        // may not be able to "un-substitute" variables back in the end.
-        if (addBoundsFromParameters) {
-            for ((parameter, variable) in parametersToFreshVariables) {
-                for (bound in parameter.resolvedBounds) {
-                    val boundWithVariables = parametersToVariablesSubstitutor.substituteOrSelf(bound.coneType)
-                    constraintSystem.addSubtypeConstraint(variable.defaultType, boundWithVariables, SimpleConstraintSystemConstraintPosition)
-                }
+        for ((parameter, variable) in parametersToFreshVariables) {
+            for (bound in parameter.resolvedBounds) {
+                val boundWithVariables = parametersToVariablesSubstitutor.substituteOrSelf(bound.coneType)
+                constraintSystem.addSubtypeConstraint(variable.defaultType, boundWithVariables, SimpleConstraintSystemConstraintPosition)
             }
         }
 
