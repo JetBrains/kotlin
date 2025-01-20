@@ -76,6 +76,12 @@ fun FirCallableSymbol<*>.isReadOnlyComposable(session: FirSession): Boolean =
         else -> false
     }
 
+fun ConeKotlinType.isComposableFunction(session: FirSession): Boolean {
+    val kind = functionTypeKind(session)
+    return kind == ComposableFunction || kind == KComposableFunction
+}
+
+
 @OptIn(SymbolInternals::class)
 private fun FirPropertyAccessorSymbol.isComposableDelegate(session: FirSession): Boolean {
     if (!propertySymbol.hasDelegate) return false

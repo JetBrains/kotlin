@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE_WITH_ANNOTATIONS
 
 class ComposeErrorMessages : DefaultErrorMessages.Extension {
@@ -142,6 +143,11 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
             ComposeErrors.NAMED_ARGUMENTS_NOT_ALLOWED,
             "Named arguments in composable function types are deprecated." +
                     " This will become an error in Kotlin 2.0"
+        )
+        MAP.put(
+            ComposeErrors.COMPOSABLE_INAPPLICABLE_TYPE,
+            "@Composable annotation is not applicable to {0}",
+            RENDER_TYPE
         )
     }
 }
