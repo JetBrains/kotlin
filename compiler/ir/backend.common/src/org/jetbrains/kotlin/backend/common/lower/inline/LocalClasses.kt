@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
-import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
-import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -157,78 +154,5 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 return irBlock
             }
         }, container as? IrDeclarationParent ?: container.parent)
-    }
-}
-
-private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: MutableSet<IrClass>) {
-    if (!isInline) return
-    // Conservatively assume that functions with reified type parameters must be copied.
-    if (typeParameters.any { it.isReified }) return
-
-    val crossinlineParameters = parameters.filter { it.isCrossinline }.toSet()
-    acceptChildrenVoid(object : IrVisitorVoid() {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitClass(declaration: IrClass) {
-            var canExtract = true
-            if (crossinlineParameters.isNotEmpty()) {
-                declaration.acceptVoid(object : IrVisitorVoid() {
-                    override fun visitElement(element: IrElement) {
-                        element.acceptChildrenVoid(this)
-                    }
-
-                    override fun visitGetValue(expression: IrGetValue) {
-                        if (expression.symbol.owner in crossinlineParameters)
-                            canExtract = false
-                    }
-                })
-            }
-            if (canExtract)
-                classesToExtract.add(declaration)
-        }
-    })
-}
-
-/**
- * Rewrites local classes so that they don't capture any locals. Locals are passed to the class explicitly, and usages of those locals
- * inside the class are replaced with accesses to the class fields.
- */
-class LocalClassesInInlineFunctionsLowering(val context: LoweringContext) : BodyLoweringPass {
-    override fun lower(irFile: IrFile) {
-        runOnFilePostfix(irFile)
-    }
-
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val function = container as? IrFunction ?: return
-        val classesToExtract = mutableSetOf<IrClass>()
-        function.collectExtractableLocalClassesInto(classesToExtract)
-        if (classesToExtract.isEmpty())
-            return
-
-        LocalDeclarationsLowering(context).lower(function, function, classesToExtract)
-    }
-}
-
-/**
- * Moves local classes from inline functions into the nearest declaration container.
- */
-class LocalClassesExtractionFromInlineFunctionsLowering(context: LoweringContext) : LocalClassPopupLowering(context) {
-    private val classesToExtract = mutableSetOf<IrClass>()
-
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val function = container as? IrFunction ?: return
-        function.collectExtractableLocalClassesInto(classesToExtract)
-        if (classesToExtract.isEmpty())
-            return
-
-        super.lower(irBody, container)
-
-        classesToExtract.clear()
-    }
-
-    override fun shouldPopUp(klass: IrClass, currentScope: ScopeWithIr?): Boolean {
-        return classesToExtract.contains(klass)
     }
 }
