@@ -5,4 +5,5 @@
 
 package kotlinx.parcelize
 
+// Random comment
 object DirectInitializerMarker
