@@ -283,8 +283,7 @@ private class CodeFragmentCapturedValueVisitor(
             lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
 
             val argument = jvmNameAnnotation.argumentMapping.mapping[Name.identifier("name")]
-                ?: error("`name` must be specified for @JvmName annotation")
-            return argument !is FirLiteralExpression
+            return argument != null && argument !is FirLiteralExpression
         }
 
     private val FirFunctionSymbol<*>.hasAnnotationArgumentShouldBeEvaluated: Boolean

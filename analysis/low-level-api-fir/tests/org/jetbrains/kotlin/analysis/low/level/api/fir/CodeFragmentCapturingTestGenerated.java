@@ -120,6 +120,12 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   }
 
   @Test
+  @TestMetadata("JvmNameConstEvaluationBadName.kt")
+  public void testJvmNameConstEvaluationBadName() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/JvmNameConstEvaluationBadName.kt");
+  }
+
+  @Test
   @TestMetadata("lambda1.kt")
   public void testLambda1() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/lambda1.kt");
