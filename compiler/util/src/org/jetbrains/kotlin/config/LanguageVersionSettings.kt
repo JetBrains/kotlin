@@ -386,6 +386,7 @@ enum class LanguageFeature(
     EnableDfaWarningsInK2(KOTLIN_2_3, kind = OTHER), // KT-50965
     AllowEagerSupertypeAccessibilityChecks(KOTLIN_2_3, kind = OTHER), // KT-73611
     DontMakeExplicitJavaTypeArgumentsFlexible(KOTLIN_2_3, kind = OTHER), // KT-71718
+    ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, kind = OTHER), // KT-67869
 
     // End of 2.* language features --------------------------------------------------
 

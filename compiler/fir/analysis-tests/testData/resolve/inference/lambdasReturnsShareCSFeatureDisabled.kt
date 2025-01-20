@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_FIR_DUMP
 // ISSUE: KT-67869
-//// LANGUAGE: -ResolveTopLevelLambdasAsSyntheticCallArgument
+// LANGUAGE: -ResolveTopLevelLambdasAsSyntheticCallArgument
 
 fun expectAny(a: Any) {}
 

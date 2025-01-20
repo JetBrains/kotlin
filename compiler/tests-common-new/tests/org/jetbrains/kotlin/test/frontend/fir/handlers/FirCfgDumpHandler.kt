@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.DumpCfgOption
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_CFG
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper.Companion.isTeamCityBuild
 
 // TODO: adapt to multifile and multimodule tests
 class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
@@ -38,12 +41,36 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}.dot")
+        val nameWithoutExtension = testDataFile.nameWithoutFirExtension
+        val basicExpectedFile = testDataFile.parentFile.resolve("$nameWithoutExtension.dot")
+
+        val expectedFile =
+            if (USE_LATEST_LANGUAGE_VERSION in testServices.moduleStructure.allDirectives)
+                testDataFile.parentFile.resolve("$nameWithoutExtension.latestLV.dot").takeIf { it.exists() }
+                    ?: basicExpectedFile
+            else
+                basicExpectedFile
 
         if (!alreadyDumped) {
             assertions.assertFileDoesntExist(expectedFile, DUMP_CFG)
         } else {
             assertions.assertEqualsToFile(expectedFile, builder.toString())
+        }
+
+        if (basicExpectedFile != expectedFile && basicExpectedFile.readText().trim() == expectedFile.readText().trim()) {
+            if (!isTeamCityBuild) {
+                expectedFile.delete()
+            }
+
+            val message = if (isTeamCityBuild) {
+                "Please remove `${expectedFile.path}`"
+            } else {
+                "Deleted `${expectedFile.path}`"
+            }
+
+            testServices.assertions.fail {
+                "$message\nPlease re-run the test"
+            }
         }
     }
 }
