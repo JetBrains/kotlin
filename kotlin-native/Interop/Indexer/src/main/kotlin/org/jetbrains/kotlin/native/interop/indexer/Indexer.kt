@@ -735,32 +735,46 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
 
             CXType_ObjCObjectPointer -> objCType {
-                val declaration = clang_getTypeDeclaration(clang_getPointeeType(type))
+                val pointeeType = clang_getPointeeType(type)
+                val declaration = clang_getTypeDeclaration(pointeeType)
                 val declarationKind = declaration.kind
                 val nullability = getNullability(type, typeAttributes)
                 when (declarationKind) {
-                    CXCursorKind.CXCursor_NoDeclFound -> ObjCIdType(nullability, getProtocols(type))
+                    CXCursorKind.CXCursor_NoDeclFound -> ObjCIdType(nullability, getProtocols(pointeeType))
 
                     CXCursorKind.CXCursor_ObjCInterfaceDecl ->
-                        ObjCObjectPointer(getObjCClassAt(declaration), nullability, getProtocols(type))
+                        ObjCObjectPointer(getObjCClassAt(declaration), nullability, getProtocols(pointeeType))
 
-                    CXCursorKind.CXCursor_TypedefDecl ->
+                    CXCursorKind.CXCursor_TypedefDecl -> {
                         // typedef to Objective-C class itself, e.g. `typedef NSObject Object;`,
                         //   (as opposed to `typedef NSObject* Object;`).
                         // Note: it is not yet represented as Kotlin `typealias`.
+                        val objectType = getTypedefUnderlyingObjCObjectType(declaration)
+
                         ObjCObjectPointer(
-                                getObjCClassAt(getTypedefUnderlyingObjCClass(declaration)),
+                                getObjCClassAt(clang_getTypeDeclaration(objectType)),
                                 nullability,
-                                getProtocols(type)
+                                getProtocols(objectType)
                         )
+                    }
 
                     else -> TODO("${declarationKind.toString()} ${clang_getTypeSpelling(type).convertAndDispose()}")
                 }
             }
 
-            CXType_ObjCId -> objCType { ObjCIdType(getNullability(type, typeAttributes), getProtocols(type)) }
+            CXType_ObjCId -> objCType {
+                ObjCIdType(
+                        getNullability(type, typeAttributes),
+                        protocols = emptyList() // `CXType_ObjCId` means `id` without any protocols.
+                )
+            }
 
-            CXType_ObjCClass -> objCType { ObjCClassPointer(getNullability(type, typeAttributes), getProtocols(type)) }
+            CXType_ObjCClass -> objCType {
+                ObjCClassPointer(
+                        getNullability(type, typeAttributes),
+                        protocols = emptyList() // `CXType_ObjCClass` means `Class` without any protocols.
+                )
+            }
 
             CXType_ObjCSel -> PointerType(VoidType)
 
@@ -770,14 +784,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
 
-    private tailrec fun getTypedefUnderlyingObjCClass(typedefDecl: CValue<CXCursor>): CValue<CXCursor> {
+    private tailrec fun getTypedefUnderlyingObjCObjectType(typedefDecl: CValue<CXCursor>): CValue<CXType> {
         assert(typedefDecl.kind == CXCursorKind.CXCursor_TypedefDecl)
         val underlyingType = clang_getTypedefDeclUnderlyingType(typedefDecl)
         val underlyingTypeDecl = clang_getTypeDeclaration(underlyingType)
 
         return when (underlyingTypeDecl.kind) {
-            CXCursorKind.CXCursor_TypedefDecl -> getTypedefUnderlyingObjCClass(underlyingTypeDecl)
-            CXCursorKind.CXCursor_ObjCInterfaceDecl -> underlyingTypeDecl
+            CXCursorKind.CXCursor_TypedefDecl -> getTypedefUnderlyingObjCObjectType(underlyingTypeDecl)
+            CXCursorKind.CXCursor_ObjCInterfaceDecl -> underlyingType
             else -> TODO(
                     """typedef = ${getCursorSpelling(typedefDecl)}
                         |underlying decl kind = ${underlyingTypeDecl.kind}
@@ -799,10 +813,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
 
-    private fun getProtocols(type: CValue<CXType>): List<ObjCProtocol> {
-        val num = clang_Type_getNumProtocols(type)
-        return (0 until num).map { index ->
-            getObjCProtocolAt(clang_Type_getProtocol(type, index))
+    private fun getProtocols(objectType: CValue<CXType>): List<ObjCProtocol> {
+        val num = clang_Type_getNumObjCProtocolRefs(objectType)
+        return (0..<num).map { index ->
+            getObjCProtocolAt(clang_Type_getObjCProtocolDecl(objectType, index))
         }
     }
 
