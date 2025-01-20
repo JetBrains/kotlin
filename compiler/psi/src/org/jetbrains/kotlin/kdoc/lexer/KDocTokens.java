@@ -57,6 +57,7 @@ public interface KDocTokens {
     int CODE_BLOCK_TEXT_Id = 4;
     int TAG_NAME_Id = 5;
     int MARKDOWN_ESCAPED_CHAR_Id = 6;
+    @Deprecated
     int MARKDOWN_INLINE_LINK_Id = 7;
 
     KDocToken START                 = new KDocToken("KDOC_START", START_Id);
@@ -75,6 +76,7 @@ public interface KDocTokens {
     };
 
     KDocToken MARKDOWN_ESCAPED_CHAR = new KDocToken("KDOC_MARKDOWN_ESCAPED_CHAR", MARKDOWN_ESCAPED_CHAR_Id);
+    @Deprecated
     KDocToken MARKDOWN_INLINE_LINK = new KDocToken("KDOC_MARKDOWN_INLINE_LINK", MARKDOWN_INLINE_LINK_Id);
     @SuppressWarnings("unused")
     TokenSet KDOC_HIGHLIGHT_TOKENS = TokenSet.create(START, END, LEADING_ASTERISK, TEXT, CODE_BLOCK_TEXT, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR, MARKDOWN_INLINE_LINK);
