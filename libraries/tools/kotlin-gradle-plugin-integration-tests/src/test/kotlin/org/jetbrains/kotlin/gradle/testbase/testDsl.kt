@@ -246,28 +246,39 @@ private fun TestProject.buildWithAction(
         if (enableBuildScan) agreeToBuildScanService()
         ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
 
-        val runWithDebug = enableGradleDebug.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace)
+        val runWithDebug = enableGradleDebug.toBooleanFlag()
         if (runWithDebug && isTeamCityRun) {
             fail("Please don't set `enableGradleDebug = true` in teamcity run, this can fail build")
         }
 
+        val connectSubprocessVMToDebugger = runWithDebug && environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace != null
         val allBuildArguments = commonBuildSetup(
-            buildArguments,
-            buildOptions,
-            enableBuildCacheDebug,
-            enableBuildScan,
-            enableGradleDaemonMemoryLimitInMb,
-            enableKotlinDaemonMemoryLimitInMb,
-            gradleVersion,
-            kotlinDaemonDebugPort
+            buildArguments = buildArguments,
+            buildOptions = buildOptions,
+            enableBuildCacheDebug = enableBuildCacheDebug,
+            enableBuildScan = enableBuildScan,
+            enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
+            enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+            connectSubprocessVMToDebugger = connectSubprocessVMToDebugger,
+            gradleVersion = gradleVersion,
+            kotlinDaemonDebugPort = kotlinDaemonDebugPort
         )
         val gradleRunnerForBuild = gradleRunner
-            .also { if (forceOutput.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = null)) it.forwardOutput() }
+            .also { if (forceOutput.toBooleanFlag()) it.forwardOutput() }
             .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
-            .withDebug(runWithDebug)
+            .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
             .withArguments(allBuildArguments)
         withBuildSummary(allBuildArguments) {
-            val buildResult = gradleRunnerForBuild.action()
+            val buildResult = if (connectSubprocessVMToDebugger) {
+                validateDebuggingSocketIsListeningForTestsWithEnv(
+                    runCatching {
+                        gradleRunnerForBuild.action()
+                    },
+                    environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace
+                )
+            } else {
+                gradleRunnerForBuild.action()
+            }
             if (enableBuildScan) buildResult.printBuildScanUrl()
             assertions(buildResult)
             buildResult.additionalAssertions(buildOptions)
@@ -277,6 +288,46 @@ private fun TestProject.buildWithAction(
 
 fun getGradleUserHome(): File {
     return testKitDir.toAbsolutePath().toFile().normalize().absoluteFile
+}
+
+private fun validateDebuggingSocketIsListeningForTestsWithEnv(
+    buildResult: Result<BuildResult>,
+    overridingEnvironmentVariablesInstantiationBacktrace: Throwable?,
+): BuildResult {
+    if (buildResult.isSuccess) {
+        return buildResult.getOrThrow()
+    }
+    val exception = buildResult.exceptionOrNull()!!
+    val exceptionMessage = exception.fullMessage
+
+    if (!exceptionMessage.contains("AGENT_ERROR_TRANSPORT_INIT")) {
+        // This is not a debugger connection issue
+        throw exception
+    }
+
+    fail(
+        buildString {
+            appendLine(
+                """
+                    ⚠ withDebug failed to connect to test that was overriding environment variables
+                    
+                    To debug a test that runs with environment variables:
+                        1. Create run configuration "Remote JVM Debug". Select Debugger Mode: "Listen to remote JVM" and check "Auto restart"
+                        2. Specify Host: ${EnableGradleDebug.LOOPBACK_IP} and Port: ${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}
+                        3. Run this run configuration and then run the test under debugger
+                    """.trimIndent()
+            )
+            appendLine()
+            appendLine("JVM connection failed at ${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS} with:")
+            appendLine(exceptionMessage)
+            appendLine()
+            appendLine("Environment variables instantiated at:")
+            overridingEnvironmentVariablesInstantiationBacktrace?.backtrace()?.lineSequence()?.drop(1)?.forEach {
+                appendLine("  ${it}")
+            }
+            appendLine()
+        }
+    )
 }
 
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
@@ -297,13 +348,14 @@ internal inline fun <reified T> TestProject.getModels(
     crossinline assertions: ModelContainer<T>.() -> Unit,
 ) {
     val allBuildArguments = commonBuildSetup(
-        emptyList(),
-        buildOptions,
-        false,
-        enableBuildScan,
-        enableGradleDaemonMemoryLimitInMb,
-        enableKotlinDaemonMemoryLimitInMb,
-        gradleVersion
+        buildArguments = emptyList(),
+        buildOptions = buildOptions,
+        enableBuildCacheDebug = false,
+        enableBuildScan = enableBuildScan,
+        enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
+        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        connectSubprocessVMToDebugger = false,
+        gradleVersion = gradleVersion
     )
 
     val connector = GradleConnector
@@ -422,7 +474,7 @@ class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(
     constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
 }
 
-@RequiresOptIn("Environmental variables override may lead to interference of parallel builds and breaks Gradle tests debugging")
+@RequiresOptIn("Environmental variables override may lead to interference of parallel builds")
 annotation class EnvironmentalVariablesOverride
 
 @OptIn(EnvironmentalVariablesOverride::class)
@@ -520,6 +572,7 @@ private fun commonBuildSetup(
     enableBuildScan: Boolean,
     enableGradleDaemonMemoryLimitInMb: Int?,
     enableKotlinDaemonMemoryLimitInMb: Int?,
+    connectSubprocessVMToDebugger: Boolean,
     gradleVersion: GradleVersion,
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
@@ -531,7 +584,7 @@ private fun commonBuildSetup(
         .sortedWith(compareBy { it.toString() })
         .joinToString(separator = ",")
 
-    val gradleJvmOptions = collectGradleJvmOptions(enableGradleDaemonMemoryLimitInMb, buildOptions.fileLeaksReportFile)
+    val gradleJvmOptions = collectGradleJvmOptions(enableGradleDaemonMemoryLimitInMb, buildOptions.fileLeaksReportFile, connectSubprocessVMToDebugger)
     val kotlinDaemonJvmArgs = collectKotlinJvmArgs(enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort)
 
     /**
@@ -573,6 +626,7 @@ private fun commonBuildSetup(
 private fun collectGradleJvmOptions(
     enableGradleDaemonMemoryLimitInMb: Int?,
     useFileLeakDetectorToFile: File?,
+    connectSubprocessVMToDebugger: Boolean,
 ): List<String> = buildList {
     if (useFileLeakDetectorToFile != null) {
         val fileLeakDetector = File("src/test/resources/common/file-leak-detector-1.15-jar-with-dependencies.jar")
@@ -581,6 +635,14 @@ private fun collectGradleJvmOptions(
     // Limiting Gradle daemon heap size to reduce memory pressure on CI agents
     if (enableGradleDaemonMemoryLimitInMb != null) {
         add("-Xmx${enableGradleDaemonMemoryLimitInMb}m")
+    }
+    /**
+     * This mode is used to debug the target project when the target project has environment variables. There should be someone listening
+     * for the debugee on [EnableGradleDebug.LOOPBACK_IP]:[EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS] which we check
+     * in [validateDebuggingSocketIsListeningForTestsWithEnv]
+     */
+    if (connectSubprocessVMToDebugger) {
+        add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=n,address=${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}")
     }
 }
 
@@ -1125,32 +1187,19 @@ enum class EnableGradleDebug {
     ENABLED,
     AUTO;
 
-    fun toBooleanFlag(
-        overridingEnvironmentVariablesInstantiationBacktrace: Throwable?,
-    ): Boolean {
+    fun toBooleanFlag(): Boolean {
         when (this) {
             DISABLED -> return false
             ENABLED -> return true
             AUTO -> {
-                val isAutomaticDebuggingEnabled = System.getProperty("kotlin.gradle.autoDebugIT").toBoolean()
-                if (overridingEnvironmentVariablesInstantiationBacktrace != null) {
-                    if (isAutomaticDebuggingEnabled) {
-                        println(
-                            buildString {
-                                appendLine()
-                                appendLine("⚠ Automatic withDebug has been disabled due to use of overriding environment variables created:")
-                                overridingEnvironmentVariablesInstantiationBacktrace.backtrace().lineSequence().drop(1).forEach {
-                                    appendLine("  ${it}")
-                                }
-                            }
-                        )
-                    }
-                    return false
-                }
-                val isRunningUnderDebugger = ManagementFactory.getRuntimeMXBean().inputArguments.toString().contains("-agentlib:jdwp")
-                return isAutomaticDebuggingEnabled && isRunningUnderDebugger
+                return System.getProperty("kotlin.gradle.autoDebugIT").toBoolean() && ManagementFactory.getRuntimeMXBean().inputArguments.toString().contains("-agentlib:jdwp")
             }
         }
+    }
+
+    companion object {
+        const val LOOPBACK_IP = "127.0.0.1"
+        const val PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS = 5100
     }
 }
 
