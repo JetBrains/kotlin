@@ -1,6 +1,7 @@
 import org.gradle.api.Project
 import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.task
 
@@ -47,5 +48,5 @@ fun JavaExec.passClasspathInJar() {
 
     mainClass.set("-jar")
     classpath = project.files()
-    args = listOf(jarTask.outputs.files.singleFile.path) + args.orEmpty()
+    args = listOf(jarTask.outputs.files.singleFile.path) + args.get()
 }
