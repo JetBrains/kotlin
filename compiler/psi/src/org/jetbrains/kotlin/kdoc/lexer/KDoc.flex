@@ -154,11 +154,6 @@ CODE_FENCE_END=("```" | "~~~")
         return KDocTokens.MARKDOWN_ESCAPED_CHAR;
     }
 
-    "[" [^\[]* "](" [^)]* ")" {
-        yybegin(CONTENTS);
-        return KDocTokens.MARKDOWN_INLINE_LINK;
-    }
-
     {CODE_FENCE_START} {
         yybegin(CODE_BLOCK_LINE_BEGINNING);
         return KDocTokens.TEXT;
