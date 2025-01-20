@@ -1,0 +1,38 @@
+KtCallExpression(107,112): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = foo
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = param
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false

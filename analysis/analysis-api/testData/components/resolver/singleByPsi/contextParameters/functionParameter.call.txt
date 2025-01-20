@@ -1,0 +1,14 @@
+KtNameReferenceExpression(84,89): 'param'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = Context
+          symbol = param: Context
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}

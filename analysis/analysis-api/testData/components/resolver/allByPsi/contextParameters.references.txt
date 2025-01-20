@@ -1,0 +1,131 @@
+KtNameReferenceExpression(25,31): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(34,40): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(58,59): 'a'
+  KtSimpleNameReference:
+    a: kotlin.String
+
+KtNameReferenceExpression(97,98): 'A'
+  KtSimpleNameReference:
+    (in ROOT) class A
+
+KtNameReferenceExpression(130,134): 'this'
+  KtSimpleNameReference:
+    (in ROOT) class Base
+
+KtCallExpression(135,140): 'bar()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(135,138): 'bar'
+  KtSimpleNameReference:
+    (in Base) fun bar()
+
+KtNameReferenceExpression(149,150): 'a'
+  KtSimpleNameReference:
+    a: A
+
+KtCallExpression(151,158): 'foo("")'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(151,154): 'foo'
+  KtSimpleNameReference:
+    (in A) fun foo(a: kotlin.String): kotlin.String
+
+KtNameReferenceExpression(181,182): 'A'
+  KtSimpleNameReference:
+    (in ROOT) class A
+
+KtNameReferenceExpression(208,214): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(243,247): 'this'
+  KtSimpleNameReference:
+    (in ROOT) class Base
+
+KtCallExpression(248,253): 'bar()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(248,251): 'bar'
+  KtSimpleNameReference:
+    (in Base) fun bar()
+
+KtNameReferenceExpression(273,274): 'a'
+  KtSimpleNameReference:
+    a: A
+
+KtCallExpression(275,282): 'foo("")'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(275,278): 'foo'
+  KtSimpleNameReference:
+    (in A) fun foo(a: kotlin.String): kotlin.String
+
+KtNameReferenceExpression(309,310): 'A'
+  KtSimpleNameReference:
+    (in ROOT) class A
+
+KtCallExpression(349,360): 'funMember()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(349,358): 'funMember'
+  KtSimpleNameReference:
+    (in Base) fun funMember()
+
+KtNameReferenceExpression(369,383): 'propertyMember'
+  KtSimpleNameReference:
+    (in Base) val propertyMember: kotlin.String
+
+KtCallExpression(441,542): 'with(Base()) {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(441,445): 'with'
+  KtSimpleNameReference:
+    (in kotlin) inline fun <T, R> with(receiver: T, block: T.() -> R): R
+
+KtCallExpression(446,452): 'Base()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(446,450): 'Base'
+  KtSimpleNameReference:
+    (in Base) constructor()
+
+KtCallExpression(464,536): 'with(A()) {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(464,468): 'with'
+  KtSimpleNameReference:
+    (in kotlin) inline fun <T, R> with(receiver: T, block: T.() -> R): R
+
+KtCallExpression(469,472): 'A()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(469,470): 'A'
+  KtSimpleNameReference:
+    (in A) constructor()
+
+KtCallExpression(488,499): 'funMember()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(488,497): 'funMember'
+  KtSimpleNameReference:
+    (in Base) fun funMember()
+
+KtNameReferenceExpression(512,526): 'propertyMember'
+  KtSimpleNameReference:
+    (in Base) val propertyMember: kotlin.String

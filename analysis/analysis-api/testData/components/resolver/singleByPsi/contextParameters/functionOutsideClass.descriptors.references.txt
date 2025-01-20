@@ -1,0 +1,6 @@
+KtNameReferenceExpression(205,214): 'funMember'
+  KtSimpleNameReference:
+    (in Base) fun funMember()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

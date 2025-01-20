@@ -1,0 +1,35 @@
+KtNameReferenceExpression(245,259): 'propertyMember'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: Base
+            visibility: LOCAL
+          type = Base
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = propertyMember
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val propertyMember: kotlin.String
+          callableId = /Base.propertyMember
+      simpleAccess = Read
+      typeArgumentsMapping = {}

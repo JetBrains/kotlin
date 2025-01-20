@@ -119,6 +119,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceByFileTestGenerated
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedFieldNestedName.kt")
   public void testDelegatedFieldNestedName() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/delegatedFieldNestedName.kt");
@@ -188,6 +194,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceByFileTestGenerated
   @TestMetadata("multiEquals.kt")
   public void testMultiEquals() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/multiEquals.kt");
+  }
+
+  @Test
+  @TestMetadata("operatorsWithContextParameters.kt")
+  public void testOperatorsWithContextParameters() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/operatorsWithContextParameters.kt");
   }
 
   @Test
