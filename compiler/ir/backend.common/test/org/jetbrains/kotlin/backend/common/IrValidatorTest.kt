@@ -78,16 +78,23 @@ class IrValidatorTest {
         val function1 = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
+        }.apply {
+            parameters = listOf(
+                createExtensionReceiver(TestIrBuiltins.stringType),
+                buildValueParameter(this) {
+                    name = Name.identifier("p0")
+                    type = TestIrBuiltins.anyType
+                    kind = IrParameterKind.Regular
+                }
+            )
         }
-        function1.parameters += function1.createExtensionReceiver(TestIrBuiltins.stringType)
-        function1.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val functionCall =
             IrCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function1.symbol,
                 typeArgumentsCount = 0,
             ).apply {
-                extensionReceiver = stringConcatenationWithWrongType
-                putValueArgument(0, stringConcatenationWithWrongType)
+                arguments[0] = stringConcatenationWithWrongType
+                arguments[1] = stringConcatenationWithWrongType
             }
         val function2 = IrFactoryImpl.buildFun {
             name = Name.identifier("bar")
@@ -111,18 +118,25 @@ class IrValidatorTest {
         val function = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
+        }.apply {
+            parameters = listOf(
+                createExtensionReceiver(TestIrBuiltins.stringType),
+                buildValueParameter(this) {
+                    name = Name.identifier("p0")
+                    type = TestIrBuiltins.anyType
+                    kind = IrParameterKind.Regular
+                }
+            )
         }
-        function.parameters += function.createExtensionReceiver(TestIrBuiltins.stringType)
-        function.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val body = IrFactoryImpl.createBlockBody(5, 24)
         val stringConcatenationWithWrongType = IrStringConcatenationImpl(9, 20, TestIrBuiltins.anyType)
         val functionCall =
             IrCallImpl(
                 6, 23, TestIrBuiltins.anyType, function.symbol,
                 typeArgumentsCount = 0,
-           ).apply {
-                extensionReceiver = stringConcatenationWithWrongType
-                putValueArgument(0, stringConcatenationWithWrongType)
+            ).apply {
+                arguments[0] = stringConcatenationWithWrongType
+                arguments[1] = stringConcatenationWithWrongType
             }
         body.statements.add(functionCall)
         function.body = body
@@ -1008,7 +1022,7 @@ class IrValidatorTest {
                 6, 23, TestIrBuiltins.anyType, function.symbol,
                 typeArgumentsCount = 0,
             ).apply {
-                putValueArgument(0, vararg)
+                arguments[0] = vararg
             }
         body.statements.add(functionCall)
         function.body = body
@@ -1052,7 +1066,7 @@ class IrValidatorTest {
                 6, 23, TestIrBuiltins.anyType, function.symbol,
                 typeArgumentsCount = 0,
             ).apply {
-                putValueArgument(0, vararg)
+                arguments[0] = vararg
             }
         body.statements.add(functionCall)
         function.body = body
