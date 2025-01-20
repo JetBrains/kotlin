@@ -29,6 +29,12 @@ abstract class IrErrorCallExpression : IrErrorExpression() {
         visitor.visitErrorCallExpression(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitErrorCallExpression(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitErrorCallExpression(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         explicitReceiver?.accept(visitor, data)
         arguments.forEach { it.accept(visitor, data) }

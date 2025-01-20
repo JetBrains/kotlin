@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -61,6 +62,12 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
     override fun acceptVoid(visitor: IrVisitorVoid) {
         visitor.visitScript(this)
     }
+
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+        transformer.visitScript(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+        transformer.visitScript(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }

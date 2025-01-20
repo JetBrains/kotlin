@@ -24,6 +24,12 @@ abstract class IrGetField : IrFieldAccessExpression() {
         visitor.visitGetField(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitGetField(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitGetField(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         receiver?.accept(visitor, data)
     }

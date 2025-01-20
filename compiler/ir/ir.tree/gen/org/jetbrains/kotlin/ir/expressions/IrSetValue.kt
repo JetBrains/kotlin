@@ -26,6 +26,12 @@ abstract class IrSetValue : IrValueAccessExpression() {
         visitor.visitSetValue(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitSetValue(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitSetValue(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         value.accept(visitor, data)
     }

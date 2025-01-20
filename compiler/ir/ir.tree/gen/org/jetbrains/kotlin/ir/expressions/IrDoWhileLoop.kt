@@ -24,6 +24,12 @@ abstract class IrDoWhileLoop : IrLoop() {
         visitor.visitDoWhileLoop(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitDoWhileLoop(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitDoWhileLoop(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         body?.accept(visitor, data)
         condition.accept(visitor, data)

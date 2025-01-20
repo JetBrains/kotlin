@@ -33,6 +33,12 @@ abstract class IrConstantObject : IrConstantValue() {
         visitor.visitConstantObject(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitConstantObject(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitConstantObject(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         valueArguments.forEach { it.accept(visitor, data) }
     }

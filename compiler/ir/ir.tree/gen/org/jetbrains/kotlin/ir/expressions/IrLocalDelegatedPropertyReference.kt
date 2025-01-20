@@ -11,6 +11,8 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
@@ -30,4 +32,10 @@ abstract class IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDe
     override fun acceptVoid(visitor: IrVisitorVoid) {
         visitor.visitLocalDelegatedPropertyReference(this)
     }
+
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitLocalDelegatedPropertyReference(this, data) as IrExpression
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitLocalDelegatedPropertyReference(this) as IrExpression
 }

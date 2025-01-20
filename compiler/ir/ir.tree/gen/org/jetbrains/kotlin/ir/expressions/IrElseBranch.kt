@@ -25,8 +25,8 @@ abstract class IrElseBranch : IrBranch() {
     }
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElseBranch =
-        accept(transformer, data) as IrElseBranch
+        transformer.visitElseBranch(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrElseBranch =
-        transform(transformer, null)
+        transformer.visitElseBranch(this)
 }

@@ -28,6 +28,12 @@ abstract class IrDynamicMemberExpression : IrDynamicExpression() {
         visitor.visitDynamicMemberExpression(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitDynamicMemberExpression(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitDynamicMemberExpression(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         receiver.accept(visitor, data)
     }

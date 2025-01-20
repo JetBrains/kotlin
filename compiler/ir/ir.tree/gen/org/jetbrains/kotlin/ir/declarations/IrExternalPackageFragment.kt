@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -43,6 +44,12 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
     override fun acceptVoid(visitor: IrVisitorVoid) {
         visitor.visitExternalPackageFragment(this)
     }
+
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+        transformer.visitExternalPackageFragment(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+        transformer.visitExternalPackageFragment(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

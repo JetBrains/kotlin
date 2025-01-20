@@ -53,6 +53,12 @@ abstract class IrRichPropertyReference : IrExpression() {
         visitor.visitRichPropertyReference(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitRichPropertyReference(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitRichPropertyReference(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         boundValues.forEach { it.accept(visitor, data) }
         getterFunction.accept(visitor, data)

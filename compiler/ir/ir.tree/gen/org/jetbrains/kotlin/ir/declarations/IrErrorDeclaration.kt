@@ -8,7 +8,10 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
@@ -24,4 +27,10 @@ abstract class IrErrorDeclaration : IrDeclarationBase() {
     override fun acceptVoid(visitor: IrVisitorVoid) {
         visitor.visitErrorDeclaration(this)
     }
+
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement =
+        transformer.visitErrorDeclaration(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrElement =
+        transformer.visitErrorDeclaration(this)
 }

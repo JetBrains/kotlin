@@ -152,6 +152,12 @@ abstract class IrRichFunctionReference : IrExpression() {
         visitor.visitRichFunctionReference(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitRichFunctionReference(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitRichFunctionReference(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         boundValues.forEach { it.accept(visitor, data) }
         invokeFunction.accept(visitor, data)

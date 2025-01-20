@@ -27,6 +27,12 @@ abstract class IrConstantArray : IrConstantValue() {
         visitor.visitConstantArray(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitConstantArray(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitConstantArray(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         elements.forEach { it.accept(visitor, data) }
     }

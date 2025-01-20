@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
  */
 sealed class IrBody : IrElementBase(), IrElement {
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBody =
-        accept(transformer, data) as IrBody
+    abstract override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBody
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrBody =
-        transform(transformer, null)
+    abstract override fun transformVoid(transformer: IrElementTransformerVoid): IrBody
 }

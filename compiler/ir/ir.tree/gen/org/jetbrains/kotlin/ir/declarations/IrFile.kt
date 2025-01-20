@@ -34,10 +34,10 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
     }
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrFile =
-        accept(transformer, data) as IrFile
+        transformer.visitFile(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrFile =
-        transform(transformer, null)
+        transformer.visitFile(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

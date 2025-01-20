@@ -31,6 +31,12 @@ abstract class IrTry : IrExpression() {
         visitor.visitTry(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitTry(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitTry(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         tryResult.accept(visitor, data)
         catches.forEach { it.accept(visitor, data) }

@@ -28,6 +28,12 @@ abstract class IrSuspendableExpression : IrExpression() {
         visitor.visitSuspendableExpression(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitSuspendableExpression(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitSuspendableExpression(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         suspensionPointId.accept(visitor, data)
         result.accept(visitor, data)

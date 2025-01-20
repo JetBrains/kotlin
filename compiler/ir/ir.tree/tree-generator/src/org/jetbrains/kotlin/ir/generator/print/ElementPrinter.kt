@@ -5,20 +5,12 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.generators.tree.AbstractElementPrinter
-import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
-import org.jetbrains.kotlin.generators.tree.StandardTypes
-import org.jetbrains.kotlin.generators.tree.TypeVariable
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.nullable
 import org.jetbrains.kotlin.generators.tree.printer.*
-import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.generators.util.printBlock
-import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.ir.generator.elementTransformerVoidType
-import org.jetbrains.kotlin.ir.generator.irTransformerType
-import org.jetbrains.kotlin.ir.generator.irVisitorType
-import org.jetbrains.kotlin.ir.generator.irVisitorVoidType
+import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
@@ -73,6 +65,12 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         }
     }
 
+    private fun ImportCollectingPrinter.castIfNeeded(from: ElementOrRef<Element>, to: ElementOrRef<Element>) {
+        if (!from.element.isSubclassOf(to.element)) {
+            print(" as ", to.render())
+        }
+    }
+
     private fun ImportCollectingPrinter.printTransformChildrenMethodImplementation(element: Element, hasData: Boolean) {
         if (!element.isRootElement) {
             printBlock {
@@ -86,10 +84,9 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                             } else {
                                 print("transformVoid(transformer)")
                             }
-                            val elementRef = child.typeRef as GenericElementRef<*>
-                            if (!elementRef.element.hasTransformMethod) {
-                                print(" as ", elementRef.render())
-                            }
+                            @Suppress("UNCHECKED_CAST")
+                            val elementRef = child.typeRef as GenericElementRef<Element>
+                            castIfNeeded(elementRef.element.transformMethodReturnType, elementRef)
                             println()
                         }
                         is ListField -> {
@@ -125,6 +122,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             treeName = "IR",
         )
 
+        var acceptMethodHasBody = false
         if (element.hasAcceptMethod) {
             println()
             val visitorParameter = FunctionParameter("visitor", irVisitorVoidType)
@@ -135,6 +133,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 override = !element.isRootElement,
             )
             if (!element.isRootElement) {
+                acceptMethodHasBody = true
                 printBlock {
                     println(visitorParameter.name, ".", element.visitFunctionName, "(this)")
                 }
@@ -151,39 +150,48 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             if (element.isRootElement) {
                 printKDoc(transformMethodKDoc(transformerParameter, dataParameter, "IR"))
             }
+            val transformMethodModality = when {
+                acceptMethodHasBody || element.kind!!.isInterface -> null
+                else -> Modality.ABSTRACT
+            }
             printFunctionDeclaration(
                 name = "transform",
                 parameters = listOf(transformerParameter, dataParameter),
-                returnType = element,
+                returnType = element.transformMethodReturnType,
                 typeParameters = listOf(dataTP),
+                modality = transformMethodModality,
                 override = !element.isRootElement,
             )
-            if (!element.isRootElement) {
+            if (acceptMethodHasBody) {
                 println(" =")
                 withIndent {
-                    print("accept(transformer, data)")
-                    print(" as ", element.render())
+                    print("transformer.", element.visitFunctionName, "(this, data)")
+                    castIfNeeded(element.getTransformExplicitType(), element.transformMethodReturnType)
+                    println()
                 }
+            } else {
+                println()
             }
-            println()
+
             println()
             val transformerVoidParameter = FunctionParameter("transformer", elementTransformerVoidType)
             printFunctionDeclaration(
                 name = "transformVoid",
                 parameters = listOf(transformerVoidParameter),
-                returnType = element,
+                returnType = element.transformMethodReturnType,
+                modality = transformMethodModality,
                 override = !element.isRootElement,
             )
-            if (!element.isRootElement) {
+            if (acceptMethodHasBody) {
                 println(" =")
                 withIndent {
-                    print("transform(transformer, null)")
-                    if (element.getTransformExplicitType() != element) {
-                        print(" as ", element.render())
-                    }
+                    print("transformer.", element.visitFunctionName, "(this)")
+                    castIfNeeded(element.getTransformExplicitType(), element.transformMethodReturnType)
+                    println()
                 }
+            } else {
+                println()
             }
-            println()
         }
 
         if (element.hasAcceptChildrenMethod) {

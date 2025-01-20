@@ -9,6 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
@@ -24,4 +26,10 @@ abstract class IrFunctionReference : IrCallableReference<IrFunctionSymbol>() {
     override fun acceptVoid(visitor: IrVisitorVoid) {
         visitor.visitFunctionReference(this)
     }
+
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitFunctionReference(this, data) as IrExpression
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitFunctionReference(this) as IrExpression
 }

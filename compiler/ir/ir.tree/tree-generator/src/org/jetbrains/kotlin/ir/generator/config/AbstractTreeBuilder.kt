@@ -27,7 +27,7 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
     }
 
     protected fun Element.needTransformMethod() {
-        hasTransformMethod = true
+        refinesTransformMethod = true
     }
 
     protected fun Element.noMethodInVisitor() {

@@ -43,8 +43,8 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
     }
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrTypeParameter =
-        accept(transformer, data) as IrTypeParameter
+        transformer.visitTypeParameter(this, data) as IrTypeParameter
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrTypeParameter =
-        transform(transformer, null) as IrTypeParameter
+        transformer.visitTypeParameter(this) as IrTypeParameter
 }

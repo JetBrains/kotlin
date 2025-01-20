@@ -31,10 +31,10 @@ abstract class IrBranch : IrElementBase(), IrElement {
     }
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBranch =
-        accept(transformer, data) as IrBranch
+        transformer.visitBranch(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrBranch =
-        transform(transformer, null)
+        transformer.visitBranch(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         condition.accept(visitor, data)

@@ -30,6 +30,12 @@ abstract class IrVararg : IrExpression() {
         visitor.visitVararg(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitVararg(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitVararg(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         elements.forEach { it.accept(visitor, data) }
     }

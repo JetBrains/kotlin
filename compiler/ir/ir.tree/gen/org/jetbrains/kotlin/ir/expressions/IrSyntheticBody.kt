@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
@@ -23,4 +25,10 @@ abstract class IrSyntheticBody : IrBody() {
     override fun acceptVoid(visitor: IrVisitorVoid) {
         visitor.visitSyntheticBody(this)
     }
+
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBody =
+        transformer.visitSyntheticBody(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrBody =
+        transformer.visitSyntheticBody(this)
 }

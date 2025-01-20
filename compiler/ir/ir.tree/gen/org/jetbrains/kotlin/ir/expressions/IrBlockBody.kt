@@ -25,6 +25,12 @@ abstract class IrBlockBody : IrBody(), IrStatementContainer {
         visitor.visitBlockBody(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBody =
+        transformer.visitBlockBody(this, data)
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrBody =
+        transformer.visitBlockBody(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
     }

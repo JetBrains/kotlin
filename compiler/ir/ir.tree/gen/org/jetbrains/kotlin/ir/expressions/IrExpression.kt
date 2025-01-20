@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement {
     abstract var type: IrType
 
-    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
-        accept(transformer, data) as IrExpression
+    abstract override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression
 
-    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
-        transform(transformer, null)
+    abstract override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression
 }

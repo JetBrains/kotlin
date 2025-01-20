@@ -29,6 +29,12 @@ abstract class IrFunctionExpression : IrExpression() {
         visitor.visitFunctionExpression(this)
     }
 
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitFunctionExpression(this, data) as IrExpression
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitFunctionExpression(this) as IrExpression
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         function.accept(visitor, data)
     }

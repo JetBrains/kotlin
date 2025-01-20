@@ -36,10 +36,10 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
     }
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrModuleFragment =
-        accept(transformer, data) as IrModuleFragment
+        transformer.visitModuleFragment(this, data)
 
     override fun transformVoid(transformer: IrElementTransformerVoid): IrModuleFragment =
-        transform(transformer, null)
+        transformer.visitModuleFragment(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         files.forEach { it.accept(visitor, data) }

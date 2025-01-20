@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.elementBaseType
-import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
-import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 class Element(
     name: String,
@@ -51,11 +49,16 @@ class Element(
 
     var customHasAcceptMethod: Boolean? = null
 
+    var refinesTransformMethod: Boolean = false
+
     override val hasAcceptMethod: Boolean
         get() = customHasAcceptMethod ?: (implementations.isNotEmpty() && parentInVisitor != null)
 
+    val transformMethodReturnType: Element
+        get() = elementAncestorsAndSelfDepthFirst().firstNotNullOfOrNull { it.takeIf { it.refinesTransformMethod } } ?: this
 
-    override var hasTransformMethod = false
+    override val hasTransformMethod: Boolean
+        get() = refinesTransformMethod || hasAcceptMethod
 
     override val hasAcceptChildrenMethod: Boolean
         get() = hasAcceptOrTransformChildrenMethod(Element::walkableChildren)

@@ -9,6 +9,8 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
@@ -24,4 +26,10 @@ abstract class IrEnumConstructorCall : IrFunctionAccessExpression() {
     override fun acceptVoid(visitor: IrVisitorVoid) {
         visitor.visitEnumConstructorCall(this)
     }
+
+    override fun <D> transform(transformer: IrTransformer<D>, data: D): IrExpression =
+        transformer.visitEnumConstructorCall(this, data) as IrExpression
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrExpression =
+        transformer.visitEnumConstructorCall(this) as IrExpression
 }
