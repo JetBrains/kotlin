@@ -171,7 +171,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
 internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
     lowering = ::SyntheticAccessorLowering,
     name = "SyntheticAccessorGeneration",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
+    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase),
 )
 
 private val inlineAllFunctionsPhase = makeIrModulePhase(
