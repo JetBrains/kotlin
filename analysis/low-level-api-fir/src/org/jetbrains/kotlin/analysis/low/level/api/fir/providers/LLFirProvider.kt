@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptyKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolMatchingPsi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
@@ -48,7 +49,7 @@ internal class LLFirProvider(
 
     fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
         val classId = classLikeDeclaration.getClassId() ?: return null
-        return symbolProvider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)?.fir
+        return symbolProvider.getClassLikeSymbolMatchingPsi(classId, classLikeDeclaration)?.fir
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
