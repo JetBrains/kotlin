@@ -128,3 +128,13 @@ FILE: conflictingOverloads.kt
     }
     private final fun <no name provided>(): R|kotlin/Unit| {
     }
+    public final class ErrorDestructuring : R|kotlin/Any| {
+        public constructor(): R|ErrorDestructuring| {
+            super<R|kotlin/Any|>()
+        }
+
+        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+    }

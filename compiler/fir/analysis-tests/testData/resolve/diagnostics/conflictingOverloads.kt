@@ -70,3 +70,8 @@ class <!CONFLICTING_OVERLOADS!>mest<!>
 <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 
 private <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
+
+class ErrorDestructuring {
+    val <!SYNTAX!>(a, b)<!> = 1 to 2
+    val <!SYNTAX!>(c, d)<!> = 1 to 2
+}
