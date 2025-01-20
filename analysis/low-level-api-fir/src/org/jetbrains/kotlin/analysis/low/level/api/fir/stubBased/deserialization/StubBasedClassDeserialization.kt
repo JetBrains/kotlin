@@ -143,7 +143,7 @@ internal fun deserializeClassToSymbol(
     scopeProvider: FirScopeProvider,
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
-    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
+    deserializeNestedClass: (ClassId, KtClassLikeDeclaration, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
     initialOrigin: FirDeclarationOrigin,
 ) {
     val kind = when (classOrObject) {
@@ -249,7 +249,9 @@ internal fun deserializeClassToSymbol(
 
                     val nestedClassId = classId.createNestedClassId(Name.identifier(name))
                     // Add declaration to the context to avoid redundant provider access to the class map
-                    deserializeNestedClass(nestedClassId, context.withClassLikeDeclaration(declaration))?.fir?.let(this::addDeclaration)
+                    deserializeNestedClass(nestedClassId, declaration, context.withClassLikeDeclaration(declaration))
+                        ?.fir
+                        ?.let(this::addDeclaration)
                 }
 
                 is KtTypeAlias -> addDeclaration(memberDeserializer.loadTypeAlias(declaration, FirTypeAliasSymbol(classId), scopeProvider))
