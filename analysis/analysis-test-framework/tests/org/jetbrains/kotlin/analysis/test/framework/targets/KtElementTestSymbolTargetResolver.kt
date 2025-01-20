@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 /**
  * A [KtElement] [TestSymbolTargetResolver] which resolves *all* possible [KtElement]s for a [TestSymbolTarget]. The resolver may return
@@ -33,7 +31,7 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
  *
  * The resolver currently doesn't support [PackageTarget], [EnumEntryInitializerTarget], and [SamConstructorTarget].
  */
-internal class KtElementTestSymbolTargetResolver(private val project: Project) : TestSymbolTargetResolver<KtElement>() {
+internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolTargetResolver<KtElement>() {
     private val declarationProvider = project.createDeclarationProvider(GlobalSearchScope.allScope(project), contextualModule = null)
 
     init {
@@ -71,30 +69,19 @@ internal class KtElementTestSymbolTargetResolver(private val project: Project) :
             }
         } else {
             // We want to find all callable elements which match the callable ID, not just the callables of the class that the symbol
-            // provider would find, so we have to
+            // provider would find, so we have to look into all possible class declarations.
             val classes = resolveClasses(classId)
 
+            val callableName = callableId.callableName.asString()
             buildList {
                 for (ktClass in classes) {
-                    // Approach: The callable ID refers to a callable in a semantic sense. So if the callable can be found in the class
-                    // symbol's declared member scope (or as a fake override), the reference to it is valid and should result in a PSI
-                    // element. This is NOT the same as just searching for all callables by PSI.
-                    analyze(ktClass) {
-                        val classSymbol = ktClass.classSymbol ?: return@analyze
-                        check(classSymbol.psi == ktClass) {
-                            "`classSymbol` returned the wrong class symbol for the given ${KtClassOrObject::class.simpleName}."
+                    for (member in ktClass.declarations) {
+                        if ((member is KtCallableDeclaration || member is KtEnumEntry) && member.name == callableName) {
+                            add(member)
                         }
-
-                        findMatchingCallableSymbols(callableId, classSymbol)
-                            .mapNotNullTo(this@buildList) { it.fakeOverrideOriginal.psi as? KtElement }
                     }
                 }
             }
-        }
-
-        // Destroy all evidence of analysis. The test symbol target resolver should not prime the global resolution state.
-        runWriteAction {
-            project.publishGlobalModuleStateModificationEvent()
         }
 
         return callables.ifEmpty { error("Cannot find a callable `$callableId`.") }
