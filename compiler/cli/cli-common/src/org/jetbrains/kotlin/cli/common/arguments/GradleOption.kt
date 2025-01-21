@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import kotlin.reflect.KClass
-import kotlin.reflect.KVisibility
-
 /**
  * @param value should be one of [DefaultValue] enum values
  * @param gradleInputType should be one of [GradleInputTypes] enum values
@@ -40,6 +37,7 @@ enum class DefaultValue {
     LANGUAGE_VERSIONS,
     API_VERSIONS,
     JVM_TARGET_VERSIONS,
+    JVM_DEFAULT_MODES,
     JS_ECMA_VERSIONS,
     JS_MODULE_KINDS,
     JS_SOURCE_MAP_CONTENT_MODES,

@@ -143,6 +143,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @GradleOption(
+        value = DefaultValue.JVM_DEFAULT_MODES,
+        gradleInputType = GradleInputTypes.INPUT,
+    )
     @Argument(
         value = "-jvm-default",
         valueDescription = "{enable|no-compatibility|disable}",

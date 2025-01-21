@@ -94,6 +94,15 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy$Compan
 	public final fun fromPolicy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
 }
 
+public final class org/jetbrains/kotlin/gradle/dsl/JvmDefaultMode : java/lang/Enum {
+	public static final field DISABLE Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public static final field ENABLE Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public static final field NO_COMPATIBILITY Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public final fun getCompilerArgument ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JvmDefaultMode;
+}
+
 public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget$Companion;
 	public static final field JVM_10 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -401,6 +410,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
 	public abstract fun getJavaParameters ()Lorg/gradle/api/provider/Property;
+	public abstract fun getJvmDefault ()Lorg/gradle/api/provider/Property;
 	public abstract fun getJvmTarget ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getNoJdk ()Lorg/gradle/api/provider/Property;

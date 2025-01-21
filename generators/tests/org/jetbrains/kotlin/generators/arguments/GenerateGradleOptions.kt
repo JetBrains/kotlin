@@ -828,6 +828,7 @@ private fun Printer.generateOptionDeprecation(property: KProperty1<*, *>) {
 
 private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val description = property.javaField!!.getAnnotation(Argument::class.java).description
+        .improveSpecificKdocRendering()
     val possibleValues = property.gradleValues.possibleValues
     val defaultValue = property.gradleValues.defaultValue
 
@@ -841,6 +842,10 @@ private fun Printer.generateDoc(property: KProperty1<*, *>) {
     println(" * Default value: ${defaultValue.removePrefix("$OPTIONS_PACKAGE_PREFIX.")}")
     println(" */")
 }
+
+private fun String.improveSpecificKdocRendering(): String =
+    // Render -jvm-default argument values as a list.
+    replace("\n-jvm-default=([a-z-]*)".toRegex(), "\n* `-jvm-default=$1`")
 
 internal inline fun Printer.withIndent(fn: Printer.() -> Unit) {
     pushIndent()
@@ -878,6 +883,7 @@ private val KProperty1<*, *>.gradleValues: DefaultValues
             DefaultValue.EMPTY_STRING_LIST_DEFAULT -> DefaultValues.EmptyStringListDefault
             DefaultValue.EMPTY_STRING_ARRAY_DEFAULT -> DefaultValues.EmptyStringArrayDefault
             DefaultValue.JVM_TARGET_VERSIONS -> DefaultValues.JvmTargetVersions
+            DefaultValue.JVM_DEFAULT_MODES -> DefaultValues.JvmDefaultModes
             DefaultValue.LANGUAGE_VERSIONS -> DefaultValues.LanguageVersions
             DefaultValue.API_VERSIONS -> DefaultValues.ApiVersions
             DefaultValue.JS_MAIN -> DefaultValues.JsMain

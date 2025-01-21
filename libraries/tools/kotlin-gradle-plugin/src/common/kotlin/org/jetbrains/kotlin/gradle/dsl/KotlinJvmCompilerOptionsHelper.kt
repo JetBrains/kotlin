@@ -13,6 +13,7 @@ internal object KotlinJvmCompilerOptionsHelper {
     ) {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillCompilerArguments(from, args)
         args.javaParameters = from.javaParameters.get()
+        args.jvmDefault = from.jvmDefault.orNull?.compilerArgument
         args.jvmTarget = from.jvmTarget.get().target
         args.moduleName = from.moduleName.orNull
         args.noJdk = from.noJdk.get()
@@ -29,6 +30,7 @@ internal object KotlinJvmCompilerOptionsHelper {
     ) {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(from, into)
         into.javaParameters.convention(from.javaParameters)
+        into.jvmDefault.convention(from.jvmDefault)
         into.jvmTarget.convention(from.jvmTarget)
         into.moduleName.convention(from.moduleName)
         into.noJdk.convention(from.noJdk)
