@@ -23,7 +23,7 @@ fun foo(p: P<IDerived, Collection<IBase>>, d: IDerived) {
         p.add(d)
     }
 
-    if (p is <!CANNOT_CHECK_FOR_ERASED!>Inv<out IBase><!>) {
+    if (p is Inv<out IBase>) {
         p.get().b()
     }
 }
