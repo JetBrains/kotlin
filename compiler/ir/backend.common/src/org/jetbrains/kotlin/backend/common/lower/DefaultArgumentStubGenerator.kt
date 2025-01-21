@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
-import org.jetbrains.kotlin.backend.common.lower.isMovedReceiver
+import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
-import org.jetbrains.kotlin.backend.common.lower.isMovedReceiver as isMovedReceiverImpl
+import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue as canHaveDefaultValueImpl
 
 // TODO: fix expect/actual default parameters
 
@@ -63,7 +63,6 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
 
         return context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += builder.irBlockBody(newIrFunction) {
-                val params = mutableListOf<IrValueDeclaration>()
                 val variables = mutableMapOf<IrValueSymbol, IrValueSymbol>()
 
                 // In order to deal with forward references in default value lambdas,
@@ -85,21 +84,17 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 val intAnd = this@DefaultArgumentStubGenerator.context.ir.symbols.getBinaryOperator(
                     OperatorNameConventions.AND, context.irBuiltIns.intType, context.irBuiltIns.intType
                 )
-                var sourceParameterIndex = -1
-                val originalDeclarationValueParameters = originalDeclaration.parameters.filter {
-                    it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context
-                }
-                originalDeclarationValueParameters.forEachIndexed { index, valueParameter ->
-                    if (!valueParameter.isMovedReceiver()) {
-                        ++sourceParameterIndex
+                var defaultableParameterIndex = -1
+                val variablesForDefaultParameters = originalDeclaration.parameters.map { valueParameter ->
+                    val canHaveDefaultValue = valueParameter.canHaveDefaultValue()
+                    if (canHaveDefaultValue) {
+                        defaultableParameterIndex++
                     }
                     val parameter = newIrFunction.parameters[valueParameter.indexInParameters]
                     val remapped = valueParameter.defaultValue?.let { defaultValue ->
-                        val newIrFunctionValueParameters = newIrFunction.parameters.filter {
-                            it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context
-                        }
-                        val mask = irGet(newIrFunctionValueParameters[originalDeclarationValueParameters.size + index / 32])
-                        val bit = irInt(1 shl (sourceParameterIndex % 32))
+                        require(canHaveDefaultValue) { "Parameter ${valueParameter.render()} cannot have a default value" }
+                        val mask = irGet(newIrFunction.parameters[originalDeclaration.parameters.size + defaultableParameterIndex / 32])
+                        val bit = irInt(1 shl (defaultableParameterIndex % 32))
                         val defaultFlag =
                             irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
 
@@ -108,10 +103,10 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                             .transform(ValueRemapper(variables), null)
 
                         selectArgumentOrDefault(defaultFlag, parameter, expression)
-                    } ?: parameter
+                    }
 
-                    params.add(remapped)
-                    variables[valueParameter.symbol] = remapped.symbol
+                    variables[valueParameter.symbol] = (remapped ?: parameter).symbol
+                    remapped
                 }
 
                 when (originalDeclaration) {
@@ -121,9 +116,9 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                         // apparently do have dispatch receivers (though *probably* not type arguments, but copy
                         // those as well just in case):
                         passTypeArgumentsFrom(newIrFunction, offset = newIrFunction.parentAsClass.typeParameters.size)
-                        arguments.assignFrom((listOfNotNull(newIrFunction.dispatchReceiverParameter) + params).map { irGet(it) })
+                        arguments.assignFrom(variablesForDefaultParameters zip newIrFunction.parameters) { irGet(it.first ?: it.second) }
                     }
-                    is IrSimpleFunction -> +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, params))
+                    is IrSimpleFunction -> +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, variablesForDefaultParameters))
                 }
             }.statements
         }
@@ -200,20 +195,16 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
     private fun IrBlockBodyBuilder.dispatchToImplementation(
         irFunction: IrSimpleFunction,
         newIrFunction: IrFunction,
-        params: MutableList<IrValueDeclaration>
+        variablesForDefaultParameters: List<IrValueDeclaration?>
     ): IrExpression {
         val dispatchCall = irCall(irFunction, origin = getOriginForCallToImplementation()).apply {
             passTypeArgumentsFrom(newIrFunction)
-            val irFunctionValueParameters =
-                irFunction.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
-            var nonValueParameters = 0
             symbol.owner.parameters.forEachIndexed { index, parameter ->
-                if (parameter.kind == IrParameterKind.DispatchReceiver || parameter.kind == IrParameterKind.ExtensionReceiver) {
-                    arguments[index] = newIrFunction.parameters.single { it.kind == parameter.kind }.let { irGet(it) }
-                    nonValueParameters++
+                val variable = variablesForDefaultParameters[index]
+                if (variable == null) {
+                    arguments[index] = irGet(newIrFunction.parameters[index])
                 } else {
-                    val variable = params[index - nonValueParameters]
-                    val paramType = irFunctionValueParameters[index - nonValueParameters].type
+                    val paramType = parameter.type
                     // The JVM backend doesn't introduce new variables, and hence may have incompatible types here.
                     val value = if (!paramType.isNullable() && variable.type.isNullable()) {
                         irImplicitCast(irGet(variable), paramType)
@@ -231,7 +222,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 irFunction.returnType,
                 irEqualsNull(irGet(handlerDeclaration)),
                 dispatchCall,
-                generateHandleCall(handlerDeclaration, irFunction, newIrFunction, params)
+                generateHandleCall(handlerDeclaration, irFunction, newIrFunction, variablesForDefaultParameters)
             )
         } else dispatchCall
     }
@@ -248,7 +239,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
         handlerDeclaration: IrValueParameter,
         oldIrFunction: IrFunction,
         newIrFunction: IrFunction,
-        params: MutableList<IrValueDeclaration>
+        variablesForDefaultParameters: List<IrValueDeclaration?>
     ): IrExpression {
         assert(needSpecialDispatch(oldIrFunction as IrSimpleFunction))
         error("This method should be overridden")
@@ -411,9 +402,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
 
-        val realArgumentsNumber = declaration.parameters.count {
-            (it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context) && !it.isMovedReceiver()
-        }
+        val realArgumentsNumber = declaration.parameters.count { it.canHaveDefaultValue() }
         val maskValues = IntArray((realArgumentsNumber + 31) / 32)
 
         assert(stubFunction.parameters.size - declaration.parameters.size - maskValues.size in listOf(0, 1)) {
@@ -439,7 +428,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 listOf()
             }
             for (parameter in (valueParametersPrefix + stubFunctionValueParameters)) {
-                if (!parameter.isMovedReceiver() && parameter !in stubFunctionReceiverParameters) {
+                if (parameter.canHaveDefaultValue() && parameter !in stubFunctionReceiverParameters) {
                     ++sourceParameterIndex
                 }
                 val newArgument = when {
@@ -494,7 +483,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 
-    protected fun IrValueParameter.isMovedReceiver() = isMovedReceiverImpl()
+    protected fun IrValueParameter.canHaveDefaultValue() = canHaveDefaultValueImpl()
 }
 
 /**
@@ -550,9 +539,9 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
         copyReturnTypeFrom(original)
         copyValueParametersFrom(original)
 
-        val originalValueParametersCount =
+        val originalDefaultableParametersCount =
             original.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
-        for (i in 0 until (originalValueParametersCount + 31) / 32) {
+        for (i in 0 until (originalDefaultableParametersCount + 31) / 32) {
             addValueParameter(
                 "mask$i".synthesizedString,
                 context.irBuiltIns.intType,
@@ -576,5 +565,6 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
     }
 }
 
-private fun IrValueParameter.isMovedReceiver() =
-    origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER || origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+private fun IrValueParameter.canHaveDefaultValue() =
+    kind != IrParameterKind.DispatchReceiver && kind != IrParameterKind.ExtensionReceiver &&
+    origin != IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER && origin != IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER

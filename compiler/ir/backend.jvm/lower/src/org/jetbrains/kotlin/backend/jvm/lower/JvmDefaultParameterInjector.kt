@@ -60,7 +60,7 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
 
-        val realArgumentsNumber = declaration.valueParameters.filterNot { it.isMovedReceiver() }.size
+        val realArgumentsNumber = declaration.valueParameters.filter { it.canHaveDefaultValue() }.size
         val maskValues = IntArray((realArgumentsNumber + 31) / 32)
 
         val oldArguments: Map<IrValueParameter, IrExpression?> = buildMap {
@@ -69,7 +69,7 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
             putAll(declaration.valueParameters.mapIndexed { index, parameter -> parameter to expression.getValueArgument(index) })
         }
 
-        val indexes = declaration.valueParameters.filterNot { it.isMovedReceiver() }.withIndex().associate { it.value to it.index }
+        val indexes = declaration.valueParameters.filter { it.canHaveDefaultValue() }.withIndex().associate { it.value to it.index }
         val mainArguments = this@JvmDefaultParameterInjector.context.multiFieldValueClassReplacements
             .mapFunctionMfvcStructures(this, stubFunction, declaration) { sourceParameter: IrValueParameter, targetParameterType: IrType ->
                 val valueArgument = oldArguments[sourceParameter]
