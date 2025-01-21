@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackag
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLAmbiguousClassLikeSymbolCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -80,16 +79,19 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
     ) : this(session, moduleComponents, session.llResolveExtensionTool, canContainKotlinPackage, declarationProviderFactory)
 
+    private val searchScope: GlobalSearchScope
+        get() = moduleComponents.module.contentScope
+
     override val declarationProvider = KotlinCompositeDeclarationProvider.create(
         listOfNotNull(
-            declarationProviderFactory(moduleComponents.module.contentScope),
+            declarationProviderFactory(searchScope),
             extensionTool?.declarationProvider,
         )
     )
 
     override val packageProvider = KotlinCompositePackageProvider.create(
         listOfNotNull(
-            session.project.createPackageProvider(moduleComponents.module.contentScope),
+            session.project.createPackageProvider(searchScope),
             extensionTool?.packageProvider,
         )
     )
@@ -105,6 +107,11 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         )
     )
 
+    private val classLikeCache =
+        LLPsiAwareClassLikeSymbolCache(session, searchScope, ::computeClassLikeSymbolByClassId) { declaration: KtClassLikeDeclaration, _ ->
+            computeClassLikeSymbolByPsi(declaration)
+        }
+
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
         return getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration = null)
@@ -118,9 +125,9 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         classLikeDeclaration: KtClassLikeDeclaration?,
     ): FirClassLikeSymbol<*>? {
         if (!classId.isAccepted()) return null
-        return classifierCache.getNotNullValueForNotNullContext(classId, classLikeDeclaration) { classId, context ->
+        return classLikeCache.getSymbolByClassId(classId, classLikeDeclaration) { classId, context ->
             // To find out more about KT-62339, we're adding information about whether the declaration for the given class ID can *now* be
-            // found by the declaration provider (or is still `null`), and whether the given context element is actually in the scope of the
+            // found by the declaration provider (or is still `null`). And whether the given context element is actually in the scope of the
             // symbol provider.
             val declaration = declarationProvider.getClassLikeDeclarationByClassId(classId)
             withPsiEntry("declarationFromDeclarationProvider", declaration)
@@ -129,7 +136,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
             withVirtualFileEntry("contextVirtualFile", virtualFile)
 
             if (virtualFile != null) {
-                val isInContentScope = moduleComponents.module.contentScope.contains(virtualFile)
+                val isInContentScope = searchScope.contains(virtualFile)
                 withEntry("isContextInScope", isInContentScope.toString())
             }
         }
@@ -137,16 +144,10 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (!classId.isAccepted()) return null
-
-        return ambiguousClassLikeSymbolCache.getClassLikeSymbolByPsi<KtClassLikeDeclaration>(classId, declaration)
+        return classLikeCache.getSymbolByPsi<KtClassLikeDeclaration>(classId, declaration) { it }
     }
 
     private fun ClassId.isAccepted(): Boolean = !isLocal && (allowKotlinPackage || !isKotlinPackage())
-
-    private val classifierCache: FirCache<ClassId, FirClassLikeSymbol<*>?, KtClassLikeDeclaration?> =
-        session.firCachesFactory.createCache { classId, context ->
-            computeClassLikeSymbolByClassId(classId, context)
-        }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeSymbol<*>? {
         require(context == null || context.isPhysical)
@@ -156,14 +157,14 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         return findClassLikeSymbol(classId, ktClass) { FirElementFinder.findClassifierWithClassId(it, classId) }
     }
 
-    private val ambiguousClassLikeSymbolCache =
-        LLAmbiguousClassLikeSymbolCache.withoutContext(this, moduleComponents.module.contentScope) { declaration ->
-            val classId = declaration.getClassId() ?: return@withoutContext null
+    private fun computeClassLikeSymbolByPsi(declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
+        require(declaration.isPhysical)
 
-            findClassLikeSymbol(classId, declaration) { file ->
-                FirElementFinder.findDeclaration(file, declaration) as? FirClassLikeDeclaration
-            }
+        val classId = declaration.getClassId() ?: return null
+        return findClassLikeSymbol(classId, declaration) { file ->
+            FirElementFinder.findDeclaration(file, declaration) as? FirClassLikeDeclaration
         }
+    }
 
     private inline fun findClassLikeSymbol(
         classId: ClassId,
