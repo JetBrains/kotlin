@@ -1093,9 +1093,8 @@ class CallAndReferenceGenerator(
                 // to properly insert nullability check
                 irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)
             }
-        }
-        with(adapterGenerator) {
-            if (unsubstitutedParameterType != null) {
+
+            with(adapterGenerator) {
                 val unwrappedParameterType =
                     if (parameter.isVararg) unsubstitutedParameterType.arrayElementType()!! else unsubstitutedParameterType
                 val samFunctionType = getFunctionTypeForPossibleSamType(unwrappedParameterType)
@@ -1106,6 +1105,7 @@ class CallAndReferenceGenerator(
                 irArgument = irArgument.applySamConversionIfNeeded(argument)
             }
         }
+
         return irArgument
             .applyImplicitIntegerCoercionIfNeeded(argument, parameter)
     }
