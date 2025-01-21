@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -161,6 +161,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             .callables { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
             .filterIsInstance<KaNamedFunctionSymbol>()
+            .filterNot { hasTypeForValueClassInSignature(it) }
 
         createMethods(this@SymbolLightClassForClassOrObject, componentAndCopyFunctions, result)
         generateMethodsFromAny(classSymbol, result)
