@@ -1095,10 +1095,9 @@ class CallAndReferenceGenerator(
             }
         }
         with(adapterGenerator) {
-            if (parameter?.returnTypeRef is FirResolvedTypeRef) {
-                // Java type case (from annotations)
-                val parameterType = parameter.returnTypeRef.coneType
-                val unwrappedParameterType = if (parameter.isVararg) parameterType.arrayElementType()!! else parameterType
+            if (unsubstitutedParameterType != null) {
+                val unwrappedParameterType =
+                    if (parameter.isVararg) unsubstitutedParameterType.arrayElementType()!! else unsubstitutedParameterType
                 val samFunctionType = getFunctionTypeForPossibleSamType(unwrappedParameterType)
                 irArgument = irArgument.applySuspendConversionIfNeeded(
                     argument,
