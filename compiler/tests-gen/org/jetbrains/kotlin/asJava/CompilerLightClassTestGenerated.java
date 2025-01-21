@@ -404,6 +404,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
   }
 
+  @TestMetadata("varargAndValueClass.kt")
+  public void testVarargAndValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/varargAndValueClass.kt");
+  }
+
   @TestMetadata("wildcardWithoutArguments.kt")
   public void testWildcardWithoutArguments() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArguments.kt");
