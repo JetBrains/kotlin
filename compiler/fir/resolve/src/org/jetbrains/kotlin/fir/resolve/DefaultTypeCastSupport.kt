@@ -12,17 +12,10 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.types.AbstractTypeChecker.effectiveVariance
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.model.TypeVariance
 
 /**
  * See [TypeCastSupport].
@@ -37,76 +30,18 @@ class DefaultTypeCastSupport : TypeCastSupport {
         session: FirSession,
     ): Boolean {
         val classSymbol = targetType.toRegularClassSymbol(session) ?: return false
-        val (constraintSystem, parametersToFreshVariables) = prepareConstraintsSystemForSubtypeArgumentsInference(
-            type, classSymbol, session,
+        val staticallyKnownSubtype = findStaticallyKnownSubtype(
+            type, classSymbol,
+            isSubTypeMarkedNullable = false,
+            attributes = ConeAttributes.Empty,
+            session = session,
         )
 
-        // We haven't yet added any `targetType`-specific information into the CS, so a contradiction
-        // manifests arguments-irrelevant typing issues, such as casts impossible simply due to
-        // declaration-site data
-        if (constraintSystem.hasContradiction) {
+        if (staticallyKnownSubtype == null) {
             return targetType.typeArguments.any { it !is ConeStarProjection }
         }
 
-        for ((_, constraintsWithVariable) in constraintSystem.currentStorage().notFixedTypeVariables) {
-            val variable = constraintsWithVariable.typeVariable as ConeTypeVariable
-            val variableIndex = parametersToFreshVariables.values.indexOf(variable)
-            val argument = targetType.typeArguments[variableIndex]
-            // The trivial constraints are always there, and we want to check the presence of those that may not be
-            val constraints = constraintsWithVariable.constraints.filterNot(constraintSystem::isTrivial)
-            val argumentType = argument.type ?: continue // Absent for star projections, no need to check them
-
-            val variance = with(constraintSystem) {
-                effectiveVariance(
-                    declared = parametersToFreshVariables.keys.toList()[variableIndex].toLookupTag().getVariance(),
-                    useSite = argument.getVariance(),
-                ) ?: return false // Variance errors must be reported separately
-            }
-
-            val equalityType = constraints.firstOrNull { it.kind == ConstraintKind.EQUALITY }?.type
-
-            when (variance) {
-                TypeVariance.INV -> {
-                    val it = equalityType ?: return true
-                    constraintSystem.addSubtypeConstraint(it, argumentType, SimpleConstraintSystemConstraintPosition)
-                    constraintSystem.addSubtypeConstraint(argumentType, it, SimpleConstraintSystemConstraintPosition)
-                }
-                TypeVariance.OUT -> {
-                    val itType = equalityType ?: constraints.combinedUpperBound(session)
-                    // "Fix" the variable to its own upper bound
-                    constraintSystem.addSubtypeConstraint(itType, variable.defaultType, SimpleConstraintSystemConstraintPosition)
-                    constraintSystem.addSubtypeConstraint(variable.defaultType, argumentType, SimpleConstraintSystemConstraintPosition)
-                }
-                TypeVariance.IN -> {
-                    val itType = equalityType ?: constraints.combinedLowerBound(session)
-                    // "Fix" the variable to its own lower bound
-                    constraintSystem.addSubtypeConstraint(variable.defaultType, itType, SimpleConstraintSystemConstraintPosition)
-                    constraintSystem.addSubtypeConstraint(argumentType, variable.defaultType, SimpleConstraintSystemConstraintPosition)
-                }
-            }
-
-            if (constraintSystem.hasContradiction) {
-                return true
-            }
-        }
-
-        return constraintSystem.hasContradiction
-    }
-
-    private fun List<Constraint>.combinedUpperBound(session: FirSession): KotlinTypeMarker {
-        val filtered = mapNotNull { if (it.kind == ConstraintKind.UPPER) it.type else null }
-        return when {
-            filtered.isNotEmpty() -> session.typeContext.intersectTypes(filtered)
-            else -> session.builtinTypes.nullableAnyType.coneType
-        }
-    }
-
-    private fun List<Constraint>.combinedLowerBound(session: FirSession): KotlinTypeMarker {
-        val filtered = mapNotNull { if (it.kind == ConstraintKind.LOWER) it.type else null }
-        return when {
-            filtered.isNotEmpty() -> session.typeContext.commonSuperType(filtered)
-            else -> session.builtinTypes.nothingType.coneType
-        }
+        return !staticallyKnownSubtype.isSubtypeOf(targetType, session)
     }
 
     override fun findStaticallyKnownSubtype(
