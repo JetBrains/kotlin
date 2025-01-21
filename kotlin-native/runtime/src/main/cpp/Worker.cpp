@@ -32,6 +32,7 @@
 #include "Memory.h"
 #include "Natives.h"
 #include "Runtime.h"
+#include "ScopedExternalRCRef.hpp"
 #include "Types.h"
 #include "Worker.h"
 #include "objc_support/AutoreleasePool.hpp"
@@ -126,10 +127,10 @@ typedef std::multiset<Job, JobCompare> DelayedJobSet;
 
 class Worker {
  public:
-  Worker(KInt id, WorkerExceptionHandling exceptionHandling, mm::RawExternalRCRef* name, WorkerKind kind)
+  Worker(KInt id, WorkerExceptionHandling exceptionHandling, mm::ScopedExternalRCRef name, WorkerKind kind)
       : id_(id),
         kind_(kind),
-        name_(name),
+        name_(std::move(name)),
         exceptionHandling_(exceptionHandling) {
     kotlin::ThreadStateGuard guard(ThreadState::kNative);
     pthread_mutex_init(&lock_, nullptr);
@@ -159,7 +160,7 @@ class Worker {
 
   WorkerExceptionHandling exceptionHandling() const { return exceptionHandling_; }
 
-  mm::RawExternalRCRef* name() const { return name_; }
+  mm::RawExternalRCRef* name() const { return static_cast<mm::RawExternalRCRef*>(name_); }
 
   WorkerKind kind() const { return kind_; }
 
@@ -189,8 +190,7 @@ class Worker {
   WorkerKind kind_;
   std::deque<Job> queue_;
   DelayedJobSet delayed_;
-  // ExternalRCRef with worker's name.
-  mm::RawExternalRCRef* name_;
+  mm::ScopedExternalRCRef name_;
   // Lock and condition for waiting on the queue.
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
@@ -280,11 +280,10 @@ class Future {
   void clear() {
     Locker locker(&lock_);
     // No one cared to consume result - dispose it.
-    mm::releaseAndDisposeExternalRCRef(result_);
-    result_ = nullptr;
+    result_ = mm::ScopedExternalRCRef();
   }
 
-  mm::RawExternalRCRef* consumeResultUnlocked() {
+  mm::ScopedExternalRCRef consumeResultUnlocked() {
     Locker locker(&lock_);
     while (state_ == SCHEDULED) {
       waitInNativeState(&cond_, &lock_);
@@ -292,12 +291,10 @@ class Future {
     // TODO: maybe use message from exception?
     if (state_ == THROWN)
         ThrowIllegalStateException();
-    auto result = result_;
-    result_ = nullptr;
-    return result;
+    return std::move(result_);
   }
 
-  void storeResultUnlocked(mm::RawExternalRCRef* result, bool ok);
+  void storeResultUnlocked(mm::ScopedExternalRCRef result, bool ok);
 
   void cancelUnlocked(MemoryState* memoryState);
 
@@ -313,7 +310,7 @@ class Future {
   KInt state_;
   // Integer id of the future.
   KInt id_;
-  mm::RawExternalRCRef* result_;
+  mm::ScopedExternalRCRef result_;
   // Lock and condition for waiting on the future.
   mutable pthread_mutex_t lock_;
   mutable pthread_cond_t cond_;
@@ -338,11 +335,11 @@ class State {
     pthread_cond_destroy(&cond_);
   }
 
-  Worker* addWorkerUnlocked(WorkerExceptionHandling exceptionHandling, mm::RawExternalRCRef* name, WorkerKind kind) {
+  Worker* addWorkerUnlocked(WorkerExceptionHandling exceptionHandling, mm::ScopedExternalRCRef name, WorkerKind kind) {
     Worker* worker = nullptr;
     {
       Locker locker(&lock_);
-      worker = new Worker(nextWorkerId(), exceptionHandling, name, kind);
+      worker = new Worker(nextWorkerId(), exceptionHandling, std::move(name), kind);
       if (worker == nullptr) return nullptr;
       workers_[worker->id()] = worker;
     }
@@ -468,7 +465,7 @@ class State {
     return it->second->stateUnlocked();
   }
 
-  mm::RawExternalRCRef* consumeFutureUnlocked(KInt id) {
+  mm::ScopedExternalRCRef consumeFutureUnlocked(KInt id) {
     Future* future = nullptr;
     {
       Locker locker(&lock_);
@@ -656,12 +653,12 @@ State* theState() {
   return state;
 }
 
-void Future::storeResultUnlocked(mm::RawExternalRCRef* result, bool ok) {
+void Future::storeResultUnlocked(mm::ScopedExternalRCRef result, bool ok) {
   kotlin::ThreadStateGuard guard(ThreadState::kNative);
   {
     Locker locker(&lock_);
     state_ = ok ? COMPUTED : THROWN;
-    result_ = result;
+    result_ = std::move(result);
     // Beware here: although manual clearly says that pthread_cond_broadcast() could be called outside
     // of the taken lock, it's not on macOS (as of 10.13.1). If moved outside of the lock,
     // some notifications are missing.
@@ -684,8 +681,8 @@ void Future::cancelUnlocked(MemoryState* memoryState) {
 // Defined in RuntimeUtils.kt.
 extern "C" void ReportUnhandledException(KRef e);
 
-KInt startWorker(WorkerExceptionHandling exceptionHandling, mm::RawExternalRCRef* name) {
-  Worker* worker = theState()->addWorkerUnlocked(exceptionHandling, name, WorkerKind::kNative);
+KInt startWorker(WorkerExceptionHandling exceptionHandling, mm::ScopedExternalRCRef name) {
+  Worker* worker = theState()->addWorkerUnlocked(exceptionHandling, std::move(name), WorkerKind::kNative);
   if (worker == nullptr) return -1;
   worker->startEventLoop();
   return worker->id();
@@ -719,7 +716,7 @@ KInt stateOfFuture(KInt id) {
   return theState()->stateOfFutureUnlocked(id);
 }
 
-mm::RawExternalRCRef* consumeFuture(KInt id) {
+mm::ScopedExternalRCRef consumeFuture(KInt id) {
   return theState()->consumeFutureUnlocked(id);
 }
 
@@ -822,7 +819,7 @@ Worker::~Worker() {
       mm::releaseAndDisposeExternalRCRef(job.executeAfter.operation);
   }
 
-  mm::releaseAndDisposeExternalRCRef(name_);
+  name_ = nullptr;
 
   kotlin::AssertThreadState(memoryState_, ThreadState::kNative);
   pthread_mutex_destroy(&lock_);
@@ -1000,11 +997,11 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_REGULAR: {
-      mm::RawExternalRCRef* result = nullptr;
+      mm::ScopedExternalRCRef result;
       bool ok = true;
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          result = WorkerLaunchpadForRegularJob(job.regularJob.argument, job.regularJob.function);
+          result = mm::ScopedExternalRCRef(WorkerLaunchpadForRegularJob(job.regularJob.argument, job.regularJob.function));
       } catch (ExceptionObjHolder& e) {
         ok = false;
         switch (exceptionHandling()) {
@@ -1016,7 +1013,7 @@ JobKind Worker::processQueueElement(bool blocking) {
         }
       }
       // Notify the future.
-      job.regularJob.future->storeResultUnlocked(result, ok);
+      job.regularJob.future->storeResultUnlocked(std::move(result), ok);
       break;
     }
     default: {
@@ -1029,7 +1026,7 @@ JobKind Worker::processQueueElement(bool blocking) {
 extern "C" {
 
 KInt Kotlin_Worker_startInternal(KBoolean errorReporting, mm::RawExternalRCRef* name) {
-    return startWorker(errorReporting ? WorkerExceptionHandling::kDefault : WorkerExceptionHandling::kIgnore, name);
+    return startWorker(errorReporting ? WorkerExceptionHandling::kDefault : WorkerExceptionHandling::kIgnore, mm::ScopedExternalRCRef(name));
 }
 
 KInt Kotlin_Worker_currentInternal() {
@@ -1065,7 +1062,7 @@ KInt Kotlin_Worker_stateOfFuture(KInt id) {
 }
 
 mm::RawExternalRCRef* Kotlin_Worker_consumeFuture(KInt id) {
-  return consumeFuture(id);
+  return static_cast<mm::RawExternalRCRef*>(consumeFuture(id));
 }
 
 KBoolean Kotlin_Worker_waitForAnyFuture(KInt versionToken, KInt millis) {
