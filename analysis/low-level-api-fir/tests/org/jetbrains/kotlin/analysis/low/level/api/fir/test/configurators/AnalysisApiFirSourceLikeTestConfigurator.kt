@@ -40,6 +40,9 @@ abstract class AnalysisApiFirSourceLikeTestConfigurator(override val analyseInDe
         }
     }
 
+    override val testPrefix: String?
+        get() = if (analyseInDependentSession) "dependent.fir" else null
+
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> = listOf(
         AnalysisApiBaseTestServiceRegistrar,
         AnalysisApiIdeModeTestServiceRegistrar,

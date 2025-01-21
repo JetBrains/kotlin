@@ -1343,6 +1343,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("stringBuilderLength.kt")
+  public void testStringBuilderLength() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/stringBuilderLength.kt");
+  }
+
+  @Test
   @TestMetadata("SuperTypePrimaryConstructor.kt")
   public void testSuperTypePrimaryConstructor() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/SuperTypePrimaryConstructor.kt");

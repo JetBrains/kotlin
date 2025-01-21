@@ -1,0 +1,18 @@
+KtNameReferenceExpression(47,53): 'length'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = out
+          isSafeNavigation = false
+          type = kotlin.text.StringBuilder
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = length
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val length: kotlin.Int
+          callableId = java/lang/StringBuilder.length
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
