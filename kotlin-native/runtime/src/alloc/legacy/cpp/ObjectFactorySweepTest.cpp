@@ -8,6 +8,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ExternalRCRef.hpp"
 #include "ExtraObjectDataFactory.hpp"
 #include "FinalizerHooksTestSupport.hpp"
 #include "MarkAndSweepUtils.hpp"
@@ -254,7 +255,7 @@ public:
         auto& extraObjectData = InstallExtraData(objHeader);
         auto* setHeader = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
         EXPECT_EQ(setHeader, weakReference.header());
-        weakReference->weakRef = specialRefRegistryThreadQueue_.createRef(objHeader, 0);
+        weakReference->weakRef = mm::externalRCRef(specialRefRegistryThreadQueue_.createRef(objHeader, 0));
         weakReference->referred = objHeader;
         specialRefRegistryThreadQueue_.publish();
         return weakReference;

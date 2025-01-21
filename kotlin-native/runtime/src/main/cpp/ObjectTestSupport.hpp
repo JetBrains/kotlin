@@ -363,8 +363,6 @@ struct RegularWeakReferenceImplPayload {
     static constexpr test_support::NoRefFields<RegularWeakReferenceImplPayload> kFields{};
 };
 
-extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader*);
-
 class RegularWeakReferenceImpl : public Object<RegularWeakReferenceImplPayload> {
 public:
     static RegularWeakReferenceImpl& FromObjHeader(ObjHeader* obj) noexcept {
@@ -374,7 +372,7 @@ public:
 
     RegularWeakReferenceImpl() noexcept : Object(theRegularWeakReferenceImplTypeInfo) {}
 
-    OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(Konan_RegularWeakReferenceImpl_get, header()); }
+    OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(mm::tryRefExternalRCRef, (*this)->weakRef); }
 
     ObjHeader* get() noexcept {
         ObjHeader* result;
