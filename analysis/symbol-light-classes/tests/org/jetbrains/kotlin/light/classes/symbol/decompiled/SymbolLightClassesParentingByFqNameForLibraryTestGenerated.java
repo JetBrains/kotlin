@@ -433,6 +433,12 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("valueClassInsideStaticMembers.kt")
+  public void testValueClassInsideStaticMembers() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideStaticMembers.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassMembers.kt")
   public void testValueClassMembers() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassMembers.kt");
