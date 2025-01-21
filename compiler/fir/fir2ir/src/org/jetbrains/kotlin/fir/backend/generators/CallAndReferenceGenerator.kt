@@ -1104,7 +1104,7 @@ class CallAndReferenceGenerator(
                     argument,
                     substitutor.substituteOrSelf(samFunctionType ?: unwrappedParameterType)
                 )
-                irArgument = irArgument.applySamConversionIfNeeded(argument, parameter)
+                irArgument = irArgument.applySamConversionIfNeeded(argument)
             }
         }
         return irArgument

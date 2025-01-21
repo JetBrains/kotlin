@@ -395,15 +395,11 @@ internal class AdapterGenerator(
 
     internal fun IrExpression.applySamConversionIfNeeded(
         argument: FirExpression,
-        parameter: FirValueParameter?,
     ): IrExpression {
-        if (parameter == null) {
-            return this
-        }
         if (this is IrVararg) {
             // element-wise SAM conversion if and only if we can build 1-to-1 mapping for elements.
             return applyConversionOnVararg(argument) { firVarargArgument ->
-                applySamConversionIfNeeded(firVarargArgument, parameter)
+                applySamConversionIfNeeded(firVarargArgument)
             }
         }
 
