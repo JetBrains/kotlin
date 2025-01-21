@@ -15,6 +15,8 @@
 #import <dispatch/dispatch.h>
 
 #import "CallsChecker.hpp"
+#include "ManuallyScoped.hpp"
+#include "ObjCBackRef.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
@@ -36,20 +38,31 @@ extern "C" KInt Kotlin_hashCode(KRef str);
 extern "C" KBoolean Kotlin_equals(KRef lhs, KRef rhs);
 extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
+namespace {
+
+struct KotlinBaseBody {
+    union {
+        kotlin::ManuallyScoped<kotlin::mm::ObjCBackRef> regularRef;
+        KRef permanentObj;
+    };
+    bool permanent;
+};
+
+}
+
 // Note: `KotlinBase`'s `toKotlin` and `_tryRetain` methods will terminate if
 // called with non-frozen object on a wrong worker. `retain` will also terminate
 // in these conditions if backref's refCount is zero.
 
 @implementation KotlinBase {
-  BackRefFromAssociatedObject refHolder;
-  bool permanent;
+  KotlinBaseBody body;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  if (permanent) {
-    RETURN_OBJ(refHolder.refPermanent());
+  if (body.permanent) {
+    RETURN_OBJ(body.permanentObj);
   } else {
-    RETURN_OBJ(refHolder.ref());
+    RETURN_OBJ(**body.regularRef);
   }
 }
 
@@ -95,9 +108,9 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
   }
   ObjHolder holder;
   AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
-  result->refHolder.initAndAddRef(holder.obj());
   RuntimeAssert(!holder.obj()->permanent(), "dynamically allocated object is permanent");
-  result->permanent = false;
+  result->body.permanent = false;
+  result->body.regularRef.construct(holder.obj());
   return result;
 }
 
@@ -108,61 +121,60 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
-  bool permanent = obj->permanent();
-  candidate->permanent = permanent;
 
-  if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
-    candidate->refHolder.initAndAddRef(obj);
+  if (!obj->permanent()) { // TODO: permanent objects should probably be supported as custom types.
+    candidate->body.regularRef.construct(obj);
     if (id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate)) {
       {
         kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-        candidate->refHolder.releaseRef();
+        candidate->body.regularRef->release();
         [candidate releaseAsAssociatedObject];
       }
       return objc_retain(old);
     }
   } else {
-    candidate->refHolder.initForPermanentObject(obj);
+    candidate->body.permanent = true;
+    candidate->body.permanentObj = obj;
   }
 
   return candidate;
 }
 
 -(instancetype)retain {
-  if (permanent) {
+  if (body.permanent) {
     [super retain];
   } else {
-    refHolder.addRef();
+    body.regularRef->retain();
   }
   return self;
 }
 
 -(BOOL)_tryRetain {
-  if (permanent) {
+  if (body.permanent) {
     return [super _tryRetain];
   } else {
-    return refHolder.tryAddRef();
+    return body.regularRef->tryRetain();
   }
 }
 
 -(oneway void)release {
-  if (permanent) {
+  if (body.permanent) {
     [super release];
   } else {
-    refHolder.releaseRef();
+    body.regularRef->release();
   }
 }
 
 -(void)releaseAsAssociatedObject {
-  RuntimeAssert(!permanent, "Cannot be called on permanent objects");
+  RuntimeAssert(!body.permanent, "Cannot be called on permanent objects");
   // No need for any special handling. Weak reference handling machinery
   // has already cleaned up the reference to Kotlin object.
   [super release];
 }
 
 -(void)dealloc {
-  if (!permanent) {
-    refHolder.dealloc();
+  if (!body.permanent) {
+    body.regularRef.destroy();
   }
   [super dealloc];
 }
@@ -195,18 +207,22 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
         return [[bestFittingClass alloc] initWithExternalRCRef:ref];
     }
 
-    permanent = refHolder.initWithExternalRCRef(externalRCRef);
-    if (permanent) {
+    if (auto obj = kotlin::mm::externalRCRefAsPermanentObject(externalRCRef)) {
+        body.permanent = true;
+        body.permanentObj = obj;
         // Cannot attach associated objects to permanent objects.
         return self;
     }
+
+    body.permanent = false;
+    body.regularRef.construct(kotlin::mm::externalRCRefNonPermanent(externalRCRef));
 
     id newSelf = nil;
     {
         // TODO: Make it okay to get/replace associated objects w/o runnable state.
         kotlin::CalledFromNativeGuard guard;
         // `ref` holds a strong reference to obj, no need to place obj onto a stack.
-        KRef obj = refHolder.ref();
+        KRef obj = **body.regularRef;
         newSelf = AtomicCompareAndSwapAssociatedObject(obj, nullptr, self);
     }
 
@@ -218,7 +234,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
     RuntimeAssert(
             [[newSelf class] isSubclassOfClass:[self class]],
             "During initialization of %p (%s) for Kotlin object %p trying to replace self with %p (%s) that is not a subclass", self,
-            class_getName([self class]), refHolder.ref(), newSelf, class_getName([newSelf class]));
+            class_getName([self class]), **body.regularRef, newSelf, class_getName([newSelf class]));
 
     KotlinBase* retiredSelf = self; // old `self`
     self = [newSelf retain]; // new `self`, retained.
@@ -232,7 +248,10 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 }
 
 - (uintptr_t)externalRCRef {
-    return reinterpret_cast<uintptr_t>(refHolder.externalRCRef(permanent));
+    if (body.permanent) {
+        return reinterpret_cast<uintptr_t>(kotlin::mm::permanentObjectAsExternalRCRef(body.permanentObj));
+    }
+    return reinterpret_cast<uintptr_t>(static_cast<kotlin::mm::RawExternalRCRefNonPermanent*>(*body.regularRef));
 }
 
 - (NSString *)description {

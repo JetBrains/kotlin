@@ -9,9 +9,7 @@
 #include <type_traits>
 
 #include "ExternalRCRef.hpp"
-#include "ManuallyScoped.hpp"
 #include "Memory.h"
-#include "ObjCBackRef.hpp"
 #include "RawPtr.hpp"
 
 class KRefSharedHolder {
@@ -32,40 +30,6 @@ class KRefSharedHolder {
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
-
-class BackRefFromAssociatedObject {
- public:
-  void initForPermanentObject(ObjHeader* obj);
-
-  void initAndAddRef(ObjHeader* obj);
-
-  // Returns true if initialized as permanent.
-  bool initWithExternalRCRef(kotlin::mm::RawExternalRCRef* ref) noexcept;
-
-  void addRef();
-
-  bool tryAddRef();
-
-  void releaseRef();
-
-  void dealloc();
-
-  ObjHeader* ref() const;
-
-  ObjHeader* refPermanent() const;
-
-  kotlin::mm::RawExternalRCRef* externalRCRef(bool permanent) const noexcept;
-
- private:
-  union {
-    kotlin::ManuallyScoped<kotlin::mm::ObjCBackRef> ref_; // Regular object.
-    ObjHeader* permanentObj_; // Permanent object.
-  };
-};
-
-static_assert(
-        std::is_trivially_destructible_v<BackRefFromAssociatedObject>,
-        "BackRefFromAssociatedObject destructor is not guaranteed to be called.");
 
 extern "C" {
 RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj);
