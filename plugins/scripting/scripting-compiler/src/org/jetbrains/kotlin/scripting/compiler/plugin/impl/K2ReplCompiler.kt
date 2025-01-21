@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
@@ -309,6 +310,7 @@ private fun compileImpl(
             languageVersionSettings = compilerConfiguration.languageVersionSettings,
             predefinedJavaComponents = state.predefinedJavaComponents,
         )
+        KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
     }
 
     val session = FirJvmSessionFactory.createModuleBasedSession(
