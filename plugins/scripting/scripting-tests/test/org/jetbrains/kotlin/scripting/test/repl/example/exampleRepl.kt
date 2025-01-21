@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal.What
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
@@ -165,6 +166,14 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
             scriptCompilationConfiguration.with {
                 repl {
                     currentLineId(lineId)
+                }
+
+                // Updating the classpath after initial Compiler State is created will crash with
+                // Error(error=java.lang.IllegalStateException: module data FirModuleDataImpl:<REPL-lib-2> not bound to session
+                jvm {
+                    val repoPath = "/Users/christian.melchior/JetBrains/kotlin"
+                    val testFiles = File("$repoPath/plugins/scripting/scripting-tests/build/classes/kotlin/test")
+                    updateClasspath(listOf(testFiles))
                 }
             }
         )
