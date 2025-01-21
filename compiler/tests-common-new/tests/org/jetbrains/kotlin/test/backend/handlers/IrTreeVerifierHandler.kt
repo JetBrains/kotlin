@@ -32,9 +32,9 @@ class IrTreeVerifierHandler(
         if (CodegenTestDirectives.DUMP_IR !in module.directives) return
 
         val irFiles = info.irModuleFragment.files
-        val testFileToIrFile = irFiles.groupWithTestFiles(module)
-        for ((testFile, irFile) in testFileToIrFile) {
-            if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
+        val testFileToIrFile = irFiles.groupWithTestFiles(testServices)
+        for ((moduleAndFile, irFile) in testFileToIrFile) {
+            if (moduleAndFile?.second?.directives?.contains(EXTERNAL_FILE) == true) continue
 
             IrVerifier(assertions, testServices.defaultsProvider.frontendKind == FrontendKinds.FIR).verifyWithAssert(irFile)
 

@@ -67,6 +67,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property replaceImplicitSetterParameterNameWith If not null, them implicit value parameter name [IMPLICIT_SET_PARAMETER] would be
  *   replaced by the given value.
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
+ * @property filePathRenderer allows to post-process the rendered IrFile name
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -87,6 +88,7 @@ data class DumpIrTreeOptions(
     val printSealedSubclasses: Boolean = true,
     val replaceImplicitSetterParameterNameWith: Name? = null,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
+    val filePathRenderer: (IrFile, String) -> String = { _, name -> name }
 ) {
     /**
      * A customizable filter to exclude some (or all) flags for declarations or declaration references.

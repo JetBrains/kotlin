@@ -284,7 +284,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String {
         val fileName = if (options.printFilePath) declaration.path else declaration.name
-        return "FILE fqName:${declaration.packageFqName} fileName:$fileName"
+        return "FILE fqName:${declaration.packageFqName} fileName:${options.filePathRenderer(declaration, fileName)}"
     }
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
