@@ -16,8 +16,6 @@ using MarkQueue = intrusive_forward_list<GC::ObjectData>;
 struct MarkTraits {
     using MarkQueue = MarkQueue;
 
-    static constexpr auto kAllowHeapToStackRefs = true;
-
     static void clear(MarkQueue& queue) noexcept { queue.clear(); }
 
     static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {

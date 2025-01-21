@@ -40,6 +40,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
     val llvmDeclarations = generationState.llvmDeclarations
     val intPtrType = LLVMIntPtrTypeInContext(llvm.llvmContext, llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
+    internal val immTwoIntPtrType = LLVMConstInt(intPtrType, 2, 1)!!
     internal val immThreeIntPtrType = LLVMConstInt(intPtrType, 3, 1)!!
     // Keep in sync with OBJECT_TAG_MASK in C++.
     internal val immTypeInfoMask = LLVMConstNot(LLVMConstInt(intPtrType, 3, 0)!!)!!
@@ -424,7 +425,7 @@ internal class StackLocalsManagerImpl(
 
             val objectHeader = structGep(type, stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
-            setTypeInfoForStackObject(runtime.objHeaderType, objectHeader, typeInfo)
+            setObjectTag(runtime.objHeaderType, objectHeader, typeInfo, tag = codegen.immThreeIntPtrType /* OBJECT_TAG_STACK */)
             val gcRootSetSlot = createRootSetSlot()
             StackLocal(null, irClass, stackSlot, objectHeader, gcRootSetSlot)
         }
@@ -477,7 +478,7 @@ internal class StackLocalsManagerImpl(
             val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
             // Set array size in ArrayHeader.
             val arrayHeaderSlot = structGep(arrayType, arraySlot, 0, "arrayHeader")
-            setTypeInfoForStackObject(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo)
+            setObjectTag(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo, tag = codegen.immThreeIntPtrType /* OBJECT_TAG_STACK */)
             val sizeField = structGep(runtime.arrayHeaderType, arrayHeaderSlot, 1, "count_")
             store(count, sizeField)
 
@@ -539,14 +540,6 @@ internal class StackLocalsManagerImpl(
         if (stackLocal.gcRootSetSlot != null) {
             storeStackRef(kNullObjHeaderPtr, stackLocal.gcRootSetSlot)
         }
-    }
-
-    private fun setTypeInfoForStackObject(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
-        val typeInfo = structGep(headerType, header, 0, "typeInfoOrMeta_")
-        // Set tag OBJECT_TAG_STACK.
-        val typeInfoValue = intToPtr(or(ptrToInt(typeInfoPointer, codegen.intPtrType),
-                codegen.immThreeIntPtrType), kTypeInfoPtr)
-        store(typeInfoValue, typeInfo)
     }
 }
 
@@ -891,25 +884,39 @@ internal abstract class FunctionGenerationContext(
             call(llvm.allocInstanceFunction, listOf(typeInfo), lifetime, resultSlot = resultSlot)
 
     fun allocInstance(irClass: IrClass, lifetime: Lifetime, resultSlot: LLVMValueRef?) =
-        if (lifetime == Lifetime.STACK)
-            stackLocalsManager.alloc(irClass)
-        else
-            allocInstance(codegen.typeInfoForAllocation(irClass), lifetime, resultSlot)
+            if (lifetime == Lifetime.STACK)
+                stackLocalsManager.alloc(irClass)
+            else {
+                val typeInfo = codegen.typeInfoForAllocation(irClass)
+                val instance = allocInstance(typeInfo, lifetime, resultSlot)
+                if (lifetime == Lifetime.LOCAL)
+                    setObjectTag(runtime.objHeaderType, instance, typeInfo, tag = codegen.immTwoIntPtrType /* OBJECT_TAG_LOCAL */)
+                instance
+            }
 
     fun allocArray(
-        irClass: IrClass,
-        count: LLVMValueRef,
-        lifetime: Lifetime,
-        exceptionHandler: ExceptionHandler,
-        resultSlot: LLVMValueRef? = null
+            irClass: IrClass,
+            count: LLVMValueRef,
+            lifetime: Lifetime,
+            exceptionHandler: ExceptionHandler,
+            resultSlot: LLVMValueRef? = null
     ): LLVMValueRef {
         val typeInfo = codegen.typeInfoValue(irClass)
         return if (lifetime == Lifetime.STACK) {
             require(LLVMIsConstant(count) != 0) { "Expected a constant for the size of a stack-allocated array" }
             stackLocalsManager.allocArray(irClass, count)
         } else {
-            call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+            val array = call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+            if (lifetime == Lifetime.LOCAL)
+                setObjectTag(runtime.arrayHeaderType, array, typeInfo, tag = codegen.immTwoIntPtrType /* OBJECT_TAG_LOCAL */)
+            array
         }
+    }
+
+    fun setObjectTag(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef, tag: LLVMValueRef) {
+        val typeInfo = structGep(headerType, header, 0, "typeInfoOrMeta_")
+        val typeInfoValue = intToPtr(or(ptrToInt(typeInfoPointer, codegen.intPtrType), tag), kTypeInfoPtr)
+        store(typeInfoValue, typeInfo)
     }
 
     fun unreachable(): LLVMValueRef? {

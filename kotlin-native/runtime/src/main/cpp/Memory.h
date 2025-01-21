@@ -30,6 +30,7 @@
 typedef enum {
     OBJECT_TAG_HEAP = 0,
     OBJECT_TAG_PERMANENT = 1, // Must match to permanentTag() in Kotlin.
+    OBJECT_TAG_LOCAL = 2,
     OBJECT_TAG_STACK = 3,
     // Keep in sync with immTypeInfoMask in Kotlin.
     OBJECT_TAG_MASK = (1 << 2) - 1
@@ -100,6 +101,14 @@ struct ObjHeader {
     return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_STACK;
   }
 
+  /** 
+   * A local object is a heap-allocated object which could have been allocated on
+   * the stack but for some reasons (like it's too big) wasn't. 
+   */
+  inline bool local() const {
+    return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_LOCAL;
+  }
+
   // Unsafe cast to ArrayHeader. Use carefully!
   // TODO: RuntimeAssert on type_info()->IsArray()?
   ArrayHeader* array() { return reinterpret_cast<ArrayHeader*>(this); }
@@ -110,6 +119,10 @@ struct ObjHeader {
   }
 
   inline bool heap() const {
+    return !hasPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_PERMANENT); // OBJECT_TAG_HEAP or OBJECT_TAG_LOCAL
+  }
+
+  inline bool heapNotLocal() const {
     return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == OBJECT_TAG_HEAP;
   }
 

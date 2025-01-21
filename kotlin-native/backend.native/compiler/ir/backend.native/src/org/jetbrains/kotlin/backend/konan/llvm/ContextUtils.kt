@@ -52,7 +52,7 @@ internal sealed class Lifetime(val slotType: SlotType) {
     }
 
     // If reference is frame-local (only obtained from some call and never leaves).
-    object LOCAL : Lifetime(SlotType.ARENA) {
+    object LOCAL : Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "LOCAL"
         }

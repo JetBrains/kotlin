@@ -137,7 +137,7 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
         prev = ref.load();
     }
 
-    if (prev != nullptr && prev->heap()) {
+    if (prev != nullptr && prev->heapNotLocal()) {
         // TODO Redundant if the destination object is black.
         //      Yet at the moment there is now efficient way to distinguish black and gray objects.
 

@@ -28,13 +28,12 @@ namespace internal {
 template <typename Traits>
 void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexcept {
     auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
-    if (field->heap()) {
+    if (field->heapNotLocal()) {
         Traits::tryEnqueue(markQueue, field);
     }
-    if constexpr (!Traits::kAllowHeapToStackRefs) {
-        if (object->heap()) {
-            RuntimeAssert(!field->stack(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
-        }
+    if (object->heapNotLocal()) {
+        RuntimeAssert(!field->stack(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
+        RuntimeAssert(!field->local(), "Heap object %p references local object %p[typeInfo=%p]", object, field, field->type_info());
     }
 }
 
@@ -61,11 +60,13 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
     if (isNullOrMarker(object))
         return false;
 
-    if (object->heap()) {
+    if (object->heapNotLocal()) {
         Traits::tryEnqueue(markQueue, object);
     } else {
-        // Each permanent and stack object has own entry in the root set, so it's okay to only process objects in heap.
-        Traits::processInMark(markQueue, object);
+        bool visitChildren = !object->local() || Traits::tryMark(object);
+        // Each permanent/stack/local object has own entry in the root set, so it's okay to only process objects in heap.
+        if (visitChildren)
+            Traits::processInMark(markQueue, object);
         RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
     }
     return true;
@@ -76,8 +77,8 @@ template <typename Traits>
 void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
     if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
-                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d stack=%d", object,
-                weakReference, weakReference->permanent(), weakReference->stack());
+                weakReference->heapNotLocal(), "Weak reference must be a non-local heap object. object=%p weak=%p permanent=%d stack=%d local=%d", object,
+                weakReference, weakReference->permanent(), weakReference->stack(), weakReference->local());
         // Do not schedule RegularWeakReferenceImpl but process it right away.
         // This will skip markQueue interaction.
         if (Traits::tryMark(weakReference)) {
@@ -100,9 +101,7 @@ template <typename Traits>
 void Mark(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue) noexcept {
     while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
         markHandle.addObject();
-
         Traits::processInMark(markQueue, top);
-
         // TODO: Consider moving it before processInMark to make the latter something of a tail call.
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
             internal::processExtraObjectData<Traits>(markHandle, markQueue, *extraObjectData, top);

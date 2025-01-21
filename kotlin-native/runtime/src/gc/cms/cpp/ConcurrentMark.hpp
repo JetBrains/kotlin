@@ -53,8 +53,6 @@ public:
         using MarkQueue = ParallelProcessor::Worker;
         using AnyQueue = ParallelProcessor::WorkSource;
 
-        static constexpr auto kAllowHeapToStackRefs = false;
-
         ALWAYS_INLINE static void clear(AnyQueue& queue) noexcept { RuntimeAssert(queue.localEmpty(), "Mark queue must be empty"); }
 
         static PERFORMANCE_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
