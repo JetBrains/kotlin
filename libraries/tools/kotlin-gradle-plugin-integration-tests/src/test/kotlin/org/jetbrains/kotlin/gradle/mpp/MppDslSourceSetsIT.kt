@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 
 @MppGradlePluginTests
@@ -37,13 +38,13 @@ class MppDslSourceSetsIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "mpp-empty-sources")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testPublishEmptySourceSets(gradleVersion: GradleVersion) {
         project(
             projectName = "mpp-empty-sources",
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
+            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
             build("publish") {
                 assertTasksNoSource(
                     ":compileKotlinJs",

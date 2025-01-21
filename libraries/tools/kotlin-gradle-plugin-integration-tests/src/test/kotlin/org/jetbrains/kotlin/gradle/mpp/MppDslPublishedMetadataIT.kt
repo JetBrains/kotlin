@@ -76,6 +76,10 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 localRepoDir = localRepoDir,
             )
 
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
+            )
+
             subProject("sample-app").apply {
                 buildGradle.modify {
                     it.replace("\"com.example:sample-lib:1.0\"", "project(':')")

@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 import org.jetbrains.kotlin.gradle.utils.lenient
+import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
 open class KotlinJvmCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
+    internal val defaultJavaSourceSet: SourceSet,
 ) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
     DeprecatedKotlinCompilationWithResources<KotlinJvmOptions> {
 
@@ -57,12 +59,14 @@ open class KotlinJvmCompilation @Inject internal constructor(
      * value, but later target will be configured to run with Java enabled. If possible, please use [compileJavaTaskProviderSafe].
      */
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
-        get() = if (target.withJavaEnabled) {
+        get() {
             val project = target.project
-            val javaSourceSets = project.javaSourceSets
-            val javaSourceSet = javaSourceSets.getByName(compilationName)
-            project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
-        } else null
+            val javaSourceSet = if (target.withJavaEnabled) {
+                val javaSourceSets = project.javaSourceSets
+                javaSourceSets.getByName(compilationName)
+            } else defaultJavaSourceSet
+            return project.tasks.named<JavaCompile>(javaSourceSet.compileJavaTaskName)
+        }
 
     /**
      * Alternative to [compileJavaTaskProvider] to safely receive [JavaCompile] task provider  when [KotlinJvmTarget.withJavaEnabled]
@@ -72,24 +76,26 @@ open class KotlinJvmCompilation @Inject internal constructor(
         .provider { javaSourceSet.lenient.getOrNull() }
         .flatMap { javaSourceSet ->
             checkNotNull(javaSourceSet)
-            project.tasks.named(javaSourceSet.compileJavaTaskName, JavaCompile::class.java)
+            project.tasks.named<JavaCompile>(javaSourceSet.compileJavaTaskName)
         }
 
+    internal val defaultCompileJavaProvider: TaskProvider<out JavaCompile>
+        get() = project.tasks.named<JavaCompile>(defaultJavaSourceSet.compileJavaTaskName)
 
     internal val javaSourceSet: Future<SourceSet?> get() = javaSourceSetImpl
-    private val javaSourceSetImpl: CompletableFuture<SourceSet?> = CompletableFuture<SourceSet?>().also { future ->
+    private val javaSourceSetImpl: CompletableFuture<SourceSet> = CompletableFuture<SourceSet>().also { future ->
         /**
-         * If no SourceSet was set until 'AfterFinaliseDsl', then user really did never call into 'withJava', hence
-         * we can complete the Future with 'null' notifying everybody, that there won't be any java source set associated with
-         * this compilation
+         * If no SourceSet was set until 'AfterFinaliseDsl', then user really did never call into 'withJava'.
+         * Hence, we can complete the Future with Java SourceSet created by default.
          */
         target.project.launchInStage(AfterFinaliseDsl) {
             if (!future.isCompleted) {
-                future.complete(null)
+                future.complete(defaultJavaSourceSet)
             }
         }
     }
 
+    @Deprecated("Conditionally creating Java source sets is deprecated. Check 'defaultJavaSourceSet' instead.")
     internal fun maybeCreateJavaSourceSet(): SourceSet {
         check(target.withJavaEnabled)
         val sourceSet = target.project.javaSourceSets.maybeCreate(compilationName)

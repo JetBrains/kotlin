@@ -300,11 +300,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @MppGradlePluginTests
-    @DisplayName("works in MPP withJava project")
+    @DisplayName("works in MPP with Java project")
     @GradleTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testJvmWithJavaConfigurationCache(gradleVersion: GradleVersion) {
         project("mppJvmWithJava", gradleVersion) {
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             build("jvmWithJavaJar")
             build("jvmWithJavaJar") {
                 assertOutputContains("Reusing configuration cache.")

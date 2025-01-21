@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
+import org.jetbrains.kotlin.gradle.util.replaceText
 import java.nio.file.Files
 import kotlin.streams.asSequence
 import kotlin.test.assertEquals
@@ -80,7 +81,6 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("Build metrics produces valid report for mpp-jvm")
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
-        maxVersion = TestVersions.Gradle.G_8_6,
     )
     @GradleTest
     fun testBuildMetricsForMppJvm(gradleVersion: GradleVersion) {
@@ -117,6 +117,7 @@ class BuildReportsIT : KGPBaseTest() {
         languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
     ) {
         project(project, gradleVersion) {
+            if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             build(task) {
                 assertBuildReportPathIsPrinted()
             }
@@ -125,6 +126,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
 
         project(project, gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = languageVersion)) {
+            if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             build(task, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
                 assertBuildReportPathIsPrinted()
             }

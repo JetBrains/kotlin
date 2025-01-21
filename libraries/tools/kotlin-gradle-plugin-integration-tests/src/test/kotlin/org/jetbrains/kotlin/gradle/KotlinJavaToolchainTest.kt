@@ -297,13 +297,13 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @DisplayName("Toolchain should be correctly supported in multiplatform plugin jvm with 'withJava()' targets")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     @GradleTest
     internal fun toolchainCorrectlySupportedInMPPluginWithJava(gradleVersion: GradleVersion) {
         project(
             projectName = "mppJvmWithJava".fullProjectName,
             gradleVersion = gradleVersion
         ) {
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             useToolchainToCompile(11)
 
             build("assemble") {
@@ -320,7 +320,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "mppJvmWithJava".fullProjectName,
             gradleVersion = gradleVersion
         ) {
-            buildGradle.replaceText("withJava()", "")
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             useToolchainToCompile(11)
 
             build("assemble") {

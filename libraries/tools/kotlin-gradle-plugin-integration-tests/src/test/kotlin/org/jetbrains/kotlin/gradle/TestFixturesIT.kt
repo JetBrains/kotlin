@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
@@ -37,6 +38,7 @@ class TestFixturesIT : KGPBaseTest() {
     fun testInternalAccessInMppProjectWithJava(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """

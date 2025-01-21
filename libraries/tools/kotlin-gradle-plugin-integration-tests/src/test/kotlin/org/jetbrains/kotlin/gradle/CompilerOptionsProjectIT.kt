@@ -441,6 +441,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                         |import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
                         |
                         |kotlin {
+                        |    jvmToolchain(11)
                         |    jvm {
                         |        compilerOptions {
                         |            languageVersion = KotlinVersion.KOTLIN_1_8

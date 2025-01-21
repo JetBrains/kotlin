@@ -12,6 +12,7 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -413,7 +414,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("Validation should show error for MPP JVM target withJava")
     @GradleTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     internal fun mppWithJavaFailValidation(gradleVersion: GradleVersion) {
         project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
             gradleProperties.append(
@@ -421,6 +421,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 kotlin.jvm.target.validation.mode = error
                 """.trimIndent()
             )
+
+            if (!isWithJavaSupported) {
+                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
+                    subProject(it).buildGradleKts.replaceText("withJava()", "")
+                }
+            }
 
             subProject("lib").buildGradleKts.appendText(
                 """
@@ -444,7 +450,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("Validation should not run MPP JVM target without withJava")
     @GradleTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     internal fun mppJvmNotFailValidation(gradleVersion: GradleVersion) {
         project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
             gradleProperties.append(
@@ -452,6 +457,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 kotlin.jvm.target.validation.mode = error
                 """.trimIndent()
             )
+
+            if (!isWithJavaSupported) {
+                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
+                    subProject(it).buildGradleKts.replaceText("withJava()", "")
+                }
+            }
 
             subProject("lib").buildGradleKts.appendText(
                 """

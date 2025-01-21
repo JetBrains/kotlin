@@ -36,7 +36,7 @@ class KT31459JvmMainClassesTest {
         val task = project.tasks.getByName("jvmMainClasses")
 
         assertEquals(
-            setOf("compileKotlinJvm", "compileJava", "jvmProcessResources"),
+            setOf("compileKotlinJvm", "compileJava", "jvmProcessResources", "compileJvmMainJava", "processJvmMainResources"),
             task.directDependencies
         )
     }

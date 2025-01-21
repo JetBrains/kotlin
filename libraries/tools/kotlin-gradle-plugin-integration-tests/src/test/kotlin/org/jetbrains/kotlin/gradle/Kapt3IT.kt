@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSA
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -1035,13 +1036,15 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt with MPP/Jvm")
     @GradleTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_6)
     fun testMPPKaptPresence(gradleVersion: GradleVersion) {
         project(
             "mpp-kapt-presence".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
+            if (!isWithJavaSupported) {
+                subProject("dac").buildGradle.replaceText("withJava()", "")
+            }
 
             build(":dac:compileKotlinJvm") {
                 assertTasksExecuted(
