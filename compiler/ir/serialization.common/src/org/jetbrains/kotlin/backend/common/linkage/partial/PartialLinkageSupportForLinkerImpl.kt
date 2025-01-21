@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogger
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
@@ -53,10 +55,12 @@ internal class PartialLinkageSupportForLinkerImpl(
 
     override fun enqueueFile(file: IrFile) {
         filesEnqueuedForProcessing += file
+        logFile("FILE SCHEDULED", file)
     }
 
     override fun enqueueDeclaration(declaration: IrDeclaration) {
         declarationsEnqueuedForProcessing += declaration
+        logDeclaration("DECLARATION SCHEDULED", declaration)
     }
 
     override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) {
@@ -102,4 +106,14 @@ internal class PartialLinkageSupportForLinkerImpl(
     override fun collectAllStubbedSymbols(): Set<IrSymbol> {
         return stubGenerator.allStubbedSymbols
     }
+}
+
+internal fun logDeclaration(prefix: String, declaration: IrDeclaration) {
+    val kind = declaration::class.java.simpleName
+    val fqName = (declaration as IrDeclarationWithName).fqNameWhenAvailable?.asString() ?: "<unknown FQN>"
+    println("$prefix: $kind, FQN = $fqName")
+}
+
+internal fun logFile(prefix: String, file: IrFile) {
+    println("$prefix: ${file.fileEntry.name}")
 }

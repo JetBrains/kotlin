@@ -60,6 +60,8 @@ internal class PartiallyLinkedIrTreePatcher(
 
     fun removeUnusableAnnotationsFromFiles(files: Collection<IrFile>) {
         for (file in files) {
+            logFile("FILE PROCESSED", file)
+
             val currentFile: PLFile = PLFile.IrBased(file)
 
             // Optimization: Don't patch declarations from stdlib/built-ins.
@@ -71,6 +73,10 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     fun patchDeclarations(declarations: Collection<IrDeclaration>) {
+        for (declaration in declarations) {
+            logDeclaration("DECLARATION PROCESSED", declaration)
+        }
+
         val declarationsGroupedByDirectParent = declarations.groupBy { it.parent }
 
         for ((directParent: IrDeclarationParent, declarationsWithSameParent: List<IrDeclaration>) in declarationsGroupedByDirectParent) {
