@@ -41,7 +41,11 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     val optIn: org.gradle.api.provider.ListProperty<kotlin.String>
 
     /**
-     * Enable progressive compiler mode. In this mode, deprecations and bug fixes for unstable code take effect immediately instead of going through a graceful migration cycle. Code written in progressive mode is backward compatible; however, code written without progressive mode enabled may cause compilation errors in progressive mode.
+     * Enable progressive compiler mode.
+     * In this mode, deprecations and bug fixes for unstable code take effect immediately
+     * instead of going through a graceful migration cycle.
+     * Code written in progressive mode is backward compatible; however, code written without
+     * progressive mode enabled may cause compilation errors in progressive mode.
      *
      * Default value: false
      */

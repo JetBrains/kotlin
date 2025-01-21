@@ -29,7 +29,8 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val main: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode>
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
+     * This option does nothing and is left for compatibility with the legacy backend.
+     * It is deprecated and will be removed in Kotlin 2.2.
      *
      * Default value: false
      */
@@ -58,7 +59,8 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val moduleName: org.gradle.api.provider.Property<kotlin.String>
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
+     * This option does nothing and is left for compatibility with the legacy backend.
+     * It is deprecated and will be removed in Kotlin 2.2.
      *
      * Default value: false
      */
@@ -116,7 +118,8 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val target: org.gradle.api.provider.Property<kotlin.String>
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in a future release.
+     * This option does nothing and is left for compatibility with the legacy backend.
+     * It is deprecated and will be removed in a future release.
      *
      * Default value: false
      */
