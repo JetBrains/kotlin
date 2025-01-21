@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -548,7 +550,7 @@ internal val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal val nativeLoweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> =
-        listOf(upgradeCallableReferencesModuleWisePhase, assertionWrapperModuleWisePhase) + loweringsOfTheFirstPhase
+        listOf(upgradeCallableReferencesModuleWisePhase, assertionWrapperModuleWisePhase) + loweringsOfTheFirstPhase(KonanManglerIr)
 
 internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
     upgradeCallableReferencesFileWisePhase,
