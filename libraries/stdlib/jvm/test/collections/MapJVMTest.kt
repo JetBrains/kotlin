@@ -6,8 +6,8 @@
 package test.collections
 
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 import kotlin.test.*
+import kotlin.jvm.internal.CompactMap
 
 class MapJVMTest {
     @Test fun createSortedMap() {
@@ -73,6 +73,32 @@ class MapJVMTest {
         }
         expect(1) {
             (map as MutableMap<String, Int>).getOrPut("x") { 1 }
+        }
+    }
+
+    @Test fun compactMap() {
+        fun <K, V> expectSame(expect: Map<K, V>, actual: Map<K, V>) {
+            expect(expect.size) { actual.size }
+            expect(expect.isEmpty()) { actual.isEmpty() }
+            expect(expect.keys) { actual.keys }
+            expect(expect.values.toSet()) { actual.values.toSet() }
+            expect(expect.entries.size) { actual.entries.size }
+            for ((key, value) in actual) {
+                expect(expect[key]) { value }
+            }
+            for ((key, value) in expect) {
+                expect(true) { actual.containsKey(key) }
+                expect(value) { actual[key] }
+                expect(true) { actual.containsValue(value) }
+            }
+        }
+
+        val map = mutableMapOf<Int,Int>()
+        expectSame(map, CompactMap(map))
+        val rnd = kotlin.random.Random(0)
+        for (k in 0..100) {
+            map[rnd.nextInt()] = rnd.nextInt()
+            expectSame(map, CompactMap(map))
         }
     }
 }

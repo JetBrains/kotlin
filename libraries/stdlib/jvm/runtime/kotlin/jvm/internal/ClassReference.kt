@@ -104,63 +104,68 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
                 Function10::class.java, Function11::class.java, Function12::class.java, Function13::class.java, Function14::class.java,
                 Function15::class.java, Function16::class.java, Function17::class.java, Function18::class.java, Function19::class.java,
                 Function20::class.java, Function21::class.java, Function22::class.java
-            ).mapIndexed { i, clazz -> clazz to i }.toMap()
+            ).mapIndexed { i, clazz -> clazz to i }.toMap().compact()
 
-        private val primitiveFqNames = HashMap<String, String>().apply {
-            put("boolean", "kotlin.Boolean")
-            put("char", "kotlin.Char")
-            put("byte", "kotlin.Byte")
-            put("short", "kotlin.Short")
-            put("int", "kotlin.Int")
-            put("float", "kotlin.Float")
-            put("long", "kotlin.Long")
-            put("double", "kotlin.Double")
-        }
+        private val classFqNames: CompactMap<String, String>
+        private val simpleNames: CompactMap<String, String>
 
-        private val primitiveWrapperFqNames = HashMap<String, String>().apply {
-            put("java.lang.Boolean", "kotlin.Boolean")
-            put("java.lang.Character", "kotlin.Char")
-            put("java.lang.Byte", "kotlin.Byte")
-            put("java.lang.Short", "kotlin.Short")
-            put("java.lang.Integer", "kotlin.Int")
-            put("java.lang.Float", "kotlin.Float")
-            put("java.lang.Long", "kotlin.Long")
-            put("java.lang.Double", "kotlin.Double")
-        }
-
-        // See JavaToKotlinClassMap.
-        private val classFqNames = HashMap<String, String>().apply {
-            put("java.lang.Object", "kotlin.Any")
-            put("java.lang.String", "kotlin.String")
-            put("java.lang.CharSequence", "kotlin.CharSequence")
-            put("java.lang.Throwable", "kotlin.Throwable")
-            put("java.lang.Cloneable", "kotlin.Cloneable")
-            put("java.lang.Number", "kotlin.Number")
-            put("java.lang.Comparable", "kotlin.Comparable")
-            put("java.lang.Enum", "kotlin.Enum")
-            put("java.lang.annotation.Annotation", "kotlin.Annotation")
-            put("java.lang.Iterable", "kotlin.collections.Iterable")
-            put("java.util.Iterator", "kotlin.collections.Iterator")
-            put("java.util.Collection", "kotlin.collections.Collection")
-            put("java.util.List", "kotlin.collections.List")
-            put("java.util.Set", "kotlin.collections.Set")
-            put("java.util.ListIterator", "kotlin.collections.ListIterator")
-            put("java.util.Map", "kotlin.collections.Map")
-            put("java.util.Map\$Entry", "kotlin.collections.Map.Entry")
-            put("kotlin.jvm.internal.StringCompanionObject", "kotlin.String.Companion")
-            put("kotlin.jvm.internal.EnumCompanionObject", "kotlin.Enum.Companion")
-
-            putAll(primitiveFqNames)
-            putAll(primitiveWrapperFqNames)
-            primitiveFqNames.values.associateTo(this) { kotlinName ->
-                "kotlin.jvm.internal.${kotlinName.substringAfterLast('.')}CompanionObject" to "$kotlinName.Companion"
+        init {
+            val primitiveFqNames = HashMap<String, String>().apply {
+                put("boolean", "kotlin.Boolean")
+                put("char", "kotlin.Char")
+                put("byte", "kotlin.Byte")
+                put("short", "kotlin.Short")
+                put("int", "kotlin.Int")
+                put("float", "kotlin.Float")
+                put("long", "kotlin.Long")
+                put("double", "kotlin.Double")
             }
-            for ((klass, arity) in FUNCTION_CLASSES) {
-                put(klass.name, "kotlin.Function$arity")
-            }
-        }
 
-        private val simpleNames = classFqNames.mapValues { (_, fqName) -> fqName.substringAfterLast('.') }
+            val primitiveWrapperFqNames = HashMap<String, String>().apply {
+                put("java.lang.Boolean", "kotlin.Boolean")
+                put("java.lang.Character", "kotlin.Char")
+                put("java.lang.Byte", "kotlin.Byte")
+                put("java.lang.Short", "kotlin.Short")
+                put("java.lang.Integer", "kotlin.Int")
+                put("java.lang.Float", "kotlin.Float")
+                put("java.lang.Long", "kotlin.Long")
+                put("java.lang.Double", "kotlin.Double")
+            }
+
+            // See JavaToKotlinClassMap.
+            classFqNames = HashMap<String, String>().apply {
+                put("java.lang.Object", "kotlin.Any")
+                put("java.lang.String", "kotlin.String")
+                put("java.lang.CharSequence", "kotlin.CharSequence")
+                put("java.lang.Throwable", "kotlin.Throwable")
+                put("java.lang.Cloneable", "kotlin.Cloneable")
+                put("java.lang.Number", "kotlin.Number")
+                put("java.lang.Comparable", "kotlin.Comparable")
+                put("java.lang.Enum", "kotlin.Enum")
+                put("java.lang.annotation.Annotation", "kotlin.Annotation")
+                put("java.lang.Iterable", "kotlin.collections.Iterable")
+                put("java.util.Iterator", "kotlin.collections.Iterator")
+                put("java.util.Collection", "kotlin.collections.Collection")
+                put("java.util.List", "kotlin.collections.List")
+                put("java.util.Set", "kotlin.collections.Set")
+                put("java.util.ListIterator", "kotlin.collections.ListIterator")
+                put("java.util.Map", "kotlin.collections.Map")
+                put("java.util.Map\$Entry", "kotlin.collections.Map.Entry")
+                put("kotlin.jvm.internal.StringCompanionObject", "kotlin.String.Companion")
+                put("kotlin.jvm.internal.EnumCompanionObject", "kotlin.Enum.Companion")
+
+                putAll(primitiveFqNames)
+                putAll(primitiveWrapperFqNames)
+                primitiveFqNames.values.associateTo(this) { kotlinName ->
+                    "kotlin.jvm.internal.${kotlinName.substringAfterLast('.')}CompanionObject" to "$kotlinName.Companion"
+                }
+                for ((klass, arity) in FUNCTION_CLASSES) {
+                    put(klass.name, "kotlin.Function$arity")
+                }
+            }.compact()
+
+            simpleNames = classFqNames.mapValues { (_, fqName) -> fqName.substringAfterLast('.') }.compact(classFqNames)
+        }
 
         public fun getClassSimpleName(jClass: Class<*>): String? = when {
             jClass.isAnonymousClass -> null
