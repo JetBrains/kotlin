@@ -58,6 +58,24 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     }
 
     @Test
+    @TestMetadata("classAndTypeAliasAmbiguityLibraryMultiModule.kt")
+    public void testClassAndTypeAliasAmbiguityLibraryMultiModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/classAndTypeAliasAmbiguityLibraryMultiModule.kt");
+    }
+
+    @Test
+    @TestMetadata("classAndTypeAliasAmbiguityLibrarySingleModuleMultiRoot.kt")
+    public void testClassAndTypeAliasAmbiguityLibrarySingleModuleMultiRoot() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/classAndTypeAliasAmbiguityLibrarySingleModuleMultiRoot.kt");
+    }
+
+    @Test
+    @TestMetadata("classAndTypeAliasAmbiguitySourceSingleModule.kt")
+    public void testClassAndTypeAliasAmbiguitySourceSingleModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/classAndTypeAliasAmbiguitySourceSingleModule.kt");
+    }
+
+    @Test
     @TestMetadata("classCallableAmbiguityLibraryMultiModule.kt")
     public void testClassCallableAmbiguityLibraryMultiModule() {
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/classCallableAmbiguityLibraryMultiModule.kt");
@@ -91,6 +109,24 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     @TestMetadata("enumEntryAmbiguitySourceSingleModule.kt")
     public void testEnumEntryAmbiguitySourceSingleModule() {
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/enumEntryAmbiguitySourceSingleModule.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassAmbiguityLibraryMultiModule.kt")
+    public void testNestedClassAmbiguityLibraryMultiModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/nestedClassAmbiguityLibraryMultiModule.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassAmbiguityLibrarySingleModuleMultiRoot.kt")
+    public void testNestedClassAmbiguityLibrarySingleModuleMultiRoot() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/nestedClassAmbiguityLibrarySingleModuleMultiRoot.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassAmbiguitySourceSingleModule.kt")
+    public void testNestedClassAmbiguitySourceSingleModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/nestedClassAmbiguitySourceSingleModule.kt");
     }
 
     @Test
