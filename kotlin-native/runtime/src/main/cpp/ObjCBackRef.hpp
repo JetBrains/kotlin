@@ -8,7 +8,6 @@
 #include "ExternalRCRef.hpp"
 #include "Memory.h"
 #include "RawPtr.hpp"
-#include "SpecialRefRegistry.hpp"
 #include "Utils.hpp"
 
 namespace kotlin::mm {
@@ -23,93 +22,75 @@ public:
     ObjCBackRef() noexcept = default;
 
     // Cast raw ref into a back reference.
-    explicit ObjCBackRef(RawExternalRCRefNonPermanent* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
+    explicit ObjCBackRef(RawExternalRCRefNonPermanent* raw) noexcept : raw_(raw) {}
 
     // Cast back reference into a raw ref
     [[nodiscard("must be manually disposed")]] explicit operator RawExternalRCRefNonPermanent*() && noexcept {
-        // Make sure to move out from node_.
-        auto node = std::move(node_);
-        return node->asRaw();
+        // Make sure to move out from raw_.
+        auto raw = std::move(raw_);
+        return static_cast<RawExternalRCRefNonPermanent*>(raw);
     }
 
     // Create new back reference for `obj`.
-    [[nodiscard("must be manually disposed")]] static ObjCBackRef create(ObjHeader* obj) noexcept;
+    [[nodiscard("must be manually disposed")]] static ObjCBackRef create(ObjHeader* obj) noexcept {
+        RuntimeAssert(!obj || !obj->permanent(), "ObjCBackRef only works with non-permanent objects");
+        return ObjCBackRef(mm::externalRCRefNonPermanent(mm::createRetainedExternalRCRef(obj)));
+    }
 
     // Dispose back reference.
     void dispose() && noexcept {
-        RuntimeAssert(node_, "Disposing null ObjCBackRef");
-        // Make sure to move out from node_.
-        auto node = std::move(node_);
-        // Can be safely called with any thread state.
-        node->dispose();
+        // Make sure to move out from raw_.
+        auto raw = std::move(raw_);
+        disposeExternalRCRef(static_cast<RawExternalRCRefNonPermanent*>(raw));
     }
 
     // Increment refcount.
     void retain() noexcept {
-        // In objc import if KtClass inherits from ObjCClass
+        // NOTE: In objc import if KtClass inherits from ObjCClass
         // calling [self retain] inside [ObjCClass dealloc] will lead to
         // this->retain() being called after this->dispose()
-        if (!node_) return;
-        // Can be safely called with any thread state.
-        node_->retainRef();
+        retainExternalRCRef(static_cast<RawExternalRCRefNonPermanent*>(raw_));
     }
 
     // Decrement refcount.
     void release() noexcept {
-        // In objc import if KtClass inherits from ObjCClass
+        // NOTE: In objc import if KtClass inherits from ObjCClass
         // calling [self release] inside [ObjCClass dealloc] will lead to
         // this->release() being called after this->dispose()
-        if (!node_) return;
-        // Can be safely called with any thread state.
-        node_->releaseRef();
+        releaseExternalRCRef(static_cast<RawExternalRCRefNonPermanent*>(raw_));
     }
 
     // Try incrementing refcount. Will fail if the underlying object is not alive.
     // Must be called in the runnable state.
     [[nodiscard("refcount change must be processed")]] bool tryRetain() noexcept {
         AssertThreadState(ThreadState::kRunnable);
-        // In objc export if ObjCClass is objc_setAssociatedObject with KtClass
+        // NOTE: In objc export if ObjCClass is objc_setAssociatedObject with KtClass
         // calling [KtClass _tryRetain] inside [ObjCClass dealloc] will lead to
         // this->tryRetain() being called after this->dispose()
-        if (!node_) return false;
-        return tryRetainIgnoreState();
+        ObjHolder holder;
+        if (mm::tryRefExternalRCRef(static_cast<RawExternalRCRefNonPermanent*>(raw_), holder.slot())) {
+            mm::retainExternalRCRef(static_cast<RawExternalRCRefNonPermanent*>(raw_));
+            return true;
+        }
+        return false;
     }
 
     // Get the underlying object.
     // The result is only safe to use only with refcount > 0.
     [[nodiscard("expensive pure function")]] ObjHeader* operator*() const noexcept {
-        // In objc import if KtClass inherits from ObjCClass
+        // NOTE: In objc import if KtClass inherits from ObjCClass
         // calling [self retain] inside [ObjCClass dealloc] and then passing the retained
         // reference back to Kotlin will lead to
         // this->operator*() being called after this->dispose()
-        if (!node_) return nullptr;
-        return node_->ref();
+        return mm::dereferenceExternalRCRef(static_cast<RawExternalRCRefNonPermanent*>(raw_));
     }
-
-    // Get the type of underlying object.
-    // Can only be called if refcount > 0.
-    [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept {
-        RuntimeAssert(node_, "typeInfo on null ObjCBackRef");
-        return node_->typeInfo();
-    }
-
-    bool tryRetainForTests() noexcept { return tryRetainIgnoreState(); }
 
     static ObjCBackRef& reinterpret(RawExternalRCRefNonPermanent*& raw) noexcept { return reinterpret_cast<ObjCBackRef&>(raw); }
 
     static const ObjCBackRef& reinterpret(RawExternalRCRefNonPermanent* const& raw) noexcept { return reinterpret_cast<const ObjCBackRef&>(raw); }
 
 private:
-    bool tryRetainIgnoreState() noexcept {
-        ObjHolder holder;
-        if (auto* obj = node_->tryRef(holder.slot())) {
-            node_->retainRef();
-            return true;
-        }
-        return false;
-    }
-
-    raw_ptr<SpecialRefRegistry::Node> node_;
+    raw_ptr<RawExternalRCRefNonPermanent> raw_;
 };
 
 static_assert(sizeof(ObjCBackRef) == sizeof(void*), "ObjCBackRef must be a thin wrapper around pointer");

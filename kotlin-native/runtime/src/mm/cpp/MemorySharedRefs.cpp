@@ -7,9 +7,6 @@
 
 #include <shared_mutex>
 
-#include "ExternalRCRef.hpp"
-#include "ObjCBackRef.hpp"
-
 using namespace kotlin;
 
 void KRefSharedHolder::initLocal(ObjHeader* obj) {
@@ -49,7 +46,7 @@ void BackRefFromAssociatedObject::initForPermanentObject(ObjHeader* obj) {
 void BackRefFromAssociatedObject::initAndAddRef(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
     RuntimeAssert(!obj->permanent(), "Can only be called with non-permanent object");
-    ref_ = static_cast<mm::RawExternalRCRefNonPermanent*>(mm::ObjCBackRef::create(obj));
+    ref_ = mm::ObjCBackRef::create(obj);
     deallocMutex_.construct();
 }
 
@@ -58,13 +55,13 @@ bool BackRefFromAssociatedObject::initWithExternalRCRef(mm::RawExternalRCRef* re
         permanentObj_ = obj;
         return true;
     }
-    ref_ = mm::externalRCRefNonPermanent(ref);
+    ref_ = mm::ObjCBackRef(mm::externalRCRefNonPermanent(ref));
     deallocMutex_.construct();
     return false;
 }
 
 void BackRefFromAssociatedObject::addRef() {
-    mm::ObjCBackRef::reinterpret(ref_).retain();
+    ref_.retain();
 }
 
 bool BackRefFromAssociatedObject::tryAddRef() {
@@ -76,21 +73,21 @@ bool BackRefFromAssociatedObject::tryAddRef() {
         return false;
     }
     CalledFromNativeGuard threadStateGuard;
-    return mm::ObjCBackRef::reinterpret(ref_).tryRetain();
+    return ref_.tryRetain();
 }
 
 void BackRefFromAssociatedObject::releaseRef() {
-    mm::ObjCBackRef::reinterpret(ref_).release();
+    ref_.release();
 }
 
 void BackRefFromAssociatedObject::dealloc() {
     // This will wait for all `tryAddRef` to finish.
     std::unique_lock guard(*deallocMutex_);
-    std::move(mm::ObjCBackRef::reinterpret(ref_)).dispose();
+    std::move(ref_).dispose();
 }
 
 ObjHeader* BackRefFromAssociatedObject::ref() const {
-    return *mm::ObjCBackRef::reinterpret(ref_);
+    return *ref_;
 }
 
 ObjHeader* BackRefFromAssociatedObject::refPermanent() const {
@@ -101,5 +98,5 @@ mm::RawExternalRCRef* BackRefFromAssociatedObject::externalRCRef(bool permanent)
     if (permanent) {
         return mm::permanentObjectAsExternalRCRef(permanentObj_);
     }
-    return externalRCRef(ref_);
+    return externalRCRef(static_cast<mm::RawExternalRCRefNonPermanent*>(ref_));
 }
