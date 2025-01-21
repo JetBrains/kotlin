@@ -101,20 +101,17 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
 )
 
-///**
-// * The second phase of inlining (inline all functions).
-// */
-//private val inlineAllFunctionsPhase = makeIrModulePhase(
-//    { context: LoweringContext ->
-//        FunctionInlining(
-//            context,
-//            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler = TODO()),
-//            produceOuterThisFields = false,
-//        )
-//    },
-//    name = "InlineAllFunctions",
-//    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
-//)
+private val inlineAllFunctionsPhase = makeIrModulePhase(
+    { context: LoweringContext ->
+        FunctionInlining(
+            context,
+            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler = TODO()),
+            produceOuterThisFields = false,
+        )
+    },
+    name = "InlineAllFunctions",
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
+)
 
 val loweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
     lateinitPhase,
@@ -127,7 +124,6 @@ val loweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<LoweringContext, IrM
     outerThisSpecialAccessorInInlineFunctionsPhase,
     syntheticAccessorGenerationPhase,
     validateIrAfterInliningOnlyPrivateFunctions,
-//         TODO KT-72441 add public inlining to this list
-//        inlineAllFunctionsPhase,
+    inlineAllFunctionsPhase,
 //        validateIrAfterInliningAllFunctions
 )
