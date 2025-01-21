@@ -127,8 +127,11 @@ TEST(GlobalRootSetTest, Basic) {
                 testing::UnorderedElementsAre(
                         asGlobal(global1), asGlobal(global2), asStableRef(stableRef1), asStableRef(stableRef2), asStableRef(stableRef3)));
 
+        mm::releaseExternalRCRef(stableRefHandle1);
         mm::disposeExternalRCRef(stableRefHandle1);
+        mm::releaseExternalRCRef(stableRefHandle2);
         mm::disposeExternalRCRef(stableRefHandle2);
+        mm::releaseExternalRCRef(stableRefHandle3);
         mm::disposeExternalRCRef(stableRefHandle3);
     });
 }
