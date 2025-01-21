@@ -288,8 +288,8 @@ class JvmCachedDeclarations(
             } else if (implementation.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode, implementation)) {
                 val klass = newFunction.parentAsClass
                 when (context.config.jvmDefaultMode) {
-                    JvmDefaultMode.ALL -> return null
-                    JvmDefaultMode.ALL_COMPATIBILITY if klass.hasJvmDefaultNoCompatibilityAnnotation() -> return null
+                    JvmDefaultMode.NO_COMPATIBILITY -> return null
+                    JvmDefaultMode.ENABLE if klass.hasJvmDefaultNoCompatibilityAnnotation() -> return null
                     else -> superFunction
                 }
             } else {

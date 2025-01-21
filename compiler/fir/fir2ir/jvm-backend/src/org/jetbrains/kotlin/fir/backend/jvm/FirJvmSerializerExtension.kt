@@ -128,9 +128,9 @@ open class FirJvmSerializerExtension(
                 JvmProtoBuf.jvmClassFlags,
                 JvmFlags.getClassFlags(
                     true,
-                    (JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode &&
+                    (JvmDefaultMode.ENABLE == jvmDefaultMode &&
                             !klass.hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID, session)) ||
-                            (JvmDefaultMode.ALL == jvmDefaultMode &&
+                            (JvmDefaultMode.NO_COMPATIBILITY == jvmDefaultMode &&
                                     klass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session))
                 )
             )
@@ -159,7 +159,7 @@ open class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
-            if (jvmDefaultMode == JvmDefaultMode.ALL) {
+            if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) {
                 builder.addVersionRequirement(
                     DescriptorSerializer.writeVersionRequirement(
                         1,

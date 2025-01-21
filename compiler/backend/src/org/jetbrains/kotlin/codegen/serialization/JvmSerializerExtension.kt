@@ -84,8 +84,8 @@ class JvmSerializerExtension(
                 JvmProtoBuf.jvmClassFlags,
                 JvmFlags.getClassFlags(
                     true,
-                    (JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode && !descriptor.hasJvmDefaultNoCompatibilityAnnotation()) ||
-                            (JvmDefaultMode.ALL == jvmDefaultMode && descriptor.hasJvmDefaultWithCompatibilityAnnotation())
+                    (JvmDefaultMode.ENABLE == jvmDefaultMode && !descriptor.hasJvmDefaultNoCompatibilityAnnotation()) ||
+                            (JvmDefaultMode.NO_COMPATIBILITY == jvmDefaultMode && descriptor.hasJvmDefaultWithCompatibilityAnnotation())
                 )
             )
         }
@@ -99,7 +99,7 @@ class JvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (isInterface(classDescriptor)) {
-            if (jvmDefaultMode == JvmDefaultMode.ALL) {
+            if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) {
                 builder.addVersionRequirement(
                     writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
                 )
