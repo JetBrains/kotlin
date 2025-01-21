@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
 private val lateinitPhase = makeIrModulePhase(
     ::LateinitLowering,
@@ -108,11 +109,11 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
 )
 
-private val inlineAllFunctionsPhase = makeIrModulePhase(
+private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
     { context: LoweringContext ->
         FunctionInlining(
             context,
-            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler = TODO()),
+            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler),
             produceOuterThisFields = false,
         )
     },
@@ -120,7 +121,9 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
-val loweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
+fun loweringsOfTheFirstPhase(
+    irMangler: IrMangler,
+): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
     lateinitPhase,
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
@@ -132,6 +135,6 @@ val loweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringCo
     outerThisSpecialAccessorInInlineFunctionsPhase,
     syntheticAccessorGenerationPhase,
     validateIrAfterInliningOnlyPrivateFunctions,
-    inlineAllFunctionsPhase,
+    inlineAllFunctionsPhase(irMangler),
 //        validateIrAfterInliningAllFunctions
 )
