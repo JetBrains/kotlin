@@ -97,7 +97,7 @@ TEST_F(SpecialRefRegistryTest, RegisterRetainedRefWithoutPublish) {
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
         EXPECT_THAT(mm::dereferenceExternalRCRef(ref), obj);
 
-        mm::disposeExternalRCRef(ref);
+        mm::releaseAndDisposeExternalRCRef(ref);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
@@ -126,7 +126,7 @@ TEST_F(SpecialRefRegistryTest, RegisterRetainedRef) {
         EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(mm::dereferenceExternalRCRef(ref), obj);
 
-        mm::disposeExternalRCRef(ref);
+        mm::releaseAndDisposeExternalRCRef(ref);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
