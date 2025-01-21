@@ -10,6 +10,7 @@ import org.gradle.kotlin.dsl.task
  */
 
 // creating class eagerly here: using register causes problems due to quite complicated relationships between these tasks
+@Suppress("DEPRECATION")
 fun Project.smartJavaExec(configure: JavaExec.() -> Unit) = tasks.creating(JavaExec::class) {
     configure()
     passClasspathInJar()

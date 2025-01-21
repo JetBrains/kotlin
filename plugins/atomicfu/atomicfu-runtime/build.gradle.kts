@@ -34,6 +34,7 @@ dependencies {
     implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project)
 }
 
+@Suppress("DEPRECATION")
 val emptyJavadocJar by tasks.creating(Jar::class) {
     archiveClassifier.set("javadoc")
 }

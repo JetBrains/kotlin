@@ -66,6 +66,7 @@ if (kotlinBuildProperties.isTeamcityBuild) {
     }
 } else {
     // avoiding IntelliJ test configuration selection menu (see comments in compiler/fir/fir2ir/build.gradle.kts for details)
+    @Suppress("DEPRECATION")
     tasks.create("fastJarFSLongTests")
 }
 
