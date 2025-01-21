@@ -127,15 +127,10 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                         it is KaKotlinPropertySymbol && it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED && it.name == StandardNames.ENUM_ENTRIES
                     }
                 }
-                .filterNot {
-                    hasTypeForValueClassInSignature(it)
-                }
 
             val suppressStatic = classKind() == KaClassKind.COMPANION_OBJECT
             createMethods(this@SymbolLightClassForClassOrObject, visibleDeclarations, result, suppressStatic = suppressStatic)
-
             createConstructors(this@SymbolLightClassForClassOrObject, declaredMemberScope.constructors, result)
-
 
             addMethodsFromCompanionIfNeeded(result, classSymbol)
 
@@ -161,7 +156,6 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             .callables { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
             .filterIsInstance<KaNamedFunctionSymbol>()
-            .filterNot { hasTypeForValueClassInSignature(it) }
 
         createMethods(this@SymbolLightClassForClassOrObject, componentAndCopyFunctions, result)
         generateMethodsFromAny(classSymbol, result)

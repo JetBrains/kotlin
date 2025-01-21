@@ -227,7 +227,7 @@ internal fun KaSession.createMethods(
                 ProgressManager.checkCanceled()
 
                 if (declaration.hasReifiedParameters || isHiddenOrSynthetic(declaration)) return
-                if (declaration.name.isSpecial) return
+                if (declaration.name.isSpecial || hasTypeForValueClassInSignature(declaration, ignoreReturnType = isTopLevel)) return
 
                 result.add(
                     SymbolLightSimpleMethod(
@@ -315,6 +315,8 @@ internal fun KaSession.createPropertyAccessors(
     val propertyTypeIsValueClass = hasTypeForValueClassInSignature(callableSymbol = declaration, suppressJvmNameCheck = true)
 
     fun KaPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
+        if (declaration.hasReifiedParameters) return false
+
         when {
             !propertyTypeIsValueClass -> {}
             /*
@@ -334,7 +336,12 @@ internal fun KaSession.createPropertyAccessors(
              *     private static Ljava/lang/String; topLevelProp
              *  }
              */
-            this is KaPropertyGetterSymbol && lightClass is SymbolLightClassForFacade -> {}
+            this is KaPropertyGetterSymbol && lightClass is SymbolLightClassForFacade && !hasTypeForValueClassInSignature(
+                callableSymbol = declaration,
+                ignoreReturnType = isTopLevel,
+            ) -> {
+            }
+
             // Accessors with JvmName can be accessible from Java
             hasJvmNameAnnotation() -> {}
             else -> return false
@@ -342,7 +349,6 @@ internal fun KaSession.createPropertyAccessors(
 
         if (onlyJvmStatic && !hasJvmStaticAnnotation() && !declaration.hasJvmStaticAnnotation()) return false
 
-        if (declaration.hasReifiedParameters) return false
         if (isHiddenByDeprecation(declaration)) return false
         if (isHiddenOrSynthetic(this, siteTarget)) return false
         if (!hasBody && visibility == KaSymbolVisibility.PRIVATE) return false
