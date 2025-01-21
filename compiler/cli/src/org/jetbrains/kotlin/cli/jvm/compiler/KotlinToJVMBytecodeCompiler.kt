@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -385,10 +387,16 @@ object KotlinToJVMBytecodeCompiler {
     ): JvmIrCodegenFactory.CodegenInput {
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
+        val builderFactory = when {
+            configuration.useClassBuilderFactoryForTest -> ClassBuilderFactories.TEST
+            else -> ClassBuilderFactories.BINARIES
+        }
+
         val state = GenerationState(
             project,
             moduleDescriptor,
             configuration,
+            builderFactory = builderFactory,
             targetId = module?.let(::TargetId),
             moduleName = module?.getModuleName() ?: configuration.moduleName,
             onIndependentPartCompilationEnd = createOutputFilesFlushingCallbackIfPossible(configuration),

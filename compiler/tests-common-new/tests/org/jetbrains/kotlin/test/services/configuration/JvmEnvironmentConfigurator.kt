@@ -305,6 +305,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             )
         )
         configuration.outputDirectory = outputDir
+        configuration.retainOutputInMemory = true
+        configuration.useClassBuilderFactoryForTest = true
 
         val isMppCompilation = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
         for (mppModule in module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)) {

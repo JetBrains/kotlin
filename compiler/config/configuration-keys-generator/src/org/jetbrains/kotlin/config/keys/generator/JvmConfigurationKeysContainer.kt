@@ -99,4 +99,9 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val SKIP_BODIES by key<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT")
 
     val EXPRESSION_TO_EVALUATE by key<String>("Expression to evaluate in script mode", throwOnNull = false)
+
+    val USE_CLASS_BUILDER_FACTORY_FOR_TEST by key<Boolean>(
+        "Use ClassBuilderFactory.Test for GenerationState",
+        comment = "For test purposes only. Cannot be set via CLI arguments"
+    )
 }
