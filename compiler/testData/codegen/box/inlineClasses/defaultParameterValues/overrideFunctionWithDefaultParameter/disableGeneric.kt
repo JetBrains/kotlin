@@ -1,7 +1,8 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
+// JVM_DEFAULT_MODE: disable
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
 // JVM_TARGET: 1.8
@@ -12,7 +13,7 @@ interface Path {
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class RealPath(val x: Int) : Path {
+value class RealPath<T: Int>(val x: T) : Path {
     override fun dispatch(maxDepth: Int) = Unit
 
     fun childrenDispatch(recursively: Boolean): Unit =

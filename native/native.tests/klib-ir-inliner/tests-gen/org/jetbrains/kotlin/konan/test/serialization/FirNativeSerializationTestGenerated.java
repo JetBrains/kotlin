@@ -7178,57 +7178,57 @@ public class FirNativeSerializationTestGenerated extends AbstractFirNativeSerial
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
+          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable")
           @TestDataPath("$PROJECT_ROOT")
-          public class AllCompatibility {
+          public class Enable {
             @Test
-            public void testAllFilesPresentInAllCompatibility() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            public void testAllFilesPresentInEnable() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
 
             @Test
             @TestMetadata("superCall.kt")
             public void testSuperCall() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCall.kt");
             }
 
             @Test
             @TestMetadata("superCallFromInterface.kt")
             public void testSuperCallFromInterface() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface.kt");
             }
 
             @Test
             @TestMetadata("superCallFromInterface2.kt")
             public void testSuperCallFromInterface2() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface2.kt");
             }
 
             @Test
             @TestMetadata("superPropAccess.kt")
             public void testSuperPropAccess() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccess.kt");
             }
 
             @Test
             @TestMetadata("superPropAccessFromInterface.kt")
             public void testSuperPropAccessFromInterface() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface.kt");
             }
 
             @Test
             @TestMetadata("superPropAccessFromInterface2.kt")
             public void testSuperPropAccessFromInterface2() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface2.kt");
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
+            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy")
             @TestDataPath("$PROJECT_ROOT")
             public class DelegationBy {
               @Test
               public void testAllFilesPresentInDelegationBy() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
               }
             }
           }
@@ -7238,20 +7238,14 @@ public class FirNativeSerializationTestGenerated extends AbstractFirNativeSerial
           @TestDataPath("$PROJECT_ROOT")
           public class Interop {
             @Test
-            @TestMetadata("allAgainsAllCompatibility.kt")
-            public void testAllAgainsAllCompatibility() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
-            }
-
-            @Test
-            @TestMetadata("allCompatibilityAgainsAll.kt")
-            public void testAllCompatibilityAgainsAll() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
-            }
-
-            @Test
             public void testAllFilesPresentInInterop() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("enableAgainstNoCompatibility.kt")
+            public void testEnableAgainstNoCompatibility() {
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/enableAgainstNoCompatibility.kt");
             }
 
             @Test
@@ -7276,6 +7270,12 @@ public class FirNativeSerializationTestGenerated extends AbstractFirNativeSerial
             @TestMetadata("newAndOldSchemes2Compatibility.kt")
             public void testNewAndOldSchemes2Compatibility() {
               runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
+            }
+
+            @Test
+            @TestMetadata("noCompatibilityAgainstEnable.kt")
+            public void testNoCompatibilityAgainstEnable() {
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/noCompatibilityAgainstEnable.kt");
             }
           }
         }
@@ -27395,26 +27395,6 @@ public class FirNativeSerializationTestGenerated extends AbstractFirNativeSerial
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
-        @TestDataPath("$PROJECT_ROOT")
-        public class AllCompatibility {
-          @Test
-          public void testAllFilesPresentInAllCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
-          @TestDataPath("$PROJECT_ROOT")
-          public class DelegationBy {
-            @Test
-            public void testAllFilesPresentInDelegationBy() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-          }
-        }
-
-        @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
         @TestDataPath("$PROJECT_ROOT")
         public class DefaultCompatibilityBridges {
@@ -27435,41 +27415,61 @@ public class FirNativeSerializationTestGenerated extends AbstractFirNativeSerial
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable")
         @TestDataPath("$PROJECT_ROOT")
-        public class NoDefaultImpls {
+        public class Enable {
           @Test
-          public void testAllFilesPresentInNoDefaultImpls() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          public void testAllFilesPresentInEnable() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
           @TestDataPath("$PROJECT_ROOT")
           public class DelegationBy {
             @Test
             public void testAllFilesPresentInDelegationBy() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NoCompatibility {
+          @Test
+          public void testAllFilesPresentInNoCompatibility() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy")
+          @TestDataPath("$PROJECT_ROOT")
+          public class DelegationBy {
+            @Test
+            public void testAllFilesPresentInDelegationBy() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization")
           @TestDataPath("$PROJECT_ROOT")
           public class Specialization {
             @Test
             public void testAllFilesPresentInSpecialization() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility")
           @TestDataPath("$PROJECT_ROOT")
           public class WithCompatibility {
             @Test
             public void testAllFilesPresentInWithCompatibility() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
         }

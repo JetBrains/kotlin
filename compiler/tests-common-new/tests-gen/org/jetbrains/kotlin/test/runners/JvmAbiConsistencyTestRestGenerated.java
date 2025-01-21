@@ -6491,21 +6491,21 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         }
 
         @Test
-        @TestMetadata("propertiesOverrides.kt")
-        public void testPropertiesOverrides() {
-          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverrides.kt");
+        @TestMetadata("propertiesOverridesDisableJvmDefault.kt")
+        public void testPropertiesOverridesDisableJvmDefault() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesDisableJvmDefault.kt");
         }
 
         @Test
-        @TestMetadata("propertiesOverridesAllCompatibilityJvmDefault.kt")
-        public void testPropertiesOverridesAllCompatibilityJvmDefault() {
-          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesAllCompatibilityJvmDefault.kt");
+        @TestMetadata("propertiesOverridesEnableJvmDefault.kt")
+        public void testPropertiesOverridesEnableJvmDefault() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesEnableJvmDefault.kt");
         }
 
         @Test
-        @TestMetadata("propertiesOverridesAllJvmDefault.kt")
-        public void testPropertiesOverridesAllJvmDefault() {
-          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesAllJvmDefault.kt");
+        @TestMetadata("propertiesOverridesNoCompatibilityJvmDefault.kt")
+        public void testPropertiesOverridesNoCompatibilityJvmDefault() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesNoCompatibilityJvmDefault.kt");
         }
 
         @Test
@@ -14751,9 +14751,9 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         }
 
         @Test
-        @TestMetadata("jvmDefaultAll.kt")
-        public void testJvmDefaultAll() {
-          runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultAll.kt");
+        @TestMetadata("jvmDefaultNoCompatibility.kt")
+        public void testJvmDefaultNoCompatibility() {
+          runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultNoCompatibility.kt");
         }
       }
 
@@ -15066,9 +15066,9 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
           }
 
           @Test
-          @TestMetadata("bridgesInClassWithDisableAgainstAllCompatibility.kt")
-          public void testBridgesInClassWithDisableAgainstAllCompatibility() {
-            runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgesInClassWithDisableAgainstAllCompatibility.kt");
+          @TestMetadata("bridgesInClassWithDisableAgainstEnable.kt")
+          public void testBridgesInClassWithDisableAgainstEnable() {
+            runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgesInClassWithDisableAgainstEnable.kt");
           }
 
           @Test

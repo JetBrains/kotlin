@@ -1580,9 +1580,9 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
       }
 
       @Test
-      @TestMetadata("jvmDefaultAll.kt")
-      public void testJvmDefaultAll() {
-        runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultAll.kt");
+      @TestMetadata("jvmDefaultNoCompatibility.kt")
+      public void testJvmDefaultNoCompatibility() {
+        runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultNoCompatibility.kt");
       }
     }
 
@@ -1895,9 +1895,9 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
-        @TestMetadata("bridgesInClassWithDisableAgainstAllCompatibility.kt")
-        public void testBridgesInClassWithDisableAgainstAllCompatibility() {
-          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgesInClassWithDisableAgainstAllCompatibility.kt");
+        @TestMetadata("bridgesInClassWithDisableAgainstEnable.kt")
+        public void testBridgesInClassWithDisableAgainstEnable() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgesInClassWithDisableAgainstEnable.kt");
         }
 
         @Test

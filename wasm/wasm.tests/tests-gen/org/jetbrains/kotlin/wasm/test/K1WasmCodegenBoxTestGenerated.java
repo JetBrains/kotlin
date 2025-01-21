@@ -26811,26 +26811,6 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
-      @TestDataPath("$PROJECT_ROOT")
-      public class AllCompatibility {
-        @Test
-        public void testAllFilesPresentInAllCompatibility() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
-        @TestDataPath("$PROJECT_ROOT")
-        public class DelegationBy {
-          @Test
-          public void testAllFilesPresentInDelegationBy() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-          }
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
       @TestDataPath("$PROJECT_ROOT")
       public class DefaultCompatibilityBridges {
@@ -26851,41 +26831,61 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
+      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable")
       @TestDataPath("$PROJECT_ROOT")
-      public class NoDefaultImpls {
+      public class Enable {
         @Test
-        public void testAllFilesPresentInNoDefaultImpls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        public void testAllFilesPresentInEnable() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
         public class DelegationBy {
           @Test
           public void testAllFilesPresentInDelegationBy() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          }
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NoCompatibility {
+        @Test
+        public void testAllFilesPresentInNoCompatibility() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DelegationBy {
+          @Test
+          public void testAllFilesPresentInDelegationBy() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
           }
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization")
         @TestDataPath("$PROJECT_ROOT")
         public class Specialization {
           @Test
           public void testAllFilesPresentInSpecialization() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
           }
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility")
         @TestDataPath("$PROJECT_ROOT")
         public class WithCompatibility {
           @Test
           public void testAllFilesPresentInWithCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
           }
         }
       }

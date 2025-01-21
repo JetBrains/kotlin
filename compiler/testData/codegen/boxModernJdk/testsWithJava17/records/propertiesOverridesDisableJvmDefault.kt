@@ -1,6 +1,7 @@
 // API_VERSION: 1.5
 // LANGUAGE: +JvmRecordSupport
 // ENABLE_JVM_PREVIEW
+// JVM_DEFAULT_MODE: disable
 
 // FILE: JavaClass.java
 public class JavaClass {
