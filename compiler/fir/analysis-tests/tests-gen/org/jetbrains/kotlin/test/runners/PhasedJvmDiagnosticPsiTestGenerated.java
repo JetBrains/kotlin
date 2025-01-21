@@ -44341,6 +44341,17 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/when/exhaustive")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Exhaustive {
+        @Test
+        @TestMetadata("ExhaustiveStarProjection.kt")
+        public void testExhaustiveStarProjection() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/ExhaustiveStarProjection.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/when/guard")
       @TestDataPath("$PROJECT_ROOT")
       public class Guard {

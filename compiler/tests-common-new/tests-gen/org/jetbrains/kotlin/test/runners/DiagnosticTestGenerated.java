@@ -46091,6 +46091,22 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/when/exhaustive")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Exhaustive {
+        @Test
+        public void testAllFilesPresentInExhaustive() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/exhaustive"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("ExhaustiveStarProjection.kt")
+        public void testExhaustiveStarProjection() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/ExhaustiveStarProjection.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/when/guard")
       @TestDataPath("$PROJECT_ROOT")
       public class Guard {
