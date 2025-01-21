@@ -45,6 +45,11 @@ sealed interface TestSymbolTarget {
 
     data class TypeAliasTarget(val classId: ClassId) : TestSymbolTarget
 
+    /**
+     * Describes a class-like declaration with the specified [classId]. This target is a composition of [ClassTarget] and [TypeAliasTarget].
+     */
+    data class ClassLikeTarget(val classId: ClassId) : TestSymbolTarget
+
     data class CallableTarget(val callableId: CallableId) : TestSymbolTarget
 
     data class EnumEntryInitializerTarget(val enumEntryId: CallableId) : TestSymbolTarget
@@ -65,6 +70,7 @@ sealed interface TestSymbolTarget {
             "callable:",
             "class:",
             "typealias:",
+            "class_like:",
             "enum_entry_initializer:",
             "script",
             "sam_constructor:",
@@ -103,6 +109,7 @@ sealed interface TestSymbolTarget {
                 "package" -> PackageTarget(extractPackageFqName(value))
                 "class" -> ClassTarget(ClassId.fromString(value))
                 "typealias" -> TypeAliasTarget(ClassId.fromString(value))
+                "class_like" -> ClassLikeTarget(ClassId.fromString(value))
                 "callable" -> CallableTarget(extractCallableId(value))
                 "enum_entry_initializer" -> EnumEntryInitializerTarget(extractCallableId(value))
                 "sam_constructor" -> SamConstructorTarget(ClassId.fromString(value))

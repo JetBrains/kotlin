@@ -18,11 +18,15 @@ abstract class TestSymbolTargetResolver<R> {
         is ClassTarget -> resolveClassTarget(target)
         is ScriptTarget -> resolveScriptTarget(target)
         is TypeAliasTarget -> resolveTypeAliasTarget(target)
+        is ClassLikeTarget -> resolveClassLikeTarget(target)
         is CallableTarget -> resolveCallableTarget(target)
         is EnumEntryInitializerTarget -> resolveEnumEntryInitializerTarget(target)
         is SamConstructorTarget -> resolveSamConstructorTarget(target)
         is TargetWithOwner -> resolveTargetWithOwner(target)
     }
+
+    private fun resolveClassLikeTarget(target: ClassLikeTarget): List<R> =
+        resolveClassTarget(ClassTarget(target.classId)) + resolveTypeAliasTarget(TypeAliasTarget(target.classId))
 
     private fun resolveTargetWithOwner(target: TargetWithOwner): List<R> {
         // We need to allow multiple owners in case there is an ambiguity which needs to culminate in multiple resolution results.
