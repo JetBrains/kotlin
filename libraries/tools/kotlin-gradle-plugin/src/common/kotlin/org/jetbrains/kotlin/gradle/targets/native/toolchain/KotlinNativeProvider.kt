@@ -7,18 +7,25 @@ package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import javax.inject.Inject
 
 internal sealed class KotlinNativeProvider(project: Project) {
     @get:Internal
@@ -63,45 +70,6 @@ internal class KotlinNativeFromToolchainProvider(
     @get:Internal
     val reinstallBundle: Property<Boolean> = project.objects.property(project.kotlinPropertiesProvider.nativeReinstall)
 
-    @get:Input
-    internal val kotlinNativeBundleVersion: Provider<String> = bundleDirectory.zip(reinstallBundle) { bundleDir, reinstallFlag ->
-        val kotlinNativeVersion =
-            if (overriddenKonanHome.isPresent)
-                overriddenKonanHome.get()
-            else
-                NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
-
-        if (toolchainEnabled.get()) {
-            kotlinNativeBundleBuildService.get().prepareKotlinNativeBundle(
-                project,
-                kotlinNativeCompilerConfiguration,
-                kotlinNativeVersion,
-                File(bundleDir),
-                reinstallFlag,
-                konanTargets,
-                overriddenKonanHome.orNull
-            )
-        }
-        kotlinNativeVersion
-    }
-
-    @get:Input
-    val kotlinNativeDependencies: Provider<Set<String>> =
-        kotlinNativeBundleVersion
-            .zip(bundleDirectory) { _, bundleDir ->
-                if (toolchainEnabled.get() && enableDependenciesDownloading) {
-                    kotlinNativeBundleBuildService.get()
-                        .downloadNativeDependencies(
-                            File(bundleDir),
-                            konanDataDir.orNull,
-                            konanTargets,
-                            project.logger
-                        )
-                } else {
-                    emptySet()
-                }
-            }
-
     // Gradle tries to evaluate this val during configuration cache,
     // which lead to resolving configuration, even if k/n bundle is in konan home directory.
     @Transient
@@ -119,7 +87,90 @@ internal class KotlinNativeFromToolchainProvider(
                 }
             }
         )
+
+    @get:Internal
+    internal val dependencyNameWithOsAndVersion = NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
+
+    @get:Internal
+    internal val nativeKotlinVersion = project.nativeProperties.kotlinNativeVersion
+
+    @get:Internal
+    internal val nativeJvmArgs = project.listProperty { project.nativeProperties.jvmArgs.get() }
+
+    @get:Internal
+    internal val actualNativeHomeDirectory: Provider<File> = project.nativeProperties.actualNativeHomeDirectory
+
+    @get:Internal
+//    internal val nativeCacheKind: Provider<NativeCacheKind> = project.nativeProperties.getKonanCacheKind(konanTargets, konanPropertiesService)
+    internal val nativeCacheKind: Provider<NativeCacheKind> = project.provider { NativeCacheKind.NONE }
+
+    @get:Internal
+    internal val objects = project.provider { project.objects }
+
+    @get:Internal
+    internal val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
+
+    @get:Internal
+    internal val useXcodeMessageStyle = project.provider { project.useXcodeMessageStyle }
+
+    @get:Internal
+    internal val nativeClasspath = project.provider {
+        project.objects.nativeCompilerClasspath(
+            project.nativeProperties.actualNativeHomeDirectory,
+            project.nativeProperties.shouldUseEmbeddableCompilerJar
+        )
+    }
+
+    @get:Internal
+    internal val nativeDistributionType = project.provider { PropertiesProvider(project).nativeDistributionType }
+
+    @get:Input
+    internal val kotlinNativeBundleVersion: Provider<String> = providerFactory.of(NativeVersionValueSource::class.java) {
+        it.parameters.bundleDirectory.set(project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath })
+        it.parameters.reinstallBundle.set(reinstallBundle)
+        it.parameters.overriddenKonanHome.set(overriddenKonanHome)
+        it.parameters.dependencyNameWithOsAndVersion.set(dependencyNameWithOsAndVersion)
+        it.parameters.toolchainEnabled.set(toolchainEnabled)
+        it.parameters.kotlinNativeCompilerConfiguration.set(kotlinNativeCompilerConfiguration)
+//        it.parameters.logger.set(logger)
+        it.parameters.kotlinNativeVersion.set(nativeKotlinVersion)
+    }.zip(kotlinNativeBundleBuildService) { nativeVersion, nativeBundleService ->
+        nativeBundleService.setupKotlinNativePlatformLibraries(
+            objects.get(),
+            konanTargets,
+            nativeDistributionType.orNull,
+            kotlinCompilerArgumentsLogLevel,
+            useXcodeMessageStyle.get(),
+            nativeClasspath.get(),
+            nativeJvmArgs,
+            actualNativeHomeDirectory,
+            konanDataDir,
+            nativeCacheKind,
+        )
+        nativeVersion
+    }
+
+    @get:Input
+    val kotlinNativeDependencies: Provider<Set<String>> =
+        kotlinNativeBundleBuildService.zip(
+            project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath }
+        ) { service, bundleDir ->
+            if (toolchainEnabled.get() && enableDependenciesDownloading) {
+                service.downloadNativeDependencies(
+                    File(bundleDir),
+                    konanDataDir.orNull,
+                    konanTargets,
+//                        logger
+//                            project.logger
+                )
+            } else {
+                emptySet()
+            }
+        }
 }
+
+
+internal open class FileSystemOperationsHandler @Inject constructor(val fileSystemOperations: FileSystemOperations) {}
 
 internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(enabledOnCurrenHost: Boolean, konanTarget: KonanTarget, ): KotlinNativeProvider {
     if (enabledOnCurrenHost) {
