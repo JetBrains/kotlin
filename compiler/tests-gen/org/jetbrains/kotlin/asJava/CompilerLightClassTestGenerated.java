@@ -144,6 +144,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DataClassWithCustomImplementedMembers.kt");
   }
 
+  @TestMetadata("dataClassWithValueClass.kt")
+  public void testDataClassWithValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/dataClassWithValueClass.kt");
+  }
+
   @TestMetadata("DefaultImplsWithTypeParameters.kt")
   public void testDefaultImplsWithTypeParameters() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DefaultImplsWithTypeParameters.kt");

@@ -163,6 +163,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("dataClassWithValueClass.kt")
+  public void testDataClassWithValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/dataClassWithValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("DefaultImplsWithTypeParameters.kt")
   public void testDefaultImplsWithTypeParameters() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DefaultImplsWithTypeParameters.kt");
