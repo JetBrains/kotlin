@@ -76,7 +76,7 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
         val irModule = testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend).irModuleFragment
 
         return buildMap {
-            for ((irFile, testFile) in matchIrFileWithTestFile(irModule, module)) {
+            for ((irFile, testFile) in matchIrFileWithTestFile(irModule, module, testServices)) {
                 putAll(evaluatedConstTracker.processFile(testFile, irFile))
             }
         }
