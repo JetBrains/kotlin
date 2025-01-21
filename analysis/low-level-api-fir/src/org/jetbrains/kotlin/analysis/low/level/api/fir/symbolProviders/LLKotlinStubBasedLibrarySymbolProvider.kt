@@ -9,13 +9,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLAmbiguousClassLikeSymbolCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -64,6 +64,9 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     private val kotlinScopeProvider: FirKotlinScopeProvider get() = session.kotlinScopeProvider
     private val moduleData: LLFirModuleData get() = session.llFirModuleData
 
+    private val module: KaModule
+        get() = moduleData.ktModule
+
     final override val declarationProvider = session.project.createDeclarationProvider(
         scope,
         contextualModule = session.ktModule,
@@ -74,15 +77,12 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     override val symbolNamesProvider: FirSymbolNamesProvider =
         LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider, allowKotlinPackage)
 
-    private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
-        createTypeAliasCache { classId, context -> findAndDeserializeTypeAlias(classId, context) }
-
-    private val ambiguousTypeAliasCache = LLAmbiguousClassLikeSymbolCache(
-        this,
+    private val typeAliasCache = LLPsiAwareClassLikeSymbolCache(
         scope,
-        createTypeAliasCache { declaration, context ->
+        createTypeAliasCache(::findAndDeserializeTypeAlias),
+        createTypeAliasCache { declaration: KtClassLikeDeclaration, context ->
             val classId = declaration.getClassId() ?: return@createTypeAliasCache Pair(null, null)
-            findAndDeserializeTypeAlias(classId, context)
+            findAndDeserializeTypeAlias(classId, declaration, context)
         },
     )
 
@@ -100,16 +100,14 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             },
         )
 
-    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, StubBasedFirDeserializationContext?> =
-        session.firCachesFactory.createCache(
-            createValue = { classId, context -> findAndDeserializeClass(classId, context) }
-        )
-
-    private val ambiguousClassCache =
-        LLAmbiguousClassLikeSymbolCache(this, scope) { declaration, context: StubBasedFirDeserializationContext? ->
-            val classId = declaration.getClassId() ?: return@LLAmbiguousClassLikeSymbolCache null
-            findAndDeserializeClass(classId, context)
-        }
+    private val classCache = LLPsiAwareClassLikeSymbolCache(
+        session,
+        scope,
+        ::findAndDeserializeClass,
+    ) { declaration: KtClassLikeDeclaration, context ->
+        val classId = declaration.getClassId() ?: return@LLPsiAwareClassLikeSymbolCache null
+        findAndDeserializeClass(classId, declaration, context)
+    }
 
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
@@ -138,54 +136,87 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         classId: ClassId,
         context: StubBasedFirDeserializationContext?,
     ): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
-        val classLikeDeclaration =
-            (context?.classLikeDeclaration ?: declarationProvider.getClassLikeDeclarationByClassId(classId))
-        if (classLikeDeclaration is KtTypeAlias) {
-            val symbol = FirTypeAliasSymbol(classId)
-            val postProcessor: DeserializedTypeAliasPostProcessor = {
-                val rootContext = context ?: StubBasedFirDeserializationContext.createRootContext(
-                    moduleData,
-                    StubBasedAnnotationDeserializer(session),
-                    classId.packageFqName,
-                    classId.relativeClassName,
-                    classLikeDeclaration,
-                    null, null, symbol,
-                    initialOrigin = getDeclarationOriginFor(classLikeDeclaration.containingKtFile)
-                )
-                rootContext.memberDeserializer.loadTypeAlias(classLikeDeclaration, symbol, kotlinScopeProvider)
-            }
-            return symbol to postProcessor
+        val declaration = context?.classLikeDeclaration
+            ?: declarationProvider.getClassLikeDeclarationByClassId(classId)
+            ?: return Pair(null, null)
+
+        return findAndDeserializeTypeAlias(classId, declaration, context)
+    }
+
+    private fun findAndDeserializeTypeAlias(
+        classId: ClassId,
+        declaration: KtClassLikeDeclaration,
+        context: StubBasedFirDeserializationContext?,
+    ): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
+        if (declaration !is KtTypeAlias) return Pair(null, null)
+
+        checkDeclarationAndContextConsistency(declaration, context)
+
+        val symbol = FirTypeAliasSymbol(classId)
+        val postProcessor: DeserializedTypeAliasPostProcessor = {
+            val rootContext = context ?: StubBasedFirDeserializationContext.createRootContext(
+                moduleData,
+                StubBasedAnnotationDeserializer(session),
+                classId.packageFqName,
+                classId.relativeClassName,
+                declaration,
+                null, null, symbol,
+                initialOrigin = getDeclarationOriginFor(declaration.containingKtFile)
+            )
+            rootContext.memberDeserializer.loadTypeAlias(declaration, symbol, kotlinScopeProvider)
         }
-        return null to null
+        return symbol to postProcessor
     }
 
     private fun findAndDeserializeClass(
         classId: ClassId,
         parentContext: StubBasedFirDeserializationContext?,
     ): FirRegularClassSymbol? {
-        val classLikeDeclaration = parentContext?.classLikeDeclaration
+        val declaration = parentContext?.classLikeDeclaration
             ?: declarationProvider.getClassLikeDeclarationByClassId(classId)
             ?: return null
 
-        val symbol = FirRegularClassSymbol(classId)
-        if (classLikeDeclaration is KtClassOrObject) {
-            deserializeClassToSymbol(
-                classId,
-                classLikeDeclaration,
-                symbol,
-                session,
-                moduleData,
-                StubBasedAnnotationDeserializer(session),
-                kotlinScopeProvider,
-                parentContext = parentContext,
-                containerSource = deserializedContainerSourceProvider.getClassContainerSource(classId),
-                deserializeNestedClass = this::getNestedClass,
-                initialOrigin = parentContext?.initialOrigin ?: getDeclarationOriginFor(classLikeDeclaration.containingKtFile)
-            )
+        return findAndDeserializeClass(classId, declaration, parentContext)
+    }
 
-            return symbol
+    private fun findAndDeserializeClass(
+        classId: ClassId,
+        declaration: KtClassLikeDeclaration,
+        parentContext: StubBasedFirDeserializationContext?,
+    ): FirRegularClassSymbol? {
+        if (declaration !is KtClassOrObject) return null
+
+        checkDeclarationAndContextConsistency(declaration, parentContext)
+
+        val symbol = FirRegularClassSymbol(classId)
+        deserializeClassToSymbol(
+            classId,
+            declaration,
+            symbol,
+            session,
+            moduleData,
+            StubBasedAnnotationDeserializer(session),
+            kotlinScopeProvider,
+            parentContext = parentContext,
+            containerSource = deserializedContainerSourceProvider.getClassContainerSource(classId),
+            deserializeNestedClass = this::getNestedClass,
+            initialOrigin = parentContext?.initialOrigin ?: getDeclarationOriginFor(declaration.containingKtFile)
+        )
+
+        return symbol
+    }
+
+    private fun checkDeclarationAndContextConsistency(
+        declaration: KtClassLikeDeclaration,
+        context: StubBasedFirDeserializationContext?,
+    ) {
+        requireWithAttachment(
+            context?.classLikeDeclaration == null || declaration === context.classLikeDeclaration,
+            { "The declaration to deserialize should be the same as the context's declaration." },
+        ) {
+            withPsiEntry("declaration", declaration, module)
+            withPsiEntry("context.classLikeDeclaration", context?.classLikeDeclaration, module)
         }
-        return null
     }
 
     private fun loadFunctionsByCallableId(
@@ -227,19 +258,17 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
 
     private fun getNestedClass(
         classId: ClassId,
-        declaration: KtClassLikeDeclaration,
+        declaration: KtClassOrObject,
         parentContext: StubBasedFirDeserializationContext,
     ): FirRegularClassSymbol? {
         requireWithAttachment(
             parentContext.classLikeDeclaration != null,
             { "The context should have a class-like declaration when deserializing nested classes." },
         ) {
-            withPsiEntry("declaration", declaration, session.llFirModuleData.ktModule)
+            withPsiEntry("declaration", declaration, module)
         }
 
-        return classCache.getNotNullValueForNotNullContext(classId, parentContext)
-            ?.takeIf { it.hasPsi(declaration) }
-            ?: ambiguousClassCache.getSymbol(declaration, parentContext)
+        return classCache.getSymbolByPsiInScope(classId, declaration, parentContext)
     }
 
     @FirSymbolProviderInternals
@@ -319,70 +348,64 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     }
 
     private fun getCachedClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? {
-        return classCache.getValueIfComputed(classId)
-            ?: typeAliasCache.getValueIfComputed(classId)
+        return classCache.getCachedSymbolByClassId(classId)
+            ?: typeAliasCache.getCachedSymbolByClassId(classId)
     }
 
     private fun getClass(classId: ClassId): FirRegularClassSymbol? {
-        return classCache.getValue(classId, context = null)
+        return classCache.getSymbolByClassId(classId, context = null)
     }
 
     private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
         if (!classId.relativeClassName.isOneSegmentFQN()) return null
-        return typeAliasCache.getValue(classId, context = null)
+        return typeAliasCache.getSymbolByClassId(classId, context = null)
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
         val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
-        cache.getValueIfComputed(classId)?.let { return it }
+        cache.getCachedSymbolByClassId(classId)?.let { return it }
 
-        val topmostClassLikeDeclaration = classLikeDeclaration.takeIf {
-            classId.isNestedClass
-        }?.getTopmostParentOfType<KtClassLikeDeclaration>()
-
-        val outermostClassId = topmostClassLikeDeclaration?.getClassId()
-        if (outermostClassId != null) {
+        classLikeDeclaration.runIfNested(classId) { topLevelDeclaration, topLevelClassId ->
             // We have to load the root declaration to initialize nested classes correctly.
-            getClassLikeSymbolByClassId(outermostClassId, topmostClassLikeDeclaration)
+            getClassLikeSymbolByClassId(topLevelClassId, topLevelDeclaration)
 
             // Nested declarations are already loaded. In contrast to `getClassLikeSymbolByPsi`, we want to specifically load by `classId`
             // here, so there's no need to access the ambiguity cache.
-            cache.getValueIfComputed(classId)?.let { return it }
+            cache.getCachedSymbolByClassId(classId)?.let { return it }
         }
 
-        return cache.getNotNullValueForNotNullContext(classId, createClassLikeDeserializationContext(classId, classLikeDeclaration))
+        return cache.getSymbolByClassId(classId, createClassLikeDeserializationContext(classId, classLikeDeclaration))
     }
 
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (declaration !is KtClassLikeDeclaration) return null
 
         val cache = if (declaration is KtClassOrObject) classCache else typeAliasCache
-        cache.getValueIfComputed(classId)
-            ?.takeIf { it.hasPsi(declaration) }
-            ?.let { return it }
+        cache.getCachedSymbolByPsi(classId, declaration)?.let { return it }
 
-        val ambiguityCache = if (declaration is KtClassOrObject) ambiguousClassCache else ambiguousTypeAliasCache
-
-        val topmostClassLikeDeclaration = declaration.takeIf {
-            classId.isNestedClass
-        }?.getTopmostParentOfType<KtClassLikeDeclaration>()
-
-        val outermostClassId = topmostClassLikeDeclaration?.getClassId()
-        if (outermostClassId != null) {
+        declaration.runIfNested(classId) { topLevelDeclaration, topLevelClassId ->
             // We have to load the root declaration to initialize nested classes correctly.
-            getClassLikeSymbolByPsi(outermostClassId, topmostClassLikeDeclaration)
+            getClassLikeSymbolByPsi(topLevelClassId, topLevelDeclaration)
 
             // Nested declarations are already loaded.
-            val result = cache.getValueIfComputed(classId)
-                ?.takeIf { it.hasPsi(declaration) }
-                ?: ambiguityCache.getSymbolIfCached(declaration)
-
-            result?.let { return it }
+            cache.getCachedSymbolByPsi(classId, declaration)?.let { return it }
         }
 
-        return ambiguityCache.getClassLikeSymbolByPsi<KtClassLikeDeclaration>(classId, declaration) { declaration ->
+        return cache.getSymbolByPsi<KtClassLikeDeclaration>(classId, declaration) { declaration ->
             createClassLikeDeserializationContext(classId, declaration)
         }
+    }
+
+    private inline fun KtClassLikeDeclaration.runIfNested(
+        classId: ClassId,
+        action: (KtClassLikeDeclaration, ClassId) -> Unit,
+    ) {
+        if (!classId.isNestedClass) return
+
+        val topLevelDeclaration = getTopmostParentOfType<KtClassLikeDeclaration>() ?: return
+        val topLevelClassId = topLevelDeclaration.getClassId() ?: return
+
+        action(topLevelDeclaration, topLevelClassId)
     }
 
     private fun createClassLikeDeserializationContext(
