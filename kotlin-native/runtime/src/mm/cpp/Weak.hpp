@@ -13,7 +13,6 @@ namespace kotlin::mm {
 OBJ_GETTER(createRegularWeakReferenceImpl, ObjHeader* object) noexcept;
 void disposeRegularWeakReferenceImpl(ObjHeader* weakRef) noexcept;
 
-OBJ_GETTER(derefRegularWeakReferenceImpl, ObjHeader* weakRef) noexcept;
 ObjHeader* regularWeakReferenceImplBaseObjectUnsafe(ObjHeader* weakRef) noexcept;
 
 } // namespace kotlin::mm

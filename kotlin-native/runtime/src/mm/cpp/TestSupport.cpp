@@ -72,7 +72,7 @@ test_support::RegularWeakReferenceImpl& test_support::InstallWeakReference(
     mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo, location);
     auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(*location);
     auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
-    weakReference->weakRef = mm::externalRCRefNonPermanent(mm::createUnretainedExternalRCRef(objHeader));
+    weakReference->weakRef = mm::createUnretainedExternalRCRef(objHeader);
     weakReference->referred = objHeader;
     auto* setWeakRef = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
     EXPECT_EQ(setWeakRef, weakReference.header());

@@ -12,14 +12,14 @@
 using namespace kotlin;
 
 extern "C" {
-OBJ_GETTER(makeRegularWeakReferenceImpl, mm::RawExternalRCRefNonPermanent*, void*);
+OBJ_GETTER(makeRegularWeakReferenceImpl, KRef, void*);
 }
 
 namespace {
 
 struct RegularWeakReferenceImpl {
     ObjHeader header;
-    mm::RawExternalRCRefNonPermanent* weakRef;
+    mm::RawExternalRCRef* weakRef;
     void* referred;
 };
 
@@ -38,7 +38,7 @@ OBJ_GETTER(mm::createRegularWeakReferenceImpl, ObjHeader* object) noexcept {
         RETURN_OBJ(weakRef);
     }
     ObjHolder holder;
-    auto* weakRef = makeRegularWeakReferenceImpl(mm::externalRCRefNonPermanent(mm::createUnretainedExternalRCRef(object)), object, holder.slot());
+    auto* weakRef = makeRegularWeakReferenceImpl(object, object, holder.slot());
     auto* setWeakRef = extraObject.GetOrSetRegularWeakReferenceImpl(object, weakRef);
     RETURN_OBJ(setWeakRef);
 }
@@ -47,10 +47,6 @@ void mm::disposeRegularWeakReferenceImpl(ObjHeader* weakRef) noexcept {
     auto& ref = asRegularWeakReferenceImpl(weakRef)->weakRef;
     mm::disposeExternalRCRef(ref);
     ref = nullptr;
-}
-
-OBJ_GETTER(mm::derefRegularWeakReferenceImpl, ObjHeader* weakRef) noexcept {
-    RETURN_RESULT_OF(mm::tryRefExternalRCRef, asRegularWeakReferenceImpl(weakRef)->weakRef);
 }
 
 ObjHeader* mm::regularWeakReferenceImplBaseObjectUnsafe(ObjHeader* weakRef) noexcept {

@@ -25,6 +25,10 @@ RUNTIME_NOTHROW extern "C" mm::RawExternalRCRef* Kotlin_native_internal_ref_crea
     return mm::createRetainedExternalRCRef(obj);
 }
 
+RUNTIME_NOTHROW extern "C" mm::RawExternalRCRef* Kotlin_native_internal_ref_createUnretainedExternalRCRef(KRef obj) {
+    return mm::createUnretainedExternalRCRef(obj);
+}
+
 RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_disposeExternalRCRef(mm::RawExternalRCRef* ref) {
     mm::disposeExternalRCRef(ref);
 }
@@ -50,6 +54,11 @@ RUNTIME_NOTHROW extern "C" bool Kotlin_native_internal_ref_tryRetainExternalRCRe
         return true;
     }
     return false;
+}
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_native_internal_ref_tryDereferenceExternalRCRef, mm::RawExternalRCRef* ref) {
+    AssertThreadState(ThreadState::kRunnable);
+    RETURN_RESULT_OF(mm::tryRefExternalRCRef, ref);
 }
 
 KRef kotlin::mm::externalRCRefAsPermanentObject(mm::RawExternalRCRef* ref) noexcept {

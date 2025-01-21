@@ -445,10 +445,6 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* ref
     RETURN_RESULT_OF(mm::createRegularWeakReferenceImpl, referred);
 }
 
-RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader* weakRef) {
-    RETURN_RESULT_OF(mm::derefRegularWeakReferenceImpl, weakRef);
-}
-
 RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakRef) {
     mm::disposeRegularWeakReferenceImpl(weakRef);
 }
