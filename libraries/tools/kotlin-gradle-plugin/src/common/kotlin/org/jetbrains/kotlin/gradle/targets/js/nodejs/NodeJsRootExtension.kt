@@ -85,7 +85,7 @@ open class NodeJsRootExtension(
         "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
                 "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
     )
-    var version = "22.0.0"
+    var version = "22.13.0"
 
     @Deprecated(
         "Use command from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +

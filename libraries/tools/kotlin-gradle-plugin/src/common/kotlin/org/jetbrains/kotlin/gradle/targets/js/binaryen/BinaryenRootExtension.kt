@@ -34,7 +34,7 @@ open class BinaryenRootExtension(
         .value("https://github.com/WebAssembly/binaryen/releases/download")
 
     override val versionProperty: org.gradle.api.provider.Property<String> = rootProject.objects.property<String>()
-        .convention("120")
+        .convention("122")
 
     override val downloadProperty: org.gradle.api.provider.Property<Boolean> = rootProject.objects.property<Boolean>()
         .convention(true)
