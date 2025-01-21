@@ -168,12 +168,14 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
                     currentLineId(lineId)
                 }
 
-                // Updating the classpath after initial Compiler State is created will crash with
-                // Error(error=java.lang.IllegalStateException: module data FirModuleDataImpl:<REPL-lib-2> not bound to session
-                jvm {
-                    val repoPath = "/Users/christian.melchior/JetBrains/kotlin"
-                    val testFiles = File("$repoPath/plugins/scripting/scripting-tests/testBuild/kotlin/main")
-                    updateClasspath(listOf(testFiles))
+                if (lineNo > 1) {
+                    // Updating the classpath after initial Compiler State is created will crash with
+                    // Error(error=java.lang.IllegalStateException: module data FirModuleDataImpl:<REPL-lib-2> not bound to session
+                    jvm {
+                        val repoPath = "/Users/christian.melchior/JetBrains/kotlin"
+                        val testFiles = File("$repoPath/plugins/scripting/scripting-tests/testBuild/kotlin/main")
+                        updateClasspath(listOf(testFiles))
+                    }
                 }
             }
         )
