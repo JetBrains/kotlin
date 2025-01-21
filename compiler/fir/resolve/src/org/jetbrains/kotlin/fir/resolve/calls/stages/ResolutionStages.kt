@@ -429,7 +429,6 @@ object CheckDslScopeViolation : ResolutionStage() {
     /**
      * Checks whether the implicit receiver (represented as an object of type `T`) violates DSL scope rules.
      */
-    @OptIn(ImplicitValue.ImplicitValueInternals::class)
     private fun checkImpl(
         receiverValueToCheck: ConeResolutionAtom,
         candidate: Candidate,
@@ -465,7 +464,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         }
     }
 
-    private fun ImplicitValue.containsAnyOfGivenDslMarkers(
+    private fun ImplicitValue<*>.containsAnyOfGivenDslMarkers(
         otherDslMarkers: Set<ClassId>,
         context: ResolutionContext,
     ): Boolean {

@@ -1536,7 +1536,6 @@ abstract class FirDataFlowAnalyzer(
     // This method can be used to change the smart cast state to some node that is not the one at which the graph
     // builder is currently stopped. This is temporary: adding any more nodes to the graph will restart tracking
     // of the current position in the graph.
-    @OptIn(ImplicitValue.ImplicitValueInternals::class)
     private fun resetSmartCastPositionTo(flow: Flow?) {
         val previous = currentSmartCastPosition
         if (previous == flow) return

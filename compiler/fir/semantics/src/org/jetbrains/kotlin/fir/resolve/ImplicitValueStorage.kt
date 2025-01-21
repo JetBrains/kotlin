@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataElement
+import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -17,10 +18,15 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.util.PersistentSetMultimap
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * An immutable view of [ImplicitValue]s stored in a [FirTowerDataContext]'s [FirTowerDataElement]s that's convenient for certain kind of queries.
+ *
+ * [FirTowerDataElement]s are the source of truth, therefore, the data must always be updated together.
+ */
 class ImplicitValueStorage private constructor(
     private val implicitReceiverStack: PersistentList<ImplicitReceiverValue<*>>,
     private val implicitReceiversByLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
-    private val implicitValuesBySymbol: PersistentMap<FirThisOwnerSymbol<*>, ImplicitValue>
+    private val implicitValuesBySymbol: PersistentMap<FirThisOwnerSymbol<*>, ImplicitValue<*>>
 ) {
     constructor() : this(
         persistentListOf(),
@@ -33,11 +39,9 @@ class ImplicitValueStorage private constructor(
 
     /**
      * Contains implicit receivers, context receivers and context parameters.
-     * Only used by DFA to apply smart casts using [ImplicitValueStorage.replaceImplicitValueType].
-     * Therefore, it's just a helper and [FirTowerDataElement] should be considered the actual source of truth.
+     * Among other things, used by DFA to apply smart casts using [ImplicitValueStorage.replaceImplicitValueType].
      */
-    @ImplicitValue.ImplicitValueInternals
-    val implicitValues: Collection<ImplicitValue>
+    val implicitValues: Collection<ImplicitValue<*>>
         get() = implicitValuesBySymbol.values
 
     fun addAllImplicitReceivers(receivers: List<ImplicitReceiverValue<*>>): ImplicitValueStorage {
@@ -70,8 +74,16 @@ class ImplicitValueStorage private constructor(
         return ImplicitValueStorage(
             implicitReceiverStack,
             contextReceivers.fold(implicitReceiversByLabel) { acc, value -> acc.putIfNameIsNotNull(value.labelName, value) },
-            contextParameters.fold(implicitValuesBySymbol) { acc, value -> acc.put(value.boundSymbol, value) },
+            implicitValuesBySymbol.addAll(contextParameters),
         )
+    }
+
+    private fun PersistentMap<FirThisOwnerSymbol<*>, ImplicitValue<*>>.addAll(
+        contextParameters: List<ImplicitValue<*>>,
+    ): PersistentMap<FirThisOwnerSymbol<*>, ImplicitValue<*>> {
+        return contextParameters.fold(this) { acc, value ->
+            acc.put(value.boundSymbol, value)
+        }
     }
 
     private fun PersistentSetMultimap<Name, ImplicitReceiverValue<*>>.putIfNameIsNotNull(name: Name?, value: ImplicitReceiverValue<*>) =

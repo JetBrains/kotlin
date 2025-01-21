@@ -97,7 +97,7 @@ sealed class ImplicitReceiverValue<S>(
     protected val scopeSession: ScopeSession,
     mutable: Boolean,
     private val inaccessibleReceiver: Boolean = false,
-) : ImplicitValue(type, mutable), ReceiverValue
+) : ImplicitValue<S>(type, mutable), ReceiverValue
         where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
 
     abstract val isContextReceiver: Boolean

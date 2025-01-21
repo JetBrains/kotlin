@@ -275,7 +275,7 @@ class FirTowerDataElement(
         }
     }
 
-    val implicitContextGroup: List<ImplicitValue>? = if (contextReceiverGroup != null && contextParameterGroup != null) {
+    val implicitContextGroup: List<ImplicitValue<*>>? = if (contextReceiverGroup != null && contextParameterGroup != null) {
         contextReceiverGroup + contextParameterGroup
     } else {
         null
