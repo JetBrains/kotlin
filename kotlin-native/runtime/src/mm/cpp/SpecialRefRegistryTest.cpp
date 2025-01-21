@@ -188,7 +188,7 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefsWithoutPublish) {
         auto ref1 = mm::createRetainedExternalRCRef(obj);
         auto ref2 = mm::createUnretainedExternalRCRef(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
 
         mm::releaseAndDisposeExternalRCRef(ref1);
@@ -212,15 +212,15 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefs) {
         auto ref1 = mm::createRetainedExternalRCRef(obj);
         auto ref2 = mm::createUnretainedExternalRCRef(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
 
         publish();
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj, obj, obj));
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
+        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj, obj));
 
-        mm::disposeExternalRCRef(ref1);
+        mm::releaseAndDisposeExternalRCRef(ref1);
         mm::disposeExternalRCRef(ref2);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
