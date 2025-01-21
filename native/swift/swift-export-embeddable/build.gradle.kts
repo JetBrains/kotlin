@@ -58,6 +58,7 @@ dependencies {
 
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-compiler-embeddable"))
+    runtimeOnly(libs.kotlinx.serialization.core)
 }
 
 fun registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJarTask: TaskProvider<out org.gradle.jvm.tasks.Jar>) {
