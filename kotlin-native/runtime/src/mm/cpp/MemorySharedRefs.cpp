@@ -9,7 +9,6 @@
 
 #include "ExternalRCRef.hpp"
 #include "ObjCBackRef.hpp"
-#include "StableRef.hpp"
 
 using namespace kotlin;
 
@@ -21,7 +20,7 @@ void KRefSharedHolder::initLocal(ObjHeader* obj) {
 
 void KRefSharedHolder::init(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
-    ref_ = static_cast<mm::RawExternalRCRefNonPermanent*>(mm::StableRef::create(obj));
+    ref_ = mm::createRetainedExternalRCRef(obj);
     obj_ = obj;
 }
 
@@ -36,7 +35,8 @@ void KRefSharedHolder::dispose() {
     if (!ref_) {
         return;
     }
-    std::move(mm::StableRef::reinterpret(ref_)).dispose();
+    auto ref = std::move(ref_);
+    mm::releaseAndDisposeExternalRCRef(static_cast<mm::RawExternalRCRef*>(ref));
     // obj_ is dangling now.
 }
 

@@ -21,7 +21,6 @@
 #include "Runtime.h"
 #include "SafePoint.hpp"
 #include "SpecialRefRegistry.hpp"
-#include "StableRef.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadState.hpp"

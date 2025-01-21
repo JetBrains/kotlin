@@ -13,7 +13,6 @@
 
 #include "ExternalRCRef.hpp"
 #include "ObjCBackRef.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "ThreadRegistry.hpp"
 
@@ -85,13 +84,13 @@ TEST_F(SpecialRefRegistryTest, RegisterStableRefWithoutPublish) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
-        auto ref = mm::StableRef::create(obj);
+        auto ref = mm::createRetainedExternalRCRef(obj);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
         EXPECT_THAT(*ref, obj);
 
-        std::move(ref).dispose();
+        mm::disposeExternalRCRef(ref);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
@@ -107,7 +106,7 @@ TEST_F(SpecialRefRegistryTest, RegisterStableRef) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
-        auto ref = mm::StableRef::create(obj);
+        auto ref = mm::createRetainedExternalRCRef(obj);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
@@ -119,7 +118,7 @@ TEST_F(SpecialRefRegistryTest, RegisterStableRef) {
         EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(*ref, obj);
 
-        std::move(ref).dispose();
+        mm::disposeExternalRCRef(ref);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
@@ -232,14 +231,14 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefsWithoutPublish) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
-        auto ref1 = mm::StableRef::create(obj);
+        auto ref1 = mm::createRetainedExternalRCRef(obj);
         auto ref2 = mm::createUnretainedExternalRCRef(obj);
         auto ref3 = mm::ObjCBackRef::create(obj);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
 
-        std::move(ref1).dispose();
+        mm::releaseAndDisposeExternalRCRef(ref1);
         mm::disposeExternalRCRef(ref2);
         ref3.release();
         std::move(ref3).dispose();
@@ -258,7 +257,7 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefs) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
-        auto ref1 = mm::StableRef::create(obj);
+        auto ref1 = mm::createRetainedExternalRCRef(obj);
         auto ref2 = mm::createUnretainedExternalRCRef(obj);
         auto ref3 = mm::ObjCBackRef::create(obj);
 
@@ -270,7 +269,7 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefs) {
         EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre(obj, obj, obj));
 
-        std::move(ref1).dispose();
+        mm::disposeExternalRCRef(ref1);
         mm::disposeExternalRCRef(ref2);
         ref3.release();
         std::move(ref3).dispose();
@@ -382,9 +381,9 @@ TEST_F(SpecialRefRegistryTest, StressStableRef) {
             ScopedMemoryInit scope;
             ObjHolder holder(obj);
             waiter.wait();
-            auto ref = mm::StableRef::create(obj);
+            auto ref = mm::createUnretainedExternalRCRef(obj);
             publish();
-            std::move(ref).dispose();
+            mm::releaseAndDisposeExternalRCRef(ref);
         });
     }
     waiter.allow();

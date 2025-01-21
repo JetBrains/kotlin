@@ -10,9 +10,9 @@
 
 #include "gtest/gtest.h"
 
+#include "ExternalRCRef.hpp"
 #include "GCImpl.hpp"
 #include "GlobalData.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "TracingGCTest.hpp"
 
@@ -121,7 +121,7 @@ TYPED_TEST_P(TracingGCTest, ReleaseStableRefDuringRSCollection) {
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         mutatorFutures.push_back(mutators[i].Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
             auto& obj = AllocateObject(threadData);
-            auto stableRef = mm::StableRef::create(obj.header());
+            auto externalRCRef = mm::createRetainedExternalRCRef(obj.header());
 
             ++readyThreads;
             while (!mm::IsThreadSuspensionRequested()) {}
@@ -129,7 +129,7 @@ TYPED_TEST_P(TracingGCTest, ReleaseStableRefDuringRSCollection) {
             mm::safePoint();
 
             mutator.AddStackRoot(obj.header());
-            std::move(stableRef).dispose();
+            mm::releaseAndDisposeExternalRCRef(externalRCRef);
 
             while (!gcDone) { mm::safePoint(); }
 

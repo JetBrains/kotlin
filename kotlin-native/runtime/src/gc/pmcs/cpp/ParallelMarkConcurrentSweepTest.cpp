@@ -13,7 +13,6 @@
 #include "GCImpl.hpp"
 #include "GlobalData.hpp"
 #include "SafePoint.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "TracingGCTest.hpp"
 

@@ -11,8 +11,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ExternalRCRef.hpp"
 #include "ShadowStack.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;
@@ -106,9 +106,9 @@ TEST(GlobalRootSetTest, Basic) {
         ObjHeader* stableRef1 = reinterpret_cast<ObjHeader*>(3);
         ObjHeader* stableRef2 = reinterpret_cast<ObjHeader*>(4);
         ObjHeader* stableRef3 = reinterpret_cast<ObjHeader*>(5);
-        auto stableRefHandle1 = mm::StableRef(stableRefsProducer.createRef(stableRef1, 1));
-        auto stableRefHandle2 = mm::StableRef(stableRefsProducer.createRef(stableRef2, 1));
-        auto stableRefHandle3 = mm::StableRef(stableRefsProducer.createRef(stableRef3, 1));
+        auto stableRefHandle1 = stableRefsProducer.createRef(stableRef1, 1);
+        auto stableRefHandle2 = stableRefsProducer.createRef(stableRef2, 1);
+        auto stableRefHandle3 = stableRefsProducer.createRef(stableRef3, 1);
 
         globalsProducer.Publish();
         stableRefsProducer.publish();
@@ -127,9 +127,9 @@ TEST(GlobalRootSetTest, Basic) {
                 testing::UnorderedElementsAre(
                         asGlobal(global1), asGlobal(global2), asStableRef(stableRef1), asStableRef(stableRef2), asStableRef(stableRef3)));
 
-        std::move(stableRefHandle1).dispose();
-        std::move(stableRefHandle2).dispose();
-        std::move(stableRefHandle3).dispose();
+        mm::disposeExternalRCRef(stableRefHandle1);
+        mm::disposeExternalRCRef(stableRefHandle2);
+        mm::disposeExternalRCRef(stableRefHandle3);
     });
 }
 

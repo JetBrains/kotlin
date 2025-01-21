@@ -6,9 +6,8 @@
 #pragma once
 
 #include "ExternalRCRef.hpp"
-#include "Memory.h"
 #include "RawPtr.hpp"
-#include "SpecialRefRegistry.hpp"
+#include "Types.h"
 #include "Utils.hpp"
 
 namespace kotlin::mm {
@@ -25,53 +24,37 @@ public:
     StableRef() noexcept = default;
 
     // Cast raw ref into a stable reference.
-    explicit StableRef(RawExternalRCRefNonPermanent* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
+    explicit StableRef(RawExternalRCRef* raw) noexcept : raw_(raw) {}
 
     // Cast stable reference into raw ref.
-    [[nodiscard("must be manually disposed")]] explicit operator RawExternalRCRefNonPermanent*() && noexcept {
-        // Make sure to move out from node_.
-        auto node = std::move(node_);
-        return node->asRaw();
+    explicit operator RawExternalRCRef*() noexcept {
+        return static_cast<RawExternalRCRef*>(raw_);
     }
 
     // Create new stable reference for `obj`.
-    [[nodiscard("must be manually disposed")]] static StableRef create(ObjHeader* obj) noexcept;
+    [[nodiscard("must be manually disposed")]] static StableRef create(KRef obj) noexcept {
+        return StableRef(createRetainedExternalRCRef(obj));
+    }
 
     // Dispose stable reference.
     void dispose() && noexcept {
-        std::move(*this).disposeImpl();
+        // Make sure to move out of the field.
+        auto raw = std::move(raw_);
+        mm::releaseAndDisposeExternalRCRef(static_cast<RawExternalRCRef*>(raw));
     }
 
     // Get the underlying object.
     // Always safe, because the object is guaranteed to be in the root set.
     [[nodiscard("expensive pure function")]] ObjHeader* operator*() const noexcept {
-        RuntimeAssert(node_, "operator* on null StableRef");
-        return node_->ref();
+        return dereferenceExternalRCRef(static_cast<mm::RawExternalRCRef*>(raw_));
     }
 
-    // Get the type of underlying object.
-    [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept {
-        RuntimeAssert(node_, "typeInfo on null StableRef");
-        return node_->typeInfo();
-    }
+    static StableRef& reinterpret(RawExternalRCRef*& raw) noexcept { return reinterpret_cast<StableRef&>(raw); }
 
-    static StableRef& reinterpret(RawExternalRCRefNonPermanent*& raw) noexcept { return reinterpret_cast<StableRef&>(raw); }
-
-    static const StableRef& reinterpret(RawExternalRCRefNonPermanent* const& raw) noexcept { return reinterpret_cast<const StableRef&>(raw); }
+    static const StableRef& reinterpret(RawExternalRCRef* const& raw) noexcept { return reinterpret_cast<const StableRef&>(raw); }
 
 private:
-    raw_ptr<SpecialRefRegistry::Node> disposeImpl() && noexcept {
-        RuntimeAssert(node_, "Disposing null StableRef");
-        // Make sure to move out from node_.
-        auto node = std::move(node_);
-        // Can be safely called with any thread state.
-        node->releaseRef();
-        // Can be safely called with any thread state.
-        node->dispose();
-        return node;
-    }
-
-    raw_ptr<SpecialRefRegistry::Node> node_;
+    raw_ptr<RawExternalRCRef> raw_;
 };
 
 static_assert(sizeof(StableRef) == sizeof(void*), "StableRef must be a thin wrapper around pointer");

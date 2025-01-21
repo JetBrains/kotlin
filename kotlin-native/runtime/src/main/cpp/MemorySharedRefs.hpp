@@ -11,6 +11,7 @@
 #include "ExternalRCRef.hpp"
 #include "ManuallyScoped.hpp"
 #include "Memory.h"
+#include "RawPtr.hpp"
 #include "concurrent/Mutex.hpp"
 
 class KRefSharedHolder {
@@ -27,7 +28,7 @@ class KRefSharedHolder {
 
  private:
   ObjHeader* obj_;
-  kotlin::mm::RawExternalRCRefNonPermanent* ref_; // TODO: `obj_`` may be permanent, though.
+  kotlin::raw_ptr<kotlin::mm::RawExternalRCRef> ref_;
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");

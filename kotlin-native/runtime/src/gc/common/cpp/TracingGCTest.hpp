@@ -22,7 +22,6 @@
 #include "ObjectTestSupport.hpp"
 #include "SafePoint.hpp"
 #include "SingleThreadExecutor.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
