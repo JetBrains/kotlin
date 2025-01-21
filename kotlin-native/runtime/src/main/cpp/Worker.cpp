@@ -43,8 +43,8 @@ extern "C" {
 RUNTIME_NORETURN void ThrowWorkerAlreadyTerminated();
 RUNTIME_NORETURN void ThrowWrongWorkerOrAlreadyTerminated();
 RUNTIME_NORETURN void ThrowFutureInvalidState();
-KNativePtr WorkerLaunchpadForRegularJob(KNativePtr jobArgument, KNativePtr job);
-void WorkerLaunchpadForExecuteAfterJob(KNativePtr job);
+mm::RawExternalRCRef* WorkerLaunchpadForRegularJob(mm::RawExternalRCRef* jobArgument, KNativePtr job);
+void WorkerLaunchpadForExecuteAfterJob(mm::RawExternalRCRef* job);
 
 }  // extern "C"
 
@@ -93,7 +93,7 @@ struct Job {
   union {
     struct {
       KNativePtr function; // Raw pointer to function.
-      KNativePtr argument;
+      mm::RawExternalRCRef* argument;
       Future* future;
       KInt transferMode;
     } regularJob;
@@ -104,7 +104,7 @@ struct Job {
     } terminationRequest;
 
     struct {
-      KNativePtr operation;
+      mm::RawExternalRCRef* operation;
       uint64_t whenExecute;
     } executeAfter;
   };
@@ -126,10 +126,10 @@ typedef std::multiset<Job, JobCompare> DelayedJobSet;
 
 class Worker {
  public:
-  Worker(KInt id, WorkerExceptionHandling exceptionHandling, KNativePtr customName, WorkerKind kind)
+  Worker(KInt id, WorkerExceptionHandling exceptionHandling, mm::RawExternalRCRef* name, WorkerKind kind)
       : id_(id),
         kind_(kind),
-        name_(customName),
+        name_(name),
         exceptionHandling_(exceptionHandling) {
     kotlin::ThreadStateGuard guard(ThreadState::kNative);
     pthread_mutex_init(&lock_, nullptr);
@@ -159,7 +159,7 @@ class Worker {
 
   WorkerExceptionHandling exceptionHandling() const { return exceptionHandling_; }
 
-  KNativePtr name() const { return name_; }
+  mm::RawExternalRCRef* name() const { return name_; }
 
   WorkerKind kind() const { return kind_; }
 
@@ -190,7 +190,7 @@ class Worker {
   std::deque<Job> queue_;
   DelayedJobSet delayed_;
   // ExternalRCRef with worker's name.
-  KNativePtr name_;
+  mm::RawExternalRCRef* name_;
   // Lock and condition for waiting on the queue.
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
@@ -284,7 +284,7 @@ class Future {
     result_ = nullptr;
   }
 
-  KNativePtr consumeResultUnlocked() {
+  mm::RawExternalRCRef* consumeResultUnlocked() {
     Locker locker(&lock_);
     while (state_ == SCHEDULED) {
       waitInNativeState(&cond_, &lock_);
@@ -297,7 +297,7 @@ class Future {
     return result;
   }
 
-  void storeResultUnlocked(KNativePtr result, bool ok);
+  void storeResultUnlocked(mm::RawExternalRCRef* result, bool ok);
 
   void cancelUnlocked(MemoryState* memoryState);
 
@@ -313,8 +313,7 @@ class Future {
   KInt state_;
   // Integer id of the future.
   KInt id_;
-  // ExternalRCRef with future's result.
-  KNativePtr result_;
+  mm::RawExternalRCRef* result_;
   // Lock and condition for waiting on the future.
   mutable pthread_mutex_t lock_;
   mutable pthread_cond_t cond_;
@@ -339,11 +338,11 @@ class State {
     pthread_cond_destroy(&cond_);
   }
 
-  Worker* addWorkerUnlocked(WorkerExceptionHandling exceptionHandling, KNativePtr customName, WorkerKind kind) {
+  Worker* addWorkerUnlocked(WorkerExceptionHandling exceptionHandling, mm::RawExternalRCRef* name, WorkerKind kind) {
     Worker* worker = nullptr;
     {
       Locker locker(&lock_);
-      worker = new Worker(nextWorkerId(), exceptionHandling, customName, kind);
+      worker = new Worker(nextWorkerId(), exceptionHandling, name, kind);
       if (worker == nullptr) return nullptr;
       workers_[worker->id()] = worker;
     }
@@ -378,7 +377,7 @@ class State {
   }
 
   Future* addJobToWorkerUnlocked(
-      KInt id, KNativePtr jobFunction, KNativePtr jobArgument, bool toFront, KInt transferMode) {
+      KInt id, KNativePtr jobFunction, mm::RawExternalRCRef* jobArgument, bool toFront, KInt transferMode) {
     Future* future = nullptr;
     Worker* worker = nullptr;
     Locker locker(&lock_);
@@ -408,7 +407,7 @@ class State {
     return future;
   }
 
-  bool executeJobAfterInWorkerUnlocked(KInt id, KNativePtr operation, KLong afterMicroseconds) {
+  bool executeJobAfterInWorkerUnlocked(KInt id, mm::RawExternalRCRef* operation, KLong afterMicroseconds) {
     Worker* worker = nullptr;
     Locker locker(&lock_);
 
@@ -431,7 +430,7 @@ class State {
     return true;
   }
 
-  bool scheduleJobInWorkerUnlocked(KInt id, KNativePtr operation) {
+  bool scheduleJobInWorkerUnlocked(KInt id, mm::RawExternalRCRef* operation) {
       Worker* worker = nullptr;
       Locker locker(&lock_);
 
@@ -469,7 +468,7 @@ class State {
     return it->second->stateUnlocked();
   }
 
-  KNativePtr consumeFutureUnlocked(KInt id) {
+  mm::RawExternalRCRef* consumeFutureUnlocked(KInt id) {
     Future* future = nullptr;
     {
       Locker locker(&lock_);
@@ -482,7 +481,7 @@ class State {
       future = it->second;
     }
 
-    KNativePtr result = future->consumeResultUnlocked();
+    auto result = future->consumeResultUnlocked();
 
     {
        Locker locker(&lock_);
@@ -496,7 +495,7 @@ class State {
     return result;
   }
 
-  KNativePtr getWorkerNameUnlocked(KInt id) {
+  mm::RawExternalRCRef* getWorkerNameUnlocked(KInt id) {
     Locker locker(&lock_);
     auto it = workers_.find(id);
     if (it == workers_.end()) {
@@ -657,7 +656,7 @@ State* theState() {
   return state;
 }
 
-void Future::storeResultUnlocked(KNativePtr result, bool ok) {
+void Future::storeResultUnlocked(mm::RawExternalRCRef* result, bool ok) {
   kotlin::ThreadStateGuard guard(ThreadState::kNative);
   {
     Locker locker(&lock_);
@@ -685,8 +684,8 @@ void Future::cancelUnlocked(MemoryState* memoryState) {
 // Defined in RuntimeUtils.kt.
 extern "C" void ReportUnhandledException(KRef e);
 
-KInt startWorker(WorkerExceptionHandling exceptionHandling, KNativePtr customName) {
-  Worker* worker = theState()->addWorkerUnlocked(exceptionHandling, customName, WorkerKind::kNative);
+KInt startWorker(WorkerExceptionHandling exceptionHandling, mm::RawExternalRCRef* name) {
+  Worker* worker = theState()->addWorkerUnlocked(exceptionHandling, name, WorkerKind::kNative);
   if (worker == nullptr) return -1;
   worker->startEventLoop();
   return worker->id();
@@ -697,13 +696,13 @@ KInt currentWorker() {
   return ::g_worker->id();
 }
 
-KInt execute(KInt id, KInt transferMode, KNativePtr jobArgument, KNativePtr jobFunction) {
+KInt execute(KInt id, KInt transferMode, mm::RawExternalRCRef* jobArgument, KNativePtr jobFunction) {
   Future* future = theState()->addJobToWorkerUnlocked(id, jobFunction, jobArgument, false, transferMode);
   if (future == nullptr) ThrowWorkerAlreadyTerminated();
   return future->id();
 }
 
-void executeAfter(KInt id, KNativePtr job, KLong afterMicroseconds) {
+void executeAfter(KInt id, mm::RawExternalRCRef* job, KLong afterMicroseconds) {
   if (!theState()->executeJobAfterInWorkerUnlocked(id, job, afterMicroseconds))
     ThrowWorkerAlreadyTerminated();
 }
@@ -720,11 +719,11 @@ KInt stateOfFuture(KInt id) {
   return theState()->stateOfFutureUnlocked(id);
 }
 
-KNativePtr consumeFuture(KInt id) {
+mm::RawExternalRCRef* consumeFuture(KInt id) {
   return theState()->consumeFutureUnlocked(id);
 }
 
-KNativePtr getWorkerName(KInt id) {
+mm::RawExternalRCRef* getWorkerName(KInt id) {
   return theState()->getWorkerNameUnlocked(id);
 }
 
@@ -787,7 +786,7 @@ void WaitNativeWorkerTermination(KInt id) {
     theState()->waitNativeWorkersTerminationUnlocked(false, [id](KInt worker) { return worker == id; });
 }
 
-bool WorkerSchedule(KInt id, KNativePtr job) {
+bool WorkerSchedule(KInt id, mm::RawExternalRCRef* job) {
     return theState()->scheduleJobInWorkerUnlocked(id, job);
 }
 
@@ -1001,7 +1000,7 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_REGULAR: {
-      KNativePtr result = nullptr;
+      mm::RawExternalRCRef* result = nullptr;
       bool ok = true;
       try {
           objc_support::AutoreleasePool autoreleasePool;
@@ -1029,8 +1028,8 @@ JobKind Worker::processQueueElement(bool blocking) {
 
 extern "C" {
 
-KInt Kotlin_Worker_startInternal(KBoolean errorReporting, KNativePtr customName) {
-    return startWorker(errorReporting ? WorkerExceptionHandling::kDefault : WorkerExceptionHandling::kIgnore, customName);
+KInt Kotlin_Worker_startInternal(KBoolean errorReporting, mm::RawExternalRCRef* name) {
+    return startWorker(errorReporting ? WorkerExceptionHandling::kDefault : WorkerExceptionHandling::kIgnore, name);
 }
 
 KInt Kotlin_Worker_currentInternal() {
@@ -1041,11 +1040,11 @@ KInt Kotlin_Worker_requestTerminationWorkerInternal(KInt id, KBoolean processSch
   return requestTermination(id, processScheduledJobs);
 }
 
-KInt Kotlin_Worker_executeInternal(KInt id, KInt transferMode, KNativePtr jobArgument, KNativePtr job) {
+KInt Kotlin_Worker_executeInternal(KInt id, KInt transferMode, mm::RawExternalRCRef* jobArgument, KNativePtr job) {
   return execute(id, transferMode, jobArgument, job);
 }
 
-void Kotlin_Worker_executeAfterInternal(KInt id, KNativePtr job, KLong afterMicroseconds) {
+void Kotlin_Worker_executeAfterInternal(KInt id, mm::RawExternalRCRef* job, KLong afterMicroseconds) {
   executeAfter(id, job, afterMicroseconds);
 }
 
@@ -1057,7 +1056,7 @@ KBoolean Kotlin_Worker_parkInternal(KInt id, KLong timeoutMicroseconds, KBoolean
   return park(id, timeoutMicroseconds, process);
 }
 
-KNativePtr Kotlin_Worker_getNameInternal(KInt id) {
+mm::RawExternalRCRef* Kotlin_Worker_getNameInternal(KInt id) {
   return getWorkerName(id);
 }
 
@@ -1065,7 +1064,7 @@ KInt Kotlin_Worker_stateOfFuture(KInt id) {
   return stateOfFuture(id);
 }
 
-KNativePtr Kotlin_Worker_consumeFuture(KInt id) {
+mm::RawExternalRCRef* Kotlin_Worker_consumeFuture(KInt id) {
   return consumeFuture(id);
 }
 

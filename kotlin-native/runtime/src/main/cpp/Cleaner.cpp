@@ -17,7 +17,7 @@ namespace {
 
 struct CleanerImpl {
     ObjHeader header;
-    KNativePtr cleanerStablePtr;
+    kotlin::mm::RawExternalRCRef* cleanerStablePtr;
 };
 
 constexpr KInt kCleanerWorkerUninitialized = 0;
