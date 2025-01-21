@@ -1603,6 +1603,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/jvmDefaultIncorrectValue.args");
     }
 
+    @TestMetadata("jvmDefaultIncorrectValueOld.args")
+    public void testJvmDefaultIncorrectValueOld() {
+      runTest("compiler/testData/cli/jvm/jvmDefaultIncorrectValueOld.args");
+    }
+
+    @TestMetadata("jvmDefaultOld.args")
+    public void testJvmDefaultOld() {
+      runTest("compiler/testData/cli/jvm/jvmDefaultOld.args");
+    }
+
     @TestMetadata("jvmRecordOk.args")
     public void testJvmRecordOk() {
       runTest("compiler/testData/cli/jvm/jvmRecordOk.args");

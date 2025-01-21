@@ -936,7 +936,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val facet = KotlinFacetSettings()
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments()
-            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefaultOld = JvmDefaultMode.DISABLE.oldDescription
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.DISABLE.description
 
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
@@ -948,7 +948,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val facet = KotlinFacetSettings()
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments()
-            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefaultOld = JvmDefaultMode.ALL_COMPATIBILITY.oldDescription
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.ALL_COMPATIBILITY.description
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,
                 JpsKotlinFacetModuleExtension(facet)

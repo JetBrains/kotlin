@@ -143,6 +143,21 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-jvm-default",
+        valueDescription = "{enable|no-compatibility|disable}",
+        description = """Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
+-jvm-default=disable             Default behavior. Do not generate JVM default methods.
+-jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes
+                                 with static methods for compatibility with code compiled in the 'disable' mode.
+-jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes."""
+    )
+    var jvmDefault: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     // Advanced options
 
     @Argument(value = "-Xuse-old-backend", description = "Use the old JVM backend.")
@@ -445,28 +460,12 @@ The default value is 'warn'."""
     @Argument(
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable}",
-        description = """Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
--Xjvm-default=all                Generate JVM default methods for all interface declarations with bodies in the module.
-                                 Do not generate 'DefaultImpls' stubs for interface declarations with bodies. If an interface inherits a method with a
-                                 body from an interface compiled in 'disable' mode and doesn't override it, then a 'DefaultImpls' stub will be
-                                 generated for it.
-                                 This BREAKS BINARY COMPATIBILITY if some client code relies on the presence of 'DefaultImpls' classes.
-                                 Note that if interface delegation is used, all interface methods are delegated.
--Xjvm-default=all-compatibility  Like 'all', but additionally generate compatibility stubs in the 'DefaultImpls' classes.
-                                 Compatibility stubs can help library and runtime authors maintain backward binary compatibility
-                                 for existing clients compiled against previous library versions.
-                                 'all' and 'all-compatibility' modes change the library ABI surface that will be used by clients after
-                                 the recompilation of the library. Because of this, clients might be incompatible with previous library
-                                 versions. This usually means that proper library versioning is required, for example with major version increases in SemVer.
-                                 In subtypes of Kotlin interfaces compiled in 'all' or 'all-compatibility' mode, 'DefaultImpls'
-                                 compatibility stubs will invoke the default method of the interface with standard JVM runtime resolution semantics.
-                                 Perform additional compatibility checks for classes inheriting generic interfaces where in some cases an
-                                 additional implicit method with specialized signatures was generated in 'disable' mode.
-                                 Unlike in 'disable' mode, the compiler will report an error if such a method is not overridden explicitly
-                                 and the class is not annotated with '@JvmDefaultWithoutCompatibility' (see KT-39603 for more details).
--Xjvm-default=disable            Default behavior. Do not generate JVM default methods."""
+        description = """This option is deprecated. Migrate to -jvm-default as follows:
+-Xjvm-default=disable            -> -jvm-default=disable
+-Xjvm-default=all-compatibility  -> -jvm-default=enable
+-Xjvm-default=all                -> -jvm-default=no-compatibility"""
     )
-    var jvmDefaultOld: String = JvmDefaultMode.DISABLE.oldDescription
+    var jvmDefaultOld: String? = null
         set(value) {
             checkFrozen()
             field = value
@@ -844,12 +843,7 @@ This option is deprecated and will be deleted in future versions."""
         result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
             .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
-        JvmDefaultMode.fromStringOrNullOld(jvmDefaultOld)?.let {
-            result[JvmAnalysisFlags.jvmDefaultMode] = it
-        } ?: collector.report(
-            CompilerMessageSeverity.ERROR,
-            "Unknown -Xjvm-default mode: $jvmDefaultOld, supported modes: ${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
-        )
+        result[JvmAnalysisFlags.jvmDefaultMode] = configureJvmDefaultMode(collector)
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
@@ -867,6 +861,31 @@ This option is deprecated and will be deleted in future versions."""
         return result
     }
 
+    private fun configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode {
+        val mode = when {
+            jvmDefault != null -> JvmDefaultMode.fromStringOrNull(jvmDefault).also {
+                if (it == null) {
+                    collector?.report(
+                        CompilerMessageSeverity.ERROR,
+                        "Unknown -jvm-default mode: $jvmDefault, supported modes: " +
+                                "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
+                    )
+                }
+            }
+            jvmDefaultOld != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefaultOld).also {
+                if (it == null) {
+                    collector?.report(
+                        CompilerMessageSeverity.ERROR,
+                        "Unknown -Xjvm-default mode: $jvmDefaultOld, supported modes: " +
+                                "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
+                    )
+                }
+            }
+            else -> null
+        }
+        return mode ?: JvmDefaultMode.DISABLE
+    }
+
     override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
         val result = super.configureLanguageFeatures(collector)
         if (typeEnhancementImprovementsInStrictMode) {
@@ -875,7 +894,7 @@ This option is deprecated and will be deleted in future versions."""
         if (enhanceTypeParameterTypesToDefNotNull) {
             result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
         }
-        if (JvmDefaultMode.fromStringOrNullOld(jvmDefaultOld)?.isEnabled == true) {
+        if (configureJvmDefaultMode(null).isEnabled) {
             result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
             result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
         }

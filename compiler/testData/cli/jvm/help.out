@@ -6,6 +6,12 @@ where possible options include:
   -include-runtime           Include the Kotlin runtime in the resulting JAR.
   -java-parameters           Generate metadata for Java 1.8 reflection on method parameters.
   -jdk-home <path>           Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
+  -jvm-default {enable|no-compatibility|disable}
+                             Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
+                             -jvm-default=disable             Default behavior. Do not generate JVM default methods.
+                             -jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes
+                                                              with static methods for compatibility with code compiled in the 'disable' mode.
+                             -jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
   -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–23), with 1.8 as the default.
   -module-name <name>        Name of the generated '.kotlin_module' file.
   -no-jdk                    Don't automatically include the Java runtime in the classpath.

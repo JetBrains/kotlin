@@ -78,14 +78,13 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     JS_OUTPUT_GRANULARITY(OVERRIDE, RegexControlled("(whole_program|per_module|per_file)", false)),
 
     // Compiler parameters
-    JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("disable", "enable", "compatibility", "all", "all-compatibility"))),
+    JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("enable", "no-compatibility", "disable"))),
     USE_OLD_BACKEND(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     USE_FIR(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
 
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
     companion object {
-        // Version 2: removed deprecated K/N targets from MPP_PLATFORMS
-        const val VERSION = 2
+        const val VERSION = 3
     }
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -78,7 +79,7 @@ internal object CompilerArgumentMetrics : FusMetrics {
             is K2JVMCompilerArguments -> {
                 val args = K2JVMCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
-                metricsConsumer.report(StringMetrics.JVM_DEFAULTS, args.jvmDefaultOld)
+                metricsConsumer.report(StringMetrics.JVM_DEFAULTS, args.jvmDefault ?: JvmDefaultMode.DISABLE.description)
 
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
