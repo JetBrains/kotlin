@@ -49,7 +49,7 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
 
     private fun isCompatibleTo(ourVersion: KotlinAbiVersion): Boolean {
         return if (this.isAtLeast(FIRST_WITH_EXPERIMENTAL_BACKWARD_COMPATIBILITY))
-            major == ourVersion.major && minor <= ourVersion.minor
+            this.isAtMost(ourVersion)
         else
             this == ourVersion
     }
@@ -86,17 +86,9 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
         /**
          * See: [KotlinAbiVersion bump history](compiler/util-klib/KotlinAbiVersionBumpHistory.md)
          *
-         * Since the release of 2.1.0, the following encoding for [minor] part of ABI version is used.
-         * Kotlin version -> ABI version:
-         * 2.1.0 -> 201
-         * 2.2.0 -> 202
-         * ...
-         * 2.9.0 -> 209
-         * 2.10.0 -> 210
-         * ...
-         * 3.0.0 -> 300
+         * Since the release of 2.2.0, the ABI version is aligned with the Kotlin version.
          */
-        val CURRENT = KotlinAbiVersion(1, 2_01, 0)
+        val CURRENT = KotlinAbiVersion(2, 2, 0)
 
         /**
          * Versions before 1.4.1 were the active development phase.
