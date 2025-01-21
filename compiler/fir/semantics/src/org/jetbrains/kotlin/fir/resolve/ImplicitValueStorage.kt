@@ -69,12 +69,10 @@ class ImplicitValueStorage private constructor(
             return this
         }
 
-        // Not adding context receivers to implicitValuesBySymbol is a bug that leads to smart-casts not working.
-        // However, we're leaving it broken because context receivers are getting removed anyway.
         return ImplicitValueStorage(
             implicitReceiverStack,
             contextReceivers.fold(implicitReceiversByLabel) { acc, value -> acc.putIfNameIsNotNull(value.labelName, value) },
-            implicitValuesBySymbol.addAll(contextParameters),
+            implicitValuesBySymbol.addAll(contextParameters).addAll(contextReceivers),
         )
     }
 

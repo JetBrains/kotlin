@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
 context(ctx: T)
@@ -8,5 +8,5 @@ class A
 
 context(a: A)
 fun A.funMember() {
-    implicit<A>()
+    <!AMBIGUOUS_CONTEXT_ARGUMENT!>implicit<!><A>()
 }

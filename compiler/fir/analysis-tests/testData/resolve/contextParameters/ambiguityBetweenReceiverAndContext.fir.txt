@@ -11,5 +11,5 @@ FILE: ambiguityBetweenReceiverAndContext.kt
     }
     context(a: R|A|)
     public final fun R|A|.funMember(): R|kotlin/Unit| {
-        R|/implicit|<R|A|>()
+        R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|A|>()
     }

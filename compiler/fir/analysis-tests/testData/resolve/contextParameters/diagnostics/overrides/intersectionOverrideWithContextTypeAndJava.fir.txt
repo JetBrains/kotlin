@@ -14,7 +14,7 @@ FILE: test.kt
         }
         )
         R|<local>/a|.R|/KotlinInterfaceWithContextType.bar|(<L> = bar@fun R|kotlin/String|.<anonymous>(b: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
-            ^ R|/implicit|<R|kotlin/String|>().R|kotlin/String.plus|(this@R|special/anonymous|).R|kotlin/String.plus|(R|<local>/b|)
+            ^ R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|kotlin/String|>().R|kotlin/String.plus|(this@R|special/anonymous|).R|kotlin/String.plus|(R|<local>/b|)
         }
         )
     }

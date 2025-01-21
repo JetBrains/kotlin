@@ -279,16 +279,30 @@ fun Candidate.mapContextArgumentsOrNull(
     towerDataContext: FirTowerDataContext,
     sink: CheckerSink,
 ): List<ConeResolutionAtom>? {
-    val receiverGroups: List<List<FirExpression>> =
-        towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
-            towerDataElement.implicitReceiver?.receiverExpression?.let(::listOf)
-                ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
+    val implicitsGroupedByScope: List<List<FirExpression>> =
+        if (callInfo.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            // With context parameters enabled, implicits are grouped by containing symbol,
+            // meaning that extension receivers and context parameters from the same declaration are in one group.
+            // See KT-74081.
+            towerDataContext.implicitValueStorage.implicitValues
+                .groupBy(
+                    keySelector = { it.boundSymbol.containingDeclarationIfParameter() },
+                    valueTransform = { it.computeExpression() })
+                .values
+                .reversed()
+        } else {
+            // Old logic from context receivers where extension receivers are in a separate group from context receivers.
+            // TODO(KT-72994) Remove when context receivers are removed
+            towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
+                towerDataElement.implicitReceiver?.receiverExpression?.let(::listOf)
+                    ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
+            }
         }
 
     val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
 
     for (expectedType in contextReceiverExpectedTypes) {
-        val matchingReceivers = findClosestMatchingReceivers(expectedType, receiverGroups)
+        val matchingReceivers = findClosestMatchingReceivers(expectedType, implicitsGroupedByScope)
         when (matchingReceivers.size) {
             0 -> {
                 sink.reportDiagnostic(NoContextArgument(expectedType))
@@ -471,14 +485,6 @@ object CheckDslScopeViolation : ResolutionStage() {
         return getDslMarkersOfImplicitValue(boundSymbol, type, context).any { it in otherDslMarkers }
     }
 
-    private fun FirBasedSymbol<*>.containingDeclarationIfParameter(): FirBasedSymbol<*> {
-        return when (this) {
-            is FirReceiverParameterSymbol -> containingDeclarationSymbol
-            is FirValueParameterSymbol -> containingDeclarationSymbol
-            else -> this
-        }
-    }
-
     private fun getDslMarkersOfImplicitValue(
         // Symbol to which the relevant receiver or context parameter is bound
         boundSymbol: FirBasedSymbol<*>,
@@ -554,6 +560,14 @@ object CheckDslScopeViolation : ResolutionStage() {
                 add(annotationClass.classId)
             }
         }
+    }
+}
+
+private fun FirBasedSymbol<*>.containingDeclarationIfParameter(): FirBasedSymbol<*> {
+    return when (this) {
+        is FirReceiverParameterSymbol -> containingDeclarationSymbol
+        is FirValueParameterSymbol -> containingDeclarationSymbol
+        else -> this
     }
 }
 

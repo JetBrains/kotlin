@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // LANGUAGE: +ContextParameters
@@ -24,7 +24,7 @@ interface IntersectionWithContextType: JavaInterface, KotlinInterfaceWithContext
 
 fun usage(a: IntersectionWithContextType) {
     a.foo { b: String -> implicit<String>() + b }
-    a.bar { b: String -> implicit<String>() + this + b  }
+    a.bar { b: String -> <!AMBIGUOUS_CONTEXT_ARGUMENT!>implicit<!><String>() + this + b  }
 }
 
 context(ctx: T)
