@@ -1,0 +1,15 @@
+FILE: ambiguityBetweenReceiverAndContext.kt
+    context(ctx: R|T|)
+    public final fun <T> implicit(): R|T| {
+        ^implicit R|<local>/ctx|
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final fun R|A|.funMember(): R|kotlin/Unit| {
+        R|/implicit|<R|A|>()
+    }
