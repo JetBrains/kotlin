@@ -1075,12 +1075,21 @@ class CallAndReferenceGenerator(
         )
 
         if (unsubstitutedParameterType != null) {
+            // Unsubstituted parameter type is only used for generating nullability check if the argument being used is flexible,
+            // while the value parameter doesn't accept nulls.
+            // And this is the only use case where the whole Array type is required for vararg, all other implicit coercion/conversion
+            // logic needs the element type and substituted type.
+            val substitutedParameterType = substitutor.substituteOrSelf(
+                when {
+                    parameter.isVararg -> unsubstitutedParameterType.arrayElementType()!!
+                    else -> unsubstitutedParameterType
+                }
+            )
             with(visitor.implicitCastInserter) {
                 val argumentType = argument.resolvedType.fullyExpandedType(session)
 
                 fun insertCastToArgument(argument: FirExpression): IrExpression = when (argument) {
                     is FirSmartCastExpression -> {
-                        val substitutedParameterType = substitutor.substituteOrSelf(unsubstitutedParameterType)
                         // here we should use a substituted parameter type to properly choose the component of an intersection type
                         //  to provide a proper cast to the smartcasted type
                         irArgument.insertCastForSmartcastWithIntersection(argumentType, substitutedParameterType)
@@ -1091,18 +1100,16 @@ class CallAndReferenceGenerator(
                     else -> irArgument
                 }
                 irArgument = insertCastToArgument(argument)
-                // here we should pass unsubstituted parameter type to properly infer if the original type accepts null or not
+                // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
                 // to properly insert nullability check
                 irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)
             }
 
             with(adapterGenerator) {
-                val unwrappedParameterType =
-                    if (parameter.isVararg) unsubstitutedParameterType.arrayElementType()!! else unsubstitutedParameterType
-                val samFunctionType = getFunctionTypeForPossibleSamType(unwrappedParameterType)
+                val samFunctionType = getFunctionTypeForPossibleSamType(substitutedParameterType)
                 irArgument = irArgument.applySuspendConversionIfNeeded(
                     argument,
-                    substitutor.substituteOrSelf(samFunctionType ?: unwrappedParameterType)
+                    samFunctionType ?: substitutedParameterType
                 )
                 irArgument = irArgument.applySamConversionIfNeeded(argument)
             }
