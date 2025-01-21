@@ -34,11 +34,11 @@ inline RawExternalRCRefNonPermanent* externalRCRefNonPermanent(RawExternalRCRef*
 }
 
 // Create ExternalRCRef for `obj` with initial refcount=1.
-// Can be called only from runnable state.
+// Can be called from any state.
 RawExternalRCRef* createRetainedExternalRCRef(KRef obj) noexcept;
 
 // Create ExternalRCRef for `obj` with initial refcount=0.
-// Can be called only from runnable state.
+// Can be called from any state.
 RawExternalRCRef* createUnretainedExternalRCRef(KRef obj) noexcept;
 
 // Retain ExternalRCRef. `ref` must have refcount>0.

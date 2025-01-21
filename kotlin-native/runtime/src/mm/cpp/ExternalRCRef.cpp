@@ -78,8 +78,6 @@ mm::RawExternalRCRef* kotlin::mm::permanentObjectAsExternalRCRef(KRef obj) noexc
 }
 
 mm::RawExternalRCRef* kotlin::mm::createRetainedExternalRCRef(KRef obj) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-
     if (obj == nullptr)
         return nullptr;
 
@@ -91,8 +89,6 @@ mm::RawExternalRCRef* kotlin::mm::createRetainedExternalRCRef(KRef obj) noexcept
 }
 
 mm::RawExternalRCRef* kotlin::mm::createUnretainedExternalRCRef(KRef obj) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-
     if (obj == nullptr)
         return nullptr;
 
