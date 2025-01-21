@@ -115,7 +115,7 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
             put("float", "kotlin.Float")
             put("long", "kotlin.Long")
             put("double", "kotlin.Double")
-        }
+        }.compact()
 
         private val primitiveWrapperFqNames = HashMap<String, String>().apply {
             put("java.lang.Boolean", "kotlin.Boolean")
@@ -126,7 +126,7 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
             put("java.lang.Float", "kotlin.Float")
             put("java.lang.Long", "kotlin.Long")
             put("java.lang.Double", "kotlin.Double")
-        }
+        }.compact()
 
         // See JavaToKotlinClassMap.
         private val classFqNames = HashMap<String, String>().apply {
@@ -158,9 +158,9 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
             for ((klass, arity) in FUNCTION_CLASSES) {
                 put(klass.name, "kotlin.Function$arity")
             }
-        }
+        }.compact()
 
-        private val simpleNames = classFqNames.mapValues { (_, fqName) -> fqName.substringAfterLast('.') }
+        private val simpleNames = classFqNames.mapValues { (_, fqName) -> fqName.substringAfterLast('.') }.compact()
 
         public fun getClassSimpleName(jClass: Class<*>): String? = when {
             jClass.isAnonymousClass -> null
