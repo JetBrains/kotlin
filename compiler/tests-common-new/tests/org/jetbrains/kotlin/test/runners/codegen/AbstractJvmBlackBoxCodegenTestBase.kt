@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
 import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.model.BackendFacade
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
@@ -29,9 +31,16 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider)
+        commonConfigurationForTest(
+            targetFrontend,
+            frontendFacade,
+            frontendToBackendConverter,
+            backendFacade,
+            additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider
+        )
 
         configureClassicFrontendHandlersStep {
             useHandlers(
