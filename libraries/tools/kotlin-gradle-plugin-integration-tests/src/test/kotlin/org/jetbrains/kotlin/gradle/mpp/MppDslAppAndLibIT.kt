@@ -8,10 +8,10 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import java.util.zip.ZipFile
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.name
@@ -80,6 +80,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
+            )
             build(
                 buildArguments = buildList {
                     add("clean")
@@ -138,6 +141,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
+            )
             val buildGradle = listOf(buildGradle, buildGradleKts).first { it.exists() }
             buildGradle.replaceText(
                 "kotlinCompileLogLevel = LogLevel.LIFECYCLE",

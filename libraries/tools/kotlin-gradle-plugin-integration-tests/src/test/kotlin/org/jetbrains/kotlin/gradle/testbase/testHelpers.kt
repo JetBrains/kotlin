@@ -277,3 +277,9 @@ val Throwable.fullMessage
         }
         it
     }.toString()
+
+/**
+ * @return `true` if 'withJava()' method should not produce a configuration error.
+ */
+internal val TestProject.isWithJavaSupported: Boolean
+    get() = gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_7)
