@@ -19,9 +19,9 @@ fun case_4(vararg args: dynamic) {
 fun case_5(x: Any?) {
     fun foo(x: List<dynamic>) = x
 
-    foo(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<dynamic>")!>listOf(null) + x as MutableList<out dynamic><!>)
+    foo(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<dynamic>")!>listOf(null) + x <!UNCHECKED_CAST!>as MutableList<out dynamic><!><!>)
 }
 
 fun case_6(x: Any?) {
-    (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Any?>")!>listOf(null) + x as MutableList<in dynamic><!>).toTypedArray()
+    (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Any?>")!>listOf(null) + x <!UNCHECKED_CAST!>as MutableList<in dynamic><!><!>).toTypedArray()
 }
