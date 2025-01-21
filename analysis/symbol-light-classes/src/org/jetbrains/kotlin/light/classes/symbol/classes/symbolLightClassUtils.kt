@@ -679,6 +679,7 @@ internal fun KaSession.hasTypeForValueClassInSignature(
 
     if (!ignoreReturnType) {
         val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
+        // Only explicitly declared types can be checked to avoid contract violations
         if (psiDeclaration?.typeReference != null && typeForValueClass(callableSymbol.returnType)) return true
     }
 
