@@ -48,6 +48,9 @@ abstract class KotlinNativeTarget @Inject constructor(
 
     internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
 
+    internal val enabledOnCurrentHostForKlibCompilation: Boolean
+        get() = konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (!project.isKotlinGranularMetadataEnabled)
             return@lazy super.kotlinComponents
@@ -104,7 +107,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         get() = disambiguateName("binaries")
 
     override val publishable: Boolean
-        get() = konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+        get() = enabledOnCurrentHostForKlibCompilation
 
     override val compilerOptions: KotlinNativeCompilerOptions = project.objects
         .newInstance<KotlinNativeCompilerOptionsDefault>()

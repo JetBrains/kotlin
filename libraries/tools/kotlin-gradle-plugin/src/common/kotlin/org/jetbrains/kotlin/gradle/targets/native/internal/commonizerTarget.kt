@@ -48,7 +48,7 @@ private fun inferCommonizerTarget(compilations: Iterable<KotlinCompilation<*>>):
     @OptIn(UnsafeApi::class)
     val allCompilationLeafTargets = compilations
         .filter { compilation -> compilation !is KotlinMetadataCompilation }
-        .map { compilation -> inferCommonizerTarget(compilation) ?: return null }
+        .mapNotNull { compilation -> inferCommonizerTarget(compilation) }
         .allLeaves()
 
     return when {
@@ -60,7 +60,9 @@ private fun inferCommonizerTarget(compilations: Iterable<KotlinCompilation<*>>):
 
 @UnsafeApi("Use compilation.commonizerTarget instead")
 internal fun inferCommonizerTarget(compilation: KotlinCompilation<*>): CommonizerTarget? {
-    if (compilation is KotlinNativeCompilation) {
+    if (compilation is KotlinNativeCompilation &&
+        compilation.target.enabledOnCurrentHostForKlibCompilation
+    ) {
         return LeafCommonizerTarget(compilation.konanTarget)
     }
 
