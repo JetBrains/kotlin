@@ -166,7 +166,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithHook) {
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
-                Kotlin_initRuntimeIfNeeded();
+                CalledFromNativeGuard guard;
                 try {
                     ThrowException(exception.header());
                 } catch (...) {
@@ -208,7 +208,7 @@ TEST(ExceptionDeathTest, TerminateHandler_NoHook) {
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
-                Kotlin_initRuntimeIfNeeded();
+                CalledFromNativeGuard guard;
                 try {
                     ThrowException(exception.header());
                 } catch (...) {
@@ -252,7 +252,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithFailingHook) {
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
-                Kotlin_initRuntimeIfNeeded();
+                CalledFromNativeGuard guard;
                 try {
                     ThrowException(exception.header());
                 } catch (...) {
