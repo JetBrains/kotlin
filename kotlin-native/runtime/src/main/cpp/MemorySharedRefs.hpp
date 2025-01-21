@@ -13,7 +13,6 @@
 #include "Memory.h"
 #include "ObjCBackRef.hpp"
 #include "RawPtr.hpp"
-#include "concurrent/Mutex.hpp"
 
 class KRefSharedHolder {
  public:
@@ -59,10 +58,7 @@ class BackRefFromAssociatedObject {
 
  private:
   union {
-    struct {
-      kotlin::mm::ObjCBackRef ref_;
-      kotlin::ManuallyScoped<kotlin::RWSpinLock> deallocMutex_;
-    }; // Regular object.
+    kotlin::ManuallyScoped<kotlin::mm::ObjCBackRef> ref_; // Regular object.
     ObjHeader* permanentObj_; // Permanent object.
   };
 };
