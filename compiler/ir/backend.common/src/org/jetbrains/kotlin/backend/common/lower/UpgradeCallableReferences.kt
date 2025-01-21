@@ -354,10 +354,10 @@ open class UpgradeCallableReferences(
             ) { parameters ->
                 // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
                 // we already have such klib, so need to handle it. We just ignore extra type parameters
-                val cleanedTypeArgumentCount = minOf(typeArgumentsCount, referencedFunction.typeParameters.size)
+                val cleanedTypeArgumentCount = minOf(typeArguments.size, referencedFunction.typeParameters.size)
                 val exprToReturn = irCallWithSubstitutedType(
                     referencedFunction.symbol,
-                    typeArguments = (0 until cleanedTypeArgumentCount).map { getTypeArgument(it) ?: context.irBuiltIns.anyNType },
+                    typeArguments = (0 until cleanedTypeArgumentCount).map { typeArguments[it] ?: context.irBuiltIns.anyNType },
                 ).apply {
                     val bound = captured.map { it.first }.toSet()
                     val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }

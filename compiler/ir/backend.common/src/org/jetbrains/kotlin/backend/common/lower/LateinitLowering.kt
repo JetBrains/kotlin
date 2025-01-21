@@ -130,7 +130,7 @@ open class LateinitLowering(
 
         if (!Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
 
-        return expression.extensionReceiver!!.replaceTailExpression {
+        return expression.arguments[0]!!.replaceTailExpression {
             val (property, dispatchReceiver) = when (it) {
                 is IrPropertyReference -> it.getter?.owner?.resolveFakeOverride()?.correspondingPropertySymbol?.owner to it.dispatchReceiver
                 is IrRichPropertyReference -> (it.reflectionTargetSymbol as? IrPropertySymbol)?.owner?.resolveFakeOverride() to it.boundValues.atMostOne()
@@ -207,7 +207,7 @@ open class UninitializedPropertyAccessExceptionThrower(private val symbols: Symb
     open fun build(builder: IrBuilderWithScope, name: String): IrExpression {
         val throwExceptionFunction = symbols.throwUninitializedPropertyAccessException.owner
         return builder.irCall(throwExceptionFunction).apply {
-            putValueArgument(0, builder.irString(name))
+            arguments[0] = builder.irString(name)
         }
     }
 }
