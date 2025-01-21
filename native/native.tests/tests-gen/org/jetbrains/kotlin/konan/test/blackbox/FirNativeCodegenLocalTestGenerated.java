@@ -791,6 +791,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("stackAllocatedArray.kt")
+    public void testStackAllocatedArray() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocatedArray.kt");
+    }
+
+    @Test
     @TestMetadata("stackAllocatedString.kt")
     public void testStackAllocatedString() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocatedString.kt");
