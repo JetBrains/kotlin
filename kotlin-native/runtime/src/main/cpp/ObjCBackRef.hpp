@@ -15,8 +15,6 @@
 
 namespace kotlin::mm {
 
-// TODO(KT-67741): Unify different SpecialRefs
-
 // Reference from an ObjC associated object back into a Kotlin object.
 // GC automatically tracks references with refcount > 0 as roots, and invalidates references with refcount = 0 when the Kotlin object is
 // collected. Use `create` and `dispose` to create and destroy the back reference.
