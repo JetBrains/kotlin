@@ -40,8 +40,9 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
         val buildOptions =
             // KT-62761: on Windows machine there are problems with removing tmp directory due to opened files
-            // Thus, the logic of Kotlin Native toolchain provisioning may not be involved here, KT-72068 may not be tested
-            // Consider removing the special handling for Windows after resolution of KT-62761
+            // Thus, the logic of Kotlin Native toolchain provisioning may not be involved here,
+            // KT-72068 cannot be tested on Windows machines.
+            // Consider removing this special handling for Windows after resolution of KT-62761
             if (HostManager.hostIsMingw)
                 defaultBuildOptions
             else defaultBuildOptions.copy(
@@ -49,10 +50,6 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 // even when target is not supported(@see KT-72068). Even without this line the test will not fail,
                 // but please don't remove while `kotlin.native.enableKlibsCrossCompilation` flag exists.
                 konanDataDir = konanDataDir,
-                // TODO: remove explicit version selection after resolution of KTI-1928
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    version = "2.0.20",
-                )
             )
         nativeProject(
             "klibCrossCompilationWithGradlePropertyEnabled",
@@ -61,18 +58,6 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
         ) {
 
             val expectedDiagnostics = projectPath.resolve("expected-diagnostics.txt")
-            if (!HostManager.hostIsMingw) {
-                expectedDiagnostics.replaceText(
-                    "> Configure project :",
-                    """
-                    |> Configure project :
-                    |w: [OldNativeVersionDiagnostic | WARNING] '2.0.20' Kotlin/Native is being used with an newer '${buildOptions.kotlinVersion}' Kotlin.
-                    |Please adjust versions to avoid incompatibilities.
-                    |#diagnostic-end
-                    |    
-                    """.trimMargin()
-                )
-            }
 
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
