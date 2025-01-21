@@ -14,7 +14,6 @@
 #include "GlobalsRegistry.hpp"
 #include "KAssert.h"
 #include "Natives.h"
-#include "ObjCBackRef.hpp"
 #include "ObjectOps.hpp"
 #include "Porting.h"
 #include "ReferenceOps.hpp"
