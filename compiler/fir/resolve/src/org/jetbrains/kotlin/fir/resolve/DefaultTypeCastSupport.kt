@@ -96,7 +96,10 @@ class DefaultTypeCastSupport : TypeCastSupport {
             val (upperConstraints, lowerConstraints) = constraints.partition { it.kind == ConstraintKind.UPPER }
 
             substitutorMap[variable] = when {
-                combinedUpperBound != null && combinedLowerBound == null -> {
+                // If the variable is bounded on both sides, there's no accurate representation as
+                // a single ConeKotlinType without additional context in the current version of the
+                // compiler. Picking the upper bound is a bit better than not picking anything at all.
+                combinedUpperBound != null -> {
                     val satisfiesOtherBounds = upperConstraints.all { combinedUpperBound.isSubtypeOf(session.typeContext, it.type) }
 
                     when {
@@ -104,7 +107,7 @@ class DefaultTypeCastSupport : TypeCastSupport {
                         else -> ConeStarProjection
                     }
                 }
-                combinedUpperBound == null && combinedLowerBound != null -> {
+                combinedLowerBound != null -> {
                     val satisfiesOtherBounds = lowerConstraints.all { it.type.isSubtypeOf(session.typeContext, combinedLowerBound) }
 
                     when {
@@ -112,8 +115,6 @@ class DefaultTypeCastSupport : TypeCastSupport {
                         else -> ConeStarProjection
                     }
                 }
-                // If both are empty, then this is correct, if both are not, then there's no
-                // obvious way how we should fix the variable, so we choose to be conservative.
                 else -> ConeStarProjection
             }
         }
