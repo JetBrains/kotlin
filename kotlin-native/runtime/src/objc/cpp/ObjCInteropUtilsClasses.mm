@@ -8,9 +8,9 @@
 #import <objc/runtime.h>
 #import <Foundation/Foundation.h>
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
 #import "ObjCExportPrivate.h"
 #import "ObjCInteropUtilsPrivate.h"
+#include "RefHolder.hpp"
 
 // TODO: rework the interface to reduce the number of virtual calls
 // in Kotlin_Interop_createKotlinObjectHolder and Kotlin_Interop_unwrapKotlinObjectHolder
@@ -20,7 +20,7 @@
 @end
 
 @implementation KotlinObjectHolder {
-  KRefSharedHolder refHolder;
+  kotlin::objc::RefHolder refHolder;
 };
 
 -(id)initWithRef:(KRef)ref {
@@ -32,11 +32,6 @@
 
 -(KRef)ref {
   return refHolder.ref();
-}
-
--(void)dealloc {
-  refHolder.dispose();
-  [super dealloc];
 }
 
 @end
