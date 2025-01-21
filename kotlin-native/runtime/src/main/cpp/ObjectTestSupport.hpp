@@ -357,7 +357,7 @@ public:
 };
 
 struct RegularWeakReferenceImplPayload {
-    mm::RawExternalRCRef* weakRef;
+    mm::RawExternalRCRefNonPermanent* weakRef;
     void* referred;
 
     static constexpr test_support::NoRefFields<RegularWeakReferenceImplPayload> kFields{};

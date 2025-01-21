@@ -78,7 +78,7 @@ mm::RawExternalRCRef* kotlin::mm::createRetainedExternalRCRef(KRef obj) noexcept
         return mm::permanentObjectAsExternalRCRef(obj);
     }
 
-    return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createRef(obj, 1);
+    return externalRCRef(mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createRef(obj, 1));
 }
 
 mm::RawExternalRCRef* kotlin::mm::createUnretainedExternalRCRef(KRef obj) noexcept {
@@ -91,58 +91,38 @@ mm::RawExternalRCRef* kotlin::mm::createUnretainedExternalRCRef(KRef obj) noexce
         return mm::permanentObjectAsExternalRCRef(obj);
     }
 
-    return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createRef(obj, 0);
+    return externalRCRef(mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createRef(obj, 0));
 }
 
-void kotlin::mm::retainExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        // Nothing to do.
-        return;
+void kotlin::mm::retainExternalRCRef(mm::RawExternalRCRefNonPermanent* ref) noexcept {
+    if (auto* node = mm::SpecialRefRegistry::Node::fromRaw(ref)) {
+        node->retainRef();
     }
-    mm::SpecialRefRegistry::Node::fromRaw(ref)->retainRef();
 }
 
-void kotlin::mm::releaseExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        // Nothing to do.
-        return;
+void kotlin::mm::releaseExternalRCRef(mm::RawExternalRCRefNonPermanent* ref) noexcept {
+    if (auto* node = mm::SpecialRefRegistry::Node::fromRaw(ref)) {
+        node->releaseRef();
     }
-    mm::SpecialRefRegistry::Node::fromRaw(ref)->releaseRef();
 }
 
-void kotlin::mm::disposeExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        // Nothing to do.
-        return;
+void kotlin::mm::disposeExternalRCRef(mm::RawExternalRCRefNonPermanent* ref) noexcept {
+    if (auto* node = mm::SpecialRefRegistry::Node::fromRaw(ref)) {
+        node->dispose();
     }
-    mm::SpecialRefRegistry::Node::fromRaw(ref)->dispose();
 }
 
-void kotlin::mm::releaseAndDisposeExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
-    if (ref == nullptr || mm::externalRCRefAsPermanentObject(ref)) {
-        // Nothing to do.
-        return;
+KRef kotlin::mm::dereferenceExternalRCRef(mm::RawExternalRCRefNonPermanent* ref) noexcept {
+    if (auto* node = mm::SpecialRefRegistry::Node::fromRaw(ref)) {
+        return node->ref();
     }
-    auto node = mm::SpecialRefRegistry::Node::fromRaw(ref);
-    node->releaseRef();
-    node->dispose();
+    return nullptr;
 }
 
-KRef kotlin::mm::dereferenceExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
-    if (ref == nullptr)
-        return nullptr;
-    if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
-        return obj;
-    }
-    return mm::SpecialRefRegistry::Node::fromRaw(ref)->ref();
-}
-
-OBJ_GETTER(kotlin::mm::tryRefExternalRCRef, RawExternalRCRef *ref) noexcept {
+OBJ_GETTER(kotlin::mm::tryRefExternalRCRef, RawExternalRCRefNonPermanent* ref) noexcept {
     AssertThreadState(ThreadState::kRunnable);
-    if (ref == nullptr)
-        RETURN_OBJ(nullptr);
-    if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
-        RETURN_OBJ(obj);
+    if (auto* node = mm::SpecialRefRegistry::Node::fromRaw(ref)) {
+        RETURN_RESULT_OF0(node->tryRef);
     }
-    RETURN_RESULT_OF0(mm::SpecialRefRegistry::Node::fromRaw(ref)->tryRef);
+    RETURN_OBJ(nullptr);
 }

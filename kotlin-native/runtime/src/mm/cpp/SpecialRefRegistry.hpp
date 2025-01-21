@@ -181,8 +181,8 @@ public:
             }
         }
 
-        RawExternalRCRef* asRaw() noexcept { return reinterpret_cast<RawExternalRCRef*>(this); }
-        static Node* fromRaw(RawExternalRCRef* ref) noexcept { return reinterpret_cast<Node*>(ref); }
+        RawExternalRCRefNonPermanent* asRaw() noexcept { return reinterpret_cast<RawExternalRCRefNonPermanent*>(this); }
+        static Node* fromRaw(RawExternalRCRefNonPermanent* ref) noexcept { return reinterpret_cast<Node*>(ref); }
 
     private:
         friend class SpecialRefRegistry;
@@ -228,7 +228,7 @@ public:
             queue_.clear();
         }
 
-        [[nodiscard("must be manually disposed")]] mm::RawExternalRCRef* createRef(ObjHeader* object, Node::Rc initialRc) noexcept {
+        [[nodiscard("must be manually disposed")]] mm::RawExternalRCRefNonPermanent* createRef(ObjHeader* object, Node::Rc initialRc) noexcept {
             return registerNode(object, initialRc).asRaw();
         }
 

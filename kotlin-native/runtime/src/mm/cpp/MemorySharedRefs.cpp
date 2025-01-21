@@ -21,7 +21,7 @@ void KRefSharedHolder::initLocal(ObjHeader* obj) {
 
 void KRefSharedHolder::init(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
-    ref_ = static_cast<mm::RawExternalRCRef*>(mm::StableRef::create(obj));
+    ref_ = static_cast<mm::RawExternalRCRefNonPermanent*>(mm::StableRef::create(obj));
     obj_ = obj;
 }
 
@@ -49,7 +49,7 @@ void BackRefFromAssociatedObject::initForPermanentObject(ObjHeader* obj) {
 void BackRefFromAssociatedObject::initAndAddRef(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
     RuntimeAssert(!obj->permanent(), "Can only be called with non-permanent object");
-    ref_ = static_cast<mm::RawExternalRCRef*>(mm::ObjCBackRef::create(obj));
+    ref_ = static_cast<mm::RawExternalRCRefNonPermanent*>(mm::ObjCBackRef::create(obj));
     deallocMutex_.construct();
 }
 
@@ -58,7 +58,7 @@ bool BackRefFromAssociatedObject::initWithExternalRCRef(mm::RawExternalRCRef* re
         permanentObj_ = obj;
         return true;
     }
-    ref_ = static_cast<mm::RawExternalRCRef*>(ref);
+    ref_ = mm::externalRCRefNonPermanent(ref);
     deallocMutex_.construct();
     return false;
 }
@@ -101,5 +101,5 @@ mm::RawExternalRCRef* BackRefFromAssociatedObject::externalRCRef(bool permanent)
     if (permanent) {
         return mm::permanentObjectAsExternalRCRef(permanentObj_);
     }
-    return ref_;
+    return externalRCRef(ref_);
 }

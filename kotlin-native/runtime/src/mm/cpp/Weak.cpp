@@ -5,6 +5,7 @@
 
 #include "Weak.hpp"
 
+#include "ExternalRCRef.hpp"
 #include "ExtraObjectData.hpp"
 #include "WeakRef.hpp"
 #include "ThreadState.hpp"
@@ -13,7 +14,7 @@
 using namespace kotlin;
 
 extern "C" {
-OBJ_GETTER(makeRegularWeakReferenceImpl, void*, void*);
+OBJ_GETTER(makeRegularWeakReferenceImpl, mm::RawExternalRCRefNonPermanent*, void*);
 }
 
 namespace {
@@ -39,7 +40,7 @@ OBJ_GETTER(mm::createRegularWeakReferenceImpl, ObjHeader* object) noexcept {
         RETURN_OBJ(weakRef);
     }
     ObjHolder holder;
-    auto* weakRef = makeRegularWeakReferenceImpl(static_cast<mm::RawExternalRCRef*>(mm::WeakRef::create(object)), object, holder.slot());
+    auto* weakRef = makeRegularWeakReferenceImpl(static_cast<mm::RawExternalRCRefNonPermanent*>(mm::WeakRef::create(object)), object, holder.slot());
     auto* setWeakRef = extraObject.GetOrSetRegularWeakReferenceImpl(object, weakRef);
     RETURN_OBJ(setWeakRef);
 }

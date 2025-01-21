@@ -27,7 +27,7 @@ class KRefSharedHolder {
 
  private:
   ObjHeader* obj_;
-  kotlin::mm::RawExternalRCRef* ref_;
+  kotlin::mm::RawExternalRCRefNonPermanent* ref_; // TODO: `obj_`` may be permanent, though.
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
@@ -58,7 +58,7 @@ class BackRefFromAssociatedObject {
  private:
   union {
     struct {
-      kotlin::mm::RawExternalRCRef* ref_;
+      kotlin::mm::RawExternalRCRefNonPermanent* ref_;
       kotlin::ManuallyScoped<kotlin::RWSpinLock> deallocMutex_;
     }; // Regular object.
     ObjHeader* permanentObj_; // Permanent object.
