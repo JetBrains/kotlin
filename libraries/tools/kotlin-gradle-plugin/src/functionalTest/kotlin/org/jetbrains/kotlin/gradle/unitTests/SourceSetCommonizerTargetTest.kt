@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.inferCommonizerTarget
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.test.BeforeTest
@@ -49,12 +50,12 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosMain) else null)
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosTest) else null)
 
         project.evaluate()
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonMain))
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonTest))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(commonMain) else null)
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(commonTest) else null)
     }
 
     @Test
@@ -77,14 +78,14 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosMain) else null)
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosTest) else null)
 
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(nativeMain))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(nativeMain) else null)
 
         project.evaluate()
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonMain))
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonTest))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(commonMain) else null)
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(commonTest) else null)
     }
 
     @Test
@@ -145,29 +146,29 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
-        assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosX64Test))
-        assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosX64Test))
-        assertEquals(CommonizerTarget(IOS_ARM64), inferCommonizerTarget(iosArm64Main))
-        assertEquals(CommonizerTarget(IOS_ARM64), inferCommonizerTarget(iosArm64Test))
-        assertEquals(CommonizerTarget(IOS_X64, IOS_ARM64), inferCommonizerTarget(iosMain))
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosMain) else null)
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosTest) else null)
+        assertEquals(CommonizerTarget(IOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(iosX64Test) else null)
+        assertEquals(CommonizerTarget(IOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(iosX64Test) else null)
+        assertEquals(CommonizerTarget(IOS_ARM64), if (HostManager.hostIsMac) inferCommonizerTarget(iosArm64Main) else null)
+        assertEquals(CommonizerTarget(IOS_ARM64), if (HostManager.hostIsMac) inferCommonizerTarget(iosArm64Test) else null)
+        assertEquals(CommonizerTarget(IOS_X64, IOS_ARM64), if (HostManager.hostIsMac) inferCommonizerTarget(iosMain) else null)
 
         assertEquals(
             CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
-            inferCommonizerTarget(nativeMain)
+            if (HostManager.hostIsMac) inferCommonizerTarget(nativeMain) else null
         )
 
         project.evaluate()
 
         assertEquals(
             CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
-            inferCommonizerTarget(commonMain)
+            if (HostManager.hostIsMac) inferCommonizerTarget(commonMain) else null
         )
 
         assertEquals(
             CommonizerTarget(IOS_ARM64, IOS_X64, LINUX_X64, MACOS_X64),
-            inferCommonizerTarget(commonTest)
+            if (HostManager.hostIsMac) inferCommonizerTarget(commonTest) else null
         )
     }
 
@@ -193,12 +194,12 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosMain) else null)
+        assertEquals(CommonizerTarget(MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(macosTest) else null)
         assertNull(inferCommonizerTarget(jvmMain), "Expected jvmMain to have no commonizer target")
         assertNull(inferCommonizerTarget(jvmTest), "Expected jvmTest to have no commonizer target")
 
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(nativeMain))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), if (HostManager.hostIsMac) inferCommonizerTarget(nativeMain) else null)
 
         project.evaluate()
         assertNull(inferCommonizerTarget(commonMain), "Expected commonMain to have no commonizer target")
