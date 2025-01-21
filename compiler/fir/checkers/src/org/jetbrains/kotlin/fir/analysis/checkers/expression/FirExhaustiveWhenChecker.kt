@@ -23,14 +23,10 @@ import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
-import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -51,7 +47,8 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
     }
 
     private fun reportNotExhaustive(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (whenExpression.isExhaustive) {
+        val exhaustivenessStatus = whenExpression.exhaustivenessStatus ?: return
+        if (exhaustivenessStatus !is ExhaustivenessStatus.NotExhaustive) {
             // whenExpression.isExhaustive is checked as otherwise the constraint is checked below
             reportEmptyThenInExpression(whenExpression, context, reporter)
             return
@@ -59,7 +56,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
 
         val source = whenExpression.source ?: return
 
-        val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(context.session)?.lowerBoundIfFlexible()
+        val subjectType = exhaustivenessStatus.subjectType
         val subjectClassSymbol = subjectType?.toRegularClassSymbol(context.session)
 
         if (whenExpression.usedAsExpression) {

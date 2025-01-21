@@ -44,7 +44,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         fun computeAllMissingCases(session: FirSession, whenExpression: FirWhenExpression): List<WhenMissingCase> {
             val subjectType = getSubjectType(session, whenExpression)?.minimumBoundIfFlexible(session)
-                ?: return ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH.reasons
+                ?: return ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH_REASONS
             return buildList {
                 for (type in subjectType.unwrapTypeParameterAndIntersectionTypes(session)) {
                     val checkers = getCheckers(type, session)
@@ -156,7 +156,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             whenExpression.replaceExhaustivenessStatus(
                 when {
                     whenExpression.hasElseBranch() -> ExhaustivenessStatus.ProperlyExhaustive
-                    else -> ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
+                    else -> ExhaustivenessStatus.NotExhaustive.noElseBranch(subjectType = null)
                 }
             )
             return
@@ -202,7 +202,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             return ExhaustivenessStatus.ExhaustiveAsNothing
         }
 
-        var status: ExhaustivenessStatus = ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
+        var status: ExhaustivenessStatus? = null
 
         val unwrappedIntersectionTypes = approximatedType.unwrapTypeParameterAndIntersectionTypes(session)
 
@@ -217,24 +217,24 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                         status = localStatus
                         break
                     }
-                    localStatus !== ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH && status === ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH -> {
+                    status == null && localStatus != null -> {
                         status = localStatus
                     }
                 }
             }
         }
 
-        return status
+        return status ?: ExhaustivenessStatus.NotExhaustive.noElseBranch(subjectType = approximatedType)
     }
 
     private fun computeStatusForNonIntersectionType(
         unwrappedSubjectType: ConeKotlinType,
         session: FirSession,
         whenExpression: FirWhenExpression,
-    ): ExhaustivenessStatus {
+    ): ExhaustivenessStatus? {
         val checkers = getCheckers(unwrappedSubjectType, session)
         if (checkers.isEmpty()) {
-            return ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
+            return null
         }
 
         val whenMissingCases = mutableListOf<WhenMissingCase>()
@@ -243,7 +243,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         return if (whenMissingCases.isEmpty()) {
             ExhaustivenessStatus.ProperlyExhaustive
         } else {
-            ExhaustivenessStatus.NotExhaustive(whenMissingCases)
+            ExhaustivenessStatus.NotExhaustive(whenMissingCases, unwrappedSubjectType)
         }
     }
 }
