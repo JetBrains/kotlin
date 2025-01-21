@@ -42,7 +42,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.jdkRelease = from.jdkRelease
     to.jspecifyAnnotations = from.jspecifyAnnotations
     to.jsr305 = from.jsr305?.copyOf()
-    to.jvmDefault = from.jvmDefault
+    to.jvmDefaultOld = from.jvmDefaultOld
     to.jvmTarget = from.jvmTarget
     to.klibLibraries = from.klibLibraries
     to.lambdas = from.lambdas

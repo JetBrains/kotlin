@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
-enum class JvmDefaultMode(val description: String) {
+enum class JvmDefaultMode(val oldDescription: String) {
     DISABLE("disable"),
     ALL_COMPATIBILITY("all-compatibility"),
     ALL("all");
@@ -15,10 +15,10 @@ enum class JvmDefaultMode(val description: String) {
 
     companion object {
         @JvmStatic
-        fun fromStringOrNull(string: String?): JvmDefaultMode? = when (string) {
-            DISABLE.description -> DISABLE
-            ALL_COMPATIBILITY.description -> ALL_COMPATIBILITY
-            ALL.description -> ALL
+        fun fromStringOrNullOld(string: String?): JvmDefaultMode? = when (string) {
+            DISABLE.oldDescription -> DISABLE
+            ALL_COMPATIBILITY.oldDescription -> ALL_COMPATIBILITY
+            ALL.oldDescription -> ALL
             else -> null
         }
     }

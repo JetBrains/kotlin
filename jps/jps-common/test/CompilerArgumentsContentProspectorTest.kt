@@ -163,7 +163,7 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::javaPackagePrefix,
             K2JVMCompilerArguments::supportCompatqualCheckerFrameworkAnnotations,
             K2JVMCompilerArguments::jspecifyAnnotations,
-            K2JVMCompilerArguments::jvmDefault,
+            K2JVMCompilerArguments::jvmDefaultOld,
             K2JVMCompilerArguments::defaultScriptExtension,
             K2JVMCompilerArguments::stringConcat,
             K2JVMCompilerArguments::klibLibraries,

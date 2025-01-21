@@ -20,7 +20,7 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {
-            args.jvmDefault = "compatibility"
+            args.jvmDefaultOld = "compatibility"
             args.apiVersion = API_VERSION
             args.optIn = arrayOf(
                 "kotlin.RequiresOptIn",

@@ -35,7 +35,7 @@ abstract class AbstractFrontendModularizedTest : AbstractModularizedTest() {
                 put(AnalysisFlags.optIn, moduleData.optInAnnotations + originalArguments?.optIn.orEmpty())
                 if (originalArguments != null) {
                     put(AnalysisFlags.skipPrereleaseCheck, originalArguments.skipPrereleaseCheck)
-                    put(JvmAnalysisFlags.jvmDefaultMode, JvmDefaultMode.fromStringOrNull(originalArguments.jvmDefault))
+                    put(JvmAnalysisFlags.jvmDefaultMode, JvmDefaultMode.fromStringOrNullOld(originalArguments.jvmDefaultOld))
                 }
 
                 configureFlags()

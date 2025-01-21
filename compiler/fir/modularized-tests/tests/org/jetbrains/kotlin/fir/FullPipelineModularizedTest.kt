@@ -28,7 +28,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {
             args.apiVersion = API_VERSION
-            args.jvmDefault = "compatibility"
+            args.jvmDefaultOld = "compatibility"
             args.optIn = moduleData.optInAnnotations.toTypedArray() + arrayOf(
                 "kotlin.RequiresOptIn",
                 "kotlin.contracts.ExperimentalContracts",
