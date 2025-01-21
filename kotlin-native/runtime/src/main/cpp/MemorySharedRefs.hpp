@@ -12,21 +12,10 @@
 #include "Memory.h"
 #include "RawPtr.hpp"
 
-class KRefSharedHolder {
- public:
-  void initLocal(ObjHeader* obj);
-
-  void init(ObjHeader* obj);
-
-  ObjHeader* ref() const;
-
-  void dispose();
-
-  OBJ_GETTER0(describe) const;
-
- private:
-  ObjHeader* obj_;
-  kotlin::raw_ptr<kotlin::mm::RawExternalRCRef> ref_;
+// Used exclusively in BlockPointerSupport.kt
+struct KRefSharedHolder {
+   ObjHeader* obj_;
+   kotlin::raw_ptr<kotlin::mm::RawExternalRCRef> ref_;
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");

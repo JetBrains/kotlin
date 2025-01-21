@@ -5,32 +5,28 @@
 
 #include "MemorySharedRefs.hpp"
 
-#include "Types.h"
+#include "ExternalRCRef.hpp"
 
-extern "C" {
-// Returns a string describing object at `address` of type `typeInfo`.
-OBJ_GETTER(DescribeObjectForDebugging, KConstNativePtr typeInfo, KConstNativePtr address);
-}  // extern "C"
+using namespace kotlin;
 
-OBJ_GETTER0(KRefSharedHolder::describe) const {
-  // Note: retrieving 'type_info()' is supposed to be correct even for unowned object.
-  RETURN_RESULT_OF(DescribeObjectForDebugging, obj_->type_info(), obj_);
+extern "C" RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj) {
+    holder->ref_ = nullptr;
+    holder->obj_ = obj;
 }
 
-extern "C" {
-RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj) {
-  holder->initLocal(obj);
+extern "C" RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj) {
+    holder->ref_ = mm::createRetainedExternalRCRef(obj);
+    holder->obj_ = obj;
 }
 
-RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj) {
-  holder->init(obj);
+extern "C" RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder) {
+    auto ref = std::move(holder->ref_);
+    mm::releaseAndDisposeExternalRCRef(static_cast<mm::RawExternalRCRef*>(ref));
+    // obj_ is dangling now.
 }
 
-RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder) {
-    holder->dispose();
+extern "C" RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder) {
+    AssertThreadState(ThreadState::kRunnable);
+    // ref_ may be null if created with initLocal.
+    return holder->obj_;
 }
-
-RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder) {
-  return holder->ref();
-}
-} // extern "C"
