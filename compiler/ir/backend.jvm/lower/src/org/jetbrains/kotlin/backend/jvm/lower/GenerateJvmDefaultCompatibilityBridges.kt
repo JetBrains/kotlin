@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.transformInPlace
 
 /**
- * Generates default compatibility bridges for classes in `-Xjvm-default=all/all-compatibility` modes.
+ * Generates default compatibility bridges for classes in `-jvm-default=enable/no-compatibility` modes.
  * See [org.jetbrains.kotlin.backend.jvm.ClassFakeOverrideReplacement.DefaultCompatibilityBridge].
  */
 @PhaseDescription(name = "GenerateJvmDefaultCompatibilityBridges")

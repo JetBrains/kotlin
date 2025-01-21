@@ -60,21 +60,21 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
   }
 
   @Test
-  @TestMetadata("defaultMethods")
-  public void testDefaultMethods() {
-    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethods/");
+  @TestMetadata("defaultMethodsDisable")
+  public void testDefaultMethodsDisable() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsDisable/");
   }
 
   @Test
-  @TestMetadata("defaultMethodsAllCompatibilityNoWarning")
-  public void testDefaultMethodsAllCompatibilityNoWarning() {
-    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsAllCompatibilityNoWarning/");
+  @TestMetadata("defaultMethodsEnable")
+  public void testDefaultMethodsEnable() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsEnable/");
   }
 
   @Test
-  @TestMetadata("defaultMethodsAllNoWarning")
-  public void testDefaultMethodsAllNoWarning() {
-    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsAllNoWarning/");
+  @TestMetadata("defaultMethodsNoCompatibility")
+  public void testDefaultMethodsNoCompatibility() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsNoCompatibility/");
   }
 
   @Test

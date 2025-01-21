@@ -279,10 +279,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
         map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
 
-        map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with ''-Xjvm-default'' option.", STRING)
+        map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with ''-jvm-default'' option.", STRING)
         map.put(
             JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION,
-            "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option."
+            "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-jvm-default=no-compatibility' option."
         )
         map.put(
             JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE,
@@ -312,7 +312,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER,
-            "Calling JVM-default members via super is supported only in Kotlin 2.1 and later, or with -Xjvm-default=all/all-compatibility.",
+            "Calling JVM-default members via super is supported only in Kotlin 2.1 and later, or with -jvm-default=enable/no-compatibility.",
         )
         map.put(
             SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,

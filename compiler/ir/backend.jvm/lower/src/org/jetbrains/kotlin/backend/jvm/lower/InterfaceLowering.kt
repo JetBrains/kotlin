@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.functions
@@ -88,9 +84,10 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  *    create a bridge from DefaultImpls of derived to DefaultImpls of base, unless
                  *    - the implementation is private, or belongs to java.lang.Object,
                  *      or is a stub for function with default parameters ($default)
-                 *    - we're in -Xjvm-default=all-compatibility mode, in which case we go via
-                 *      accessors on the parent class rather than the DefaultImpls if inherited method is compiled to JVM default
-                 *    - we're in -Xjvm-default=all mode, and we have that default implementation, in which case we simply leave it.
+                 *    - we're in -jvm-default=enable mode, in which case we go via accessors on the parent class rather than
+                 *      the DefaultImpls if inherited method is compiled to JVM default
+                 *    - we're in -jvm-default=no-compatibility mode, and we have that default implementation, in which case
+                 *      we simply leave it.
                  *
                  *    ```
                  *    interface A { fun foo() = 0 }

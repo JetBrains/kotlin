@@ -2,6 +2,7 @@
 output/stubs
 
 # kapt
+-jvm-default=no-compatibility
 -language-version 2.0
 -Xuse-k2-kapt
 -Kapt-mode=stubs

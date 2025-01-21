@@ -13,7 +13,7 @@ interface KtInterfaceA {
 
 // MODULE: lib2
 // MODULE_KIND: LibraryBinary
-// COMPILER_ARGUMENTS: -Xjvm-default=all
+// COMPILER_ARGUMENTS: -jvm-default=no-compatibility
 // FILE: p2/b.kt
 package p2
 
