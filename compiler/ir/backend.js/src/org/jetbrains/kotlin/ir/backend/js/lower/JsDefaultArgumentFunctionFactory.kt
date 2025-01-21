@@ -27,7 +27,6 @@ class JsDefaultArgumentFunctionFactory(context: CommonBackendContext) : DefaultA
         copyAttributes(original)
         copyTypeParametersFrom(original)
         copyReturnTypeFrom(original)
-        copyReceiversFrom(original)
         copyValueParametersFrom(original)
 
         if (!original.isTopLevel) {

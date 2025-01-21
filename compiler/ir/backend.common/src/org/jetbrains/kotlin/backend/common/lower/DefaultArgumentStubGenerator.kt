@@ -531,7 +531,6 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
         copyAttributes(original)
         copyTypeParametersFrom(original)
         copyReturnTypeFrom(original)
-        copyReceiversFrom(original)
         copyValueParametersFrom(original)
 
         for (i in 0 until (original.valueParameters.size + 31) / 32) {

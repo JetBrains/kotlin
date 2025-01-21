@@ -37,12 +37,6 @@ abstract class DefaultArgumentFunctionFactory(
         returnType = original.returnType.remapTypeParameters(original.classIfConstructor, classIfConstructor)
     }
 
-    protected fun IrFunction.copyReceiversFrom(original: IrFunction) {
-        dispatchReceiverParameter = original.dispatchReceiverParameter?.copyTo(this)
-        extensionReceiverParameter = original.extensionReceiverParameter?.copyTo(this)
-        contextReceiverParametersCount = original.contextReceiverParametersCount
-    }
-
     /**
      * Whether `null` will be used for this type if no argument is passed.
      * In that case, the type of the default dispatch function will be made nullable.
@@ -53,7 +47,7 @@ abstract class DefaultArgumentFunctionFactory(
     protected open fun IrType.hasNullAsUndefinedValue(): Boolean = true
 
     protected fun IrFunction.copyValueParametersFrom(original: IrFunction) {
-        valueParameters = original.valueParameters.memoryOptimizedMap {
+        parameters = original.parameters.memoryOptimizedMap {
             val newType = it.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
             val makeNullable = it.defaultValue != null && it.type.hasNullAsUndefinedValue()
             it.copyTo(
@@ -91,7 +85,7 @@ abstract class DefaultArgumentFunctionFactory(
                 }
             }
 
-            if (valueParameters.any { it.defaultValue != null }) return this
+            if (parameters.any { it.defaultValue != null }) return this
 
             return null
         }
@@ -158,7 +152,7 @@ abstract class DefaultArgumentFunctionFactory(
         //     }
         // Since this bug causes the metadata serializer to write the "has default value" flag into compiled
         // binaries, it's way too late to fix it. Hence the workaround.
-        if (declaration.valueParameters.any { it.defaultValue != null }) {
+        if (declaration.parameters.any { it.defaultValue != null }) {
             return generateDefaultsFunctionImpl(
                 declaration,
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
