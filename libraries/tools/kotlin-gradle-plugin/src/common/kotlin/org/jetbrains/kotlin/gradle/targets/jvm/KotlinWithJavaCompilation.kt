@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
+/**
+ * This compilation is used by 'kotlin-jvm' plugin.
+ */
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
 open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject internal constructor(
     compilation: KotlinCompilationImpl,
