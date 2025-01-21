@@ -1,5 +1,5 @@
 // MODULE: lib
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // FILE: lib.kt
 
 interface A<T> {

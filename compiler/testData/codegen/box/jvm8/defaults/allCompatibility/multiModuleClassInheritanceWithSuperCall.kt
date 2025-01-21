@@ -1,4 +1,4 @@
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: JVM_IR
 // JVM_TARGET: 1.8

@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: JVM_IR
 // MODULE: lib
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // FILE: Base.kt
 interface Base {
     fun f(): Int = 4

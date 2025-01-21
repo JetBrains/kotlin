@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 
 // IGNORE_BACKEND: JVM_IR
 // ^ KT-68452 ClassFormatError: Extra method is generated when functional interface extends ordinary one

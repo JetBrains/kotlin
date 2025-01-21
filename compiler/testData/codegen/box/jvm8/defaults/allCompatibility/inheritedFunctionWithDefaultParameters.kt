@@ -1,4 +1,4 @@
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 interface I {

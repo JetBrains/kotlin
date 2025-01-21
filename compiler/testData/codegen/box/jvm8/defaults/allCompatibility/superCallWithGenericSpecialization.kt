@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 
 interface Foo<T> {
     fun test(p: T): String

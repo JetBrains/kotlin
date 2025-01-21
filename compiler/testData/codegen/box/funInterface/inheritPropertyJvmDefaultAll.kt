@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 
 interface Foo<T> {
     val T.prop: String

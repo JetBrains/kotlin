@@ -1,4 +1,4 @@
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 
 // This test is checking that:
 // 1) Test2 has both the specialized method (with String in the signature) and the bridge (with Any)

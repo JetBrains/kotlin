@@ -17,7 +17,7 @@ interface Check {
 open class CheckClass : Check
 
 // MODULE: main(library)
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // FILE: source.kt
 import base.*
 

@@ -12,7 +12,7 @@ interface A<TA, UA> {
 open class B<UB> : A<Int, UB>
 
 // MODULE: main(library)
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // FILE: box.kt
 import base.*
 

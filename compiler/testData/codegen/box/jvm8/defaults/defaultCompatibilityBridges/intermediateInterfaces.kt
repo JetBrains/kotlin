@@ -15,7 +15,7 @@ interface AB3 : AB1, AB2
 open class B : AB3
 
 // MODULE: main(library)
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // FILE: source.kt
 import base.*
 

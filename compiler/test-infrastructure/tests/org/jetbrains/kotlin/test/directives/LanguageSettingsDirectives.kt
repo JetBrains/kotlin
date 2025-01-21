@@ -101,7 +101,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
 
     val JVM_DEFAULT_MODE by enumDirective(
         description = "Configures corresponding analysis flag (JvmAnalysisFlags.jvmDefaultMode)",
-        additionalParser = JvmDefaultMode.Companion::fromStringOrNullOld
+        additionalParser = JvmDefaultMode.Companion::fromStringOrNull
     )
 
     val JDK_RELEASE by valueDirective(
