@@ -172,7 +172,7 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
                 // Error(error=java.lang.IllegalStateException: module data FirModuleDataImpl:<REPL-lib-2> not bound to session
                 jvm {
                     val repoPath = "/Users/christian.melchior/JetBrains/kotlin"
-                    val testFiles = File("$repoPath/plugins/scripting/scripting-tests/build/classes/kotlin/test")
+                    val testFiles = File("$repoPath/plugins/scripting/scripting-tests/testBuild/kotlin/main")
                     updateClasspath(listOf(testFiles))
                 }
             }

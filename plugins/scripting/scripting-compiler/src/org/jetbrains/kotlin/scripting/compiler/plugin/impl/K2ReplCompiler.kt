@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -287,7 +288,9 @@ private fun compileImpl(
         )
     }
 
-    val (_, newClassPath) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
+//    val (_, newClassPath) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
+    val (libModuleData, newClassPath) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
+
 
     if (newClassPath.isNotEmpty()) {
         state.compilerContext.environment.updateClasspath(newClassPath.map { JvmClasspathRoot(it.toFile()) })
@@ -295,13 +298,29 @@ private fun compileImpl(
 
     val moduleData = state.moduleDataProvider.addNewSnippetModuleData(Name.special("<REPL-snippet-${snippet.name!!}>"))
 
+    val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+    if (libModuleData != null) {
+        FirJvmSessionFactory.createLibrarySession(
+            mainModuleName = moduleData.name,
+            sessionProvider = state.sessionProvider,
+            moduleDataProvider = SingleModuleDataProvider(libModuleData),
+            projectEnvironment = state.projectEnvironment,
+            extensionRegistrars = extensionRegistrars,
+            scope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project)),
+            packagePartProvider = state.packagePartProvider,
+            languageVersionSettings = compilerConfiguration.languageVersionSettings,
+            predefinedJavaComponents = state.predefinedJavaComponents,
+        )
+    }
+
     val session = FirJvmSessionFactory.createModuleBasedSession(
         moduleData,
         state.sessionProvider,
         AbstractProjectFileSearchScope.EMPTY,
         state.projectEnvironment,
         createIncrementalCompilationSymbolProviders = { null },
-        FirExtensionRegistrar.getInstances(project),
+        // FirExtensionRegistrar.getInstances(project),
+        extensionRegistrars,
         compilerConfiguration.languageVersionSettings,
         jvmTarget = JvmTarget.DEFAULT, // TODO: from script config
         lookupTracker = null,
