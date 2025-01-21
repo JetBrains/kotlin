@@ -1,3 +1,5 @@
+import java.util.zip.ZipFile
+
 plugins {
     java
 }
@@ -94,6 +96,105 @@ sourceSets {
     "test" {}
 }
 
-registerSwiftExportEmbeddableValidationTasks(runtimeJar(rewriteDefaultJarDepsToShadedCompiler()))
+val swiftExportEmbeddableJar = runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
+registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJar)
 sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
 javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
+
+/**
+ * Run swift-export-standalone tests against swift-export-embeddable and its runtime classpath to reproduce the environment in SwiftExportAction
+ *
+ * If these tests fail with ClassNotFoundException or similar it means that either:
+ * - Some change introduced runtime classpath breakage in swift-export-embeddable. This means such dependency must be added to [runtimeOnly]
+ * , [embedded] dependencies of swift-export-embeddable or relevant classes must be retained in compiler.pro
+ * - Or test classes and the testing code is missing a dependency in [shadedIntransitiveTestDependenciesJar]. Please add dependencies
+ * carefully after understanding the sources of breakage
+ *
+ * Make sure to run these tests against ProGuarded kotlin-compiler-embeddable e.g.:
+ * ./gradlew :native:swift:swift-export-embeddable:testSwiftExportStandaloneWithEmbeddable --info -Pkotlin.native.enabled=true -Pteamcity=true
+ */
+
+val swiftExportStandaloneTests = configurations.detachedConfiguration().apply {
+    isTransitive = false
+    // Don't add dependencies here
+    dependencies.add(project.dependencies.projectTests(":native:swift:swift-export-standalone"))
+}
+
+val intransitiveTestDependenciesJars = configurations.detachedConfiguration().apply {
+    /**
+     * These dependencies are used by the execution of test classes in swift-export-standalone
+     *
+     * Please read the comment above before adding dependencies here
+     */
+    isTransitive = false
+    // gson is actually also shadowed and embedded in KGP. In these tests it is used in XcRunRuntimeUtils
+    dependencies.add(project.dependencies.create(commonDependency("com.google.code.gson:gson")))
+    dependencies.add(project.dependencies.create(commonDependency("commons-lang:commons-lang")))
+    dependencies.add(project.dependencies.project(":native:executors"))
+    dependencies.add(project.dependencies.project(":kotlin-compiler-runner-unshaded"))
+    dependencies.add(project.dependencies.project(":kotlin-test"))
+
+    dependencies.add(project.dependencies.projectTests(":native:native.tests"))
+    dependencies.add(project.dependencies.projectTests(":compiler:tests-compiler-utils"))
+    dependencies.add(project.dependencies.projectTests(":compiler:tests-common"))
+    dependencies.add(project.dependencies.projectTests(":compiler:tests-common-new"))
+    dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure"))
+    dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure-utils"))
+}
+
+val shadedIntransitiveTestDependenciesJar = rewriteDepsToShadedJar(
+    files(
+        intransitiveTestDependenciesJars,
+        swiftExportStandaloneTests,
+    ),
+    embeddableCompilerDummyForDependenciesRewriting("shadedTestDependencies") {
+        destinationDirectory.set(project.layout.buildDirectory.dir("testDependenciesShaded"))
+    }
+).apply {
+    configure {
+        // ShadowJar doesn't handle duplicates from embedded jars
+        // duplicatesStrategy = DuplicatesStrategy.FAIL
+        val intransitiveTestDependenciesJarFiles = files(intransitiveTestDependenciesJars)
+        doFirst {
+            val permittedDuplicates = setOf(
+                "META-INF/MANIFEST.MF",
+                "META-INF/versions/9/module-info.class",
+                "com/intellij/testFramework/TestDataPath.class",
+            )
+            val duplicates = intransitiveTestDependenciesJarFiles.flatMap { jar ->
+                ZipFile(jar).use { zip ->
+                    zip.entries().asSequence().filterNot { it.isDirectory || it.name in permittedDuplicates }.map { it.name }.toList()
+                }.map { path ->
+                    path to jar
+                }
+            }.groupBy({ it.first }, { it.second }).filterValues { it.size > 1 }
+            if (duplicates.isNotEmpty()) {
+                error(duplicates.map { "${it.key}:\n${it.value.joinToString("\n") { "  ${it}" }}" }.joinToString("\n\n"))
+            }
+        }
+    }
+}
+
+val transitiveTestRuntimeClasspath = configurations.detachedConfiguration().apply {
+    dependencies.add(libs.junit.jupiter.engine.get())
+}
+
+val unarchivedStandaloneTestClasses = tasks.register<Sync>("unarchiveTestClasses") {
+    dependsOn(swiftExportStandaloneTests)
+    from(zipTree(provider { swiftExportStandaloneTests.singleFile }))
+    into(layout.buildDirectory.dir("unarchiveTestClasses"))
+}
+
+val testTask = nativeTest("testSwiftExportStandaloneWithEmbeddable", null) {
+    classpath = files(
+        // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
+        swiftExportEmbeddableJar,
+        configurations.runtimeClasspath,
+        // These dependencies are used by the test classes
+        shadedIntransitiveTestDependenciesJar,
+        transitiveTestRuntimeClasspath,
+    )
+    testClassesDirs = files(
+        unarchivedStandaloneTestClasses,
+    )
+}

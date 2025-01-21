@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.named
@@ -145,17 +146,12 @@ fun Project.embeddableCompilerDummyForDependenciesRewriting(
     }
 }
 
-fun Project.rewriteDepsToShadedJar(
-    originalJarTask: TaskProvider<out Jar>, shadowJarTask: TaskProvider<ShadowJar>, body: Jar.() -> Unit = {}
+fun rewriteDepsToShadedJar(
+    classesDirectoriesAndJars: FileCollection, shadowJarTask: TaskProvider<ShadowJar>, body: Jar.() -> Unit = {}
 ): TaskProvider<ShadowJar> {
-    originalJarTask.configure {
-        archiveClassifier.set("original")
-    }
-
-
     shadowJarTask.configure {
-        dependsOn(originalJarTask)
-        from(originalJarTask)// { include("**") }
+        dependsOn(classesDirectoriesAndJars)
+        from(classesDirectoriesAndJars)// { include("**") }
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
@@ -172,7 +168,17 @@ fun Project.rewriteDepsToShadedJar(
 }
 
 fun Project.rewriteDepsToShadedCompiler(originalJarTask: TaskProvider<out Jar>, body: Jar.() -> Unit = {}): TaskProvider<ShadowJar> =
-    rewriteDepsToShadedJar(originalJarTask, embeddableCompilerDummyForDependenciesRewriting(), body)
+    rewriteDepsToShadedJar(
+        files(
+            originalJarTask.apply {
+                configure {
+                    archiveClassifier.set("original")
+                }
+            }
+        ),
+        embeddableCompilerDummyForDependenciesRewriting(),
+        body
+    )
 
 fun Project.rewriteDefaultJarDepsToShadedCompiler(body: Jar.() -> Unit = {}): TaskProvider<ShadowJar> =
-    rewriteDepsToShadedJar(tasks.named<Jar>("jar"), embeddableCompilerDummyForDependenciesRewriting(), body)
+    rewriteDepsToShadedCompiler(tasks.named<Jar>("jar"), body)
