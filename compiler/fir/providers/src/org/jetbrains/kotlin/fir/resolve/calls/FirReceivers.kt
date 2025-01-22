@@ -92,12 +92,13 @@ class ExpressionReceiverValue(override val receiverExpression: FirExpression) : 
 
 sealed class ImplicitReceiverValue<S>(
     override val boundSymbol: S,
-    type: ConeKotlinType,
+    originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
     mutable: Boolean,
     private val inaccessibleReceiver: Boolean = false,
-) : ImplicitValue<S>(type, mutable), ReceiverValue
+) : ImplicitValue<S>(originalType, effectiveType, mutable), ReceiverValue
         where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
 
     abstract val isContextReceiver: Boolean
@@ -114,7 +115,7 @@ sealed class ImplicitReceiverValue<S>(
      * In particular, it is triggered by [createSnapshot].
      */
     private var lazyImplicitScope: Lazy<FirTypeScope?> = lazy(LazyThreadSafetyMode.PUBLICATION) {
-        originalType.scope(
+        type.scope(
             useSiteSession,
             scopeSession,
             CallableCopyTypeCalculator.DoNothing,
@@ -175,22 +176,31 @@ private fun receiverExpression(
     }
 }
 
-class ImplicitDispatchReceiverValue(
+class ImplicitDispatchReceiverValue private constructor(
     boundSymbol: FirClassSymbol<*>,
-    type: ConeKotlinType,
+    originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
-) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable) {
+) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, mutable) {
     constructor(
-        boundSymbol: FirClassSymbol<*>, useSiteSession: FirSession, scopeSession: ScopeSession
-    ) : this(
-        boundSymbol, boundSymbol.constructType(),
-        useSiteSession, scopeSession
-    )
+        boundSymbol: FirClassSymbol<*>,
+        type: ConeKotlinType,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        mutable: Boolean = true,
+    ) : this(boundSymbol, originalType = type, effectiveType = null, useSiteSession, scopeSession, mutable)
+
+    constructor(
+        boundSymbol: FirClassSymbol<*>,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ) : this(boundSymbol, boundSymbol.constructType(), useSiteSession, scopeSession)
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
-        return ImplicitDispatchReceiverValue(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
+        val effectiveType = if (isSmartCasted) type else null
+        return ImplicitDispatchReceiverValue(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, keepMutable)
     }
 
     override val isContextReceiver: Boolean
@@ -202,15 +212,25 @@ class ImplicitDispatchReceiverValue(
     }
 }
 
-class ImplicitExtensionReceiverValue(
+class ImplicitExtensionReceiverValue private constructor(
     boundSymbol: FirReceiverParameterSymbol,
-    type: ConeKotlinType,
+    originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
-) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, type, useSiteSession, scopeSession, mutable) {
+) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, mutable) {
+    constructor(
+        boundSymbol: FirReceiverParameterSymbol,
+        type: ConeKotlinType,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        mutable: Boolean = true
+    ) : this(boundSymbol, originalType = type, effectiveType = null, useSiteSession, scopeSession, mutable)
+
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirReceiverParameterSymbol> {
-        return ImplicitExtensionReceiverValue(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
+        val effectiveType = if (isSmartCasted) type else null
+        return ImplicitExtensionReceiverValue(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, keepMutable)
     }
 
     override val isContextReceiver: Boolean
@@ -223,15 +243,27 @@ class ImplicitExtensionReceiverValue(
 }
 
 
-class InaccessibleImplicitReceiverValue(
+class InaccessibleImplicitReceiverValue private constructor(
     boundSymbol: FirClassSymbol<*>,
-    type: ConeKotlinType,
+    originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
-) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable, inaccessibleReceiver = true) {
+) : ImplicitReceiverValue<FirClassSymbol<*>>(
+    boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, mutable, inaccessibleReceiver = true
+) {
+    constructor(
+        boundSymbol: FirClassSymbol<*>,
+        type: ConeKotlinType,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        mutable: Boolean = true,
+    ) : this(boundSymbol, originalType = type, effectiveType = null, useSiteSession, scopeSession, mutable)
+
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
-        return InaccessibleImplicitReceiverValue(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
+        val effectiveType = if (isSmartCasted) type else null
+        return InaccessibleImplicitReceiverValue(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, keepMutable)
     }
 
     override val isContextReceiver: Boolean
@@ -243,18 +275,28 @@ class InaccessibleImplicitReceiverValue(
     }
 }
 
-class ContextReceiverValue(
+class ContextReceiverValue private constructor(
     boundSymbol: FirValueParameterSymbol,
-    type: ConeKotlinType,
+    originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     val labelName: Name?,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
-) : ImplicitReceiverValue<FirValueParameterSymbol>(
-    boundSymbol, type, useSiteSession, scopeSession, mutable,
-) {
-    override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue =
-        ContextReceiverValue(boundSymbol, type, labelName, useSiteSession, scopeSession, keepMutable)
+) : ImplicitReceiverValue<FirValueParameterSymbol>(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, mutable) {
+    constructor(
+        boundSymbol: FirValueParameterSymbol,
+        type: ConeKotlinType,
+        labelName: Name?,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        mutable: Boolean = true,
+    ) : this(boundSymbol, originalType = type, effectiveType = null, labelName, useSiteSession, scopeSession, mutable)
+
+    override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue {
+        val effectiveType = if (isSmartCasted) type else null
+        return ContextReceiverValue(boundSymbol, originalType, effectiveType, labelName, useSiteSession, scopeSession, keepMutable)
+    }
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ContextReceiverValue {
@@ -265,19 +307,29 @@ class ContextReceiverValue(
         get() = true
 }
 
-class ImplicitReceiverValueForScriptOrSnippet(
+class ImplicitReceiverValueForScriptOrSnippet private constructor(
     boundSymbol: FirReceiverParameterSymbol,
-    type: ConeKotlinType,
+    originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
-) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, type, useSiteSession, scopeSession, mutable) {
+) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, mutable) {
+    constructor(
+        boundSymbol: FirReceiverParameterSymbol,
+        type: ConeKotlinType,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        mutable: Boolean = true,
+    ) : this(boundSymbol, originalType = type, effectiveType = null, useSiteSession, scopeSession, mutable)
 
     override val isContextReceiver: Boolean
         get() = false
 
-    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirReceiverParameterSymbol> =
-        ImplicitReceiverValueForScriptOrSnippet(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
+    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirReceiverParameterSymbol> {
+        val effectiveType = if (isSmartCasted) type else null
+        return ImplicitReceiverValueForScriptOrSnippet(boundSymbol, originalType, effectiveType, useSiteSession, scopeSession, keepMutable)
+    }
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValueForScriptOrSnippet {
