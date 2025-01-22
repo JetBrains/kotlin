@@ -59,7 +59,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             this.messageCollector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
             addKotlinSourceRoot(tmpdir.absolutePath)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir)
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
 
         // The following environment can be disposed right away since it's only needed to compile the bytecode. The test will use a separate
@@ -116,7 +116,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
     private fun makeConfiguration() = KotlinTestUtils.newConfiguration(
         ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
     ).also {
-        loadScriptingPlugin(it)
+        loadScriptingPlugin(it, testRootDisposable)
     }
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {

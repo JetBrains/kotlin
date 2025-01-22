@@ -110,7 +110,7 @@ class CompileTimeFibonacciTest : TestCase() {
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromTemplate(hostConfiguration, CompileTimeFibonacci::class, ScriptDefinition::class)
             )
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

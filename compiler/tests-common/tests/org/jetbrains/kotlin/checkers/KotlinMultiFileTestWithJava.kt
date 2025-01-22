@@ -58,7 +58,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
             files
         )
         if (isScriptingNeeded(file)) {
-            loadScriptingPlugin(configuration)
+            loadScriptingPlugin(configuration, testRootDisposable)
         }
         if (isKotlinSourceRootNeeded()) {
             configuration.addKotlinSourceRoot(kotlinSourceRoot!!.path)

@@ -393,7 +393,7 @@ class ScriptTemplateTest : TestCase() {
                 configuration.put(CommonConfigurationKeys.USE_FIR, true)
             }
 
-            loadScriptingPlugin(configuration)
+            loadScriptingPlugin(configuration, rootDisposable)
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

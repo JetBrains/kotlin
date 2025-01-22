@@ -136,7 +136,7 @@ class ScriptTest : TestCase() {
                 configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
             }
 
-            loadScriptingPlugin(configuration)
+            loadScriptingPlugin(configuration, rootDisposable)
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

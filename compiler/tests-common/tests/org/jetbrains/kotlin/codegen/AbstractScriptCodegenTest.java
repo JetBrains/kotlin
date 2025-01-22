@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.List;
 
 import static org.jetbrains.kotlin.script.ScriptTestUtilKt.loadScriptingPlugin;
 
@@ -37,7 +36,7 @@ public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
     @Override
     protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
         super.updateConfiguration(configuration);
-        loadScriptingPlugin(configuration);
+        loadScriptingPlugin(configuration, getTestRootDisposable());
     }
 
     @Override

@@ -95,7 +95,7 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
 
     protected fun doTest(path: String) {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        loadScriptingPlugin(configuration)
+        loadScriptingPlugin(configuration, testRootDisposable)
         val projectEnvironment =
             KotlinCoreEnvironment.ProjectEnvironment(
                 testRootDisposable,
