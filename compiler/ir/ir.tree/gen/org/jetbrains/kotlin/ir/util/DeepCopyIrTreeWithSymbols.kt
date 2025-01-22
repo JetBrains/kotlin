@@ -413,18 +413,15 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall =
-        IrConstructorCallImplWithShape(
+        IrConstructorCallImpl(
+            constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
+            source = expression.source,
             constructorTypeArgumentsCount = expression.constructorTypeArgumentsCount,
-            typeArgumentsCount = expression.typeArguments.size,
-            hasDispatchReceiver = expression.targetHasDispatchReceiver,
-            hasExtensionReceiver = expression.targetHasExtensionReceiver,
-            valueArgumentsCount = expression.valueArgumentsCount,
-            contextParameterCount = expression.targetContextParameterCount,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -552,18 +549,14 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitCall(expression: IrCall): IrCall =
-        IrCallImplWithShape(
+        IrCallImpl(
+            constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedSimpleFunction(expression.symbol),
             superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass),
-            typeArgumentsCount = expression.typeArguments.size,
-            hasDispatchReceiver = expression.targetHasDispatchReceiver,
-            hasExtensionReceiver = expression.targetHasExtensionReceiver,
-            valueArgumentsCount = expression.valueArgumentsCount,
-            contextParameterCount = expression.targetContextParameterCount,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -571,18 +564,14 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrFunctionReference =
-        IrFunctionReferenceImplWithShape(
+        IrFunctionReferenceImpl(
+            constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedFunction(expression.symbol),
             reflectionTarget = expression.reflectionTarget?.let(symbolRemapper::getReferencedFunction),
-            typeArgumentsCount = expression.typeArguments.size,
-            hasDispatchReceiver = expression.targetHasDispatchReceiver,
-            hasExtensionReceiver = expression.targetHasExtensionReceiver,
-            valueArgumentsCount = expression.valueArgumentsCount,
-            contextParameterCount = expression.targetContextParameterCount,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -590,7 +579,8 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
-        IrPropertyReferenceImplWithShape(
+        IrPropertyReferenceImpl(
+            constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
@@ -599,9 +589,6 @@ open class DeepCopyIrTreeWithSymbols(
             field = expression.field?.let(symbolRemapper::getReferencedField),
             getter = expression.getter?.let(symbolRemapper::getReferencedSimpleFunction),
             setter = expression.setter?.let(symbolRemapper::getReferencedSimpleFunction),
-            typeArgumentsCount = expression.typeArguments.size,
-            hasDispatchReceiver = expression.targetHasDispatchReceiver,
-            hasExtensionReceiver = expression.targetHasExtensionReceiver,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -717,17 +704,13 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall =
-        IrDelegatingConstructorCallImplWithShape(
+        IrDelegatingConstructorCallImpl(
+            constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
-            typeArgumentsCount = expression.typeArguments.size,
-            hasDispatchReceiver = expression.targetHasDispatchReceiver,
-            hasExtensionReceiver = expression.targetHasExtensionReceiver,
-            valueArgumentsCount = expression.valueArgumentsCount,
-            contextParameterCount = expression.targetContextParameterCount,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -760,17 +743,13 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall =
-        IrEnumConstructorCallImplWithShape(
+        IrEnumConstructorCallImpl(
+            constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
-            typeArgumentsCount = expression.typeArguments.size,
-            hasDispatchReceiver = expression.targetHasDispatchReceiver,
-            hasExtensionReceiver = expression.targetHasExtensionReceiver,
-            valueArgumentsCount = expression.valueArgumentsCount,
-            contextParameterCount = expression.targetContextParameterCount,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)

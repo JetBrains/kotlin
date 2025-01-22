@@ -168,6 +168,15 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         initializeTargetShapeFromSymbol(isFromTargetUpdate = false)
     }
 
+    internal fun rawCopyValueArgumentsFrom(other: IrMemberAccessExpression<*>) {
+        arguments.clear()
+        arguments.setSize(other.arguments.size)
+        targetHasDispatchReceiver = other.targetHasDispatchReceiver
+        targetHasExtensionReceiver = other.targetHasExtensionReceiver
+        targetContextParameterCount = other.targetContextParameterCount
+        targetRegularParameterCount = other.targetRegularParameterCount
+    }
+
     private fun <S : IrBindableSymbol<*, D>, D : IrSymbolOwner> S.getRealOwner(): D {
         var symbol = this
         while (symbol is IrFakeOverrideSymbolBase<*, *, *>) {
