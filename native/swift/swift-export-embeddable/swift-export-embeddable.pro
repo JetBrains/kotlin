@@ -14,6 +14,8 @@
 # These annotations are not retained at runtime, so these also shouldn't be reachable
 -dontwarn org.jetbrains.kotlin.com.intellij.openapi.util.NlsSafe
 -dontwarn org.jetbrains.kotlin.com.intellij.util.concurrency.annotations.RequiresReadLock
+# See KT-73438
+-dontwarn org.jetbrains.kotlin.com.intellij.util.concurrency.AppExecutorUtil
 
 # Keep everything from Swift Export standalone
 -keep public class org.jetbrains.kotlin.swiftexport.standalone.** { public *; }
