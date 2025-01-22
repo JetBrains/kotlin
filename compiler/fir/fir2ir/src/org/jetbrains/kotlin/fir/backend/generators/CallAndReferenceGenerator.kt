@@ -117,7 +117,9 @@ class CallAndReferenceGenerator(
                     getter = referencedPropertyGetterSymbol,
                     setter = referencedPropertySetterSymbol,
                     origin = origin
-                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
+                )
+                    .applyTypeArguments(callableReferenceAccess)
+                    .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
@@ -141,7 +143,9 @@ class CallAndReferenceGenerator(
                     getter = referencedPropertyGetterSymbol,
                     setter = referencedPropertySetterSymbol,
                     origin = origin
-                ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
+                )
+                    .applyTypeArguments(callableReferenceAccess)
+                    .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToLocalDelegatedProperty(propertySymbol: FirPropertySymbol): IrExpression? {
@@ -168,7 +172,8 @@ class CallAndReferenceGenerator(
                     getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(irPropertySymbol) },
                     setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(irPropertySymbol) },
                     origin
-                ).applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
+                )
+                    .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToFunction(functionSymbol: FirFunctionSymbol<*>): IrExpression? {
@@ -195,7 +200,8 @@ class CallAndReferenceGenerator(
                         hasDispatchReceiver = function.dispatchReceiverType != null,
                         hasExtensionReceiver = function.isExtension,
                         reflectionTarget = irFunctionSymbol
-                    ).applyTypeArguments(callableReferenceAccess)
+                    )
+                        .applyTypeArguments(callableReferenceAccess)
                         .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
                 }
             }
@@ -663,7 +669,8 @@ class CallAndReferenceGenerator(
                 is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, irType, irSymbol)
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, irType)
             }
-        }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, firSymbol, convertedExplicitReceiver)
+        }.applyTypeArguments(qualifiedAccess)
+            .applyReceivers(qualifiedAccess, firSymbol, convertedExplicitReceiver)
             .applyCallArguments(qualifiedAccess)
     }
 
@@ -747,7 +754,11 @@ class CallAndReferenceGenerator(
 
         val irRhsWithCast = with(visitor.implicitCastInserter) {
             wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
-                .insertSpecialCast(variableAssignment.rValue, variableAssignment.rValue.resolvedType, variableAssignment.lValue.resolvedType)
+                .insertSpecialCast(
+                    variableAssignment.rValue,
+                    variableAssignment.rValue.resolvedType,
+                    variableAssignment.lValue.resolvedType
+                )
         }
 
         injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
@@ -848,7 +859,9 @@ class CallAndReferenceGenerator(
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
-        }.applyTypeArguments(lValue).applyReceivers(lValue, firSymbol, explicitReceiverExpression)
+        }
+            .applyTypeArguments(lValue)
+            .applyReceivers(lValue, firSymbol, explicitReceiverExpression)
     }
 
     /** Wrap an assignment - as needed - with an implicit cast to the left-hand side type. */
