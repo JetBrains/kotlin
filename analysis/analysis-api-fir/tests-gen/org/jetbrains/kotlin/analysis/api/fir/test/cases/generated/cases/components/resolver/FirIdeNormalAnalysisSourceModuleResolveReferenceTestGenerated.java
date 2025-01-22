@@ -2086,6 +2086,54 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exten
     }
 
     @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextParameters.kt")
+    public void testCallableReferenceOnFunctionWithContextParameters() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnFunctionWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextParameters_rhs.kt")
+    public void testCallableReferenceOnFunctionWithContextParameters_rhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnFunctionWithContextParameters_rhs.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextReceivers.kt")
+    public void testCallableReferenceOnFunctionWithContextReceivers() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnFunctionWithContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextReceivers_rhs.kt")
+    public void testCallableReferenceOnFunctionWithContextReceivers_rhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnFunctionWithContextReceivers_rhs.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextParameters.kt")
+    public void testCallableReferenceOnPropertyWithContextParameters() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnPropertyWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextParameters_rhs.kt")
+    public void testCallableReferenceOnPropertyWithContextParameters_rhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnPropertyWithContextParameters_rhs.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextReceivers.kt")
+    public void testCallableReferenceOnPropertyWithContextReceivers() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnPropertyWithContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextReceivers_rhs.kt")
+    public void testCallableReferenceOnPropertyWithContextReceivers_rhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/callableReferenceOnPropertyWithContextReceivers_rhs.kt");
+    }
+
+    @Test
     @TestMetadata("functionFromFunctionExplicitly.kt")
     public void testFunctionFromFunctionExplicitly() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromFunctionExplicitly.kt");

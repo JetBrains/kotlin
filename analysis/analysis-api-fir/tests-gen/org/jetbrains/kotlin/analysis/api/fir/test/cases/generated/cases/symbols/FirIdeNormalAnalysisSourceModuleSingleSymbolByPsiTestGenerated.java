@@ -338,6 +338,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("annotatedContextParameterOnClass.kt")
+    public void testAnnotatedContextParameterOnClass() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnClass.kt");
+    }
+
+    @Test
     @TestMetadata("annotatedContextParameterOnFunction.kt")
     public void testAnnotatedContextParameterOnFunction() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnFunction.kt");
@@ -347,6 +353,24 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     @TestMetadata("annotatedContextParameterOnProperty.kt")
     public void testAnnotatedContextParameterOnProperty() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("classWithContextParameters.kt")
+    public void testClassWithContextParameters() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/classWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("classWithContextReceivers.kt")
+    public void testClassWithContextReceivers() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/classWithContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnClass.kt")
+    public void testContextParameterOnClass() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/contextParameterOnClass.kt");
     }
 
     @Test
@@ -368,9 +392,21 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("functionWithContextReceivers.kt")
+    public void testFunctionWithContextReceivers() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/functionWithContextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("propertyWithContextParameters.kt")
     public void testPropertyWithContextParameters() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/propertyWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithContextReceivers.kt")
+    public void testPropertyWithContextReceivers() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/propertyWithContextReceivers.kt");
     }
   }
 

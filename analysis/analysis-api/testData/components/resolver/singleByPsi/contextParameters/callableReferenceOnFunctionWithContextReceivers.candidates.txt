@@ -1,0 +1,23 @@
+KtCallableReferenceExpression(65,70): '::foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

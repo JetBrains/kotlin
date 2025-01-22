@@ -1,0 +1,51 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: Foo
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: [
+    KtContextReceiver:
+      label: String
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    KtContextReceiver:
+      label: List
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: [
+              Anno(position = "str")
+                psi: KtAnnotationEntry
+            ]
+            typeArguments: []
+            type: @R|Anno|(position = String(str))  kotlin/Int
+        ]
+        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+  ]
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: Foo
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(classWithContextReceivers.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
