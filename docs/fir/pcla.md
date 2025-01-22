@@ -59,7 +59,9 @@ Resolution of a lambda's body when some input types of the lambda are not proper
     - not-fixed type variables of postponed nested calls
 
 **Outer CS**
-- A union of the shared CS and the containing PCLA lambdas' constraint systems
+- Defined only for nested postponed candidates (for shared CS)
+- It consists of type variables of the containing PCLA lambdas and all the type variables of already processed inner candidates
+- For inner CS, all the outer CS-related type variables are always coming at the beginning of the list of all variables
 
 **Outer TV**
 - A type variable that was brought to the CS of a postponed nested call from the outer CS
