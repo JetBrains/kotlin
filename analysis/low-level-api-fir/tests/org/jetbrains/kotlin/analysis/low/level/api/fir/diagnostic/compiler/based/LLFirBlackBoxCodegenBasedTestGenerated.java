@@ -21137,6 +21137,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("selectingLambdas.kt")
+    public void testSelectingLambdas() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/selectingLambdas.kt");
+    }
+
+    @Test
     @TestMetadata("shared.kt")
     public void testShared() {
       runTest("compiler/testData/codegen/box/extensionFunctions/shared.kt");
@@ -22630,12 +22636,6 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
     public void testSamWithReceiverMavenProjectImportHandler() {
       runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
-    }
-
-    @Test
-    @TestMetadata("selectingLambdas.kt")
-    public void testSelectingLambdas() {
-      runTest("compiler/testData/codegen/box/fir/selectingLambdas.kt");
     }
 
     @Test
