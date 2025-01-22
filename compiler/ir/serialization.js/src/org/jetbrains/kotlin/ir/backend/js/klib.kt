@@ -609,6 +609,7 @@ fun serializeModuleIntoKlib(
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
                     shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
+                    reuseExistingSignaturesForSymbols = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
                 ),
                 irDiagnosticReporter,
                 irBuiltins,
