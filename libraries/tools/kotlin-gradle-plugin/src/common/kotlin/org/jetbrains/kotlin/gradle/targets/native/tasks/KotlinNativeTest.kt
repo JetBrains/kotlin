@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import groovy.lang.Closure
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -17,25 +18,29 @@ import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import java.io.File
-import java.util.concurrent.Callable
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class KotlinNativeTest : KotlinTest() {
-    @get:Inject
-    abstract val providerFactory: ProviderFactory
+abstract class KotlinNativeTest
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
+    objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) : KotlinTest() {
 
     @Suppress("LeakingThis")
     private val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
 
     @get:Internal
-    val executableProperty: Property<FileCollection> = project.objects.property(FileCollection::class.java)
+    val executableProperty: Property<FileCollection> = objects.property(FileCollection::class.java)
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -50,7 +55,7 @@ abstract class KotlinNativeTest : KotlinTest() {
         get() = executableProperty.get().singleFile
 
     init {
-        onlyIf { executableFile.exists() }
+        super.onlyIf { executableFile.exists() }
     }
 
     @Input
@@ -83,7 +88,7 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @Suppress("unused")
     @get:Input
-    val trackedEnvironment
+    val trackedEnvironment: Map<String, Any>
         get() = environment.filterKeys(trackedEnvironmentVariablesKeys::contains)
 
     private fun <T> Property<T>.set(providerLambda: () -> T) = set(project.provider { providerLambda() })
@@ -93,15 +98,15 @@ abstract class KotlinNativeTest : KotlinTest() {
     }
 
     fun executable(path: String) {
-        executableProperty.set { project.files(path) }
+        executableProperty.set(providers.provider { project.files(path) })
     }
 
     fun executable(provider: () -> File) {
-        executableProperty.set(project.files(Callable { provider() }))
+        executableProperty.set(project.files({ provider() }))
     }
 
     fun executable(builtByTask: Task, provider: () -> File) {
-        executableProperty.set(project.files(Callable { provider() }).builtBy(builtByTask))
+        executableProperty.set(project.files({ provider() }).builtBy(builtByTask))
     }
 
     fun executable(provider: Provider<File>) {
@@ -154,14 +159,14 @@ abstract class KotlinNativeTest : KotlinTest() {
         return TCServiceMessagesTestExecutionSpec(extendedForkOptions, cliArgs, checkExitCode, clientSettings)
     }
 
-    protected abstract class TestCommand() {
+    protected abstract class TestCommand {
         abstract val executable: String
         abstract fun cliArgs(
             testLogger: String?,
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String>
 
         protected fun testArgs(
@@ -169,7 +174,7 @@ abstract class KotlinNativeTest : KotlinTest() {
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String> = mutableListOf<String>().also {
             // during debug from IDE executable is switched and special arguments are added
             // via Gradle task manipulation; these arguments are expected to precede test settings
@@ -199,7 +204,16 @@ abstract class KotlinNativeTest : KotlinTest() {
  * A task running Kotlin/Native tests on a host machine.
  */
 @DisableCachingByDefault
-abstract class KotlinNativeHostTest : KotlinNativeTest() {
+abstract class KotlinNativeHostTest
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
+    objects: ObjectFactory,
+    providers: ProviderFactory,
+) : KotlinNativeTest(
+    objects,
+    providers,
+) {
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -210,7 +224,7 @@ abstract class KotlinNativeHostTest : KotlinNativeTest() {
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String> = testArgs(testLogger, checkExitCode, testGradleFilter, testNegativeGradleFilter, userArgs)
     }
 }
@@ -219,7 +233,16 @@ abstract class KotlinNativeHostTest : KotlinNativeTest() {
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
 @DisableCachingByDefault
-abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
+abstract class KotlinNativeSimulatorTest
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
+    objects: ObjectFactory,
+    providers: ProviderFactory,
+) : KotlinNativeTest(
+    objects,
+    providers,
+) {
     @Deprecated("Use the property 'device' instead")
     @get:Internal
     var deviceId: String
@@ -248,7 +271,7 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
             checkExitCode: Boolean,
             testGradleFilter: Set<String>,
             testNegativeGradleFilter: Set<String>,
-            userArgs: List<String>
+            userArgs: List<String>,
         ): List<String> =
             listOfNotNull(
                 "simctl",
