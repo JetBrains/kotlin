@@ -454,7 +454,6 @@ class CallAndReferenceGenerator(
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
             }
         }
-            .applyTypeArguments(qualifiedAccess)
             .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments })
     }
 
