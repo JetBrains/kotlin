@@ -563,11 +563,13 @@ A type that doesn't contain any (not-yet-fixed) type variables.
 
 ### Proper constraint
 
-A constraint that is imposed on a type variable by a proper type.
+A type constraint with a proper type.
 
 ### Constraint system (CS)
 
-A collection of type variables and constraints imposed on them.
+A collection of: 
+- type variables
+- type constraints with these type variables
 
 **Source code representation:** `org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl`
 
