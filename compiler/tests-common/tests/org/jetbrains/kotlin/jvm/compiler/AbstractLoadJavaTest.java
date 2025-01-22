@@ -211,7 +211,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
 
-        if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
+        if (InTextDirectivesUtils.isDirectiveDefined(content, "WITH_KOTLIN_JVM_ANNOTATIONS")) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.jvmAnnotationsForTests());
         }
 

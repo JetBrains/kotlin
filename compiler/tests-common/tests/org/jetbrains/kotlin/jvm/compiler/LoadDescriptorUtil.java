@@ -173,7 +173,7 @@ public class LoadDescriptorUtil {
 
             args.addAll(InTextDirectivesUtils.findListWithPrefixes(content, "JAVAC_OPTIONS:"));
 
-            if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
+            if (InTextDirectivesUtils.isDirectiveDefined(content, "WITH_KOTLIN_JVM_ANNOTATIONS")) {
                 classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests());
             }
         }
