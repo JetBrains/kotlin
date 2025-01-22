@@ -26,31 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /foo
   compilerVisibility: Public
-  contextReceivers: [
-    KtContextReceiver:
-      label: parameter1
-      type: KaUsualClassType:
-        annotations: [
-          Anno(position = "12")
-            psi: KtAnnotationEntry
-        ]
-        typeArguments: []
-        type: @R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
-    KtContextReceiver:
-      label: parameter2
-      type: KaUsualClassType:
-        annotations: []
-        typeArguments: [
-          KaUsualClassType:
-            annotations: [
-              Anno(position = "str")
-                psi: KtAnnotationEntry
-            ]
-            typeArguments: []
-            type: @R|Anno|(position = String(str))  kotlin/Int
-        ]
-        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
-  ]
+  contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null

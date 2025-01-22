@@ -4,25 +4,7 @@ KaNamedClassSymbol:
   classKind: CLASS
   companionObject: null
   compilerVisibility: Public
-  contextReceivers: [
-    KtContextReceiver:
-      label: parameter1
-      type: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/String
-    KtContextReceiver:
-      label: parameter2
-      type: KaUsualClassType:
-        annotations: []
-        typeArguments: [
-          KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/Int
-        ]
-        type: kotlin/collections/List<kotlin/Int>
-  ]
+  contextReceivers: []
   isActual: false
   isData: false
   isExpect: false

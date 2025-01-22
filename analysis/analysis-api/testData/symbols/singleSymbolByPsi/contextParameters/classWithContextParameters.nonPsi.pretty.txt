@@ -1,2 +1,0 @@
-context(parameter1@kotlin.String, parameter2@kotlin.collections.List<kotlin.Int>)
-class Foo

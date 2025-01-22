@@ -132,7 +132,7 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion {
-            if (backingPsi?.contextReceivers?.isEmpty() == true)
+            if (backingPsi != null && backingPsi.contextReceiverList == null)
                 emptyList()
             else
                 firSymbol.createContextReceivers(builder)

@@ -80,11 +80,13 @@ KtCallExpression(349,360): 'funMember()'
 
 KtNameReferenceExpression(349,358): 'funMember'
   KtSimpleNameReference:
-    (in Base) fun funMember()
+    (in Base) context(a@A)
+    fun funMember()
 
 KtNameReferenceExpression(369,383): 'propertyMember'
   KtSimpleNameReference:
-    (in Base) val propertyMember: kotlin.String
+    (in Base) context(a@A)
+    val propertyMember: kotlin.String
 
 KtCallExpression(441,542): 'with(Base()) {'
   KtInvokeFunctionReference:
@@ -124,8 +126,10 @@ KtCallExpression(488,499): 'funMember()'
 
 KtNameReferenceExpression(488,497): 'funMember'
   KtSimpleNameReference:
-    (in Base) fun funMember()
+    (in Base) context(a@A)
+    fun funMember()
 
 KtNameReferenceExpression(512,526): 'propertyMember'
   KtSimpleNameReference:
-    (in Base) val propertyMember: kotlin.String
+    (in Base) context(a@A)
+    val propertyMember: kotlin.String

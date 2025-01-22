@@ -180,7 +180,8 @@ KtNameReferenceExpression(877,881): 'this'
 
 KtOperationReferenceExpression(890,891): '+'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.unaryPlus()
+    (in ROOT) context(a@A)
+    operator fun A.unaryPlus()
 
 KtNameReferenceExpression(891,899): 'thisProp'
   KtSimpleNameReference:
@@ -188,7 +189,8 @@ KtNameReferenceExpression(891,899): 'thisProp'
 
 KtOperationReferenceExpression(908,909): '+'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.unaryPlus()
+    (in ROOT) context(a@A)
+    operator fun A.unaryPlus()
 
 KtNameReferenceExpression(909,910): 'a'
   KtSimpleNameReference:
@@ -200,7 +202,8 @@ KtNameReferenceExpression(919,927): 'thisProp'
 
 KtOperationReferenceExpression(928,929): '+'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.plus(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.plus(b: kotlin.Int)
 
 KtNameReferenceExpression(940,941): 'a'
   KtSimpleNameReference:
@@ -208,11 +211,13 @@ KtNameReferenceExpression(940,941): 'a'
 
 KtOperationReferenceExpression(942,943): '+'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.plus(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.plus(b: kotlin.Int)
 
 KtArrayAccessExpression(954,965): 'thisProp[1]'
   KtArrayAccessReference:
-    (in ROOT) operator fun A.get(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.get(b: kotlin.Int)
 
 KtNameReferenceExpression(954,962): 'thisProp'
   KtSimpleNameReference:
@@ -220,7 +225,8 @@ KtNameReferenceExpression(954,962): 'thisProp'
 
 KtArrayAccessExpression(974,978): 'a[1]'
   KtArrayAccessReference:
-    (in ROOT) operator fun A.get(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.get(b: kotlin.Int)
 
 KtNameReferenceExpression(974,975): 'a'
   KtSimpleNameReference:
@@ -228,7 +234,8 @@ KtNameReferenceExpression(974,975): 'a'
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
   KtArrayAccessReference:
-    (in ROOT) operator fun A.set(b: kotlin.Int, x: A)
+    (in ROOT) context(a@A)
+    operator fun A.set(b: kotlin.Int, x: A)
 
 KtNameReferenceExpression(987,995): 'thisProp'
   KtSimpleNameReference:
@@ -236,7 +243,8 @@ KtNameReferenceExpression(987,995): 'thisProp'
 
 KtOperationReferenceExpression(999,1000): '='
   KtSimpleNameReference:
-    (in ROOT) operator fun A.set(b: kotlin.Int, x: A)
+    (in ROOT) context(a@A)
+    operator fun A.set(b: kotlin.Int, x: A)
 
 KtCallExpression(1001,1004): 'A()'
   KtInvokeFunctionReference:
@@ -248,7 +256,8 @@ KtNameReferenceExpression(1001,1002): 'A'
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
   KtArrayAccessReference:
-    (in ROOT) operator fun A.set(b: kotlin.Int, x: A)
+    (in ROOT) context(a@A)
+    operator fun A.set(b: kotlin.Int, x: A)
 
 KtNameReferenceExpression(1013,1014): 'a'
   KtSimpleNameReference:
@@ -256,7 +265,8 @@ KtNameReferenceExpression(1013,1014): 'a'
 
 KtOperationReferenceExpression(1018,1019): '='
   KtSimpleNameReference:
-    (in ROOT) operator fun A.set(b: kotlin.Int, x: A)
+    (in ROOT) context(a@A)
+    operator fun A.set(b: kotlin.Int, x: A)
 
 KtCallExpression(1020,1023): 'A()'
   KtInvokeFunctionReference:
@@ -268,7 +278,8 @@ KtNameReferenceExpression(1020,1021): 'A'
 
 KtCallExpression(1032,1042): 'thisProp()'
   KtInvokeFunctionReference:
-    (in ROOT) operator fun A.invoke()
+    (in ROOT) context(a@A)
+    operator fun A.invoke()
 
 KtNameReferenceExpression(1032,1040): 'thisProp'
   KtSimpleNameReference:
@@ -276,7 +287,8 @@ KtNameReferenceExpression(1032,1040): 'thisProp'
 
 KtCallExpression(1051,1054): 'a()'
   KtInvokeFunctionReference:
-    (in ROOT) operator fun A.invoke()
+    (in ROOT) context(a@A)
+    operator fun A.invoke()
 
 KtNameReferenceExpression(1051,1052): 'a'
   KtSimpleNameReference:
@@ -288,7 +300,8 @@ KtNameReferenceExpression(1063,1071): 'thisProp'
 
 KtOperationReferenceExpression(1072,1074): '+='
   KtSimpleNameReference:
-    (in ROOT) operator fun A.plusAssign(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.plusAssign(b: kotlin.Int)
 
 KtNameReferenceExpression(1085,1086): 'a'
   KtSimpleNameReference:
@@ -296,7 +309,8 @@ KtNameReferenceExpression(1085,1086): 'a'
 
 KtOperationReferenceExpression(1087,1089): '+='
   KtSimpleNameReference:
-    (in ROOT) operator fun A.plusAssign(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.plusAssign(b: kotlin.Int)
 
 KtNameReferenceExpression(1100,1108): 'thisProp'
   KtSimpleNameReference:
@@ -307,10 +321,12 @@ KtNameReferenceExpression(1100,1108): 'thisProp'
 
 KtOperationReferenceExpression(1108,1110): '++'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.inc(): A
+    (in ROOT) context(a@A)
+    operator fun A.inc(): A
 
   KtSimpleNameReference:
-    (in ROOT) operator fun A.inc(): A
+    (in ROOT) context(a@A)
+    operator fun A.inc(): A
 
 KtNameReferenceExpression(1119,1120): 'a'
   KtSimpleNameReference:
@@ -329,10 +345,12 @@ KtNameReferenceExpression(1123,1124): 'a'
 
 KtOperationReferenceExpression(1124,1126): '++'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.inc(): A
+    (in ROOT) context(a@A)
+    operator fun A.inc(): A
 
   KtSimpleNameReference:
-    (in ROOT) operator fun A.inc(): A
+    (in ROOT) context(a@A)
+    operator fun A.inc(): A
 
 KtNameReferenceExpression(1136,1137): 'b'
   KtSimpleNameReference:
@@ -340,11 +358,13 @@ KtNameReferenceExpression(1136,1137): 'b'
 
 KtOperationReferenceExpression(1138,1139): '+'
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun plus(b: kotlin.Int)
+    (in SimpleOperators) context(a@A)
+    operator fun plus(b: kotlin.Int)
 
 KtOperationReferenceExpression(1150,1151): '+'
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun unaryPlus()
+    (in SimpleOperators) context(a@A)
+    operator fun unaryPlus()
 
 KtNameReferenceExpression(1151,1152): 'b'
   KtSimpleNameReference:
@@ -352,7 +372,8 @@ KtNameReferenceExpression(1151,1152): 'b'
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
   KtArrayAccessReference:
-    (in SimpleOperators) operator fun get(b: kotlin.Int)
+    (in SimpleOperators) context(a@A)
+    operator fun get(b: kotlin.Int)
 
 KtNameReferenceExpression(1161,1162): 'b'
   KtSimpleNameReference:
@@ -360,7 +381,8 @@ KtNameReferenceExpression(1161,1162): 'b'
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
   KtArrayAccessReference:
-    (in SimpleOperators) operator fun set(b: kotlin.Int, x: A)
+    (in SimpleOperators) context(a@A)
+    operator fun set(b: kotlin.Int, x: A)
 
 KtNameReferenceExpression(1174,1175): 'b'
   KtSimpleNameReference:
@@ -368,7 +390,8 @@ KtNameReferenceExpression(1174,1175): 'b'
 
 KtOperationReferenceExpression(1179,1180): '='
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun set(b: kotlin.Int, x: A)
+    (in SimpleOperators) context(a@A)
+    operator fun set(b: kotlin.Int, x: A)
 
 KtCallExpression(1181,1184): 'A()'
   KtInvokeFunctionReference:
@@ -380,7 +403,8 @@ KtNameReferenceExpression(1181,1182): 'A'
 
 KtCallExpression(1193,1196): 'b()'
   KtInvokeFunctionReference:
-    (in SimpleOperators) operator fun invoke()
+    (in SimpleOperators) context(a@A)
+    operator fun invoke()
 
 KtNameReferenceExpression(1193,1194): 'b'
   KtSimpleNameReference:
@@ -392,7 +416,8 @@ KtNameReferenceExpression(1205,1206): 'b'
 
 KtOperationReferenceExpression(1207,1209): '+='
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun plusAssign(b: kotlin.Int)
+    (in SimpleOperators) context(a@A)
+    operator fun plusAssign(b: kotlin.Int)
 
 KtNameReferenceExpression(1220,1221): 'b'
   KtSimpleNameReference:
@@ -403,10 +428,12 @@ KtNameReferenceExpression(1220,1221): 'b'
 
 KtOperationReferenceExpression(1221,1223): '++'
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun inc(): SimpleOperators
+    (in SimpleOperators) context(a@A)
+    operator fun inc(): SimpleOperators
 
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun inc(): SimpleOperators
+    (in SimpleOperators) context(a@A)
+    operator fun inc(): SimpleOperators
 
 KtCallExpression(1268,1271): 'A()'
   KtInvokeFunctionReference:
@@ -426,7 +453,8 @@ KtNameReferenceExpression(1284,1299): 'SimpleOperators'
 
 KtOperationReferenceExpression(1307,1308): '+'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.unaryPlus()
+    (in ROOT) context(a@A)
+    operator fun A.unaryPlus()
 
 KtNameReferenceExpression(1308,1309): 'a'
   KtSimpleNameReference:
@@ -438,11 +466,13 @@ KtNameReferenceExpression(1314,1315): 'a'
 
 KtOperationReferenceExpression(1316,1317): '+'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.plus(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.plus(b: kotlin.Int)
 
 KtArrayAccessExpression(1324,1328): 'a[1]'
   KtArrayAccessReference:
-    (in ROOT) operator fun A.get(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.get(b: kotlin.Int)
 
 KtNameReferenceExpression(1324,1325): 'a'
   KtSimpleNameReference:
@@ -450,7 +480,8 @@ KtNameReferenceExpression(1324,1325): 'a'
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
   KtArrayAccessReference:
-    (in ROOT) operator fun A.set(b: kotlin.Int, x: A)
+    (in ROOT) context(a@A)
+    operator fun A.set(b: kotlin.Int, x: A)
 
 KtNameReferenceExpression(1333,1334): 'a'
   KtSimpleNameReference:
@@ -458,7 +489,8 @@ KtNameReferenceExpression(1333,1334): 'a'
 
 KtOperationReferenceExpression(1338,1339): '='
   KtSimpleNameReference:
-    (in ROOT) operator fun A.set(b: kotlin.Int, x: A)
+    (in ROOT) context(a@A)
+    operator fun A.set(b: kotlin.Int, x: A)
 
 KtCallExpression(1340,1343): 'A()'
   KtInvokeFunctionReference:
@@ -470,7 +502,8 @@ KtNameReferenceExpression(1340,1341): 'A'
 
 KtCallExpression(1348,1351): 'a()'
   KtInvokeFunctionReference:
-    (in ROOT) operator fun A.invoke()
+    (in ROOT) context(a@A)
+    operator fun A.invoke()
 
 KtNameReferenceExpression(1348,1349): 'a'
   KtSimpleNameReference:
@@ -482,7 +515,8 @@ KtNameReferenceExpression(1356,1357): 'a'
 
 KtOperationReferenceExpression(1358,1360): '+='
   KtSimpleNameReference:
-    (in ROOT) operator fun A.plusAssign(b: kotlin.Int)
+    (in ROOT) context(a@A)
+    operator fun A.plusAssign(b: kotlin.Int)
 
 KtNameReferenceExpression(1367,1368): 'a'
   KtSimpleNameReference:
@@ -493,10 +527,12 @@ KtNameReferenceExpression(1367,1368): 'a'
 
 KtOperationReferenceExpression(1368,1370): '++'
   KtSimpleNameReference:
-    (in ROOT) operator fun A.inc(): A
+    (in ROOT) context(a@A)
+    operator fun A.inc(): A
 
   KtSimpleNameReference:
-    (in ROOT) operator fun A.inc(): A
+    (in ROOT) context(a@A)
+    operator fun A.inc(): A
 
 KtNameReferenceExpression(1376,1377): 'b'
   KtSimpleNameReference:
@@ -504,11 +540,13 @@ KtNameReferenceExpression(1376,1377): 'b'
 
 KtOperationReferenceExpression(1378,1379): '+'
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun plus(b: kotlin.Int)
+    (in SimpleOperators) context(a@A)
+    operator fun plus(b: kotlin.Int)
 
 KtOperationReferenceExpression(1386,1387): '+'
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun unaryPlus()
+    (in SimpleOperators) context(a@A)
+    operator fun unaryPlus()
 
 KtNameReferenceExpression(1387,1388): 'b'
   KtSimpleNameReference:
@@ -516,7 +554,8 @@ KtNameReferenceExpression(1387,1388): 'b'
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
   KtArrayAccessReference:
-    (in SimpleOperators) operator fun get(b: kotlin.Int)
+    (in SimpleOperators) context(a@A)
+    operator fun get(b: kotlin.Int)
 
 KtNameReferenceExpression(1393,1394): 'b'
   KtSimpleNameReference:
@@ -524,7 +563,8 @@ KtNameReferenceExpression(1393,1394): 'b'
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
   KtArrayAccessReference:
-    (in SimpleOperators) operator fun set(b: kotlin.Int, x: A)
+    (in SimpleOperators) context(a@A)
+    operator fun set(b: kotlin.Int, x: A)
 
 KtNameReferenceExpression(1402,1403): 'b'
   KtSimpleNameReference:
@@ -532,7 +572,8 @@ KtNameReferenceExpression(1402,1403): 'b'
 
 KtOperationReferenceExpression(1407,1408): '='
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun set(b: kotlin.Int, x: A)
+    (in SimpleOperators) context(a@A)
+    operator fun set(b: kotlin.Int, x: A)
 
 KtCallExpression(1409,1412): 'A()'
   KtInvokeFunctionReference:
@@ -544,7 +585,8 @@ KtNameReferenceExpression(1409,1410): 'A'
 
 KtCallExpression(1417,1420): 'b()'
   KtInvokeFunctionReference:
-    (in SimpleOperators) operator fun invoke()
+    (in SimpleOperators) context(a@A)
+    operator fun invoke()
 
 KtNameReferenceExpression(1417,1418): 'b'
   KtSimpleNameReference:
@@ -556,7 +598,8 @@ KtNameReferenceExpression(1425,1426): 'b'
 
 KtOperationReferenceExpression(1427,1429): '+='
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun plusAssign(b: kotlin.Int)
+    (in SimpleOperators) context(a@A)
+    operator fun plusAssign(b: kotlin.Int)
 
 KtNameReferenceExpression(1436,1437): 'b'
   KtSimpleNameReference:
@@ -567,7 +610,9 @@ KtNameReferenceExpression(1436,1437): 'b'
 
 KtOperationReferenceExpression(1437,1439): '++'
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun inc(): SimpleOperators
+    (in SimpleOperators) context(a@A)
+    operator fun inc(): SimpleOperators
 
   KtSimpleNameReference:
-    (in SimpleOperators) operator fun inc(): SimpleOperators
+    (in SimpleOperators) context(a@A)
+    operator fun inc(): SimpleOperators
