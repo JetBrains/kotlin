@@ -793,8 +793,7 @@ class CallAndReferenceGenerator(
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
-                            putContextArguments(lValue)
-                            putValueArgument(0, irRhsWithCast)
+                            putValueArgument(putContextArguments(lValue), irRhsWithCast)
                         }
 
                         else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
@@ -839,7 +838,7 @@ class CallAndReferenceGenerator(
                         typeArgumentsCount = firFunction?.typeParameters?.size ?: 0,
                         origin = origin
                     ).apply {
-                        putValueArgument(0, irRhsWithCast)
+                        putValueArgument(putContextArguments(lValue), irRhsWithCast)
                     }
                 }
 
