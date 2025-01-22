@@ -50,7 +50,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
 
     @DisplayName("Compiler should download dependencies when Kotlin Native Toolchain disabled ")
     @GradleTest
-    fun checkCompilerDownloadsDependenciesWhenToochainDisabled(gradleVersion: GradleVersion) {
+    fun checkCompilerDownloadsDependenciesWhenToolchainDisabled(gradleVersion: GradleVersion) {
         nativeProject("mpp-default-hierarchy", gradleVersion) {
 
             build(

@@ -83,7 +83,7 @@ internal class KotlinNativeFromToolchainProvider(
                         KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
                     )
                 } else {
-                    providerFactory.provider { null }
+                    providerFactory.provider { emptyList<File>() }
                 }
             }
         )
