@@ -1,4 +1,25 @@
 // FILE: 1.kt
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$inlineMe2$2
+*L
+1#1,23:1
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$inlineMe1$2
+*L
+1#1,23:1
+*E
 
 // FILE: 2.kt
 SMAP
@@ -33,8 +54,8 @@ test/_1Kt$inlineMe2$2
 + 2 2.kt
 _2Kt$box$1
 *L
-1#1,21:1
-45#2,2:22
+1#1,23:1
+45#2,2:24
 *E
 
 SMAP
@@ -47,7 +68,7 @@ test/_1Kt$inlineMe1$2
 + 2 2.kt
 _2Kt$box$1
 *L
-1#1,15:1
-42#2,2:16
+1#1,23:1
+42#2,2:24
 *E
 

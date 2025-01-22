@@ -183,7 +183,11 @@ class ClassCodegen private constructor(
 
         generateAnnotations()
 
-        visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        visitor.visitSMAP(
+            smap,
+            !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
+            parentFunction != null && parentFunction.isInline
+        )
 
         reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)
 

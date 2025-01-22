@@ -4870,6 +4870,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("trivialSmap.kt")
+      public void testTrivialSmap() {
+        runTest("compiler/testData/codegen/boxInline/smap/trivialSmap.kt");
+      }
+
+      @Test
       @TestMetadata("tryFinally1.kt")
       public void testTryFinally1() {
         runTest("compiler/testData/codegen/boxInline/smap/tryFinally1.kt");

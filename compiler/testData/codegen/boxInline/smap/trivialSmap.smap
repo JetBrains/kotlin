@@ -1,0 +1,44 @@
+// FILE: utils.kt
+SMAP
+utils.kt
+Kotlin
+*S Kotlin
+*F
++ 1 utils.kt
+a/UtilsKt$example$1
+*L
+1#1,15:1
+*E
+
+// FILE: main.kt
+SMAP
+main.kt
+Kotlin
+*S Kotlin
+*F
++ 1 main.kt
+MainKt
++ 2 utils.kt
+a/UtilsKt
+*L
+1#1,23:1
+7#2,4:24
+*S KotlinDebug
+*F
++ 1 main.kt
+MainKt
+*L
+20#1:24,4
+*E
+
+SMAP
+utils.kt
+Kotlin
+*S Kotlin
+*F
++ 1 utils.kt
+a/UtilsKt$example$1
+*L
+1#1,15:1
+*E
+
