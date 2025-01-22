@@ -88,6 +88,13 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveAfter0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveInto0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToLeft0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToLeft1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToRight0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
@@ -255,6 +262,13 @@ internal inline fun <reified T> String.load(): T {
         "ValueCounts" -> ValueCounts()
         "RenameToCamelCase" -> RenameToCamelCase()
         "RenameToCamelCaseClause" -> RenameToCamelCaseClause()
+        "MoveUnder0" -> MoveUnder0()
+        "MoveUnder1" -> MoveUnder1()
+        "MoveInto0" -> MoveInto0()
+        "MoveToLeft0" -> MoveToLeft0()
+        "MoveToLeft1" -> MoveToLeft1()
+        "MoveToRight0" -> MoveToRight0()
+        "MoveAfter0" -> MoveAfter0()
         else -> error("$this")
     } as T
 }

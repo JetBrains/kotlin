@@ -1,8 +1,13 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlinx.dataframe.api.after
+import org.jetbrains.kotlinx.dataframe.api.into
 import org.jetbrains.kotlinx.dataframe.api.move
-import org.jetbrains.kotlinx.dataframe.api.pathOf
+import org.jetbrains.kotlinx.dataframe.api.moveToLeft
+import org.jetbrains.kotlinx.dataframe.api.toLeft
+import org.jetbrains.kotlinx.dataframe.api.toRight
 import org.jetbrains.kotlinx.dataframe.api.toTop
+import org.jetbrains.kotlinx.dataframe.api.under
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
@@ -29,5 +34,75 @@ class ToTop : AbstractSchemaModificationInterpreter() {
         return receiver.df.asDataFrame().move { columns.toColumnSet() }.toTop().toPluginDataFrameSchema()
     }
 }
+
+class MoveUnder0 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
+        return receiver.df.asDataFrame().move { columns.toColumnSet() }.under(column).toPluginDataFrameSchema()
+    }
+}
+
+class MoveUnder1 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.column: SingleColumnApproximation by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
+        return receiver.df.asDataFrame().move { columns.toColumnSet() }.under { column.col.path }.toPluginDataFrameSchema()
+    }
+}
+
+class MoveInto0 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
+        return receiver.df.asDataFrame().move { columns.toColumnSet() }.into(column).toPluginDataFrameSchema()
+    }
+}
+
+class MoveToLeft0 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MoveClauseApproximation by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
+        return receiver.df.asDataFrame().move { columns.toColumnSet() }.toLeft().toPluginDataFrameSchema()
+    }
+}
+
+class MoveToLeft1 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.columns: ColumnsResolver by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = columns.resolve(receiver).map { it.path }
+        return receiver.asDataFrame().moveToLeft { columns.toColumnSet() }.toPluginDataFrameSchema()
+    }
+}
+
+
+class MoveToRight0 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MoveClauseApproximation by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
+        return receiver.df.asDataFrame().move { columns.toColumnSet() }.toRight().toPluginDataFrameSchema()
+    }
+}
+
+class MoveAfter0 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.column: SingleColumnApproximation by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = receiver.columns.resolve(receiver.df).map { it.path }
+        return receiver.df.asDataFrame().move { columns.toColumnSet() }.after { column.col.path }.toPluginDataFrameSchema()
+    }
+}
+
 
 class MoveClauseApproximation(val df: PluginDataFrameSchema, val columns: ColumnsResolver)

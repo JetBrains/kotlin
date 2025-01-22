@@ -287,9 +287,39 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("moveAfter.kt")
+  public void testMoveAfter() {
+    runTest("testData/box/moveAfter.kt");
+  }
+
+  @Test
+  @TestMetadata("moveInto.kt")
+  public void testMoveInto() {
+    runTest("testData/box/moveInto.kt");
+  }
+
+  @Test
+  @TestMetadata("moveToLeft.kt")
+  public void testMoveToLeft() {
+    runTest("testData/box/moveToLeft.kt");
+  }
+
+  @Test
+  @TestMetadata("moveToRight.kt")
+  public void testMoveToRight() {
+    runTest("testData/box/moveToRight.kt");
+  }
+
+  @Test
   @TestMetadata("moveToTop.kt")
   public void testMoveToTop() {
     runTest("testData/box/moveToTop.kt");
+  }
+
+  @Test
+  @TestMetadata("moveUnder.kt")
+  public void testMoveUnder() {
+    runTest("testData/box/moveUnder.kt");
   }
 
   @Test
