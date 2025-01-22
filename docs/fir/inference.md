@@ -534,7 +534,7 @@ See [pcla.md](pcla.md) for more information.
 
 ### Type variable (TV)
 
-Fresh type variables (or just type variables for short) are special types (and type constructors) that are created:
+Type variables are special types / type constructors that are created:
 * for each type parameter of a called declaration
 * per call of said declaration
 
@@ -547,6 +547,8 @@ To avoid mixing up type variables with the corresponding type parameters and wit
 * type variables `Tv1` and `Tv2` are two different type variables based on the same type parameter `T`
 
 There are also synthetic type variables that represent unknown parameter types and/or return types of lambdas.
+
+(Sometimes we talk about "[fresh](https://en.wikipedia.org/wiki/Fresh_variable) type variables"; they are synonymous to just "type variables".)
 
 ### Type constraint
 
