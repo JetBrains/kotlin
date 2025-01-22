@@ -37,7 +37,6 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
     }
 
     override fun execute() {
-
         val exportModules = parameters.swiftModules.zip(parameters.swiftExportSettings) { modules, settings ->
             modules.map { module ->
                 module.toInputModule(config(module.flattenPackage, settings))
