@@ -712,9 +712,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(type<AnnotationMarker>())
 
         +referencedSymbol(constructorSymbol)
-        +field("source", type<SourceElement>()) {
-            deepCopyExcludeFromConstructor = true
-        }
+        +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
     val getSingletonValue: Element by element(Expression) {
