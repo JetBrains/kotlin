@@ -5,9 +5,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 import kotlin.concurrent.atomics.AtomicInt
-import kotlin.concurrent.atomics.<!UNRESOLVED_REFERENCE!>ExperimentalAtomicApi<!>
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
-<!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalAtomicApi<!>::class<!>)<!>
+@OptIn(ExperimentalAtomicApi::class)
 expect class Foo {
     fun test(a: AtomicInt): AtomicInt
 }

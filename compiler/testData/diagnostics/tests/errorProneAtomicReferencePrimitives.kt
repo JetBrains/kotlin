@@ -29,6 +29,8 @@ fun testTypealiasedJava() {
 
 // FILE: K.kt
 
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import kotlin.concurrent.atomics.AtomicReference
 
 fun testKotlin() {

@@ -10,6 +10,9 @@ public class JavaClass {
 }
 
 // FILE: test.kt
+
+@file:OptIn(ExperimentalAtomicApi::class)
+
 import JavaClass
 import kotlin.concurrent.atomics.asKotlinAtomic
 import kotlin.concurrent.atomics.asKotlinAtomicArray
@@ -26,7 +29,6 @@ class KotlinClass {
     }
 }
 
-@OptIn(ExperimentalAtomicApi::class)
 fun usage(a: KotlinClass): String {
     return a.foo(JavaClass().a.asKotlinAtomic())+ a.bar(JavaClass().b.asKotlinAtomicArray())
 }

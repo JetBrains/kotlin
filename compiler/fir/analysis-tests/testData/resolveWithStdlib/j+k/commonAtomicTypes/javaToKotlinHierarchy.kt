@@ -11,6 +11,9 @@ public class JavaClass {
 }
 
 // FILE: test.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import JavaClass
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.atomics.AtomicInt

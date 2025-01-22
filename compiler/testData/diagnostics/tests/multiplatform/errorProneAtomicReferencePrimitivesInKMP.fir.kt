@@ -6,6 +6,8 @@
 // MODULE: common
 // FILE: C.kt
 
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import kotlin.concurrent.atomics.AtomicReference
 
 fun commonTestKotlin() {
@@ -32,6 +34,8 @@ fun commonTypealiasedKotlin() {
 
 // MODULE: jvm()()(common)
 // FILE: K.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
 
 import kotlin.concurrent.atomics.AtomicReference
 

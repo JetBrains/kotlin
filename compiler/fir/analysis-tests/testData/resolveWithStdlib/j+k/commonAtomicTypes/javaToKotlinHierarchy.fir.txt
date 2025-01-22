@@ -1,4 +1,5 @@
 FILE: test.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
     public final class KotlinClassWithFakeOverride : R|JavaClass| {
         public constructor(): R|KotlinClassWithFakeOverride| {
             super<R|JavaClass|>()

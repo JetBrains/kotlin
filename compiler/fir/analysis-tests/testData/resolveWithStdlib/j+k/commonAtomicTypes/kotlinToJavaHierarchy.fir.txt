@@ -1,4 +1,5 @@
 FILE: KotlinClass.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
     public open class KotlinClass : R|kotlin/Any| {
         public constructor(): R|KotlinClass| {
             super<R|kotlin/Any|>()
@@ -12,6 +13,7 @@ FILE: KotlinClass.kt
 
     }
 FILE: test.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
     public final fun usage(x: R|JavaClassWithFakeOverride|): R|kotlin/Unit| {
         R|<local>/x|.R|/KotlinClass.foo|(R|kotlin/concurrent/atomics/AtomicInt.AtomicInt|(Int(0)))
         R|<local>/x|.R|/KotlinClass.foo<Inapplicable(INAPPLICABLE): /KotlinClass.foo>#|(R|java/util/concurrent/atomic/AtomicInteger.AtomicInteger|(Int(0)))

@@ -1,4 +1,5 @@
 FILE: KotlinClass.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
     public open class KotlinClass : R|kotlin/Any| {
         public constructor(): R|KotlinClass| {
             super<R|kotlin/Any|>()
@@ -9,6 +10,7 @@ FILE: KotlinClass.kt
 
     }
 FILE: test.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
     public final fun usage(a: R|JavaClass|): R|kotlin/Unit| {
         R|<local>/a|.R|/JavaClass.foo|(Q|java/util/concurrent/atomic|.R|java/util/concurrent/atomic/AtomicReference.AtomicReference|<R|kotlin/String!|>(String()))
         R|<local>/a|.R|/JavaClass.foo<Inapplicable(INAPPLICABLE): /JavaClass.foo>#|(R|kotlin/concurrent/atomics/AtomicReference.AtomicReference|<R|kotlin/Int|>(Int(1)))

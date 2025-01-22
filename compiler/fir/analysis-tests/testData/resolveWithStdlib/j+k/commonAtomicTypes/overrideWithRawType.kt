@@ -3,6 +3,9 @@
 // WITH_STDLIB
 
 // FILE: KotlinClass.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import kotlin.concurrent.atomics.AtomicReference
 
 open class KotlinClass {
@@ -18,6 +21,9 @@ public class JavaClass extends KotlinClass {
 }
 
 // FILE: test.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import kotlin.concurrent.atomics.AtomicReference
 
 fun usage(a: JavaClass) {

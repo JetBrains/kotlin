@@ -11,6 +11,9 @@ public class JavaBase {
 }
 
 // FILE: test.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import kotlin.concurrent.atomics.AtomicInt
 import java.util.concurrent.atomic.AtomicInteger
 

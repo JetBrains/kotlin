@@ -5,6 +5,9 @@
 public class JavaOverloadsChild extends OverloadsWithAtomicIntAndInteger { }
 
 // FILE: test.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import JavaOverloadsChild
 import kotlin.concurrent.atomics.AtomicInt
 import java.util.concurrent.atomic.AtomicInteger

@@ -1,6 +1,9 @@
 // WITH_STDLIB
 
 // FILE: KotlinClass.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import kotlin.concurrent.atomics.AtomicInt
 
 open class KotlinClass {
@@ -22,6 +25,9 @@ public class JavaClassWithExplicitOverride extends KotlinClass {
 }
 
 // FILE: test.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import JavaClassWithExplicitOverride
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.atomics.AtomicInt

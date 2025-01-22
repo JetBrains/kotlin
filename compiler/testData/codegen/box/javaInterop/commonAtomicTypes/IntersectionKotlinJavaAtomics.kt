@@ -2,6 +2,9 @@
 // WITH_STDLIB
 
 // FILE: KotlinInterface.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import kotlin.concurrent.atomics.AtomicInt
 
 interface KotlinInterface {
@@ -47,6 +50,9 @@ public class JavaIntersectionWithExplicitOverride extends JavaClass implements K
 }
 
 // FILE: test.kt
+
+@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
+
 import JavaClass
 import kotlin.concurrent.atomics.AtomicInt
 import java.util.concurrent.atomic.AtomicInteger

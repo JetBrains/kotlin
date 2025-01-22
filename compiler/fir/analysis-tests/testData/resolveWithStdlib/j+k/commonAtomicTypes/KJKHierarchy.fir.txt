@@ -1,4 +1,5 @@
 FILE: KotlinClass.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
     public open class KotlinClass : R|kotlin/Any| {
         public constructor(): R|KotlinClass| {
             super<R|kotlin/Any|>()
@@ -12,6 +13,7 @@ FILE: KotlinClass.kt
 
     }
 FILE: test.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
     public final class KotlinChildWithFakeOverride : R|JavaClassWithFakeOverride| {
         public constructor(): R|KotlinChildWithFakeOverride| {
             super<R|JavaClassWithFakeOverride|>()
