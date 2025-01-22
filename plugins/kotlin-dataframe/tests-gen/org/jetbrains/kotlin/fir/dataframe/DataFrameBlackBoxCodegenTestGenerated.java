@@ -509,6 +509,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("toDataFrame_nested.kt")
+  public void testToDataFrame_nested() {
+    runTest("testData/box/toDataFrame_nested.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame_nullableList.kt")
   public void testToDataFrame_nullableList() {
     runTest("testData/box/toDataFrame_nullableList.kt");
