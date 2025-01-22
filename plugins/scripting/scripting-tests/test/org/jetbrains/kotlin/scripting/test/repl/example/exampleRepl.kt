@@ -34,6 +34,11 @@ import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.isIncomplete
 import kotlin.script.experimental.util.LinkedSnippet
 
+// Test if base class can be added to ScriptCompilerConfiguration
+abstract class ReplBaseClass {
+    fun sayHello() = println("Hello from base class")
+}
+
 /**
  * Test K2 REPL implementation. Very Experimental! Do not use! May break at any moment!
  */
@@ -63,6 +68,9 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
                 listOf(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests())
             )
         }
+
+        // Not currently supported?
+        baseClass(ReplBaseClass::class)
     }
 
     private val replCompiler =
