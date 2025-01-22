@@ -384,9 +384,9 @@ fun foo(x: List<String>) {
 - Analysis of all lambdas belonging to the supplied nested call *is forced even if some input types are not properly inferred*.
 - We don't run completion writing in this mode.
 
-### Eligibility for variable fixation
+### Set of type variables for fixation
 
-The set of type variables eligible for fixation is obtained
+The set of type variables that can be fixed in this mode is obtained
 in the same way as for regular calls outside PCLA —
 from the call tree of the supplied nested call itself.
 This means that this set consists of:
