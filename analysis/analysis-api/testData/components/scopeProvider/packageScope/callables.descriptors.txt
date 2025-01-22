@@ -57,7 +57,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(42)
+  initializer: KaConstantInitializerValue(42)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -186,7 +186,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(42)
+  initializer: KaConstantInitializerValue(42)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -315,7 +315,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(42)
+  initializer: KaConstantInitializerValue(42)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -444,7 +444,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(ice - 8)
+  initializer: KaNonConstantInitializerValue(ice - 8)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -573,7 +573,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(ice - 8)
+  initializer: KaNonConstantInitializerValue(ice - 8)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -702,7 +702,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(ice - 8)
+  initializer: KaNonConstantInitializerValue(ice - 8)
   isActual: false
   isConst: false
   isDelegatedProperty: false

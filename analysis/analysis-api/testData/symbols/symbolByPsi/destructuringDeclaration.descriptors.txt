@@ -87,7 +87,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val x: Int)
+        initializer: KaNonConstantInitializerValue(val x: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -214,7 +214,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val y: Int)
+        initializer: KaNonConstantInitializerValue(val y: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false

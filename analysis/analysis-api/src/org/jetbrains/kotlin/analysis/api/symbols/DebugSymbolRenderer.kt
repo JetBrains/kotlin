@@ -357,7 +357,7 @@ public class DebugSymbolRenderer(
             is KaContractEffectDeclaration -> Context(this@renderValue, printer, this@DebugSymbolRenderer)
                 .renderKaContractEffectDeclaration(value, endWithNewLine = false)
             is KaNamedAnnotationValue -> renderNamedConstantValue(value, printer, currentSymbolStack)
-            is KaInitializerValue -> renderKtInitializerValue(value, printer)
+            is KaInitializerValue -> renderKaInitializerValue(value, printer)
             is KaContextReceiver -> renderContextReceiver(value, printer, currentSymbolStack)
             is KaAnnotation -> renderAnnotationApplication(value, printer, currentSymbolStack)
             is KaAnnotationList -> renderAnnotationsList(value, printer, currentSymbolStack)
@@ -413,17 +413,16 @@ public class DebugSymbolRenderer(
         receiver: KaContextReceiver,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
-    ) {
-        with(printer) {
-            append("KtContextReceiver:")
-            withIndent {
-                appendLine()
-                append("label: ")
-                renderValue(receiver.label, printer, renderSymbolsFully = false, currentSymbolStack)
-                appendLine()
-                append("type: ")
-                renderType(receiver.type, printer, currentSymbolStack)
-            }
+    ): Unit = with(printer) {
+        append(KaContextReceiver::class.simpleName)
+        append(':')
+        withIndent {
+            appendLine()
+            append("label: ")
+            renderValue(receiver.label, printer, renderSymbolsFully = false, currentSymbolStack)
+            appendLine()
+            append("type: ")
+            renderType(receiver.type, printer, currentSymbolStack)
         }
     }
 
@@ -465,28 +464,17 @@ public class DebugSymbolRenderer(
             }
         }
 
-    private fun renderKtInitializerValue(value: KaInitializerValue, printer: PrettyPrinter) {
-        with(printer) {
-            when (value) {
-                is KaConstantInitializerValue -> {
-                    append("KtConstantInitializerValue(")
-                    append(value.constant.render())
-                    append(")")
-                }
-
-                is KaNonConstantInitializerValue -> {
-                    append("KtNonConstantInitializerValue(")
-                    append(value.initializerPsi?.firstLineOfPsi() ?: "NO_PSI")
-                    append(")")
-                }
-
-                is KaConstantValueForAnnotation -> {
-                    append("KtConstantValueForAnnotation(")
-                    append(value.annotationValue.renderAsSourceCode())
-                    append(")")
-                }
-            }
+    private fun renderKaInitializerValue(value: KaInitializerValue, printer: PrettyPrinter): Unit = with(printer) {
+        append(value::class.simpleName)
+        append('(')
+        val valueAsText = when (value) {
+            is KaConstantInitializerValue -> value.constant.render()
+            is KaNonConstantInitializerValue -> value.initializerPsi?.firstLineOfPsi() ?: "NO_PSI"
+            is KaConstantValueForAnnotation -> value.annotationValue.renderAsSourceCode()
         }
+
+        append(valueAsText)
+        append(')')
     }
 
     private fun KaSession.renderAnnotationsList(
@@ -523,5 +511,3 @@ public class DebugSymbolRenderer(
     }
 }
 
-private val PrettyPrinter.printer: PrettyPrinter
-    get() = this

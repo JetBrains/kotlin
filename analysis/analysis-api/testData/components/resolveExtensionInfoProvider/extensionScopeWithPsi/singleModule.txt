@@ -231,7 +231,7 @@ callables: 5
     hasBackingField: true
     hasGetter: true
     hasSetter: false
-    initializer: KtConstantInitializerValue("baz")
+    initializer: KaConstantInitializerValue("baz")
     isActual: false
     isConst: false
     isDelegatedProperty: false
@@ -310,7 +310,7 @@ callables: 5
     hasBackingField: true
     hasGetter: true
     hasSetter: true
-    initializer: KtConstantInitializerValue("quux")
+    initializer: KaConstantInitializerValue("quux")
     isActual: false
     isConst: false
     isDelegatedProperty: false

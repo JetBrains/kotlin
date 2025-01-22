@@ -61,7 +61,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(val firstProperty: Int)
+  initializer: KaNonConstantInitializerValue(val firstProperty: Int)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -161,7 +161,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(val secondProperty: Double)
+  initializer: KaNonConstantInitializerValue(val secondProperty: Double)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -261,7 +261,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(val thirdProperty: String)
+  initializer: KaNonConstantInitializerValue(val thirdProperty: String)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -975,7 +975,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val firstProperty: Int)
+        initializer: KaNonConstantInitializerValue(val firstProperty: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -1102,7 +1102,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val secondProperty: Double)
+        initializer: KaNonConstantInitializerValue(val secondProperty: Double)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -1229,7 +1229,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val thirdProperty: String)
+        initializer: KaNonConstantInitializerValue(val thirdProperty: String)
         isActual: false
         isConst: false
         isDelegatedProperty: false

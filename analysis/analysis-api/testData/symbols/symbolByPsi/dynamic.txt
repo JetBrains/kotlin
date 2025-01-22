@@ -59,7 +59,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(null)
+  initializer: KaConstantInitializerValue(null)
   isActual: false
   isConst: false
   isDelegatedProperty: false

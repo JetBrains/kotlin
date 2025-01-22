@@ -262,7 +262,7 @@ scopes:
         callableId: /test
         compilerVisibility: Public
         contextReceivers: [
-          KtContextReceiver:
+          KaContextReceiver:
             label: Context
             type: KaUsualClassType:
               annotations: []

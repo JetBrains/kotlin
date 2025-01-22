@@ -223,7 +223,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val s: String)
+        initializer: KaNonConstantInitializerValue(val s: String)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -500,7 +500,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(this)
+  initializer: KaNonConstantInitializerValue(this)
   isActual: false
   isConst: false
   isDelegatedProperty: false

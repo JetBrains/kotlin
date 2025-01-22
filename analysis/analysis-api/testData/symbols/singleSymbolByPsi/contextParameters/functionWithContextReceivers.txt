@@ -3,13 +3,13 @@ KaNamedFunctionSymbol:
   callableId: /foo
   compilerVisibility: Public
   contextReceivers: [
-    KtContextReceiver:
+    KaContextReceiver:
       label: String
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
-    KtContextReceiver:
+    KaContextReceiver:
       label: List
       type: KaUsualClassType:
         annotations: []

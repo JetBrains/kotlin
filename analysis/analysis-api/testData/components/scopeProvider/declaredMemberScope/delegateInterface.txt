@@ -61,7 +61,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(private val p: A)
+  initializer: KaNonConstantInitializerValue(private val p: A)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -187,7 +187,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(private val p: A)
+        initializer: KaNonConstantInitializerValue(private val p: A)
         isActual: false
         isConst: false
         isDelegatedProperty: false

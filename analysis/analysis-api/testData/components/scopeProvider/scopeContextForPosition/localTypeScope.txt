@@ -93,7 +93,7 @@ scopes:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtConstantInitializerValue(2)
+        initializer: KaConstantInitializerValue(2)
         isActual: false
         isConst: false
         isDelegatedProperty: false

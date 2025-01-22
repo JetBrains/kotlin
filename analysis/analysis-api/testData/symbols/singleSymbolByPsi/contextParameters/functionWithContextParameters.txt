@@ -3,7 +3,7 @@ KaNamedFunctionSymbol:
   callableId: /foo
   compilerVisibility: Public
   contextReceivers: [
-    KtContextReceiver:
+    KaContextReceiver:
       label: parameter1
       type: KaUsualClassType:
         annotations: [
@@ -12,7 +12,7 @@ KaNamedFunctionSymbol:
         ]
         typeArguments: []
         type: @R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
-    KtContextReceiver:
+    KaContextReceiver:
       label: parameter2
       type: KaUsualClassType:
         annotations: []

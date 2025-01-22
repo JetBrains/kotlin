@@ -87,7 +87,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val x: Int)
+        initializer: KaNonConstantInitializerValue(val x: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -214,7 +214,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val y: Int)
+        initializer: KaNonConstantInitializerValue(val y: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -341,7 +341,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val z: Int)
+        initializer: KaNonConstantInitializerValue(val z: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -655,7 +655,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(lazy { MyColor(1, 2, 3) })
+  initializer: KaNonConstantInitializerValue(lazy { MyColor(1, 2, 3) })
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -760,7 +760,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(MyColor(1, 2, 3))
+  initializer: KaNonConstantInitializerValue(MyColor(1, 2, 3))
   isActual: false
   isConst: false
   isDelegatedProperty: false

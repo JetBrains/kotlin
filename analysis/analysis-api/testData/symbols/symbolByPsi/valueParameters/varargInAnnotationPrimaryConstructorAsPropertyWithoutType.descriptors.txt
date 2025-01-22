@@ -95,7 +95,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(vararg val ints:)
+        initializer: KaNonConstantInitializerValue(vararg val ints:)
         isActual: false
         isConst: false
         isDelegatedProperty: false
