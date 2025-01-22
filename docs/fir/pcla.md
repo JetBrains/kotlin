@@ -42,7 +42,7 @@ Resolution of a lambda's body when all input types of the lambda are proper.
 
 Resolution of a lambda's body when some input types of the lambda are not proper and there are no other sources of type constraints.
 
-**PCLA lambda** — a lambda which is processed via PCLA
+**PCLA lambda** — a lambda that is processed via PCLA
 
 **Main call** — the call that contains the PCLA lambda
 
@@ -54,7 +54,7 @@ Resolution of a lambda's body when some input types of the lambda are not proper
 - A constraint system shared between all postponed nested calls inside the PCLA lambda
 - Serves as a storage of information about:
   - not-fixed type variables of postponed nested calls
-  - constraints, extracted from postponed nested calls, that are imposed on:
+  - type constraints, extracted from postponed nested calls, with:
     - not-fixed type variables of the containing PCLA lambdas
     - not-fixed type variables of postponed nested calls
 
