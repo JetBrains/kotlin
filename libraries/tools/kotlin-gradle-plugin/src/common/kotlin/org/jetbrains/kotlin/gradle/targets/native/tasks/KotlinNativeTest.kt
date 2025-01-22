@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companio
 import java.io.File
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
+@DisableCachingByDefault(because = "registering native libraries as task inputs is non-trivial KT-65607")
 abstract class KotlinNativeTest
 @Inject
 internal constructor(
@@ -221,7 +221,7 @@ internal constructor(
 /**
  * A task running Kotlin/Native tests on a host machine.
  */
-@DisableCachingByDefault
+@DisableCachingByDefault(because = "registering native libraries as task inputs is non-trivial KT-65607")
 abstract class KotlinNativeHostTest
 @Inject
 internal constructor(
@@ -242,7 +242,6 @@ internal constructor(
         providers = throw UnsupportedOperationException(),
         execOps = throw UnsupportedOperationException(),
     )
-
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -261,7 +260,7 @@ internal constructor(
 /**
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
-@DisableCachingByDefault
+@DisableCachingByDefault(because = "registering native libraries as task inputs is non-trivial KT-65607")
 abstract class KotlinNativeSimulatorTest
 @Inject
 internal constructor(
