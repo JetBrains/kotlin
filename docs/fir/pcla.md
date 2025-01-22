@@ -379,7 +379,7 @@ fun foo(x: List<String>) {
 
 ### Short description
 
-- Type variables eligible for fixation come *from the call tree of the supplied nested call itself*.
+- Type variables that can be fixed in this mode come from *the call tree of the supplied nested call itself*.
 - Variable fixation is not allowed if the TV is *deeply related to any TV from the outer CS*.
 - Analysis of all lambdas belonging to the supplied nested call *is forced even if some input types are not properly inferred*.
 - We don't run completion writing in this mode.
