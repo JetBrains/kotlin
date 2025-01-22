@@ -440,10 +440,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded", false)
     val Kotlin_getExceptionObject = importRtFunction("Kotlin_getExceptionObject", true)
 
-    val Kotlin_ObjCBlock_new by lazy { importRtFunction("Kotlin_ObjCBlock_new", false) }
-    val Kotlin_ObjCBlock_dispose by lazy { importRtFunction("Kotlin_ObjCBlock_dispose", false) }
-    val Kotlin_ObjCBlock_copy by lazy { importRtFunction("Kotlin_ObjCBlock_copy", false) }
-    val Kotlin_ObjCBlock_getKotlinFunction by lazy { importRtFunction("Kotlin_ObjCBlock_getKotlinFunction", false) }
+    val kRefSharedHolderInitLocal = importRtFunction("KRefSharedHolder_initLocal", false)
+    val kRefSharedHolderInit = importRtFunction("KRefSharedHolder_init", false)
+    val kRefSharedHolderDispose = importRtFunction("KRefSharedHolder_dispose", false)
+    val kRefSharedHolderRef = importRtFunction("KRefSharedHolder_ref", false)
 
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass", false) }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo", false) }
