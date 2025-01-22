@@ -30,6 +30,12 @@ public class FirReplSnippetResolveTestGenerated extends AbstractFirReplSnippetRe
   }
 
   @Test
+  @TestMetadata("snippetClasses.jupyter.kts")
+  public void testSnippetClasses_jupyter() {
+    runTest("analysis/low-level-api-fir/testData/repl/snippetClasses.jupyter.kts");
+  }
+
+  @Test
   @TestMetadata("snippetObjectClass.jupyter.kts")
   public void testSnippetObjectClass_jupyter() {
     runTest("analysis/low-level-api-fir/testData/repl/snippetObjectClass.jupyter.kts");
