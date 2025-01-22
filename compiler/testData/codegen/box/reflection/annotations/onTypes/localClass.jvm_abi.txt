@@ -1,0 +1,8 @@
+MODULE main
+	CLASS LocalClassKt$box$A$B.class
+		CLASS METADATA
+			Property: class.metadata.superTypes
+				K1
+					[@Anno(klass = .LocalClassKt$box$A.OK::class) kotlin/Any]
+				K2
+					[@Anno(klass = .LocalClassKt$box$A$OK::class) kotlin/Any]

@@ -77,7 +77,9 @@ internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, F
                 }
             }
             is KClassValue.Value.LocalClass -> {
-                error("Cannot serialize KClass value for local class")
+                val classId = data.serializer.localClassIdOracle.getLocalClassId(classValue)
+                    ?: error("Cannot serialize KClass value for local class")
+                data.builder.classId = data.stringTable.getQualifiedClassNameIndex(classId)
             }
         }
     }

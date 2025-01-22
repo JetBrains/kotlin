@@ -28,11 +28,13 @@ abstract class FirSerializerExtension {
     abstract val metadataVersion: BinaryVersion
 
     val annotationSerializer: FirAnnotationSerializer by lazy {
-        FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider)
+        FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider, localClassIdOracle)
     }
 
     abstract val constValueProvider: ConstValueProvider?
     abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
+
+    protected open val localClassIdOracle: LocalClassIdOracle get() = LocalClassIdOracle.EMPTY
 
     @OptIn(ConstValueProviderInternals::class)
     internal inline fun <T> processFile(firFile: FirFile, crossinline action: () -> T): T {

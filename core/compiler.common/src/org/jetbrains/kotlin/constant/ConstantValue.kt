@@ -129,17 +129,18 @@ class IntValue(value: Int) : IntegerValueConstant<Int>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitIntValue(this, data)
 }
 
-class KClassValue private constructor(value: Value) : ConstantValue<KClassValue.Value>(value) {
+class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
     sealed class Value {
         data class NormalClass(val value: ClassLiteralValue) : Value() {
             val classId: ClassId get() = value.classId
             val arrayDimensions: Int get() = value.arrayNestedness
         }
 
-        data object LocalClass : Value()
+        /**
+         * @param irClass If this constant value is produced by the IR interpreter, the `IrClass` instance of the local class.
+         */
+        data class LocalClass(val irClass: Any) : Value()
     }
-
-    constructor() : this(Value.LocalClass)
 
     constructor(value: ClassLiteralValue) : this(Value.NormalClass(value))
 

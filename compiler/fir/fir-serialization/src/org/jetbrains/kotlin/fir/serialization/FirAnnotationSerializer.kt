@@ -24,7 +24,8 @@ class FirAnnotationSerializer(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     internal val stringTable: FirElementAwareStringTable,
-    private val constValueProvider: ConstValueProvider?
+    private val constValueProvider: ConstValueProvider?,
+    internal val localClassIdOracle: LocalClassIdOracle,
 ) {
     fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation {
         val annotationValue = annotation.toConstantValue<AnnotationValue>(session, scopeSession, constValueProvider)

@@ -219,8 +219,11 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
             arrayDimensions++
         }
 
-        if (type.getClass()?.isLocal == true) return KClassValue()
-        val classId = type.getClass()?.classId ?: return null
+        val irClass = type.getClass() ?: return null
+        if (irClass.isLocal == true) {
+            return KClassValue(KClassValue.Value.LocalClass(irClass))
+        }
+        val classId = irClass.classId ?: return null
         return KClassValue(classId, arrayDimensions)
     }
 
