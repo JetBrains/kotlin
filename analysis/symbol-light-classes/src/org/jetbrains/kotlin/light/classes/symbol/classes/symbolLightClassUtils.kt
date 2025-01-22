@@ -27,16 +27,18 @@ import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
@@ -295,123 +297,6 @@ private inline fun <T : KaFunctionSymbol> KaSession.createJvmOverloadsIfNeeded(
     }
 }
 
-internal fun KaSession.createPropertyAccessors(
-    lightClass: SymbolLightClassBase,
-    result: MutableList<PsiMethod>,
-    declaration: KaPropertySymbol,
-    isTopLevel: Boolean,
-    isMutable: Boolean = !declaration.isVal,
-    onlyJvmStatic: Boolean = false,
-    suppressStatic: Boolean = false,
-) {
-    ProgressManager.checkCanceled()
-
-    if (declaration.name.isSpecial) return
-
-    if (declaration is KaKotlinPropertySymbol && declaration.isConst) return
-    if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility == KaSymbolVisibility.PRIVATE) return
-
-    if (declaration.isJvmField) return
-    val propertyTypeIsValueClass = hasTypeForValueClassInSignature(callableSymbol = declaration, suppressJvmNameCheck = true)
-
-    fun KaPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
-        if (declaration.hasReifiedParameters) return false
-
-        when {
-            !propertyTypeIsValueClass -> {}
-            /*
-             * For top-level properties with value class in return type compiler mangles only setter
-             *
-             *   @JvmInline
-             *   value class Some(val value: String)
-             *
-             *   var topLevelProp: Some = Some("1")
-             *
-             * Compiles to
-             *   public final class FooKt {
-             *     public final static getTopLevelProp()Ljava/lang/String;
-             *
-             *     public final static setTopLevelProp-5lyY9Q4(Ljava/lang/String;)V
-             *
-             *     private static Ljava/lang/String; topLevelProp
-             *  }
-             */
-            this is KaPropertyGetterSymbol && lightClass is SymbolLightClassForFacade && !hasTypeForValueClassInSignature(
-                callableSymbol = declaration,
-                ignoreReturnType = isTopLevel,
-            ) -> {
-            }
-
-            // Accessors with JvmName can be accessible from Java
-            hasJvmNameAnnotation() -> {}
-            else -> return false
-        }
-
-        if (onlyJvmStatic && !hasJvmStaticAnnotation() && !declaration.hasJvmStaticAnnotation()) return false
-
-        if (isHiddenByDeprecation(declaration)) return false
-        if (isHiddenOrSynthetic(this, siteTarget)) return false
-        if (!hasBody && visibility == KaSymbolVisibility.PRIVATE) return false
-
-        return true
-    }
-
-    val getter = declaration.getter?.takeIf {
-        it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_GETTER)
-    }
-
-    fun createSymbolLightAccessorMethod(accessor: KaPropertyAccessorSymbol): SymbolLightAccessorMethod {
-        // [KtFakeSourceElementKind.DelegatedPropertyAccessor] is not allowed as source PSI, e.g.,
-        //
-        //   val p by delegate(...)
-        //
-        // However, we also lose the source PSI of a custom property accessor, e.g.,
-        //
-        //   val p by delegate(...)
-        //     get() = ...
-        //
-        // We go upward to the property's source PSI and attempt to find/bind accessor's source PSI.
-        fun sourcePsiFromProperty(): KtPropertyAccessor? {
-            if (accessor.origin != KaSymbolOrigin.SOURCE) return null
-            val propertyPsi = declaration.psi as? KtProperty ?: return null
-            return if (accessor is KaPropertyGetterSymbol)
-                propertyPsi.getter
-            else
-                propertyPsi.setter
-        }
-
-        val lightMemberOrigin = declaration.sourcePsiSafe<KtDeclaration>()?.let {
-            LightMemberOriginForDeclaration(
-                originalElement = it,
-                originKind = JvmDeclarationOriginKind.OTHER,
-                auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
-            )
-        }
-
-        return SymbolLightAccessorMethod(
-            ktAnalysisSession = this@createPropertyAccessors,
-            propertyAccessorSymbol = accessor,
-            containingPropertySymbol = declaration,
-            lightMemberOrigin = lightMemberOrigin,
-            containingClass = lightClass,
-            isTopLevel = isTopLevel,
-            suppressStatic = suppressStatic,
-        )
-    }
-
-    if (getter != null) {
-        result.add(createSymbolLightAccessorMethod(getter))
-    }
-
-    val setter = declaration.setter?.takeIf {
-        !lightClass.isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER)
-    }
-
-    if (isMutable && setter != null) {
-        result.add(createSymbolLightAccessorMethod(setter))
-    }
-}
-
 internal fun KaSession.createAndAddField(
     lightClass: SymbolLightClassBase,
     declaration: KaPropertySymbol,
@@ -629,7 +514,7 @@ internal fun KaSession.checkIsInheritor(classOrObject: KtClassOrObject, superCla
     }
 }
 
-private val KaDeclarationSymbol.hasReifiedParameters: Boolean
+internal val KaDeclarationSymbol.hasReifiedParameters: Boolean
     get() = typeParameters.any { it.isReified }
 
 internal fun KaSession.addPropertyBackingFields(
