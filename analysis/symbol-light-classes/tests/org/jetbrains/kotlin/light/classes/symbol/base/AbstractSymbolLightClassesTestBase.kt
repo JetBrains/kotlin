@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupp
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -184,7 +183,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         if (!firJava.exists()) return
         val identicalCheckerHelper = IdenticalCheckerHelper(testServices)
         if (identicalCheckerHelper.contentsAreEquals(java.toFile(), firJava.toFile(), trimLines = true)) {
-            identicalCheckerHelper.deleteFirFile(java.toFile())
+            identicalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(java.toFile())
             fail("$firJava is equals to $java. The redundant test data file removed")
         }
     }

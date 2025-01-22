@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,8 +54,8 @@ class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisCheck
         if (DUMP_IR !in allDirectives)
             return
         if (FIR_IDENTICAL in allDirectives) {
-            simpleDumpChecker.deleteFirFile(testDataFile)
-            prettyDumpChecker.deleteFirFile(testDataFile)
+            simpleDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
+            prettyDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
             return
         }
         val isPrettyDumpEnabled = DUMP_KT_IR in allDirectives && SKIP_KT_DUMP !in allDirectives
@@ -63,8 +63,8 @@ class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisCheck
             simpleDumpChecker.firAndClassicContentsAreEquals(testDataFile) &&
             (!isPrettyDumpEnabled || prettyDumpChecker.firAndClassicContentsAreEquals(testDataFile, trimLines = true))
         ) {
-            simpleDumpChecker.deleteFirFile(testDataFile)
-            prettyDumpChecker.deleteFirFile(testDataFile)
+            simpleDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
+            prettyDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
             simpleDumpChecker.addDirectiveToClassicFileAndAssert(testDataFile)
         }
     }

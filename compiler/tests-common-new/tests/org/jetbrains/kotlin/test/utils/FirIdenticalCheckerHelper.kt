@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -94,9 +94,20 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
     }
 
-    fun deleteFirFile(testDataFile: File) {
+    fun deleteFirFileToCompareAndAssertIfExists(testDataFile: File) {
+        val firFileToCompare = getFirFileToCompare(testDataFile)?.takeIf(File::exists) ?: return
         if (!isTeamCityBuild) {
-            getFirFileToCompare(testDataFile)?.takeIf { it.exists() }?.delete()
+            firFileToCompare.delete()
+        }
+
+        val message = if (isTeamCityBuild) {
+            "Please remove `${testDataFile.path}`"
+        } else {
+            "Deleted `${testDataFile.path}`"
+        }
+
+        testServices.assertions.fail {
+            "$message\nPlease re-run the test"
         }
     }
 }

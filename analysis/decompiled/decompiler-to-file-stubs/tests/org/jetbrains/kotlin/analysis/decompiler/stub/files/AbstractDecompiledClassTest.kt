@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,18 +19,18 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.services.AssertionsService
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.stream.Collectors
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import java.io.File
-import org.jetbrains.kotlin.test.services.AssertionsService
 
 abstract class AbstractDecompiledClassTest : KotlinTestWithEnvironment() {
     protected open val useK2ToCompileCode: Boolean = false
@@ -137,7 +137,7 @@ internal data class TestData(
         }
         if (useK2) {
             if (IdenticalCheckerHelper.firAndClassicContentsAreEquals(expectedFile.toFile())) {
-                IdenticalCheckerHelper.deleteFirFile(expectedFile.toFile())
+                IdenticalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(expectedFile.toFile())
                 IdenticalCheckerHelper.addDirectiveToClassicFileAndAssert(mainKotlinFile.toFile())
             }
         }
