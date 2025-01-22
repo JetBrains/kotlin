@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -164,16 +164,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private fun KaSession.createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<PsiMethod>) {
         // Similar to `copy`, synthetic members from `Any` should refer to `data` class as origin, not the function in `Any`.
         val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
-        result.add(
-            SymbolLightSimpleMethod(
-                ktAnalysisSession = this,
-                functionSymbol,
-                lightMemberOrigin,
-                this@SymbolLightClassForClassOrObject,
-                METHOD_INDEX_BASE,
-                false,
-                suppressStatic = false,
-            )
+        createSimpleMethods(
+            this@SymbolLightClassForClassOrObject,
+            result,
+            functionSymbol,
+            lightMemberOrigin,
+            METHOD_INDEX_BASE,
+            isTopLevel = false,
         )
     }
 
@@ -197,17 +194,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         fun createDelegateMethod(functionSymbol: KaNamedFunctionSymbol) {
             val kotlinOrigin = functionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }
-            result.add(
-                SymbolLightSimpleMethod(
-                    ktAnalysisSession = this,
-                    functionSymbol,
-                    lightMemberOrigin,
-                    this@SymbolLightClassForClassOrObject,
-                    METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
-                    false,
-                    argumentsSkipMask = null,
-                    suppressStatic = false,
-                )
+            createSimpleMethods(
+                containingClass = this@SymbolLightClassForClassOrObject,
+                result = result,
+                functionSymbol = functionSymbol,
+                lightMemberOrigin = lightMemberOrigin,
+                methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
+                isTopLevel = false,
             )
         }
 

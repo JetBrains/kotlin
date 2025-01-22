@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
@@ -20,8 +21,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
+import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -31,15 +31,15 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLA
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
-internal class SymbolLightSimpleMethod(
+internal class SymbolLightSimpleMethod private constructor(
     ktAnalysisSession: KaSession,
     functionSymbol: KaNamedFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isTopLevel: Boolean,
-    argumentsSkipMask: BitSet? = null,
-    private val suppressStatic: Boolean = false,
+    argumentsSkipMask: BitSet?,
+    private val suppressStatic: Boolean,
 ) : SymbolLightMethod<KaNamedFunctionSymbol>(
     ktAnalysisSession = ktAnalysisSession,
     functionSymbol = functionSymbol,
@@ -239,4 +239,47 @@ internal class SymbolLightSimpleMethod(
     }
 
     override fun getReturnType(): PsiType = _returnedType
+
+    companion object {
+        internal fun KaSession.createSimpleMethods(
+            containingClass: SymbolLightClassBase,
+            result: MutableList<PsiMethod>,
+            functionSymbol: KaNamedFunctionSymbol,
+            lightMemberOrigin: LightMemberOrigin?,
+            methodIndex: Int,
+            isTopLevel: Boolean,
+            suppressStatic: Boolean = false,
+        ) {
+            ProgressManager.checkCanceled()
+
+            if (functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
+            if (functionSymbol.name.isSpecial || hasTypeForValueClassInSignature(functionSymbol, ignoreReturnType = isTopLevel)) return
+
+            result.add(
+                SymbolLightSimpleMethod(
+                    ktAnalysisSession = this,
+                    functionSymbol = functionSymbol,
+                    lightMemberOrigin = lightMemberOrigin,
+                    containingClass = containingClass,
+                    methodIndex = methodIndex,
+                    isTopLevel = isTopLevel,
+                    suppressStatic = suppressStatic,
+                    argumentsSkipMask = null,
+                )
+            )
+
+            createJvmOverloadsIfNeeded(functionSymbol, result) { methodIndex, argumentSkipMask ->
+                SymbolLightSimpleMethod(
+                    ktAnalysisSession = this,
+                    functionSymbol = functionSymbol,
+                    lightMemberOrigin = lightMemberOrigin,
+                    containingClass = containingClass,
+                    methodIndex = methodIndex,
+                    isTopLevel = isTopLevel,
+                    argumentsSkipMask = argumentSkipMask,
+                    suppressStatic = suppressStatic,
+                )
+            }
+        }
+    }
 }

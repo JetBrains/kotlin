@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -225,37 +225,15 @@ internal fun KaSession.createMethods(
 
     fun KaSession.handleDeclaration(declaration: KaCallableSymbol) {
         when (declaration) {
-            is KaNamedFunctionSymbol -> {
-                ProgressManager.checkCanceled()
-
-                if (declaration.hasReifiedParameters || isHiddenOrSynthetic(declaration)) return
-                if (declaration.name.isSpecial || hasTypeForValueClassInSignature(declaration, ignoreReturnType = isTopLevel)) return
-
-                result.add(
-                    SymbolLightSimpleMethod(
-                        ktAnalysisSession = this,
-                        functionSymbol = declaration,
-                        lightMemberOrigin = null,
-                        containingClass = lightClass,
-                        methodIndex = METHOD_INDEX_BASE,
-                        isTopLevel = isTopLevel,
-                        suppressStatic = suppressStatic
-                    )
-                )
-
-                createJvmOverloadsIfNeeded(declaration, result) { methodIndex, argumentSkipMask ->
-                    SymbolLightSimpleMethod(
-                        ktAnalysisSession = this,
-                        functionSymbol = declaration,
-                        lightMemberOrigin = null,
-                        containingClass = lightClass,
-                        methodIndex = methodIndex,
-                        isTopLevel = isTopLevel,
-                        argumentsSkipMask = argumentSkipMask,
-                        suppressStatic = suppressStatic
-                    )
-                }
-            }
+            is KaNamedFunctionSymbol -> createSimpleMethods(
+                containingClass = lightClass,
+                functionSymbol = declaration,
+                result = result,
+                lightMemberOrigin = null,
+                methodIndex = METHOD_INDEX_BASE,
+                isTopLevel = isTopLevel,
+                suppressStatic = suppressStatic,
+            )
 
             is KaPropertySymbol -> createPropertyAccessors(
                 lightClass,
@@ -280,7 +258,7 @@ internal fun KaSession.createMethods(
     }
 }
 
-private inline fun <T : KaFunctionSymbol> KaSession.createJvmOverloadsIfNeeded(
+internal inline fun <T : KaFunctionSymbol> KaSession.createJvmOverloadsIfNeeded(
     declaration: T,
     result: MutableList<PsiMethod>,
     lightMethodCreator: (Int, BitSet) -> PsiMethod,
