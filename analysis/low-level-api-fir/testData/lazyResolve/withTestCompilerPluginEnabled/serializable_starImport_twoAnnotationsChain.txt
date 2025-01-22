@@ -295,8 +295,8 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>|
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
@@ -325,8 +325,8 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
-        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>|
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
@@ -355,8 +355,8 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>|
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
@@ -385,8 +385,8 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+    public final [ResolvedTo(BODY_RESOLVE)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/reflect/KFunction2<test/Serializer, @R|kotlin/ParameterName|(name = String(x))  test/FirstTarget, kotlin/Unit>|
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] serializable_starImport_twoAnnotationsChain.kt

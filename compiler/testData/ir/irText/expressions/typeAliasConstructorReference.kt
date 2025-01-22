@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import Host.Nested
 
 class C(x: Int)

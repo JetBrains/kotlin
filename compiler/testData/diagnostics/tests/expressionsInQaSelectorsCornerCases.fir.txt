@@ -13,7 +13,7 @@ FILE: expressionsInQaSelectorsCornerCases.fir.kt
         lval f: R|kotlin/Int.() -> kotlin/Int| = Q|kotlin/Int|::R|/b<kotlin/Int>|
         R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(5)).R|kotlin/Int.inv|()
         Q|kotlin/Int|::R|/b<kotlin/Int>|.R|SubstitutionOverride<kotlin/reflect/KFunction1.invoke: R|kotlin/Int|>|(Int(5)).R|kotlin/Int.inv|()
-        lval d: R|@ExtensionFunctionType kotlin/reflect/KFunction2<kotlin/Int, ERROR CLASS: Cannot infer argument for type parameter T, kotlin/Int>| = Q|kotlin/Int|::R|/a<CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>#|
+        lval d: R|@ExtensionFunctionType kotlin/reflect/KFunction2<kotlin/Int, @R|kotlin/ParameterName|(name = String(it))  ERROR CLASS: Cannot infer argument for type parameter T, kotlin/Int>| = Q|kotlin/Int|::R|/a<CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>#|
         R|<local>/d|.R|SubstitutionOverride<kotlin/reflect/KFunction2.invoke: R|kotlin/Int|>|(Int(5), Char(=)).R|kotlin/Int.inv|()
         lval e: R|kotlin/Int.(kotlin/Char) -> kotlin/Int| = Q|kotlin/Int|::R|/a<kotlin/Char>|
         R|<local>/e|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Int|>|(Int(5), Char(=)).R|kotlin/Int.inv|()
