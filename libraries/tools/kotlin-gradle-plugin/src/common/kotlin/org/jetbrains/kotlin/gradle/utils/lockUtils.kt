@@ -10,7 +10,12 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-
+/**
+ * Executes [block] while holding [this] lock.
+ *
+ * The lock is acquired before [block] is executed, and is always released after the block completes,
+ * regardless of whether the block executes successfully or throws an exception.
+ */
 @OptIn(ExperimentalContracts::class)
 internal inline fun Lock.use(
     block: () -> Unit,
@@ -25,6 +30,12 @@ internal inline fun Lock.use(
 }
 
 
+/**
+ * Executes [block] while holding [this] lock, and returns a result.
+ *
+ * The lock is acquired before [block] is executed, and is always released after the block completes,
+ * regardless of whether the block executes successfully or throws an exception.
+ */
 @OptIn(ExperimentalContracts::class)
 internal inline fun <R> Lock.use(
     block: () -> R,
