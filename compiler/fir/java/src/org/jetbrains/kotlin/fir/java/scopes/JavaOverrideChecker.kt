@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -73,7 +74,8 @@ class JavaOverrideChecker internal constructor(
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
             val candidateLookupTag = candidateType.fullyExpandedType(session).lookupTag
             val candidateTypeClassId = candidateLookupTag.classId.let { it.readOnlyToMutable() ?: it }
-            val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val baseLookupTag = baseType.fullyExpandedType(session).lookupTag
+            val baseTypeClassId = baseLookupTag.classId.let { it.readOnlyToMutable() ?: it }
             if (candidateTypeClassId != baseTypeClassId) return false
             if (candidateTypeClassId == StandardClassIds.Array) {
                 assert(candidateType.typeArguments.size == 1) {
@@ -105,7 +107,10 @@ class JavaOverrideChecker internal constructor(
             // Now we have to check type arguments equality, with some exceptions (note that in Kotlin 2.0-2.1 we didn't check arguments at all)
             if (candidateType.typeArguments.size != baseType.typeArguments.size) return false
             return candidateType.typeArguments.zip(baseType.typeArguments).withIndex().all { (index, pair) ->
-                val typeParameterSymbol = candidateLookupTag.toSymbol(session)?.typeParameterSymbols[index]
+                // We prefer read-only classes here as they have out variance
+                val varianceLookupTag = baseLookupTag.toSymbol(session)?.takeIf { JavaToKotlinClassMap.isReadOnly(it.classId) }
+                    ?: candidateLookupTag.toSymbol(session)
+                val typeParameterSymbol = varianceLookupTag?.typeParameterSymbols[index]
                 val variance = typeParameterSymbol?.variance ?: Variance.INVARIANT
                 val (ct, bt) = pair
                 when {
@@ -132,6 +137,10 @@ class JavaOverrideChecker internal constructor(
             ProjectionKind.OUT ->
                 // We take upper bound as Any! vs Any? should be correct
                 type!!.upperBoundIfFlexible() == typeParameterSymbol?.resolvedBounds?.singleOrNull()?.coneType?.upperBoundIfFlexible()
+            ProjectionKind.INVARIANT -> if (typeParameterSymbol?.variance == Variance.OUT_VARIANCE) {
+                // invariant projection with out variance is equivalent to out projection
+                type!!.upperBoundIfFlexible() == typeParameterSymbol.resolvedBounds.singleOrNull()?.coneType?.upperBoundIfFlexible()
+            } else false
             else ->
                 false
         }
