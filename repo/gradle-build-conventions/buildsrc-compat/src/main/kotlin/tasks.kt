@@ -160,6 +160,10 @@ fun Project.projectTest(
         project.dependencies {
             "testImplementation"(project(":compiler:tests-mutes:mutes-junit5"))
         }
+    } else {
+        project.dependencies {
+            "testImplementation"(project(":compiler:tests-mutes:mutes-junit4"))
+        }
     }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
@@ -171,6 +175,12 @@ fun Project.projectTest(
         inputs.dir(File(rootDir, "build/ideaHomeForTests")).withPathSensitivity(PathSensitivity.RELATIVE)
 
         muteWithDatabase()
+        if (jUnitMode == JUnitMode.JUnit4) {
+            jvmArgs(
+                "-javaagent:${classpath.find { it.name.contains("junit-foundation") }?.absolutePath ?:
+                error("junit-foundation not found in ${classpath.joinToString("\n")}")}"
+            )
+        }
 
         doFirst {
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst
