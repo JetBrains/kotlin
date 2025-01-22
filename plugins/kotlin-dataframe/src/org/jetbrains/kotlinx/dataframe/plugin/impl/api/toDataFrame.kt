@@ -131,6 +131,18 @@ class Properties0 : AbstractInterpreter<Unit>() {
     }
 }
 
+class ToDataFrameDslStringInvoke : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
+    val Arguments.receiver: String by arg()
+    val Arguments.builder by dsl()
+
+    override fun Arguments.interpret() {
+        val addDsl = CreateDataFrameDslImplApproximation()
+        builder(addDsl, emptyMap())
+        dsl.columns.add(SimpleColumnGroup(receiver, addDsl.columns))
+    }
+}
+
 class CreateDataFrameConfiguration {
     var maxDepth = DEFAULT_MAX_DEPTH
     var traverseConfiguration: TraverseConfiguration = TraverseConfiguration()
