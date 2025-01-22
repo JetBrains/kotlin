@@ -71,8 +71,9 @@ Resolution of a lambda's body when some input types of the lambda are not proper
 ## PCLA entry point
 
 A lambda is resolved in PCLA mode when the following conditions apply:
+- The given call tree has to be completed in the `FULL` mode.
 - There are no other ways to infer new constraints for any type variable of the given call tree.
-  - This condition necessitates that the given call tree has to be completed in `FULL` mode.
+  - **NOTE:** this is only possible in the `FULL` mode; hence the previous condition
 - *At least one input type of the lambda contains not-fixed type variables as type arguments:*
   - for example, the following lambdas are suitable for PCLA:
     - `MutableList<Ev>.() -> Unit`
