@@ -35,14 +35,22 @@ class UpdateTestDataHandler(
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (enabled || System.getProperty("kotlin.test.update.test.data") == "true") {
-            val assertationFailures = failedAssertions
-                .flatMap { (it.cause as? MultipleFailuresError)?.failures ?: listOf(it.cause) }
-                .filterIsInstance<AssertionFailedError>()
-            for (failure in assertationFailures) {
-                val path = (failure.expected?.value as? FileInfo)?.path ?: continue
-                File(path).writeText(failure.actual.stringRepresentation)
+            failedAssertions.forEach {
+                it.cause.tryUpdateTestData()
             }
         }
         return failedAssertions
     }
+}
+
+fun Throwable.tryUpdateTestData() {
+    when {
+        this is AssertionFailedError -> tryUpdateTestData()
+        this is MultipleFailuresError -> this.failures.forEach { it.tryUpdateTestData() }
+    }
+}
+
+fun AssertionFailedError.tryUpdateTestData() {
+    val path = (expected?.value as? FileInfo)?.path ?: return
+    File(path).writeText(actual.stringRepresentation)
 }
