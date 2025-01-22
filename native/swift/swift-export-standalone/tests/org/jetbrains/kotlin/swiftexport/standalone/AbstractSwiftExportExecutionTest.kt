@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider.getTestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.io.File
@@ -57,6 +59,9 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ): TestExecutable {
+        val configs = testRunSettings.configurables as AppleConfigurables
+        val sysFrameworksRoot = configs.absoluteTargetSysRoot + "/../../Library/Frameworks"
+
         val swiftExtraOpts = swiftModules.flatMap {
             listOf(
                 "-I", it.rootDir.absolutePath,
@@ -67,14 +72,16 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
             "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")}",
+
+            "-F", sysFrameworksRoot,
+            "-Xlinker", "-rpath", "-Xlinker", sysFrameworksRoot,
+            "-framework", "Testing"
         )
 
-        val provider = createTestProvider(buildDir(testName), testSources)
         val success = SwiftCompilation(
             testRunSettings,
             testSources + listOf(
-                provider,
-                testSuiteDir.resolve("main.swift")
+                testSuiteDir.resolve("main-testing.swift")
             ),
             TestCompilationArtifact.Executable(buildDir(testName).resolve("swiftTestExecutable")),
             swiftExtraOpts,
