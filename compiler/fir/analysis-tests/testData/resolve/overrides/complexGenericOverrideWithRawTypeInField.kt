@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
 
 // FILE: StackJava.java
 public class StackJava {

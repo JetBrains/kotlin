@@ -4630,6 +4630,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("complexGenericOverrideWithRawTypeLegacy.kt")
+      public void testComplexGenericOverrideWithRawTypeLegacy() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("genericOverrideWithRawType.kt")
       public void testGenericOverrideWithRawType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/genericOverrideWithRawType.kt");

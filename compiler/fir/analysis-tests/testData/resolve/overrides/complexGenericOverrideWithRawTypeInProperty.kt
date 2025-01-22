@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
 
 // FILE: base.kt
 

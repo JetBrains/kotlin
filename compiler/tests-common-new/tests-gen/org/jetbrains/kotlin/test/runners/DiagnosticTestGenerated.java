@@ -24367,6 +24367,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("complexGenericOverrideLegacy.kt")
+      public void testComplexGenericOverrideLegacy() {
+        runTest("compiler/testData/diagnostics/tests/j+k/complexGenericOverrideLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("computeIfAbsentConcurrent.kt")
       public void testComputeIfAbsentConcurrent() {
         runTest("compiler/testData/diagnostics/tests/j+k/computeIfAbsentConcurrent.kt");
@@ -32292,6 +32298,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature3.kt")
       public void testInheritingJavaClassWithGenericClashInOverrideSignature3() {
         runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature3.kt");
+      }
+
+      @Test
+      @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignatureLegacy.kt")
+      public void testInheritingJavaClassWithGenericClashInOverrideSignatureLegacy() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignatureLegacy.kt");
       }
 
       @Test

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
@@ -61,7 +63,10 @@ class FirClassSubstitutionScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-            val function = if (rawClassSymbol != null && !original.dependsOnRawClassSymbol()) {
+            val function = if (rawClassSymbol != null &&
+                session.languageVersionSettings.supportsFeature(LanguageFeature.ProperHandlingOfGenericAndRawTypesInJavaOverrides) &&
+                !original.dependsOnRawClassSymbol()
+            ) {
                 original
             } else {
                 substitutionOverrideCache.overridesForFunctions.getValue(original, this)

@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
 // ISSUE: KT-55822
 // FILE: A.java
 import java.util.List;

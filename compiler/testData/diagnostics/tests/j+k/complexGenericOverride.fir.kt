@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
 // ISSUE: KT-24239
 
 // FILE: StackJava.java
