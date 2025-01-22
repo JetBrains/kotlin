@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.support.serviceOf
+
 plugins {
     java
 }
@@ -94,6 +96,97 @@ sourceSets {
     "test" {}
 }
 
-registerSwiftExportEmbeddableValidationTasks(runtimeJar(rewriteDefaultJarDepsToShadedCompiler()))
+val swiftExportEmbeddableJar = runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
+registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJar)
 sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
 javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
+
+/**
+ * Run swift-export-standalone tests against swift-export-embeddable and its runtime classpath to reproduce the environment in KGP
+ *
+ * Make sure to run these tests against ProGuarded kotlin-compiler-embeddable e.g.
+ * ./gradlew :native:swift:swift-export-embeddable:testSwiftExportStandaloneWithEmbeddable --info -Pkotlin.native.enabled=true -Pteamcity=true
+ */
+val unarchivedStandaloneTestClasses = registerUnarchiveTask(
+    "unarchiveTestClasses",
+    files(
+        configurations.detachedConfiguration().apply {
+            isTransitive = false
+            dependencies.add(project.dependencies.projectTests(":native:swift:swift-export-standalone"))
+        }
+    )
+)
+
+val shadedIntransitiveTestDependenciesJar = rewriteDepsToShadedJar(
+    run {
+        val testDependenciesClasspath = configurations.detachedConfiguration().apply {
+            // These dependencies must not be transitive to accurately replicate SwiftExportAction runtime classpath
+            isTransitive = false
+            dependencies.add(project.dependencies.create(commonDependency("commons-lang:commons-lang")))
+            dependencies.add(project.dependencies.project(":native:executors"))
+            dependencies.add(project.dependencies.project(":kotlin-compiler-runner-unshaded"))
+            dependencies.add(project.dependencies.project(":kotlin-test"))
+
+            dependencies.add(project.dependencies.projectTests(":native:native.tests"))
+            dependencies.add(project.dependencies.projectTests(":compiler:tests-compiler-utils"))
+            dependencies.add(project.dependencies.projectTests(":compiler:tests-common"))
+            dependencies.add(project.dependencies.projectTests(":compiler:tests-common-new"))
+            dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure"))
+            dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure-utils"))
+        }
+        val unarchiveTask = registerUnarchiveTask(
+            "unarchiveTestDependencies",
+            files(testDependenciesClasspath)
+        )
+
+        tasks.register<Jar>("testDependenciesJar") {
+            from(unarchiveTask)
+            // The test classes themselves must also be shaded against the embeddable compiler
+            from(unarchivedStandaloneTestClasses)
+            destinationDirectory.set(project.layout.buildDirectory.dir("testDependencies"))
+        }
+    },
+    embeddableCompilerDummyForDependenciesRewriting("shadedTestDependencies") {
+        destinationDirectory.set(project.layout.buildDirectory.dir("testDependenciesShaded"))
+    }
+)
+
+val transitiveTestRuntimeClasspath = configurations.detachedConfiguration().apply {
+    dependencies.add(libs.junit.jupiter.engine.get())
+}
+
+val testTask = nativeTest("testSwiftExportStandaloneWithEmbeddable", null) {
+    classpath = files(
+        swiftExportEmbeddableJar,
+        configurations.runtimeClasspath,
+        shadedIntransitiveTestDependenciesJar,
+        transitiveTestRuntimeClasspath,
+    )
+    testClassesDirs = files(
+        unarchivedStandaloneTestClasses,
+    )
+}
+
+fun registerUnarchiveTask(
+    taskName: String,
+    dependencyJars: FileCollection
+): TaskProvider<Task> {
+    val output = layout.buildDirectory.dir(taskName)
+    val archiveOperations: ArchiveOperations = serviceOf<ArchiveOperations>()
+    val fsOperations: FileSystemOperations = serviceOf<FileSystemOperations>()
+
+    return tasks.register(taskName) {
+        inputs.files(dependencyJars)
+        outputs.dir(output)
+
+        doLast {
+            fsOperations.copy {
+                duplicatesStrategy = DuplicatesStrategy.WARN
+                dependencyJars.forEach {
+                    from(archiveOperations.zipTree(it).matching { exclude("META-INF/MANIFEST.MF") })
+                }
+                into(output)
+            }
+        }
+    }
+}
