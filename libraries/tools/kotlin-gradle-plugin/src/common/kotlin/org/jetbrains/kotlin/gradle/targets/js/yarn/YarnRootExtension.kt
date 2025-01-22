@@ -9,22 +9,31 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.RESTORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.STORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
+import javax.inject.Inject
 
-open class YarnRootExtension(
+open class YarnRootExtension
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
     val project: Project,
     val nodeJsRoot: NodeJsRootExtension,
     private val yarnSpec: YarnRootEnvSpec,
+    private val objects: ObjectFactory,
 ) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
     init {
         check(project == project.rootProject)
@@ -35,7 +44,7 @@ open class YarnRootExtension(
     }
 
     override val packageManager: Yarn by lazy {
-        Yarn()
+        Yarn(objects)
     }
 
     override val environment: YarnEnvironment by lazy {

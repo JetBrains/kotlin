@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import java.io.File
 
-abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
+abstract class YarnBasics internal constructor(
+    private val objects: ObjectFactory,
+) : NpmApiExecution<YarnEnvironment> {
 
     fun yarnExec(
         services: ServiceRegistry,
@@ -21,9 +24,9 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
         yarn: YarnEnvironment,
         dir: File,
         description: String,
-        args: List<String>
+        args: List<String>,
     ) {
-        services.execWithProgress(description) { exec ->
+        services.execWithProgress(description, objects) { exec ->
             val arguments = args
                 .plus(
                     if (logger.isDebugEnabled) "--verbose" else ""
@@ -35,7 +38,7 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
             val nodeExecutable = nodeJs.nodeExecutable
             if (!yarn.ignoreScripts) {
                 val nodePath = File(nodeExecutable).parent
-                exec.environment(
+                exec.launchOpts.environment.put(
                     "PATH",
                     "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
                 )
@@ -43,15 +46,14 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
 
             val command = yarn.executable
             if (yarn.standalone) {
-                exec.executable = command
-                exec.args = arguments
+                exec.launchOpts.executable.set(command)
+                exec.setArguments(arguments)
             } else {
-                exec.executable = nodeExecutable
-                exec.args = listOf(command) + arguments
+                exec.launchOpts.executable.set(nodeExecutable)
+                exec.setArguments(listOf(command) + arguments)
             }
 
-            exec.workingDir = dir
+            exec.launchOpts.workingDir.fileValue(dir)
         }
-
     }
 }

@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
 import javax.inject.Inject
 
@@ -34,10 +36,9 @@ abstract class KotlinNativeTest
 constructor(
     objects: ObjectFactory,
     private val providers: ProviderFactory,
-) : KotlinTest() {
+) : KotlinTest(objects, providers) {
 
-    @Suppress("LeakingThis")
-    private val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
+    private val processOptions: ProcessLaunchOptions = objects.processLaunchOptions()
 
     @get:Internal
     val executableProperty: Property<FileCollection> = objects.property(FileCollection::class.java)
@@ -71,16 +72,18 @@ constructor(
 
     @get:Input
     var workingDir: String
-        get() = processOptions.workingDir.absolutePath
+        get() = processOptions.workingDir.get().asFile.absolutePath
         set(value) {
-            processOptions.workingDir = File(value)
+            processOptions.workingDir.set(File(value))
         }
 
     @get:Internal
     var environment: Map<String, Any>
-        get() = processOptions.environment
+        get() = processOptions.environment.get()
         set(value) {
-            processOptions.environment = value
+            processOptions.environment.set(providers.provider {
+                value.mapValues { it.value.toString() }
+            })
         }
 
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
@@ -90,8 +93,6 @@ constructor(
     @get:Input
     val trackedEnvironment: Map<String, Any>
         get() = environment.filterKeys(trackedEnvironmentVariablesKeys::contains)
-
-    private fun <T> Property<T>.set(providerLambda: () -> T) = set(project.provider { providerLambda() })
 
     fun executable(file: File) {
         executableProperty.set(project.files(file))
@@ -119,7 +120,7 @@ constructor(
 
     @JvmOverloads
     fun environment(name: String, value: Any, tracked: Boolean = true) {
-        processOptions.environment(name, value)
+        processOptions.environment.put(name, providers.provider { value.toString() })
         if (tracked) {
             trackedEnvironmentVariablesKeys.add(name)
         }
@@ -138,9 +139,7 @@ constructor(
     protected abstract val testCommand: TestCommand
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
-        val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
-        processOptions.copyTo(extendedForkOptions)
-        extendedForkOptions.executable = testCommand.executable
+        processOptions.executable.set(testCommand.executable)
 
         val clientSettings = TCServiceMessagesClientSettings(
             name,
@@ -156,7 +155,12 @@ constructor(
 
         val cliArgs = testCommand.cliArgs("TEAMCITY", checkExitCode, includePatterns, excludePatterns, args)
 
-        return TCServiceMessagesTestExecutionSpec(extendedForkOptions, cliArgs, checkExitCode, clientSettings)
+        return TCServiceMessagesTestExecutionSpec(
+            processLaunchOpts = processOptions,
+            processArgs = cliArgs,
+            checkExitCode = checkExitCode,
+            clientSettings = clientSettings,
+        )
     }
 
     protected abstract class TestCommand {
@@ -288,12 +292,12 @@ constructor(
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val origin = super.createTestExecutionSpec()
         return NativeAppleSimulatorTCServiceMessagesTestExecutionSpec(
-            origin.forkOptions,
-            origin.args,
-            origin.checkExitCode,
-            origin.clientSettings,
-            origin.dryRunArgs,
-            standalone,
+            processLaunchOpts = origin.processLaunchOpts,
+            processArgs = origin.processArgs,
+            checkExitCode = origin.checkExitCode,
+            clientSettings = origin.clientSettings,
+            dryRunArgs = origin.dryRunArgs,
+            standaloneMode = standalone,
         )
     }
 }

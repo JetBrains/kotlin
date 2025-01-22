@@ -19,8 +19,6 @@ import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
-import org.gradle.process.internal.ExecHandle
-import org.gradle.process.internal.ExecHandleFactory
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
@@ -38,6 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandle
 import java.io.File
 import javax.inject.Inject
 
@@ -59,8 +58,13 @@ constructor(
     override val rules: KotlinWebpackRulesContainer =
         project.objects.webpackRulesContainer()
 
-    @get:Inject
-    open val execHandleFactory: ExecHandleFactory
+    @get:Internal
+    @Deprecated(
+        "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.",
+        ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+    )
+    @Suppress("unused")
+    open val execHandleFactory: Nothing
         get() = injected
 
     private val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
@@ -271,11 +275,11 @@ constructor(
             npmProject,
             logger,
             configFile.get(),
-            execHandleFactory,
             bin,
             webpackArgs,
             nodeArgs,
-            config
+            config,
+            objects,
         )
     }
 
@@ -333,5 +337,4 @@ constructor(
             process?.abort()
         }
     }
-
 }

@@ -5,25 +5,35 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.internal.service.ServiceRegistry
-import org.gradle.process.ExecResult
-import org.gradle.process.internal.ExecAction
-import org.gradle.process.internal.ExecActionFactory
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder
+import org.jetbrains.kotlin.gradle.utils.processes.ExecResult
+import org.jetbrains.kotlin.gradle.utils.processes.execHandleBuilder
 import java.io.ByteArrayOutputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import kotlin.concurrent.thread
 
-internal fun ServiceRegistry.execWithProgress(description: String, readStdErr: Boolean = false, body: (ExecAction) -> Unit): ExecResult {
+internal fun ServiceRegistry.execWithProgress(
+    description: String,
+    objects: ObjectFactory,
+    readStdErr: Boolean = false,
+    body: (ExecHandleBuilder) -> Unit,
+): ExecResult {
     val stderr = ByteArrayOutputStream()
     val stdout = StringBuilder()
     val stdInPipe = PipedInputStream()
-    val exec = get(ExecActionFactory::class.java).newExecAction()
-    body(exec)
+    val processRunnerBuilder = objects.execHandleBuilder {
+        standardOutput = PipedOutputStream(stdInPipe)
+        redirectErrorStream = readStdErr
+        ignoreExitValue = true
+        body(this)
+    }
+    val processRunner = processRunnerBuilder.build()
     return operation(description) {
         progress(description)
-        exec.standardOutput = PipedOutputStream(stdInPipe)
         val outputReaderThread = thread(name = "output reader for [$description]") {
             stdInPipe.reader().use { reader ->
                 val buffer = StringBuilder()
@@ -39,17 +49,13 @@ internal fun ServiceRegistry.execWithProgress(description: String, readStdErr: B
                             buffer.setLength(0)
                         }
                         stdout.append(ch)
-                    } else buffer.append(ch)
+                    } else {
+                        buffer.append(ch)
+                    }
                 }
             }
         }
-        if (readStdErr) {
-            exec.errorOutput = exec.standardOutput
-        } else {
-            exec.errorOutput = System.err
-        }
-        exec.isIgnoreExitValue = true
-        val result = exec.execute()
+        val result = processRunner.execute()
         outputReaderThread.join()
         if (result.exitValue != 0) {
             error(
@@ -66,14 +72,16 @@ internal fun ServiceRegistry.execWithProgress(description: String, readStdErr: B
 
 internal fun ServiceRegistry.execWithErrorLogger(
     description: String,
-    body: (ExecAction, ProgressLogger) -> Pair<TeamCityMessageCommonClient, TeamCityMessageCommonClient>
+    objects: ObjectFactory,
+    body: (ExecHandleBuilder, ProgressLogger) -> Pair<TeamCityMessageCommonClient, TeamCityMessageCommonClient>,
 ): ExecResult {
-    val exec = get(ExecActionFactory::class.java).newExecAction()
     return operation(description) {
         progress(description)
-        val (standardClient, errorClient) = body(exec, this)
-        exec.isIgnoreExitValue = true
-        val result = exec.execute()
+        val processHandleBuilder = objects.execHandleBuilder()
+        val (standardClient, errorClient) = body(processHandleBuilder, this@operation)
+        processHandleBuilder.ignoreExitValue = true
+        val processHandle = processHandleBuilder.build()
+        val result = processHandle.execute()
         if (result.exitValue != 0) {
             error(
                 errorClient.testFailedMessage()

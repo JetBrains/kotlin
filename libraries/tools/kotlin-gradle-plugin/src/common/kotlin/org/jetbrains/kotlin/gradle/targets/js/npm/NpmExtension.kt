@@ -10,18 +10,25 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
+import javax.inject.Inject
 
-open class NpmExtension(
+open class NpmExtension
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
     val project: Project,
-    val nodeJsRoot: NodeJsRootExtension
+    val nodeJsRoot: NodeJsRootExtension,
+    private val objects: ObjectFactory,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {
     init {
         check(project == project.rootProject)
@@ -29,7 +36,7 @@ open class NpmExtension(
     }
 
     override val packageManager: Npm by lazy {
-        Npm()
+        Npm(objects)
     }
 
     override val environment: NpmEnvironment by lazy {

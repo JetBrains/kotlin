@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
-class Npm : NpmApiExecution<NpmEnvironment> {
+class Npm internal constructor(
+    private val objects: ObjectFactory,
+) : NpmApiExecution<NpmEnvironment> {
 
     override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> {
         return listOf(
@@ -65,16 +69,14 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         packageManagerEnvironment: NpmEnvironment,
         cliArgs: List<String>,
     ) {
-        val nodeJsWorldDir = nodeJs.rootPackageDir.getFile()
-
         npmExec(
-            services,
-            logger,
-            nodeJs,
-            packageManagerEnvironment,
-            nodeJsWorldDir,
-            NpmApiExecution.resolveOperationDescription("npm"),
-            cliArgs
+            services = services,
+            logger = logger,
+            nodeJs = nodeJs,
+            environment = packageManagerEnvironment,
+            dir = nodeJs.rootPackageDir.map { it.asFile },
+            description = NpmApiExecution.resolveOperationDescription("npm"),
+            args = cliArgs,
         )
     }
 
@@ -87,32 +89,50 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         description: String,
         args: List<String>,
     ) {
-        services.execWithProgress(description) { exec ->
-            val arguments = listOf("install") + args
-                .plus(
-                    if (logger.isDebugEnabled) "--verbose" else ""
-                )
-                .plus(
-                    if (environment.ignoreScripts) "--ignore-scripts" else ""
-                ).filter { it.isNotEmpty() }
+        npmExec(
+            services = services,
+            logger = logger,
+            nodeJs = nodeJs,
+            environment = environment,
+            dir = objects.directoryProperty().fileValue(dir).asFile,
+            description = description,
+            args = args
+        )
+    }
+
+    fun npmExec(
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NodeJsEnvironment,
+        environment: NpmEnvironment,
+        dir: Provider<File>,
+        description: String,
+        args: List<String>,
+    ) {
+        services.execWithProgress(description, objects = objects) { exec ->
+            val arguments: List<String> = mutableListOf<String>().apply {
+                add("install")
+                addAll(args)
+                if (logger.isDebugEnabled) add("--verbose")
+                if (environment.ignoreScripts) add("--ignore-scripts")
+            }.filter { it.isNotEmpty() }
 
             if (!environment.standalone) {
                 val nodeExecutable = nodeJs.nodeExecutable
                 val nodePath = File(nodeExecutable).parent
-                exec.environment(
+                exec.launchOpts.environment.put(
                     "PATH",
-                    "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
+                    "$nodePath${File.pathSeparator}${System.getenv("PATH")}",
                 )
             }
 
             val command = environment.executable
 
-            exec.executable = command
-            exec.args = arguments
+            exec.launchOpts.executable.set(command)
+            exec.launchOpts.workingDir.fileProvider(dir)
 
-            exec.workingDir = dir
+            exec.setArguments(arguments)
         }
-
     }
 
     private fun saveRootProjectWorkspacesPackageJson(

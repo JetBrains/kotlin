@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.AbstractTestTask
-import org.gradle.process.internal.ExecHandleFactory
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -20,7 +22,13 @@ import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class KotlinTest : AbstractTestTask() {
+abstract class KotlinTest
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) : AbstractTestTask() {
     @Input
     @Optional
     var targetName: String? = null
@@ -43,12 +51,22 @@ abstract class KotlinTest : AbstractTestTask() {
     val excludePatterns: Set<String>
         @Input get() = excludes + filterExt.excludePatterns
 
-    @get:Inject
-    open val fileResolver: FileResolver
+    @get:Internal
+    @Deprecated(
+        "FileResolver is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.",
+        ReplaceWith("TODO(\"FileResolver is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+    )
+    @Suppress("unused")
+    open val fileResolver: Nothing
         get() = injected
 
-    @get:Inject
-    open val execHandleFactory: ExecHandleFactory
+    @get:Internal
+    @Deprecated(
+        "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.",
+        ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+    )
+    @Suppress("unused")
+    open val execHandleFactory: Nothing
         get() = injected
 
     private val runListeners = mutableListOf<KotlinTestRunnerListener>()
@@ -63,10 +81,11 @@ abstract class KotlinTest : AbstractTestTask() {
     private val ignoreTcsmOverflow = PropertiesProvider(project).ignoreTcsmOverflow
 
     // This method is called on execution time
-    override fun createTestExecuter() = TCServiceMessagesTestExecutor(
-        execHandleFactory,
-        runListeners,
-        ignoreTcsmOverflow.get(),
-        ignoreRunFailures,
-    )
+    override fun createTestExecuter(): TestExecuter<*> =
+        TCServiceMessagesTestExecutor(
+            runListeners,
+            ignoreTcsmOverflow.get(),
+            ignoreRunFailures,
+            objects,
+        )
 }

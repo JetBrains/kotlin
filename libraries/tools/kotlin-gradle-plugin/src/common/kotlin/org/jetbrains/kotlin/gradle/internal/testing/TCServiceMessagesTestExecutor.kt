@@ -8,21 +8,23 @@ package org.jetbrains.kotlin.gradle.internal.testing
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
-import org.gradle.process.ExecResult
-import org.gradle.process.ProcessForkOptions
-import org.gradle.process.internal.ExecHandle
-import org.gradle.process.internal.ExecHandleFactory
+import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandle
+import org.jetbrains.kotlin.gradle.utils.processes.ExecResult
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
+import org.jetbrains.kotlin.gradle.utils.processes.execHandleBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.OutputStream
 
 open class TCServiceMessagesTestExecutionSpec(
-    val forkOptions: ProcessForkOptions,
-    val args: List<String>,
+    internal val processLaunchOpts: ProcessLaunchOptions,
+    val processArgs: List<String>,
     val checkExitCode: Boolean,
     val clientSettings: TCServiceMessagesClientSettings,
     val dryRunArgs: List<String>? = null,
 ) : TestExecutionSpec {
+
     internal open fun createClient(
         testResultProcessor: TestResultProcessor,
         log: Logger,
@@ -30,66 +32,78 @@ open class TCServiceMessagesTestExecutionSpec(
         TCServiceMessagesClient(testResultProcessor, clientSettings, log)
 
     internal open fun wrapExecute(body: () -> Unit) = body()
+
     internal open fun showSuppressedOutput() = Unit
 }
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing")
 
 class TCServiceMessagesTestExecutor(
-    val execHandleFactory: ExecHandleFactory,
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreTcsmOverflow: Boolean,
     val ignoreRunFailures: Boolean,
+    private val objects: ObjectFactory,
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
-    private lateinit var execHandle: ExecHandle
-    var outputReaderThread: Thread? = null
-    var shouldStop = false
 
-    override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
+    private lateinit var execHandle: ExecHandle
+
+    override fun execute(
+        spec: TCServiceMessagesTestExecutionSpec,
+        testResultProcessor: TestResultProcessor,
+    ) {
         spec.wrapExecute {
             val client = spec.createClient(testResultProcessor, log)
 
             if (spec.dryRunArgs != null) {
-                val exec = execHandleFactory.newExec()
-                spec.forkOptions.copyTo(exec)
-                // get rid of redundant output during dry-run
-                exec.standardOutput = object : OutputStream() {
-                    override fun write(b: Int) {
-                        // do nothing
-                    }
-                }
-                exec.args = spec.dryRunArgs
-                execHandle = exec.build()
+                execHandle = objects.execHandleBuilder {
+                    setArguments(spec.dryRunArgs)
 
-                execHandle.start()
-                val result: ExecResult = execHandle.waitForFinish()
+                    launchOpts {
+                        workingDir.set(spec.processLaunchOpts.workingDir)
+                        executable.set(spec.processLaunchOpts.executable)
+                        environment.putAll(spec.processLaunchOpts.environment)
+                    }
+
+                    // get rid of redundant output during dry-run
+                    standardOutput = nullOutputStream
+
+                    ignoreExitValue = true
+                }.build()
+
+                val result = execHandle.execute()
                 if (result.exitValue != 0) {
                     error(client.testFailedMessage(execHandle, result.exitValue))
                 }
             }
 
             try {
-                val exec = execHandleFactory.newExec()
-                spec.forkOptions.copyTo(exec)
-                exec.args = spec.args
-                exec.standardOutput = TCServiceMessageOutputStreamHandler(
-                    client,
-                    { spec.showSuppressedOutput() },
-                    log,
-                    ignoreTcsmOverflow
-                )
-                exec.errorOutput = TCServiceMessageOutputStreamHandler(
-                    client,
-                    { spec.showSuppressedOutput() },
-                    log,
-                    ignoreTcsmOverflow
-                )
-                execHandle = exec.build()
+                execHandle = objects.execHandleBuilder {
+                    setArguments(spec.processArgs)
+
+                    launchOpts {
+                        workingDir.set(spec.processLaunchOpts.workingDir)
+                        executable.set(spec.processLaunchOpts.executable)
+                        environment.putAll(spec.processLaunchOpts.environment)
+                    }
+
+                    standardOutput = TCServiceMessageOutputStreamHandler(
+                        client,
+                        { spec.showSuppressedOutput() },
+                        log,
+                        ignoreTcsmOverflow
+                    )
+                    errorOutput = TCServiceMessageOutputStreamHandler(
+                        client,
+                        { spec.showSuppressedOutput() },
+                        log,
+                        ignoreTcsmOverflow
+                    )
+                    ignoreExitValue = true
+                }.build()
 
                 lateinit var result: ExecResult
                 client.root {
-                    execHandle.start()
-                    result = execHandle.waitForFinish()
+                    result = execHandle.execute()
                 }
 
                 if (spec.checkExitCode && result.exitValue != 0) {
@@ -114,10 +128,20 @@ class TCServiceMessagesTestExecutor(
     }
 
     override fun stopNow() {
-        shouldStop = true
         if (::execHandle.isInitialized) {
             execHandle.abort()
         }
-        outputReaderThread?.join()
     }
 }
+
+/**
+ * Returns a new [OutputStream] which discards all bytes.
+ *
+ * Replace with [OutputStream.nullOutputStream] when min JDK is 11+.
+ */
+private val nullOutputStream: OutputStream =
+    object : OutputStream() {
+        override fun write(b: Int) {
+            // do nothing
+        }
+    }

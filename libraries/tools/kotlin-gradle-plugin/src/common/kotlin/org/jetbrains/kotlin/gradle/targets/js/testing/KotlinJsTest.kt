@@ -8,36 +8,36 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
-import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import javax.inject.Inject
 
 @DisableCachingByDefault
 abstract class KotlinJsTest
+@InternalKotlinGradlePluginApi
 @Inject
 constructor(
     @Transient
     @Internal
     override var compilation: KotlinJsIrCompilation,
-) : KotlinTest(),
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) : KotlinTest(objects, providers),
     RequiresNpmDependencies {
-    @Transient
-    private val nodeJs = project.kotlinNodeJsEnvSpec
-
-    private val nodeExecutable = nodeJs.executable
 
     @Input
     var environment = mutableMapOf<String, String>()
@@ -103,6 +103,7 @@ constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
+
     @Deprecated("Use useMocha instead", ReplaceWith("useMocha()"))
     fun useNodeJs() = useMocha()
 
@@ -119,7 +120,7 @@ constructor(
     fun useMocha() = useMocha {}
     fun useMocha(body: KotlinMocha.() -> Unit) =
         if (compilation.wasmTarget == null) {
-            use(KotlinMocha(compilation, path), body)
+            use(KotlinMocha(compilation, path, objects, providers), body)
         } else {
             logger.warn("Mocha test framework for Wasm target is not supported. For KotlinWasmNode used")
             testFramework
@@ -132,10 +133,11 @@ constructor(
     }
 
     fun useKarma() = useKarma {}
-    fun useKarma(body: KotlinKarma.() -> Unit) = use(
-        KotlinKarma(compilation, { services }, path),
-        body
-    )
+    fun useKarma(body: KotlinKarma.() -> Unit): KotlinKarma =
+        use(
+            KotlinKarma(compilation, { services }, path, objects, providers),
+            body
+        )
 
     fun useKarma(fn: Action<KotlinKarma>) {
         useKarma {
@@ -155,17 +157,15 @@ constructor(
     }
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
-        val forkOptions = DefaultProcessForkOptions(fileResolver)
-        forkOptions.workingDir = testFramework!!.workingDir.getFile()
-        forkOptions.executable = testFramework!!.executable.get()
-
-        environment.forEach { (key, value) ->
-            forkOptions.environment(key, value)
+        val launchOpts = objects.processLaunchOptions {
+            workingDir.set(this@KotlinJsTest.testFramework!!.workingDir)
+            executable.set(this@KotlinJsTest.testFramework!!.executable)
+            environment.putAll(this@KotlinJsTest.environment)
         }
 
         return testFramework!!.createTestExecutionSpec(
             task = this,
-            forkOptions = forkOptions,
+            launchOpts = launchOpts,
             nodeJsArgs = nodeJsArgs,
             debug = debug
         )

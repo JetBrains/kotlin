@@ -13,10 +13,10 @@ import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdErr
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
-import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandle
 import org.slf4j.Logger
 import java.text.ParseException
 
@@ -205,7 +205,7 @@ internal open class TCServiceMessagesClient(
 
     private fun TestNode.output(
         destination: TestOutputEvent.Destination,
-        text: String
+        text: String,
     ) {
         allOutput.append(text)
         if (settings.treatFailedTestOutputAsStacktrace) {
@@ -237,7 +237,7 @@ internal open class TCServiceMessagesClient(
 
             check(it.localId == assertLocalId) {
                 "Bad TCSM: unexpected node to close `$assertLocalId`, expected `${it.localId}`, stack: ${
-                leaf.collectParents().joinToString("") { item -> "\n - ${item.localId}" }
+                    leaf.collectParents().joinToString("") { item -> "\n - ${item.localId}" }
                 }\n"
             }
         }
@@ -289,7 +289,7 @@ internal open class TCServiceMessagesClient(
      */
     abstract inner class Node(
         var parent: Node? = null,
-        val localId: String
+        val localId: String,
     ) {
         val id: String = if (parent != null) "${parent!!.id}/$localId" else localId
 
@@ -466,7 +466,7 @@ internal open class TCServiceMessagesClient(
         methodName: String,
         displayName: String,
         localId: String,
-        ignored: Boolean = false
+        ignored: Boolean = false,
     ) : Node(parent, localId) {
         val stackTraceOutput by lazy { StringBuilder() }
         val allOutput by lazy { StringBuilder() }
