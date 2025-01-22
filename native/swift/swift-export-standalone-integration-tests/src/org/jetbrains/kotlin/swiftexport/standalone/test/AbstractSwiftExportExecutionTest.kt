@@ -15,13 +15,22 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProv
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import java.io.File
 
+/**
+ * Abstract swift export execution test
+ *
+ * Swift project provides a modern testing framework – swift-testing, integrated into SPM and Xcode.
+ * Unfortunately, those integrations aren't a good fit for us, for various reasons. Fortunately, swift-testing provides
+ * a separate ABI with a separate entrypoint, which we use here.
+ * See more at https://github.com/swiftlang/swift-testing/tree/main/Documentation/ABI.
+ * Harness is at native/native.tests/testData/framework/main-testing.swift
+ */
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
@@ -73,14 +82,16 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
             "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")}",
+
+            "-F", testRunSettings.systemFrameworksPath,
+            "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath,
+            "-framework", "Testing"
         )
 
-        val provider = createTestProvider(buildDir(testName), testSources)
         val success = SwiftCompilation(
             testRunSettings,
             testSources + listOf(
-                provider,
-                testSuiteDir.resolve("main.swift")
+                testSuiteDir.resolve("main-testing.swift")
             ),
             TestCompilationArtifact.Executable(buildDir(testName).resolve("swiftTestExecutable")),
             swiftExtraOpts,
