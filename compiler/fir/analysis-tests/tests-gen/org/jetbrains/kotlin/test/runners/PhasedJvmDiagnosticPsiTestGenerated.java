@@ -23503,6 +23503,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("complexGenericOverrideLegacy.kt")
+      public void testComplexGenericOverrideLegacy() {
+        runTest("compiler/testData/diagnostics/tests/j+k/complexGenericOverrideLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("computeIfAbsentConcurrent.kt")
       public void testComputeIfAbsentConcurrent() {
         runTest("compiler/testData/diagnostics/tests/j+k/computeIfAbsentConcurrent.kt");
@@ -31062,6 +31068,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignature3.kt")
       public void testInheritingJavaClassWithGenericClashInOverrideSignature3() {
         runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignature3.kt");
+      }
+
+      @Test
+      @TestMetadata("InheritingJavaClassWithGenericClashInOverrideSignatureLegacy.kt")
+      public void testInheritingJavaClassWithGenericClashInOverrideSignatureLegacy() {
+        runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithGenericClashInOverrideSignatureLegacy.kt");
       }
 
       @Test
@@ -53802,6 +53814,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("complexGenericOverrideWithRawTypeInProperty.kt")
       public void testComplexGenericOverrideWithRawTypeInProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeInProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("complexGenericOverrideWithRawTypeLegacy.kt")
+      public void testComplexGenericOverrideWithRawTypeLegacy() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/complexGenericOverrideWithRawTypeLegacy.kt");
       }
 
       @Test

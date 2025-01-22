@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
 // ISSUE: KT-74148
 // SCOPE_DUMP: C:foo
 // FIR_IDENTICAL

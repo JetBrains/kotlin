@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -91,7 +93,12 @@ class JavaOverrideChecker internal constructor(
             // For built-in collections various matching exceptions are possible,
             // like containsAll(Collection<?>) vs containsAll(Collection<E>)
             // or putAll(Map<? extends K, ?>) vs putAll(Map<? extends K, V>)
-            if (baseFromBuiltins) return true
+            // We do the same in pre-2.2 mode (as it worked so at this period of time in K2)
+            if (baseFromBuiltins ||
+                !session.languageVersionSettings.supportsFeature(LanguageFeature.ProperHandlingOfGenericAndRawTypesInJavaOverrides)
+            ) {
+                return true
+            }
             // Java spec (8.4.2, 8.4.8) says here that methods should either have the same signature,
             // or signature erasure for base method should be the same as signature (without erasure) for candidate method
             // So the candidate type (but not the base type) is allowed to be raw, but we checked it at the beginning of the function

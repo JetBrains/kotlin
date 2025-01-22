@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
 // SCOPE_DUMP: D:foo
 // FILE: A.java
 public interface A<T> {

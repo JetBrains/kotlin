@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
+// LANGUAGE: -ProperHandlingOfGenericAndRawTypesInJavaOverrides
 // ISSUE: KT-24239
 
 // FILE: StackJava.java
@@ -25,14 +25,14 @@ public class StackJava {
 }
 
 // FILE: test.kt
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MySubject<!> : StackJava.SubjectClass() {
+class MySubject : StackJava.SubjectClass() {
     fun foo() {
         this.anyMethod<StackJava.Some>(StackJava.Some());
-        this.anyMethod<StackJava.Some>(StackJava.Another());
-        this.anyMethod<StackJava.Some>(StackJava.Incorrect());
-        this.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>anyMethod<!>(StackJava.Incorrect())
-        this.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(StackJava.Incorrect())
-        this.anyMethod<StackJava.Incorrect>(StackJava.Incorrect())
-        this.bar<StackJava.Incorrect>(StackJava.Incorrect())
+        this.anyMethod<StackJava.Some>(<!ARGUMENT_TYPE_MISMATCH!>StackJava.Another()<!>);
+        this.anyMethod<StackJava.Some>(<!ARGUMENT_TYPE_MISMATCH!>StackJava.Incorrect()<!>);
+        this.<!CANNOT_INFER_PARAMETER_TYPE!>anyMethod<!>(<!ARGUMENT_TYPE_MISMATCH!>StackJava.Incorrect()<!>)
+        this.<!CANNOT_INFER_PARAMETER_TYPE!>bar<!>(<!ARGUMENT_TYPE_MISMATCH!>StackJava.Incorrect()<!>)
+        this.anyMethod<StackJava.Incorrect>(<!ARGUMENT_TYPE_MISMATCH!>StackJava.Incorrect()<!>)
+        this.bar<StackJava.Incorrect>(<!ARGUMENT_TYPE_MISMATCH!>StackJava.Incorrect()<!>)
     }
 }

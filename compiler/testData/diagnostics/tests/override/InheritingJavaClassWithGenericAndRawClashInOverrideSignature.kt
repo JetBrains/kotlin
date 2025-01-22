@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProperHandlingOfGenericAndRawTypesInJavaOverrides
 // ISSUE: KT-74148
 // FILE: A.java
 public abstract class A<T> {
