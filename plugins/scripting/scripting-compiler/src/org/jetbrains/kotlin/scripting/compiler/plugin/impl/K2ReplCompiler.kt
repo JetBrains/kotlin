@@ -197,12 +197,12 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         get() = moduleDataHistory
 
     override fun getModuleData(path: Path?): FirModuleData? {
-        val normalizedPath = path?.normalize()
-        return if (normalizedPath != null) {
-            pathToModuleData[normalizedPath]
-        } else {
-            null
+        val normalizedPath = path?.normalize() ?: return null
+        pathToModuleData[normalizedPath]?.let { return it }
+        for ((libPath, moduleData) in pathToModuleData) {
+            if (normalizedPath.startsWith(libPath)) return moduleData
         }
+        return null
     }
 
     fun addNewLibraryModuleDataIfNeeded(libraryPaths: List<Path>): Pair<FirModuleData?, List<Path>> {
@@ -288,7 +288,6 @@ private fun compileImpl(
         )
     }
 
-//    val (_, newClassPath) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
     val (libModuleData, newClassPath) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
 
 
@@ -319,7 +318,6 @@ private fun compileImpl(
         AbstractProjectFileSearchScope.EMPTY,
         state.projectEnvironment,
         createIncrementalCompilationSymbolProviders = { null },
-        // FirExtensionRegistrar.getInstances(project),
         extensionRegistrars,
         compilerConfiguration.languageVersionSettings,
         jvmTarget = JvmTarget.DEFAULT, // TODO: from script config
