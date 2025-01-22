@@ -251,12 +251,7 @@ private fun TestProject.buildWithAction(
             fail("Please don't set `enableGradleDebug = true` in teamcity run, this can fail build")
         }
 
-        val environmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace
-        val areEnvironmentalVariablesSpecified = environmentVariablesInstantiationBacktrace != null
-        if (runWithDebug && environmentVariablesInstantiationBacktrace != null) {
-            validateDebuggingSocketIsListeningForTestsWithEnv(environmentVariablesInstantiationBacktrace)
-        }
-
+        val connectSubprocessVMToDebugger = runWithDebug && environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace != null
         val allBuildArguments = commonBuildSetup(
             buildArguments = buildArguments,
             buildOptions = buildOptions,
@@ -264,17 +259,26 @@ private fun TestProject.buildWithAction(
             enableBuildScan = enableBuildScan,
             enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
             enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-            connectSubprocessVMToDebugger = runWithDebug && areEnvironmentalVariablesSpecified,
+            connectSubprocessVMToDebugger = connectSubprocessVMToDebugger,
             gradleVersion = gradleVersion,
             kotlinDaemonDebugPort = kotlinDaemonDebugPort
         )
         val gradleRunnerForBuild = gradleRunner
             .also { if (forceOutput.toBooleanFlag()) it.forwardOutput() }
             .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
-            .withDebug(runWithDebug && !areEnvironmentalVariablesSpecified)
+            .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
             .withArguments(allBuildArguments)
         withBuildSummary(allBuildArguments) {
-            val buildResult = gradleRunnerForBuild.action()
+            val buildResult = if (connectSubprocessVMToDebugger) {
+                validateDebuggingSocketIsListeningForTestsWithEnv(
+                    runCatching {
+                        gradleRunnerForBuild.action()
+                    },
+                    environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace
+                )
+            } else {
+                gradleRunnerForBuild.action()
+            }
             if (enableBuildScan) buildResult.printBuildScanUrl()
             assertions(buildResult)
             buildResult.additionalAssertions(buildOptions)
@@ -286,24 +290,25 @@ fun getGradleUserHome(): File {
     return testKitDir.toAbsolutePath().toFile().normalize().absoluteFile
 }
 
-/**
- * Use "/path/to/java -agentlib:jdwp... stub" to check that we can connect target Gradle daemon to the debugger
- * - If no one is listening the socket will fail to connect. In this case we fail the test and print the instruction
- * - If someone is listening, java will fail with "java.lang.ClassNotFoundException: stub"
- *
- */
-private fun validateDebuggingSocketIsListeningForTestsWithEnv(overridingEnvironmentVariablesInstantiationBacktrace: Throwable) {
-    val jvmPing = ProcessBuilder(
-        File(System.getProperty("java.home"), "bin/java").path,
-        "-agentlib:jdwp=transport=dt_socket,server=n,address=${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS},suspend=y",
-        "stub",
-    ).redirectErrorStream(true).start().inputStream.readAllBytes().toString(Charsets.UTF_8)
-    if (!jvmPing.contains("java.lang.ClassNotFoundException: stub")) {
-        fail(
-            buildString {
-                appendLine()
-                appendLine(
-                    """
+private fun validateDebuggingSocketIsListeningForTestsWithEnv(
+    buildResult: Result<BuildResult>,
+    overridingEnvironmentVariablesInstantiationBacktrace: Throwable?,
+): BuildResult {
+    if (buildResult.isSuccess) {
+        return buildResult.getOrThrow()
+    }
+    val exception = buildResult.exceptionOrNull()!!
+    val exceptionMessage = exception.fullMessage
+
+    if (!exceptionMessage.contains("AGENT_ERROR_TRANSPORT_INIT")) {
+        // This is not a debugger connection issue
+        throw exception
+    }
+
+    fail(
+        buildString {
+            appendLine(
+                """
                     ⚠ withDebug failed to connect to test that was overriding environment variables
                     
                     To debug a test that runs with environment variables:
@@ -311,19 +316,18 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(overridingEnvironm
                         2. Specify Host: ${EnableGradleDebug.LOOPBACK_IP} and Port: ${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}
                         3. Run this run configuration and then run the test under debugger
                     """.trimIndent()
-                )
-                appendLine()
-                appendLine("JVM connection check failed at ${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS} with:")
-                appendLine(jvmPing)
-                appendLine()
-                appendLine("Environment variables instantiated at:")
-                overridingEnvironmentVariablesInstantiationBacktrace.backtrace().lineSequence().drop(1).forEach {
-                    appendLine("  ${it}")
-                }
-                appendLine()
+            )
+            appendLine()
+            appendLine("JVM connection failed at ${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS} with:")
+            appendLine(exceptionMessage)
+            appendLine()
+            appendLine("Environment variables instantiated at:")
+            overridingEnvironmentVariablesInstantiationBacktrace?.backtrace()?.lineSequence()?.drop(1)?.forEach {
+                appendLine("  ${it}")
             }
-        )
-    }
+            appendLine()
+        }
+    )
 }
 
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
