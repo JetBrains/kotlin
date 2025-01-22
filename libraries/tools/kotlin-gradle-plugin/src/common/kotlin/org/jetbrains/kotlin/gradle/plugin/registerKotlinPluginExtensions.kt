@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSe
 import org.jetbrains.kotlin.gradle.targets.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmCompilationWireJavaSourcesSideEffect
+import org.jetbrains.kotlin.gradle.targets.jvm.ConfigureJavaTestFixturesSideEffect
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
@@ -119,6 +120,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureFrameworkExportSideEffect)
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
+        register(project, ConfigureJavaTestFixturesSideEffect)
         if (useNonPackedKlibs) {
             register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
             register(project, CreateNonPackedKlibVariantsSideEffect)
