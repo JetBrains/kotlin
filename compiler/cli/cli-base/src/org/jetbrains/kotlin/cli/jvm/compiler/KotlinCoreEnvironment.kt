@@ -231,7 +231,9 @@ class KotlinCoreEnvironment private constructor(
 
         collectAdditionalSources(project)
 
-        sourceFiles.sortBy { it.virtualFile.path }
+        if (!configuration.dontSortSourceFiles) {
+            sourceFiles.sortBy { it.virtualFile.path }
+        }
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 

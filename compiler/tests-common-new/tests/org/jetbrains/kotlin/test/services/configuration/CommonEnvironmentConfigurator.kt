@@ -111,6 +111,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         configuration.allowAnyScriptsInSourceRoots = true
         configuration.allowKotlinPackage = true
         configuration.dontCreateSeparateSessionForScripts = true
+        configuration.dontSortSourceFiles = true
     }
 }
 

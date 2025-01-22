@@ -59,4 +59,9 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
         description = "don't create separate session for scripts",
         comment = "Should be used only in tests, impossible to set via compiler arguments"
     )
+
+    val DONT_SORT_SOURCE_FILES by key<Boolean>(
+        description = "don't sort source files in FS order",
+        comment = "Should be used only in tests, impossible to set via compiler arguments",
+    )
 }

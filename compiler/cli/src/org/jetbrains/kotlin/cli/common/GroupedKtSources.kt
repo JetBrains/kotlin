@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceRootsCheckingForDuplicates
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.dontSortSourceFiles
 import org.jetbrains.kotlin.idea.KotlinFileType
 import java.util.TreeSet
 
@@ -53,8 +54,14 @@ fun collectSources(
     project: Project,
     messageCollector: MessageCollector
 ): GroupedKtSources {
-    val platformSources = TreeSet(ktSourceFileComparator)
-    val commonSources = TreeSet(ktSourceFileComparator)
+    fun createSet(): MutableSet<KtSourceFile> = if (compilerConfiguration.dontSortSourceFiles) {
+        mutableSetOf()
+    } else {
+        TreeSet(ktSourceFileComparator)
+    }
+
+    val platformSources = createSet()
+    val commonSources = createSet()
     val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
     // TODO: the scripts checking should be part of the scripting plugin functionality, as it is implemented now in ScriptingProcessSourcesBeforeCompilingExtension
