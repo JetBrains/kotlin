@@ -1789,6 +1789,116 @@ class IrValidatorTest {
             ),
         )
     }
+
+    @Test
+    fun `overrides of private declarations are reported`() {
+        val file = createIrFile("test.kt")
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+        }
+        val subclass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MySubclass")
+        }.apply {
+            superTypes = listOf(IrSimpleTypeImpl(klass.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
+        }
+
+        val privateFunction = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+            visibility = DescriptorVisibilities.PRIVATE
+        }.apply {
+            parent = klass
+        }
+        klass.declarations.add(privateFunction)
+
+        val privateFunctionOverride = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }.apply {
+            parent = subclass
+            overriddenSymbols = listOf(privateFunction.symbol)
+        }
+        subclass.declarations.add(privateFunctionOverride)
+
+        val publicFunction = IrFactoryImpl.buildFun {
+            name = Name.identifier("bar")
+            returnType = TestIrBuiltins.unitType
+            visibility = DescriptorVisibilities.PUBLIC
+        }.apply {
+            parent = klass
+        }
+        klass.declarations.add(publicFunction)
+
+        val publicFunctionOverride = IrFactoryImpl.buildFun {
+            name = Name.identifier("bar")
+            returnType = TestIrBuiltins.unitType
+        }.apply {
+            parent = subclass
+            overriddenSymbols = listOf(publicFunction.symbol)
+        }
+        subclass.declarations.add(publicFunctionOverride)
+
+        val privateProperty = IrFactoryImpl.buildProperty {
+            name = Name.identifier("p1")
+            visibility = DescriptorVisibilities.PRIVATE
+        }.apply {
+            parent = klass
+        }
+        klass.declarations.add(privateProperty)
+
+        val privatePropertyOverride = IrFactoryImpl.buildProperty {
+            name = Name.identifier("p1")
+        }.apply {
+            parent = subclass
+            overriddenSymbols = listOf(privateProperty.symbol)
+        }
+        subclass.declarations.add(privatePropertyOverride)
+
+        val publicProperty = IrFactoryImpl.buildProperty {
+            name = Name.identifier("p2")
+            visibility = DescriptorVisibilities.PUBLIC
+        }.apply {
+            parent = klass
+        }
+        klass.declarations.add(publicProperty)
+
+        val publicPropertyOverride = IrFactoryImpl.buildProperty {
+            name = Name.identifier("p2")
+        }.apply {
+            parent = subclass
+            overriddenSymbols = listOf(publicProperty.symbol)
+        }
+        subclass.declarations.add(publicPropertyOverride)
+
+        file.addChild(klass)
+        file.addChild(subclass)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Overrides private declaration FUN name:foo visibility:private modality:FINAL <> () returnType:kotlin.Unit
+                    FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                      inside CLASS CLASS name:MySubclass modality:FINAL visibility:public superTypes:[org.sample.MyClass]
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Overrides private declaration PROPERTY name:p1 visibility:private modality:FINAL [val]
+                    PROPERTY name:p1 visibility:public modality:FINAL [val]
+                      inside CLASS CLASS name:MySubclass modality:FINAL visibility:public superTypes:[org.sample.MyClass]
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+            ),
+        )
+    }
 }
 
 private object TestIrBuiltins : IrBuiltIns() {

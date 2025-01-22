@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
+import org.jetbrains.kotlin.ir.util.render
 
 internal object IrPrivateDeclarationOverrideChecker : IrDeclarationChecker<IrDeclaration> {
     override fun check(
@@ -20,7 +21,7 @@ internal object IrPrivateDeclarationOverrideChecker : IrDeclarationChecker<IrDec
             for (overriddenSymbol in declaration.overriddenSymbols) {
                 val overriddenDeclaration = overriddenSymbol.owner as? IrDeclarationWithVisibility ?: continue
                 if (overriddenDeclaration.visibility == DescriptorVisibilities.PRIVATE) {
-                    context.error(declaration, "Overrides private declaration $overriddenDeclaration")
+                    context.error(declaration, "Overrides private declaration ${overriddenDeclaration.render()}")
                 }
             }
         }
