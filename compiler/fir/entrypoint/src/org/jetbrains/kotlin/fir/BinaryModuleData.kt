@@ -29,6 +29,11 @@ class BinaryModuleData(
             )
         }
 
+        fun createBuiltinsModuleData(
+            mainModuleName: Name,
+            platform: TargetPlatform,
+        ): FirBuiltinsModuleData = FirBuiltinsModuleData(mainModuleName, platform)
+
         fun initialize(
             mainModuleName: Name,
             platform: TargetPlatform,

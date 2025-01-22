@@ -82,7 +82,7 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val stableModuleName: String?
 }
 
-class FirModuleDataImpl(
+open class FirModuleDataImpl(
     override val name: Name,
     override val dependencies: List<FirModuleData>,
     override val dependsOnDependencies: List<FirModuleData>,
@@ -100,6 +100,14 @@ class FirModuleDataImpl(
 
     override val allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
 }
+
+class FirBuiltinsModuleData(mainModuleName: Name, platform: TargetPlatform) : FirModuleDataImpl(
+    Name.special("<builtins of ${mainModuleName.asString()}>"),
+    dependencies = emptyList(),
+    dependsOnDependencies = emptyList(),
+    friendDependencies = emptyList(),
+    platform,
+)
 
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()
 val FirSession.moduleData: FirModuleData

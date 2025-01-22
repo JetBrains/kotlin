@@ -54,8 +54,8 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val builtinsModuleData = BinaryModuleData.createDependencyModuleData(
-                Name.special("<builtins of ${mainModuleName.asString()}"),
+            val builtinsModuleData = BinaryModuleData.createBuiltinsModuleData(
+                mainModuleName,
                 moduleDataProvider.platform,
             )
             builtinsModuleData.bindSession(this)
