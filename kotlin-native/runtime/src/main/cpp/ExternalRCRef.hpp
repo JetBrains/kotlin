@@ -120,3 +120,10 @@ inline OBJ_GETTER(tryRefExternalRCRef, RawExternalRCRef* ref) noexcept {
 }
 
 }
+
+extern "C" {
+
+RUNTIME_NOTHROW kotlin::mm::RawExternalRCRef* Kotlin_mm_createRetainedExternalRCRef(KRef obj);
+RUNTIME_NOTHROW void Kotlin_mm_releaseAndDisposeExternalRCRef(kotlin::mm::RawExternalRCRef* ref);
+
+}

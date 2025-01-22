@@ -4,6 +4,7 @@
  */
 
 #include "Common.h"
+#include "ExternalRCRef.hpp"
 #include "TypeInfo.h"
 #include "Memory.h"
 #include "Types.h"
@@ -80,6 +81,9 @@ touchFunction(Kotlin_processEmptyObjectInMark)
 touchFunction(Kotlin_arrayGetElementAddress)
 touchFunction(Kotlin_intArrayGetElementAddress)
 touchFunction(Kotlin_longArrayGetElementAddress)
+
+touchFunction(Kotlin_mm_createRetainedExternalRCRef)
+touchFunction(Kotlin_mm_releaseAndDisposeExternalRCRef)
 
 #ifdef __cplusplus
 } // extern "C"

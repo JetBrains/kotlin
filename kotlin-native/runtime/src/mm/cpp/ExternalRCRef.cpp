@@ -131,3 +131,11 @@ OBJ_GETTER(kotlin::mm::tryRefExternalRCRef, RawExternalRCRefNonPermanent* ref) n
     }
     RETURN_OBJ(nullptr);
 }
+
+extern "C" RUNTIME_NOTHROW mm::RawExternalRCRef* Kotlin_mm_createRetainedExternalRCRef(KRef obj) {
+    return mm::createRetainedExternalRCRef(obj);
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_mm_releaseAndDisposeExternalRCRef(mm::RawExternalRCRef* ref) {
+    mm::releaseAndDisposeExternalRCRef(ref);
+}

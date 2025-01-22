@@ -9,10 +9,6 @@
 
 #include <objc/objc.h>
 
-#include "ExternalRCRef.hpp"
-#include "Memory.h"
-#include "RawPtr.hpp"
-
 extern "C" {
 
 struct Block_descriptor_1;
@@ -54,19 +50,5 @@ struct Block_descriptor_1_without_helpers {
 id objc_retainBlock(id self);
 
 }
-
-struct KRefSharedHolder {
-   ObjHeader* obj_;
-   kotlin::raw_ptr<kotlin::mm::RawExternalRCRef> ref_;
-};
-
-static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
-
-extern "C" {
-RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj);
-RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj);
-RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder);
-RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder);
-} // extern "C"
 
 #endif
