@@ -30,7 +30,7 @@ touchType(TypeInfoObjCExportAddition)
 
 touchType(Block_literal_1)
 touchType(Block_descriptor_1)
-touchType(KRefSharedHolder)
+touchType(Kotlin_ObjCBlock)
 
 NSString* touchNSString() { return [[NSString alloc] init]; }
 
@@ -59,10 +59,10 @@ touchFunction(Kotlin_ObjCExport_resumeContinuation)
 touchFunction(Kotlin_ObjCExport_NSIntegerTypeProvider)
 touchFunction(Kotlin_longTypeProvider)
 
-touchFunction(KRefSharedHolder_initLocal)
-touchFunction(KRefSharedHolder_init)
-touchFunction(KRefSharedHolder_dispose)
-touchFunction(KRefSharedHolder_ref)
+touchFunction(Kotlin_ObjCBlock_new)
+touchFunction(Kotlin_ObjCBlock_dispose)
+touchFunction(Kotlin_ObjCBlock_copy)
+touchFunction(Kotlin_ObjCBlock_getKotlinFunction)
 
 }
 

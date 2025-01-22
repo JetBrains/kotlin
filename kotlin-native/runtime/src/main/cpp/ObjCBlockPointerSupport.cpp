@@ -3,28 +3,41 @@
  * that can be found in the LICENSE file.
  */
 
+#include <Block.h>
+
+#include "ExternalRCRef.hpp"
 #include "ObjCBlockPointerSupport.hpp"
 
 using namespace kotlin;
 
-extern "C" RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj) {
-    holder->ref_ = nullptr;
-    holder->obj_ = obj;
+extern "C" RUNTIME_NOTHROW id Kotlin_ObjCBlock_new(KRef kotlinFunction, void (*invoke)(void*, ...), Block_descriptor_1* descriptor) {
+    if (!kotlinFunction)
+        return nullptr;
+
+    Kotlin_ObjCBlock blockOnStack;
+    auto& blockOnStackBase = blockOnStack.literal;
+    blockOnStackBase.isa = &_NSConcreteStackBlock;
+    blockOnStackBase.flags = (1 << 25) | (1 << 30) | (1 << 31);
+    blockOnStackBase.reserved = 0;
+    blockOnStackBase.invoke = invoke;
+    blockOnStackBase.descriptor = descriptor;
+    blockOnStack.kotlinFunction = kotlinFunction;
+    blockOnStack.ref = nullptr;
+    return objc_retainBlock(reinterpret_cast<id>(&blockOnStack));
 }
 
-extern "C" RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj) {
-    holder->ref_ = mm::createRetainedExternalRCRef(obj);
-    holder->obj_ = obj;
+extern "C" RUNTIME_NOTHROW void Kotlin_ObjCBlock_dispose(Kotlin_ObjCBlock* block) {
+    mm::releaseAndDisposeExternalRCRef(block->ref);
 }
 
-extern "C" RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder) {
-    auto ref = std::move(holder->ref_);
-    mm::releaseAndDisposeExternalRCRef(static_cast<mm::RawExternalRCRef*>(ref));
-    // obj_ is dangling now.
-}
-
-extern "C" RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder) {
+extern "C" RUNTIME_NOTHROW void Kotlin_ObjCBlock_copy(Kotlin_ObjCBlock* dst, Kotlin_ObjCBlock* src) {
     AssertThreadState(ThreadState::kRunnable);
-    // ref_ may be null if created with initLocal.
-    return holder->obj_;
+    auto kotlinFunction = src->kotlinFunction;
+    dst->kotlinFunction = kotlinFunction;
+    dst->ref = mm::createRetainedExternalRCRef(kotlinFunction);
+}
+
+extern "C" RUNTIME_NOTHROW KRef Kotlin_ObjCBlock_getKotlinFunction(Kotlin_ObjCBlock* block) {
+    AssertThreadState(ThreadState::kRunnable);
+    return block->kotlinFunction;
 }

@@ -10,8 +10,6 @@
 #include <objc/objc.h>
 
 #include "ExternalRCRef.hpp"
-#include "Memory.h"
-#include "RawPtr.hpp"
 
 extern "C" {
 
@@ -53,21 +51,19 @@ struct Block_descriptor_1_without_helpers {
 
 id objc_retainBlock(id self);
 
-}
-
-// Used exclusively in BlockPointerSupport.kt
-struct KRefSharedHolder {
-   ObjHeader* obj_;
-   kotlin::raw_ptr<kotlin::mm::RawExternalRCRef> ref_;
+struct Kotlin_ObjCBlock {
+    Block_literal_1 literal;
+    KRef kotlinFunction;
+    kotlin::mm::RawExternalRCRef* ref;
 };
 
-static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
+static_assert(std::is_trivially_destructible_v<Kotlin_ObjCBlock>, "Kotlin_ObjCBlock destructor is not guaranteed to be called.");
 
-extern "C" {
-RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj);
-RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj);
-RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder);
-RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder);
+RUNTIME_NOTHROW id Kotlin_ObjCBlock_new(KRef kotlinFunction, void (*invoke)(void*, ...), Block_descriptor_1* descriptor);
+RUNTIME_NOTHROW void Kotlin_ObjCBlock_dispose(Kotlin_ObjCBlock* block);
+RUNTIME_NOTHROW void Kotlin_ObjCBlock_copy(Kotlin_ObjCBlock* dst, Kotlin_ObjCBlock* src);
+RUNTIME_NOTHROW KRef Kotlin_ObjCBlock_getKotlinFunction(Kotlin_ObjCBlock* block);
+
 } // extern "C"
 
 #endif

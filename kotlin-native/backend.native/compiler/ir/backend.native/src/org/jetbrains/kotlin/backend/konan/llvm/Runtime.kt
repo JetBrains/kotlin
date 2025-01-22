@@ -112,9 +112,9 @@ internal class Runtime(
     val objCIVarListType by lazy { createOpaqueStructType("_ivar_list_t") }
     val objCPropListType by lazy { createOpaqueStructType("_prop_list_t") }
 
-    val kRefSharedHolderType by lazy { getStructType("KRefSharedHolder", isClass = true) }
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
     val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
+    val Kotlin_ObjCBlock by lazy { getStructType("Kotlin_ObjCBlock") }
 
     fun sizeOf(type: LLVMTypeRef) = LLVMABISizeOfType(targetData, type).toInt()
     fun alignOf(type: LLVMTypeRef) = LLVMABIAlignmentOfType(targetData, type)
