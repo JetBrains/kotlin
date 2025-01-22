@@ -443,6 +443,18 @@ class CallAndReferenceGenerator(
                         } else {
                             selectedReceiver
                         }
+
+                        if (noArguments || qualifiedAccess !is FirCall) return@apply
+
+                        val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(qualifiedAccess)
+                        if (valueParameters == null || argumentMapping == null || !visitor.annotationMode && argumentMapping.isEmpty()) return@apply
+
+                        val dynamicCallVarargArgument = argumentMapping.keys.firstOrNull() as? FirVarargArgumentsExpression
+                            ?: error("Dynamic call must have a single vararg argument")
+                        for (argument in dynamicCallVarargArgument.arguments) {
+                            val irArgument = convertArgument(argument, null, substitutor)
+                            arguments.add(irArgument)
+                        }
                     }
                 }
 
@@ -452,9 +464,9 @@ class CallAndReferenceGenerator(
                 }
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
+                    .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments })
             }
         }
-            .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments })
     }
 
     internal fun injectGetValueCall(element: FirElement, calleeReference: FirReference): IrExpression? {
@@ -1083,21 +1095,6 @@ class CallAndReferenceGenerator(
                     ).apply {
                         for (argument in call.arguments) {
                             arguments.add(visitor.convertToIrExpression(argument))
-                        }
-                    }
-                }
-            }
-
-            is IrDynamicOperatorExpression -> apply {
-                if (call == null) return@apply
-                val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
-                if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty())) {
-                    if (valueParameters != null) {
-                        val dynamicCallVarargArgument = argumentMapping.keys.firstOrNull() as? FirVarargArgumentsExpression
-                            ?: error("Dynamic call must have a single vararg argument")
-                        for (argument in dynamicCallVarargArgument.arguments) {
-                            val irArgument = convertArgument(argument, null, substitutor)
-                            arguments.add(irArgument)
                         }
                     }
                 }
