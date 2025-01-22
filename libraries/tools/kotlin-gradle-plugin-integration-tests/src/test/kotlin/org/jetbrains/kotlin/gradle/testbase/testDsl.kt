@@ -422,7 +422,7 @@ class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(
     constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
 }
 
-@RequiresOptIn("Environmental variables override may lead to interference of parallel builds and breaks Gradle tests debugging")
+@RequiresOptIn("Environmental variables override may lead to interference of parallel builds")
 annotation class EnvironmentalVariablesOverride
 
 @OptIn(EnvironmentalVariablesOverride::class)
