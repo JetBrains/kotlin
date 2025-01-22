@@ -131,9 +131,7 @@ abstract class KotlinJvmTarget @Inject constructor(
         level = DeprecationLevel.WARNING
     )
     fun withJava() {
-        KotlinToolingDiagnostics.KMPWithJavaErrorDiagnostic()?.let {
-            project.reportDiagnostic(it)
-        }
+        project.reportDiagnostic(KotlinToolingDiagnostics.KMPWithJavaDiagnostic())
 
         @Suppress("DEPRECATION")
         if (withJavaEnabled)
