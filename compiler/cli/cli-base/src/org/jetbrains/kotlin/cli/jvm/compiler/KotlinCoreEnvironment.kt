@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
@@ -768,6 +769,7 @@ class KotlinCoreEnvironment private constructor(
                 with(registrar) { extensionStorage.registerExtensions(configuration) }
             }
             extensionStorage.registerInProject(project) { createErrorMessage(it) }
+            configuration[TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK]?.invoke(project)
         }
 
         private fun registerApplicationServicesForCLI(applicationEnvironment: KotlinCoreApplicationEnvironment) {

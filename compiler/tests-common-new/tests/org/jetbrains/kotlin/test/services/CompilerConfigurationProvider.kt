@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -90,7 +91,7 @@ open class CompilerConfigurationProviderImpl(
             testRootDisposable,
             CompilerConfiguration()
         )
-        val configuration = createCompilerConfiguration(testServices, module, configurators)
+        val configuration = createCompilerConfiguration(module)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
@@ -102,7 +103,13 @@ open class CompilerConfigurationProviderImpl(
 
     @OptIn(TestInfrastructureInternals::class)
     fun createCompilerConfiguration(module: TestModule): CompilerConfiguration {
-        return createCompilerConfiguration(testServices, module, configurators)
+        return createCompilerConfiguration(testServices, module, configurators).also { configuration ->
+            if (testServices.cliBasedFacadesEnabled) {
+                configuration.put(TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK) { project ->
+                    registerCompilerExtensions(project, module, configuration)
+                }
+            }
+        }
     }
 }
 
