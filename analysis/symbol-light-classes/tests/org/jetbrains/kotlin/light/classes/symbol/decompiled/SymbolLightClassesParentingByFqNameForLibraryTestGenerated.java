@@ -433,6 +433,18 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("valueClassInsideDefaultImpl.kt")
+  public void testValueClassInsideDefaultImpl() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideDefaultImpl.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassInsideDelegatedClass.kt")
+  public void testValueClassInsideDelegatedClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideDelegatedClass.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassInsideStaticMembers.kt")
   public void testValueClassInsideStaticMembers() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideStaticMembers.kt");

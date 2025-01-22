@@ -369,6 +369,16 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
   }
 
+  @TestMetadata("valueClassInsideDefaultImpl.kt")
+  public void testValueClassInsideDefaultImpl() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideDefaultImpl.kt");
+  }
+
+  @TestMetadata("valueClassInsideDelegatedClass.kt")
+  public void testValueClassInsideDelegatedClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideDelegatedClass.kt");
+  }
+
   @TestMetadata("valueClassInsideStaticMembers.kt")
   public void testValueClassInsideStaticMembers() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideStaticMembers.kt");
