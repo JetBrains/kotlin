@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.directives
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationKind
-import org.jetbrains.kotlin.analysis.api.platform.modification.isGlobalLevel
-import org.jetbrains.kotlin.analysis.api.platform.modification.isModuleLevel
+import org.jetbrains.kotlin.analysis.api.platform.modification.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
@@ -93,11 +89,11 @@ fun KtTestModuleStructure.publishWildcardModificationEventsByDirective(modificat
     }
 }
 
-fun publishModificationEvent(modificationEventKind: KotlinModificationEventKind, ktModule: KaModule) {
+private fun publishModificationEvent(modificationEventKind: KotlinModificationEventKind, ktModule: KaModule) {
     publishModificationEventByKind(modificationEventKind, ktModule.project, ktModule)
 }
 
-fun publishGlobalModificationEvent(modificationEventKind: KotlinModificationEventKind, project: Project) {
+private fun publishGlobalModificationEvent(modificationEventKind: KotlinModificationEventKind, project: Project) {
     require(modificationEventKind.isGlobalLevel)
 
     publishModificationEventByKind(modificationEventKind, project, ktModule = null)
