@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.isReplSnippet
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -15,7 +16,7 @@ internal fun declarationCanBeLazilyResolved(element: KtElement?, codeFragmentAwa
     is KtFunctionLiteral -> false
     is KtTypeParameter -> declarationCanBeLazilyResolved(element.parentOfType<KtNamedDeclaration>(withSelf = false), codeFragmentAware)
     is KtScript -> declarationCanBeLazilyResolved(element.parent as? KtFile, codeFragmentAware)
-    is KtFile -> codeFragmentAware || element !is KtCodeFragment
+    is KtFile -> codeFragmentAware || element !is KtCodeFragment || element.isReplSnippet()
     is KtDestructuringDeclarationEntry -> declarationCanBeLazilyResolved(element.parent as? KtDestructuringDeclaration, codeFragmentAware)
     is KtParameter -> declarationCanBeLazilyResolved(element.ownerFunction, codeFragmentAware)
     is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtAnonymousInitializer -> {
