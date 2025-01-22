@@ -133,7 +133,8 @@ open class IncrementalFirJvmCompilerRunner(
             val pluginOptions = args.pluginOptions?.toMutableList() ?: ArrayList()
             val pluginConfigurations = args.pluginConfigurations?.toList() ?: emptyList()
             // TODO: add scripting support when ready in FIR
-            val pluginLoadResult = PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration)
+            val pluginLoadResult =
+                PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration, rootDisposable)
             if (pluginLoadResult != ExitCode.OK) return pluginLoadResult to emptyList()
             // -- /plugins
 

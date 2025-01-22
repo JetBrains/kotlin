@@ -21,7 +21,6 @@ package org.jetbrains.kotlin.cli.jvm.repl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -208,7 +207,7 @@ internal class TestRepl(
     private val configuration =
         KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *templateClasspath.toTypedArray()).apply {
             put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, disposable)
         }
 
     val baseClasspath: List<File> get() = configuration.jvmClasspathRoots

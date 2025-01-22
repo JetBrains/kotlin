@@ -135,7 +135,7 @@ class ScriptGenTest : CodegenTestCase() {
 
             addKotlinSourceRoots(sourcePaths.map { "${KtTestUtil.getTestDataPathBase()}/codegen/$it" })
         }
-        loadScriptingPlugin(configuration)
+        loadScriptingPlugin(configuration, testRootDisposable)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

@@ -112,7 +112,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         compilerImpl.checkTargetArguments()?.let { return it }
 
-        val pluginLoadResult = loadPlugins(paths, arguments, configuration)
+        val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != OK) return pluginLoadResult
 
         CommonWebConfigurationUpdater.initializeCommonConfiguration(compilerImpl.configuration, arguments)
@@ -334,7 +334,7 @@ fun RuntimeDiagnostic.Companion.resolve(
     }
 }
 
-fun loadPluginsForTests(configuration: CompilerConfiguration): ExitCode {
+fun loadPluginsForTests(configuration: CompilerConfiguration, parentDisposable: Disposable): ExitCode {
     var pluginClasspath: Iterable<String> = emptyList()
     val kotlinPaths = PathUtil.kotlinPathsForCompiler
     val libPath = kotlinPaths.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
@@ -342,6 +342,6 @@ fun loadPluginsForTests(configuration: CompilerConfiguration): ExitCode {
         PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
     pluginClasspath = jars.map { it.canonicalPath } + pluginClasspath
 
-    return PluginCliParser.loadPluginsSafe(pluginClasspath, listOf(), listOf(), configuration)
+    return PluginCliParser.loadPluginsSafe(pluginClasspath, listOf(), listOf(), configuration, parentDisposable)
 }
 

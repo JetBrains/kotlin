@@ -102,7 +102,7 @@ class ScriptCliCompilationTest : TestCase() {
                     ScriptDefinition.FromTemplate(hostConfiguration, scriptDef, ScriptDefinition::class)
                 )
             }
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

@@ -112,7 +112,7 @@ class ConstructAnnotationTest : TestCase() {
         val compilationConfiguration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
             updateWithBaseCompilerArguments()
             addKotlinSourceRoot(file.path)
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
         val configuration = ScriptCompilationConfiguration {
             defaultImports(*classes)

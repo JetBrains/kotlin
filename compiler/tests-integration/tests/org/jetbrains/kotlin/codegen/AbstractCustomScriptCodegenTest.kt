@@ -46,7 +46,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
         configuration.addJvmClasspathRoots(additionalDependencies.orEmpty())
 
-        loadScriptingPlugin(configuration)
+        loadScriptingPlugin(configuration, testRootDisposable)
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {

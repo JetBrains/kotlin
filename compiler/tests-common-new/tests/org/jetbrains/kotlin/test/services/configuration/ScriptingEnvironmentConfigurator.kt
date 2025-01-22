@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.test.services.*
 class ScriptingEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (module.files.any { it.isKtsFile }) {
+            val parentDisposable = testServices.compilerConfigurationProvider.testRootDisposable
             val pluginFiles = testServices.standardLibrariesPathProvider.scriptingPluginFilesForTests().map { it.path }
-            loadScriptingPlugin(configuration, pluginFiles)
+            loadScriptingPlugin(configuration, parentDisposable, pluginFiles)
         }
     }
 }

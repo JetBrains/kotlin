@@ -93,7 +93,7 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
             )
         }
 
-        loadScriptingPlugin(configuration)
+        loadScriptingPlugin(configuration, testRootDisposable)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
