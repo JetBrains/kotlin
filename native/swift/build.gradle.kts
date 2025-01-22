@@ -8,5 +8,6 @@ tasks.register("sirAllTests") {
         ":native:swift:swift-export-ide:test",
         ":native:swift:sir-compiler-bridge:test",
         ":native:swift:sir-printer:test",
+        ":native:swift:swift-export-embeddable:testSwiftExportStandaloneWithEmbeddable",
     )
 }
