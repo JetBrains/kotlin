@@ -130,7 +130,8 @@ fun Assertions.assertFileDoesntExist(file: File, directive: Directive) {
 fun <R> TestFile.findByPath(testServices: TestServices, finder: (String) -> R?): R? {
     finder("/${this.name}")?.let { return it }
     val realFile = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(this)
-    return finder(realFile.canonicalPath)
+    val normalizedPath = FileUtil.toSystemIndependentName(realFile.canonicalPath)
+    return finder(normalizedPath)
 }
 
 /**

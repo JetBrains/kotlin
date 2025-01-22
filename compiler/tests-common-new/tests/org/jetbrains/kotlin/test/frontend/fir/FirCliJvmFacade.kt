@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
@@ -43,7 +44,8 @@ class FirCliJvmFacade(testServices: TestServices) : FrontendFacade<FirOutputArti
             val testFilePerFirFile = correspondingModule.files.mapNotNull { testFile ->
                 val firFile = it.fir.firstOrNull { firFile ->
                     val path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile).canonicalPath
-                    path == firFile.sourceFile?.path
+                    val normalizedPath = FileUtil.toSystemIndependentName(path)
+                    normalizedPath == firFile.sourceFile?.path
                 } ?: return@mapNotNull null
                 testFile to firFile
             }
