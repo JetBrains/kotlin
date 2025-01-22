@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleCapabilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.replCompilationConfigurationProviderService
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import java.io.File
 import java.nio.file.Path
@@ -329,6 +331,8 @@ private fun compileImpl(
         needRegisterJavaElementFinder = true,
         init = {},
     )
+    @OptIn(FirImplementationDetail::class)
+    session.replCompilationConfigurationProviderService.scriptConfiguration = state.scriptCompilationConfiguration
 
     val rawFir = session.buildFirFromKtFiles(allSourceFiles)
 

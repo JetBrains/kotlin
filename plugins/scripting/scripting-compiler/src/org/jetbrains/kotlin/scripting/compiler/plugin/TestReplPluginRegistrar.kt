@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.Fir2IrReplSnippetConfiguratorExtensionImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplCompilationConfigurationProviderService
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplSnippetConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplSnippetResolveExtensionImpl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -23,6 +24,7 @@ class FirReplCompilerExtensionRegistrar(
         +FirReplSnippetConfiguratorExtensionImpl.Companion.getFactory(hostConfiguration)
         +FirReplSnippetResolveExtensionImpl.Companion.getFactory(hostConfiguration)
         +Fir2IrReplSnippetConfiguratorExtensionImpl.Companion.getFactory(hostConfiguration)
+        +::FirReplCompilationConfigurationProviderService
     }
 }
 

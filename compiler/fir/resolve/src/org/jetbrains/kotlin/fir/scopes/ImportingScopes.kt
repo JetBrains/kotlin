@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionConfigurationExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.firScriptResolutionConfigurators
 import org.jetbrains.kotlin.fir.importTracker
@@ -65,17 +67,9 @@ internal fun computeImportingScopes(
         }
     }
 
-    val script = file.declarations.firstOrNull() as? FirScript
-    val scriptDefaultImports by lazy(LazyThreadSafetyMode.NONE) {
-        script?.let {
-            val importResolveTransformer = FirImportResolveTransformer(session)
-            session.extensionService.firScriptResolutionConfigurators.flatMap {
-                it.getScriptDefaultImports(script).map { firImport ->
-                    (importResolveTransformer.transformImport(firImport, null) as? FirResolvedImport) ?: firImport
-                }
-            }
-        }?.partition { it.isAllUnder }
-    }
+    val scriptingDefaultImports =
+        getDefaultImportsForScripting<FirScript>(session, file, FirScriptResolutionConfigurationExtension::getScriptDefaultImports)
+            ?: getDefaultImportsForScripting<FirReplSnippet>(session, file, FirScriptResolutionConfigurationExtension::getSnippetDefaultImports)
 
     return buildList {
         if (includeDefaultImports) {
@@ -87,9 +81,9 @@ internal fun computeImportingScopes(
                     FirSingleLevelDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW, excludedImportNames)
                 },
             )
-            if (script != null) {
+            if (scriptingDefaultImports != null) {
                 this += scopeSession.getOrBuild(file, DEFAULT_SCRIPT_STAR_IMPORT) {
-                    FirExplicitStarImportingScope(scriptDefaultImports?.first.orEmpty(), session, scopeSession, excludedImportNames)
+                    FirExplicitStarImportingScope(scriptingDefaultImports.first, session, scopeSession, excludedImportNames)
                 }
             }
         }
@@ -103,9 +97,9 @@ internal fun computeImportingScopes(
             this += scopeSession.getOrBuild(DefaultSimpleImportKey(DefaultImportPriority.HIGH, excludedImportNames), DEFAULT_SIMPLE_IMPORT) {
                 FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH, excludedImportNames)
             }
-            if (script != null) {
+            if (scriptingDefaultImports != null) {
                 this += scopeSession.getOrBuild(file, DEFAULT_SCRIPT_SIMPLE_IMPORT) {
-                    FirExplicitSimpleImportingScope(scriptDefaultImports?.second.orEmpty(), session, scopeSession)
+                    FirExplicitSimpleImportingScope(scriptingDefaultImports.second, session, scopeSession)
                 }
             }
         }
@@ -124,6 +118,20 @@ internal fun computeImportingScopes(
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
         this += FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
     }
+}
+
+private inline fun <reified T : FirDeclaration> getDefaultImportsForScripting(
+    session: FirSession,
+    file: FirFile,
+    getDefaultImports: FirScriptResolutionConfigurationExtension.(T) -> List<FirImport>
+): Pair<List<FirImport>, List<FirImport>>? {
+    val element = file.declarations.firstOrNull() as? T ?: return null
+    val importResolveTransformer = FirImportResolveTransformer(session)
+    return session.extensionService.firScriptResolutionConfigurators.flatMap {
+        it.getDefaultImports(element).map { firImport ->
+            (importResolveTransformer.transformImport(firImport, data = null) as? FirResolvedImport) ?: firImport
+        }
+    }.partition { it.isAllUnder }
 }
 
 private class ListStorageFirScope(val result: List<FirScope>) : FirScope() {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.replCompilationConfigurationProviderService
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
 
@@ -165,6 +167,8 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
                 registerExperimentalCheckers()
             }
         }.also(::registerExtraComponents)
+        @OptIn(FirImplementationDetail::class)
+        moduleBasedSession.replCompilationConfigurationProviderService.scriptConfiguration = ScriptCompilationConfiguration.Default
 
         val firAnalyzerFacade = FirAnalyzerFacade(moduleBasedSession, ktFiles.values, parser = firParser)
         val firFiles = firAnalyzerFacade.runResolution()
