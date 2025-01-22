@@ -35,18 +35,20 @@ import org.jetbrains.kotlin.types.SmartcastStability
  * That's because context parameters **cannot** be implicit receivers of calls.
  *
  * See the KDoc of [ReceiverValue] for further details.
+ *
+ * @param originalType A type before the smart cast.
+ * @param effectiveType A type after the smart cast, if available.
+ * @param mutable Whether this values's type must remain mutable.
  */
 sealed class ImplicitValue<S>(
-    type: ConeKotlinType,
+    val originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     protected val mutable: Boolean,
 ) where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
     abstract val boundSymbol: S
 
-    var type: ConeKotlinType = type
+    var type: ConeKotlinType = originalType
         private set
-
-    // Type before smart cast
-    val originalType: ConeKotlinType = type
 
     protected abstract fun computeOriginalExpression(): FirExpression
 
@@ -59,7 +61,14 @@ sealed class ImplicitValue<S>(
      */
     protected val originalExpression: FirExpression by lazy(LazyThreadSafetyMode.PUBLICATION, ::computeOriginalExpression)
 
-    private var isSmartCasted: Boolean = false
+    protected var isSmartCasted: Boolean = false
+        private set
+
+    init {
+        if (effectiveType != null) {
+            updateEffectiveType(effectiveType)
+        }
+    }
 
     /**
      * The idea of expression for implicit values is the following:
@@ -110,6 +119,10 @@ sealed class ImplicitValue<S>(
     open fun updateTypeFromSmartcast(type: ConeKotlinType) {
         if (type == this.type) return
         if (!mutable) error("Cannot mutate an immutable ImplicitReceiverValue")
+        updateEffectiveType(type)
+    }
+
+    private fun updateEffectiveType(type: ConeKotlinType) {
         this.type = type
         isSmartCasted = type != this.originalType
     }
@@ -117,11 +130,18 @@ sealed class ImplicitValue<S>(
     abstract fun createSnapshot(keepMutable: Boolean): ImplicitValue<S>
 }
 
-class ImplicitContextParameterValue(
+class ImplicitContextParameterValue private constructor(
     override val boundSymbol: FirValueParameterSymbol,
-    type: ConeKotlinType,
+    originalType: ConeKotlinType,
+    effectiveType: ConeKotlinType?,
     mutable: Boolean = true,
-) : ImplicitValue<FirValueParameterSymbol>(type, mutable) {
+) : ImplicitValue<FirValueParameterSymbol>(originalType, effectiveType, mutable) {
+    constructor(
+        boundSymbol: FirValueParameterSymbol,
+        type: ConeKotlinType,
+        mutable: Boolean = true,
+    ) : this(boundSymbol, originalType = type, effectiveType = null, mutable)
+
     override fun computeOriginalExpression(): FirExpression = buildPropertyAccessExpression {
         source = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
         calleeReference = buildResolvedNamedReference {
@@ -132,6 +152,7 @@ class ImplicitContextParameterValue(
     }
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitContextParameterValue {
-        return ImplicitContextParameterValue(boundSymbol, type, keepMutable)
+        val effectiveType = if (isSmartCasted) type else null
+        return ImplicitContextParameterValue(boundSymbol, originalType, effectiveType, keepMutable)
     }
 }
