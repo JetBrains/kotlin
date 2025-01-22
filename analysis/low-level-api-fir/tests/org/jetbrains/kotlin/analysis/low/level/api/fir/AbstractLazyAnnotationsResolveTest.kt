@@ -50,7 +50,7 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        resolveWithCaches(mainFile) { firResolveSession ->
+        withResolveSession(mainFile) { firResolveSession ->
             val (firElement, _) = findFirDeclarationToResolve(mainFile, testServices, firResolveSession)
             val psiElement = firElement.realPsi as? KtAnnotated
 

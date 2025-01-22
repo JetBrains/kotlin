@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.targets.getTestTargetKtElements
 import org.jetbrains.kotlin.analysis.test.framework.utils.renderLocationDescription
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -41,8 +40,6 @@ abstract class AbstractResolveToFirSymbolTest : AbstractAnalysisApiBasedTest() {
     )
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val project = testServices.ktTestModuleStructure.project
-
         val targetElements = getTestTargetKtElements(testDataPath, mainFile)
             .map { element ->
                 require(element is KtDeclaration) {
@@ -52,20 +49,22 @@ abstract class AbstractResolveToFirSymbolTest : AbstractAnalysisApiBasedTest() {
             }
             .sortedWith(elementComparator)
 
-        val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(mainModule.ktModule)
-        val actualText = prettyPrint {
-            targetElements.forEach { (ktDeclaration, locationDescription) ->
-                // Resolve to `BODY_RESOLVE` so that enum entry initializers are visible. This allows us to disambiguate enum entries with
-                // the same name in the test results according to their initializer members.
-                val firSymbol = ktDeclaration.resolveToFirSymbol(resolveSession, phase = FirResolvePhase.BODY_RESOLVE)
+        val actualText = withResolveSession(mainModule.ktModule) { resolveSession ->
+            prettyPrint {
+                targetElements.forEach { (ktDeclaration, locationDescription) ->
+                    // Resolve to `BODY_RESOLVE` so that enum entry initializers are visible. This allows us to disambiguate enum entries with
+                    // the same name in the test results according to their initializer members.
+                    val firSymbol = ktDeclaration.resolveToFirSymbol(resolveSession, phase = FirResolvePhase.BODY_RESOLVE)
 
-                appendLine("${ktDeclaration::class.simpleName} '${ktDeclaration.name}' in $locationDescription:")
-                withIndent {
-                    appendLine(firSymbol.fir.render())
+                    appendLine("${ktDeclaration::class.simpleName} '${ktDeclaration.name}' in $locationDescription:")
+                    withIndent {
+                        appendLine(firSymbol.fir.render())
+                    }
+                    appendLine()
                 }
-                appendLine()
             }
         }
+
         testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
     }
 

@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.beforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.name
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.AssertionsService
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
@@ -42,7 +44,7 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        resolveWithClearCaches(mainFile) { firResolveSession ->
+        withResolveSession(mainFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
 
             val session = firResolveSession.getSessionFor(mainModule.ktModule) as LLFirResolvableModuleSession

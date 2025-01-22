@@ -5,18 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -39,18 +45,20 @@ internal fun FirBasedSymbol<*>.name(): String = when (this) {
 
 internal fun FirDeclaration.name(): String = symbol.name()
 
-internal inline fun <R> resolveWithClearCaches(context: KtElement, action: (LLFirResolveSession) -> R): R {
-    val project = context.project
-    val module = KotlinProjectStructureProvider.getModule(project, context, useSiteModule = null)
-    val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(module)
+internal inline fun <R> withResolveSession(context: KtElement, action: (LLFirResolveSession) -> R): R {
+    val module = KotlinProjectStructureProvider.getModule(context.project, context, useSiteModule = null)
+    return withResolveSession(module, action)
+}
+
+internal inline fun <R> withResolveSession(module: KaModule, action: (LLFirResolveSession) -> R): R {
+    val resolveSession = LLFirResolveSessionService.getInstance(module.project).getFirResolveSession(module)
     return action(resolveSession)
 }
 
-internal inline fun <R> resolveWithCaches(context: KtElement, action: (LLFirResolveSession) -> R): R {
-    val project = context.project
-    val module = KotlinProjectStructureProvider.getModule(project, context, useSiteModule = null)
-    val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(module)
-    return action(resolveSession)
+internal fun clearCaches(project: Project) {
+    project.analysisMessageBus
+        .syncPublisher(KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION)
+        .onModification()
 }
 
 internal val LLFirResolveSession.isSourceSession: Boolean

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithCaches
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -73,7 +73,7 @@ internal fun testInBlockModification(
     elementToModify: PsiElement,
     testServices: TestServices,
     dumpFirFile: Boolean,
-): String = resolveWithCaches(file) { firSession ->
+): String = withResolveSession(file) { firSession ->
     // We are trying to invoke a test case twice inside one session to be sure that sequent modifications are work
     val firstAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, firSession)
     val secondAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, firSession)

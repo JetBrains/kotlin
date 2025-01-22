@@ -494,11 +494,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] bottom.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|org/example/BottomAdditional| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun bottom(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface BottomAdditional : R|org/example/Bottom| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface BottomAdditional : <ERROR TYPE REF: Loop in supertypes involving org/example/BottomAdditional> {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Bottom : R|org/example/Middle| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Bottom : <ERROR TYPE REF: Loop in supertypes involving org/example/Bottom> {
     }

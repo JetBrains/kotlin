@@ -44,10 +44,6 @@ class LLFirResolveSessionService(project: Project) {
         return create(module) { cache.getSession(it, true) }
     }
 
-    fun getFirResolveSessionNoCaching(module: KaModule): LLFirResolveSession {
-        return create(module, cache::getSessionNoCaching)
-    }
-
     private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolvableResolveSession {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)

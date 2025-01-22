@@ -44,9 +44,12 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
                 error("Unexpected module kind ${mainKtModule::class.simpleName}")
             }
         }
-        val resolveSession = LLFirResolveSessionService.getInstance(mainKtModule.project).getFirResolveSessionNoCaching(mainKtModule)
-        val firClass = resolveSession.useSiteFirSession.firClassByPsiClassProvider.getFirClass(psiClassUnderCaret)
-        val rendered = firClass.fir.render()
+
+        val rendered = withResolveSession(mainKtModule) { resolveSession ->
+            val firClassSymbol = resolveSession.useSiteFirSession.firClassByPsiClassProvider.getFirClass(psiClassUnderCaret)
+            firClassSymbol.fir.render()
+        }
+
         testServices.assertions.assertEqualsToTestDataFileSibling(rendered)
     }
 

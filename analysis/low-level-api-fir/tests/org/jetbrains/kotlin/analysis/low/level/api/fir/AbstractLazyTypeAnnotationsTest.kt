@@ -20,16 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.fir.types.forEachType
+import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -51,7 +47,7 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
         val builderAfterAnnotationResolve = StringBuilder()
 
         val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
-        resolveWithClearCaches(mainFile) { session ->
+        withResolveSession(mainFile) { session ->
             val (declaration, resolver) = findFirDeclarationToResolve(mainFile, testServices, session)
             resolver.invoke(FirResolvePhase.TYPES)
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.Directives.PRE_RESOLVED_PHASE
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.OutputRenderingMode.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
@@ -55,7 +56,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         val resultBuilder = StringBuilder()
         val renderer = lazyResolveRenderer(resultBuilder)
 
-        resolveWithCaches(ktFile) { firResolveSession ->
+        withResolveSession(ktFile) { firResolveSession ->
             checkSession(firResolveSession)
             val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
@@ -109,7 +110,9 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             }
         }
 
-        resolveWithClearCaches(ktFile) { llSession ->
+        clearCaches(ktFile.project)
+
+        withResolveSession(ktFile) { llSession ->
             checkSession(llSession)
             val firFile = llSession.getOrBuildFirFile(ktFile)
             firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val classOrObject = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtClassOrObject>(mainFile)
-        resolveWithClearCaches(classOrObject) { session ->
+        withResolveSession(classOrObject) { session ->
             val classSymbol = classOrObject.resolveToFirSymbolOfType<FirClassSymbol<*>>(session)
             val symbols = collectAllCallableDeclarations(classSymbol, session)
             val dumpBefore = dumpSymbols(symbols)
