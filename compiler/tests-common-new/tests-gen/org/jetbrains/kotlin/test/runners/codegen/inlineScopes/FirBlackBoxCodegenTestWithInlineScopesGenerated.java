@@ -20958,6 +20958,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("selectingLambdas.kt")
+    public void testSelectingLambdas() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/selectingLambdas.kt");
+    }
+
+    @Test
     @TestMetadata("shared.kt")
     public void testShared() {
       runTest("compiler/testData/codegen/box/extensionFunctions/shared.kt");
@@ -22445,12 +22451,6 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
     public void testSamWithReceiverMavenProjectImportHandler() {
       runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
-    }
-
-    @Test
-    @TestMetadata("selectingLambdas.kt")
-    public void testSelectingLambdas() {
-      runTest("compiler/testData/codegen/box/fir/selectingLambdas.kt");
     }
 
     @Test
