@@ -43,14 +43,22 @@ fun IrClassifierSymbol.isKFunction(): Boolean = this.isClassWithNamePrefix("KFun
 fun IrClassifierSymbol.isSuspendFunction(): Boolean = this.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn)
 fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
 
-private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean {
-    val declaration = owner as IrDeclarationWithName
-    return name == declaration.name.asString() && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
-}
+private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean =
+    checkNameAndPackage({ it == name }, { it == packageFqName.asString() })
 
-private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
-    val declaration = owner as IrDeclarationWithName
-    return declaration.name.asString().startsWith(prefix) && (declaration.parent as? IrPackageFragment)?.packageFqName == packageFqName
+private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean =
+    checkNameAndPackage({ it.startsWith(prefix) }, { it == packageFqName.asString() })
+
+private inline fun IrClassifierSymbol.checkNameAndPackage(checkName: (String) -> Boolean, checkPackage: (String) -> Boolean): Boolean {
+    return if (isBound) {
+        val classifier = owner as IrDeclarationWithName
+        if (!checkName(classifier.name.asString())) return false
+        val packageFqName = (classifier.parent as? IrPackageFragment)?.packageFqName?.asString() ?: return false
+        checkPackage(packageFqName)
+    } else {
+        val commonSignature = signature as? IdSignature.CommonSignature ?: return false
+        checkName(commonSignature.declarationFqName) && checkPackage(commonSignature.packageFqName)
+    }
 }
 
 fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
