@@ -20,18 +20,19 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
-import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.classes.*
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
+import org.jetbrains.kotlin.asJava.classes.findEntry
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -39,15 +40,12 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForPrope
 import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
@@ -123,96 +121,6 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
 
     return (targetField as? SymbolLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }
-
-internal fun KaSession.createConstructors(
-    lightClass: SymbolLightClassBase,
-    declarations: Sequence<KaConstructorSymbol>,
-    result: MutableList<PsiMethod>,
-) {
-    val constructors = declarations.toList()
-    if (constructors.isEmpty()) {
-        result.add(lightClass.defaultConstructor())
-        return
-    }
-
-    for (constructor in constructors) {
-        ProgressManager.checkCanceled()
-
-        if (isHiddenOrSynthetic(constructor)) continue
-
-        result.add(
-            SymbolLightConstructor(
-                ktAnalysisSession = this@createConstructors,
-                constructorSymbol = constructor,
-                containingClass = lightClass,
-                methodIndex = METHOD_INDEX_BASE
-            )
-        )
-
-        createJvmOverloadsIfNeeded(constructor, result) { methodIndex, argumentSkipMask ->
-            SymbolLightConstructor(
-                ktAnalysisSession = this@createConstructors,
-                constructorSymbol = constructor,
-                containingClass = lightClass,
-                methodIndex = methodIndex,
-                argumentsSkipMask = argumentSkipMask
-            )
-        }
-    }
-    val primaryConstructor = constructors.singleOrNull { it.isPrimary }
-    if (primaryConstructor != null && shouldGenerateNoArgOverload(lightClass, primaryConstructor, constructors)) {
-        result.add(
-            lightClass.noArgConstructor(
-                primaryConstructor.compilerVisibility.externalDisplayName,
-                primaryConstructor.sourcePsiSafe(),
-                METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR
-            )
-        )
-    }
-}
-
-private fun KaSession.shouldGenerateNoArgOverload(
-    lightClass: SymbolLightClassBase,
-    primaryConstructor: KaConstructorSymbol,
-    constructors: Iterable<KaConstructorSymbol>,
-): Boolean {
-    val classOrObject = lightClass.kotlinOrigin ?: return false
-    return primaryConstructor.visibility != KaSymbolVisibility.PRIVATE &&
-            !classOrObject.hasModifier(INNER_KEYWORD) && !lightClass.isEnum &&
-            !classOrObject.hasModifier(SEALED_KEYWORD) &&
-            primaryConstructor.valueParameters.isNotEmpty() &&
-            primaryConstructor.valueParameters.all { it.hasDefaultValue } &&
-            constructors.none { it.valueParameters.isEmpty() } &&
-            !primaryConstructor.hasJvmOverloadsAnnotation()
-}
-
-private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
-    val classOrObject = kotlinOrigin
-    val visibility = when {
-        this is SymbolLightClassForClassLike<*> && (classKind().let { it.isObject || it == KaClassKind.ENUM_CLASS }) -> PsiModifier.PRIVATE
-        classOrObject?.hasModifier(SEALED_KEYWORD) == true -> PsiModifier.PROTECTED
-        this is SymbolLightClassForEnumEntry -> PsiModifier.PACKAGE_LOCAL
-        else -> PsiModifier.PUBLIC
-    }
-
-    return noArgConstructor(visibility, classOrObject, METHOD_INDEX_FOR_DEFAULT_CTOR)
-}
-
-private fun SymbolLightClassBase.noArgConstructor(
-    visibility: String,
-    declaration: KtDeclaration?,
-    methodIndex: Int,
-): KtLightMethod = SymbolLightNoArgConstructor(
-    declaration?.let {
-        LightMemberOriginForDeclaration(
-            originalElement = it,
-            originKind = JvmDeclarationOriginKind.OTHER,
-        )
-    },
-    this,
-    visibility,
-    methodIndex,
-)
 
 internal fun KaSession.createMethods(
     lightClass: SymbolLightClassBase,
