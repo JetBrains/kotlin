@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.io.PrintWriter
 import java.io.Serializable
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -123,14 +122,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
                 if (matchingExceptions.isNotEmpty()) {
                     CaughtBuildFailure.Expected(matchingExceptions)
                 } else {
-                    CaughtBuildFailure.Unexpected(
-                        java.io.StringWriter().use {
-                            PrintWriter(it).use {
-                                topLevelException.printStackTrace(it)
-                            }
-                            it
-                        }.toString()
-                    )
+                    CaughtBuildFailure.Unexpected(topLevelException.fullMessage)
                 }
             }
 
