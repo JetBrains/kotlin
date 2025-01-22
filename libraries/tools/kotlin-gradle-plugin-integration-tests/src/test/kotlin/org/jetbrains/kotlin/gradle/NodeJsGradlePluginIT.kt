@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 
 
 @MppGradlePluginTests
@@ -30,6 +31,36 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
 
             build(":app2:jsNodeDevelopmentRun") {
                 assertOutputContains("Hello with version: v22.1.0")
+            }
+        }
+    }
+
+    @DisplayName("Check that changing granularity doesn't break incremental compilation")
+    @GradleTest
+    @TestMetadata("subprojects-nodejs-setup")
+    fun testIncrementalCompilationWithChangingGranularity(gradleVersion: GradleVersion) {
+        project("subprojects-nodejs-setup", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.incremental.js.ir=true
+                |kotlin.js.ir.output.granularity=whole-program
+                """.trimMargin()
+            )
+
+            build(":app1:jsNodeDevelopmentRun") {
+                assertOutputContains("Hello with version: v22.2.0")
+            }
+
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.ir.output.granularity=per-file
+                """.trimMargin()
+            )
+
+            build(":app1:jsNodeDevelopmentRun") {
+                assertOutputContains("Hello with version: v22.2.0")
             }
         }
     }
