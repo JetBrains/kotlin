@@ -1,11 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
-#include "MemorySharedRefs.hpp"
-
-#include "ExternalRCRef.hpp"
+#include "ObjCBlockPointerSupport.hpp"
 
 using namespace kotlin;
 

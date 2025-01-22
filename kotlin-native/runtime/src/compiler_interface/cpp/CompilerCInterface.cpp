@@ -9,7 +9,6 @@
 #include "Types.h"
 #include "Runtime.h"
 #include "Exceptions.h"
-#include "MemorySharedRefs.hpp"
 #include "Natives.h"
 #include "KString.h"
 
@@ -32,8 +31,6 @@ touchType(ObjHeader)
 touchType(ArrayHeader)
 touchType(StringHeader)
 touchType(FrameOverlay)
-
-touchType(KRefSharedHolder)
 
 touchFunction(AllocInstance)
 touchFunction(AllocArrayInstance)
@@ -68,11 +65,6 @@ touchFunction(AddTLSRecord)
 touchFunction(LookupTLS)
 
 touchFunction(Kotlin_initRuntimeIfNeeded)
-
-touchFunction(KRefSharedHolder_initLocal)
-touchFunction(KRefSharedHolder_init)
-touchFunction(KRefSharedHolder_dispose)
-touchFunction(KRefSharedHolder_ref)
 
 touchFunction(Kotlin_mm_switchThreadStateNative)
 touchFunction(Kotlin_mm_switchThreadStateNative_debug)

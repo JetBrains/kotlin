@@ -4,6 +4,7 @@
  */
 
 #import "Memory.h"
+#include "ObjCBlockPointerSupport.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportErrors.h"
 

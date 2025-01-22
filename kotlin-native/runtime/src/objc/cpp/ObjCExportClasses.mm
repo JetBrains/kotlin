@@ -5,7 +5,6 @@
 
 #import "Types.h"
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
 
 #if KONAN_OBJC_INTEROP
 

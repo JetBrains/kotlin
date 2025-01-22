@@ -23,6 +23,7 @@
 #import <objc/objc-exception.h>
 #import <dispatch/dispatch.h>
 
+#include "ObjCBlockPointerSupport.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
