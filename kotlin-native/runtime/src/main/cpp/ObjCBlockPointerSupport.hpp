@@ -55,7 +55,6 @@ id objc_retainBlock(id self);
 
 }
 
-// Used exclusively in BlockPointerSupport.kt
 struct KRefSharedHolder {
    ObjHeader* obj_;
    kotlin::raw_ptr<kotlin::mm::RawExternalRCRef> ref_;
