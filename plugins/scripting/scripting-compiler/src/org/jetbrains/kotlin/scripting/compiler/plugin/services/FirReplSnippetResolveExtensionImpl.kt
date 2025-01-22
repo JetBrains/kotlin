@@ -67,6 +67,7 @@ class FirReplSnippetResolveExtensionImpl(
                         is FirSimpleFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
                         is FirRegularClass -> classLikes.put(it.name, it.symbol)
                         is FirTypeAlias -> classLikes.put(it.name, it.symbol)
+                        else -> {}
                     }
                 }
             }
