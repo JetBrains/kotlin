@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -198,15 +197,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
                 if (target.resolvePhase >= resolverPhase) return true
 
                 performCustomResolveUnderLock(target) {
-                    val firDesignation = FirDesignation(containingDeclarations, target)
-                    // Just calculate the body and CFG
-                    resolveWithKeeper(
-                        target,
-                        firDesignation,
-                        BodyStateKeepers.REPL_SNIPPET,
-                        { FirLazyBodiesCalculator.calculateBodies(firDesignation) }) {
-                        calculateControlFlowGraph(target)
-                    }
+                    resolve(target, BodyStateKeepers.REPL_SNIPPET)
                 }
                 return true
             }

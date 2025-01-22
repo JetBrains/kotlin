@@ -97,7 +97,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
         when (target) {
-            is FirFile, is FirScript, is FirRegularClass, is FirCodeFragment -> {}
+            is FirFile, is FirScript, is FirReplSnippet, is FirRegularClass, is FirCodeFragment -> {}
             else -> {
                 if (!target.isRegularDeclarationWithAnnotation) {
                     throwUnexpectedFirElementError(target)

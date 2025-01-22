@@ -9,6 +9,11 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.patchDesignationPathIfNeeded
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.Companion.collectDesignationPath
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.Companion.declarationTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirFileStructureNode.Companion.build
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirFileStructureNode.Companion.mappingName
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirFileStructureNode.Companion.mappingNameByPsi
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -118,7 +123,7 @@ internal class FirElementFinder : FirSessionComponent {
 
             val additionalPathPrefix = firFile.declarations
                 .singleOrNull()
-                .takeIf { it is FirScript }
+                .takeIf { it is FirScript || it is FirReplSnippet }
                 ?.let(FirFileStructureNode::mappingName)
 
             val pathSegments = listOfNotNull(additionalPathPrefix) + containerClassId?.relativeClassName?.pathSegments().orEmpty()
@@ -284,7 +289,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
 
             // A corner case for scripts as they always present in [pathSegments] even if it is a target,
             // so it should be checked
-            if (pathIndex != 0 || structures.singleOrNull()?.element !is FirScript) {
+            if (pathIndex != 0 || (structures.singleOrNull()?.element !is FirScript && structures.singleOrNull()?.element !is FirReplSnippet)) {
                 return null
             }
         }

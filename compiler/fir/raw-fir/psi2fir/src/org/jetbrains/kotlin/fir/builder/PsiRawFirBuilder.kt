@@ -1437,68 +1437,70 @@ open class PsiRawFirBuilder(
                 name = snippetName
                 symbol = snippetSymbol
 
-                var lastStatement: FirStatement? = null // Unclear how to get this from the LazyFirL
+                var lastStatement: FirStatement? = null
                 body = buildOrLazyBlock {
                     withContainerSymbol(snippetSymbol, isLocal = true) {
-                        buildBlock {
-                            val declarationsIter = script.declarations.listIterator()
-                            while (declarationsIter.hasNext()) {
-                                val declaration = declarationsIter.next()
-                                val isLast = !declarationsIter.hasNext()
+                        withForcedLocalContext {
+                            buildBlock {
+                                val declarationsIter = script.declarations.listIterator()
+                                while (declarationsIter.hasNext()) {
+                                    val declaration = declarationsIter.next()
+                                    val isLast = !declarationsIter.hasNext()
 
-                                when (declaration) {
-                                    is KtScriptInitializer -> {
-                                        val initializer = buildAnonymousInitializer(
-                                            initializer = declaration,
-                                            containingDeclarationSymbol = snippetSymbol,
-                                            allowLazyBody = !isLast,
-                                            isLocal = isLast,
-                                        )
+                                    when (declaration) {
+                                        is KtScriptInitializer -> {
+                                            val initializer = buildAnonymousInitializer(
+                                                initializer = declaration,
+                                                containingDeclarationSymbol = snippetSymbol,
+                                                allowLazyBody = !isLast,
+                                                isLocal = isLast,
+                                            )
 
-                                        val bodyStatements = initializer.body!!.statements
-                                        if (isLast) {
-                                            lastStatement = bodyStatements.lastOrNull()
+                                            val bodyStatements = initializer.body!!.statements
+                                            if (isLast) {
+                                                lastStatement = bodyStatements.lastOrNull()
+                                            }
+
+                                            statements.addAll(bodyStatements)
                                         }
+                                        is KtDestructuringDeclaration -> {
+                                            val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
+                                            statements.add(destructuringContainerVar)
 
-                                        statements.addAll(bodyStatements)
-                                    }
-                                    is KtDestructuringDeclaration -> {
-                                        val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
-                                        statements.add(destructuringContainerVar)
-
-                                        addDestructuringVariables(
-                                            statements,
-                                            this@Visitor,
-                                            baseModuleData,
-                                            declaration,
-                                            destructuringContainerVar,
-                                            tmpVariable = false,
-                                            forceLocal = false,
-                                        ) {
-                                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                            addDestructuringVariables(
+                                                statements,
+                                                this@Visitor,
+                                                baseModuleData,
+                                                declaration,
+                                                destructuringContainerVar,
+                                                tmpVariable = false,
+                                                forceLocal = false,
+                                            ) {
+                                                configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                            }
                                         }
-                                    }
-                                    is KtProperty -> {
-                                        val firProperty = convertProperty(declaration, null, forceLocal = true)
-                                        statements.add(firProperty)
-                                    }
-                                    else -> {
-                                        val firStatement = declaration.toFirStatement()
-                                        if (firStatement is FirDeclaration) {
-                                            statements.add(firStatement)
-                                        } else {
-                                            error("unexpected declaration type in script")
+                                        is KtProperty -> {
+                                            val firProperty = convertProperty(declaration, null, forceLocal = true)
+                                            statements.add(firProperty)
+                                        }
+                                        else -> {
+                                            val firStatement = declaration.toFirStatement()
+                                            if (firStatement is FirDeclaration) {
+                                                statements.add(firStatement)
+                                            } else {
+                                                error("unexpected declaration type in script")
+                                            }
                                         }
                                     }
                                 }
+                                lastStatement = statements.lastOrNull()
                             }
-                            lastStatement = statements.lastOrNull()
                         }
                     }
                 }
-                // TODO: proper lazy support - see the script
-                resultTypeRef =
-                    if (lastStatement is FirDeclaration) implicitUnitType else FirImplicitTypeRefImplWithoutSource
+                resultTypeRef = if (lastStatement is FirDeclaration) {
+                    implicitUnitType
+                } else FirImplicitTypeRefImplWithoutSource
                 setup()
             }
         }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -166,8 +167,11 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
     }
 
     private fun resolveReplTypes(firSnippet: FirReplSnippet) {
-        // Repl statements are lazy here, unlike Script. Problem?
-        TODO("Unclear if this is correct")
+        if (firSnippet.body is FirLazyBlock) {
+            return
+        }
+        firSnippet.transformAnnotations(transformer, null)
+        firSnippet.transformReceivers(transformer, null)
     }
 
     private fun resolveClassTypes(firClass: FirRegularClass) {

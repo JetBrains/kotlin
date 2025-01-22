@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBui
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -55,13 +56,19 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
                         containerClassFir?.declarations
                     } else {
                         if (declaration.containingKtFile.isScript()) {
-                            // .kts will have a single [FirScript] as a declaration. We need to unwrap statements in it.
-                            val firScript = firFile.declarations.singleOrNull() as? FirScript
-                            if (declaration is KtScript) {
-                                return@findSourceNonLocalFirDeclarationByProvider firScript?.takeIf { it.psi == declaration }
+                            // .kts will have a single [FirScript] or [FirReplSnippet] as a declaration. We need to unwrap statements in it.
+                            val firScript = firFile.declarations.singleOrNull()
+                            if (declaration is KtScript && (firScript is FirReplSnippet || firScript is FirScript)) {
+                                return@findSourceNonLocalFirDeclarationByProvider firScript.takeIf { it.psi == declaration }
                             }
 
-                            firScript?.declarations
+                            when (firScript) {
+                                is FirScript -> firScript.declarations
+                                is FirReplSnippet -> {
+                                    firScript.snippetDeclarations
+                                }
+                                else -> errorWithFirSpecificEntries("Unexpected script type", fir = firScript)
+                            }
                         } else {
                             firFile.declarations
                         }
@@ -253,6 +260,14 @@ val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
             is PsiFile -> null
             else -> element.parent
         }
+    }
+
+val FirReplSnippet.snippetDeclarations: List<FirDeclaration>
+    get() {
+        require(body !is FirLazyBlock) {
+            "Snippet body should be calculated"
+        }
+        return body.statements.filterIsInstance<FirDeclaration>()
     }
 
 val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>

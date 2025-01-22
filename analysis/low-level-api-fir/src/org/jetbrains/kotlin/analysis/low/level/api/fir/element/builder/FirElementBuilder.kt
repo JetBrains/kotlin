@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.isReplSnippet
 import org.jetbrains.kotlin.utils.ThreadSafe
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -388,7 +389,7 @@ internal fun getNonLocalContainingDeclaration(
             declarationCanBeLazilyResolved(parent, codeFragmentAware) &&
             predicate(parent)
         ) {
-            if (codeFragmentAware && element.containingFile is KtCodeFragment) {
+            if (codeFragmentAware && (element.containingFile is KtCodeFragment || element.containingFile.isReplSnippet())) {
                 candidate = parent
             } else {
                 return parent

@@ -217,8 +217,20 @@ internal sealed class LLFirTargetResolver(
         }
     }
 
+    final override fun withReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit) {
+        withContainingDeclaration(firReplSnippet) {
+            @Suppress("DEPRECATION_ERROR")
+            withContainingSnippet(firReplSnippet, action)
+        }
+    }
+
     @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
     protected open fun withContainingScript(firScript: FirScript, action: () -> Unit) {
+        action()
+    }
+
+    @Deprecated("Should never be called directly, only for override purposes, please use withScriptLike", level = DeprecationLevel.ERROR)
+    protected open fun withContainingSnippet(firScript: FirReplSnippet, action: () -> Unit) {
         action()
     }
 

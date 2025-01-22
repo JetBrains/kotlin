@@ -83,6 +83,7 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
             is FirAnonymousInitializer,
             is FirFile,
             is FirScript,
+            is FirReplSnippet,
             is FirCodeFragment,
             is FirDanglingModifierList,
                 -> {

@@ -47,7 +47,7 @@ class FirDesignation(
      *
      * ### Contracts:
      * * Can contain [FirFile] only in the first position
-     * * Can contain [FirScript] only in the first or second position
+     * * Can contain [FirScript] or [FirReplSnippet] only in the first or second position
      *
      * @see file
      * @see fileOrNull
@@ -69,9 +69,9 @@ class FirDesignation(
                     withFirDesignationEntry("designation", this@FirDesignation)
                 }
 
-                is FirScript -> requireWithAttachment(
+                is FirScript, is FirReplSnippet -> requireWithAttachment(
                     index == 0 || index == 1 && path.first() is FirFile,
-                    { "${FirScript::class.simpleName} can be only in the first or second position of the path, but actual is '$index'" },
+                    { "${declaration::class.simpleName} can be only in the first or second position of the path, but actual is '$index'" },
                 ) {
                     withFirDesignationEntry("designation", this@FirDesignation)
                 }
@@ -126,7 +126,6 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
     return when (target) {
         is FirSyntheticProperty,
         is FirSyntheticPropertyAccessor,
-        is FirReplSnippet,
         is FirAnonymousFunction,
         is FirErrorFunction,
         is FirAnonymousObject,
@@ -176,7 +175,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
         }
 
         is FirFile -> FirDesignation(target)
-        is FirScript, is FirCodeFragment -> {
+        is FirScript, is FirCodeFragment, is FirReplSnippet -> {
             collectDesignationPathWithContainingClass(providedFile, target, containingClassId = null)
         }
     }
@@ -206,8 +205,11 @@ private fun collectDesignationPathWithContainingClass(
 
     val fallbackClassPath = collectDesignationPathWithContainingClassFallback(target, containingClassId)
     val fallbackFile = providedFile ?: fallbackClassPath?.lastOrNull()?.getContainingFile() ?: file
-    val fallbackScript = fallbackFile?.declarations?.singleOrNull() as? FirScript
-    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath.orEmpty()
+    val fallbackScriptLike = when (val declaration = fallbackFile?.declarations?.singleOrNull()) {
+        is FirScript, is FirReplSnippet -> declaration
+        else -> null
+    }
+    val fallbackPath = listOfNotNull(fallbackFile, fallbackScriptLike) + fallbackClassPath.orEmpty()
     val patchedPath = patchDesignationPathIfNeeded(target, fallbackPath)
     return FirDesignation(patchedPath, target)
 }
