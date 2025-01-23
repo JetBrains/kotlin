@@ -1543,9 +1543,10 @@ class ComposableFunctionBodyTransformer(
                 // not the call site had a spread or not and only create groups if it did.
 
                 // composer.startMovableGroup(<>, values.size)
+                val sizeGetter = param.type.classOrNull!!.getPropertyGetter("size")!!.owner
                 val irGetParamSize = irMethodCall(
                     irGet(param),
-                    param.type.classOrNull!!.getPropertyGetter("size")!!.owner
+                    sizeGetter
                 )
 
                 // TODO(lmr): verify this works with default vararg expressions!
@@ -1557,9 +1558,21 @@ class ComposableFunctionBodyTransformer(
                     )
                 )
 
+                // dirty = if (composer.changed(values.length)) 0b0100 else 0b0000
                 // for (value in values) {
                 //     dirty = dirty or if (composer.changed(value)) 0b0100 else 0b0000
                 // }
+                skipPreamble.statements.add(
+                    dirty.irOrSetBitsAtSlot(
+                        slotIndex,
+                        irIfThenElse(
+                            context.irBuiltIns.intType,
+                            irChanged(irMethodCall(irGet(param), sizeGetter), compareInstanceForFunctionTypes = true),
+                            thenPart = irConst(ParamState.Different.bitsForSlot(slotIndex)),
+                            elsePart = irConst(ParamState.Uncertain.bitsForSlot(slotIndex))
+                        )
+                    )
+                )
                 skipPreamble.statements.add(
                     irForLoop(
                         varargElementType,
@@ -1591,7 +1604,7 @@ class ComposableFunctionBodyTransformer(
                 // composer.endMovableGroup()
                 skipPreamble.statements.add(irEndMovableGroup(scope))
 
-                // if (dirty and 0b0110 === 0) {
+                // if (dirty and 0b1110 === 0) {
                 //   dirty = dirty or 0b0010
                 // }
                 skipPreamble.statements.add(

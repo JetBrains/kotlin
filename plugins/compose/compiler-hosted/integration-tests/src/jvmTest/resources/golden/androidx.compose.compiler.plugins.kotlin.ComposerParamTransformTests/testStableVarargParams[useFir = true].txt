@@ -34,6 +34,7 @@ fun B(values: IntArray, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(B):Test.kt#2487m")
   val %dirty = %changed
   %composer.startMovableGroup(<>, values.size)
+  %dirty = %dirty or if (%composer.changed(values.size)) 0b0100 else 0
   val <iterator> = values.iterator()
   while (<iterator>.hasNext()) {
     val value = <iterator>.next()
