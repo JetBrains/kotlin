@@ -1,3 +1,4 @@
+@_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
@@ -25,26 +26,26 @@ public final class Foo: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public extension main.a.b.c {
+public extension ExportedKotlinPackages.a.b.c {
     public final class E: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-        public static var A: main.a.b.c.E {
+        public static var A: ExportedKotlinPackages.a.b.c.E {
             get {
-                return main.a.b.c.E(__externalRCRef: a_b_c_E_A_get())
+                return ExportedKotlinPackages.a.b.c.E(__externalRCRef: a_b_c_E_A_get())
             }
         }
-        public static var B: main.a.b.c.E {
+        public static var B: ExportedKotlinPackages.a.b.c.E {
             get {
-                return main.a.b.c.E(__externalRCRef: a_b_c_E_B_get())
+                return ExportedKotlinPackages.a.b.c.E(__externalRCRef: a_b_c_E_B_get())
             }
         }
-        public static var C: main.a.b.c.E {
+        public static var C: ExportedKotlinPackages.a.b.c.E {
             get {
-                return main.a.b.c.E(__externalRCRef: a_b_c_E_C_get())
+                return ExportedKotlinPackages.a.b.c.E(__externalRCRef: a_b_c_E_C_get())
             }
         }
-        public static var allCases: [main.a.b.c.E] {
+        public static var allCases: [ExportedKotlinPackages.a.b.c.E] {
             get {
-                return a_b_c_E_entries_get() as! Swift.Array<main.a.b.c.E>
+                return a_b_c_E_entries_get() as! Swift.Array<ExportedKotlinPackages.a.b.c.E>
             }
         }
         package override init(
@@ -54,14 +55,8 @@ public extension main.a.b.c {
         }
         public static func valueOf(
             value: Swift.String
-        ) -> main.a.b.c.E {
-            return main.a.b.c.E(__externalRCRef: a_b_c_E_valueOf__TypesOfArguments__Swift_String__(value))
-        }
-    }
-}
-public enum a {
-    public enum b {
-        public enum c {
+        ) -> ExportedKotlinPackages.a.b.c.E {
+            return ExportedKotlinPackages.a.b.c.E(__externalRCRef: a_b_c_E_valueOf__TypesOfArguments__Swift_String__(value))
         }
     }
 }

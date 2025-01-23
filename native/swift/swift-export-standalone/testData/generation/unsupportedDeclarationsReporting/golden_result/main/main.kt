@@ -1,7 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(a.b.c.E::class, "22ExportedKotlinPackages1aO1bO1cO4mainE1EC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.Nested::class, "4main3FooC6NestedC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(a.b.c.E::class, "4main1aO1bO1cO4mainE1EC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
