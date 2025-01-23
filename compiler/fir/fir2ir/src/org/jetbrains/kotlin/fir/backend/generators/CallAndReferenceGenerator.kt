@@ -681,8 +681,7 @@ class CallAndReferenceGenerator(
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, irType)
             }
         }.applyTypeArguments(qualifiedAccess)
-            .applyReceivers(qualifiedAccess, firSymbol, convertedExplicitReceiver)
-            .applyCallArguments(qualifiedAccess)
+            .applyReceiversAndArguments(qualifiedAccess, firSymbol, convertedExplicitReceiver)
     }
 
     private fun FirCallableSymbol<*>.valueParametersSize(): Int {
@@ -1356,6 +1355,24 @@ class CallAndReferenceGenerator(
     }
 
     ////// RECEIVER AND CONTEXT/VALUE ARGUMENT MAPPING
+
+    private fun IrExpression.applyReceiversAndArguments(
+        statement: FirStatement?,
+        declarationSiteSymbol: FirCallableSymbol<*>?,
+        explicitReceiverExpression: IrExpression?,
+    ): IrExpression {
+        if (statement == null) return this
+
+        var expression = this
+
+        if (statement is FirQualifiedAccessExpression) {
+            expression = expression.applyReceivers(statement, declarationSiteSymbol, explicitReceiverExpression)
+        }
+
+        expression = expression.applyCallArguments(statement)
+
+        return expression
+    }
 
     private fun IrExpression.applyReceivers(
         qualifiedAccess: FirQualifiedAccessExpression,
