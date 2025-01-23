@@ -71,8 +71,6 @@ internal class ExecHandleBuilder(
     }
 
     fun build(): ExecHandle {
-//        val launchOpts = launchOpts
-
         val executable = launchOpts.executable.orNull
         check(!executable.isNullOrBlank()) { "executable must not be empty" }
 
@@ -85,7 +83,6 @@ internal class ExecHandleBuilder(
         val inputHandler = standardInput?.let { StreamsHandler.ForwardStdin(it) } ?: StreamsHandler.EmptyStdIn()
 
         val workingDir = launchOpts.workingDir.orNull?.asFile ?: error("workingDir is required")
-//        val arguments = launchOpts.arguments.orNull.orEmpty().flatMap { it.asArguments() }
         val environment = launchOpts.environment.orNull.orEmpty()
 
         return ExecHandle(
