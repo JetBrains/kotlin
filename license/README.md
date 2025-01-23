@@ -262,6 +262,10 @@ any distributions of the tools or libraries:
       - License: Apache License 2.0 ([license/third_party/gradle-node-plugin_LICENSE.txt](third_party/gradle-node-plugin_LICENSE.txt))
       - Origin: Copyright (c) 2013 node-gradle/gradle-node-plugin
 
+ - Path: kotlin/org/jetbrains/kotlin/gradle/utils/processes
+      - License: Apache 2 ([license/third_party/gradle_license.txt][gradle])
+      - Origin: Gradle, Copyright 2002-2025 Gradle, Inc.
+
 ## Example Code
 
 The following code is provided as examples and is not incorporated into
