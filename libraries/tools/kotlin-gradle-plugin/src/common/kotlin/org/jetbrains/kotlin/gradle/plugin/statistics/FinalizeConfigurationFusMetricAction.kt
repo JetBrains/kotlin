@@ -14,8 +14,19 @@ internal val FinalizeConfigurationFusMetricAction = KotlinProjectSetupCoroutine 
     KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
     project.gradle.sharedServices.registrations.findByName(BuildFusService.serviceName)?.also {
-        val parameters = it.parameters as BuildFusService.Parameters
-        parameters.generalConfigurationMetrics.finalizeValue()
-        parameters.configurationMetrics.add(KotlinProjectConfigurationMetrics.collectMetrics(project))
+        val parameters = it.parameters
+        if (parameters is ConfigurationMetricsBuildFusParameters) {
+            //build service parameter is used,
+            //it is important to avoid service parameters initialization before all configuration metrics are collected
+            parameters.generalConfigurationMetrics.finalizeValue()
+            parameters.configurationMetrics.add(KotlinProjectConfigurationMetrics.collectMetrics(project))
+        } else {
+            (parameters as BuildFusService.Parameters).generalConfigurationMetrics.finalizeValue()
+
+            //build service field is used,
+            //it is safe to access build service, as configuration metrics will be cached in [BuildFinishFlowAction]
+            val buildFusService = it.service.orNull as FlowActionBuildFusService
+            buildFusService.addConfigurationTimeMetric(KotlinProjectConfigurationMetrics.collectMetrics(project))
+        }
     }
 }

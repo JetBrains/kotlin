@@ -6,36 +6,21 @@
 package org.jetbrains.kotlin.gradle.fus.internal
 
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
 import org.jetbrains.kotlin.gradle.fus.Metric
 import org.jetbrains.kotlin.gradle.fus.UniqueId
 import java.util.concurrent.ConcurrentLinkedQueue
 
-abstract class InternalGradleBuildFusStatisticsService :
-    GradleBuildFusStatisticsService<InternalGradleBuildFusStatisticsService.Parameter> {
-    internal interface Parameter : CommonFusServiceParameters {
+abstract class InternalGradleBuildFusStatisticsService<T : InternalGradleBuildFusStatisticsService.Parameter> :
+    GradleBuildFusStatisticsService<T> {
+
+    interface Parameter : BuildServiceParameters {
         val fusStatisticsRootDirPath: Property<String>
-        val buildId: Property<String>
     }
 
-    internal val buildId = parameters.buildId.get()
-    private val metrics = ConcurrentLinkedQueue<Metric>()
-
-    /**
-     * Returns a list of collected metrics sets.
-     *
-     *
-     * These sets are not going to be merged into one as no aggregation information is present here.
-     * Non-thread safe
-     */
-    fun getAllReportedMetrics(): List<Metric> {
-        val reportedMetrics = ArrayList<Metric>()
-        parameters.configurationMetrics.orNull?.also {
-            reportedMetrics.addAll(it)
-        }
-        reportedMetrics.addAll(metrics)
-        return reportedMetrics
-    }
+    internal val executionTimeMetrics = ConcurrentLinkedQueue<Metric>()
 
     override fun reportMetric(name: String, value: Boolean, uniqueId: UniqueId) {
         internalReportMetric(name, value, uniqueId)
@@ -51,7 +36,16 @@ abstract class InternalGradleBuildFusStatisticsService :
 
     private fun internalReportMetric(name: String, value: Any, uniqueId: UniqueId) {
         //all aggregations should be done on IDEA side
-        metrics.add(Metric(name, value, uniqueId))
+        executionTimeMetrics.add(Metric(name, value, uniqueId))
     }
+
+    /**
+     * Returns a list of collected metrics sets.
+     *
+     *
+     * These sets are not going to be merged into one as no aggregation information is present here.
+     * Non-thread safe
+     */
+    abstract fun getExecutionTimeMetrics(): Provider<List<Metric>>
 
 }

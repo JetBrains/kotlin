@@ -42,7 +42,8 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for dokka")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+//        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+        minVersion = TestVersions.Gradle.G_8_11
     )
     fun testDokka(gradleVersion: GradleVersion) {
         project(
@@ -66,7 +67,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for dokka v2 html doc")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testDokkaV2HtmlDoc(gradleVersion: GradleVersion) {
         val expectedDokkaFusMetrics = arrayOf(
@@ -82,7 +83,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for dokka v2 javadoc")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testDokkaV2Javadoc(gradleVersion: GradleVersion) {
         val expectedDokkaFusMetrics = arrayOf(
@@ -159,6 +160,9 @@ class FusStatisticsIT : KGPBaseTest() {
     @NativeGradlePluginTests
     @DisplayName("Verify that the metric for applying the Cocoapods plugin is being collected")
     @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
     fun testMetricCollectingOfApplyingCocoapodsPlugin(gradleVersion: GradleVersion) {
         project("native-cocoapods-template", gradleVersion) {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
@@ -170,6 +174,9 @@ class FusStatisticsIT : KGPBaseTest() {
     @NativeGradlePluginTests
     @DisplayName("Verify that the metric for native incremental compilation")
     @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
     fun testMetricCollectingForNative(gradleVersion: GradleVersion) {
         nativeProject(
             "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
@@ -187,6 +194,9 @@ class FusStatisticsIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("Verify that the metric for applying the Kotlin JS plugin is being collected")
     @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
     fun testMetricCollectingOfApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("simple-js-library", gradleVersion) {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
@@ -199,6 +209,9 @@ class FusStatisticsIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @DisplayName("Ensure that the metric are not collected if plugins were not applied to simple project")
     @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0],
+    )
     fun testAppliedPluginsMetricsAreNotCollectedInSimpleProject(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
@@ -220,7 +233,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for project with buildSrc")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0]
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2]
     )
     fun testProjectWithBuildSrcForGradleVersion7(gradleVersion: GradleVersion) {
         //KT-64022 there are a different build instances in buildSrc and rest project:
@@ -274,7 +287,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for failed build")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsForFailedBuild(gradleVersion: GradleVersion) {
         project(
@@ -302,7 +315,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("fus metric for multiproject")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     @JvmGradlePluginTests
     fun testFusStatisticsForMultiproject(gradleVersion: GradleVersion) {
@@ -328,7 +341,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("general fields with configuration cache")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion) {
         testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.DISABLED)
@@ -338,7 +351,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("general fields with configuration cache and project isolation")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testFusStatisticsWithConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
         testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.ENABLED)
@@ -393,7 +406,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("configuration type metrics")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testConfigurationTypeFusMetrics(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
@@ -425,7 +438,7 @@ class FusStatisticsIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @GradleTest
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1, TestVersions.Gradle.G_8_2])
     fun testKotlinxPlugins(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
@@ -459,6 +472,9 @@ class FusStatisticsIT : KGPBaseTest() {
 
     @MppGradlePluginTests
     @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
     fun testWasmIncrementalStatisticCollection(gradleVersion: GradleVersion) {
         project(
             "new-mpp-wasm-test", gradleVersion
@@ -484,6 +500,9 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("native compiler arguments")
     @GradleTest
     @NativeGradlePluginTests
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
     fun testNativeCompilerArguments(gradleVersion: GradleVersion) {
         nativeProject("native-incremental-simple", gradleVersion) {
             buildGradleKts.appendText(

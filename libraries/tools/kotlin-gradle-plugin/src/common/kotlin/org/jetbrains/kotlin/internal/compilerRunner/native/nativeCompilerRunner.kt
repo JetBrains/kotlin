@@ -29,7 +29,7 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
     actualNativeHomeDirectory: Provider<File>,
     jvmArgs: Provider<List<String>>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
-    buildFusService: Property<BuildFusService?>,
+    buildFusService: Property<out BuildFusService<out BuildFusService.Parameters>?>,
 ): KotlinNativeToolRunner = newInstance<KotlinNativeToolRunner>(
     metricsReporter,
     classLoadersCachingBuildService,
