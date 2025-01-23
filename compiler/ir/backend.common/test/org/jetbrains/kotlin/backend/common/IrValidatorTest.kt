@@ -110,6 +110,8 @@ class IrValidatorTest {
         return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also(module::addFile)
     }
 
+    private fun createTrueConst() = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)
+
     private fun buildInvalidIrTreeWithLocations(): IrElement {
         val file = createIrFile()
         val function = IrFactoryImpl.buildFun {
@@ -1585,10 +1587,10 @@ class IrValidatorTest {
         )
 
         val incorrectLoop = IrWhileLoopImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, null).apply {
-            condition = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)
+            condition = createTrueConst()
         }
         val correctLoop = IrWhileLoopImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, null).apply {
-            condition = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)
+            condition = createTrueConst()
         }
         val incorrectBreak = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, incorrectLoop)
         val incorrectContinue = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, incorrectLoop)
@@ -1690,18 +1692,18 @@ class IrValidatorTest {
 
         val incorrectGetField = IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol, TestIrBuiltins.booleanType)
         val incorrectSetField = IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol, TestIrBuiltins.booleanType).apply {
-            value = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)
+            value = createTrueConst()
         }
         val correctGetField = IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol, TestIrBuiltins.intType)
         val correctSetField = IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol, TestIrBuiltins.unitType).apply {
-            value = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)
+            value = createTrueConst()
         }
         val incorrectSetValue = IrSetValueImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             type = TestIrBuiltins.anyType,
             symbol = variable.symbol,
-            value = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true),
+            value = createTrueConst(),
             origin = null,
         )
         val incorrectGetValue = IrGetValueImpl(
@@ -1715,7 +1717,7 @@ class IrValidatorTest {
             endOffset = UNDEFINED_OFFSET,
             type = TestIrBuiltins.unitType,
             symbol = variable.symbol,
-            value = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true),
+            value = createTrueConst(),
             origin = null,
         )
         val correctGetValue = IrGetValueImpl(
@@ -2055,6 +2057,125 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected org.sample.MyObject, got kotlin.Int
                     GET_OBJECT 'CLASS OBJECT name:MyObject modality:FINAL visibility:public superTypes:[]' type=kotlin.Int
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+        )
+    }
+
+    @Test
+    fun `type operator calls with incorrect types are reported`() {
+        val file = createIrFile("test.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+        )
+
+        val incorrectCast = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.booleanType.makeNullable(),
+            operator = IrTypeOperator.CAST,
+            typeOperand = TestIrBuiltins.booleanType,
+            argument = createTrueConst()
+        )
+
+        val correctCast = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.booleanType,
+            operator = IrTypeOperator.CAST,
+            typeOperand = TestIrBuiltins.booleanType,
+            argument = createTrueConst()
+        )
+
+        val incorrectSafeCast = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.booleanType,
+            operator = IrTypeOperator.SAFE_CAST,
+            typeOperand = TestIrBuiltins.booleanType,
+            argument = createTrueConst()
+        )
+
+        val correctSafeCast = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.booleanType.makeNullable(),
+            operator = IrTypeOperator.SAFE_CAST,
+            typeOperand = TestIrBuiltins.booleanType,
+            argument = createTrueConst()
+        )
+
+        val incorrectInstanceOf = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.intType,
+            operator = IrTypeOperator.INSTANCEOF,
+            typeOperand = TestIrBuiltins.intType,
+            argument = createTrueConst()
+        )
+
+        val correctInstanceOf = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.booleanType,
+            operator = IrTypeOperator.INSTANCEOF,
+            typeOperand = TestIrBuiltins.intType,
+            argument = createTrueConst()
+        )
+
+        body.statements.addAll(
+            listOf(
+                incorrectCast,
+                correctCast,
+                incorrectSafeCast,
+                correctSafeCast,
+                incorrectInstanceOf,
+                correctInstanceOf
+            )
+        )
+        function.body = body
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Boolean, got kotlin.Boolean?
+                    TYPE_OP type=kotlin.Boolean? origin=CAST typeOperand=kotlin.Boolean
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Boolean?, got kotlin.Boolean
+                    TYPE_OP type=kotlin.Boolean origin=SAFE_CAST typeOperand=kotlin.Boolean
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Boolean, got kotlin.Int
+                    TYPE_OP type=kotlin.Int origin=INSTANCEOF typeOperand=kotlin.Int
                       inside BLOCK_BODY
                         inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
