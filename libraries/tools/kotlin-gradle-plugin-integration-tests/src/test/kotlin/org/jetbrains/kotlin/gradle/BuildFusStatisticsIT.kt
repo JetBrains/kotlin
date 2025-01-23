@@ -86,9 +86,17 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                             "class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService is already instantiated in another classpath",
                             1
                         )
+
+                        // from buildSrc project
                         assertOutputContainsExactlyTimes(
                             "[KOTLIN] Initialize BuildFusService${'$'}Inject",
-                            2
+                            1
+                        )
+
+                        //from main project
+                        assertOutputContainsExactlyTimes(
+                            "[KOTLIN] Initialize FlowActionBuildFusService${'$'}Inject",
+                            1
                         )
                     }
                 }
