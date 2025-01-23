@@ -7,12 +7,16 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.SirAttribute
+import org.jetbrains.kotlin.sir.SirFunctionalType
+import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.SirAndKaSession
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.nodes.SirInitFromKtSymbol
 
 @OptIn(KaExperimentalApi::class)
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
@@ -60,7 +64,7 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
 }
 
 @OptIn(KaExperimentalApi::class)
-private fun <P: KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
+private fun <P : KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
     return parameter.returnType.translateType(
         useSiteSession,
         reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
@@ -68,3 +72,4 @@ private fun <P: KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol:
         processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
     )
 }
+

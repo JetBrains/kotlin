@@ -64,6 +64,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("innerClass")
+  public void testInnerClass() {
+    runTest("native/swift/swift-export-standalone/testData/execution/innerClass/");
+  }
+
+  @Test
   @TestMetadata("list")
   public void testList() {
     runTest("native/swift/swift-export-standalone/testData/execution/list/");
