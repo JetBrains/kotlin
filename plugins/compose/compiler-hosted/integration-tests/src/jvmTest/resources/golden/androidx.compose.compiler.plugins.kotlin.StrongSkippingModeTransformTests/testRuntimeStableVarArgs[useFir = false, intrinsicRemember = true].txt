@@ -25,6 +25,7 @@ class Holder<T>  {
     %composer = %composer.startRestartGroup(<>)
     val %dirty = %changed
     %composer.startMovableGroup(<>, x.size)
+    %dirty = %dirty or if (%composer.changed(x.size)) 0b0100 else 0
     val <iterator> = x.iterator()
     while (<iterator>.hasNext()) {
       val value = <iterator>.next()
