@@ -17,7 +17,7 @@ fun box(): String {
     if (user.age != 10) return "Fail: problem with `age` property"
 
     val json = js("JSON.stringify(user)")
-    if (json != "{\"age\":10,\"name\":\"Name\"}") return "Fail: got the next json: $json"
+    if (json != "{\"name\":\"Name\",\"age\":10}") return "Fail: got the next json: $json"
 
     return "OK"
 }

@@ -21,11 +21,11 @@ fun box(): String {
     if (user.email != "test@test") return "Fail: problem with `email` property"
 
     val json = js("JSON.stringify(user)")
-    if (json != "{\"age\":10,\"name\":\"Name\",\"email\":\"test@test\"}") return "Fail: got the next json: $json"
+    if (json != "{\"name\":\"Name\",\"age\":10,\"email\":\"test@test\"}") return "Fail: got the next json: $json"
 
-    val copy = user.copy()
+    val copy = User.copy(user)
     val copiedJson = js("JSON.stringify(copy)")
-    if (copiedJson != "{\"age\":10,\"name\":\"Name\",\"email\":\"test@test\"}") return "Fail: got the next json: $copiedJson"
+    if (copiedJson != "{\"name\":\"Name\",\"age\":10,\"email\":\"test@test\"}") return "Fail: got the next json: $copiedJson"
 
     val simpleUser = User(name = "Name", age = 10)
 
@@ -33,11 +33,11 @@ fun box(): String {
     if (simpleUser.age != 10) return "Fail: problem with `age` property"
 
     val anotherJson = js("JSON.stringify(simpleUser)")
-    if (anotherJson != "{\"age\":10,\"name\":\"Name\"}") return "Fail: got the next json: $anotherJson"
+    if (anotherJson != "{\"name\":\"Name\",\"age\":10}") return "Fail: got the next json: $anotherJson"
 
-    val anotherCopy = simpleUser.copy()
+    val anotherCopy = User.copy(simpleUser)
     val anotherCopiedJson = js("JSON.stringify(anotherCopy)")
-    if (anotherCopiedJson != "{\"age\":10,\"name\":\"Name\"}") return "Fail: got the next json: $anotherCopiedJson"
+    if (anotherCopiedJson != "{\"name\":\"Name\",\"age\":10}") return "Fail: got the next json: $anotherCopiedJson"
 
     return "OK"
 }

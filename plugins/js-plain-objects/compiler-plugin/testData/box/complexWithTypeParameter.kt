@@ -15,24 +15,28 @@ external interface User<T> : BaseUser<T> {
     val age: Int
 }
 
+fun assertUser(user: User<String>, name: String, age: Int): String {
+    if (user.name != name) return "Fail: problem with `name` property"
+    if (user.age != age) return "Fail: problem with `age` property"
+
+    val json = js("JSON.stringify(user)")
+    if (json != "{\"name\":\"$name\",\"age\":$age}") return "Fail: got the next json: $json"
+
+    return "OK"
+}
+
 fun box(): String {
     val user = User(name = "Name", age = 10)
 
-    if (user.name != "Name") return "Fail: problem with `name` property"
-    if (user.age != 10) return "Fail: problem with `age` property"
+    assertUser(user, name = "Name", age = 10).let {
+        if (it != "OK") return it
+    }
 
-    val json = js("JSON.stringify(user)")
-    if (json != "{\"name\":\"Name\",\"age\":10}") return "Fail: got the next json: $json"
+    val userAsBaseUserCopy = User.copy(user, name = "New one")
 
-    val userAsBaseUser: BaseUser<*> = user
-
-    if (userAsBaseUser.name != "Name") return "Fail: problem with `name` property on BaseUser"
-
-    val userAsBaseUserCopy = userAsBaseUser.copy(name = "New one")
-    if (userAsBaseUserCopy.name != "New one") return "Fail: problem with copied `name` property on BaseUser"
-
-    val userAsBaseUserCopyJson = js("JSON.stringify(userAsBaseUserCopy)")
-    if (userAsBaseUserCopyJson != "{\"name\":\"New one\",\"age\":10}") return "Fail: got the next json: $userAsBaseUserCopyJson"
+    assertUser(userAsBaseUserCopy, name = "New one", age = 10).let {
+        if (it != "OK") return it
+    }
 
     return "OK"
 }

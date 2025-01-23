@@ -10,7 +10,7 @@ external interface User {
 
 fun box(): String {
     val user = User(name = "Name", age = 10)
-    val copy = user.copy(age = 11)
+    val copy = User.copy(user, age = 11)
 
     if (copy === user) return "Fail: mutation instead of immutable copy"
 
@@ -19,7 +19,7 @@ fun box(): String {
     if (copy.name != "Name") return "Fail: problem with copied `name` property"
     if (copy.age != 11) return "Fail: problem with copied `age` property"
 
-    if (json != "{\"age\":11,\"name\":\"Name\"}") return "Fail: got the next json for the copy: $json"
+    if (json != "{\"name\":\"Name\",\"age\":11}") return "Fail: got the next json for the copy: $json"
 
     return "OK"
 }

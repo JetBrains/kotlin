@@ -25,7 +25,7 @@ fun box(): String {
     if (user.friends.items[0] != "Friend") return "Fail: problem with `friends.items` property"
 
     val json = js("JSON.stringify(user)")
-    if (json != "{\"friends\":{\"items\":[\"Friend\"]},\"age\":10,\"name\":\"Name\"}") return "Fail: got the next json: $json"
+    if (json != "{\"name\":\"Name\",\"age\":10,\"friends\":{\"items\":[\"Friend\"]}}") return "Fail: got the next json: $json"
 
     return "OK"
 }

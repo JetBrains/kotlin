@@ -72,15 +72,17 @@ import kotlin.collections.plusAssign
  * ```
  * external interface Admin {
  *   val chat: Chat
- *
- *  inline fun copy(chat: Chat = this.chat, email: String = this.email): Admin =
- *      Admin.Companion.invoke(chat, name)
+ *   val email: String?
  *
  *   @JsExport.Ignore
  *   companion object {
  *      @JsNoDispatchReceiver
  *      inline operator fun invoke(chat: Chat, email: String? = VOID): Admin =
  *          js("{ chat: chat, name: name }")
+ *
+ *      @JsNoDispatchReceiver
+ *      inline fun copy(source: Admin, chat: Chat = VOID, email: String = VOID): Admin =
+ *          js("Object.assign({}, source, { chat: chat, email: email })")
  *   }
  * }
  * ```
@@ -148,11 +150,8 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         val outerClass = classSymbol.getContainingClassSymbol()
-        return when {
-            classSymbol.isCompanion && outerClass?.isJsPlainObject == true -> setOf(OperatorNameConventions.INVOKE)
-            classSymbol.isJsPlainObject -> setOf(StandardNames.DATA_CLASS_COPY)
-            else -> emptySet()
-        }
+        if (!classSymbol.isCompanion || outerClass?.isJsPlainObject != true) return emptySet()
+        return setOf(OperatorNameConventions.INVOKE, StandardNames.DATA_CLASS_COPY)
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
@@ -163,7 +162,8 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
 
         return when (callableId.callableName) {
             StandardNames.DATA_CLASS_COPY -> {
-                containingClass
+                possibleInterface
+                    ?.takeIf { context.owner.isCompanion }
                     ?.let { factoryFqNamesToJsPlainObjectsInterface[it.asSingleFqName()] }
                     ?.let { listOf(createJsPlainObjectCopyFunction(callableId, context.owner, it).symbol) } ?: emptyList()
             }
@@ -182,7 +182,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         parent: FirClassSymbol<*>,
         jsPlainObjectInterface: FirRegularClassSymbol,
     ): FirSimpleFunction {
-        return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface) {
+        return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface, isOperator = true) {
             runIf(resolvedTypeRef.coneType.isMarkedOrFlexiblyNullable) {
                 buildPropertyAccessExpression {
                     calleeReference = buildResolvedNamedReference {
@@ -200,7 +200,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         parent: FirClassSymbol<*>,
         jsPlainObjectInterface: FirRegularClassSymbol,
     ): FirSimpleFunction {
-        return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface) {
+        return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface, includeJsPlainObjectInterfaceAsParameter = true) {
             buildPropertyAccessExpression {
                 calleeReference = buildResolvedNamedReference {
                     name = StandardIds.VOID_PROPERTY_NAME
@@ -216,6 +216,8 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         callableId: CallableId,
         parent: FirClassSymbol<*>,
         jsPlainObjectInterface: FirRegularClassSymbol,
+        isOperator: Boolean = false,
+        includeJsPlainObjectInterfaceAsParameter: Boolean = false,
         getParameterDefaultValueFromProperty: ClassProperty.() -> FirExpression?
     ): FirSimpleFunction {
         var typeParameterSubstitutor: ConeSubstitutor? = null
@@ -240,13 +242,13 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                 Visibilities.Public.toEffectiveVisibility(parent, forClass = true)
             ).apply {
                 isInline = true
-                isOperator = true
                 isOverride = false
+                this.isOperator = isOperator
             }
 
             annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
 
-            if (parent.isCompanion && jsPlainObjectInterface.typeParameterSymbols.isNotEmpty()) {
+            if (jsPlainObjectInterface.typeParameterSymbols.isNotEmpty()) {
                 jsPlainObjectInterface.typeParameterSymbols.mapTo(typeParameters) {
                     val typeParameter = buildTypeParameterCopy(it.fir) {
                         origin = JsPlainObjectsPluginKey.origin
@@ -279,11 +281,25 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             }
 
             returnTypeRef = replacedJsPlainObjectType
-            dispatchReceiverType =
-                if (parent.isCompanion) parent.defaultType() else replacedJsPlainObjectType.coneType as ConeSimpleKotlinType
+            dispatchReceiverType = parent.defaultType()
 
-            if (parent.isCompanion) {
-                annotateWith(JsStandardClassIds.Annotations.JsNoDispatchReceiver)
+            annotateWith(JsStandardClassIds.Annotations.JsNoDispatchReceiver)
+
+            if (includeJsPlainObjectInterfaceAsParameter) {
+                val sourceVariableName = Name.identifier("source")
+
+                valueParameters += buildValueParameter {
+                    moduleData = session.moduleData
+                    origin = JsPlainObjectsPluginKey.origin
+                    returnTypeRef = replacedJsPlainObjectType
+                    name = sourceVariableName
+                    symbol = FirValueParameterSymbol(sourceVariableName)
+                    isCrossinline = false
+                    isNoinline = true
+                    isVararg = false
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
+                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                }
             }
 
             jsPlainObjectProperties.mapTo(valueParameters) {

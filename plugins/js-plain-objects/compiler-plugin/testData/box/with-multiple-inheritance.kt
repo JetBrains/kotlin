@@ -27,7 +27,7 @@ fun box(): String {
     if (user.role != "Admin") return "Fail: problem with `role` property"
 
     val json = js("JSON.stringify(user)")
-    if (json != "{\"age\":10,\"name\":\"Name\",\"role\":\"Admin\",\"email\":\"test@test\"}") return "Fail: got the next json: $json"
+    if (json != "{\"name\":\"Name\",\"age\":10,\"role\":\"Admin\",\"email\":\"test@test\"}") return "Fail: got the next json: $json"
 
     return "OK"
 }
