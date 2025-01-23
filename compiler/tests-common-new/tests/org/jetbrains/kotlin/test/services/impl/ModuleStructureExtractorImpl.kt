@@ -90,8 +90,6 @@ class ModuleStructureExtractorImpl(
         private var linesOfCurrentFile = mutableListOf<String>()
         private var endLineNumberOfLastFile = -1
 
-        private var allowFilesWithSameNames = false
-
         private var directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         private var moduleDirectivesBuilder: RegisteredDirectivesParser = directivesBuilder
         private var fileDirectivesBuilder: RegisteredDirectivesParser? = null
@@ -214,9 +212,6 @@ class ModuleStructureExtractorImpl(
                     }
                     currentFileName = (values.first() as String).also(::validateFileName)
                 }
-                ModuleStructureDirectives.ALLOW_FILES_WITH_SAME_NAMES -> {
-                    allowFilesWithSameNames = true
-                }
                 else -> return false
             }
 
@@ -319,7 +314,7 @@ class ModuleStructureExtractorImpl(
                 "module_${currentModuleName}_$defaultFileName"
             }
             val filename = currentFileName ?: actualDefaultFileName
-            if (!allowFilesWithSameNames && filesOfCurrentModule.any { it.name == filename }) {
+            if (filesOfCurrentModule.any { it.name == filename }) {
                 error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
             val directives = fileDirectivesBuilder?.build()?.onEach { it.checkDirectiveApplicability(contextIsFile = true) }

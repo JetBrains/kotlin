@@ -28,10 +28,4 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
             Declares (next) snippet with auto-incremented number
         """.trimIndent()
     )
-
-    val ALLOW_FILES_WITH_SAME_NAMES by directive(
-        """
-        Allows specifying test files with the same names using the // FILE directive.
-        """.trimIndent()
-    )
 }

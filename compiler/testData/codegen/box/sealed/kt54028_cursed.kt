@@ -1,4 +1,3 @@
-// ALLOW_FILES_WITH_SAME_NAMES
 // KLIB_RELATIVE_PATH_BASES: a, b
 
 // Test that if we have two different files with the same name in the same package, KT-54028 doesn't reproduce.
