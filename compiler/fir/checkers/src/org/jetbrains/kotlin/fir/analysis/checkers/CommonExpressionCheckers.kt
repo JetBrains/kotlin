@@ -80,6 +80,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirOptionalExpectationExpressionChecker,
             FirParenthesizedLhsSetOperatorChecker,
             FirCommonAtomicReferenceToPrimitiveCallChecker,
+            FirCommonAtomicArrayToPrimitiveCallChecker,
             FirGenericQualifierOnConstructorCallChecker,
         )
 
