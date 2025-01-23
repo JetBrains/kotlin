@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import kotlin.reflect.KClass
 
 internal class NodeJsPluginApplier(
-    private val platformDisambiguate: HasPlatformDisambiguate,
+    private val platformDisambiguate: HasPlatformDisambiguator,
     private val nodeJsEnvSpecKlass: KClass<out BaseNodeJsEnvSpec>,
     private val nodeJsEnvSpecName: String,
     private val nodeJsRootApply: (project: Project) -> BaseNodeJsRootExtension,

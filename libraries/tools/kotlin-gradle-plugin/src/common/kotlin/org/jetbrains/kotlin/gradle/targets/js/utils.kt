@@ -84,17 +84,38 @@ internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File
     return testRunnerFile
 }
 
-internal fun <T> KotlinJsIrCompilation.targetVariant(
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the compilation configuration.
+ *
+ * @param jsVariant The variant to be used if the target is JavaScript.
+ * @param wasmVariant The variant to be used if the target is WebAssembly.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the compilation configuration.
+ */
+internal fun <T> KotlinJsIrCompilation.webTargetVariant(
     jsVariant: T,
     wasmVariant: T,
-): T = target.targetVariant(jsVariant, wasmVariant)
+): T = target.webTargetVariant(jsVariant, wasmVariant)
 
-internal fun <T> KotlinJsIrCompilation.targetVariant(
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the compilation configuration.
+ *
+ * @param jsVariant A lambda that returns the JavaScript-specific variant.
+ * @param wasmVariant A lambda that returns the WebAssembly-specific variant.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the compilation configuration.
+ */
+internal fun <T> KotlinJsIrCompilation.webTargetVariant(
     jsVariant: () -> T,
     wasmVariant: () -> T,
-): T = target.targetVariant(jsVariant, wasmVariant)
+): T = target.webTargetVariant(jsVariant, wasmVariant)
 
-internal fun <T> KotlinJsIrTarget.targetVariant(
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the target configuration.
+ *
+ * @param jsVariant A lambda that returns the JavaScript-specific variant.
+ * @param wasmVariant A lambda that returns the WebAssembly-specific variant.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the target configuration.
+ */
+internal fun <T> KotlinJsIrTarget.webTargetVariant(
     jsVariant: () -> T,
     wasmVariant: () -> T,
 ): T = if (wasmTargetType == null) {
@@ -103,7 +124,14 @@ internal fun <T> KotlinJsIrTarget.targetVariant(
     wasmVariant()
 }
 
-internal fun <T> KotlinJsIrTarget.targetVariant(
+/**
+ * Determines the appropriate variant (JavaScript or WebAssembly) to use based on the target configuration.
+ *
+ * @param jsVariant The variant to be used if the target is JavaScript.
+ * @param wasmVariant The variant to be used if the target is WebAssembly.
+ * @return The appropriate variant (either the result of `jsVariant` or `wasmVariant`), depending on the target configuration.
+ */
+internal fun <T> KotlinJsIrTarget.webTargetVariant(
     jsVariant: T,
     wasmVariant: T,
 ): T = if (wasmTargetType == null) {

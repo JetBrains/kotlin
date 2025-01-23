@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 open class NodeJsPlugin : CommonNodeJsPlugin {
     override fun apply(target: Project) {
         NodeJsPluginApplier(
-            platformDisambiguate = JsPlatformDisambiguate,
+            platformDisambiguate = JsPlatformDisambiguator,
             nodeJsEnvSpecKlass = NodeJsEnvSpec::class,
             nodeJsEnvSpecName = NodeJsEnvSpec.EXTENSION_NAME,
             nodeJsRootApply = { NodeJsRootPlugin.apply(it) }

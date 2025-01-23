@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.targetVariant
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 
@@ -29,7 +29,7 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
 
     @Transient
-    private val nodeJsEnvSpec = compilation.targetVariant(
+    private val nodeJsEnvSpec = compilation.webTargetVariant(
         { compilation.project.kotlinNodeJsEnvSpec },
         { compilation.project.wasmKotlinNodeJsEnvSpec },
     )

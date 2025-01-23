@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 
 open class NodeJsRootExtension(
@@ -17,7 +17,7 @@ open class NodeJsRootExtension(
     project,
     nodeJs,
     rootDir
-), HasPlatformDisambiguate by JsPlatformDisambiguate {
+), HasPlatformDisambiguator by JsPlatformDisambiguator {
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"
     }
