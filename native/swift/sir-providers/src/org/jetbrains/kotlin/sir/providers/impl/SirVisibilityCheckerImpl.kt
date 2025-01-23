@@ -97,10 +97,6 @@ public class SirVisibilityCheckerImpl(
             if (classKind == KaClassKind.INTERFACE && modality == KaSymbolModality.SEALED) {
                 return false
             }
-            if (isInner) {
-                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inner classes are not supported yet.")
-                return@with false
-            }
             if (classKind == KaClassKind.ENUM_CLASS) {
                 return@with true
             }

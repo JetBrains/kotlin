@@ -91,12 +91,21 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                         "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
                     }
                 )
-                add(
-                    request.initializationDescriptor(typeNamer).createFunctionBridge {
-                        val args = argNames(this)
-                        "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
-                    }
-                )
+                if (request.callable.isInner) {
+                    add(
+                        request.initializationDescriptor(typeNamer).createFunctionBridge {
+                            val args = argNames(this)
+                            "kotlin.native.internal.initInstance(${args[0]}, (${args[1]} as ${kotlinFqName[0]}).${kotlinFqName[1]}())"
+                        }
+                    )
+                } else {
+                    add(
+                        request.initializationDescriptor(typeNamer).createFunctionBridge {
+                            val args = argNames(this)
+                            "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
+                        }
+                    )
+                }
             }
         }
     }

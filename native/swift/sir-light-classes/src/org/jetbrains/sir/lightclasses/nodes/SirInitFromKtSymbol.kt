@@ -5,8 +5,9 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
@@ -40,6 +41,10 @@ internal class SirInitFromKtSymbol(
     }
     override val documentation: String? by lazyWithSessions {
         ktSymbol.documentation()
+    }
+
+    override val isInner: Boolean by lazyWithSessions {
+        (ktSymbol.containingSymbol as? KaNamedClassSymbol)?.isInner ?: false
     }
 
     override val isRequired: Boolean = false

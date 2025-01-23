@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.swiftexport.standalone;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -61,6 +61,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   @TestMetadata("inheritance")
   public void testInheritance() {
     runTest("native/swift/swift-export-standalone/testData/execution/inheritance/");
+  }
+
+  @Test
+  @TestMetadata("innerClass")
+  public void testInnerClass() {
+    runTest("native/swift/swift-export-standalone/testData/execution/innerClass/");
   }
 
   @Test

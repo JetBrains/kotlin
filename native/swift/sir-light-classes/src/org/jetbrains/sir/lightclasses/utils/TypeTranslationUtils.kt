@@ -7,12 +7,16 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.SirAttribute
+import org.jetbrains.kotlin.sir.SirFunctionalType
+import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.SirAndKaSession
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.nodes.SirInitFromKtSymbol
 
 @OptIn(KaExperimentalApi::class)
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
@@ -42,7 +46,7 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
                     }
                 }
             SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))
-        }
+        } + listOfNotNull(getOuterParameterOfInnerClass())
     }
 }
 
@@ -60,11 +64,28 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
 }
 
 @OptIn(KaExperimentalApi::class)
-private fun <P: KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
+private fun <P : KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
     return parameter.returnType.translateType(
         useSiteSession,
         reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
         reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },
         processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
     )
+}
+
+private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {
+    return withSessions {
+        val sirFromKtSymbol = this@getOuterParameterOfInnerClass
+        if (sirFromKtSymbol is SirInitFromKtSymbol && sirFromKtSymbol.isInner) {
+            val outSymbol = (ktSymbol.containingSymbol?.containingSymbol as? KaNamedClassSymbol)
+            val outType = outSymbol?.defaultType?.translateType(
+                this.useSiteSession,
+                { error("Error translating type") },
+                { error("Unsupported type") },
+                {})
+            outType?.run {
+                SirParameter(argumentName = "outer", type = this)
+            }
+        } else null
+    }
 }
