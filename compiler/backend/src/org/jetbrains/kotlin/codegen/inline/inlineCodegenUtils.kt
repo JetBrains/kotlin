@@ -407,7 +407,7 @@ internal fun loadClassBytesByInternalName(state: GenerationState, internalName: 
     //try to find just compiled classes then in dependencies
     state.factory.get("$internalName.class")?.let { return it.asByteArray() }
 
-    state.inlineCache.classBytes.get(internalName)?.let { return it }
+    state.inlineCache.getClassBytes(internalName)?.let { return it }
 
     val file = findVirtualFileImprecise(state, internalName) ?: throw RuntimeException("Couldn't find virtual file for $internalName")
 

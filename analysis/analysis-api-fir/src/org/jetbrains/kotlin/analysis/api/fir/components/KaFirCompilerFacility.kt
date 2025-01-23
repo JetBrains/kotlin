@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -493,7 +494,7 @@ internal class KaFirCompilerFacility(
         generateClassFilter: GenerationState.GenerateClassFilter,
         diagnosticReporter: PendingDiagnosticsCollectorWithSuppress,
         jvmGeneratorExtensions: JvmGeneratorExtensions,
-        fillInlineCache: (GenerationState) -> Unit
+        bytecodeCache: Map<String, ByteArray>,
     ): KaCompilationResult {
         val matchingClassNames = mutableSetOf<String>()
 
@@ -518,10 +519,9 @@ internal class KaFirCompilerFacility(
             configuration,
             classBuilderFactory,
             generateDeclaredClassFilter = generateClassFilter,
-            diagnosticReporter = diagnosticReporter
+            diagnosticReporter = diagnosticReporter,
+            compiledCodeProvider = KaFirCompilerFacilityCompiledCodeProvider(bytecodeCache)
         )
-
-        fillInlineCache(generationState)
 
         ProgressManager.checkCanceled()
 
@@ -655,12 +655,9 @@ internal class KaFirCompilerFacility(
             codegenFactory,
             generateClassFilter,
             diagnosticReporter,
-            baseFir2IrExtensions
-        ) { generationState ->
-            bytecodeCache.forEach { (className, compileResult) ->
-                generationState.inlineCache.classBytes.put(className, compileResult)
-            }
-        }
+            baseFir2IrExtensions,
+            bytecodeCache
+        )
 
         if (diagnosticReporter.hasErrors) {
             val errors = computeErrors(diagnosticReporter.diagnostics, allowedErrorFilter)
@@ -962,6 +959,12 @@ internal class KaFirCompilerFacility(
             evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir,
             ideCodegenSettings = ideCodegenSettings,
         )
+    }
+}
+
+private class KaFirCompilerFacilityCompiledCodeProvider(val cache: Map<String, ByteArray>) : CompiledCodeProvider {
+    override fun getClassBytes(className: String): ByteArray? {
+        return cache[className]
     }
 }
 

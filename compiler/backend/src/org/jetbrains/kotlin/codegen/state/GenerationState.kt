@@ -51,6 +51,7 @@ class GenerationState(
     val jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module),
     val ignoreErrors: Boolean = false,
     diagnosticReporter: DiagnosticReporter? = null,
+    compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
 ) {
     val diagnosticReporter: DiagnosticReporter =
         diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector)
@@ -62,7 +63,7 @@ class GenerationState(
 
     val config = JvmBackendConfig(configuration)
 
-    val inlineCache: InlineCache = InlineCache()
+    val inlineCache: InlineCache = InlineCache(compiledCodeProvider)
 
     val incrementalCacheForThisTarget: IncrementalCache? = configuration.incrementalCompilationComponents?.let { components ->
         val targetId = targetId
