@@ -32,7 +32,9 @@ public:
     }
 
     // Create new back reference for `obj`.
-    [[nodiscard("must be manually disposed")]] static ObjCBackRef create(ObjHeader* obj) noexcept;
+    [[nodiscard("must be manually disposed")]] static ObjCBackRef create(ObjHeader* obj) noexcept {
+        return ObjCBackRef(&mm::ExternalRCRefImpl::create(obj, 1));
+    }
 
     // Dispose back reference.
     void dispose() && noexcept {

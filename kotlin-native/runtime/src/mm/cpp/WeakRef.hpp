@@ -32,7 +32,9 @@ public:
     }
 
     // Create new weak reference for `obj`.
-    [[nodiscard("must be manually disposed")]] static WeakRef create(ObjHeader* obj) noexcept;
+    [[nodiscard("must be manually disposed")]] static WeakRef create(ObjHeader* obj) noexcept {
+        return WeakRef(&mm::ExternalRCRefImpl::create(obj, 0));
+    }
 
     // Dispose weak reference.
     void dispose() && noexcept {

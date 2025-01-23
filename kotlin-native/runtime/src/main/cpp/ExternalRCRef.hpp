@@ -34,9 +34,14 @@ public:
     static_assert(disposedMarker < 0, "disposedMarker must be an impossible Rc value");
 
     ExternalRCRefImpl() noexcept = default;
+
+    // The constructor is used internally. Create the reference by calling `create()`.
     ExternalRCRefImpl(ExternalRCRefRegistry& registry, KRef obj, Rc rc) noexcept;
 
     ~ExternalRCRefImpl();
+
+    // Create new reference for `obj` with initial reference counter `rc`.
+    [[nodiscard("must be manually disposed")]] static ExternalRCRefImpl& create(KRef obj, Rc rc) noexcept;
 
     // Dispose `this`. It's unsafe to use `this` after this call.
     void dispose() noexcept;

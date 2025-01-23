@@ -8,12 +8,14 @@
 #include <optional>
 
 #include "CompilerConstants.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "GC.hpp"
 #include "Memory.h"
 #include "ObjCBackRef.hpp"
 #include "PointerBits.h"
 #include "ReferenceOps.hpp"
-#include "ExternalRCRefRegistry.hpp"
+#include "ThreadData.hpp"
+#include "ThreadRegistry.hpp"
 
 using namespace kotlin;
 
@@ -96,6 +98,11 @@ mm::ExternalRCRefImpl::~ExternalRCRefImpl() {
         auto rc = rc_.load(std::memory_order_relaxed);
         RuntimeAssert(rc == disposedMarker, "Deleting ExternalRCRefImpl@%p with rc %d", this, rc);
     }
+}
+
+// static
+mm::ExternalRCRefImpl& mm::ExternalRCRefImpl::create(KRef obj, Rc rc) noexcept {
+    return mm::ThreadRegistry::Instance().CurrentThreadData()->externalRCRefRegistry().createExternalRCRefImpl(obj, rc);
 }
 
 void mm::ExternalRCRefImpl::dispose() noexcept {

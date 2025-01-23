@@ -34,7 +34,9 @@ public:
     }
 
     // Create new stable reference for `obj`.
-    [[nodiscard("must be manually disposed")]] static StableRef create(ObjHeader* obj) noexcept;
+    [[nodiscard("must be manually disposed")]] static StableRef create(ObjHeader* obj) noexcept {
+        return StableRef(&mm::ExternalRCRefImpl::create(obj, 1));
+    }
 
     // Dispose stable reference.
     void dispose() && noexcept {
