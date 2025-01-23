@@ -12,7 +12,7 @@ package kotlin.concurrent.atomics
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicInt public actual constructor(private var value: Int) {
 
     /**
@@ -90,7 +90,7 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicLong public actual constructor(private var value: Long) {
     /**
      * Atomically loads the value from this [AtomicLong].
@@ -167,7 +167,7 @@ public actual class AtomicLong public actual constructor(private var value: Long
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicBoolean public actual constructor(private var value: Boolean) {
 
     /**
@@ -228,7 +228,7 @@ public actual class AtomicBoolean public actual constructor(private var value: B
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicReference<T> public actual constructor(private var value: T) {
     /**
      * Atomically loads the value from this [AtomicReference].
