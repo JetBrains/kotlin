@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
@@ -35,7 +34,7 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
 
     private fun createSession(context: Fe10AnalysisContext, useSiteModule: KaModule, token: KaLifetimeToken): KaFe10Session {
         return createSession {
-            val resolutionScope = KaGlobalSearchScope(shadowedScope = GlobalSearchScope.EMPTY_SCOPE, useSiteModule)
+            val resolutionScope = KaResolutionScope.forModule(useSiteModule)
             KaFe10Session(context, useSiteModule, token, analysisSessionProvider, resolutionScope)
         }
     }

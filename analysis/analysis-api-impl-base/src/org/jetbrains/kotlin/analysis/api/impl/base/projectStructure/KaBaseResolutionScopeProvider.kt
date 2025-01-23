@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
@@ -16,9 +17,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 
 class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
-    override fun getResolutionScope(module: KaModule): GlobalSearchScope {
+    override fun getResolutionScope(module: KaModule): KaResolutionScope {
         val moduleWithDependentScopes = getModuleAndDependenciesContentScopes(module)
-        return KotlinGlobalSearchScopeMerger.getInstance(module.project).union(moduleWithDependentScopes)
+        return KaBaseResolutionScope(module, KotlinGlobalSearchScopeMerger.getInstance(module.project).union(moduleWithDependentScopes))
     }
 
     @OptIn(KaPlatformInterface::class)
