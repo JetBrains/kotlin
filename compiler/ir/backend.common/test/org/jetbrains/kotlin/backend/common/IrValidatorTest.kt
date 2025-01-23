@@ -2336,6 +2336,56 @@ class IrValidatorTest {
             ),
         )
     }
+
+    @Test
+    fun `return expressions with incorrect type are reported`() {
+        val file = createIrFile("test.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.booleanType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+        )
+
+        val incorrectReturn = IrReturnImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.booleanType,
+            returnTargetSymbol = function.symbol,
+            value = createTrueConst()
+        )
+
+        val correctReturn = IrReturnImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.nothingType,
+            returnTargetSymbol = function.symbol,
+            value = createTrueConst()
+        )
+
+        body.statements.addAll(listOf(incorrectReturn, correctReturn))
+        function.body = body
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Nothing, got kotlin.Boolean
+                    RETURN type=kotlin.Boolean from='public final fun foo (): kotlin.Boolean declared in org.sample'
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Boolean
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+        )
+    }
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
