@@ -12,7 +12,7 @@ This guide is not intended to be complete. Instead, the key points for running a
   * And a wrapper that calls `runTest` on the Litmus test
 * To run the tests, do the following:
     * Run `./gradlew :native:native.tests:generateTests`
-    * Then run `./gradlew :native:native.tests:litmus-tests:check -Pkotlin.internal.native.optimizationMode=OPT`
+    * Then run `./gradlew :native:native.tests:litmus-tests:check -Pkotlin.internal.native.test.optimizationMode=OPT`
   
 ## Notes
 
