@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.targetVariant
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.Serializable
@@ -64,7 +64,7 @@ class KotlinCompilationNpmResolver(
         KotlinPackageJsonTask.create(compilation)
 
     val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> = run {
-        val npmResolutionManager = compilation.targetVariant(
+        val npmResolutionManager = compilation.webTargetVariant(
             { project.kotlinNpmResolutionManager },
             { project.wasmKotlinNpmResolutionManager },
         )
@@ -89,7 +89,7 @@ class KotlinCompilationNpmResolver(
                 it.attribute(publicPackageJsonAttribute)
             }
 
-            val nodeJsRoot = compilation.targetVariant(
+            val nodeJsRoot = compilation.webTargetVariant(
                 { project.rootProject.kotlinNodeJsRootExtension },
                 { project.rootProject.wasmKotlinNodeJsRootExtension },
             )

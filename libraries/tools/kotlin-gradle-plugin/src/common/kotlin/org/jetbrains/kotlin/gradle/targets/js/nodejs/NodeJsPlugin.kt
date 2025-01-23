@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 abstract class NodeJsPlugin internal constructor() : CommonNodeJsPlugin {
     override fun apply(target: Project) {
         NodeJsPluginApplier(
-            platformDisambiguate = JsPlatformDisambiguate,
+            platformDisambiguate = JsPlatformDisambiguator,
             nodeJsEnvSpecKlass = NodeJsEnvSpec::class,
             nodeJsEnvSpecName = NodeJsEnvSpec.EXTENSION_NAME,
             nodeJsRootApply = { NodeJsRootPlugin.apply(it) }

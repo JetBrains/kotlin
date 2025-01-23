@@ -160,7 +160,7 @@ constructor(
     }
 
     private val commonLazyDelegate = lazy {
-        targetVariant(
+        webTargetVariant(
             { NpmResolverPlugin.apply(project) },
             { WasmNpmResolverPlugin.apply(project) },
         )
@@ -190,7 +190,7 @@ constructor(
         val compilation = binary.compilation
         return project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
             it.versions.value(
-                compilation.targetVariant(
+                compilation.webTargetVariant(
                     { project.rootProject.kotlinNodeJsRootExtension.versions },
                     { project.rootProject.wasmKotlinNodeJsRootExtension.versions },
                 )
@@ -253,7 +253,7 @@ constructor(
     //d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
-        targetVariant(
+        webTargetVariant(
             { NodeJsRootPlugin.apply(project.rootProject) },
             { WasmNodeJsRootPlugin.apply(project.rootProject) },
         )

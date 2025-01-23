@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
-import org.jetbrains.kotlin.gradle.targets.js.targetVariant
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
@@ -82,7 +82,7 @@ abstract class KotlinPackageJsonTask :
             val npmProject = compilation.npmProject
             val packageJsonTaskName = npmProject.packageJsonTaskName
 
-            val npmResolutionManager = compilation.targetVariant(
+            val npmResolutionManager = compilation.webTargetVariant(
                 { project.kotlinNpmResolutionManager },
                 { project.wasmKotlinNpmResolutionManager },
             )

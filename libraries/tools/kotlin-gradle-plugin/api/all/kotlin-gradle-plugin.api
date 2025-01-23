@@ -3472,12 +3472,12 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsPlugin$Co
 	public final fun getKotlinNodeJsEnvSpec (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnvSpec;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/AbstractNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/AbstractNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;Lkotlin/jvm/functions/Function0;Ljava/lang/String;)V
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension$Companion {
@@ -5838,10 +5838,10 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJs
 	public fun getNodeJsSetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
 public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsPlugin {
@@ -5851,24 +5851,24 @@ public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlugin : 
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public final fun apply (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnvSpec;
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getKotlinNodeJsEnvSpec (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnvSpec;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/AbstractNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/AbstractNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension$Companion;
 	public fun <init> (Lorg/gradle/api/Project;Lkotlin/jvm/functions/Function0;Ljava/lang/String;)V
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
 public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsRootPlugin {
@@ -5878,12 +5878,12 @@ public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootPlugi
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootPlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootPlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public final fun apply (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension;
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getKotlinNodeJsRootExtension (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension;
 	public final fun getKotlinNpmResolutionManager (Lorg/gradle/api/Project;)Lorg/gradle/api/provider/Provider;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
 public class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension : org/jetbrains/kotlin/gradle/targets/js/npm/AbstractNpmExtension {
@@ -5891,11 +5891,11 @@ public class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension : org
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun get (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension;
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverPlugin : org/jetbrains/kotlin/gradle/targets/web/npm/CommonNpmResolverPlugin {
@@ -5916,10 +5916,10 @@ public class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin : org/
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public final fun apply (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension;
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec : org/jetbrains/kotlin/gradle/targets/web/yarn/AbstractYarnRootEnvSpec {
@@ -5927,9 +5927,9 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRoot
 	public fun <init> ()V
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 	public final fun getYARN ()Ljava/lang/String;
 }
 
@@ -5938,10 +5938,10 @@ public class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension;Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun get (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension;
-	public fun getPlatformDisambiguate ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 	public final fun getYARN ()Ljava/lang/String;
 }
 
@@ -5952,7 +5952,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/AbstractNod
 	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/AbstractNodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguate {
+public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/AbstractNodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public field resolver Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinRootNpmResolver;
 	public fun <init> (Lorg/gradle/api/Project;Lkotlin/jvm/functions/Function0;Ljava/lang/String;)V
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;

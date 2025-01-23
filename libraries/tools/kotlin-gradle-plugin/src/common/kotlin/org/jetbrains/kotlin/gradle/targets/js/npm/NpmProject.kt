@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.targetVariant
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.io.Serializable
@@ -47,7 +47,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
 
     @delegate:Transient
     val nodeJsRoot by lazy {
-        compilation.targetVariant(
+        compilation.webTargetVariant(
             { project.rootProject.kotlinNodeJsRootExtension },
             { project.rootProject.wasmKotlinNodeJsRootExtension },
         )
@@ -55,7 +55,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
 
     @delegate:Transient
     val nodeJs by lazy {
-        compilation.targetVariant(
+        compilation.webTargetVariant(
             { project.kotlinNodeJsEnvSpec },
             { project.wasmKotlinNodeJsEnvSpec },
         )

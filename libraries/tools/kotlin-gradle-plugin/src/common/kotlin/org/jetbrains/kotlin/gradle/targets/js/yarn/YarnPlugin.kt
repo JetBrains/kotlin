@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
 open class YarnPlugin : CommonYarnPlugin {
     override fun apply(target: Project) {
         YarnPluginApplier(
-            platformDisambiguate = JsPlatformDisambiguate,
+            platformDisambiguate = JsPlatformDisambiguator,
             yarnRootKlass = YarnRootExtension::class,
             yarnRootName = YarnRootExtension.YARN,
             yarnEnvSpecKlass = YarnRootEnvSpec::class,

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.D
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.targetVariant
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
@@ -36,7 +36,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
     private val project = subTarget.project
 
-    private val nodeJsRoot = subTarget.target.targetVariant(
+    private val nodeJsRoot = subTarget.target.webTargetVariant(
         { project.rootProject.kotlinNodeJsRootExtension },
         { project.rootProject.wasmKotlinNodeJsRootExtension },
     )

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 
@@ -20,7 +20,7 @@ abstract class WasmNodeJsEnvSpec : BaseNodeJsEnvSpec() {
         get() = project.tasks.withType(NodeJsSetupTask::class.java)
             .named(extensionName(NodeJsSetupTask.Companion.NAME))
 
-    companion object : HasPlatformDisambiguate by WasmPlatformDisambiguate {
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
             get() = extensionName("kotlinNodeJsSpec")
     }
