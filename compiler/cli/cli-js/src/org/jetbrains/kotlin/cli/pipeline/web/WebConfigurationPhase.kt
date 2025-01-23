@@ -258,7 +258,11 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             arguments.duplicatedUniqueNameStrategy,
             default = DuplicatedUniqueNameStrategy.DENY
         )
-        val moduleName = arguments.irModuleName ?: arguments.moduleName!!
+        val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
+            val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
+            configuration.messageCollector.report(ERROR, message, location = null)
+            return
+        }
         configuration.moduleName = moduleName
         configuration.allowKotlinPackage = arguments.allowKotlinPackage
         configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
