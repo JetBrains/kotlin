@@ -39851,6 +39851,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Tag("klib")
     public class Strings {
       @Test
+      @TestMetadata("charSequenceGet.kt")
+      public void testCharSequenceGet() {
+        runTest("compiler/testData/codegen/box/strings/charSequenceGet.kt");
+      }
+
+      @Test
       @TestMetadata("concatDynamicWithConstants.kt")
       public void testConcatDynamicWithConstants() {
         runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");

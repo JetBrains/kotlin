@@ -46540,6 +46540,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("charSequenceGet.kt")
+    public void testCharSequenceGet() {
+      runTest("compiler/testData/codegen/box/strings/charSequenceGet.kt");
+    }
+
     @TestMetadata("concatDynamicWithConstants.kt")
     public void testConcatDynamicWithConstants() {
       runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");

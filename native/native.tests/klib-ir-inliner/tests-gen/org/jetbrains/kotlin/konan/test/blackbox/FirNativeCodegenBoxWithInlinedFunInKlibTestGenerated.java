@@ -44538,6 +44538,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("charSequenceGet.kt")
+      public void testCharSequenceGet() {
+        runTest("compiler/testData/codegen/box/strings/charSequenceGet.kt");
+      }
+
+      @Test
       @TestMetadata("concatDynamicWithConstants.kt")
       public void testConcatDynamicWithConstants() {
         runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");
