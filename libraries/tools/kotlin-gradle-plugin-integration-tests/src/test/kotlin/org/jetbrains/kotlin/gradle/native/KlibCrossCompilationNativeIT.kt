@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -23,7 +24,13 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     @TestMetadata("klibCrossCompilationDefaultSettings")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun compileIosTargetOnNonDarwinHostWithDefaultSettings(gradleVersion: GradleVersion) {
-        nativeProject("klibCrossCompilationDefaultSettings", gradleVersion) {
+        nativeProject(
+            "klibCrossCompilationDefaultSettings",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                warningMode = WarningMode.All
+            )
+        ) {
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(
                     projectPath.resolve("diagnostics.txt").toFile(),
@@ -43,7 +50,9 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             // Thus, the logic of Kotlin Native toolchain provisioning may not be involved here, KT-72068 may not be tested
             // Consider removing the special handling for Windows after resolution of KT-62761
             if (HostManager.hostIsMingw)
-                defaultBuildOptions
+                defaultBuildOptions.copy(
+                    warningMode = WarningMode.All
+                )
             else defaultBuildOptions.copy(
                 // This line is required for the custom konan home location, to check that it is downloaded,
                 // even when target is not supported(@see KT-72068). Even without this line the test will not fail,
@@ -52,7 +61,8 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 // TODO: remove explicit version selection after resolution of KTI-1928
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     version = "2.0.20",
-                )
+                ),
+                warningMode = WarningMode.All
             )
         nativeProject(
             "klibCrossCompilationWithGradlePropertyEnabled",

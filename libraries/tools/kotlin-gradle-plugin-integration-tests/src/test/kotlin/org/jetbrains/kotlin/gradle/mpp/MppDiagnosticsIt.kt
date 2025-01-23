@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -21,7 +22,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
-        project("diagnosticsRenderingSmoke", gradleVersion) {
+        project(
+            "diagnosticsRenderingSmoke",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                warningMode = WarningMode.All
+            )
+        ) {
             build {
                 assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
@@ -93,7 +100,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @GradleTest
     fun testErrorDiagnosticBuildSucceeds(gradleVersion: GradleVersion) {
-        project("errorDiagnosticBuildSucceeds", gradleVersion) {
+        project(
+            "errorDiagnosticBuildSucceeds",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                warningMode = WarningMode.All
+            )
+        ) {
             build("assemble") {
                 assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
             }
@@ -105,7 +118,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @GradleTest
     fun testSuppressGradlePluginErrors(gradleVersion: GradleVersion) {
-        project("suppressGradlePluginErrors", gradleVersion) {
+        project(
+            "suppressGradlePluginErrors",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                warningMode = WarningMode.All
+            )
+        ) {
             // build succeeds
             build("assemble") {
                 assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
@@ -175,7 +194,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @GradleTest
     fun testDiagnosticsRenderingWithStacktraceOption(gradleVersion: GradleVersion) {
-        project("diagnosticsRenderingWithStacktraceOption", gradleVersion) {
+        project(
+            "diagnosticsRenderingWithStacktraceOption",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                warningMode = WarningMode.All
+            )
+        ) {
             // KGP sets showDiagnosticsStacktrace=false and --full-stacktrace by default in tests,
             // need to override that to mimic real-life scenarios
             val options = buildOptions.copy(showDiagnosticsStacktrace = null, stacktraceMode = null)
