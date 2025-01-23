@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.AsmLikeInstructionListingHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -36,13 +37,14 @@ abstract class AbstractAsmLikeInstructionListingTestBase<R : ResultingArtifact.F
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             +CHECK_ASM_LIKE_INSTRUCTIONS
         }
 
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
 
         configureClassicFrontendHandlersStep {
             useHandlers(
@@ -81,6 +83,9 @@ open class AbstractIrAsmLikeInstructionListingTest :
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
 }
 
 abstract class AbstractFirAsmLikeInstructionListingTestBase(val parser: FirParser) :
@@ -91,6 +96,9 @@ abstract class AbstractFirAsmLikeInstructionListingTestBase(val parser: FirParse
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

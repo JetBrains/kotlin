@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForTest
@@ -33,6 +34,7 @@ abstract class AbstractBytecodeTextTestBase<R : ResultingArtifact.FrontendOutput
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
@@ -40,7 +42,7 @@ abstract class AbstractBytecodeTextTestBase<R : ResultingArtifact.FrontendOutput
             +WITH_REFLECT
         }
 
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
 
         commonHandlersForCodegenTest()
 
@@ -60,6 +62,9 @@ open class AbstractIrBytecodeTextTest : AbstractBytecodeTextTestBase<ClassicFron
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
 }
 
 open class AbstractFirBytecodeTextTestBase(val parser: FirParser) : AbstractBytecodeTextTestBase<FirOutputArtifact>(
@@ -70,6 +75,9 @@ open class AbstractFirBytecodeTextTestBase(val parser: FirParser) : AbstractByte
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

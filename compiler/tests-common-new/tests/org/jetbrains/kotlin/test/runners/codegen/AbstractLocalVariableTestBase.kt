@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.test.configuration.commonConfigurationForTest
 import org.jetbrains.kotlin.test.configuration.commonHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.model.BackendFacade
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
@@ -29,12 +31,14 @@ abstract class AbstractLocalVariableTestBase<R : ResultingArtifact.FrontendOutpu
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForTest(
             targetFrontend,
             frontendFacade,
             frontendToBackendConverter,
+            backendFacade,
             additionalSourceProvider = ::MainFunctionForDebugTestsSourceProvider
         )
 

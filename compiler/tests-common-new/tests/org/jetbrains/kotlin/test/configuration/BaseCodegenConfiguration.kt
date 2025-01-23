@@ -52,7 +52,7 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     targetFrontend: FrontendKind<F>,
     frontendFacade: Constructor<FrontendFacade<F>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>> = ::JvmIrBackendFacade,
+    backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>,
     additionalSourceProvider: Constructor<AdditionalSourceProvider>? = null,
 ) {
     commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
