@@ -22,6 +22,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.services.SymbolExternalDocume
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.DefaultSymbolToDocumentableTranslator
 import org.jetbrains.dokka.plugability.*
 import org.jetbrains.dokka.renderers.PostAction
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 
 @Suppress("unused")
@@ -38,13 +39,23 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
         }
     }
 
+
     internal val disposeKotlinAnalysisPostAction by extending {
         CoreExtensions.postActions providing { context ->
             PostAction {
                 querySingle { kotlinAnalysis }.close()
-                if (context.configuration.finalizeCoroutines)
-                    // TODO #3936(https://youtrack.jetbrains.com/issue/KT-71862)  use an endpoint from AA
-                    javaAnalysisPlugin.disposeGlobalStandaloneApplicationServices()
+                if (context.configuration.finalizeCoroutines) {
+                    /**
+                     * Disposes global resources which would persist after unloading Analysis API (Symbols analysis) and IJ platform classes.
+                     *
+                     * **Important:** Once this function has been called, Analysis API *and* IntelliJ platform classes should not be used anymore. The classes
+                     * should either be unloaded or the whole program should be shut down.
+                     *
+                     * Note: Disposing of resources, including threads, allows unloading Dokka's class loader.
+                     */
+                    @OptIn(KaExperimentalApi::class)
+                    org.jetbrains.kotlin.analysis.api.standalone.disposeGlobalStandaloneApplicationServices()
+                }
             }
         }
     }
