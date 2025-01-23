@@ -1,6 +1,7 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="idea.default" />
+    <inspection_tool class="47f19f4d-216d-38db-89e2-b4ab7bc182bf" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="AbstractMethodCallInConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AnalysisApiMissingLifetimeCheck" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ArchaicSystemPropertyAccess" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -479,6 +480,18 @@
       <option name="ignoreObscureOperators" value="true" />
     </inspection_tool>
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES">
+      <replaceConfiguration name="Avoid 'single' calls on collections" description="The exception message in &lt;code&gt;single()&lt;/code&gt; is unclear and does not include the relevant details." suppressId="THROWING_SINGLE_CALL_ON_COLLECTION" problemDescriptor="Prefer &lt;code&gt;singleOrNull() ?: error(&quot;...&quot;)&lt;/code&gt;" text="$Expression$.$MethodCall${ $Statement$ }" recursive="false" caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="false" replacement="$Expression$.singleOrNull{ $Statement$ } ?: error(&quot;The list should have exactly one element. Got: $${$Expression$}&quot;)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="MethodCall" regexp="single" within="" contains="" />
+        <constraint name="Expression" within="" contains="" />
+        <constraint name="Statement" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="Avoid 'single' calls on collections" text="$Expression$.$MethodCall$($Parameter$)" recursive="false" caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="false" replacement="$Expression$.singleOrNull($Parameter$) ?: error(&quot;The list should have exactly one element. Got: $${$Expression$}&quot;)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="MethodCall" regexp="single" within="" contains="" />
+        <constraint name="Expression" within="" contains="" />
+        <constraint name="Parameter" minCount="0" within="" contains="" />
+      </replaceConfiguration>
       <searchConfiguration name="Deprecated compiler API usage" uuid="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" suppressId="DEPRECATED_COMPILER_API" text="$Reference$" recursive="true" caseInsensitive="true" type="Kotlin" pattern_context="default">
         <constraint name="__context__" within="" contains="" />
         <constraint name="Reference" reference="Deprecated compiler API - class" within="" contains="" />
