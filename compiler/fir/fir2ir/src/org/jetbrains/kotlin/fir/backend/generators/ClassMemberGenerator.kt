@@ -359,7 +359,6 @@ internal class ClassMemberGenerator(
 
         check(constructorSymbol is FirConstructorSymbol)
 
-        val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
@@ -408,12 +407,9 @@ internal class ClassMemberGenerator(
                         }
                     }
                 }
-                if (firDispatchReceiver != null) {
-                    it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
-                }
                 with(callGenerator) {
                     declarationStorage.enterScope(irConstructorSymbol)
-                    val result = it.applyCallArguments(this@toIrDelegatingConstructorCall)
+                    val result = it.applyReceiversAndArguments(this@toIrDelegatingConstructorCall, constructorSymbol, null)
                     declarationStorage.leaveScope(irConstructorSymbol)
                     result
                 }

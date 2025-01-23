@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class CallAndReferenceGenerator(
@@ -464,7 +465,9 @@ class CallAndReferenceGenerator(
                 }
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
-                    .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments })
+                    .applyIf(qualifiedAccess is FirCall && !noArguments) {
+                        applyReceiversAndArguments(qualifiedAccess, declarationSiteSymbol = null, explicitReceiverExpression = null)
+                    }
             }
         }
     }
@@ -979,7 +982,7 @@ class CallAndReferenceGenerator(
         return visitor.withAnnotationMode {
             val annotationCall = annotation.toAnnotationCall()
             irConstructorCall
-                .applyCallArguments(annotationCall)
+                .applyReceiversAndArguments(annotationCall, declarationSiteSymbol = firConstructorSymbol, explicitReceiverExpression = null)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
         }
     }
@@ -1355,7 +1358,7 @@ class CallAndReferenceGenerator(
      * @param irAssignmentRhs If passed, this expression will be the only applied argument.
      * Context arguments will still be set from [statement].
      */
-    private fun IrExpression.applyReceiversAndArguments(
+    fun IrExpression.applyReceiversAndArguments(
         statement: FirStatement?,
         declarationSiteSymbol: FirCallableSymbol<*>?,
         explicitReceiverExpression: IrExpression?,
@@ -1364,10 +1367,7 @@ class CallAndReferenceGenerator(
         if (statement == null) return this
 
         var expression = this
-
-        if (statement is FirQualifiedAccessExpression) {
-            expression = expression.applyReceivers(statement, declarationSiteSymbol, explicitReceiverExpression)
-        }
+        expression = expression.applyReceivers(statement, declarationSiteSymbol, explicitReceiverExpression)
 
         if (expression is IrMemberAccessExpression<*> && irAssignmentRhs != null) {
             val contextArgumentCount = expression.putContextArguments(statement)
@@ -1380,26 +1380,26 @@ class CallAndReferenceGenerator(
     }
 
     private fun IrExpression.applyReceivers(
-        qualifiedAccess: FirQualifiedAccessExpression,
+        statement: FirStatement,
         declarationSiteSymbol: FirCallableSymbol<*>?,
         explicitReceiverExpression: IrExpression?,
     ): IrExpression {
         when (this) {
-            is IrMemberAccessExpression<*> -> {
+            is IrMemberAccessExpression<*> if statement is FirQualifiedAccessExpression -> {
                 if (declarationSiteSymbol?.dispatchReceiverType != null) {
                     // Although type alias constructors with inner RHS work as extension functions
                     // (https://github.com/Kotlin/KEEP/blob/master/proposals/type-aliases.md#type-alias-constructors-for-inner-classes),
                     // They should work as real constructors with initialized `dispatchReceiver` instead of `extensionReceiver` on IR level.
                     val isConstructorOnTypealiasWithInnerRhs =
-                        (qualifiedAccess.calleeReference.symbol as? FirConstructorSymbol)?.let {
+                        (statement.calleeReference.symbol as? FirConstructorSymbol)?.let {
                             it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameter != null
                         } == true
                     val baseDispatchReceiver = if (!isConstructorOnTypealiasWithInnerRhs) {
-                        qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
+                        statement.findIrDispatchReceiver(explicitReceiverExpression)
                     } else {
-                        qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)
+                        statement.findIrExtensionReceiver(explicitReceiverExpression)
                     }
-                    var firDispatchReceiver = qualifiedAccess.dispatchReceiver
+                    var firDispatchReceiver = statement.dispatchReceiver
                     if (firDispatchReceiver is FirPropertyAccessExpression && firDispatchReceiver.calleeReference is FirSuperReference) {
                         firDispatchReceiver = firDispatchReceiver.dispatchReceiver
                     }
@@ -1423,13 +1423,13 @@ class CallAndReferenceGenerator(
                 // constructors don't have extension receiver (except a case with type alias and inner RHS that is handled above),
                 // but may have receiver parameter in case of inner classes
                 if (declarationSiteSymbol?.receiverParameter != null && declarationSiteSymbol !is FirConstructorSymbol) {
-                    extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
-                        val symbol = qualifiedAccess.calleeReference.toResolvedCallableSymbol()
-                            ?: error("Symbol for call ${qualifiedAccess.render()} not found")
+                    extensionReceiver = statement.findIrExtensionReceiver(explicitReceiverExpression)?.let {
+                        val symbol = statement.calleeReference.toResolvedCallableSymbol()
+                            ?: error("Symbol for call ${statement.render()} not found")
                         symbol.fir.receiverParameter?.typeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
-                                val extensionReceiver = qualifiedAccess.extensionReceiver!!
-                                val substitutor = qualifiedAccess.buildSubstitutorByCalledCallable(c)
+                                val extensionReceiver = statement.extensionReceiver!!
+                                val substitutor = statement.buildSubstitutorByCalledCallable(c)
                                 it.insertSpecialCast(
                                     extensionReceiver,
                                     extensionReceiver.resolvedType,
@@ -1441,20 +1441,26 @@ class CallAndReferenceGenerator(
                 }
             }
 
-            is IrFieldAccessExpression -> {
+            is IrMemberAccessExpression<*> if statement is FirDelegatedConstructorCall -> {
+                statement.dispatchReceiver?.let {
+                    dispatchReceiver = visitor.convertToIrExpression(it)
+                }
+            }
+
+            is IrFieldAccessExpression if statement is FirQualifiedAccessExpression -> {
                 val firDeclaration = declarationSiteSymbol!!.fir.propertyIfBackingField
                 // Top-level properties are considered as static in IR
                 val fieldIsStatic =
                     firDeclaration.isStatic || (firDeclaration is FirProperty && !firDeclaration.isLocal && firDeclaration.containingClassLookupTag() == null)
                 if (!fieldIsStatic) {
-                    receiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
+                    receiver = statement.findIrDispatchReceiver(explicitReceiverExpression)
                 }
             }
         }
         return this
     }
 
-    internal fun IrExpression.applyCallArguments(
+    private fun IrExpression.applyCallArguments(
         statement: FirStatement?,
     ): IrExpression {
         val call = statement as? FirCall
