@@ -184,7 +184,7 @@ class CallAndReferenceGenerator(
                 if (function is FirConstructor) {
                     // The number of type parameters of typealias constructor may mismatch with that number in the original constructor.
                     // And for IR, we need to use the original constructor as a source of truth
-                    function = function?.typeAliasConstructorInfo?.originalConstructor ?: function
+                    function = function.typeAliasConstructorInfo?.originalConstructor ?: function
                 }
                 return if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
                     // Receivers are being applied inside
@@ -853,6 +853,7 @@ class CallAndReferenceGenerator(
                 }
 
                 is IrSimpleFunctionSymbol -> {
+                    // Assignment to synthetic var property
                     val firFunction = calleeReference.toResolvedFunctionSymbol()?.fir
                     IrCallImpl(
                         startOffset, endOffset, type, symbol,
@@ -1517,8 +1518,8 @@ class CallAndReferenceGenerator(
                     return IrGetValueImpl(startOffset, endOffset, symbol, null)
                 }
 
-                dispatchReceiver = dispatchReceiver?.freeze("\$this")
-                extensionReceiver = extensionReceiver?.freeze("\$receiver")
+                dispatchReceiver = dispatchReceiver?.freeze($$"$this")
+                extensionReceiver = extensionReceiver?.freeze($$"$receiver")
                 for ((parameter, irArgument) in converted) {
                     putValueArgument(
                         valueParameters.indexOf(parameter) + contextArgumentCount,
