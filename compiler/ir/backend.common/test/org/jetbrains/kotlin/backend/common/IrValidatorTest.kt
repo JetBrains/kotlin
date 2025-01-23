@@ -2185,6 +2185,44 @@ class IrValidatorTest {
             ),
         )
     }
+
+    @Test
+    fun `calls with incorrect type are reported`() {
+        val file = createIrFile("test.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+        )
+
+        val incorrectCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol)
+
+        val correctCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, function.symbol)
+
+        body.statements.addAll(listOf(incorrectCall, correctCall))
+        function.body = body
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
+                    CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+        )
+    }
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
