@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -69,5 +70,9 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
     // This is "IGNORE"-like test directive.
     val IGNORE_IR_DESERIALIZATION_TEST by enumDirective<TargetBackend>(
         description = "Ignore failures on IR mismatch before Klib serialization vs after Klib deserialization",
+    )
+
+    val KLIB_RELATIVE_PATH_BASES by stringDirective(
+        description = "Sets ${KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES}"
     )
 }

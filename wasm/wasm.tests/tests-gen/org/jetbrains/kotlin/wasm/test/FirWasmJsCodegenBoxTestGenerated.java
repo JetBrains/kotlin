@@ -40086,6 +40086,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("kt54028_cursed.kt")
+    public void testKt54028_cursed() {
+      runTest("compiler/testData/codegen/box/sealed/kt54028_cursed.kt");
+    }
+
+    @Test
     @TestMetadata("multipleFiles_enabled.kt")
     public void testMultipleFiles_enabled() {
       runTest("compiler/testData/codegen/box/sealed/multipleFiles_enabled.kt");
