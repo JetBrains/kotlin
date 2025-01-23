@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
+import kotlin.io.path.appendText
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertTrue
@@ -409,6 +410,31 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin/$moduleName.mjs")
                 )
             }
+        }
+    }
+
+    // Android Studio touches all properties to analyze
+    // It may break some properties with Task source
+    // but we need to work in Android Studio,
+    // so it is better to be sure that we work in this strange situation
+    @DisplayName("Touch properties to not break Android studio")
+    @GradleTest
+    fun testTouchingWebpackPropertyToNotBreakAndroidStudio(gradleVersion: GradleVersion) {
+        project("wasm-browser-simple-project", gradleVersion) {
+            val moduleName = "hello"
+            buildGradleKts.appendText(
+                //language=kotlin
+                """
+                    
+                    tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("wasmJsBrowserDevelopmentRun")                    
+                        .get()
+                        .inputFilesDirectory
+                        .get()
+                    
+                """.trimIndent()
+            )
+
+            build("help")
         }
     }
 }

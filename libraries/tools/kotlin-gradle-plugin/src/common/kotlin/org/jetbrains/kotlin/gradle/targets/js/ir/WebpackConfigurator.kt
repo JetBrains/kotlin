@@ -79,9 +79,12 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
+                        // properties could be read by other agents (for example Android Studio)
+                        // without a wrapper,
+                        // it could force the error about querying a value of a task which is not executed yet
                         inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
                             task.project.provider { linkSyncTask.get().destinationDirectory.get() },
-                        ),
+                        ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
                         nodeJs = nodeJs,
@@ -172,9 +175,12 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
+                        // properties could be read by other agents (for example Android Studio)
+                        // without a wrapper,
+                        // it could force the error about querying a value of a task which is not executed yet
                         inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
-                            linkSyncTask.flatMap { it.destinationDirectory },
-                        ),
+                            task.project.provider { linkSyncTask.get().destinationDirectory.get() },
+                        ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
                         nodeJs = nodeJs,
