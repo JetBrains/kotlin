@@ -63,7 +63,7 @@ public expect interface Collection<out E> : Iterable<E> {
     /**
      * Returns the size of the collection.
      *
-     * If a collection contains more than [Int.MAX_VALUE] elements, the value of this property is undefined.
+     * If a collection contains more than [Int.MAX_VALUE] elements, the value of this property is unspecified.
      * For implementations allowing to have more than [Int.MAX_VALUE] elements,
      * it is recommended to explicitly document behavior of this property.
      *
@@ -109,7 +109,7 @@ public expect interface Collection<out E> : Iterable<E> {
  * Unlike [Collection], an iterator returned by [iterator] allows removing elements during iteration.
  *
  * Until stated otherwise, [MutableCollection] implementations are not thread-safe and their modification without
- * explicit synchronization may result in undefined behavior.
+ * explicit synchronization may result in data corruption, loss, and runtime errors.
  *
  * @param E the type of elements contained in the collection. The mutable collection is invariant in its element type.
  */
@@ -235,7 +235,7 @@ public expect interface List<out E> : Collection<E> {
      * Returns the index of the first occurrence of the specified element in the list, or `-1` if the specified
      * element is not contained in the list.
      *
-     * For lists containing more than [Int.MAX_VALUE] elements, a result of this function is undefined.
+     * For lists containing more than [Int.MAX_VALUE] elements, a result of this function is unspecified.
      *
      * @sample samples.collections.Collections.Lists.indexOf
      */
@@ -245,7 +245,7 @@ public expect interface List<out E> : Collection<E> {
      * Returns the index of the last occurrence of the specified element in the list, or -1 if the specified
      * element is not contained in the list.
      *
-     * For lists containing more than [Int.MAX_VALUE] elements, a result of this function is undefined.
+     * For lists containing more than [Int.MAX_VALUE] elements, a result of this function is unspecified.
      *
      * @sample samples.collections.Collections.Lists.lastIndexOf
      */
@@ -269,7 +269,7 @@ public expect interface List<out E> : Collection<E> {
      * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
      * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list.
      *
-     * Structural changes in the base list make the behavior of the view undefined.
+     * Structural changes in the base list make the behavior of the view unspecified.
      *
      * @throws IndexOutOfBoundsException if [fromIndex] less than zero or [toIndex] greater than [size] of this list.
      * @throws IllegalArgumentException of [fromIndex] is greater than [toIndex].
@@ -292,7 +292,7 @@ public expect interface List<out E> : Collection<E> {
  * A view returned by [subList] is also allows modifications of the underlying list.
  *
  * Until stated otherwise, [MutableList] implementations are not thread-safe and their modification without
- * explicit synchronization may result in undefined behavior.
+ * explicit synchronization may result in data corruption, loss, and runtime errors.
  *
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
@@ -391,7 +391,7 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
      * The returned list is backed by this list, so changes in the returned list are reflected in this list, and vice-versa.
      *
-     * Structural changes in the base list make the behavior of the view undefined.
+     * Structural changes in the base list make the behavior of the view unspecified.
      *
      * @throws IndexOutOfBoundsException if [fromIndex] less than zero or [toIndex] greater than [size] of this list.
      * @throws IllegalArgumentException of [fromIndex] is greater than [toIndex].
@@ -457,7 +457,7 @@ public expect interface Set<out E> : Collection<E> {
  * Unlike [Set], an iterator returned by [iterator] allows modifying the set during iteration.
  *
  * Until stated otherwise, [MutableSet] implementations are not thread-safe and their modification without
- * explicit synchronization may result in undefined behavior.
+ * explicit synchronization may result in data corruption, loss, and runtime errors.
  *
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
@@ -528,7 +528,7 @@ public expect interface Map<K, out V> {
     /**
      * Returns the number of key/value pairs in the map.
      *
-     * If a map contains more than [Int.MAX_VALUE] elements, the value of this property is undefined.
+     * If a map contains more than [Int.MAX_VALUE] elements, the value of this property is unspecified.
      * For implementations allowing to have more than [Int.MAX_VALUE] elements,
      * it is recommended to explicitly document behavior of this property.
      *
@@ -593,7 +593,7 @@ public expect interface Map<K, out V> {
      * Represents a key/value pair held by a [Map].
      *
      * Map entries are not supposed to be stored separately or used long after they are obtained.
-     * The behavior of an entry is undefined if the backing map has been modified after the entry was obtained.
+     * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained.
      */
     public interface Entry<out K, out V> {
         /**
@@ -622,7 +622,7 @@ public expect interface Map<K, out V> {
  * Unlike [Map], iterators returned by [keys], [values] and [entries] are all mutable and let updating the map during the iteration.
  *
  * Until stated otherwise, [MutableMap] implementations are not thread-safe and their modification without
- * explicit synchronization may result in undefined behavior.
+ * explicit synchronization may result in data corruption, loss, and runtime errors.
  *
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The mutable map is invariant in its value type.
@@ -689,7 +689,7 @@ public expect interface MutableMap<K, V> : Map<K, V> {
      * Represents a key/value pair held by a [MutableMap].
      *
      * Map entries are not supposed to be stored separately or used long after they are obtained.
-     * The behavior of an entry is undefined if the backing map has been modified after the entry was obtained.
+     * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained.
      */
     public interface MutableEntry<K, V> : Map.Entry<K, V> {
         /**
