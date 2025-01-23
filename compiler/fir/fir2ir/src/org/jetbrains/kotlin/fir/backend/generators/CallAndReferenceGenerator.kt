@@ -119,7 +119,7 @@ class CallAndReferenceGenerator(
                     origin = origin
                 )
                     .applyTypeArguments(callableReferenceAccess)
-                    .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
+                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
@@ -145,7 +145,7 @@ class CallAndReferenceGenerator(
                     origin = origin
                 )
                     .applyTypeArguments(callableReferenceAccess)
-                    .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
+                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToLocalDelegatedProperty(propertySymbol: FirPropertySymbol): IrExpression? {
@@ -173,7 +173,7 @@ class CallAndReferenceGenerator(
                     setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(irPropertySymbol) },
                     origin
                 )
-                    .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
+                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToFunction(functionSymbol: FirFunctionSymbol<*>): IrExpression? {
@@ -202,7 +202,7 @@ class CallAndReferenceGenerator(
                         reflectionTarget = irFunctionSymbol
                     )
                         .applyTypeArguments(callableReferenceAccess)
-                        .applyReceivers(callableReferenceAccess, firSymbol, explicitReceiverExpression)
+                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
                 }
             }
 
