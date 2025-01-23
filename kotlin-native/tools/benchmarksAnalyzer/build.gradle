@@ -97,7 +97,7 @@ kotlin {
             }
         }
 
-        if (HostManager.hostIsMingw) {
+        if (HostManager.@Companion.hostIsMingw) {
             mingwX64('windows') {
                 binaries.all {
                     linkerOpts = ["-L${getMingwPath()}/lib".toString()]
@@ -110,7 +110,7 @@ kotlin {
             }
         }
 
-        if (HostManager.hostIsLinux) {
+        if (HostManager.@Companion.hostIsLinux) {
             linuxX64('linux') {
                 compilations.main.cinterops {
                     libcurl {
@@ -120,7 +120,7 @@ kotlin {
             }
         }
 
-        if (HostManager.hostIsMac) {
+        if (HostManager.@Companion.hostIsMac) {
             macosX64('macosX64') {
                 compilations.main.cinterops {
                     libcurl {
