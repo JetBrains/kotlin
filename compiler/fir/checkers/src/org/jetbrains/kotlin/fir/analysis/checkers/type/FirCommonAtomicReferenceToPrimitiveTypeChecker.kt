@@ -15,15 +15,28 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 abstract class AbstractAtomicReferenceToPrimitiveTypeChecker(
     val atomicReferenceClassId: ClassId,
+    val appropriateCandidatesForArgument: Map<ClassId, ClassId>,
     mppKind: MppCheckerKind,
 ) : FirResolvedTypeRefChecker(mppKind) {
     final override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkAtomicReferenceAccess(typeRef.coneType, typeRef.source, atomicReferenceClassId, context, reporter)
+        checkAtomicReferenceAccess(
+            typeRef.coneType, typeRef.source,
+            atomicReferenceClassId, appropriateCandidatesForArgument,
+            context, reporter,
+        )
     }
 }
 
 object FirCommonAtomicReferenceToPrimitiveTypeChecker :
-    AbstractAtomicReferenceToPrimitiveTypeChecker(StandardClassIds.AtomicReference, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveTypeChecker(
+        StandardClassIds.AtomicReference,
+        StandardClassIds.atomicByPrimitive,
+        MppCheckerKind.Platform,
+    )
 
 object FirCommonAtomicReferenceArrayToPrimitiveTypeChecker :
-    AbstractAtomicReferenceToPrimitiveTypeChecker(StandardClassIds.AtomicArray, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveTypeChecker(
+        StandardClassIds.AtomicArray,
+        StandardClassIds.atomicArrayByPrimitive,
+        MppCheckerKind.Platform,
+    )

@@ -79,16 +79,59 @@ object JvmStandardClassIds {
     val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAME)
 
     @JvmField
+    val ATOMIC_BOOLEAN_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicBoolean")
+
+    @JvmField
+    val ATOMIC_BOOLEAN_CLASS_ID = ClassId.topLevel(ATOMIC_BOOLEAN_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_INTEGER_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicInteger")
+
+    @JvmField
+    val ATOMIC_INTEGER_CLASS_ID = ClassId.topLevel(ATOMIC_INTEGER_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_LONG_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicLong")
+
+    @JvmField
+    val ATOMIC_LONG_CLASS_ID = ClassId.topLevel(ATOMIC_LONG_FQ_NAME)
+
+    @JvmField
     val ATOMIC_REFERENCE_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicReference")
 
     @JvmField
     val ATOMIC_REFERENCE_CLASS_ID = ClassId.topLevel(ATOMIC_REFERENCE_FQ_NAME)
 
     @JvmField
+    val atomicByPrimitive = mapOf(
+        StandardClassIds.Boolean to ATOMIC_BOOLEAN_CLASS_ID,
+        StandardClassIds.Int to ATOMIC_INTEGER_CLASS_ID,
+        StandardClassIds.Long to ATOMIC_LONG_CLASS_ID,
+    )
+
+    @JvmField
     val ATOMIC_REFERENCE_ARRAY_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicReferenceArray")
 
     @JvmField
     val ATOMIC_REFERENCE_ARRAY_CLASS_ID = ClassId.topLevel(ATOMIC_REFERENCE_ARRAY_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_INTEGER_ARRAY_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicIntegerArray")
+
+    @JvmField
+    val ATOMIC_INTEGER_ARRAY_CLASS_ID = ClassId.topLevel(ATOMIC_INTEGER_ARRAY_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_LONG_ARRAY_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicLongArray")
+
+    @JvmField
+    val ATOMIC_LONG_ARRAY_CLASS_ID = ClassId.topLevel(ATOMIC_LONG_ARRAY_FQ_NAME)
+
+    @JvmField
+    val atomicArrayByPrimitive = mapOf(
+        StandardClassIds.Int to ATOMIC_INTEGER_ARRAY_CLASS_ID,
+        StandardClassIds.Long to ATOMIC_LONG_ARRAY_CLASS_ID,
+    )
 
     const val MULTIFILE_PART_NAME_DELIMITER = "__"
 
