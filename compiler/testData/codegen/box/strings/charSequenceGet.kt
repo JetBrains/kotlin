@@ -2,8 +2,12 @@
 
 import kotlin.test.*
 
+// CHECK_CALLED_IN_SCOPE: function=charCodeAt scope=getStringChar
+// CHECK_NOT_CALLED_IN_SCOPE: function=charSequenceGet scope=getStringChar
 fun getStringChar(s: String, index: Int): Char = s[index]
 
+// CHECK_CALLED_IN_SCOPE: function=charSequenceGet scope=getCharSequenceChar
+// CHECK_NOT_CALLED_IN_SCOPE: function=charCodeAt scope=getCharSequenceChar
 fun getCharSequenceChar(s: CharSequence, index: Int): Char = s[index]
 
 private class MyCharSequence(val s: String) : CharSequence by s

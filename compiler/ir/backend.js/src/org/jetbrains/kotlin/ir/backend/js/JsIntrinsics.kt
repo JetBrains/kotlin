@@ -367,6 +367,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
 
     val jsCharSequenceGet = getInternalFunction("charSequenceGet")
+    val jsCharCodeAt = getInternalFunction("charCodeAt")
     val jsCharSequenceLength = getInternalFunction("charSequenceLength")
     val jsCharSequenceSubSequence = getInternalFunction("charSequenceSubSequence")
 
