@@ -163,6 +163,7 @@ object StandardClassIds {
     val EnumEntries = "EnumEntries".enumsId()
 
     val AtomicReference = "AtomicReference".atomicsId()
+    val AtomicArray = "AtomicArray".atomicsId()
 
     object Annotations {
         val Suppress = "Suppress".baseId()

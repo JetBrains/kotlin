@@ -550,6 +550,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
+    @TestMetadata("errorProneAtomicArrayPrimitives.kt")
+    public void testErrorProneAtomicArrayPrimitives() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicArrayPrimitives.kt");
+    }
+
+    @Test
     @TestMetadata("errorProneAtomicReferencePrimitives.kt")
     public void testErrorProneAtomicReferencePrimitives() {
       runTest("compiler/testData/diagnostics/tests/errorProneAtomicReferencePrimitives.kt");
