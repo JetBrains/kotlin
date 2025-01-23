@@ -9724,12 +9724,6 @@ final inline fun (kotlin/Float.Companion).kotlin/fromBits(kotlin/Int): kotlin/Fl
 final inline fun (kotlin/Short).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Short(kotlin.Int){}[0]
 
 // Targets: [js, native]
-final inline fun (kotlin/String).kotlin.text/substring(kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int){}[0]
-
-// Targets: [js, native]
-final inline fun (kotlin/String).kotlin.text/substring(kotlin/Int, kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [js, native]
 final inline fun kotlin/floatToUInt(kotlin/Float): kotlin/UInt // kotlin/floatToUInt|floatToUInt(kotlin.Float){}[0]
 
 // Targets: [js, native]
@@ -13410,6 +13404,12 @@ final inline fun (kotlin/Int).kotlin.text/toString(kotlin/Int): kotlin/String //
 final inline fun (kotlin/Long).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Long(kotlin.Int){}[0]
 
 // Targets: [native]
+final inline fun (kotlin/String).kotlin.text/substring(kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int){}[0]
+
+// Targets: [native]
+final inline fun (kotlin/String).kotlin.text/substring(kotlin/Int, kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int;kotlin.Int){}[0]
+
+// Targets: [native]
 final inline fun (kotlin/String).kotlin.text/toByte(): kotlin/Byte // kotlin.text/toByte|toByte@kotlin.String(){}[0]
 
 // Targets: [native]
@@ -13952,6 +13952,12 @@ final fun (kotlin/Int).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin
 final fun (kotlin/Long).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Long(kotlin.Int){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/String).kotlin.text/substring(kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/String).kotlin.text/substring(kotlin/Int, kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int;kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/String).kotlin.text/toByte(): kotlin/Byte // kotlin.text/toByte|toByte@kotlin.String(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
@@ -14122,12 +14128,6 @@ final fun (kotlin/Float.Companion).kotlin/fromBits(kotlin/Int): kotlin/Float // 
 
 // Targets: [wasmJs, wasmWasi]
 final fun (kotlin/Short).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Short(kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun (kotlin/String).kotlin.text/substring(kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun (kotlin/String).kotlin.text/substring(kotlin/Int, kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int;kotlin.Int){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines/SuspendFunction2<#A, #B, #C>, #A, #B, kotlin.coroutines/Continuation<#C>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2|startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines.SuspendFunction2<0:0,0:1,0:2>;0:0;0:1;kotlin.coroutines.Continuation<0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]

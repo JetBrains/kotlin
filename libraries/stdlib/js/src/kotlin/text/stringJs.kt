@@ -268,11 +268,9 @@ if (typeof String.prototype.endsWith === "undefined") {
 """)
 internal inline fun String.nativeEndsWith(s: String): Boolean = asDynamic().endsWith(s)
 
-@kotlin.internal.InlineOnly
-public actual inline fun String.substring(startIndex: Int): String = asDynamic().substring(startIndex)
+public actual fun String.substring(startIndex: Int): String = asDynamic().substring(startIndex)
 
-@kotlin.internal.InlineOnly
-public actual inline fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
+public actual fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
 
 @Deprecated("Use String.plus() instead", ReplaceWith("this + str"))
 @DeprecatedSinceKotlin(warningSince = "1.6")
