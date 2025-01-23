@@ -59,7 +59,6 @@ package kotlin.concurrent.atomics
     public constructor(array: kotlin.IntArray) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
-        public final get
 
     public final fun loadAt(index: kotlin.Int): kotlin.Int { /* compiled code */ }
 
@@ -102,7 +101,6 @@ package kotlin.concurrent.atomics
     public constructor(array: kotlin.LongArray) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
-        public final get
 
     public final fun loadAt(index: kotlin.Int): kotlin.Long { /* compiled code */ }
 
