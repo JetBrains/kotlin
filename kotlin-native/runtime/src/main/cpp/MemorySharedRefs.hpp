@@ -8,6 +8,7 @@
 
 #include <type_traits>
 
+#include "ExternalRCRef.hpp"
 #include "ManuallyScoped.hpp"
 #include "Memory.h"
 #include "concurrent/Mutex.hpp"
@@ -26,7 +27,7 @@ class KRefSharedHolder {
 
  private:
   ObjHeader* obj_;
-  kotlin::mm::RawSpecialRef* ref_;
+  kotlin::mm::ExternalRCRefImpl* ref_;
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
@@ -57,7 +58,7 @@ class BackRefFromAssociatedObject {
  private:
   union {
     struct {
-      kotlin::mm::RawSpecialRef* ref_;
+      kotlin::mm::ExternalRCRefImpl* ref_;
       kotlin::ManuallyScoped<kotlin::RWSpinLock> deallocMutex_;
     }; // Regular object.
     ObjHeader* permanentObj_; // Permanent object.

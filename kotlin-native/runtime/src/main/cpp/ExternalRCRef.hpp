@@ -12,6 +12,8 @@ namespace kotlin::mm {
 
 // TODO(KT-67741): Unify different SpecialRefs
 
+class ExternalRCRefImpl;
+
 // Object if the given kotlin.native.internal.ref.ExternalRCRef is permanent object, nullptr otherwise.
 KRef externalRCRefAsPermanentObject(void* ref) noexcept;
 

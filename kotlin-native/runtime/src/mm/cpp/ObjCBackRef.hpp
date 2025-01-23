@@ -22,10 +22,10 @@ public:
     ObjCBackRef() noexcept = default;
 
     // Cast raw ref into a back reference.
-    explicit ObjCBackRef(RawSpecialRef* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
+    explicit ObjCBackRef(ExternalRCRefImpl* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
 
     // Cast back reference into a raw ref
-    [[nodiscard("must be manually disposed")]] explicit operator RawSpecialRef*() && noexcept {
+    [[nodiscard("must be manually disposed")]] explicit operator ExternalRCRefImpl*() && noexcept {
         // Make sure to move out from node_.
         auto node = std::move(node_);
         return node->asRaw();
@@ -94,9 +94,9 @@ public:
 
     bool tryRetainForTests() noexcept { return tryRetainIgnoreState(); }
 
-    static ObjCBackRef& reinterpret(RawSpecialRef*& raw) noexcept { return reinterpret_cast<ObjCBackRef&>(raw); }
+    static ObjCBackRef& reinterpret(ExternalRCRefImpl*& raw) noexcept { return reinterpret_cast<ObjCBackRef&>(raw); }
 
-    static const ObjCBackRef& reinterpret(RawSpecialRef* const& raw) noexcept { return reinterpret_cast<const ObjCBackRef&>(raw); }
+    static const ObjCBackRef& reinterpret(ExternalRCRefImpl* const& raw) noexcept { return reinterpret_cast<const ObjCBackRef&>(raw); }
 
 private:
     bool tryRetainIgnoreState() noexcept {

@@ -9,6 +9,7 @@
 #include <list>
 #include <optional>
 
+#include "ExternalRCRef.hpp"
 #include "GC.hpp"
 #include "Memory.h"
 #include "ReferenceOps.hpp"
@@ -184,8 +185,8 @@ class SpecialRefRegistry : private Pinned {
             }
         }
 
-        RawSpecialRef* asRaw() noexcept { return reinterpret_cast<RawSpecialRef*>(this); }
-        static Node* fromRaw(RawSpecialRef* ref) noexcept { return reinterpret_cast<Node*>(ref); }
+        ExternalRCRefImpl* asRaw() noexcept { return reinterpret_cast<ExternalRCRefImpl*>(this); }
+        static Node* fromRaw(ExternalRCRefImpl* ref) noexcept { return reinterpret_cast<Node*>(ref); }
 
     private:
         friend class SpecialRefRegistry;

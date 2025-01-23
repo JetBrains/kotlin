@@ -140,10 +140,6 @@ ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
 
 struct FrameOverlay;
 
-namespace kotlin::mm {
-struct RawSpecialRef;
-} // namespace kotlin::mm
-
 #ifdef __cplusplus
 extern "C" {
 #endif

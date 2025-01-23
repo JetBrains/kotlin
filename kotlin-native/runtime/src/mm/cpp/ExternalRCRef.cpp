@@ -26,7 +26,7 @@ RUNTIME_NOTHROW extern "C" void* Kotlin_native_internal_ref_createRetainedExtern
     if (obj->permanent()) {
         return mm::permanentObjectAsExternalRCRef(obj);
     }
-    return static_cast<mm::RawSpecialRef*>(mm::ObjCBackRef::create(obj));
+    return static_cast<mm::ExternalRCRefImpl*>(mm::ObjCBackRef::create(obj));
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_disposeExternalRCRef(void* ref) {
@@ -35,7 +35,7 @@ RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_disposeExternalRCRef(
         // Nothing to do.
         return;
     }
-    mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).dispose();
+    mm::ObjCBackRef(static_cast<mm::ExternalRCRefImpl*>(ref)).dispose();
 }
 
 RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_native_internal_ref_dereferenceExternalRCRef, void* ref) {
@@ -44,7 +44,7 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_native_internal_ref_dereferenceExte
     if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
         RETURN_OBJ(obj);
     }
-    RETURN_OBJ(*mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)));
+    RETURN_OBJ(*mm::ObjCBackRef(static_cast<mm::ExternalRCRefImpl*>(ref)));
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_retainExternalRCRef(void* ref) {
@@ -53,7 +53,7 @@ RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_retainExternalRCRef(v
         // Nothing to do.
         return;
     }
-    mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).retain();
+    mm::ObjCBackRef(static_cast<mm::ExternalRCRefImpl*>(ref)).retain();
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_releaseExternalRCRef(void* ref) {
@@ -62,7 +62,7 @@ RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_releaseExternalRCRef(
         // Nothing to do.
         return;
     }
-    mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).release();
+    mm::ObjCBackRef(static_cast<mm::ExternalRCRefImpl*>(ref)).release();
 }
 
 RUNTIME_NOTHROW extern "C" bool Kotlin_native_internal_ref_tryRetainExternalRCRef(void* ref) {
@@ -71,7 +71,7 @@ RUNTIME_NOTHROW extern "C" bool Kotlin_native_internal_ref_tryRetainExternalRCRe
     if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
         return true;
     }
-    return mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).tryRetain();
+    return mm::ObjCBackRef(static_cast<mm::ExternalRCRefImpl*>(ref)).tryRetain();
 }
 
 KRef kotlin::mm::externalRCRefAsPermanentObject(void* ref) noexcept {
@@ -97,5 +97,5 @@ const TypeInfo* kotlin::mm::externalRCRefType(void* ref) noexcept {
         RuntimeAssert(obj->permanent(), "Permanent ExternalRCRef for non-permanent object %p", obj);
         return obj->type_info();
     }
-    return mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).typeInfo();
+    return mm::ObjCBackRef(static_cast<mm::ExternalRCRefImpl*>(ref)).typeInfo();
 }
