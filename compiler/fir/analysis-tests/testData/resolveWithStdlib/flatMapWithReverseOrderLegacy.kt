@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +PreferDependentTypeVariablesWithProperArgumentConstraint
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -PreferDependentTypeVariablesWithProperArgumentConstraint
 // FULL_JDK
 // STDLIB_JDK8
 // JVM_TARGET: 1.8
@@ -27,7 +27,7 @@ fun specifyTypeTest(fragments: Set<MergeFragment>) {
     val flatMap = fragments.flatMapTo(TreeSet(Wrapper.reverseOrder())) { f -> f.tailsAndBody }
 
     for (f in flatMap) {
-        testFun(f)
+        testFun(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
     }
 
 }

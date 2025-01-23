@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.IncorporationConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -80,6 +81,7 @@ class VariableFixationFinder(
         OUTER_TYPE_VARIABLE_DEPENDENCY,
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
+        WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT, // Same as before but also has a constraint T = ... not dependent on others
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
@@ -114,7 +116,7 @@ class VariableFixationFinder(
         dependencyProvider.isRelatedToOuterTypeVariable(variable) -> TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY
 
         // All cases below do not prevent fixation but just define the priority order of a variable
-        hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+        hasDependencyToOtherTypeVariables(variable) -> computeReadinessForVariableWithDependencies(variable)
         // TODO: Consider removing this kind of readiness, see KT-63032
         allConstraintsTrivialOrNonProper(variable) -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
@@ -208,6 +210,21 @@ class VariableFixationFinder(
                 return true
         }
         return false
+    }
+
+    private fun Context.computeReadinessForVariableWithDependencies(typeVariable: TypeConstructorMarker): TypeVariableFixationReadiness {
+        return if (!languageVersionSettings.supportsFeature(LanguageFeature.PreferDependentTypeVariablesWithProperArgumentConstraint) ||
+            !hasProperArgumentConstraint(typeVariable)
+        ) {
+            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+        } else {
+            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+        }
+    }
+
+    private fun Context.hasProperArgumentConstraint(typeVariable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[typeVariable]?.constraints ?: return false
+        return constraints.any { it.kind == ConstraintKind.EQUALITY && isProperArgumentConstraint(it) }
     }
 
     private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructorMarker): Boolean {
