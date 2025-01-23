@@ -9,7 +9,7 @@ class C
 context(a: A) fun implicit1(): A = implicit<A>()
 context(b: B) fun implicit2(): A = implicit<A>()
 fun A.implicit3(): A = implicit<A>()
-context(a: A) fun A.implicit4(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT!>implicit<!><A>()
+context(a: A) fun A.implicit4(): A = implicit<A>()
 context(a: A, b: B) fun implicit5(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT!>implicit<!><A>()
 context(a: A) fun implicit6(): A = implicit()
 context(a: A, c: C) fun implicit7(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT, CANNOT_INFER_PARAMETER_TYPE!>implicit<!>()
