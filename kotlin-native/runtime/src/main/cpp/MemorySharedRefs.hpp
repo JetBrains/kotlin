@@ -39,7 +39,7 @@ class BackRefFromAssociatedObject {
   void initAndAddRef(ObjHeader* obj);
 
   // Returns true if initialized as permanent.
-  bool initWithExternalRCRef(void* ref) noexcept;
+  bool initWithExternalRCRef(kotlin::mm::RawExternalRCRef* ref) noexcept;
 
   void addRef();
 
@@ -53,7 +53,7 @@ class BackRefFromAssociatedObject {
 
   ObjHeader* refPermanent() const;
 
-  void* externalRCRef(bool permanent) const noexcept;
+  kotlin::mm::RawExternalRCRef* externalRCRef(bool permanent) const noexcept;
 
  private:
   union {

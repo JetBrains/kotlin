@@ -53,12 +53,12 @@ void BackRefFromAssociatedObject::initAndAddRef(ObjHeader* obj) {
     deallocMutex_.construct();
 }
 
-bool BackRefFromAssociatedObject::initWithExternalRCRef(void* ref) noexcept {
+bool BackRefFromAssociatedObject::initWithExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
     if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
         permanentObj_ = obj;
         return true;
     }
-    ref_ = static_cast<mm::ExternalRCRefImpl*>(ref);
+    ref_ = mm::ExternalRCRefImpl::fromRaw(ref);
     deallocMutex_.construct();
     return false;
 }
@@ -97,9 +97,9 @@ ObjHeader* BackRefFromAssociatedObject::refPermanent() const {
     return permanentObj_;
 }
 
-void* BackRefFromAssociatedObject::externalRCRef(bool permanent) const noexcept {
+mm::RawExternalRCRef* BackRefFromAssociatedObject::externalRCRef(bool permanent) const noexcept {
     if (permanent) {
         return mm::permanentObjectAsExternalRCRef(permanentObj_);
     }
-    return ref_;
+    return ref_->toRaw();
 }

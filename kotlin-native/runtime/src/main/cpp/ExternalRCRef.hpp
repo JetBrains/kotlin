@@ -18,15 +18,23 @@ namespace kotlin::mm {
 
 class ExternalRCRefRegistry;
 
+// `RawExternalRCRef*` is `kotlin.native.internal.ref.ExternalRCRef`.
+// NOTE: operations on `RawExternalRCRef*` support `nullptr`, while
+//       operations on `kotlin.native.internal.ref.ExternalRCRef` do not support `null`.
+//
+// See also: ExternalRCRefImpl.
+struct RawExternalRCRef;
+
 // An externally-reference-counted entity bound to a Kotlin object `obj_`.
 // `ExternalRCRefImpl` is registered in `ExternalRCRefRegistry` and has the following properties:
 // * `rc_ > 0` -> `obj_` is in global roots
 // * `rc_ == 0` -> `obj_` eventually disappears from roots
 // * `rc_ == disposedMarker` -> this is not unsafe to use and will be deleted at some point.
 //
-// Every `ExternalRCRefImpl*` is valid `kotlin.native.internal.ref.ExternalRCRef`.
-// The reverse is not true: for permanent objects `kotlin.native.internal.ref.ExternalRCRef`
-// is specially encoded.
+// Every `ExternalRCRefImpl*` is `RawExternalRCRef*`.
+// The reverse is not true: for permanent objects `RawExternalRCRef*` is specially encoded.
+//
+// See also: RawExternalRCRef.
 class ExternalRCRefImpl : private Pinned {
 public:
     using Rc = int32_t;
@@ -63,6 +71,20 @@ public:
     // Decrement `rc_`. Can only be called when `rc_ > 0`.
     void releaseRef() noexcept;
 
+    // Convert to `RawExternalRCRef*`. Always a valid operation.
+    RawExternalRCRef* toRaw() noexcept { return reinterpret_cast<RawExternalRCRef*>(this); }
+
+    // Convert to `const RawExternalRCRef*`. Always a valid operation.
+    const RawExternalRCRef* toRaw() const noexcept { return reinterpret_cast<const RawExternalRCRef*>(this); }
+
+    // Convert from `RawExternalRCRef*`. Only valid when `ref` does not point to a permanent object.
+    static ExternalRCRefImpl* fromRaw(RawExternalRCRef* ref) noexcept {
+        return const_cast<ExternalRCRefImpl*>(fromRaw(static_cast<const RawExternalRCRef*>(ref)));
+    }
+
+    // Convert from `RawExternalRCRef*`. Only valid when `ref` does not point to a permanent object.
+    static const ExternalRCRefImpl* fromRaw(const RawExternalRCRef* ref) noexcept;
+
 private:
     friend class ExternalRCRefRegistry;
     friend class ExternalRCRefRegistryTest;
@@ -88,13 +110,73 @@ private:
     std::atomic<ExternalRCRefImpl*> nextRoot_ = nullptr;
 };
 
-// Object if the given kotlin.native.internal.ref.ExternalRCRef is permanent object, nullptr otherwise.
-KRef externalRCRefAsPermanentObject(void* ref) noexcept;
+// Object if the given `ref` points to permanent object, nullptr otherwise.
+KRef externalRCRefAsPermanentObject(const RawExternalRCRef* ref) noexcept;
 
-// kotlin.native.internal.ref.ExternalRCRef for the given permanent object.
-void* permanentObjectAsExternalRCRef(KRef obj) noexcept;
+// Create `RawExternalRCRef*` for the given permanent object.
+RawExternalRCRef* permanentObjectAsExternalRCRef(KRef obj) noexcept;
 
-// TypeInfo of the given kotlin.native.internal.ref.ExternalRCRef.
-const TypeInfo* externalRCRefType(void* ref) noexcept;
+// Create `RawExternalRCRef*` pointing to `obj`. The initial reference count will be 1.
+// May only be called in the runnable state.
+inline RawExternalRCRef* createRetainedExternalRCRef(KRef obj) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+    if (!obj) return nullptr;
+    if (obj->permanent()) return permanentObjectAsExternalRCRef(obj);
+    return ExternalRCRefImpl::create(obj, 1).toRaw();
+}
+
+// Create `RawExternalRCRef*` pointing to `obj`. The initial reference count will be 0.
+// May only be called in the runnable state.
+inline RawExternalRCRef* createUnretainedExternalRCRef(KRef obj) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+    if (!obj) return nullptr;
+    if (obj->permanent()) return permanentObjectAsExternalRCRef(obj);
+    return ExternalRCRefImpl::create(obj, 0).toRaw();
+}
+
+// Dispose `RawExternalRCRef*`. `ref` becomes invalid to use after this operation.
+// May only be called when the reference count is 0.
+// Can be called in any state.
+inline void disposeExternalRCRef(RawExternalRCRef* ref) noexcept {
+    if (!ref || externalRCRefAsPermanentObject(ref)) return;
+    ExternalRCRefImpl::fromRaw(ref)->dispose();
+}
+
+// Return object that `RawExternalRCRef*` points to.
+// The result is only safe to use when the reference count is >0 or if the object is
+// known to be in the roots in some other way (e.g. on stack).
+// Can be called in any state.
+inline KRef dereferenceExternalRCRef(const RawExternalRCRef* ref) noexcept {
+    if (!ref) return nullptr;
+    if (auto obj = externalRCRefAsPermanentObject(ref)) return obj;
+    return ExternalRCRefImpl::fromRaw(ref)->ref();
+}
+
+// Increment the reference count.
+// May only be called when the reference count is >0 or if the object is
+// known to be in the roots in some other way (e.g. on stack).
+// Can be called in any state.
+inline void retainExternalRCRef(RawExternalRCRef* ref) noexcept {
+    if (!ref || externalRCRefAsPermanentObject(ref)) return;
+    ExternalRCRefImpl::fromRaw(ref)->retainRef();
+}
+
+// Decrement the reference count.
+// May only be called when the reference count is >0.
+// Can be called in any state.
+inline void releaseExternalRCRef(RawExternalRCRef* ref) noexcept {
+    if (!ref || externalRCRefAsPermanentObject(ref)) return;
+    ExternalRCRefImpl::fromRaw(ref)->releaseRef();
+}
+
+// Safely dereference `RawExternalRCRef*`: if the underlying object is not yet collected by the GC,
+// returns it. Otherwise returns `nullptr`.
+// May only be called in the runnable state.
+inline OBJ_GETTER(tryRefExternalRCRef, RawExternalRCRef* ref) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
+    if (!ref) RETURN_OBJ(nullptr);
+    if (auto obj = externalRCRefAsPermanentObject(ref)) RETURN_OBJ(obj);
+    RETURN_RESULT_OF0(ExternalRCRefImpl::fromRaw(ref)->tryRef);
+}
 
 }
