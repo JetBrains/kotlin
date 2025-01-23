@@ -12,7 +12,7 @@ import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.utils.processes.ExecHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecResult
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
-import org.jetbrains.kotlin.gradle.utils.processes.execHandleBuilder
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder.Companion.execHandleBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.OutputStream

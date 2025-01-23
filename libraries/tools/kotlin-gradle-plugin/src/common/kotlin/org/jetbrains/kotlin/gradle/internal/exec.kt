@@ -9,8 +9,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder.Companion.execHandleBuilder
 import org.jetbrains.kotlin.gradle.utils.processes.ExecResult
-import org.jetbrains.kotlin.gradle.utils.processes.execHandleBuilder
 import java.io.ByteArrayOutputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream

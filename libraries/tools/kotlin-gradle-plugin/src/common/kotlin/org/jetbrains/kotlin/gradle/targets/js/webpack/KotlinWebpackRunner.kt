@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStream
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.utils.processes.ExecHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder.Companion.execHandleBuilder
 import org.jetbrains.kotlin.gradle.utils.processes.ExecResult
-import org.jetbrains.kotlin.gradle.utils.processes.execHandleBuilder
 import java.io.File
 
 internal data class KotlinWebpackRunner(

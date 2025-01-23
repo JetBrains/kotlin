@@ -98,13 +98,18 @@ internal class ExecHandleBuilder(
             ignoreExitValue = ignoreExitValue
         )
     }
-}
 
-internal fun ObjectFactory.execHandleBuilder(
-    block: ExecHandleBuilder.() -> Unit = {},
-): ExecHandleBuilder {
-    return ExecHandleBuilder(
-        processLaunchOptions(),
-    )
-        .apply(block)
+    companion object {
+        /**
+         * Create a new instance of [ExecHandleBuilder].
+         */
+        internal fun ObjectFactory.execHandleBuilder(
+            block: ExecHandleBuilder.() -> Unit = {},
+        ): ExecHandleBuilder {
+            return ExecHandleBuilder(
+                processLaunchOptions(),
+            )
+                .apply(block)
+        }
+    }
 }
