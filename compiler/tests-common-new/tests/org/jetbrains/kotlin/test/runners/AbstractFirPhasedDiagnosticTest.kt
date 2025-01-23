@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTest
-import org.jetbrains.kotlin.test.configuration.commonConfigurationForTest
+import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.configuration.configureCommonDiagnosticTestPaths
 import org.jetbrains.kotlin.test.configuration.setupHandlersForDiagnosticTest
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -38,7 +38,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
             LANGUAGE + "+EnableDfaWarningsInK2"
         }
 
-        commonConfigurationForTest(
+        commonConfigurationForJvmTest(
             targetFrontend = FrontendKinds.FIR,
             frontendFacade = ::FirCliJvmFacade,
             frontendToBackendConverter = ::Fir2IrCliJvmFacade,

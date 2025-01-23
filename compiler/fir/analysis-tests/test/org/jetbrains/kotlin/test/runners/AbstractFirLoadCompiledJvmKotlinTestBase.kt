@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -29,7 +30,7 @@ abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.Fr
     protected abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
-        commonConfigurationForTest(frontendKind, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForJvmTest(frontendKind, frontendFacade, frontendToBackendConverter, backendFacade)
 
         configureJvmArtifactsHandlersStep {
             useHandlers(::JvmLoadedMetadataDumpHandler)
