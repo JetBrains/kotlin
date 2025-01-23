@@ -36,10 +36,7 @@ internal fun ModuleWithScopeProvider.initializeSirModule(
     config: SwiftExportConfig,
     moduleProvider: SirModuleProvider,
 ): SwiftModuleBuildResults {
-    val moduleForPackageEnums = when (config.multipleModulesHandlingStrategy) {
-        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> buildModule { name = config.moduleForPackagesName }
-        MultipleModulesHandlingStrategy.IntoSingleModule -> with(moduleProvider) { mainModule.sirModule() }
-    }
+    val moduleForPackageEnums = buildModule { name = config.moduleForPackagesName }
     val sirSession = StandaloneSirSession(
         useSiteModule = useSiteModule,
         moduleToTranslate = mainModule,
@@ -59,10 +56,7 @@ internal fun ModuleWithScopeProvider.initializeSirModule(
     return with(moduleProvider) {
         SwiftModuleBuildResults(
             module = mainModule.sirModule(),
-            packages = if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping)
-                sirSession.enumGenerator.collectedPackages
-            else
-                emptySet()
+            packages = sirSession.enumGenerator.collectedPackages
         )
     }
 }

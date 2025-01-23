@@ -41,7 +41,6 @@ public data class SwiftExportConfig(
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
-    val multipleModulesHandlingStrategy: MultipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.OneToOneModuleMapping,
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
     val moduleForPackagesName: String = "ExportedKotlinPackages",
 ) {
@@ -86,10 +85,6 @@ public data class SwiftExportConfig(
                 )
             }
     }
-}
-
-public enum class MultipleModulesHandlingStrategy {
-    OneToOneModuleMapping, IntoSingleModule;
 }
 
 public enum class UnsupportedDeclarationReporterKind {
@@ -207,10 +202,7 @@ public fun runSwiftExport(
 }
 
 private fun translateModule(module: InputModule, dependencies: Set<InputModule>): TranslationResult {
-    val moduleProvider: SirModuleProvider = when (module.config.multipleModulesHandlingStrategy) {
-        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider()
-        MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = module.name)
-    }
+    val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider()
     val buildResult = createModuleWithScopeProviderFromBinary(module, dependencies)
         .initializeSirModule(module.config, moduleProvider)
 

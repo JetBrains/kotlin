@@ -68,7 +68,6 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
         )
 
         var unsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent
-        var multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.OneToOneModuleMapping
 
         val discoveredConfig: Map<String, String> = module
             .swiftExportConfigMap()
@@ -78,12 +77,6 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
                         UnsupportedDeclarationReporterKind.entries
                             .singleOrNull { it.name.lowercase() == value.lowercase() }
                             ?.let { unsupportedDeclarationReporterKind = it }
-                        false
-                    }
-                    "multipleModulesHandlingStrategy" -> {
-                        MultipleModulesHandlingStrategy.entries
-                            .singleOrNull { it.name.lowercase() == value.lowercase() }
-                            ?.let { multipleModulesHandlingStrategy = it }
                         false
                     }
                     else -> true
@@ -101,7 +94,6 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
             unsupportedTypeStrategy = unsupportedTypeStrategy,
             outputPath = tmpdir.toPath().resolve(module.name),
             unsupportedDeclarationReporterKind = unsupportedDeclarationReporterKind,
-            multipleModulesHandlingStrategy = multipleModulesHandlingStrategy,
         )
     }
 
