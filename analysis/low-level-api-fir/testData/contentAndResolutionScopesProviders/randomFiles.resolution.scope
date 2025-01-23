@@ -1,0 +1,9 @@
+Resulting Resolution Scope:
+Module SOME_DEPENDENCY:
+    /c.kt
+    /x.kt
+Module MAIN:
+    /a.kt
+    /z.kt
+    /c.kt
+    /x.kt
