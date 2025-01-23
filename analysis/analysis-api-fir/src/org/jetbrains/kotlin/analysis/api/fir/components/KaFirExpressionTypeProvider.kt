@@ -268,8 +268,15 @@ internal class KaFirExpressionTypeProvider(
                 ?: getExpectedTypeByTryExpression(unwrapped)
                 ?: getExpectedTypeOfElvisOperand(unwrapped)
                 ?: getExpectedTypeByWhenEntryValue(unwrapped)
+                ?: getExpectedTypeByDelegatedSuperType(unwrapped)
             return expectedType
         }
+
+    private fun getExpectedTypeByDelegatedSuperType(expression: PsiElement): KaType? {
+        val entry =
+            expression.unwrapQualified<KtDelegatedSuperTypeEntry> { delegated, expr -> delegated.delegateExpression == expr } ?: return null
+        return with(analysisSession) { entry.typeReference?.type }
+    }
 
     private fun getExpectedTypeByTypeCast(expression: PsiElement): KaType? {
         val typeCastExpression =

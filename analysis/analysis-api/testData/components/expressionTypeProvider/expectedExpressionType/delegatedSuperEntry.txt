@@ -1,0 +1,5 @@
+expression: a
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: SomeFace
