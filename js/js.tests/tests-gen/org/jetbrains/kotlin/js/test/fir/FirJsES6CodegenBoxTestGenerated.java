@@ -6969,6 +6969,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("assignmentOfContextVar.kt")
+    public void testAssignmentOfContextVar() {
+      runTest("compiler/testData/codegen/box/contextParameters/assignmentOfContextVar.kt");
+    }
+
+    @Test
     @TestMetadata("classMemberAndTopLevelExtensionWithContext.kt")
     public void testClassMemberAndTopLevelExtensionWithContext() {
       runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelExtensionWithContext.kt");

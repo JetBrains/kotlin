@@ -8051,6 +8051,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("assignmentOfContextVar.kt")
+    public void testAssignmentOfContextVar() {
+      runTest("compiler/testData/codegen/box/contextParameters/assignmentOfContextVar.kt");
+    }
+
     @TestMetadata("classMemberAndTopLevelExtensionWithContext.kt")
     public void testClassMemberAndTopLevelExtensionWithContext() {
       runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelExtensionWithContext.kt");
