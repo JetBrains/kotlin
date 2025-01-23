@@ -41,6 +41,10 @@ public expect interface MutableIterable<out T> : Iterable<T> {
  * Functions in this interface support only read-only access to the collection;
  * read/write access is supported through the [MutableCollection] interface.
  *
+ * [Collection] is a top-level interface for objects aggregating multiple different homogenous elements. Other more specific interfaces,
+ * like [List], [Set], and [Map] extend [Collection] to provide more specific guarantees on how elements are stored and accessed, as well
+ * as provide richer functionality.
+ *
  * [Collection] implementation may have different guarantees on the order and uniqueness of contained elements,
  * for example, elements contained in a [List] are ordered and could contain duplicates, while elements contained in
  * a [Set] may not contain duplicates and there is no particular order imposed on them.
@@ -105,6 +109,10 @@ public expect interface Collection<out E> : Iterable<E> {
  * a read-only counterpart, [Collection] could be used instead.
  *
  * [MutableCollection] extends [Collection] contract with functions allowing to add or remove elements.
+ *
+ * [MutableCollection] is a top-level interface for mutable objects aggregating multiple different homogenous elements.
+ * Other more specific interfaces, like [MutableList], [MutableSet], and [MutableMap] extend [MutableCollection] to provide
+ * more specific guarantees on how elements are stored, accessed and modified, as well as provide richer functionality.
  *
  * Unlike [Collection], an iterator returned by [iterator] allows removing elements during iteration.
  *
