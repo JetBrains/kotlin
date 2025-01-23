@@ -45,7 +45,7 @@ object UnsafePublicationTests {
 
     @Test
     @Ignore // Fails, because Kotlin does not have a full construction guarantee.
-    fun plainArray() = runTest(UnsafePublication.PlainArray)
+    fun plainArray() = runTest(UnsafePublicationNative.PlainArray)
 
     @Test
     @Ignore // Fails, because Kotlin does not have a full construction guarantee.
