@@ -367,6 +367,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   }
 
   @Test
+  @TestMetadata("jsExportWithClass")
+  public void testJsExportWithClass() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportWithClass/");
+  }
+
+  @Test
   @TestMetadata("jsExportWithMultipleFiles")
   public void testJsExportWithMultipleFiles() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExportWithMultipleFiles/");

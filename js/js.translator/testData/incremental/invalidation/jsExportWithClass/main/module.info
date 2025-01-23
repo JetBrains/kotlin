@@ -4,3 +4,6 @@ STEP 0:
 STEP 1..6:
     dependencies: lib1
     updated imports: m.kt
+STEP 7:
+    dependencies: lib1
+    modified ir: m.kt
