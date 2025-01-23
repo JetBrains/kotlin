@@ -2284,6 +2284,58 @@ class IrValidatorTest {
             ),
         )
     }
+
+    @Test
+    fun `instance initializer calls with incorrect type are reported`() {
+        val file = createIrFile("test.kt")
+        val myClass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+            kind = ClassKind.CLASS
+        }
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+        )
+
+        val incorrectInstanceInitializerCall = IrInstanceInitializerCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            classSymbol = myClass.symbol,
+            type = TestIrBuiltins.intType
+        )
+
+        val correctInstanceInitializerCall = IrInstanceInitializerCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            classSymbol = myClass.symbol,
+            type = TestIrBuiltins.unitType
+        )
+
+        body.statements.addAll(listOf(incorrectInstanceInitializerCall, correctInstanceInitializerCall))
+        function.body = body
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Int
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]' type=kotlin.Int
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+        )
+    }
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
