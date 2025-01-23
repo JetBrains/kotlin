@@ -1,5 +1,5 @@
 Module: lib
-FILE fqName:p3 fileName:/foo.kt
+FILE fqName:p3 fileName:/p3/foo.kt
   FUN name:Foo visibility:public modality:FINAL <> (text:@[MyInlineable] kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     annotations:
       MyInlineable

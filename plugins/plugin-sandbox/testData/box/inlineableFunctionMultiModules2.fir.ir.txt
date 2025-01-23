@@ -1,5 +1,5 @@
 Module: lib
-FILE fqName:p3 fileName:/foo.kt
+FILE fqName:p3 fileName:/p3/foo.kt
   FUN name:setContent visibility:public modality:FINAL <> (content:@[MyInlineable] kotlin.Function0<kotlin.Unit>) returnType:kotlin.Int
     VALUE_PARAMETER name:content index:0 type:@[MyInlineable] kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
