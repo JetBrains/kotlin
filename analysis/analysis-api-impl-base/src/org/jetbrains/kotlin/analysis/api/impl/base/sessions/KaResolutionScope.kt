@@ -15,32 +15,41 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 
+/**
+ * A scope used for resolving files inside [useSiteModule].
+ * This scope is a union of [useSiteModule]'s content scope and content scopes of modules [useSiteModule] depends on.
+ *
+ * Additionally, [KaResolutionScope] encapsulates special handling required for
+ * generated and shadowed scopes provided by [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider].
+ * After KT-74541 is fixed, these scopes will be contained directly in [KaModule.contentScope].
+ */
 @KaImplementationDetail
-class KaGlobalSearchScope(
-    val shadowedScope: GlobalSearchScope,
+class KaResolutionScope(
     private val useSiteModule: KaModule,
+    private val shadowedScopeByGeneratedFiles: GlobalSearchScope = EMPTY_SCOPE,
 ) : GlobalSearchScope() {
-    val baseScope: GlobalSearchScope
+    val resolutionScope: GlobalSearchScope
         get() = KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
+            .intersectWith(notScope(shadowedScopeByGeneratedFiles))
 
     override fun getProject(): Project? {
-        return baseScope.project
+        return resolutionScope.project
     }
 
     override fun isSearchInModuleContent(aModule: Module): Boolean {
-        return baseScope.isSearchInModuleContent(aModule)
+        return resolutionScope.isSearchInModuleContent(aModule)
     }
 
     override fun isSearchInLibraries(): Boolean {
-        return baseScope.isSearchInLibraries
+        return resolutionScope.isSearchInLibraries
     }
 
     override fun contains(file: VirtualFile): Boolean {
-        return (baseScope.contains(file) && !shadowedScope.contains(file)) || isFromGeneratedModule(file)
+        return resolutionScope.contains(file) || isFromGeneratedModule(file)
     }
 
     override fun toString(): String {
-        return "Analysis scope for $useSiteModule (base: $baseScope, shadowed: $shadowedScope)"
+        return "Analysis scope for $useSiteModule (Resolution scope: $resolutionScope, Scope shadowed by generated files: $shadowedScopeByGeneratedFiles)"
     }
 
     /**
