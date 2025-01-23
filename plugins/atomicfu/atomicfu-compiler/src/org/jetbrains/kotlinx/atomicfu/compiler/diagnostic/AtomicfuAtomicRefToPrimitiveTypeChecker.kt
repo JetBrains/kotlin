@@ -10,4 +10,4 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.AbstractAtomicReferenceTo
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
 
 object AtomicfuAtomicRefToPrimitiveTypeChecker :
-    AbstractAtomicReferenceToPrimitiveTypeChecker(AtomicfuStandardClassIds.AtomicRef, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveTypeChecker(AtomicfuStandardClassIds.AtomicRef, emptyMap(), MppCheckerKind.Platform)

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {
@@ -100,6 +101,23 @@ object FirDiagnosticRenderers {
             decoration + renderer.render(elements)
         }
     }
+
+    fun <Q> preformat(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q> =
+        ContextDependentRenderer { value, context ->
+            MessageFormat(message).format(arrayOf(renderer.render(value, context)))
+        }
+
+    fun <Q> emptyStringIfNullOr(renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q?> =
+        ContextDependentRenderer { value, context ->
+            value?.let { renderer.render(it, context) } ?: ""
+        }
+
+    /**
+     * Formats the formatted [message] if the value is not `null`.
+     * Returns an empty string otherwise.
+     */
+    fun <Q> suggestIfNotNull(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q?> =
+        emptyStringIfNullOr(preformat(message, renderer))
 
     val SYMBOLS_ON_NEWLINE_WITH_INDENT = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
         private val mode = MultiplatformDiagnosticRenderingMode()

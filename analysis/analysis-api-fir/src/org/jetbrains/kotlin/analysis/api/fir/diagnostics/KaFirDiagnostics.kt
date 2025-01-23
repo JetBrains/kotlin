@@ -2139,6 +2139,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AtomicRefWithoutConsistentIdentity::class
         val atomicRef: ClassId
         val argumentType: KaType
+        val suggestedType: ClassId?
     }
 
     interface ExtensionInClassReferenceNotAllowed : KaFirDiagnostic<KtExpression> {

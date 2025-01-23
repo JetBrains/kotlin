@@ -2565,6 +2565,7 @@ internal class GenericQualifierOnConstructorCallWarningImpl(
 internal class AtomicRefWithoutConsistentIdentityImpl(
     override val atomicRef: ClassId,
     override val argumentType: KaType,
+    override val suggestedType: ClassId?,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AtomicRefWithoutConsistentIdentity

@@ -990,6 +990,7 @@ fun checkAtomicReferenceAccess(
     type: ConeKotlinType,
     source: KtSourceElement?,
     atomicReferenceClassId: ClassId,
+    appropriateCandidatesForArgument: Map<ClassId, ClassId>,
     context: CheckerContext,
     reporter: DiagnosticReporter,
 ) {
@@ -997,6 +998,7 @@ fun checkAtomicReferenceAccess(
     val argument = expanded.typeArguments.firstOrNull()?.type ?: return
 
     if (expanded.classId == atomicReferenceClassId && (argument.isPrimitive || argument.isValueClass(context.session))) {
-        reporter.reportOn(source, FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY, atomicReferenceClassId, argument, context)
+        val candidate = appropriateCandidatesForArgument[argument.classId]
+        reporter.reportOn(source, FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY, atomicReferenceClassId, argument, candidate, context)
     }
 }

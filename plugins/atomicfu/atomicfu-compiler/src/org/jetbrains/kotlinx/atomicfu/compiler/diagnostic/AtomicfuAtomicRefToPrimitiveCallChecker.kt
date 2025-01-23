@@ -21,7 +21,11 @@ object AtomicfuAtomicRefToPrimitiveCallChecker : FirFunctionCallChecker(MppCheck
         val callable = expression.calleeReference.resolved?.resolvedSymbol as? FirFunctionSymbol<*>
 
         if (callable?.callableId == AtomicfuStandardClassIds.Callables.atomic) {
-            checkAtomicReferenceAccess(expression.resolvedType, expression.source, AtomicfuStandardClassIds.AtomicRef, context, reporter)
+            checkAtomicReferenceAccess(
+                expression.resolvedType, expression.source,
+                AtomicfuStandardClassIds.AtomicRef, emptyMap(),
+                context, reporter,
+            )
         }
     }
 }

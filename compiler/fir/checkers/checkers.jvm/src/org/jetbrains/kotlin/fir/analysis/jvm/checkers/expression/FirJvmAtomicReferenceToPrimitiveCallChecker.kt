@@ -10,7 +10,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractAtomicRefer
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmAtomicReferenceToPrimitiveCallChecker :
-    AbstractAtomicReferenceToPrimitiveCallChecker(JvmStandardClassIds.ATOMIC_REFERENCE_CLASS_ID, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        JvmStandardClassIds.ATOMIC_REFERENCE_CLASS_ID,
+        JvmStandardClassIds.atomicByPrimitive,
+        MppCheckerKind.Platform,
+    )
 
 object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
-    AbstractAtomicReferenceToPrimitiveCallChecker(JvmStandardClassIds.ATOMIC_REFERENCE_ARRAY_CLASS_ID, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        JvmStandardClassIds.ATOMIC_REFERENCE_ARRAY_CLASS_ID,
+        JvmStandardClassIds.atomicArrayByPrimitive,
+        MppCheckerKind.Platform,
+    )

@@ -18,19 +18,32 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
     val atomicReferenceClassId: ClassId,
+    val appropriateCandidatesForArgument: Map<ClassId, ClassId>,
     mppKind: MppCheckerKind,
 ) : FirFunctionCallChecker(mppKind) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val callable = expression.calleeReference.resolved?.resolvedSymbol
 
         if (callable is FirConstructorSymbol) {
-            checkAtomicReferenceAccess(expression.resolvedType, expression.source, atomicReferenceClassId, context, reporter)
+            checkAtomicReferenceAccess(
+                expression.resolvedType, expression.source,
+                atomicReferenceClassId, appropriateCandidatesForArgument,
+                context, reporter
+            )
         }
     }
 }
 
 object FirCommonAtomicReferenceToPrimitiveCallChecker :
-    AbstractAtomicReferenceToPrimitiveCallChecker(StandardClassIds.AtomicReference, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        StandardClassIds.AtomicReference,
+        StandardClassIds.atomicByPrimitive,
+        MppCheckerKind.Platform,
+    )
 
 object FirCommonAtomicArrayToPrimitiveCallChecker :
-    AbstractAtomicReferenceToPrimitiveCallChecker(StandardClassIds.AtomicArray, MppCheckerKind.Platform)
+    AbstractAtomicReferenceToPrimitiveCallChecker(
+        StandardClassIds.AtomicArray,
+        StandardClassIds.atomicArrayByPrimitive,
+        MppCheckerKind.Platform,
+    )

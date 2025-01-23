@@ -1015,6 +1015,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY by warning<PsiElement> {
             parameter<ClassId>("atomicRef")
             parameter<ConeKotlinType>("argumentType")
+            parameter<ClassId?>("suggestedType")
         }
     }
 
