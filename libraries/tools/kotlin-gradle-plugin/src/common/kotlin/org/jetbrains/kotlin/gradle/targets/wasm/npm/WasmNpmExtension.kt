@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.npm
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 
 /**
  * An extension for configuring NPM-related tasks and properties specifically for WebAssembly (Wasm) projects.
@@ -28,7 +28,7 @@ abstract class WasmNpmExtension internal constructor(
     project,
     nodeJsRoot
 ) {
-    companion object : HasPlatformDisambiguate by WasmPlatformDisambiguate {
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
             get() = extensionName("kotlinNpm")
 

@@ -55,7 +55,7 @@ class KotlinKarma(
     private val platformType = compilation.platformType
 
     @Transient
-    private val nodeJsRoot = compilation.targetVariant(
+    private val nodeJsRoot = compilation.webTargetVariant(
         { project.rootProject.kotlinNodeJsRootExtension },
         { project.rootProject.wasmKotlinNodeJsRootExtension },
     )
@@ -65,7 +65,7 @@ class KotlinKarma(
     }
 
     @Transient
-    private val nodeJsEnvSpec = compilation.targetVariant(
+    private val nodeJsEnvSpec = compilation.webTargetVariant(
         { project.kotlinNodeJsEnvSpec },
         { project.wasmKotlinNodeJsEnvSpec },
     )

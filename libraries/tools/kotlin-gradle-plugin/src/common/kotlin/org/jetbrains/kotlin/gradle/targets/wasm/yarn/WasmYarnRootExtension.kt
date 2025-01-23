@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 
@@ -21,7 +21,7 @@ abstract class WasmYarnRootExtension internal constructor(
     nodeJsRoot,
     yarnSpec,
 ) {
-    companion object : HasPlatformDisambiguate by WasmPlatformDisambiguate {
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val YARN: String
             get() = extensionName("kotlinYarn")
 

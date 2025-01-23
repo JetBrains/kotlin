@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionContainer
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
@@ -45,7 +45,7 @@ import kotlin.reflect.KClass
  * @property lockFileDirectory A function to determine the directory where lock files should be stored.
  */
 internal class YarnPluginApplier(
-    private val platformDisambiguate: HasPlatformDisambiguate,
+    private val platformDisambiguate: HasPlatformDisambiguator,
     private val yarnRootKlass: KClass<out BaseYarnRootExtension>,
     private val yarnRootName: String,
     private val yarnEnvSpecKlass: KClass<out BaseYarnRootEnvSpec>,

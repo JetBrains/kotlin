@@ -15,7 +15,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import kotlin.reflect.KClass
 
 internal class NodeJsRootPluginApplier(
-    private val platformDisambiguate: HasPlatformDisambiguate,
+    private val platformDisambiguate: HasPlatformDisambiguator,
     private val nodeJsRootKlass: KClass<out BaseNodeJsRootExtension>,
     private val nodeJsRootName: String,
     private val npmKlass: KClass<out BaseNpmExtension>,

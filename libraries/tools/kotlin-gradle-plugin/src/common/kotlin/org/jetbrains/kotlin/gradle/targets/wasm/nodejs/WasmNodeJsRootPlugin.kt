@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlugin {
 
     override fun apply(target: Project) {
-        val rootDirectoryName = WasmPlatformDisambiguate.platformDisambiguate
+        val rootDirectoryName = WasmPlatformDisambiguator.platformDisambiguator
         NodeJsRootPluginApplier(
-            platformDisambiguate = WasmPlatformDisambiguate,
+            platformDisambiguate = WasmPlatformDisambiguator,
             nodeJsRootKlass = WasmNodeJsRootExtension::class,
             nodeJsRootName = WasmNodeJsRootExtension.EXTENSION_NAME,
             npmKlass = WasmNpmExtension::class,
@@ -48,7 +48,7 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
         ).apply(target)
     }
 
-    companion object : HasPlatformDisambiguate by WasmPlatformDisambiguate {
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         fun apply(rootProject: Project): WasmNodeJsRootExtension {
             check(rootProject == rootProject.rootProject)
             rootProject.plugins.apply(WasmNodeJsRootPlugin::class.java)

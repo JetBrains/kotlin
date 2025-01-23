@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPluginApplier
 import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
@@ -24,7 +24,7 @@ abstract class WasmYarnPlugin internal constructor() : CommonYarnPlugin {
     override fun apply(target: Project) {
 
         YarnPluginApplier(
-            platformDisambiguate = WasmPlatformDisambiguate,
+            platformDisambiguate = WasmPlatformDisambiguator,
             yarnRootKlass = WasmYarnRootExtension::class,
             yarnRootName = WasmYarnRootExtension.YARN,
             yarnEnvSpecKlass = WasmYarnRootEnvSpec::class,
@@ -32,11 +32,11 @@ abstract class WasmYarnPlugin internal constructor() : CommonYarnPlugin {
             nodeJsRootApply = { WasmNodeJsRootPlugin.apply(it) },
             nodeJsRootExtension = { it.kotlinNodeJsRootExtension },
             nodeJsEnvSpec = { it.kotlinNodeJsEnvSpec },
-            lockFileDirectory = { it.resolve(LockCopyTask.KOTLIN_JS_STORE).resolve(WasmPlatformDisambiguate.platformDisambiguate) },
+            lockFileDirectory = { it.resolve(LockCopyTask.KOTLIN_JS_STORE).resolve(WasmPlatformDisambiguator.platformDisambiguator) },
         ).apply(target)
     }
 
-    companion object : HasPlatformDisambiguate by WasmPlatformDisambiguate {
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         fun apply(project: Project): WasmYarnRootExtension {
             val rootProject = project.rootProject
             rootProject.plugins.apply(WasmYarnPlugin::class.java)

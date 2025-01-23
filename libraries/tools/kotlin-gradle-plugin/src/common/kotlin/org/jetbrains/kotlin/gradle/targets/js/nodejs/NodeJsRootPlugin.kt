@@ -37,12 +37,12 @@ abstract class NodeJsRootPlugin internal constructor() : CommonNodeJsRootPlugin 
 
     override fun apply(target: Project) {
         NodeJsRootPluginApplier(
-            platformDisambiguate = JsPlatformDisambiguate,
+            platformDisambiguate = JsPlatformDisambiguator,
             nodeJsRootKlass = NodeJsRootExtension::class,
             nodeJsRootName = NodeJsRootExtension.EXTENSION_NAME,
             npmKlass = NpmExtension::class,
             npmName = NpmExtension.EXTENSION_NAME,
-            rootDirectoryName = JsPlatformDisambiguate.jsPlatform,
+            rootDirectoryName = JsPlatformDisambiguator.jsPlatform,
             lockFileDirectory = { it.dir(LockCopyTask.KOTLIN_JS_STORE) },
             singleNodeJsPluginApply = { NodeJsPlugin.apply(it) },
             yarnPlugin = YarnPlugin::class,
