@@ -28,16 +28,18 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
   } else if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(state)) 0b0100 else 0b0010
   }
-  %composer.startMovableGroup(<>, values.size)
-  %dirty = %dirty or if (%composer.changed(values.size)) 0b00100000 else 0
-  val <iterator> = values.iterator()
-  while (<iterator>.hasNext()) {
-    val value = <iterator>.next()
-    %dirty = %dirty or if (%composer.changed(value)) 0b00100000 else 0
-  }
-  %composer.endMovableGroup()
-  if (%dirty and 0b01110000 == 0) {
-    %dirty = %dirty or 0b00010000
+  if (%default and 0b0010 == 0) {
+    %composer.startMovableGroup(<>, values.size)
+    %dirty = %dirty or if (%composer.changed(values.size)) 0b00100000 else 0
+    val <iterator> = values.iterator()
+    while (<iterator>.hasNext()) {
+      val value = <iterator>.next()
+      %dirty = %dirty or if (%composer.changed(value)) 0b00100000 else 0
+    }
+    %composer.endMovableGroup()
+    if (%dirty and 0b01110000 == 0) {
+      %dirty = %dirty or 0b00010000
+    }
   }
   if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     %composer.startDefaults()

@@ -748,7 +748,7 @@ abstract class AbstractComposeLowering(
         type: IrType = context.irBuiltIns.unitType,
         origin: IrStatementOrigin? = null,
         statements: List<IrStatement>,
-    ): IrExpression {
+    ): IrBlock {
         return IrBlockImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
