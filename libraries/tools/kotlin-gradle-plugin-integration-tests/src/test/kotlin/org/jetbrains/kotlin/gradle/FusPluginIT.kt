@@ -51,7 +51,6 @@ class FusPluginIT : KGPBaseTest() {
     @DisplayName("with configuration cache and project isolation")
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
-        maxVersion = TestVersions.Gradle.G_8_10, // https://youtrack.jetbrains.com/issue/KT-73702/
     )
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {

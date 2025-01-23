@@ -1999,7 +1999,10 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusServ
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Companion;
 	public fun <init> ()V
 	public fun close ()V
+	protected final fun getBuildFailed ()Z
+	protected final fun getBuildId ()Ljava/lang/String;
 	public fun onFinish (Lorg/gradle/tooling/events/FinishEvent;)V
+	protected final fun setBuildFailed (Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Companion {
@@ -2009,9 +2012,28 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Parameters : org/gradle/api/services/BuildServiceParameters {
 	public abstract fun getBuildId ()Lorg/gradle/api/provider/Property;
 	public abstract fun getBuildStatisticsConfiguration ()Lorg/gradle/api/provider/Property;
-	public abstract fun getConfigurationMetrics ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getGeneralConfigurationMetrics ()Lorg/gradle/api/provider/Property;
-	public abstract fun getUseBuildFinishFlowAction ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/CloseActionBuildFusService : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/CloseActionBuildFusService$Companion;
+	public fun <init> ()V
+	public fun close ()V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/CloseActionBuildFusService$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMetricParameterFlowActionBuildFusService : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMetricParameterFlowActionBuildFusService$Companion;
+	public fun <init> ()V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMetricParameterFlowActionBuildFusService$Companion {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMetricsBuildFusParameters : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Parameters {
+	public abstract fun getConfigurationMetrics ()Lorg/gradle/api/provider/ListProperty;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/DaemonReuseCounter : org/jetbrains/kotlin/gradle/plugin/statistics/IDaemonReuseCounterMXBean {
@@ -2024,6 +2046,18 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/DaemonReuseCoun
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/DaemonReuseCounter$Companion {
 	public final fun getOrdinal ()J
 	public final fun incrementAndGetOrdinal ()J
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBuildFusService : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBuildFusService$Companion;
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;)V
+	public final fun addConfigurationTimeMetric (Lorg/gradle/api/provider/Provider;)V
+	public final fun addConfigurationTimeMetric (Lorg/jetbrains/kotlin/gradle/plugin/statistics/MetricContainer;)V
+	public final fun addConfigurationTimeMetrics (Ljava/util/List;)V
+	public final fun getConfigurationTimeMetrics ()Lorg/gradle/api/provider/Provider;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBuildFusService$Companion {
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/GradleFileReportService : org/jetbrains/kotlin/build/report/statistics/file/ReadableFileReportService {

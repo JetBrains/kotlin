@@ -127,7 +127,6 @@ internal fun collectProjectConfigurationTimeMetrics(
 
         configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
 
-
         configurationTimeMetrics.put(
             BooleanMetrics.KOTLIN_KTS_USED,
             project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
