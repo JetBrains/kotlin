@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 object NativeTypeCheckers : TypeCheckers() {
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
         get() = setOf(
+            FirNativeAtomicReferenceToPrimitiveTypeChecker,
+            FirNativeAtomicArrayToPrimitiveTypeChecker,
             FirDynamicUnsupportedChecker,
         )
 }
