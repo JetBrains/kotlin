@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
@@ -50,7 +50,7 @@ private constructor(
     val extensionTools: List<LLFirResolveExtensionTool>,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFirSession,
-    useSiteScope: KaGlobalSearchScope
+    useSiteScope: KaResolutionScope
 ) : KaBaseSession(
     token,
     resolver = KaFirResolver(analysisSessionProvider),
@@ -145,7 +145,7 @@ private constructor(
                 }
             )
 
-            val resolutionScope = KaGlobalSearchScope(shadowedScope, useSiteModule)
+            val resolutionScope = KaResolutionScope(useSiteModule, shadowedScope)
 
             return createSession {
                 KaFirSession(
