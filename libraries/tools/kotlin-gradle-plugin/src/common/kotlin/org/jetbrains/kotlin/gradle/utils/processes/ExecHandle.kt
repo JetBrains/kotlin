@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.gradle.utils.processes
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.utils.use
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executor
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Launch and manage an external process.
@@ -58,7 +58,7 @@ internal class ExecHandle(
     /** State of this [ProcessRunner]. */
     private var state: ExecHandleState = ExecHandleState.Initial
         set(value) {
-            lock.use {
+            lock.withLock {
                 logger.debug("Changing state to: $state")
                 field = value
                 stateChanged.signalAll()
@@ -83,7 +83,7 @@ internal class ExecHandle(
 
     fun start(): ExecHandle {
         logger.info("Starting process '$displayName'. Working directory: $directory Command: $command ${arguments.joinToString(" ")}")
-        lock.use {
+        lock.withLock {
             check(stateIn(ExecHandleState.Initial)) { "Cannot start process '$displayName' because it has already been started" }
             state = ExecHandleState.Starting
 
@@ -123,7 +123,7 @@ internal class ExecHandle(
     }
 
     fun abort() {
-        lock.use {
+        lock.withLock {
             if (stateIn(ExecHandleState.Succeeded, ExecHandleState.Failed, ExecHandleState.Aborted)) {
                 return
             }
@@ -135,11 +135,10 @@ internal class ExecHandle(
         }
     }
 
-    private fun stateIn(vararg states: ExecHandleState): Boolean {
-        lock.use {
-            return state in states
+    private fun stateIn(vararg states: ExecHandleState): Boolean =
+        lock.withLock {
+            state in states
         }
-    }
 
     private fun setEndStateInfo(
         newState: ExecHandleState,
@@ -148,11 +147,11 @@ internal class ExecHandle(
     ) {
         removeShutdownHook(shutdownHookAction)
 
-        val currentState = lock.use<ExecHandleState> { state }
+        val currentState = lock.withLock { state }
 
         val newResult = ExecResult(exitValue, displayName, execExceptionFor(failureCause, currentState))
 
-        lock.use {
+        lock.withLock {
             state = newState
             this.execResult = newResult
         }
@@ -178,7 +177,7 @@ internal class ExecHandle(
     }
 
     private fun waitForFinish(): ExecResult {
-        lock.use {
+        lock.withLock {
             while (!state.isTerminal) {
                 try {
                     stateChanged.await()
@@ -197,7 +196,7 @@ internal class ExecHandle(
     }
 
     private fun result(): ExecResult {
-        lock.use {
+        lock.withLock {
             execResult!!.rethrowFailure()
             return execResult!!
         }
@@ -278,7 +277,7 @@ internal class ExecHandle(
         private var aborted: Boolean = false
 
         fun abortProcess() {
-            lock.use {
+            lock.withLock {
                 if (aborted) {
                     return
                 }
@@ -312,7 +311,7 @@ internal class ExecHandle(
         }
 
         private fun startProcess() {
-            lock.use {
+            lock.withLock {
                 check(!aborted) { "Cannot start process ${execHandle.displayName}. Process has already been aborted." }
                 val processBuilder: ProcessBuilder = createProcessBuilder(execHandle)
                 val process: Process = processBuilder.start()
