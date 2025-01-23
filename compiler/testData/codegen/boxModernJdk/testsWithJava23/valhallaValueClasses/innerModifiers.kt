@@ -4,6 +4,7 @@
 // IGNORE_BACKEND: ANDROID
 // IGNORE_DEXING
 // CHECK_BYTECODE_LISTING
+// CHECK_BYTECODE_TEXT
 
 class A {
     @JvmField
@@ -38,3 +39,11 @@ fun box(): String {
     require(A.F.static == "OK")
     return "OK"
 }
+
+// 3 public final static synchronized INNERCLASS A\$B A B
+// 3 public static synchronized INNERCLASS A\$C A C
+// 3 public static synchronized abstract INNERCLASS A\$D A D
+// 3 public final synchronized INNERCLASS A\$E A E
+// 5 public static abstract INNERCLASS A\$F A F
+// 2 public static abstract INNERCLASS A\$G A G
+// 2 public final static synchronized enum INNERCLASS A\$H A H

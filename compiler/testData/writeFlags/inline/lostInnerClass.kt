@@ -11,4 +11,4 @@ class Introspector {
 
 // TESTED_OBJECT_KIND: innerClass
 // TESTED_OBJECTS: Introspector$SchemaRetriever$inSchema$1, SchemaRetriever
-// FLAGS: ACC_FINAL, ACC_PUBLIC, ACC_SUPER
+// FLAGS: ACC_FINAL, ACC_PUBLIC

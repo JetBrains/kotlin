@@ -8,4 +8,4 @@ interface A {
     companion object {}
 }
 
-// 2 public final static synchronized INNERCLASS A\$DefaultImpls A DefaultImpls
+// 2 public final static INNERCLASS A\$DefaultImpls A DefaultImpls

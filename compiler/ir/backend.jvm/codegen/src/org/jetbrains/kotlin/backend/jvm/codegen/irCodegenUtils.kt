@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.jvmTarget
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -116,7 +120,14 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
             innerAccessFlagsForModalityAndKind() or
             (if (isInner) 0 else Opcodes.ACC_STATIC) or
-            (if (isValhallaValueClass || isInterface || isAnnotationClass) 0 else Opcodes.ACC_SUPER)
+            (if (!isValhallaSupportEnabled(context) || isValhallaValueClass || isInterface || isAnnotationClass) 0 else Opcodes.ACC_SUPER)
+}
+
+private fun isValhallaSupportEnabled(context: JvmBackendContext): Boolean {
+    val isJvmTargetCompatible = (context.configuration.jvmTarget?.majorVersion ?: 1) >= 23
+    val isJvmPreviewEnabled = context.configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.enableJvmPreview)
+    val kotlinSupportsValhallaValueClasses = context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ValhallaValueClasses)
+    return isJvmTargetCompatible && isJvmPreviewEnabled && kotlinSupportsValhallaValueClasses
 }
 
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
