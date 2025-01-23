@@ -2223,6 +2223,67 @@ class IrValidatorTest {
             ),
         )
     }
+
+    @Test
+    fun `delegating constructor calls with incorrect type are reported`() {
+        val file = createIrFile("test.kt")
+        val myClass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+            kind = ClassKind.CLASS
+        }
+        val constructor = IrFactoryImpl.buildConstructor {
+            isPrimary = true
+            returnType = myClass.symbol.createType(false, listOf())
+        }.apply {
+            parent = myClass
+        }
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+        )
+
+        val incorrectDelegatingConstructorCall = IrDelegatingConstructorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = constructor.symbol,
+            typeArgumentsCount = 0
+        )
+
+        val correctDelegatingConstructorCall = IrDelegatingConstructorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.unitType,
+            symbol = constructor.symbol,
+            typeArgumentsCount = 0
+        )
+
+        body.statements.addAll(listOf(incorrectDelegatingConstructorCall, correctDelegatingConstructorCall))
+        function.body = body
+        file.addChild(myClass)
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in org.sample.MyClass'
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+        )
+    }
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
