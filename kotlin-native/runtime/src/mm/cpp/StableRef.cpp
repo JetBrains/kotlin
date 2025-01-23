@@ -5,15 +5,14 @@
 
 #include "StableRef.hpp"
 
-#include "MemoryPrivate.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
-#include "ThreadState.hpp"
 
 using namespace kotlin;
 
 // static
 mm::StableRef mm::StableRef::create(ObjHeader* obj) noexcept {
     RuntimeAssert(obj != nullptr, "Creating StableRef for null object");
-    return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createStableRef(obj);
+    return mm::StableRef(&mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createExternalRCRefImpl(obj, 1));
 }

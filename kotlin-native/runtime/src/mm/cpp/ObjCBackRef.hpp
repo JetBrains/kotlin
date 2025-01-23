@@ -5,9 +5,9 @@
 
 #pragma once
 
+#include "ExternalRCRef.hpp"
 #include "Memory.h"
 #include "RawPtr.hpp"
-#include "SpecialRefRegistry.hpp"
 #include "Utils.hpp"
 
 namespace kotlin::mm {
@@ -22,13 +22,13 @@ public:
     ObjCBackRef() noexcept = default;
 
     // Cast raw ref into a back reference.
-    explicit ObjCBackRef(ExternalRCRefImpl* raw) noexcept : node_(SpecialRefRegistry::Node::fromRaw(raw)) {}
+    explicit ObjCBackRef(ExternalRCRefImpl* raw) noexcept : ref_(raw) {}
 
     // Cast back reference into a raw ref
     [[nodiscard("must be manually disposed")]] explicit operator ExternalRCRefImpl*() && noexcept {
-        // Make sure to move out from node_.
-        auto node = std::move(node_);
-        return node->asRaw();
+        // Make sure to move out from ref_.
+        auto ref = std::move(ref_);
+        return static_cast<ExternalRCRefImpl*>(ref);
     }
 
     // Create new back reference for `obj`.
@@ -36,11 +36,11 @@ public:
 
     // Dispose back reference.
     void dispose() && noexcept {
-        if (!node_) return;
-        // Make sure to move out from node_.
-        auto node = std::move(node_);
-        // Can be safely called with any thread state.
-        node->dispose();
+        // Make sure to move out from ref_.
+        if (auto ref = std::move(ref_)) {
+            // Can be safely called with any thread state.
+            ref->dispose();
+        }
     }
 
     // Increment refcount.
@@ -48,9 +48,9 @@ public:
         // In objc import if KtClass inherits from ObjCClass
         // calling [self retain] inside [ObjCClass dealloc] will lead to
         // this->retain() being called after this->dispose()
-        if (!node_) return;
+        if (!ref_) return;
         // Can be safely called with any thread state.
-        node_->retainRef();
+        ref_->retainRef();
     }
 
     // Decrement refcount.
@@ -58,9 +58,9 @@ public:
         // In objc import if KtClass inherits from ObjCClass
         // calling [self release] inside [ObjCClass dealloc] will lead to
         // this->release() being called after this->dispose()
-        if (!node_) return;
+        if (!ref_) return;
         // Can be safely called with any thread state.
-        node_->releaseRef();
+        ref_->releaseRef();
     }
 
     // Try incrementing refcount. Will fail if the underlying object is not alive.
@@ -70,7 +70,7 @@ public:
         // In objc export if ObjCClass is objc_setAssociatedObject with KtClass
         // calling [KtClass _tryRetain] inside [ObjCClass dealloc] will lead to
         // this->tryRetain() being called after this->dispose()
-        if (!node_) return false;
+        if (!ref_) return false;
         return tryRetainIgnoreState();
     }
 
@@ -81,15 +81,8 @@ public:
         // calling [self retain] inside [ObjCClass dealloc] and then passing the retained
         // reference back to Kotlin will lead to
         // this->operator*() being called after this->dispose()
-        if (!node_) return nullptr;
-        return node_->ref();
-    }
-
-    // Get the type of underlying object.
-    // Can only be called if refcount > 0.
-    [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept {
-        RuntimeAssert(node_, "typeInfo on null ObjCBackRef");
-        return node_->typeInfo();
+        if (!ref_) return nullptr;
+        return ref_->ref();
     }
 
     bool tryRetainForTests() noexcept { return tryRetainIgnoreState(); }
@@ -101,14 +94,14 @@ public:
 private:
     bool tryRetainIgnoreState() noexcept {
         ObjHolder holder;
-        if (auto* obj = node_->tryRef(holder.slot())) {
-            node_->retainRef();
+        if (auto* obj = ref_->tryRef(holder.slot())) {
+            ref_->retainRef();
             return true;
         }
         return false;
     }
 
-    raw_ptr<SpecialRefRegistry::Node> node_;
+    raw_ptr<ExternalRCRefImpl> ref_;
 };
 
 static_assert(sizeof(ObjCBackRef) == sizeof(void*), "ObjCBackRef must be a thin wrapper around pointer");

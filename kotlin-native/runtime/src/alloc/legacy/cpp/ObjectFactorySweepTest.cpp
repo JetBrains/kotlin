@@ -255,7 +255,7 @@ public:
         auto& extraObjectData = InstallExtraData(objHeader);
         auto* setHeader = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
         EXPECT_EQ(setHeader, weakReference.header());
-        weakReference->weakRef = static_cast<mm::ExternalRCRefImpl*>(specialRefRegistryThreadQueue_.createWeakRef(objHeader));
+        weakReference->weakRef = &specialRefRegistryThreadQueue_.createExternalRCRefImpl(objHeader, 0);
         weakReference->referred = objHeader;
         specialRefRegistryThreadQueue_.publish();
         return weakReference;

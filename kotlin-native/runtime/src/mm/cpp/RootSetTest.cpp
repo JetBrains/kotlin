@@ -106,9 +106,9 @@ TEST(GlobalRootSetTest, Basic) {
         ObjHeader* stableRef1 = reinterpret_cast<ObjHeader*>(3);
         ObjHeader* stableRef2 = reinterpret_cast<ObjHeader*>(4);
         ObjHeader* stableRef3 = reinterpret_cast<ObjHeader*>(5);
-        auto stableRefHandle1 = stableRefsProducer.createStableRef(stableRef1);
-        auto stableRefHandle2 = stableRefsProducer.createStableRef(stableRef2);
-        auto stableRefHandle3 = stableRefsProducer.createStableRef(stableRef3);
+        mm::StableRef stableRefHandle1(&stableRefsProducer.createExternalRCRefImpl(stableRef1, 1));
+        mm::StableRef stableRefHandle2(&stableRefsProducer.createExternalRCRefImpl(stableRef2, 1));
+        mm::StableRef stableRefHandle3(&stableRefsProducer.createExternalRCRefImpl(stableRef3, 1));
 
         globalsProducer.Publish();
         stableRefsProducer.publish();
