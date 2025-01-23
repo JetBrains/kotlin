@@ -11,11 +11,10 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "ObjCBackRef.hpp"
-#include "StableRef.hpp"
+#include "ExternalRCRef.hpp"
+#include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
 #include "ThreadRegistry.hpp"
-#include "WeakRef.hpp"
 
 using namespace kotlin;
 
@@ -40,6 +39,23 @@ private:
     bool allow_ = false;
     std::mutex mutex_;
     std::condition_variable cv_;
+};
+
+struct Payload {
+    static constexpr test_support::NoRefFields<Payload> kFields = {};
+};
+
+test_support::TypeInfoHolder typeInfoHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
+
+struct HeapObject : test_support::Object<Payload> {
+    HeapObject() noexcept : Object(typeInfoHolder.typeInfo()) {}
+};
+
+struct PermanentObject : test_support::Object<Payload> {
+    PermanentObject() noexcept : Object(typeInfoHolder.typeInfo()) {
+        header()->typeInfoOrMeta_ = setPointerBits(header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        RuntimeAssert(header()->permanent(), "Must be permanent");
+    }
 };
 
 } // namespace
@@ -75,174 +91,46 @@ public:
         return result;
     }
 
-    ObjHeader* tryRef(mm::WeakRef& weakRef) noexcept {
+    template <typename Traits>
+    ObjHeader* tryRef(mm::ExternalRCRef<Traits>& weakRef) noexcept {
         ObjHeader* result;
         return weakRef.tryRef(&result);
     }
 };
 
-TEST_F(ExternalRCRefRegistryTest, RegisterStableRefWithoutPublish) {
+TEST_F(ExternalRCRefRegistryTest, RegisterRefsWithoutPublish) {
     RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::StableRef::create(obj);
+        HeapObject object1;
+        HeapObject object2;
+        PermanentObject object3;
+        PermanentObject object4;
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(*ref, obj);
+        auto ref1 = mm::OwningExternalRCRef(object1.header());
+        auto ref2 = mm::WeakExternalRCRef(object2.header());
+        auto ref3 = mm::OwningExternalRCRef(object3.header());
+        auto ref4 = mm::WeakExternalRCRef(object4.header());
 
-        std::move(ref).dispose();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-
-        publish();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
-
-TEST_F(ExternalRCRefRegistryTest, RegisterStableRef) {
-    RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::StableRef::create(obj);
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(*ref, obj);
-
-        publish();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(*ref, obj);
-
-        std::move(ref).dispose();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
-
-TEST_F(ExternalRCRefRegistryTest, RegisterWeakRefWithoutPublish) {
-    RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::WeakRef::create(obj);
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(tryRef(ref), obj);
-
-        std::move(ref).dispose();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(object1.header()));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
 
-        publish();
+        EXPECT_THAT(*ref1, object1.header());
+        EXPECT_THAT(tryRef(ref1), object1.header());
+        EXPECT_THAT(tryRef(ref2), object2.header());
+        EXPECT_THAT(*ref3, object3.header());
+        EXPECT_THAT(tryRef(ref3), object3.header());
+        EXPECT_THAT(tryRef(ref4), object4.header());
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
+        ref1.reset();
+        ref2.reset();
+        ref3.reset();
+        ref4.reset();
 
-TEST_F(ExternalRCRefRegistryTest, RegisterWeakRef) {
-    RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::WeakRef::create(obj);
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(tryRef(ref), obj);
-
-        publish();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(tryRef(ref), obj);
-
-        std::move(ref).dispose();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
-
-TEST_F(ExternalRCRefRegistryTest, RegisterObjCRefWithoutPublish) {
-    RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::ObjCBackRef::create(obj);
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(*ref, obj);
-
-        ref.release();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(*ref, obj);
-
-        std::move(ref).dispose();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-
-        publish();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
-
-TEST_F(ExternalRCRefRegistryTest, RegisterObjCRef) {
-    RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::ObjCBackRef::create(obj);
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(*ref, obj);
-
-        publish();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(*ref, obj);
-
-        ref.release();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(*ref, obj);
-
-        std::move(ref).dispose();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
-
-TEST_F(ExternalRCRefRegistryTest, RegisterAllRefsWithoutPublish) {
-    RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref1 = mm::StableRef::create(obj);
-        auto ref2 = mm::WeakRef::create(obj);
-        auto ref3 = mm::ObjCBackRef::create(obj);
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-
-        std::move(ref1).dispose();
-        std::move(ref2).dispose();
-        ref3.release();
-        std::move(ref3).dispose();
+        EXPECT_THAT(*ref1, nullptr);
+        EXPECT_THAT(tryRef(ref1), nullptr);
+        EXPECT_THAT(tryRef(ref2), nullptr);
+        EXPECT_THAT(*ref3, nullptr);
+        EXPECT_THAT(tryRef(ref3), nullptr);
+        EXPECT_THAT(tryRef(ref4), nullptr);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
@@ -256,24 +144,49 @@ TEST_F(ExternalRCRefRegistryTest, RegisterAllRefsWithoutPublish) {
 
 TEST_F(ExternalRCRefRegistryTest, RegisterAllRefs) {
     RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref1 = mm::StableRef::create(obj);
-        auto ref2 = mm::WeakRef::create(obj);
-        auto ref3 = mm::ObjCBackRef::create(obj);
+        HeapObject object1;
+        HeapObject object2;
+        PermanentObject object3;
+        PermanentObject object4;
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
+        auto ref1 = mm::OwningExternalRCRef(object1.header());
+        auto ref2 = mm::WeakExternalRCRef(object2.header());
+        auto ref3 = mm::OwningExternalRCRef(object3.header());
+        auto ref4 = mm::WeakExternalRCRef(object4.header());
+
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(object1.header()));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
+
+        EXPECT_THAT(*ref1, object1.header());
+        EXPECT_THAT(tryRef(ref1), object1.header());
+        EXPECT_THAT(tryRef(ref2), object2.header());
+        EXPECT_THAT(*ref3, object3.header());
+        EXPECT_THAT(tryRef(ref3), object3.header());
+        EXPECT_THAT(tryRef(ref4), object4.header());
 
         publish();
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj, obj, obj));
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(object1.header()));
+        EXPECT_THAT(all(), testing::UnorderedElementsAre(object1.header(), object2.header()));
 
-        std::move(ref1).dispose();
-        std::move(ref2).dispose();
-        ref3.release();
-        std::move(ref3).dispose();
+        EXPECT_THAT(*ref1, object1.header());
+        EXPECT_THAT(tryRef(ref1), object1.header());
+        EXPECT_THAT(tryRef(ref2), object2.header());
+        EXPECT_THAT(*ref3, object3.header());
+        EXPECT_THAT(tryRef(ref3), object3.header());
+        EXPECT_THAT(tryRef(ref4), object4.header());
+
+        ref1.reset();
+        ref2.reset();
+        ref3.reset();
+        ref4.reset();
+
+        EXPECT_THAT(*ref1, nullptr);
+        EXPECT_THAT(tryRef(ref1), nullptr);
+        EXPECT_THAT(tryRef(ref2), nullptr);
+        EXPECT_THAT(*ref3, nullptr);
+        EXPECT_THAT(tryRef(ref3), nullptr);
+        EXPECT_THAT(tryRef(ref4), nullptr);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
@@ -282,109 +195,94 @@ TEST_F(ExternalRCRefRegistryTest, RegisterAllRefs) {
 
 TEST_F(ExternalRCRefRegistryTest, InvalidateWeakRef) {
     RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::WeakRef::create(obj);
+        HeapObject object;
+        auto ref = mm::WeakExternalRCRef(object.header());
         publish();
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(obj), testing::UnorderedElementsAre(nullptr));
+        EXPECT_THAT(all(object.header()), testing::UnorderedElementsAre(nullptr));
         EXPECT_THAT(tryRef(ref), nullptr);
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre(nullptr));
         EXPECT_THAT(tryRef(ref), nullptr);
 
-        std::move(ref).dispose();
+        ref.reset();
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
     });
 }
 
-TEST_F(ExternalRCRefRegistryTest, InvalidateObjCRef) {
+TEST_F(ExternalRCRefRegistryTest, RetainWeakRef) {
     RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::ObjCBackRef::create(obj);
-        ref.release();
+        HeapObject object;
+        auto ref = mm::WeakExternalRCRef(object.header());
         publish();
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(obj), testing::UnorderedElementsAre(nullptr));
-        EXPECT_FALSE(ref.tryRetainForTests());
+        EXPECT_THAT(all(), testing::UnorderedElementsAre(object.header()));
+        EXPECT_THAT(tryRef(ref), object.header());
+
+        mm::retainExternalRCRef(ref.get());
+
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(object.header()));
+        EXPECT_THAT(all(), testing::UnorderedElementsAre(object.header()));
+
+        mm::releaseExternalRCRef(ref.get());
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(nullptr));
+        EXPECT_THAT(all(), testing::UnorderedElementsAre(object.header()));
+        EXPECT_THAT(tryRef(ref), object.header());
 
-        std::move(ref).dispose();
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
-
-TEST_F(ExternalRCRefRegistryTest, TryObjCRef) {
-    RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::ObjCBackRef::create(obj);
-        ref.release();
-        publish();
-
-        EXPECT_TRUE(ref.tryRetainForTests());
-        EXPECT_THAT(*ref, obj);
-
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(*ref, obj);
-
-        ref.release();
-        std::move(ref).dispose();
+        ref.reset();
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
     });
 }
 
-TEST_F(ExternalRCRefRegistryTest, ReRetainObjCRefBeforePublish) {
+TEST_F(ExternalRCRefRegistryTest, RetainWeakRefBeforePublish) {
     RunInNewThread([this] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::ObjCBackRef::create(obj);
-        ref.release();
-        ref.retain();
+        HeapObject object;
+        auto ref = mm::WeakExternalRCRef(object.header());
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
+        mm::retainExternalRCRef(ref.get());
+
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(object.header()));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
-        EXPECT_THAT(*ref, obj);
+        EXPECT_THAT(tryRef(ref), object.header());
 
         publish();
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(all(), testing::UnorderedElementsAre(obj));
-        EXPECT_THAT(*ref, obj);
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(object.header()));
+        EXPECT_THAT(all(), testing::UnorderedElementsAre(object.header()));
+        EXPECT_THAT(tryRef(ref), object.header());
 
-        ref.release();
-        std::move(ref).dispose();
+        mm::releaseExternalRCRef(ref.get());
+
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(all(), testing::UnorderedElementsAre(object.header()));
+        EXPECT_THAT(tryRef(ref), object.header());
+
+        ref.reset();
 
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
     });
 }
 
-TEST_F(ExternalRCRefRegistryTest, StressStableRef) {
-    ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
+TEST_F(ExternalRCRefRegistryTest, StressOwningRef) {
+    HeapObject object;
     Waiter waiter;
     std::vector<ScopedThread> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         mutators.emplace_back([&, this] {
             ScopedMemoryInit scope;
-            ObjHolder holder(obj);
             waiter.wait();
-            auto ref = mm::StableRef::create(obj);
+            auto ref = mm::OwningExternalRCRef(object.header());
             publish();
-            std::move(ref).dispose();
+            ref.reset();
         });
     }
     waiter.allow();
@@ -394,17 +292,16 @@ TEST_F(ExternalRCRefRegistryTest, StressStableRef) {
 }
 
 TEST_F(ExternalRCRefRegistryTest, StressWeakRef) {
-    ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
+    HeapObject object;
     Waiter waiter;
     std::vector<ScopedThread> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         mutators.emplace_back([&, this] {
             ScopedMemoryInit scope;
-            ObjHolder holder(obj);
             waiter.wait();
-            auto ref = mm::WeakRef::create(obj);
+            auto ref = mm::WeakExternalRCRef(object.header());
             publish();
-            std::move(ref).dispose();
+            ref.reset();
         });
     }
     waiter.allow();
@@ -413,39 +310,17 @@ TEST_F(ExternalRCRefRegistryTest, StressWeakRef) {
     EXPECT_THAT(all(), testing::UnorderedElementsAre());
 }
 
-TEST_F(ExternalRCRefRegistryTest, StressObjCRef) {
-    ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-    Waiter waiter;
-    std::vector<ScopedThread> mutators;
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back([&, this] {
-            ScopedMemoryInit scope;
-            ObjHolder holder(obj);
-            waiter.wait();
-            auto ref = mm::ObjCBackRef::create(obj);
-            publish();
-            ref.release();
-            std::move(ref).dispose();
-        });
-    }
-    waiter.allow();
-    mutators.clear();
-    EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-    EXPECT_THAT(all(), testing::UnorderedElementsAre());
-}
-
-TEST_F(ExternalRCRefRegistryTest, StressObjCRefRetainRelease) {
+TEST_F(ExternalRCRefRegistryTest, StressWeakRefRetainRelease) {
     RunInNewThread([this] {
         constexpr int kGCCycles = 10000;
         constexpr int kRefsCount = 3;
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
+        HeapObject object;
+        KRef obj = object.header();
         Waiter waiter;
         std::atomic<bool> canStop = false;
-        std::vector<mm::ObjCBackRef> refs;
+        std::vector<mm::WeakExternalRCRef> refs;
         for (int i = 0; i < kRefsCount; ++i) {
-            refs.emplace_back(mm::ObjCBackRef::create(obj));
-            refs.back().release();
+            refs.emplace_back(mm::WeakExternalRCRef(obj));
         }
         publish();
         std::vector<ScopedThread> mutators;
@@ -458,21 +333,20 @@ TEST_F(ExternalRCRefRegistryTest, StressObjCRefRetainRelease) {
             canStop.store(true, std::memory_order_release);
         });
         for (int i = 0; i < kDefaultThreadCount; ++i) {
-            mutators.emplace_back([i, obj, &refs, &waiter, &canStop] {
+            mutators.emplace_back([i, &refs, &waiter, &canStop] {
                 ScopedMemoryInit scope;
-                ObjHolder holder(obj);
                 waiter.wait();
                 auto& ref = refs[i % kRefsCount];
                 while (!canStop.load(std::memory_order_acquire)) {
-                    ref.retain();
-                    ref.release();
+                    mm::retainExternalRCRef(ref.get());
+                    mm::releaseExternalRCRef(ref.get());
                 }
             });
         }
         waiter.allow();
         mutators.clear();
         for (auto& ref : refs) {
-            std::move(ref).dispose();
+            ref.reset();
         }
         EXPECT_THAT(roots(), testing::UnorderedElementsAre());
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
