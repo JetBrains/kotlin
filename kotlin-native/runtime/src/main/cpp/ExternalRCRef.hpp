@@ -5,11 +5,14 @@
 
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 
 #include "Memory.h"
+#include "RawPtr.hpp"
 #include "Types.h"
+#include "Utils.hpp"
 #include "std_support/Atomic.hpp"
 
 namespace kotlin::mm {
@@ -22,7 +25,7 @@ class ExternalRCRefRegistry;
 // NOTE: operations on `RawExternalRCRef*` support `nullptr`, while
 //       operations on `kotlin.native.internal.ref.ExternalRCRef` do not support `null`.
 //
-// See also: ExternalRCRefImpl.
+// See also: ExternalRCRefImpl, OwningExternalRCRef, WeakExternalRCRef.
 struct RawExternalRCRef;
 
 // An externally-reference-counted entity bound to a Kotlin object `obj_`.
@@ -34,7 +37,7 @@ struct RawExternalRCRef;
 // Every `ExternalRCRefImpl*` is `RawExternalRCRef*`.
 // The reverse is not true: for permanent objects `RawExternalRCRef*` is specially encoded.
 //
-// See also: RawExternalRCRef.
+// See also: RawExternalRCRef, OwningExternalRCRef, WeakExternalRCRef.
 class ExternalRCRefImpl : private Pinned {
 public:
     using Rc = int32_t;
@@ -179,4 +182,90 @@ inline OBJ_GETTER(tryRefExternalRCRef, RawExternalRCRef* ref) noexcept {
     RETURN_RESULT_OF0(ExternalRCRefImpl::fromRaw(ref)->tryRef);
 }
 
-}
+namespace internal {
+
+struct OwningTraits {
+    static RawExternalRCRef* create(KRef obj) { return createRetainedExternalRCRef(obj); }
+
+    static void destroy(RawExternalRCRef* ref) {
+        releaseExternalRCRef(ref);
+        disposeExternalRCRef(ref);
+    }
+};
+
+struct WeakTraits {
+    static RawExternalRCRef* create(KRef obj) { return createUnretainedExternalRCRef(obj); }
+
+    static void destroy(RawExternalRCRef* ref) { disposeExternalRCRef(ref); }
+};
+
+} // namespace internal
+
+// Smart pointer wrapper around `RawExternalRCRef*`.
+// Use `OwningExternalRCRef` when it should model owning pointer.
+// Use `WeakExternalRCRef` when it should model weak pointer.
+template <typename Traits = internal::OwningTraits>
+class ExternalRCRef : private MoveOnly {
+public:
+    ExternalRCRef() noexcept = default;
+    ExternalRCRef(std::nullptr_t) noexcept {}
+
+    // Adopt `RawExternalRCRef*` without affecting reference count.
+    explicit ExternalRCRef(RawExternalRCRef* raw) noexcept : raw_(raw) {}
+
+    // Create new `ExternalRCRef` pointing to `obj`.
+    // `OwningExternalRCRef` creates retained reference.
+    // `WeakExternalRCRef` creates unretained reference.
+    explicit ExternalRCRef(KRef obj) noexcept : raw_(Traits::create(obj)) {}
+
+    ExternalRCRef(ExternalRCRef&& rhs) noexcept = default;
+
+    // Dispose the current reference.
+    // `OwningExternalRCRef` additionally releases the reference first.
+    ~ExternalRCRef() { Traits::destroy(get()); }
+
+    friend void swap(ExternalRCRef& lhs, ExternalRCRef& rhs) noexcept { return lhs.raw_.swap(rhs.raw_); }
+
+    ExternalRCRef& operator=(ExternalRCRef&& rhs) noexcept {
+        ExternalRCRef tmp(std::move(rhs));
+        swap(*this, tmp);
+        return *this;
+    }
+
+    RawExternalRCRef* get() const noexcept { return static_cast<RawExternalRCRef*>(raw_); }
+
+    // Detach from current reference without disposing or altering reference count.
+    RawExternalRCRef* release() noexcept {
+        auto result = std::move(raw_);
+        return static_cast<RawExternalRCRef*>(result);
+    }
+
+    void reset() noexcept { *this = nullptr; }
+
+    void reset(RawExternalRCRef* raw) noexcept { *this = ExternalRCRef(raw); }
+
+    void reset(KRef obj) noexcept { *this = ExternalRCRef(obj); }
+
+    // Return the underlying object.
+    // The result is only safe to use, when reference count is >0, or there is a guarantee
+    // that the object is in roots in some other way (e.g. on stack)
+    KRef ref() const noexcept { return dereferenceExternalRCRef(get()); }
+
+    KRef operator*() const noexcept { return ref(); }
+    KRef* operator->() const noexcept { return &*this; }
+
+    // Safely return the underlying object.
+    // If the object is not collected by the GC, return it.
+    // Otherwise, returns nullptr
+    OBJ_GETTER0(tryRef) const noexcept { RETURN_RESULT_OF(tryRefExternalRCRef, get()); }
+
+private:
+    RawExternalRCRef* raw() noexcept { return static_cast<RawExternalRCRef*>(raw_); }
+
+    raw_ptr<RawExternalRCRef> raw_;
+};
+
+using OwningExternalRCRef = ExternalRCRef<internal::OwningTraits>;
+using WeakExternalRCRef = ExternalRCRef<internal::WeakTraits>;
+
+} // namespace kotlin::mm
