@@ -12,7 +12,7 @@ package kotlin.concurrent.atomics
 /**
  * An array of ints in which elements may be updated atomically.
  *
- * Instances of [AtomicIntArray] are represented by [java.util.concurrent.atomic.AtomicIntegerArray] and provide the the same atomicity guarantees.
+ * Instances of [AtomicIntArray] are represented by [java.util.concurrent.atomic.AtomicIntegerArray] and provide the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -120,7 +120,7 @@ public actual class AtomicIntArray {
 /**
  * An array of longs in which elements may be updated atomically.
  *
- * Instances of [AtomicLongArray] are represented by [java.util.concurrent.atomic.AtomicLongArray] and provide the the same atomicity guarantees.
+ * Instances of [AtomicLongArray] are represented by [java.util.concurrent.atomic.AtomicLongArray] and provide the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -228,7 +228,7 @@ public actual class AtomicLongArray {
 /**
  * A generic array of objects in which elements may be updated atomically.
  *
- * Instances of [AtomicArray] are represented by [java.util.concurrent.atomic.AtomicReferenceArray] and provide the the same atomicity guarantees.
+ * Instances of [AtomicArray] are represented by [java.util.concurrent.atomic.AtomicReferenceArray] and provide the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
