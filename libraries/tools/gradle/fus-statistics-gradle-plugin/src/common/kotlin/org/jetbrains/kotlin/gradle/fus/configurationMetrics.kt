@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.gradle.fus
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.fus.internal.CommonFusServiceParameters
+import org.jetbrains.kotlin.gradle.fus.internal.BuildCloseFusStatisticsBuildService
+import org.jetbrains.kotlin.gradle.fus.internal.BuildFlowFusStatisticsBuildService
 import org.jetbrains.kotlin.gradle.fus.internal.serviceName
 
 /**
@@ -15,14 +16,26 @@ import org.jetbrains.kotlin.gradle.fus.internal.serviceName
  * New value will be present in configuration cache if GradleBuildFusStatisticsBuildService.Parameters are not calculated yet
  * [GradleBuildFusStatisticsService.reportMetric] should be called for execution time metrics
  */
-fun Project.addGradleConfigurationPhaseMetric(reportAction: () -> Collection<Metric>) {
+fun Project.addGradleConfigurationPhaseMetric(reportAction: () -> List<Metric>) {
     project.gradle.sharedServices.registrations.findByName(serviceName)?.also { fusService ->
+
         val parameters = fusService.parameters
-        if (parameters is CommonFusServiceParameters) {
+        if (parameters is BuildCloseFusStatisticsBuildService.Parameter) {
+            //build service parameter is used,
+            //it is important to avoid service parameters initialization before all configuration metrics are collected
             parameters.configurationMetrics.addAll(project.provider {
                 reportAction()
             })
-            fusService.parameters
+        } else {
+            //build service field is used,
+            //it is safe to access build service, as configuration metrics will be cached in [BuildFinishFlowAction]
+            val fusBuildService = fusService.service.orNull
+            if (fusBuildService is BuildFlowFusStatisticsBuildService) {
+                fusBuildService.collectMetrics(provider {
+                    reportAction.invoke()
+                })
+            }
         }
+
     }
 }
