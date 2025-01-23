@@ -1936,6 +1936,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/libraryDirNotFound.args");
     }
 
+    @TestMetadata("noModuleName.args")
+    public void testNoModuleName() {
+      runTest("compiler/testData/cli/js/noModuleName.args");
+    }
+
     @TestMetadata("noStdlib.args")
     public void testNoStdlib() {
       runTest("compiler/testData/cli/js/noStdlib.args");
