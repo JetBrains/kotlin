@@ -112,6 +112,24 @@ interface KotlinJvmBinariesDsl {
     /**
      * Creates [JavaExec] task to run configured in the [KotlinJvmBinariesDsl] spec class from this target
      * compilation with name equals [compilationName].
+     */
+    fun executable(
+        compilationName: String,
+        configure: KotlinJvmBinaryDsl.() -> Unit
+    ): TaskProvider<JavaExec> = executable(compilationName, disambiguationSuffix = "", configure = configure)
+
+    /**
+     * Creates [JavaExec] task to run configured in the [KotlinJvmBinariesDsl] spec class from this target
+     * compilation with name equals [compilationName].
+     */
+    fun executable(
+        compilationName: String,
+        configure: Action<KotlinJvmBinaryDsl>
+    ): TaskProvider<JavaExec> = executable(compilationName, disambiguationSuffix = "", configure = configure)
+
+    /**
+     * Creates [JavaExec] task to run configured in the [KotlinJvmBinariesDsl] spec class from this target
+     * compilation with name equals [compilationName].
      *
      * @param disambiguationSuffix should be used to distinguish between different executable for the same compilation.
      * This suffix is used as a last part in executable names - for example,

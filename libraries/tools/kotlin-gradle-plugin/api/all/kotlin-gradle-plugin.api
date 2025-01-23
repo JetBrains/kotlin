@@ -5903,12 +5903,16 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnWorkspaces : 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl {
 	public abstract fun executable (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun executable (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun executable (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun executable (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun executable (Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun executable (Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl$DefaultImpls {
 	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
+	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
 	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
 	public static fun executable (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Lorg/gradle/api/Action;)Lorg/gradle/api/tasks/TaskProvider;
 	public static synthetic fun executable$default (Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
