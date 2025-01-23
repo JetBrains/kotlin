@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.targetVariant
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -99,11 +99,11 @@ constructor(
         ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
-            val nodeJsRoot = compilation.targetVariant(
+            val nodeJsRoot = compilation.webTargetVariant(
                 { NodeJsRootPlugin.apply(project.rootProject) },
                 { WasmNodeJsRootPlugin.apply(project.rootProject) },
             )
-            val nodeJsEnvSpec = compilation.targetVariant(
+            val nodeJsEnvSpec = compilation.webTargetVariant(
                 { NodeJsPlugin.apply(project) },
                 { WasmNodeJsPlugin.apply(project) },
             )
