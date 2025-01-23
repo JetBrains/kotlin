@@ -54,7 +54,7 @@ void gc::internal::GCThread::PerformFullGC(int64_t epoch) noexcept {
 
     gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
 
-    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
+    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::ExternalRCRefRegistry::instance());
 
     // This should really be done by each individual thread while waiting
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {

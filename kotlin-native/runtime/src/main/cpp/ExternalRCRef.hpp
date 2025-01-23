@@ -14,9 +14,9 @@
 
 namespace kotlin::mm {
 
-// TODO(KT-67741): Unify different SpecialRefs
+// TODO(KT-67741): Unify different ExternalRCRefs
 
-class SpecialRefRegistry;
+class ExternalRCRefRegistry;
 
 // An externally-reference-counted entity bound to a Kotlin object `obj_`.
 // `ExternalRCRefImpl` is registered in `ExternalRCRefRegistry` and has the following properties:
@@ -34,7 +34,7 @@ public:
     static_assert(disposedMarker < 0, "disposedMarker must be an impossible Rc value");
 
     ExternalRCRefImpl() noexcept = default;
-    ExternalRCRefImpl(SpecialRefRegistry& registry, KRef obj, Rc rc) noexcept;
+    ExternalRCRefImpl(ExternalRCRefRegistry& registry, KRef obj, Rc rc) noexcept;
 
     ~ExternalRCRefImpl();
 
@@ -59,8 +59,8 @@ public:
     void releaseRef() noexcept;
 
 private:
-    friend class SpecialRefRegistry;
-    friend class SpecialRefRegistryTest;
+    friend class ExternalRCRefRegistry;
+    friend class ExternalRCRefRegistryTest;
 
     // obj_ is set in the constructor and can be nulled out only by the
     // GC thread when processing weaks. It's the responsibility of the

@@ -47,11 +47,11 @@ auto collectPointers(T& iterable) {
 extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     // Validate that global registries are empty.
     auto globals = mm::GlobalsRegistry::Instance().LockForIter();
-    auto specialRefs = mm::SpecialRefRegistry::instance().lockForIter();
+    auto externalRCRefs = mm::ExternalRCRefRegistry::instance().lockForIter();
     auto threads = mm::ThreadRegistry::Instance().LockForIter();
 
     EXPECT_THAT(collectCopy(globals), testing::UnorderedElementsAre());
-    EXPECT_THAT(collectPointers(specialRefs), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectPointers(externalRCRefs), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(threads), testing::UnorderedElementsAre());
     alloc::test_support::assertClear(mm::GlobalData::Instance().allocator());
 }

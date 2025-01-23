@@ -104,16 +104,16 @@ bool tryResetMark(GC::ObjectData& objectData) noexcept;
 
 namespace barriers {
 
-class SpecialRefReleaseGuard : MoveOnly {
+class ExternalRCRefReleaseGuard : MoveOnly {
     class Impl;
 public:
     static bool isNoop();
 
-    SpecialRefReleaseGuard(mm::DirectRefAccessor ref) noexcept;
-    SpecialRefReleaseGuard(SpecialRefReleaseGuard&& other) noexcept;
-    ~SpecialRefReleaseGuard() noexcept;
+    ExternalRCRefReleaseGuard(mm::DirectRefAccessor ref) noexcept;
+    ExternalRCRefReleaseGuard(ExternalRCRefReleaseGuard&& other) noexcept;
+    ~ExternalRCRefReleaseGuard() noexcept;
 
-    SpecialRefReleaseGuard& operator=(SpecialRefReleaseGuard&& other) noexcept;
+    ExternalRCRefReleaseGuard& operator=(ExternalRCRefReleaseGuard&& other) noexcept;
 
 private:
     FlatPImpl<Impl, 32> impl_;

@@ -33,7 +33,7 @@ public:
 
     ~ParallelMarkConcurrentSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
-        mm::SpecialRefRegistry::instance().clearForTests();
+        mm::ExternalRCRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().gc().ClearForTests();
         mm::GlobalData::Instance().allocator().clearForTests();
     }

@@ -30,7 +30,7 @@ namespace kotlin::mm {
 // * `rc_ == 0` -> alive externally unreferenced object, must eventually be out of the root set.
 // * `rc_ == disposedMarker` -> the `ExternalRCRefImpl` itself is no longer externally referenced and can be eventually deleted.
 // * `rc_` can be increased and decreased by any thread in any state.
-//   * In practice 0 -> 1 only happens in mutator threads in runnable state, but the implementation of `SpecialRefRegistry`
+//   * In practice 0 -> 1 only happens in mutator threads in runnable state, but the implementation of `ExternalRCRefRegistry`
 //     does not depend on it.
 // * `ExternalRCRefImpl`s are owned either by a global `std::list` or by thread local `std::list`s. Global list is protected by a mutex.
 // * Insertion into the global list happens by moving from thread local list during STW and when a thread gets destroyed.
@@ -46,14 +46,14 @@ namespace kotlin::mm {
 //   the `rc_` of the `ExternalRCRefImpl` is `> 0`, the GC thread will make sure the ref is inserted
 //   into the head
 // * During roots list traversal all refs to the left are either marked or inserted into the mark queue.
-class SpecialRefRegistry : private Pinned {
+class ExternalRCRefRegistry : private Pinned {
     // TODO: Consider using a real mutex.
     using Mutex = SpinLock;
 
 public:
     class ThreadQueue : private Pinned {
     public:
-        explicit ThreadQueue(SpecialRefRegistry& registry) : owner_(registry) {}
+        explicit ThreadQueue(ExternalRCRefRegistry& registry) : owner_(registry) {}
 
         ~ThreadQueue() { publish(); }
 
@@ -64,8 +64,8 @@ public:
         }
 
         void clearForTests() noexcept {
-            for (auto& specialRef: queue_) {
-                specialRef.dispose();
+            for (auto& externalRCRef : queue_) {
+                externalRCRef.dispose();
             }
             queue_.clear();
         }
@@ -77,7 +77,7 @@ public:
         }
 
     private:
-        SpecialRefRegistry& owner_;
+        ExternalRCRefRegistry& owner_;
         std::list<ExternalRCRefImpl> queue_;
     };
 
@@ -99,11 +99,11 @@ public:
         bool operator!=(const RootsIterator& rhs) const noexcept { return !(*this == rhs); }
 
     private:
-        friend class SpecialRefRegistry;
+        friend class ExternalRCRefRegistry;
 
-        RootsIterator(SpecialRefRegistry& owner, ExternalRCRefImpl* ref) noexcept : owner_(&owner), ref_(ref) {}
+        RootsIterator(ExternalRCRefRegistry& owner, ExternalRCRefImpl* ref) noexcept : owner_(&owner), ref_(ref) {}
 
-        SpecialRefRegistry* owner_;
+        ExternalRCRefRegistry* owner_;
         ExternalRCRefImpl* ref_;
     };
 
@@ -114,11 +114,11 @@ public:
         RootsIterator end() const noexcept { return RootsIterator(*owner_, &owner_->rootsTail_); }
 
     private:
-        friend class SpecialRefRegistry;
+        friend class ExternalRCRefRegistry;
 
-        explicit RootsIterable(SpecialRefRegistry& owner) noexcept : owner_(&owner) {}
+        explicit RootsIterable(ExternalRCRefRegistry& owner) noexcept : owner_(&owner) {}
 
-        raw_ptr<SpecialRefRegistry> owner_;
+        raw_ptr<ExternalRCRefRegistry> owner_;
     };
 
     class Iterator {
@@ -135,12 +135,13 @@ public:
         bool operator!=(const Iterator& rhs) const noexcept { return iterator_ != rhs.iterator_; }
 
     private:
-        friend class SpecialRefRegistry;
-        friend class SpecialRefRegistryTest;
+        friend class ExternalRCRefRegistry;
+        friend class ExternalRCRefRegistryTest;
 
-        Iterator(SpecialRefRegistry& owner, std::list<ExternalRCRefImpl>::iterator iterator) noexcept : owner_(&owner), iterator_(iterator) {}
+        Iterator(ExternalRCRefRegistry& owner, std::list<ExternalRCRefImpl>::iterator iterator) noexcept :
+            owner_(&owner), iterator_(iterator) {}
 
-        SpecialRefRegistry* owner_;
+        ExternalRCRefRegistry* owner_;
         std::list<ExternalRCRefImpl>::iterator iterator_;
     };
 
@@ -150,19 +151,19 @@ public:
         Iterator end() noexcept { return Iterator(owner_, owner_.all_.end()); }
 
     private:
-        friend class SpecialRefRegistry;
+        friend class ExternalRCRefRegistry;
 
-        Iterable(SpecialRefRegistry& owner) noexcept : owner_(owner), guard_(owner_.mutex_) {}
+        Iterable(ExternalRCRefRegistry& owner) noexcept : owner_(owner), guard_(owner_.mutex_) {}
 
-        SpecialRefRegistry& owner_;
+        ExternalRCRefRegistry& owner_;
         std::unique_lock<Mutex> guard_;
     };
 
-    SpecialRefRegistry() noexcept { rootsHead_.nextRoot_.store(&rootsTail_, std::memory_order_relaxed); }
+    ExternalRCRefRegistry() noexcept { rootsHead_.nextRoot_.store(&rootsTail_, std::memory_order_relaxed); }
 
-    ~SpecialRefRegistry() = default;
+    ~ExternalRCRefRegistry() = default;
 
-    static SpecialRefRegistry& instance() noexcept;
+    static ExternalRCRefRegistry& instance() noexcept;
 
     void clearForTests() noexcept {
         rootsHead_.nextRoot_ = &rootsTail_;
@@ -182,7 +183,7 @@ public:
 
 private:
     friend class ExternalRCRefImpl;
-    friend class SpecialRefRegistryTest;
+    friend class ExternalRCRefRegistryTest;
 
     ExternalRCRefImpl* nextRoot(ExternalRCRefImpl* current) noexcept;
     // Erase `ref` from the roots list. `prev` is the current guess of the ref

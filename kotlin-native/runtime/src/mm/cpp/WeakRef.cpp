@@ -5,7 +5,7 @@
 
 #include "WeakRef.hpp"
 
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 
@@ -14,5 +14,5 @@ using namespace kotlin;
 // static
 mm::WeakRef mm::WeakRef::create(ObjHeader* obj) noexcept {
     RuntimeAssert(obj != nullptr, "Creating WeakRef for null object");
-    return mm::WeakRef(&mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createExternalRCRefImpl(obj, 0));
+    return mm::WeakRef(&mm::ThreadRegistry::Instance().CurrentThreadData()->externalRCRefRegistry().createExternalRCRefImpl(obj, 0));
 }

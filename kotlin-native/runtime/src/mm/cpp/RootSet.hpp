@@ -8,7 +8,7 @@
 
 #include "GlobalsRegistry.hpp"
 #include "ShadowStack.hpp"
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
 
 struct ObjHeader;
@@ -125,12 +125,12 @@ public:
         Phase phase_;
         union {
             GlobalsRegistry::Iterator globalsIterator_;
-            SpecialRefRegistry::RootsIterator specialRefsIterator_;
+            ExternalRCRefRegistry::RootsIterator externalRCRefsIterator_;
         };
     };
 
-    GlobalRootSet(GlobalsRegistry& globalsRegistry, SpecialRefRegistry& stableRefRegistry) noexcept :
-        globalsIterable_(globalsRegistry.LockForIter()), specialRefsIterable_(stableRefRegistry.roots()) {}
+    GlobalRootSet(GlobalsRegistry& globalsRegistry, ExternalRCRefRegistry& stableRefRegistry) noexcept :
+        globalsIterable_(globalsRegistry.LockForIter()), externalRCRefsIterable_(stableRefRegistry.roots()) {}
     GlobalRootSet() noexcept;
 
     Iterator begin() noexcept { return Iterator(Iterator::begin, *this); }
@@ -140,7 +140,7 @@ private:
     // TODO: These use separate locks, which is inefficient, and slightly dangerous. In practice it's
     //       fine, because this is the only place where these two locks are taken simultaneously.
     GlobalsRegistry::Iterable globalsIterable_;
-    SpecialRefRegistry::RootsIterable specialRefsIterable_;
+    ExternalRCRefRegistry::RootsIterable externalRCRefsIterable_;
 };
 
 } // namespace mm

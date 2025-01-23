@@ -13,7 +13,7 @@
 #include "ObjCBackRef.hpp"
 #include "PointerBits.h"
 #include "ReferenceOps.hpp"
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 
 using namespace kotlin;
 
@@ -80,7 +80,7 @@ RUNTIME_NOTHROW extern "C" bool Kotlin_native_internal_ref_tryRetainExternalRCRe
     return mm::ObjCBackRef(static_cast<mm::ExternalRCRefImpl*>(ref)).tryRetain();
 }
 
-mm::ExternalRCRefImpl::ExternalRCRefImpl(mm::SpecialRefRegistry& registry, KRef obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
+mm::ExternalRCRefImpl::ExternalRCRefImpl(mm::ExternalRCRefRegistry& registry, KRef obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
     RuntimeAssert(obj != nullptr, "Creating ExternalRCRefImpl for null object");
     RuntimeAssert(rc >= 0, "Creating ExternalRCRefImpl with negative rc %d", rc);
     // Runtime tests occasionally use sentinel values under 8 for opaque objects
@@ -99,7 +99,7 @@ mm::ExternalRCRefImpl::~ExternalRCRefImpl() {
 }
 
 void mm::ExternalRCRefImpl::dispose() noexcept {
-    // Synchronization with `SpecialRefRegistry::findAliveNode()`.
+    // Synchronization with `ExternalRCRefRegistry::findAliveNode()`.
     // TODO: When assertions are disabled, exchange may pollute the
     //       generated assembly. Check if this a problem.
     auto rc = rc_.exchange(disposedMarker, std::memory_order_release);
@@ -164,12 +164,12 @@ void mm::ExternalRCRefImpl::retainRef() noexcept {
         // "the object must have been passed in from somewhere, so it must be reachable anyway".
 
         // 0->1 changes require putting this node into the root set.
-        SpecialRefRegistry::instance().insertIntoRootsHead(*this);
+        ExternalRCRefRegistry::instance().insertIntoRootsHead(*this);
     }
 }
 
 void mm::ExternalRCRefImpl::releaseRef() noexcept {
-    if (gc::barriers::SpecialRefReleaseGuard::isNoop()) {
+    if (gc::barriers::ExternalRCRefReleaseGuard::isNoop()) {
         auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
         RuntimeAssert(
                 rcBefore > 0, "Releasing ExternalRCRefImpl@%p(%p %s) with rc %d", this, obj_, obj_->type_info()->fqName().c_str(),
@@ -179,13 +179,13 @@ void mm::ExternalRCRefImpl::releaseRef() noexcept {
         // The CMS GC scans global root set concurrently. A guard is required.
         auto rcBefore = rc_.load(std::memory_order_relaxed);
         while (true) {
-            std::optional<gc::barriers::SpecialRefReleaseGuard> guard;
+            std::optional<gc::barriers::ExternalRCRefReleaseGuard> guard;
             if (rcBefore == 1) {
                 // The guard is only required in case of the last reference release (0->1).
                 // We avoid it in all other cases, as the guard can be quite an overhead: e.g. taking the GC lock.
                 // We also drop the guard if CAS below fails and we retry. This way, the GC will be allowed to take the lock
                 // sooner. This does, however, hurt a thread that failed to decrement, because it may have to wait for the GC.
-                guard = gc::barriers::SpecialRefReleaseGuard{mm::DirectRefAccessor{obj_}};
+                guard = gc::barriers::ExternalRCRefReleaseGuard{mm::DirectRefAccessor{obj_}};
             }
             if (rc_.compare_exchange_strong(rcBefore, rcBefore - 1, std::memory_order_relaxed)) break;
         }

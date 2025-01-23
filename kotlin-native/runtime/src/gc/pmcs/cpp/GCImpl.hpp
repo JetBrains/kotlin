@@ -44,7 +44,7 @@ public:
 };
 
 namespace barriers {
-class SpecialRefReleaseGuard::Impl {};
+class ExternalRCRefReleaseGuard::Impl {};
 } // namespace barriers
 
 } // namespace gc

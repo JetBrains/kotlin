@@ -16,7 +16,7 @@
 #include "ObjectTraversal.hpp"
 #include "RootSet.hpp"
 #include "Runtime.h"
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 
@@ -160,7 +160,7 @@ void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& 
 }
 
 template <typename Traits>
-void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
+void processWeaks(GCHandle gcHandle, mm::ExternalRCRefRegistry& registry) noexcept {
     auto handle = gcHandle.processWeaks();
     for (auto object : registry.lockForIter()) { // FIXME rename
         auto* obj = object.load(std::memory_order_relaxed);

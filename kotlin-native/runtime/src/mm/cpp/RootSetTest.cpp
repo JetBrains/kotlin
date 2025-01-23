@@ -101,8 +101,8 @@ TEST(GlobalRootSetTest, Basic) {
         globalsProducer.Insert(&global1);
         globalsProducer.Insert(&global2);
 
-        mm::SpecialRefRegistry specialRefsRegistry;
-        mm::SpecialRefRegistry::ThreadQueue stableRefsProducer(specialRefsRegistry);
+        mm::ExternalRCRefRegistry externalRCRefsRegistry;
+        mm::ExternalRCRefRegistry::ThreadQueue stableRefsProducer(externalRCRefsRegistry);
         ObjHeader* stableRef1 = reinterpret_cast<ObjHeader*>(3);
         ObjHeader* stableRef2 = reinterpret_cast<ObjHeader*>(4);
         ObjHeader* stableRef3 = reinterpret_cast<ObjHeader*>(5);
@@ -113,7 +113,7 @@ TEST(GlobalRootSetTest, Basic) {
         globalsProducer.Publish();
         stableRefsProducer.publish();
 
-        mm::GlobalRootSet iter(globals, specialRefsRegistry);
+        mm::GlobalRootSet iter(globals, externalRCRefsRegistry);
 
         std::vector<mm::GlobalRootSet::Value> actual;
         for (auto object : iter) {
@@ -136,9 +136,9 @@ TEST(GlobalRootSetTest, Basic) {
 TEST(GlobalRootSetTest, Empty) {
     RunInNewThread([](mm::ThreadData& threadData) {
         mm::GlobalsRegistry globals;
-        mm::SpecialRefRegistry specialRefsRegistry;
+        mm::ExternalRCRefRegistry externalRCRefsRegistry;
 
-        mm::GlobalRootSet iter(globals, specialRefsRegistry);
+        mm::GlobalRootSet iter(globals, externalRCRefsRegistry);
 
         std::vector<mm::GlobalRootSet::Value> actual;
         for (auto object : iter) {

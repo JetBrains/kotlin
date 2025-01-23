@@ -110,14 +110,14 @@ PERFORMANCE_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
     return objectData.tryResetMark();
 }
 
-ALWAYS_INLINE bool gc::barriers::SpecialRefReleaseGuard::isNoop() {
+ALWAYS_INLINE bool gc::barriers::ExternalRCRefReleaseGuard::isNoop() {
     return false;
 }
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard(mm::DirectRefAccessor ref) noexcept : impl_(ref) {}
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard(SpecialRefReleaseGuard&& other) noexcept = default;
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard::~SpecialRefReleaseGuard() noexcept = default;
-PERFORMANCE_INLINE gc::barriers::SpecialRefReleaseGuard& gc::barriers::SpecialRefReleaseGuard::SpecialRefReleaseGuard::operator=(
-        SpecialRefReleaseGuard&&) noexcept = default;
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard(mm::DirectRefAccessor ref) noexcept : impl_(ref) {}
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard(ExternalRCRefReleaseGuard&& other) noexcept = default;
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard::~ExternalRCRefReleaseGuard() noexcept = default;
+PERFORMANCE_INLINE gc::barriers::ExternalRCRefReleaseGuard& gc::barriers::ExternalRCRefReleaseGuard::ExternalRCRefReleaseGuard::operator=(
+        ExternalRCRefReleaseGuard&&) noexcept = default;
 
 // static
 ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {

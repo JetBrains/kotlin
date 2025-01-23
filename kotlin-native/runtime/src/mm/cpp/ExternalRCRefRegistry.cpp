@@ -3,18 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 
 #include "GlobalData.hpp"
 
 using namespace kotlin;
 
 // static
-mm::SpecialRefRegistry& mm::SpecialRefRegistry::instance() noexcept {
-    return GlobalData::Instance().specialRefRegistry();
+mm::ExternalRCRefRegistry& mm::ExternalRCRefRegistry::instance() noexcept {
+    return GlobalData::Instance().externalRCRefRegistry();
 }
 
-mm::ExternalRCRefImpl* mm::SpecialRefRegistry::nextRoot(mm::ExternalRCRefImpl* current) noexcept {
+mm::ExternalRCRefImpl* mm::ExternalRCRefRegistry::nextRoot(mm::ExternalRCRefImpl* current) noexcept {
     RuntimeAssert(current != nullptr, "current cannot be null");
     RuntimeAssert(current != &rootsTail_, "current cannot be tail");
     mm::ExternalRCRefImpl* candidate = current->nextRoot_.load(std::memory_order_relaxed);
@@ -61,7 +61,7 @@ mm::ExternalRCRefImpl* mm::SpecialRefRegistry::nextRoot(mm::ExternalRCRefImpl* c
     }
 }
 
-std::pair<mm::ExternalRCRefImpl*, mm::ExternalRCRefImpl*> mm::SpecialRefRegistry::eraseFromRoots(
+std::pair<mm::ExternalRCRefImpl*, mm::ExternalRCRefImpl*> mm::ExternalRCRefRegistry::eraseFromRoots(
         mm::ExternalRCRefImpl* prev, mm::ExternalRCRefImpl* ref) noexcept {
     RuntimeAssert(ref != &rootsHead_, "ref cannot be head");
     RuntimeAssert(ref != &rootsTail_, "ref cannot be tail");
@@ -84,7 +84,7 @@ std::pair<mm::ExternalRCRefImpl*, mm::ExternalRCRefImpl*> mm::SpecialRefRegistry
     } while (true);
 }
 
-void mm::SpecialRefRegistry::insertIntoRootsHead(mm::ExternalRCRefImpl& ref) noexcept {
+void mm::ExternalRCRefRegistry::insertIntoRootsHead(mm::ExternalRCRefImpl& ref) noexcept {
     mm::ExternalRCRefImpl* next = rootsHead_.nextRoot_.load(std::memory_order_acquire);
     mm::ExternalRCRefImpl* refExpectedNext = nullptr;
     do {
@@ -103,7 +103,7 @@ void mm::SpecialRefRegistry::insertIntoRootsHead(mm::ExternalRCRefImpl& ref) noe
     } while (!rootsHead_.nextRoot_.compare_exchange_weak(next, &ref, std::memory_order_release, std::memory_order_acquire));
 }
 
-std::list<mm::ExternalRCRefImpl>::iterator mm::SpecialRefRegistry::nextAlive(std::list<mm::ExternalRCRefImpl>::iterator it) noexcept {
+std::list<mm::ExternalRCRefImpl>::iterator mm::ExternalRCRefRegistry::nextAlive(std::list<mm::ExternalRCRefImpl>::iterator it) noexcept {
     while (it != all_.end() && it->rc_.load(std::memory_order_relaxed) == mm::ExternalRCRefImpl::disposedMarker) {
         // Synchronization with `ExternalRCRefImpl::dispose()`
         std::atomic_thread_fence(std::memory_order_acquire);

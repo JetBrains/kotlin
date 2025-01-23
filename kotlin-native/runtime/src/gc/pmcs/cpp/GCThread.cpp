@@ -99,7 +99,7 @@ void gc::internal::MainGCThread::PerformFullGC(int64_t epoch) noexcept {
         resumeTheWorld(gcHandle);
     }
 
-    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
+    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::ExternalRCRefRegistry::instance());
 
     if (compiler::concurrentWeakSweep()) {
         stopTheWorld(gcHandle, "GC stop the world #2: prepare heap for sweep");

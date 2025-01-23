@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 
 #include <condition_variable>
 #include <mutex>
@@ -44,21 +44,21 @@ private:
 
 } // namespace
 
-class SpecialRefRegistryTest : public testing::Test {
+class ExternalRCRefRegistryTest : public testing::Test {
 public:
-    ~SpecialRefRegistryTest() {
+    ~ExternalRCRefRegistryTest() {
         // Clean up safely.
         roots();
         all();
     }
 
-    void publish() noexcept { mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().publish(); }
+    void publish() noexcept { mm::ThreadRegistry::Instance().CurrentThreadData()->externalRCRefRegistry().publish(); }
 
     template <typename... Invalidated>
     std::vector<ObjHeader*> all(Invalidated&&... invalidated) noexcept {
         std::set<ObjHeader*> invalidatedSet({std::forward<Invalidated>(invalidated)...});
         std::vector<ObjHeader*> result;
-        for (auto obj : mm::SpecialRefRegistry::instance().lockForIter()) {
+        for (auto obj : mm::ExternalRCRefRegistry::instance().lockForIter()) {
             if (invalidatedSet.find(obj) != invalidatedSet.end()) {
                 obj = nullptr;
             }
@@ -69,7 +69,7 @@ public:
 
     std::vector<ObjHeader*> roots() noexcept {
         std::vector<ObjHeader*> result;
-        for (auto* obj : mm::SpecialRefRegistry::instance().roots()) {
+        for (auto* obj : mm::ExternalRCRefRegistry::instance().roots()) {
             result.push_back(obj);
         }
         return result;
@@ -81,7 +81,7 @@ public:
     }
 };
 
-TEST_F(SpecialRefRegistryTest, RegisterStableRefWithoutPublish) {
+TEST_F(ExternalRCRefRegistryTest, RegisterStableRefWithoutPublish) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -103,7 +103,7 @@ TEST_F(SpecialRefRegistryTest, RegisterStableRefWithoutPublish) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, RegisterStableRef) {
+TEST_F(ExternalRCRefRegistryTest, RegisterStableRef) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -126,7 +126,7 @@ TEST_F(SpecialRefRegistryTest, RegisterStableRef) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, RegisterWeakRefWithoutPublish) {
+TEST_F(ExternalRCRefRegistryTest, RegisterWeakRefWithoutPublish) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -148,7 +148,7 @@ TEST_F(SpecialRefRegistryTest, RegisterWeakRefWithoutPublish) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, RegisterWeakRef) {
+TEST_F(ExternalRCRefRegistryTest, RegisterWeakRef) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -171,7 +171,7 @@ TEST_F(SpecialRefRegistryTest, RegisterWeakRef) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, RegisterObjCRefWithoutPublish) {
+TEST_F(ExternalRCRefRegistryTest, RegisterObjCRefWithoutPublish) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -199,7 +199,7 @@ TEST_F(SpecialRefRegistryTest, RegisterObjCRefWithoutPublish) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, RegisterObjCRef) {
+TEST_F(ExternalRCRefRegistryTest, RegisterObjCRef) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -228,7 +228,7 @@ TEST_F(SpecialRefRegistryTest, RegisterObjCRef) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, RegisterAllRefsWithoutPublish) {
+TEST_F(ExternalRCRefRegistryTest, RegisterAllRefsWithoutPublish) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -254,7 +254,7 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefsWithoutPublish) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, RegisterAllRefs) {
+TEST_F(ExternalRCRefRegistryTest, RegisterAllRefs) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -280,7 +280,7 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefs) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, InvalidateWeakRef) {
+TEST_F(ExternalRCRefRegistryTest, InvalidateWeakRef) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -302,7 +302,7 @@ TEST_F(SpecialRefRegistryTest, InvalidateWeakRef) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, InvalidateObjCRef) {
+TEST_F(ExternalRCRefRegistryTest, InvalidateObjCRef) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -324,7 +324,7 @@ TEST_F(SpecialRefRegistryTest, InvalidateObjCRef) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, TryObjCRef) {
+TEST_F(ExternalRCRefRegistryTest, TryObjCRef) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -347,7 +347,7 @@ TEST_F(SpecialRefRegistryTest, TryObjCRef) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, ReRetainObjCRefBeforePublish) {
+TEST_F(ExternalRCRefRegistryTest, ReRetainObjCRefBeforePublish) {
     RunInNewThread([this] {
         ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
         ObjHolder holder(obj);
@@ -373,7 +373,7 @@ TEST_F(SpecialRefRegistryTest, ReRetainObjCRefBeforePublish) {
     });
 }
 
-TEST_F(SpecialRefRegistryTest, StressStableRef) {
+TEST_F(ExternalRCRefRegistryTest, StressStableRef) {
     ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
     Waiter waiter;
     std::vector<ScopedThread> mutators;
@@ -393,7 +393,7 @@ TEST_F(SpecialRefRegistryTest, StressStableRef) {
     EXPECT_THAT(all(), testing::UnorderedElementsAre());
 }
 
-TEST_F(SpecialRefRegistryTest, StressWeakRef) {
+TEST_F(ExternalRCRefRegistryTest, StressWeakRef) {
     ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
     Waiter waiter;
     std::vector<ScopedThread> mutators;
@@ -413,7 +413,7 @@ TEST_F(SpecialRefRegistryTest, StressWeakRef) {
     EXPECT_THAT(all(), testing::UnorderedElementsAre());
 }
 
-TEST_F(SpecialRefRegistryTest, StressObjCRef) {
+TEST_F(ExternalRCRefRegistryTest, StressObjCRef) {
     ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
     Waiter waiter;
     std::vector<ScopedThread> mutators;
@@ -434,7 +434,7 @@ TEST_F(SpecialRefRegistryTest, StressObjCRef) {
     EXPECT_THAT(all(), testing::UnorderedElementsAre());
 }
 
-TEST_F(SpecialRefRegistryTest, StressObjCRefRetainRelease) {
+TEST_F(ExternalRCRefRegistryTest, StressObjCRefRetainRelease) {
     RunInNewThread([this] {
         constexpr int kGCCycles = 10000;
         constexpr int kRefsCount = 3;

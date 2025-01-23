@@ -5,7 +5,7 @@
 
 #include "ObjCBackRef.hpp"
 
-#include "SpecialRefRegistry.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 
@@ -14,5 +14,5 @@ using namespace kotlin;
 // static
 mm::ObjCBackRef mm::ObjCBackRef::create(ObjHeader* obj) noexcept {
     RuntimeAssert(obj != nullptr, "Creating ObjCBackRef for null object");
-    return mm::ObjCBackRef(&mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createExternalRCRefImpl(obj, 1));
+    return mm::ObjCBackRef(&mm::ThreadRegistry::Instance().CurrentThreadData()->externalRCRefRegistry().createExternalRCRefImpl(obj, 1));
 }

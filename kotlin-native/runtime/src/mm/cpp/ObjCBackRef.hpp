@@ -12,7 +12,7 @@
 
 namespace kotlin::mm {
 
-// TODO(KT-67741): Unify different SpecialRefs
+// TODO(KT-67741): Unify different ExternalRCRefs
 
 // Reference from an ObjC associated object back into a Kotlin object.
 // GC automatically tracks references with refcount > 0 as roots, and invalidates references with refcount = 0 when the Kotlin object is

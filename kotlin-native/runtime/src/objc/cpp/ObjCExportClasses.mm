@@ -231,7 +231,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
     self = [newSelf retain]; // new `self`, retained.
 
     // Fully release old `self`:
-    [retiredSelf release]; // decrement SpecialRef refcount,
+    [retiredSelf release]; // decrement ExternalRCRef refcount,
     [retiredSelf releaseAsAssociatedObject]; // and decrement NSObject refcount.
 
     // Return new `self`.

@@ -110,7 +110,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     // However, some threads may still try to enqueue a marked object, before they observe the barrier disablement.
     // Thus, mark queue destruction takes place only later below.
 
-    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::SpecialRefRegistry::instance());
+    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
 
     if (!terminateInSTW) {
         stopTheWorld(gcHandle(), "GC stop the world #2: prepare to sweep");

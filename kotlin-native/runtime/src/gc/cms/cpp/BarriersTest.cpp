@@ -45,7 +45,7 @@ test_support::Object<Payload>& AllocateObject(mm::ThreadData& threadData) {
 class BarriersTest : public testing::Test {
 public:
     ~BarriersTest() override {
-        mm::SpecialRefRegistry::instance().clearForTests();
+        mm::ExternalRCRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().allocator().clearForTests();
     }
 

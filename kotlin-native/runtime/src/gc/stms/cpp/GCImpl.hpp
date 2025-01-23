@@ -27,7 +27,7 @@ public:
 class GC::ThreadData::Impl {};
 
 namespace barriers {
-class SpecialRefReleaseGuard::Impl {};
+class ExternalRCRefReleaseGuard::Impl {};
 } // namespace barriers
 
 } // namespace kotlin::gc
