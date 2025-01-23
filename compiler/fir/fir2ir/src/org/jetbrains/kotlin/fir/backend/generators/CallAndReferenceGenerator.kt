@@ -1063,151 +1063,6 @@ class CallAndReferenceGenerator(
         return Triple(valueParameters, argumentMapping, substitutor)
     }
 
-    internal fun IrExpression.applyCallArguments(
-        statement: FirStatement?,
-    ): IrExpression {
-        val call = statement as? FirCall
-        return when (this) {
-            is IrMemberAccessExpression<*> -> {
-                val contextArgumentCount = putContextArguments(statement)
-                if (call == null) return this
-                val argumentsCount = call.arguments.size
-                if (argumentsCount <= valueArgumentsCount) {
-                    apply {
-                        val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
-                        if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty()) && valueParameters != null) {
-                            return applyArgumentsWithReorderingIfNeeded(
-                                argumentMapping, valueParameters, substitutor, contextArgumentCount, call,
-                            )
-                        }
-                        check(argumentsCount == 0) { "Non-empty unresolved argument list." }
-                    }
-                } else {
-                    val calleeSymbol = (this as? IrCallImpl)?.symbol
-
-                    @OptIn(UnsafeDuringIrConstructionAPI::class)
-                    val description = calleeSymbol?.signature?.render()
-                        ?: calleeSymbol?.takeIf { it.isBound }?.owner?.render()
-                        ?: "???"
-                    IrErrorCallExpressionImpl(
-                        startOffset, endOffset, type,
-                        "Cannot bind $argumentsCount arguments to '$description' call with $valueArgumentsCount parameters"
-                    ).apply {
-                        for (argument in call.arguments) {
-                            arguments.add(visitor.convertToIrExpression(argument))
-                        }
-                    }
-                }
-            }
-
-            is IrErrorCallExpressionImpl -> apply {
-                for (argument in call?.arguments.orEmpty()) {
-                    arguments.add(visitor.convertToIrExpression(argument))
-                }
-            }
-
-            else -> this
-        }
-    }
-
-    private fun IrMemberAccessExpression<*>.putContextArguments(statement: FirStatement?): Int {
-        if (statement !is FirContextArgumentListOwner) return 0
-
-        val contextArgumentCount = statement.contextArguments.size
-        if (contextArgumentCount > 0) {
-            for (index in 0 until contextArgumentCount) {
-                putValueArgument(
-                    index,
-                    visitor.convertToIrExpression(statement.contextArguments[index]),
-                )
-            }
-        }
-
-        return contextArgumentCount
-    }
-
-    private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
-        argumentMapping: Map<FirExpression, FirValueParameter>,
-        valueParameters: List<FirValueParameter>,
-        substitutor: ConeSubstitutor,
-        contextArgumentCount: Int,
-        call: FirCall,
-    ): IrExpression {
-        val converted = convertArguments(argumentMapping, substitutor)
-        // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
-        // For annotations, this is always true, since arguments have to be compile-time constants.
-        if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
-            needArgumentReordering(argumentMapping.values, valueParameters)
-        ) {
-            return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
-                fun IrExpression.freeze(nameHint: String): IrExpression {
-                    if (isUnchanging()) return this
-                    val (variable, symbol) = conversionScope.createTemporaryVariable(this, nameHint)
-                    statements.add(variable)
-                    return IrGetValueImpl(startOffset, endOffset, symbol, null)
-                }
-
-                dispatchReceiver = dispatchReceiver?.freeze("\$this")
-                extensionReceiver = extensionReceiver?.freeze("\$receiver")
-                for ((parameter, irArgument) in converted) {
-                    putValueArgument(
-                        valueParameters.indexOf(parameter) + contextArgumentCount,
-                        irArgument.freeze(parameter.name.asString())
-                    )
-                }
-                statements.add(this@applyArgumentsWithReorderingIfNeeded)
-            }
-        } else {
-            for ((parameter, irArgument) in converted) {
-                putValueArgument(valueParameters.indexOf(parameter) + contextArgumentCount, irArgument)
-            }
-            if (visitor.annotationMode) {
-                val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
-                for ((index, parameter) in valueParameters.withIndex()) {
-                    if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
-                        val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
-                            null
-                        } else {
-                            val varargType = parameter.returnTypeRef.toIrType()
-                            IrVarargImpl(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                varargType,
-                                varargType.getArrayElementType(builtins)
-                            )
-                        }
-                        putValueArgument(index, value)
-                    }
-                }
-            }
-            return this
-        }
-    }
-
-    private fun convertArguments(
-        argumentMapping: Map<FirExpression, FirValueParameter>,
-        substitutor: ConeSubstitutor,
-    ): List<Pair<FirValueParameter, IrExpression>> =
-        argumentMapping.entries.mapNotNull { (argument, parameter) ->
-            if (visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) null
-            else (parameter to convertArgument(argument, parameter, substitutor))
-        }
-
-    private fun needArgumentReordering(
-        parametersInActualOrder: Collection<FirValueParameter>,
-        valueParameters: List<FirValueParameter>,
-    ): Boolean {
-        var lastValueParameterIndex = UNDEFINED_PARAMETER_INDEX
-        for (parameter in parametersInActualOrder) {
-            val index = valueParameters.indexOf(parameter)
-            if (index < lastValueParameterIndex) {
-                return true
-            }
-            lastValueParameterIndex = index
-        }
-        return false
-    }
-
     private fun convertArgument(
         argument: FirExpression,
         parameter: FirValueParameter?,
@@ -1327,6 +1182,53 @@ class CallAndReferenceGenerator(
             else -> this
         }
     }
+
+    private fun FirQualifiedAccessExpression.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
+        findIrReceiver(explicitReceiverExpression, isDispatch = true)
+
+    private fun FirQualifiedAccessExpression.findIrExtensionReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
+        findIrReceiver(explicitReceiverExpression, isDispatch = false)
+
+    internal fun FirQualifiedAccessExpression.findIrReceiver(
+        explicitReceiverExpression: IrExpression?,
+        isDispatch: Boolean,
+    ): IrExpression? {
+        val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
+        if (firReceiver == explicitReceiver) {
+            return explicitReceiverExpression
+        }
+
+        return firReceiver
+            ?.let { visitor.convertToIrReceiverExpression(it, this) }
+            ?: explicitReceiverExpression
+    }
+
+    private fun FirCallableSymbol<*>.isFunctionFromAny(): Boolean {
+        if (this !is FirNamedFunctionSymbol) return false
+        return isMethodOfAny
+    }
+
+    private fun generateErrorCallExpression(
+        startOffset: Int,
+        endOffset: Int,
+        calleeReference: FirReference,
+        type: IrType? = null,
+    ): IrErrorCallExpression {
+        return IrErrorCallExpressionImpl(
+            startOffset, endOffset, type ?: createErrorType(),
+            "Unresolved reference: ${calleeReference.render()}"
+        )
+    }
+
+    private fun IrExpression.updateStatementOrigin(newOrigin: IrStatementOrigin) {
+        when (this) {
+            is IrFieldAccessExpression -> origin = origin ?: newOrigin
+            is IrMemberAccessExpression<*> -> origin = origin ?: newOrigin
+            is IrValueAccessExpression -> origin = origin ?: newOrigin
+        }
+    }
+
+    ////// TYPE ARGUMENT MAPPING
 
     internal fun IrExpression.applyTypeArguments(access: FirQualifiedAccessExpression): IrExpression =
         applyTypeArgumentsWithTypealiasConstructorRemapping(access.calleeReference.toResolvedCallableSymbol()?.fir, access.typeArguments)
@@ -1453,25 +1355,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun FirQualifiedAccessExpression.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
-        findIrReceiver(explicitReceiverExpression, isDispatch = true)
-
-    private fun FirQualifiedAccessExpression.findIrExtensionReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
-        findIrReceiver(explicitReceiverExpression, isDispatch = false)
-
-    internal fun FirQualifiedAccessExpression.findIrReceiver(
-        explicitReceiverExpression: IrExpression?,
-        isDispatch: Boolean,
-    ): IrExpression? {
-        val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
-        if (firReceiver == explicitReceiver) {
-            return explicitReceiverExpression
-        }
-
-        return firReceiver
-            ?.let { visitor.convertToIrReceiverExpression(it, this) }
-            ?: explicitReceiverExpression
-    }
+    ////// RECEIVER AND CONTEXT/VALUE ARGUMENT MAPPING
 
     private fun IrExpression.applyReceivers(
         qualifiedAccess: FirQualifiedAccessExpression,
@@ -1548,28 +1432,149 @@ class CallAndReferenceGenerator(
         return this
     }
 
-    private fun FirCallableSymbol<*>.isFunctionFromAny(): Boolean {
-        if (this !is FirNamedFunctionSymbol) return false
-        return isMethodOfAny
-    }
+    internal fun IrExpression.applyCallArguments(
+        statement: FirStatement?,
+    ): IrExpression {
+        val call = statement as? FirCall
+        return when (this) {
+            is IrMemberAccessExpression<*> -> {
+                val contextArgumentCount = putContextArguments(statement)
+                if (call == null) return this
+                val argumentsCount = call.arguments.size
+                if (argumentsCount <= valueArgumentsCount) {
+                    apply {
+                        val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
+                        if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty()) && valueParameters != null) {
+                            return applyArgumentsWithReorderingIfNeeded(
+                                argumentMapping, valueParameters, substitutor, contextArgumentCount, call,
+                            )
+                        }
+                        check(argumentsCount == 0) { "Non-empty unresolved argument list." }
+                    }
+                } else {
+                    val calleeSymbol = (this as? IrCallImpl)?.symbol
 
-    private fun generateErrorCallExpression(
-        startOffset: Int,
-        endOffset: Int,
-        calleeReference: FirReference,
-        type: IrType? = null,
-    ): IrErrorCallExpression {
-        return IrErrorCallExpressionImpl(
-            startOffset, endOffset, type ?: createErrorType(),
-            "Unresolved reference: ${calleeReference.render()}"
-        )
-    }
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
+                    val description = calleeSymbol?.signature?.render()
+                        ?: calleeSymbol?.takeIf { it.isBound }?.owner?.render()
+                        ?: "???"
+                    IrErrorCallExpressionImpl(
+                        startOffset, endOffset, type,
+                        "Cannot bind $argumentsCount arguments to '$description' call with $valueArgumentsCount parameters"
+                    ).apply {
+                        for (argument in call.arguments) {
+                            arguments.add(visitor.convertToIrExpression(argument))
+                        }
+                    }
+                }
+            }
 
-    private fun IrExpression.updateStatementOrigin(newOrigin: IrStatementOrigin) {
-        when (this) {
-            is IrFieldAccessExpression -> origin = origin ?: newOrigin
-            is IrMemberAccessExpression<*> -> origin = origin ?: newOrigin
-            is IrValueAccessExpression -> origin = origin ?: newOrigin
+            is IrErrorCallExpressionImpl -> apply {
+                for (argument in call?.arguments.orEmpty()) {
+                    arguments.add(visitor.convertToIrExpression(argument))
+                }
+            }
+
+            else -> this
         }
+    }
+
+    private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
+        argumentMapping: Map<FirExpression, FirValueParameter>,
+        valueParameters: List<FirValueParameter>,
+        substitutor: ConeSubstitutor,
+        contextArgumentCount: Int,
+        call: FirCall,
+    ): IrExpression {
+        val converted = convertArguments(argumentMapping, substitutor)
+        // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
+        // For annotations, this is always true, since arguments have to be compile-time constants.
+        if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
+            needArgumentReordering(argumentMapping.values, valueParameters)
+        ) {
+            return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
+                fun IrExpression.freeze(nameHint: String): IrExpression {
+                    if (isUnchanging()) return this
+                    val (variable, symbol) = conversionScope.createTemporaryVariable(this, nameHint)
+                    statements.add(variable)
+                    return IrGetValueImpl(startOffset, endOffset, symbol, null)
+                }
+
+                dispatchReceiver = dispatchReceiver?.freeze("\$this")
+                extensionReceiver = extensionReceiver?.freeze("\$receiver")
+                for ((parameter, irArgument) in converted) {
+                    putValueArgument(
+                        valueParameters.indexOf(parameter) + contextArgumentCount,
+                        irArgument.freeze(parameter.name.asString())
+                    )
+                }
+                statements.add(this@applyArgumentsWithReorderingIfNeeded)
+            }
+        } else {
+            for ((parameter, irArgument) in converted) {
+                putValueArgument(valueParameters.indexOf(parameter) + contextArgumentCount, irArgument)
+            }
+            if (visitor.annotationMode) {
+                val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
+                for ((index, parameter) in valueParameters.withIndex()) {
+                    if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
+                        val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
+                            null
+                        } else {
+                            val varargType = parameter.returnTypeRef.toIrType()
+                            IrVarargImpl(
+                                UNDEFINED_OFFSET,
+                                UNDEFINED_OFFSET,
+                                varargType,
+                                varargType.getArrayElementType(builtins)
+                            )
+                        }
+                        putValueArgument(index, value)
+                    }
+                }
+            }
+            return this
+        }
+    }
+
+    private fun convertArguments(
+        argumentMapping: Map<FirExpression, FirValueParameter>,
+        substitutor: ConeSubstitutor,
+    ): List<Pair<FirValueParameter, IrExpression>> =
+        argumentMapping.entries.mapNotNull { (argument, parameter) ->
+            if (visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) null
+            else (parameter to convertArgument(argument, parameter, substitutor))
+        }
+
+    private fun needArgumentReordering(
+        parametersInActualOrder: Collection<FirValueParameter>,
+        valueParameters: List<FirValueParameter>,
+    ): Boolean {
+        var lastValueParameterIndex = UNDEFINED_PARAMETER_INDEX
+        for (parameter in parametersInActualOrder) {
+            val index = valueParameters.indexOf(parameter)
+            if (index < lastValueParameterIndex) {
+                return true
+            }
+            lastValueParameterIndex = index
+        }
+        return false
+    }
+
+    private fun IrMemberAccessExpression<*>.putContextArguments(statement: FirStatement?): Int {
+        if (statement !is FirContextArgumentListOwner) return 0
+
+        val contextArgumentCount = statement.contextArguments.size
+        if (contextArgumentCount > 0) {
+            for (index in 0 until contextArgumentCount) {
+                // The order of arguments is dispatch receiver, context parameters, extension receiver, regular parameters
+                putValueArgument(
+                    index,
+                    visitor.convertToIrExpression(statement.contextArguments[index]),
+                )
+            }
+        }
+
+        return contextArgumentCount
     }
 }
