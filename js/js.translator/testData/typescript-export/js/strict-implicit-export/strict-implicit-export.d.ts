@@ -58,6 +58,7 @@ declare namespace JS_TESTS {
             readonly __doNotUseOrImplementIt: foo.NotExportedChildGenericClass<foo.NonExportedType>["__doNotUseOrImplementIt"];
         }
         function baz(a: number): Promise<number>;
+        function bazVoid(a: number): Promise<void>;
         function bar(): Error;
         function pep<T extends foo.NonExportedInterface & foo.NonExportedGenericInterface<number>>(x: T): void;
         const console: Console;

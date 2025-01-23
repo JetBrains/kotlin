@@ -74,6 +74,11 @@ fun baz(a: Int): kotlin.js.Promise<Int> {
 }
 
 @JsExport
+fun bazVoid(a: Int): kotlin.js.Promise<Unit> {
+    return kotlin.js.Promise<Unit> { res, rej -> res(Unit) }
+}
+
+@JsExport
 fun bar(): Throwable {
     return Throwable("Test Error")
 }
