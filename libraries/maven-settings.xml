@@ -34,5 +34,10 @@
             <username>${kotlin.kotlin-space-packages.user}</username>
             <password>${kotlin.kotlin-space-packages.password}</password>
         </server>
+        <server>
+            <id>jetbrains-team-packages</id>
+            <username>${kotlin.jetbrains-team-packages.user}</username>
+            <password>${kotlin.jetbrains-team-packages.password}</password>
+        </server>
     </servers>
 </settings>
