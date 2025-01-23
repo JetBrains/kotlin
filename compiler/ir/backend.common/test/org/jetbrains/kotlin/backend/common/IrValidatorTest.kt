@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -1896,6 +1897,68 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 ),
+            ),
+        )
+    }
+
+    @Test
+    fun `implicit coercions to unit with incorrect type are reported`() {
+        val file = createIrFile("test.kt")
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val body = IrFactoryImpl.createBlockBody(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+        )
+
+        val incorrectCoercion = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.intType,
+            operator = IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+            typeOperand = TestIrBuiltins.intType,
+            argument = IrConstImpl.int(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                type = TestIrBuiltins.intType,
+                value = 42
+            )
+        )
+
+        val correctCoercion = IrTypeOperatorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.unitType,
+            operator = IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+            typeOperand = TestIrBuiltins.unitType,
+            argument = IrConstImpl.int(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                type = TestIrBuiltins.intType,
+                value = 42
+            )
+        )
+
+        body.statements.addAll(listOf(incorrectCoercion, correctCoercion))
+        function.body = body
+        file.addChild(function)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: typeOperand is kotlin.Int
+                    TYPE_OP type=kotlin.Int origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Int
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
             ),
         )
     }
