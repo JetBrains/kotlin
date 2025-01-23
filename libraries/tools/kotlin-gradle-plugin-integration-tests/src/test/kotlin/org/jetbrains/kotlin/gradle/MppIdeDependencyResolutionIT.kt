@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
-import io.ktor.util.*
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
@@ -300,13 +301,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         ) {
             resolveIdeDependencies(":p3") { dependencies ->
                 /* Check that no compile-tasks are executed */
-                run {
-                    val compileTaskRegex = Regex(".*[cC]ompile.*")
-                    val compileTasks = tasks.filter { task -> task.path.matches(compileTaskRegex) }
-                    if (compileTasks.isNotEmpty()) {
-                        fail("Expected no compile tasks to be executed. Found $compileTasks")
-                    }
-                }
+                assertNoCompileTasksGotExecuted()
 
                 dependencies["nativeMain"].cinteropDependencies().assertMatches(
                     binaryCoordinates(Regex(".*p1-cinterop-simple.*")),
@@ -489,6 +484,35 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `KT-71074 jvmMain depends on kotlin jvm project`(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-jvm-library", newSubmoduleName = "jvm")
+
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    linuxX64()
+
+                    sourceSets.jvmMain.dependencies {
+                        api(project(":jvm"))
+                    }
+                }
+            }
+
+            resolveIdeDependencies { dependencies ->
+                assertNoCompileTasksGotExecuted()
+                dependencies["jvmMain"].getOrFail(
+                    projectArtifactDependency(
+                        Regular,
+                        ":jvm",
+                        FilePathRegex(".*/jvm.jar")
+                    )
+                )
+            }
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
@@ -502,5 +526,13 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         return sources.single().also { sourcesFile ->
             if (!sourcesFile.name.endsWith("-sources.jar")) fail("-sources.jar suffix expected. Found: ${sourcesFile.name}")
         }
+    }
+}
+
+private fun BuildResult.assertNoCompileTasksGotExecuted() {
+    val compileTaskRegex = Regex(".*[cC]ompile.*")
+    val compileTasks = tasks.filter { task -> task.path.matches(compileTaskRegex) }
+    if (compileTasks.isNotEmpty()) {
+        fail("Expected no compile tasks to be executed. Found $compileTasks")
     }
 }
