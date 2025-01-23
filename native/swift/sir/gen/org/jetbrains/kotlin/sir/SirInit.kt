@@ -22,6 +22,7 @@ abstract class SirInit : SirElementBase(), SirCallable {
     abstract val isFailable: Boolean
     abstract val parameters: List<SirParameter>
     abstract val isConvenience: Boolean
+    abstract val isInner: Boolean
     abstract val isRequired: Boolean
     abstract val isOverride: Boolean
 }

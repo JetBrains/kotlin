@@ -7,7 +7,10 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -130,7 +133,16 @@ internal abstract class SirAbstractClassFromKtSymbol(
         set(_) = Unit
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-        childDeclarations + syntheticDeclarations()
+
+        val innerClassSymbols = ktSymbol.memberScope.declarations.toList().filter {
+            it is KaNamedClassSymbol && it.isInner
+        }.toList()
+
+        val innerSirs = if (innerClassSymbols.isNotEmpty()) {
+            listOf(createSirClassFromKtSymbol(innerClassSymbols.first() as KaNamedClassSymbol, ktModule, this))
+        } else emptyList()
+
+        innerSirs + childDeclarations + syntheticDeclarations()
     }
 
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
@@ -185,6 +197,7 @@ internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() 
     override val documentation: String? = null
     override val isRequired: Boolean = false
     override val isConvenience: Boolean = false
+    override val isInner: Boolean = false
     override val isOverride: Boolean get() = overrideStatus is OverrideStatus.Overrides
     private val overrideStatus: OverrideStatus<SirInit>? by lazy { computeIsOverride() }
     override lateinit var parent: SirDeclarationParent

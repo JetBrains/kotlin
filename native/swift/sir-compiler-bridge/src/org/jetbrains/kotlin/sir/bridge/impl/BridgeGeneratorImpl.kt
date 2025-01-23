@@ -72,18 +72,36 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 )
             }
             is SirInit -> {
-                add(
-                    request.allocationDescriptor(typeNamer).createFunctionBridge {
-                        val args = argNames(this)
-                        "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
-                    }
-                )
-                add(
-                    request.initializationDescriptor(typeNamer).createFunctionBridge {
-                        val args = argNames(this)
-                        "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
-                    }
-                )
+                val isInner = false
+                //val isInner = request.callable.isInner
+                //TODO: remove inner case, since all works with adding outer parameter to translateParameters
+                if(isInner) {
+                    add(
+                        request.allocationDescriptor(typeNamer).createFunctionBridge {
+                            val args = argNames(this)
+                            "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
+                        }
+                    )
+                    add(
+                        request.innerClassInitDescriptor(typeNamer).createFunctionBridge {
+                            val args = argNames(this)
+                            "kotlin.native.internal.initInstance(${args[1]}, (${args[0]} as ${kotlinFqName[0]}).${kotlinFqName[1]}())"
+                        }
+                    )
+                } else {
+                    add(
+                        request.allocationDescriptor(typeNamer).createFunctionBridge {
+                            val args = argNames(this)
+                            "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
+                        }
+                    )
+                    add(
+                        request.initializationDescriptor(typeNamer).createFunctionBridge {
+                            val args = argNames(this)
+                            "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
+                        }
+                    )
+                }
             }
         }
     }
@@ -214,6 +232,29 @@ private fun FunctionBridgeRequest.initializationDescriptor(typeNamer: SirTypeNam
     return BridgeFunctionDescriptor(
         bridgeName + "_initialize",
         listOf(obj) + callable.bridgeParameters(),
+        bridgeType(callable.returnType),
+        fqName,
+        null,
+        null,
+        errorParameter = callable.errorType.takeIf { it != SirType.never }?.let {
+            BridgeParameter("__error", Bridge.AsOutError)
+        },
+        typeNamer = typeNamer,
+    )
+}
+
+private fun FunctionBridgeRequest.innerClassInitDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
+
+    require(callable is SirInit) { "Use descriptor instead" }
+
+    val outer = bridgeParameter(
+        SirParameter("outerArg", "outerParam", SirNominalType(SirSwiftModule.uint)
+        ), 1
+    )
+
+    return BridgeFunctionDescriptor(
+        bridgeName + "_initialize",
+        listOf(outer, obj) + callable.bridgeParameters(),
         bridgeType(callable.returnType),
         fqName,
         null,

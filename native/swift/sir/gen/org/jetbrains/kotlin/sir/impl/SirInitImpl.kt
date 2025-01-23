@@ -22,6 +22,7 @@ internal class SirInitImpl(
     override val isFailable: Boolean,
     override val parameters: MutableList<SirParameter>,
     override val isConvenience: Boolean,
+    override val isInner: Boolean,
     override val isRequired: Boolean,
     override val isOverride: Boolean,
 ) : SirInit() {

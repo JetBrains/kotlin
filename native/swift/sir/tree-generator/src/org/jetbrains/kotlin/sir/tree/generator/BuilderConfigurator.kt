@@ -39,6 +39,10 @@ class BuilderConfigurator(model: Model) : AbstractSwiftIrTreeBuilderConfigurator
             default(it, "false")
         }
 
+        configureFieldInAllLeafBuilders("isInner") {
+            default(it, "false")
+        }
+
         configureFieldInAllLeafBuilders("isRequired") {
             default(it, "false")
         }
