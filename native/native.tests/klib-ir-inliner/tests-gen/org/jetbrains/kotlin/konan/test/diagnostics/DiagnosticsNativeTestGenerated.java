@@ -51,6 +51,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   }
 
   @Test
+  @TestMetadata("errorProneAtomicArrayPrimitives.kt")
+  public void testErrorProneAtomicArrayPrimitives() {
+    runTest("compiler/testData/diagnostics/nativeTests/errorProneAtomicArrayPrimitives.kt");
+  }
+
+  @Test
   @TestMetadata("externalNonFunctions.kt")
   public void testExternalNonFunctions() {
     runTest("compiler/testData/diagnostics/nativeTests/externalNonFunctions.kt");

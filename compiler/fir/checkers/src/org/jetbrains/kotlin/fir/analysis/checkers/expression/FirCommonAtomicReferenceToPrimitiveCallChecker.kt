@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkAtomicReferenceAccess
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
@@ -22,9 +23,9 @@ abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
     mppKind: MppCheckerKind,
 ) : FirFunctionCallChecker(mppKind) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val callable = expression.calleeReference.resolved?.resolvedSymbol
+        val callable = expression.calleeReference.resolved?.resolvedSymbol ?: return
 
-        if (callable is FirConstructorSymbol) {
+        if (callable.canInstantiateProblematicAtomicReference) {
             checkAtomicReferenceAccess(
                 expression.resolvedType, expression.source,
                 atomicReferenceClassId, appropriateCandidatesForArgument,
@@ -32,6 +33,9 @@ abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
             )
         }
     }
+
+    open val FirBasedSymbol<*>.canInstantiateProblematicAtomicReference: Boolean
+        get() = this is FirConstructorSymbol
 }
 
 object FirCommonAtomicReferenceToPrimitiveCallChecker :
