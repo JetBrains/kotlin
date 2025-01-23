@@ -28,12 +28,6 @@ internal class ExecHandleBuilder(
     /** Sets whether a non-zero exit value is ignored, else throw an exception. */
     var ignoreExitValue: Boolean = false
 
-    /**
-     * If true, immediately [detach][ExecHandle.detached] after [ExecHandle.run].
-     * Otherwise,
-     */
-    var launchAsDaemon: Boolean = false
-
     /** Merge the [errorOutput] into [standardOutput]. */
     var redirectErrorStream: Boolean = false
 
@@ -103,19 +97,11 @@ internal class ExecHandleBuilder(
             outputHandler = streamsHandler,
             inputHandler = inputHandler,
             redirectErrorStream = redirectErrorStream,
-            launchAsDaemon = launchAsDaemon,
             executor = executor,
             ignoreExitValue = ignoreExitValue
         )
     }
 }
-//
-//internal fun ObjectFactory.ProcessHandle(
-//    block: ExecHandleBuilder.() -> Unit = {},
-//): ExecHandle {
-//    return execHandleBuilder(block)
-//        .build()
-//}
 
 internal fun ObjectFactory.execHandleBuilder(
     block: ExecHandleBuilder.() -> Unit = {},

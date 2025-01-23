@@ -24,14 +24,14 @@ import java.util.concurrent.locks.ReentrantLock
  *
  * ## State flows
  *
- * - `Initial → Started → [Succeeded|Failed|Aborted|Detached]`
+ * - `Initial → Started → [Succeeded|Failed|Aborted]`
  * - `Initial → Failed`
- * - `Initial → Started → Detached → Aborted`
+ * - `Initial → Started → Aborted`
  *
  * State is controlled on all control methods:
  *
  * - [start] allowed when state is `Initial`.
- * - [abort] allowed when state is `Started` or `Detached`.
+ * - [abort] allowed when state is `Started`.
  */
 internal class ExecHandle(
     val displayName: String,
@@ -47,7 +47,6 @@ internal class ExecHandle(
     private val inputHandler: StreamsHandler,
     /** Merge the process' error stream into its output stream. */
     val redirectErrorStream: Boolean,
-    val launchAsDaemon: Boolean,
     val ignoreExitValue: Boolean,
     private val executor: Executor,
 ) {
@@ -128,21 +127,13 @@ internal class ExecHandle(
             if (stateIn(ExecHandleState.Succeeded, ExecHandleState.Failed, ExecHandleState.Aborted)) {
                 return
             }
-            check(stateIn(ExecHandleState.Started, ExecHandleState.Detached)) {
-                "Cannot abort process '$displayName' because it is not in started or detached state"
+            check(stateIn(ExecHandleState.Started)) {
+                "Cannot abort process '$displayName' because it is not started"
             }
             execHandleRunner!!.abortProcess()
             this.waitForFinish()
         }
     }
-
-//    private fun setState(state: ExecHandleState) {
-//        lock.use {
-//            logger.debug("Changing state to: $state")
-//            this.state = state
-//            stateChanged.signalAll()
-//        }
-//    }
 
     private fun stateIn(vararg states: ExecHandleState): Boolean {
         lock.use {
@@ -212,10 +203,6 @@ internal class ExecHandle(
         }
     }
 
-    private fun detached() {
-        setEndStateInfo(ExecHandleState.Detached, 0)
-    }
-
     private fun started() {
         addShutdownHook(shutdownHookAction)
         state = ExecHandleState.Started
@@ -273,7 +260,6 @@ internal class ExecHandle(
 
         Aborted(true),
         Failed(true),
-        Detached(true),
         Succeeded(true),
         ;
     }
@@ -313,17 +299,12 @@ internal class ExecHandle(
                 logger.debug("waiting until streams are handled...")
                 streamsHandler.start()
 
-                if (execHandle.launchAsDaemon) {
-                    streamsHandler.close()
-                    execHandle.detached()
+                val exitValue = process!!.waitFor()
+                streamsHandler.close()
+                if (aborted) {
+                    execHandle.aborted(exitValue)
                 } else {
-                    val exitValue = process!!.waitFor()
-                    streamsHandler.close()
-                    if (aborted) {
-                        execHandle.aborted(exitValue)
-                    } else {
-                        execHandle.finished(exitValue)
-                    }
+                    execHandle.finished(exitValue)
                 }
             } catch (t: Throwable) {
                 execHandle.failed(t)
