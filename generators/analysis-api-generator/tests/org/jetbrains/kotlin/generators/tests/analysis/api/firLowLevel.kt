@@ -145,6 +145,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("inBlockModification/codeFragments", recursive = false, pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
+        testClass<AbstractContentAndResolutionScopesProvidersTest> {
+            model("contentAndResolutionScopesProviders", recursive = false, pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
         // Modifiable PSI tests must not be generated until KT-63650 is fixed.
 //        testClass<AbstractDeclarationModificationServiceCallExpressionCalleeResilienceTest> {
 //            model(
