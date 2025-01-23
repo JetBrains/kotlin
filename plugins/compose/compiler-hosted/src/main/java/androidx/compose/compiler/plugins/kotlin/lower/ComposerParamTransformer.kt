@@ -166,10 +166,10 @@ class ComposerParamTransformer(
                 argumentsMissing.add(arg == null && hasDefault)
                 if (arg != null) {
                     it.putValueArgument(i, arg)
-                } else if (param.isVararg) {
-                    // do nothing
-                } else {
+                } else if (hasDefault) {
                     it.putValueArgument(i, defaultArgumentFor(param))
+                } else {
+                    // do nothing
                 }
             }
             val valueParams = valueArgumentsCount
@@ -216,7 +216,6 @@ class ComposerParamTransformer(
     }
 
     private fun defaultArgumentFor(param: IrValueParameter): IrExpression? {
-        if (param.varargElementType != null) return null
         return param.type.defaultValue().let {
             IrCompositeImpl(
                 it.startOffset,

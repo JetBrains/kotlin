@@ -255,6 +255,19 @@ class CompositionTests {
         advance()
         revalidate()
     }
+
+    @Test
+    fun varargsInComposable() = compositionTest {
+        compose {
+            MultipleText("a", "b", "c")
+            MultipleText()
+        }
+        validate {
+            Text("a")
+            Text("b")
+            Text("c")
+        }
+    }
 }
 
 @Composable
@@ -312,4 +325,9 @@ fun EnumParameter(enum: TestComposeEnum) {
 @Composable
 fun EnumParameterLambda(enum: () -> TestComposeEnum) {
     Text(enum().name)
+}
+
+@Composable
+fun MultipleText(vararg strings: String = emptyArray()) {
+    strings.forEach { Text(it) }
 }
