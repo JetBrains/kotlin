@@ -813,9 +813,7 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = firProperty.typeParameters.size,
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
-                        ).apply {
-                            putValueArgument(putContextArguments(lValue), irRhsWithCast)
-                        }
+                        )
 
                         else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                     }
@@ -836,9 +834,7 @@ class CallAndReferenceGenerator(
                             hasExtensionReceiver = firProperty.isExtension,
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
-                        ).apply {
-                            putValueArgument(putContextArguments(lValue), irRhsWithCast)
-                        }
+                        )
 
                         backingFieldSymbol != null -> IrSetFieldImpl(
                             startOffset, endOffset, backingFieldSymbol, type,
@@ -859,9 +855,7 @@ class CallAndReferenceGenerator(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = firFunction?.typeParameters?.size ?: 0,
                         origin = origin
-                    ).apply {
-                        putValueArgument(putContextArguments(lValue), irRhsWithCast)
-                    }
+                    )
                 }
 
                 is IrVariableSymbol -> {
@@ -872,7 +866,7 @@ class CallAndReferenceGenerator(
             }
         }
             .applyTypeArguments(lValue)
-            .applyReceivers(lValue, firSymbol, explicitReceiverExpression)
+            .applyReceiversAndArguments(lValue, firSymbol, explicitReceiverExpression, irAssignmentRhs = irRhs)
     }
 
     /** Wrap an assignment - as needed - with an implicit cast to the left-hand side type. */
@@ -1357,10 +1351,15 @@ class CallAndReferenceGenerator(
 
     ////// RECEIVER AND CONTEXT/VALUE ARGUMENT MAPPING
 
+    /**
+     * @param irAssignmentRhs If passed, this expression will be the only applied argument.
+     * Context arguments will still be set from [statement].
+     */
     private fun IrExpression.applyReceiversAndArguments(
         statement: FirStatement?,
         declarationSiteSymbol: FirCallableSymbol<*>?,
         explicitReceiverExpression: IrExpression?,
+        irAssignmentRhs: IrExpression? = null,
     ): IrExpression {
         if (statement == null) return this
 
@@ -1370,7 +1369,12 @@ class CallAndReferenceGenerator(
             expression = expression.applyReceivers(statement, declarationSiteSymbol, explicitReceiverExpression)
         }
 
-        expression = expression.applyCallArguments(statement)
+        if (expression is IrMemberAccessExpression<*> && irAssignmentRhs != null) {
+            val contextArgumentCount = expression.putContextArguments(statement)
+            expression.putValueArgument(contextArgumentCount, irAssignmentRhs)
+        } else {
+            expression = expression.applyCallArguments(statement)
+        }
 
         return expression
     }
