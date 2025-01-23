@@ -94,6 +94,11 @@ private val generateTests = makeIrModulePhase(
     name = "GenerateTests",
 )
 
+private val annotationInstantiationLowering = makeIrModulePhase(
+    ::JsCommonAnnotationImplementationTransformer,
+    name = "AnnotationImplementation",
+)
+
 private val expectDeclarationsRemovingPhase = makeIrModulePhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
@@ -612,6 +617,8 @@ fun getWasmLowerings(
         jsCodeCallsLowering,
 
         generateTests,
+
+        annotationInstantiationLowering,
 
         excludeDeclarationsFromCodegenPhase,
         expectDeclarationsRemovingPhase,

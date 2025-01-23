@@ -201,11 +201,15 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
     fun IrClass.getAnnotationProperties(): List<IrProperty> {
         // For some weird reason, annotations defined in other IrFiles, do not have IrProperties in declarations.
         // (although annotations imported from Java do have)
-        val props = declarations.filterIsInstance<IrProperty>()
-        if (props.isNotEmpty()) return props
-        return declarations
-            .filterIsInstanceAnd<IrSimpleFunction> { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
-            .mapNotNull { it.correspondingPropertySymbol?.owner }
+        var props = declarations.filterIsInstance<IrProperty>()
+        if (props.isEmpty()) {
+            props = declarations
+                .filterIsInstanceAnd<IrSimpleFunction> { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
+                .mapNotNull { it.correspondingPropertySymbol?.owner }
+        }
+
+        // Filter out inherited props. For example, `kotlin.Any` has private properties in Kotlin/Wasm.
+        return props.filterNot { it.isFakeOverride }
     }
 
     abstract fun getArrayContentEqualsSymbol(type: IrType): IrFunctionSymbol

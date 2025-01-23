@@ -126,7 +126,7 @@ private val inventNamesForLocalClassesPhase = makeIrModulePhase(
 )
 
 private val annotationInstantiationLowering = makeIrModulePhase(
-    ::JsAnnotationImplementationTransformer,
+    ::JsCommonAnnotationImplementationTransformer,
     name = "AnnotationImplementation",
 )
 

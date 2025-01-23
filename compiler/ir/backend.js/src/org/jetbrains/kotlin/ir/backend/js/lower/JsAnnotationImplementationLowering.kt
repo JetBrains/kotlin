@@ -7,27 +7,28 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.lower.AnnotationImplementationMemberGenerator
 import org.jetbrains.kotlin.backend.common.lower.AnnotationImplementationTransformer
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
-import org.jetbrains.kotlin.ir.util.isUnsignedArray
+import org.jetbrains.kotlin.ir.util.*
 
 /**
- * Creates synthetic annotations implementations and uses them in annotations constructor calls.
+ * Creates `equals`, `hashCode` and `toString` methods in annotation classes.
+ * The original annotation class is used without creating a separate implementation.
  */
 // JS PIR (and IC) requires DeclarationTransformer instead of FileLoweringPass
-class JsAnnotationImplementationTransformer(jsContext: JsIrBackendContext) :
-    AnnotationImplementationTransformer(jsContext, jsContext.symbolTable, null),
+class JsCommonAnnotationImplementationTransformer(context: JsCommonBackendContext) :
+    AnnotationImplementationTransformer(context, context.symbolTable, null),
     DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
@@ -43,16 +44,48 @@ class JsAnnotationImplementationTransformer(jsContext: JsIrBackendContext) :
         compilationException("Should not be called", implClass)
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        return declaration.apply {
-            if (isAnnotationClass) {
-                implementGeneratedFunctions(this, this)
-            }
-            addConstructorBodyForCompatibility()
+        if (!declaration.isAnnotationClass) return declaration
+
+        val generator = AnnotationImplementationMemberGenerator(
+            context, symbolTable, declaration,
+            nameForToString = "@" + declaration.fqNameWhenAvailable!!.asString(),
+            forbidDirectFieldAccess = forbidDirectFieldAccessInMethods
+        ) { type, a, b ->
+            generatedEquals(this, type, a, b)
         }
+
+        var eqFun: IrSimpleFunction? = null
+        var hcFun: IrSimpleFunction? = null
+        var toStringFun: IrSimpleFunction? = null
+
+        for (f in declaration.functions) {
+            when {
+                f.isEquals() -> eqFun = f
+                f.isToString() -> toStringFun = f
+                f.isHashCode() -> hcFun = f
+            }
+        }
+
+        checkNotNull(eqFun) { "Annotation class has no equals method" }
+        checkNotNull(hcFun) { "Annotation class has no equals method" }
+        checkNotNull(toStringFun) { "Annotation class has no equals method" }
+
+        eqFun.isFakeOverride = false
+        hcFun.isFakeOverride = false
+        toStringFun.isFakeOverride = false
+
+        val dispatchReceiverType = declaration.defaultType
+        eqFun.dispatchReceiverParameter?.type = dispatchReceiverType
+        hcFun.dispatchReceiverParameter?.type = dispatchReceiverType
+        toStringFun.dispatchReceiverParameter?.type = dispatchReceiverType
+
+        generateFunctionBodies(declaration, declaration, eqFun, hcFun, toStringFun, generator)
+        declaration.addConstructorBodyForCompatibility()
+        return declaration
     }
 
     private val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> =
-        requireNotNull(jsContext.ir.symbols.arraysContentEquals) { "contentEquals symbols should be defined in JS IR context" }
+        requireNotNull(context.ir.symbols.arraysContentEquals) { "contentEquals symbols should be defined in the context" }
 
     override fun getArrayContentEqualsSymbol(type: IrType) =
         when {

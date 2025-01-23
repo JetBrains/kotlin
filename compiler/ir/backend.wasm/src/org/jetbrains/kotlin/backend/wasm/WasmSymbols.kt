@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -98,6 +99,12 @@ class WasmSymbols(
         getInternalFunction("getCoroutineContext")
     override val returnIfSuspended =
         getInternalFunction("returnIfSuspended")
+
+    private val _arraysContentEquals = symbolFinder.topLevelFunctions(COLLECTIONS_PACKAGE_FQ_NAME, "contentEquals").filter {
+        it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true
+    }
+    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
+        get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
     val throwLinkageError = getInternalFunction("throwLinkageError")
 
