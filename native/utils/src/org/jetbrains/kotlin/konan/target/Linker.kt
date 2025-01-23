@@ -486,15 +486,8 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +listOf("-target", targetTriple.toString())
             +listOf("-o", executable)
             +objectFiles
-            // --gc-sections flag may affect profiling.
-            // See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#drawbacks-and-limitations.
-            // TODO: switching to lld may help.
             if (optimize) {
-                // TODO: Can be removed after LLD update.
-                //  See KT-48085.
-                if (!dynamic) {
-                    +linkerOptimizationFlags
-                }
+                +linkerOptimizationFlags
             }
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
