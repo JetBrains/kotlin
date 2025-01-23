@@ -35,7 +35,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     private val classLoadersCachingBuildServiceProvider: Provider<ClassLoadersCachingBuildService>,
     private val toolSpec: ToolSpec,
-    private val fusMetricsConsumer: Provider<BuildFusService>,
+    private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
     private val execOperations: ExecOperations,
 ) {
     private val logger = Logging.getLogger(toolSpec.displayName.get())

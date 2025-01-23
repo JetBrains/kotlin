@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.services.internal.RegisteredBuildServiceProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
@@ -63,10 +64,8 @@ private fun registerIfAbsent(
     } else {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFlowFusStatisticsBuildService::class.java) {
             it.parameters.fusStatisticsRootDirPath.value(customPath).disallowChanges()
-            it.parameters.configurationMetrics.empty()
-            it.parameters.buildId.value(uidService.map { it.buildId }).disallowChanges()
         }
-        FusBuildFinishFlowManager.getInstance(project).subscribeForBuildFinish()
+        FusBuildFinishFlowManager.getInstance(project).subscribeForBuildFinish(fusService, uidService.map { it.buildId })
         fusService
     }
 }

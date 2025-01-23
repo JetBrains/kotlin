@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.flow.*
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.internal.report.BuildScanApi
-import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
+import org.jetbrains.kotlin.gradle.plugin.statistics.FlowActionBuildFusService
+import org.jetbrains.kotlin.gradle.plugin.statistics.MetricContainer
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import javax.inject.Inject
 
@@ -25,11 +28,12 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
             project.objects.newInstance(StatisticsBuildFlowManager::class.java)
     }
 
-    fun subscribeForBuildResult() {
+    fun subscribeForBuildResult(buildFusServiceProvider: Provider<FlowActionBuildFusService>) {
         flowScope.always(
             BuildFinishFlowAction::class.java
         ) { spec ->
             spec.parameters.buildFailed.set(flowProviders.buildWorkResult.map { it.failure.isPresent })
+            spec.parameters.configurationTimeMetrics.addAll(buildFusServiceProvider.get().getConfigurationTimeMetrics())
         }
     }
 
@@ -59,7 +63,7 @@ internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> 
 internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Parameters> {
     interface Parameters : FlowParameters {
         @get:ServiceReference
-        val buildFusServiceProperty: Property<BuildFusService>
+        val buildFusServiceProperty: Property<FlowActionBuildFusService>
 
         @get:ServiceReference
         val buildUidServiceProperty: Property<BuildUidService?>
@@ -67,12 +71,15 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
         @get:Input
         val buildFailed: Property<Boolean>
 
+        @get:Input
+        val configurationTimeMetrics: ListProperty<MetricContainer>
     }
 
     override fun execute(parameters: Parameters) {
         parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
             parameters.buildUidServiceProperty.orNull?.buildId ?: "unknown_id",
+            parameters.configurationTimeMetrics.get()
         )
     }
 }
