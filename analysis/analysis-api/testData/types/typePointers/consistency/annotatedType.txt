@@ -8,7 +8,7 @@ KaUsualClassType:
   classId: kotlin/collections/List
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: List
       symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
@@ -21,7 +21,7 @@ KaUsualClassType:
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
@@ -41,7 +41,7 @@ KaUsualClassType:
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: String
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
@@ -58,7 +58,7 @@ KaUsualClassType:
   classId: kotlin/collections/List
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: List
       symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
@@ -68,7 +68,7 @@ KaUsualClassType:
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
@@ -85,7 +85,7 @@ KaUsualClassType:
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: String
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []

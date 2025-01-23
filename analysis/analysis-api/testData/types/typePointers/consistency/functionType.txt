@@ -18,7 +18,7 @@ KaFunctionType:
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: String
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
@@ -27,7 +27,7 @@ KaFunctionType:
       typeArguments: []
   ]
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: Function1
       symbol: KaNamedClassSymbol(kotlin/Function1)
       typeArguments: [
@@ -37,7 +37,7 @@ KaFunctionType:
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
@@ -50,7 +50,7 @@ KaFunctionType:
           classId: kotlin/Int
           nullability: NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: Int
               symbol: KaNamedClassSymbol(kotlin/Int)
               typeArguments: []
@@ -66,7 +66,7 @@ KaFunctionType:
     classId: kotlin/Int
     nullability: NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: Int
         symbol: KaNamedClassSymbol(kotlin/Int)
         typeArguments: []
@@ -81,7 +81,7 @@ KaFunctionType:
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: String
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
@@ -94,7 +94,7 @@ KaFunctionType:
       classId: kotlin/Int
       nullability: NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: Int
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []

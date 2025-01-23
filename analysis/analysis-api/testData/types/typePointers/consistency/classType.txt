@@ -6,7 +6,7 @@ KaUsualClassType:
   classId: kotlin/collections/List
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: List
       symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
@@ -16,7 +16,7 @@ KaUsualClassType:
           classId: Foo
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: Foo
               symbol: KaNamedClassSymbol(Foo)
               typeArguments: []
@@ -33,7 +33,7 @@ KaUsualClassType:
       classId: Foo
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: Foo
           symbol: KaNamedClassSymbol(Foo)
           typeArguments: []

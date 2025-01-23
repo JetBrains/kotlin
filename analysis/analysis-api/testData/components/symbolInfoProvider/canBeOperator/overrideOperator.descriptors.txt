@@ -29,7 +29,7 @@ FUNCTION:
     classId: B
     nullability: NON_NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: B
         symbol: KaNamedClassSymbol(B)
         typeArguments: []
@@ -64,7 +64,7 @@ FUNCTION:
         classId: A
         nullability: NON_NULLABLE
         qualifiers: [
-          qualifier:
+          KaResolvedClassTypeQualifier:
             name: A
             symbol: KaNamedClassSymbol(A)
             typeArguments: []
@@ -84,7 +84,7 @@ FUNCTION:
     classId: B
     nullability: NON_NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: B
         symbol: KaNamedClassSymbol(B)
         typeArguments: []

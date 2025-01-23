@@ -4,7 +4,7 @@ KaUsualClassType:
   classId: B
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: B
       symbol: KaNamedClassSymbol(<local>/B)
       typeArguments: [
@@ -14,7 +14,7 @@ KaUsualClassType:
           classId: kotlin/Int
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: Int
               symbol: KaNamedClassSymbol(kotlin/Int)
               typeArguments: []
@@ -31,7 +31,7 @@ KaUsualClassType:
       classId: kotlin/Int
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: Int
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []

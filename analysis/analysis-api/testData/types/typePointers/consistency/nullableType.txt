@@ -6,7 +6,7 @@ KaUsualClassType:
   classId: Foo
   nullability: NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: Foo
       symbol: KaNamedClassSymbol(Foo)
       typeArguments: []

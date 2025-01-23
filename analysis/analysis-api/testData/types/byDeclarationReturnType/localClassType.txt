@@ -4,7 +4,7 @@ KaUsualClassType:
   classId: <local>/B
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: B
       symbol: KaNamedClassSymbol(<local>/B)
       typeArguments: []

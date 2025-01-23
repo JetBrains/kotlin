@@ -19,7 +19,7 @@ CONSTRUCTOR:
     classId: Predicate
     nullability: NON_NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: Predicate
         symbol: KaNamedClassSymbol(Predicate)
         typeArguments: [
@@ -144,7 +144,7 @@ CONSTRUCTOR:
               deprecationStatus: null
         ]
         qualifiers: [
-          qualifier:
+          KaResolvedClassTypeQualifier:
             name: Function1
             symbol: KaNamedClassSymbol(kotlin/Function1)
             typeArguments: [
@@ -175,7 +175,7 @@ CONSTRUCTOR:
                 classId: kotlin/Boolean
                 nullability: NON_NULLABLE
                 qualifiers: [
-                  qualifier:
+                  KaResolvedClassTypeQualifier:
                     name: Boolean
                     symbol: KaNamedClassSymbol(kotlin/Boolean)
                     typeArguments: []
@@ -191,7 +191,7 @@ CONSTRUCTOR:
           classId: kotlin/Boolean
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: Boolean
               symbol: KaNamedClassSymbol(kotlin/Boolean)
               typeArguments: []
@@ -227,7 +227,7 @@ CONSTRUCTOR:
             classId: kotlin/Boolean
             nullability: NON_NULLABLE
             qualifiers: [
-              qualifier:
+              KaResolvedClassTypeQualifier:
                 name: Boolean
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
@@ -272,7 +272,7 @@ CLASS:
       classId: kotlin/Any
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: Any
           symbol: KaNamedClassSymbol(kotlin/Any)
           typeArguments: []

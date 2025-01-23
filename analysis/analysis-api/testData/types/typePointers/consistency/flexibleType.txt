@@ -9,7 +9,7 @@ KaFlexibleType:
     classId: kotlin/String
     nullability: NON_NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: String
         symbol: KaNamedClassSymbol(kotlin/String)
         typeArguments: []
@@ -23,7 +23,7 @@ KaFlexibleType:
     classId: kotlin/String
     nullability: NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: String
         symbol: KaNamedClassSymbol(kotlin/String)
         typeArguments: []

@@ -352,13 +352,13 @@ public class DebugSymbolRenderer(
             is KaSymbol -> renderSymbolTag(value, printer, renderSymbolsFully, currentSymbolStack)
             is KaType -> renderType(value, printer, currentSymbolStack)
             is KaTypeProjection -> renderTypeProjection(value, printer, currentSymbolStack)
-            is KaClassTypeQualifier -> renderTypeQualifier(value, printer, currentSymbolStack)
+            is KaClassTypeQualifier -> renderRegularValue(value, printer, currentSymbolStack)
             is KaAnnotationValue -> renderAnnotationValue(value, printer)
             is KaContractEffectDeclaration -> Context(this@renderValue, printer, this@DebugSymbolRenderer)
                 .renderKaContractEffectDeclaration(value, endWithNewLine = false)
             is KaNamedAnnotationValue -> renderNamedConstantValue(value, printer, currentSymbolStack)
             is KaInitializerValue -> renderKaInitializerValue(value, printer)
-            is KaContextReceiver -> renderContextReceiver(value, printer, currentSymbolStack)
+            is KaContextReceiver -> renderRegularValue(value, printer, currentSymbolStack)
             is KaAnnotation -> renderAnnotationApplication(value, printer, currentSymbolStack)
             is KaAnnotationList -> renderAnnotationsList(value, printer, currentSymbolStack)
             is KaModule -> renderModule(value, printer)
@@ -396,33 +396,15 @@ public class DebugSymbolRenderer(
         }
     }
 
-    private fun KaSession.renderTypeQualifier(
-        value: KaClassTypeQualifier,
-        printer: PrettyPrinter,
-        currentSymbolStack: LinkedHashSet<KaSymbol>,
-    ) {
-        with(printer) {
-            appendLine("qualifier:")
-            withIndent {
-                renderByPropertyNames(value, printer, currentSymbolStack)
-            }
-        }
-    }
-
-    private fun KaSession.renderContextReceiver(
-        receiver: KaContextReceiver,
+    private fun KaSession.renderRegularValue(
+        value: Any,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
     ): Unit = with(printer) {
-        append(KaContextReceiver::class.simpleName)
-        append(':')
+        append(getApiKClassOf(value).simpleName)
+        appendLine(':')
         withIndent {
-            appendLine()
-            append("label: ")
-            renderValue(receiver.label, printer, renderSymbolsFully = false, currentSymbolStack)
-            appendLine()
-            append("type: ")
-            renderType(receiver.type, printer, currentSymbolStack)
+            renderByPropertyNames(value, printer, currentSymbolStack)
         }
     }
 
