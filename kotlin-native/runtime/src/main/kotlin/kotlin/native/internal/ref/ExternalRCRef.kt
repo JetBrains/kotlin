@@ -49,6 +49,14 @@ public typealias ExternalRCRef = NativePtr
 public external fun createRetainedExternalRCRef(obj: Any?): ExternalRCRef
 
 /**
+ * Create a new [ExternalRCRef] for Kotlin object [obj] with the initial reference count of 0.
+ */
+@InternalForKotlinNative
+@GCUnsafeCall("Kotlin_native_internal_ref_createUnretainedExternalRCRef")
+@Escapes(0b01) // obj is stored in the created ref.
+public external fun createUnretainedExternalRCRef(obj: Any?): ExternalRCRef
+
+/**
  * Dispose a valid [ExternalRCRef].
  *
  * [ref] becomes invalid to use after this operation.
@@ -62,6 +70,8 @@ public external fun disposeExternalRCRef(ref: ExternalRCRef)
  * Return the underlying object of this [ExternalRCRef].
  *
  * May only be called if the reference count is >0. Otherwise, the behavior is undefined.
+ *
+ * @see dereferenceExternalRCRefOrNull
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_dereferenceExternalRCRef")
@@ -73,8 +83,6 @@ public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any?
  *
  * Can be called concurrently with other retain/release operations.
  * May only be called if the reference count is >0. Otherwise, the behavior is undefined.
- *
- * @see tryRetainExternalRCRef
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_retainExternalRCRef")
@@ -91,14 +99,14 @@ public external fun retainExternalRCRef(ref: ExternalRCRef)
 public external fun releaseExternalRCRef(ref: ExternalRCRef)
 
 /**
- * Try to increment the reference count of this [ExternalRCRef].
+ * Try to get the underlying object of this [ExternalRCRef].
  *
  * Can be called concurrently with other retain/release operations.
- * If the reference count is >0, works just like [retainExternalRCRef].
- * If the reference count is 0, will only increment the reference count if the underlying object is not yet collected by the GC.
- *
- * @return `true` if the increment was successful and `false` if the underlying object is already collected by the GC
+ * If the reference count is >0, works just like [dereferenceExternalRCRef].
+ * If the reference count is 0, will return the underlying object only if it's not yet collected by the GC.
+ * Otherwise, returns `null`.
  */
 @InternalForKotlinNative
-@GCUnsafeCall("Kotlin_native_internal_ref_tryRetainExternalRCRef")
-public external fun tryRetainExternalRCRef(ref: ExternalRCRef): Boolean
+@GCUnsafeCall("Kotlin_native_internal_ref_dereferenceExternalRCRefOrNull")
+@Escapes(0b10) // The return value is stored in a global.
+public external fun dereferenceExternalRCRefOrNull(ref: ExternalRCRef): Any?
