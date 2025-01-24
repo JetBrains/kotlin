@@ -189,8 +189,17 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
         RuntimeAssert(
                 [bestFittingClass isSubclassOfClass:[self class]], "Best-fitting class is %s which is not a subclass of self (%s)",
                 class_getName(bestFittingClass), class_getName([self class]));
+
+        KotlinBase* retiredSelf = self; // old `self`
+
         // Rerun the entire initializer, but with the best-fitting class now.
-        return [[bestFittingClass alloc] initWithExternalRCRef:ref];
+        self = [[bestFittingClass alloc] initWithExternalRCRef:ref]; // new `self`, retained.
+
+        // Fully release old `self` by just decrementing NSObject refcount.
+        [retiredSelf releaseAsAssociatedObject];
+
+        // Return new `self`.
+        return self;
     }
 
     permanent = refHolder.initWithExternalRCRef(reinterpret_cast<void*>(ref));

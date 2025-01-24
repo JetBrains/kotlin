@@ -473,7 +473,11 @@ internal class CInteropCompilation(
                 add(it.absolutePath)
             }
             add("-Xsource-compiler-option")
-            add("-fobjc-arc")
+            if (freeCompilerArgs.objcArc) {
+                add("-fobjc-arc")
+            } else {
+                add("-fno-objc-arc")
+            }
             add("-Xsource-compiler-option")
             add("-DNS_FORMAT_ARGUMENT(A)=")
             add("-compiler-option")

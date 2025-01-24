@@ -522,4 +522,29 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             process.destroyForcibly()
         }
     }
+
+    @Test
+    @TestMetadata("initWithExternalRCRef_leak")
+    fun testInitWithExternalRCRefLeak() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        Assumptions.assumeFalse(targets.areDifferentTargets())
+
+        val srcDir = interopDir.resolve("swift/initWithExternalRCRef_leak")
+
+        val (testCase, compilationResult) = compileDefAndKtToExecutable(
+            testName = "initWithExtgernalRCRef_leak",
+            defFile = srcDir.resolve("cinterop.def"),
+            ktFiles = listOf(srcDir.resolve("main.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                compilerArgs = listOf(
+                    "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+                    "-Xbinary=swiftExport=true",
+                ),
+                cinteropArgs = listOf("-Xcompile-source", srcDir.resolve("cinterop.m").path),
+                objcArc = false
+            ),
+            extras = TestCase.NoTestRunnerExtras(),
+        )
+        runExecutableAndVerify(testCase, TestExecutable.fromCompilationResult(testCase, compilationResult))
+    }
 }

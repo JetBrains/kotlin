@@ -36,7 +36,7 @@ public:
 
     // Dispose back reference.
     void dispose() && noexcept {
-        RuntimeAssert(node_, "Disposing null ObjCBackRef");
+        if (!node_) return;
         // Make sure to move out from node_.
         auto node = std::move(node_);
         // Can be safely called with any thread state.
