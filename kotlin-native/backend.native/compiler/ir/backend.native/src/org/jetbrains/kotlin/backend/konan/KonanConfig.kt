@@ -256,6 +256,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 ?: ObjCEntryPoints.ALL
     }
 
+    /**
+     * Path to store ObjC selector to Kotlin signature mapping
+     */
+    val dumpObjcSelectorToSignatureMapping: String? by lazy {
+        configuration.get(BinaryOptions.dumpObjcSelectorToSignatureMapping)
+    }
+
     val enableSafepointSignposts: Boolean = configuration.get(BinaryOptions.enableSafepointSignposts)?.also {
         if (it && !target.supportsSignposts) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
+import org.jetbrains.kotlin.backend.konan.objcexport.dumpSelectorToSignatureMapping
 import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
@@ -49,5 +50,9 @@ internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<PsiT
         "ObjCExportCodeCodeSpec",
         outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList()) }
 ) { context, input ->
-    input.createCodeSpec(context.symbolTable!!)
+    input.createCodeSpec(context.symbolTable!!).also {
+        context.config.dumpObjcSelectorToSignatureMapping?.let { path ->
+            it.dumpSelectorToSignatureMapping(path)
+        }
+    }
 }
