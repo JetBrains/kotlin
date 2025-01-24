@@ -533,6 +533,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xallow-kotlin-package",
             "-Xexplicit-api=strict",
             "-Xexpect-actual-classes",
+            "-Xcontext-parameters",
             "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
