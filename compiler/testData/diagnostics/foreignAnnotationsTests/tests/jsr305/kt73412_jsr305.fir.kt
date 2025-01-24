@@ -37,7 +37,7 @@ import javax.annotation.meta.TypeQualifierDefault;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Nonnull
-@TypeQualifierDefault({ElementType.METHOD, ElementType.PARAMETER})
+@TypeQualifierDefault({ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE_USE})
 public @interface NonNullApi {
 }
 

@@ -153,7 +153,10 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
         // TODO: since we override the warning status, whether we force it in `extractNullability` is irrelevant.
         //   However, this is probably not what was intended.
         val nullabilityQualifier = extractNullability(typeQualifier) { false } ?: return null
-        return JavaDefaultQualifiers(nullabilityQualifier.copy(isForWarningOnly = jsr305State.isWarning), applicability)
+        return JavaDefaultQualifiers(
+            nullabilityQualifier.copy(isForWarningOnly = jsr305State.isWarning),
+            applicability, definitelyNotNull = false
+        )
     }
 
     fun extractAndMergeDefaultQualifiers(

@@ -57,10 +57,10 @@ public interface Foo<@ann.Nullable T> {
 
 import api.*
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!> : Foo<String?> {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(s: String?) {}
+class FooImpl : Foo<String?> {
+    override fun bar(s: String?) {}
 }
 
-class FooImpl2 : Foo<String?> {
-    override fun bar(s: String) {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl2<!> : Foo<String?> {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(s: String) {}
 }
