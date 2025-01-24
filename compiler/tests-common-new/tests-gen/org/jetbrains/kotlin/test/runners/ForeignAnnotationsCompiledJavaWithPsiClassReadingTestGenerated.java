@@ -244,6 +244,12 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
       }
 
       @Test
+      @TestMetadata("kt73412a_jsr305.kt")
+      public void testKt73412a_jsr305() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/kt73412a_jsr305.kt");
+      }
+
+      @Test
       @TestMetadata("nonNullNever.kt")
       public void testNonNullNever() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nonNullNever.kt");
@@ -842,6 +848,12 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
         @TestMetadata("kt73412_jspecify.kt")
         public void testKt73412_jspecify() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt73412_jspecify.kt");
+        }
+
+        @Test
+        @TestMetadata("kt73412a_jspecify.kt")
+        public void testKt73412a_jspecify() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt73412a_jspecify.kt");
         }
 
         @Test
