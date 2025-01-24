@@ -352,7 +352,7 @@ class ExpressionCodegen(
         val asmType = param.type.asmType
         val expandedType =
             if (param.type.isInlineClassType())
-                context.typeSystem.computeExpandedTypeForInlineClass(param.type) as? IrType ?: param.type
+                context.typeSystem.computeExpandedTypeForInlineClass(param.type, substituteInlineClassArguments = false) as? IrType ?: param.type
             else param.type
         if (!expandedType.isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)

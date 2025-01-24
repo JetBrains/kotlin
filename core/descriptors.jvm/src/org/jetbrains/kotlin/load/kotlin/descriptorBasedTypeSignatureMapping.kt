@@ -117,7 +117,9 @@ fun <T : Any> mapType(
         descriptor is ClassDescriptor -> {
             // NB if inline class is recursive, it's ok to map it as wrapped
             if (descriptor.isInlineClass() && !mode.needInlineClassWrapping) {
-                val expandedType = SimpleClassicTypeSystemContext.computeExpandedTypeForInlineClass(kotlinType) as KotlinType?
+                val expandedType = SimpleClassicTypeSystemContext.computeExpandedTypeForInlineClass(
+                    kotlinType, substituteInlineClassArguments = mode.inSignature
+                ) as KotlinType?
                 if (expandedType != null) {
                     return mapType(
                         expandedType, factory, mode.wrapInlineClassesMode(), typeMappingConfiguration,

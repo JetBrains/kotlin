@@ -345,7 +345,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             return
         }
 
-        val mode = getTypeMappingModeForParameter(typeSystem, declaration, type)
+        val mode = getTypeMappingModeForParameter(typeSystem, declaration, type).inSignature()
         typeMapper.mapType(type, mode, sw, materialized)
     }
 

@@ -22,7 +22,8 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
     val kotlinCollectionsToJavaCollections: Boolean = true,
     private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode,
     private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode,
-    val mapTypeAliases: Boolean = false
+    val mapTypeAliases: Boolean = false,
+    val inSignature: Boolean = false,
 ) {
     companion object {
         /**
@@ -134,13 +135,19 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
     fun wrapInlineClassesMode(): TypeMappingMode =
         TypeMappingMode(
             needPrimitiveBoxing, true, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
-            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
+            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode, mapTypeAliases, inSignature
         )
 
     fun dontWrapInlineClassesMode(): TypeMappingMode =
         TypeMappingMode(
             needPrimitiveBoxing, false, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
-            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
+            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode, mapTypeAliases, inSignature
+        )
+
+    fun inSignature(): TypeMappingMode =
+        TypeMappingMode(
+            needPrimitiveBoxing, needInlineClassWrapping, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
+            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode, mapTypeAliases, inSignature = true
         )
 
     fun mapTypeAliases(
@@ -156,6 +163,7 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
             kotlinCollectionsToJavaCollections,
             genericContravariantArgumentMode,
             genericInvariantArgumentMode,
-            mapTypeAliases = true
+            mapTypeAliases = true,
+            inSignature
         )
 }
