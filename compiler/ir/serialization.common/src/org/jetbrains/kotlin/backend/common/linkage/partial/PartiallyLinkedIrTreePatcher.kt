@@ -1006,23 +1006,47 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
+    /**
+     * [ReturnTargetContext] represents all valid return targets available at certain level of IR tree.
+     *
+     * Each [IrReturn] statement is validated against [validReturnTargets] in the current [ReturnTargetContext]
+     * to make sure no non-local returns are present. See also [IllegalNonLocalReturn].
+     */
     private sealed interface ReturnTargetContext {
         val validReturnTargets: Set<IrReturnTargetSymbol>
 
+        /** Just keeps track of [validReturnTargets]. */
         data class Default(
             override val validReturnTargets: Set<IrReturnTargetSymbol>
         ) : ReturnTargetContext
 
+        /**
+         * We have just entered a function.
+         * The function is a possible [IrReturnTarget] for underlying return statements.
+         * However, returning to this function is not available yet (it will be possible only from the function's body).
+         *
+         * @property function The function being visited.
+         * @property isInlined If this function is actually an inline-able lambda argument of some inline function call.
+         */
         data class InFunction(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val function: IrFunction,
             val isInlined: Boolean
         ) : ReturnTargetContext
 
+        /**
+         * Now we have entered the function's body.
+         * This is the place where the symbol of the function becomes a valid return target.
+         */
         data class InFunctionBody(
             override val validReturnTargets: Set<IrReturnTargetSymbol>
         ) : ReturnTargetContext
 
+        /**
+         * We have entered an IR call of an inline function, and we are going to visit the call's arguments further.
+         * Some of these arguments could be an inline-able function expression, which should be tracked in
+         * [inlinedLambdaArgumentsWithPermittedNonLocalReturns] as a possible return target for underlying return statements.
+         */
         data class InInlinedCall(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val inlinedLambdaArgumentsWithPermittedNonLocalReturns: Set<IrFunctionSymbol>
@@ -1084,7 +1108,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext
                 if (!function.isInline && !function.isInlineArrayConstructor()) return@withContext oldContext
 
-                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.parameters.size + 1)
+                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.parameters.size)
 
                 fun IrExpression?.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns() {
                     // TODO drop this `if` after KT-72441 and KT-72777 are fixed
