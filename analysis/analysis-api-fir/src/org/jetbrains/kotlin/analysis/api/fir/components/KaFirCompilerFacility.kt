@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -24,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiag
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -39,6 +43,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -110,6 +115,7 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -127,18 +133,24 @@ private class FileToCompile(val ktFile: KtFile, val firFile: FirFile)
  *
  * @param isMain Whether a chunk is a main chunk (i.e., a file from [files] is requested to be compiled).
  * @param hasCodeFragments Whether [files] contain at least one code fragment.
+ * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
  * @param files Selected files that are either from the same module, or should be compiled as they are from the same module.
  */
 private class ChunkToCompile(
     val mainFile: KtFile?,
     val hasCodeFragments: Boolean,
-    val files: List<FileToCompile>,
+    val attachPrecompiledBinaries: Boolean,
+    val files: List<FileToCompile>
 ) {
     /**
      * Whether the chunk is a main chunk.
      */
     val isMain: Boolean
         get() = mainFile != null
+}
+
+private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    Registry.`is`("kotlin.analysis.compilerFacility.useStdlibBuildOutput", true)
 }
 
 internal class KaFirCompilerFacility(
@@ -184,7 +196,7 @@ internal class KaFirCompilerFacility(
 
         val jvmIrDeserializer = JvmIrDeserializerImpl()
 
-        val bytecodeCache = HashMap<String, ByteArray>()
+        val registeredCodeProviders = ArrayList<CompiledCodeProvider>()
 
         for ((module, chunk) in chunks) {
             ProgressManager.checkCanceled()
@@ -198,6 +210,22 @@ internal class KaFirCompilerFacility(
                 val errors = computeErrors(diagnostics, allowedErrorFilter)
                 if (errors.isNotEmpty()) {
                     return KaCompilationResult.Failure(errors)
+                }
+            }
+
+            if (chunk.attachPrecompiledBinaries) {
+                val targetModule = generateSequence(module) { (module as? KaDanglingFileModule)?.contextModule }
+                    .firstIsInstanceOrNull<KaSourceModule>()
+
+                if (targetModule != null) {
+                    val outputDirectory = KotlinModuleOutputProvider.getInstance(project).getCompilationOutput(targetModule)
+                    if (outputDirectory != null) {
+                        registeredCodeProviders += KaFirDirectoryBasedCompiledCodeProvider(outputDirectory)
+                    }
+                }
+
+                if (chunk.files.isEmpty()) {
+                    continue
                 }
             }
 
@@ -215,23 +243,27 @@ internal class KaFirCompilerFacility(
                 jvmIrDeserializer,
                 codeFragmentMappings?.takeIf { chunk.hasCodeFragments },
                 generateClassFilter,
-                bytecodeCache
+                KaFirDelegatingCompiledCodeProvider(registeredCodeProviders)
             )
 
             when (result) {
                 is KaCompilationResult.Failure -> return result
                 is KaCompilationResult.Success if chunk.isMain -> return result
                 is KaCompilationResult.Success -> {
-                    for (compiledFile in result.output) {
-                        val className = getInternalClassName(compiledFile.path) ?: continue
+                    val classMap = buildMap {
+                        for (compiledFile in result.output) {
+                            val className = getInternalClassName(compiledFile.path) ?: continue
 
-                        // `GenerationState.inlineCache` uses the path to class files without ".class" as a key.
-                        // For example,
-                        //  - The key for `Foo` class in `com.example.foo` package is `com/example/foo/Foo`.
-                        //  - The key for a companion object of `Foo` in `com.example.foo` package is `com/example/foo/Foo$Companion`.
-                        //  - The key for an inner class `Inner` of `Foo` in `com.example.foo` package is `com/example/foo/Foo$Inner`.
-                        bytecodeCache[className] = compiledFile.content
+                            // `GenerationState.inlineCache` uses the path to class files without ".class" as a key.
+                            // For example,
+                            //  - The key for `Foo` class in `com.example.foo` package is `com/example/foo/Foo`.
+                            //  - The key for a companion object of `Foo` in `com.example.foo` package is `com/example/foo/Foo$Companion`.
+                            //  - The key for an inner class `Inner` of `Foo` in `com.example.foo` package is `com/example/foo/Foo$Inner`.
+                            put(className, compiledFile.content)
+                        }
                     }
+
+                    registeredCodeProviders += KaFirDependencyCompiledCodeProvider(classMap)
                 }
             }
         }
@@ -276,8 +308,14 @@ internal class KaFirCompilerFacility(
      * @param isMain Whether the chunk contains the main file (a file for which compilation was requested).
      * @param isDanglingChild Whether a new dangling module with the [module] as a context module must be created, instead of reusing
      *   [module] where possible.
+     * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
      */
-    private data class ChunkSpec(val module: KaModule, val isMain: Boolean, val isDanglingChild: Boolean)
+    private data class ChunkSpec(
+        val module: KaModule,
+        val isMain: Boolean,
+        val isDanglingChild: Boolean,
+        val attachPrecompiledBinaries: Boolean,
+    )
 
     /**
      * A facility for splitting the list of input files into chunks.
@@ -311,35 +349,54 @@ internal class KaFirCompilerFacility(
                 return
             }
 
-            fun register(spec: ChunkSpec, file: KtFile) {
-                submittedChunks.getOrPut(spec, ::LinkedHashSet).add(file)
-            }
-
             val isMainChunk = module == originalMainModule
+            val attachPrecompiledBinaries = shouldAttachPrecompiledBinaries(file)
+
+            fun register(spec: ChunkSpec, file: KtFile, alwaysAttachFile: Boolean = false) {
+                val chunkSpec = submittedChunks.getOrPut(spec, ::LinkedHashSet)
+
+                // Even if precompiled binaries should be attached instead of source files, still attach dangling files.
+                // Covered scenario: debugging the 'kotlin-stdlib' implementation.
+                if (alwaysAttachFile || !attachPrecompiledBinaries) {
+                    chunkSpec.add(file)
+                }
+            }
 
             when {
                 module is KaDanglingFileModule -> {
                     if (module.isSupported) {
-                        val spec = ChunkSpec(module, isMainChunk, isDanglingChild = false)
-                        register(spec, file)
+                        val spec = ChunkSpec(module, isMainChunk, isDanglingChild = false, attachPrecompiledBinaries)
+                        register(spec, file, alwaysAttachFile = true)
                     } else {
                         val substitutedContextModule = substitute(module.contextModule)
-                        val spec = ChunkSpec(substitutedContextModule, isMainChunk, isDanglingChild = true)
-                        register(spec, file)
+                        val spec = ChunkSpec(substitutedContextModule, isMainChunk, isDanglingChild = true, attachPrecompiledBinaries)
+                        register(spec, file, alwaysAttachFile = true)
                     }
                 }
 
                 module.isSupported && !isMainChunk -> {
-                    val spec = ChunkSpec(module, isMain = false, isDanglingChild = false)
+                    val spec = ChunkSpec(module, isMain = false, isDanglingChild = false, attachPrecompiledBinaries)
                     register(spec, file)
                 }
 
                 else -> {
                     val substitutedModule = substitute(module)
-                    val spec = ChunkSpec(substitutedModule, isMainChunk, isDanglingChild = module != substitutedModule)
+                    val isDanglingChild = module != substitutedModule
+                    val spec = ChunkSpec(substitutedModule, isMainChunk, isDanglingChild, attachPrecompiledBinaries)
                     register(spec, file)
                 }
             }
+        }
+
+        private fun shouldAttachPrecompiledBinaries(file: KtFile): Boolean {
+            if (file is KtCodeFragment) {
+                val contextFile = file.context?.containingFile
+                return if (contextFile is KtFile) shouldAttachPrecompiledBinaries(contextFile) else false
+            }
+
+            // Support for debugging in the Kotlin compiler repository.
+            // There, the 'kotlin-stdlib' comes as a source, and compiling it is non-trivial and inefficient.
+            return USE_STDLIB_BUILD_OUTPUT && file.packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
         }
 
         /**
@@ -386,7 +443,7 @@ internal class KaFirCompilerFacility(
             /**
              * Create a new multi-file dangling file module, containing copies of [files], with the specified [contextModule].
              */
-            fun appendDanglingChunk(isMain: Boolean, contextModule: KaModule, files: List<KtFile>) {
+            fun appendDanglingChunk(spec: ChunkSpec, files: List<KtFile>) {
                 val (codeFragments, ordinaryFiles) = files.partition { it is KtCodeFragment }
                 val newOrdinaryFiles = ordinaryFiles.map { createFileCopy(it, emptyMap()) }
 
@@ -399,7 +456,7 @@ internal class KaFirCompilerFacility(
 
                 val newFiles = newOrdinaryFiles + newCodeFragments
 
-                val mainFile = if (isMain) {
+                val mainFile = if (spec.isMain) {
                     val mainFileIndex = files.indexOf(originalMainFile)
                     check(mainFileIndex >= 0) { "Main file is not submitted" }
                     newFiles[mainFileIndex]
@@ -407,18 +464,22 @@ internal class KaFirCompilerFacility(
                     null
                 }
 
-                val newModule = KaDanglingFileModuleImpl(newFiles, contextModule, KaDanglingFileResolutionMode.PREFER_SELF)
+                val newModule = KaDanglingFileModuleImpl(newFiles, spec.module, KaDanglingFileResolutionMode.PREFER_SELF)
                 newFiles.forEach { it.explicitModule = newModule }
 
-                val chunk = ChunkToCompile(mainFile, codeFragments.isNotEmpty(), createFilesToCompile(newFiles))
-                result[newModule] = chunk
+                result[newModule] = ChunkToCompile(
+                    mainFile = mainFile,
+                    hasCodeFragments = codeFragments.isNotEmpty(),
+                    attachPrecompiledBinaries = spec.attachPrecompiledBinaries,
+                    files = createFilesToCompile(newFiles)
+                )
             }
 
             fun process(entries: List<Map.Entry<ChunkSpec, Set<KtFile>>>) {
                 for ((spec, files) in entries) {
                     if (spec.isDanglingChild) {
                         // Creation of the new dangling file module is explicitly requested.
-                        appendDanglingChunk(spec.isMain, spec.module, files.toList())
+                        appendDanglingChunk(spec, files.toList())
                     } else {
                         val hasCodeFragments = files.any { it is KtCodeFragment }
 
@@ -429,7 +490,12 @@ internal class KaFirCompilerFacility(
                             null
                         }
 
-                        result[spec.module] = ChunkToCompile(mainFile, hasCodeFragments, createFilesToCompile(files))
+                        result[spec.module] = ChunkToCompile(
+                            mainFile = mainFile,
+                            hasCodeFragments = hasCodeFragments,
+                            attachPrecompiledBinaries = spec.attachPrecompiledBinaries,
+                            files = createFilesToCompile(files)
+                        )
                     }
                 }
             }
@@ -494,7 +560,7 @@ internal class KaFirCompilerFacility(
         generateClassFilter: GenerationState.GenerateClassFilter,
         diagnosticReporter: PendingDiagnosticsCollectorWithSuppress,
         jvmGeneratorExtensions: JvmGeneratorExtensions,
-        bytecodeCache: Map<String, ByteArray>,
+        compiledCodeProvider: CompiledCodeProvider,
     ): KaCompilationResult {
         val matchingClassNames = mutableSetOf<String>()
 
@@ -520,7 +586,7 @@ internal class KaFirCompilerFacility(
             classBuilderFactory,
             generateDeclaredClassFilter = generateClassFilter,
             diagnosticReporter = diagnosticReporter,
-            compiledCodeProvider = KaFirCompilerFacilityCompiledCodeProvider(bytecodeCache)
+            compiledCodeProvider = compiledCodeProvider
         )
 
         ProgressManager.checkCanceled()
@@ -591,7 +657,7 @@ internal class KaFirCompilerFacility(
         jvmIrDeserializer: JvmIrDeserializer,
         codeFragmentMappings: CodeFragmentMappings?,
         generateClassFilter: GenerationState.GenerateClassFilter,
-        bytecodeCache: Map<String, ByteArray>
+        compiledCodeProvider: CompiledCodeProvider
     ): KaCompilationResult {
         val session = firResolveSession.sessionProvider.getResolvableSession(module)
         val configuration = baseConfiguration.copy().apply {
@@ -656,7 +722,7 @@ internal class KaFirCompilerFacility(
             generateClassFilter,
             diagnosticReporter,
             baseFir2IrExtensions,
-            bytecodeCache
+            compiledCodeProvider
         )
 
         if (diagnosticReporter.hasErrors) {
@@ -962,9 +1028,21 @@ internal class KaFirCompilerFacility(
     }
 }
 
-private class KaFirCompilerFacilityCompiledCodeProvider(val cache: Map<String, ByteArray>) : CompiledCodeProvider {
+private class KaFirDependencyCompiledCodeProvider(val cache: Map<String, ByteArray>) : CompiledCodeProvider {
     override fun getClassBytes(className: String): ByteArray? {
         return cache[className]
+    }
+}
+
+private class KaFirDelegatingCompiledCodeProvider(private val delegates: List<CompiledCodeProvider>) : CompiledCodeProvider {
+    override fun getClassBytes(className: String): ByteArray? {
+        return delegates.firstNotNullOfOrNull { it.getClassBytes(className) }
+    }
+}
+
+private class KaFirDirectoryBasedCompiledCodeProvider(private val outputDirectory: VirtualFile) : CompiledCodeProvider {
+    override fun getClassBytes(className: String): ByteArray? {
+        return outputDirectory.findFile("$className.class")?.contentsToByteArray(false)
     }
 }
 
