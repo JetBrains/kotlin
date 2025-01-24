@@ -37,14 +37,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * - By the point it's executed, all _private_ inline functions have already been inlined.
  */
 @PhaseDescription("SyntheticAccessorLowering")
-class SyntheticAccessorLowering(private val context: LoweringContext) : FileLoweringPass {
+class SyntheticAccessorLowering(private val context: LoweringContext, isExecutedOnFirstPhase: Boolean = false) : FileLoweringPass {
     /**
      * Whether the visibility of a generated accessor should be narrowed from _public_ to _internal_ if an accessor is only used
      * in _internal_ inline functions and therefore is not a part of public ABI.
      * This "narrowing" is supposed to be used only during the first phase of compilation.
      */
     private val narrowAccessorVisibilities =
-        context.configuration.syntheticAccessorsWithNarrowedVisibility
+        context.configuration.syntheticAccessorsWithNarrowedVisibility || isExecutedOnFirstPhase
 
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 

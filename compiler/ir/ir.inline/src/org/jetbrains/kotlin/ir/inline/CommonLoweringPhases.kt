@@ -77,7 +77,7 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
 )
 
 private val syntheticAccessorGenerationPhase = makeIrModulePhase(
-    lowering = ::SyntheticAccessorLowering,
+    lowering = { SyntheticAccessorLowering(it, isExecutedOnFirstPhase = true) },
     name = "SyntheticAccessorGeneration",
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase),
 )
