@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleVersionMetadata
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedToUpperCamelCase
 import java.io.File
 import java.io.Serializable
 
@@ -33,6 +33,7 @@ internal fun createSwiftExportedModule(
 
 internal fun LazyResolvedConfiguration.swiftExportedModules(
     exportedModules: Set<SwiftExportedModuleVersionMetadata>,
+    project: Project,
 ): List<SwiftExportedModule> {
     return allResolvedDependencies.asSequence().filterNot { dependencyResult ->
         dependencyResult.resolvedVariant.owner.let { id -> id is ModuleComponentIdentifier && id.module == "kotlin-stdlib" }
@@ -54,14 +55,14 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
     }.distinctBy { (_, artifact) ->
         artifact
     }.map { (component, artifact) ->
-        findAndCreateSwiftExportedModule(exportedModules, component, artifact)
+        project.findAndCreateSwiftExportedModule(exportedModules, component, artifact)
     }.toList()
 }
 
 private val File.isCinteropKlib get() = name.contains("cinterop-interop")
 private fun Collection<File>.filterNotCinteropKlibs(): List<File> = filterNot(File::isCinteropKlib)
 
-private fun findAndCreateSwiftExportedModule(
+private fun Project.findAndCreateSwiftExportedModule(
     exportedModules: Set<SwiftExportedModuleVersionMetadata>,
     resolvedComponent: ResolvedComponentResult,
     artifact: File,
@@ -73,7 +74,9 @@ private fun findAndCreateSwiftExportedModule(
     }
 
     return SwiftExportedModuleImp(
-        module.moduleName.orElse(dashSeparatedToUpperCamelCase(module.moduleVersion.name)).get(),
+        module.moduleName.orElse(
+            module.moduleVersion.name.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) }
+        ).get(),
         module.flattenPackage.orNull,
         artifact
     )

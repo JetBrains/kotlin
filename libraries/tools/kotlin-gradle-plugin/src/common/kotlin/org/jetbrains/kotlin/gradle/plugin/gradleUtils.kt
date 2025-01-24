@@ -18,7 +18,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtraPropertiesExtension
 

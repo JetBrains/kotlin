@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.kotlin.dsl.support.uppercaseFirstChar
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -29,7 +31,6 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.utils.exclude
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -482,6 +483,28 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export invalid module name`() {
+        val project = swiftExportProject {
+            moduleName.set("Shared.Module")
+        }
+        project.evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
+    fun `test swift export invalid exported module name`() {
+        val project = swiftExportProject {
+            export("com.arkivanov.decompose:decompose:3.1.0") {
+                moduleName.set("Custom.Decompose")
+            }
+        }
+        project.evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
     fun `test swift export custom compiler options`() {
         val project = swiftExportProject(
             swiftExport = {
@@ -504,6 +527,42 @@ class SwiftExportUnitTests {
 
         val linkTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64") as KotlinNativeLink
         assertEquals(arm64SimLib, linkTask.binary)
+    }
+
+    @Test
+    fun `test swift export invalid project name`() {
+        val invalidName = "invalid!name"
+        val project = swiftExportProject(
+            projectBuilder = {
+                withName(invalidName)
+            }
+        )
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val name = swiftExportTask.mainModuleInput.moduleName.get()
+        assertEquals(invalidName.uppercaseFirstChar(), name)
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
+    fun `test swift export invalid project name but valid module name`() {
+        val validName = "SharedModule"
+        val project = swiftExportProject(
+            projectBuilder = {
+                withName("invalid!name")
+            }
+        ) {
+            moduleName.set(validName)
+        }
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val name = swiftExportTask.mainModuleInput.moduleName.get()
+        assertEquals(validName, name)
+
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
     }
 }
 
@@ -534,11 +593,13 @@ private fun swiftExportProject(
     configuration: String = "DEBUG",
     sdk: String = "iphonesimulator",
     archs: String = "arm64",
+    projectBuilder: ProjectBuilder.() -> Unit = { },
     multiplatform: KotlinMultiplatformExtension.() -> Unit = {
         iosSimulatorArm64()
     },
     swiftExport: SwiftExportExtension.() -> Unit = {},
 ): ProjectInternal = buildProjectWithMPP(
+    projectBuilder = projectBuilder,
     preApplyCode = {
         applyEmbedAndSignEnvironment(
             configuration = configuration,

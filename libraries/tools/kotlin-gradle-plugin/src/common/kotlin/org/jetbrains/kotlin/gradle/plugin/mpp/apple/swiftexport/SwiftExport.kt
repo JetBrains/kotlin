@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportClasspathResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.swiftExportedModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -43,7 +45,7 @@ internal fun Project.registerSwiftExportTask(
 
     val swiftApiModuleName = swiftExportExtension
         .moduleName
-        .orElse(dashSeparatedToUpperCamelCase(project.name))
+        .orElse(provider { project.name.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) } })
 
     val taskNamePrefix = lowerCamelCaseName(
         target.disambiguationClassifier ?: target.name,
@@ -147,7 +149,7 @@ private fun Project.registerSwiftExportRun(
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
             configurationProvider.zip(exportedModules) { configuration, modules ->
-                configuration.swiftExportedModules(modules)
+                configuration.swiftExportedModules(modules, project)
             }
         )
 

@@ -1541,6 +1541,18 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportInvalidModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
+        operator fun invoke(moduleName: String) = build {
+            title("Invalid Swift Module Name")
+                .description {
+                    "The Swift module name '$moduleName' is invalid"
+                }
+                .solution {
+                    "Use only alphanumeric characters and underscores."
+                }
+        }
+    }
+
     object IcFirMisconfigurationLV : ToolingDiagnosticFactory(
         predefinedSeverity = FATAL,
         predefinedGroup = DiagnosticGroups.KGP.Misconfiguration
