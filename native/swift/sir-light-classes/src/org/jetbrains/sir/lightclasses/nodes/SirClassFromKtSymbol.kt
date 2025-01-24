@@ -133,16 +133,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
         set(_) = Unit
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-
-        val innerClassSymbols = ktSymbol.memberScope.declarations.toList().filter {
-            it is KaNamedClassSymbol && it.isInner
-        }.toList()
-
-        val innerSirs = if (innerClassSymbols.isNotEmpty()) {
-            listOf(createSirClassFromKtSymbol(innerClassSymbols.first() as KaNamedClassSymbol, ktModule, this))
-        } else emptyList()
-
-        innerSirs + childDeclarations + syntheticDeclarations()
+        childDeclarations + syntheticDeclarations()
     }
 
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }

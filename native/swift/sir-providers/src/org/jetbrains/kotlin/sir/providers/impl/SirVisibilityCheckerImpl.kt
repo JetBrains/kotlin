@@ -96,10 +96,6 @@ public class SirVisibilityCheckerImpl(
                     .report(this@isConsumableBySirBuilder, "${classKind.name.lowercase()} classifiers are not supported yet.")
                 return@with false
             }
-            if (isInner) {
-                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inner classes are not supported yet.")
-                return@with false
-            }
             if (classKind == KaClassKind.ENUM_CLASS) {
                 return@with true
             }
