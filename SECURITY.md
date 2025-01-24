@@ -9,3 +9,4 @@ All fixes are also applied to the master branch to be included in all upcoming r
 ## Reporting a Vulnerability
 
 Instructions for reporting a vulnerability can be found on the [Security page](https://kotlinlang.org/docs/security.html).
+damian-cell/kotlin
