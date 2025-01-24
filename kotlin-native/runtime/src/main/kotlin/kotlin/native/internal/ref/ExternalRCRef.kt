@@ -33,6 +33,8 @@ import kotlin.native.internal.NativePtr
  * - [tryRetainExternalRCRef] tries to increment the reference count of a valid [ExternalRCRef]. When reference count is >0, acts like [retainExternalRCRef].
  *   When reference count is 0, increments it only if the GC has not yet collected the underlying object.
  *
+ * `ExternalRCRef` is [NativePtr.NULL] iff the underlying object is `null`.
+ *
  * NOTE: this API is very unsafe and is subject to change.
  */
 @InternalForKotlinNative
@@ -44,7 +46,7 @@ public typealias ExternalRCRef = NativePtr
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_createRetainedExternalRCRef")
 @Escapes(0b01) // obj is stored in the created ref.
-public external fun createRetainedExternalRCRef(obj: Any): ExternalRCRef
+public external fun createRetainedExternalRCRef(obj: Any?): ExternalRCRef
 
 /**
  * Dispose a valid [ExternalRCRef].
@@ -64,7 +66,7 @@ public external fun disposeExternalRCRef(ref: ExternalRCRef)
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_dereferenceExternalRCRef")
 @Escapes(0b10) // The return value is stored in a global.
-public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any
+public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any?
 
 /**
  * Increment the reference count of this [ExternalRCRef].

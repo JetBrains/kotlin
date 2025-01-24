@@ -4,6 +4,7 @@
 import kotlin.concurrent.AtomicInt
 import kotlin.native.concurrent.*
 import kotlin.native.identityHashCode
+import kotlin.native.internal.NativePtr
 import kotlin.native.internal.isPermanent
 import kotlin.native.internal.ref.*
 import kotlin.native.runtime.GC
@@ -39,6 +40,15 @@ fun createPermanent() : Ref {
     return Permanent.identityHashCode() to createRetainedExternalRCRef(Permanent)
 }
 
+fun createNull(): Ref {
+    return null.identityHashCode() to createRetainedExternalRCRef(null)
+}
+
+@Test fun nullExternalRCRef() {
+    assertTrue(createRetainedExternalRCRef(null) == NativePtr.NULL)
+    assertNull(dereferenceExternalRCRef(NativePtr.NULL))
+}
+
 inline fun createAndDisposeTest(create: () -> Ref) {
     val ref = create()
     GC.collect()
@@ -63,6 +73,10 @@ inline fun createAndDisposeTest(create: () -> Ref) {
 
 @Test fun createAndDisposePermanent() {
     createAndDisposeTest(::createPermanent)
+}
+
+@Test fun createAndDisposeNull() {
+    createAndDisposeTest(::createNull)
 }
 
 inline fun weakTestSuccess(create: () -> Ref) {
@@ -97,6 +111,10 @@ inline fun weakTestFailure(create: () -> Ref) {
 
 @Test fun weakPermanent() {
     weakTestFailure(::createPermanent)
+}
+
+@Test fun weakNull() {
+    weakTestSuccess(::createNull)
 }
 
 inline fun weakResurrectTest(create: () -> Ref) {
@@ -139,4 +157,8 @@ inline fun weakResurrectTest(create: () -> Ref) {
 
 @Test fun weakResurrectPermanent() {
     weakResurrectTest(::createPermanent)
+}
+
+@Test fun weakResurrectNull() {
+    weakResurrectTest(::createNull)
 }

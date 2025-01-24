@@ -26,7 +26,7 @@ public fun weird_A_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("weird_A_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun weird_A_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr, __error: kotlinx.cinterop.COpaquePointerVar): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val ____error = __error
     try {
         val _result = kotlin.native.internal.initInstance(____kt, weird.A())
@@ -71,7 +71,7 @@ public fun weird_B_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("weird_B_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun weird_B_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, weird.B())
 }
 

@@ -12,7 +12,7 @@ public fun dependency_four_AnotherBar_init_allocate(): kotlin.native.internal.Na
 
 @ExportedBridge("dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, dependency.four.AnotherBar())
 }
 

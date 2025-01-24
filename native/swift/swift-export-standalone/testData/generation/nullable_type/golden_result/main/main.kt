@@ -55,7 +55,7 @@ public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___Bar_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun __root___Bar_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, Bar())
 }
 
@@ -67,7 +67,7 @@ public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UInt_main_Bar_opt___")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UInt_main_Bar_opt___(__kt: kotlin.native.internal.NativePtr, b: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __b = if (b == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(b) as Bar
     kotlin.native.internal.initInstance(____kt, Foo(__b))
 }
