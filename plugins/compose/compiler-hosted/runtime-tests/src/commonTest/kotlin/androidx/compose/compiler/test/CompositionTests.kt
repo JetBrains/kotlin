@@ -270,6 +270,21 @@ class CompositionTests {
             Text("c")
         }
     }
+
+    @Test
+    fun varargsInRestartableComposable() = compositionTest {
+        val state1 = mutableStateOf(Unit, neverEqualPolicy())
+        var counter = 0
+        compose {
+            RestartableVararg(state1) { counter++ }
+        }
+
+        assertEquals(1, counter)
+        state1.value = Unit
+        advance()
+
+        assertEquals(2, counter)
+    }
 }
 
 @Composable
@@ -337,4 +352,12 @@ fun EnumParameterLambda(enum: () -> TestComposeEnum) {
 @Composable
 fun MultipleText(vararg strings: String = emptyArray()) {
     strings.forEach { Text(it) }
+}
+
+@Composable
+fun RestartableVararg(vararg states: State<Unit> = emptyArray(), invoke: () -> Unit) {
+    invoke()
+    for (state in states) {
+        state.value
+    }
 }

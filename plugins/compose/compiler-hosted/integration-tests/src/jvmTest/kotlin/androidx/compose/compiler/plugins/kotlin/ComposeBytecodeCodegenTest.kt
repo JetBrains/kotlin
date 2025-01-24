@@ -942,4 +942,23 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         """,
     )
+
+    @Test
+    fun testVarargRestartGroup() {
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable
+                fun Foo(vararg text: String) {
+                    text.forEach { println(it) }
+                }
+            """,
+            validate = {
+                assertFalse {
+                    it.contains("Arrays.copyOf")
+                }
+            }
+        )
+    }
 }
