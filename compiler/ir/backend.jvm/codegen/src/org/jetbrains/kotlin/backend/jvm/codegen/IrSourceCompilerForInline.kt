@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.jvm.JvmEvaluatorData
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.inline.*
@@ -35,7 +35,8 @@ class IrSourceCompilerForInline(
     override val callElement: IrFunctionAccessExpression,
     private val callee: IrFunction,
     internal val codegen: ExpressionCodegen,
-    private val data: BlockInfo
+    private val data: BlockInfo,
+    private val evaluatorData: JvmEvaluatorData?,
 ) : SourceCompilerForInline {
     override val callElementText: String
         get() = ir2string(callElement)
@@ -49,6 +50,9 @@ class IrSourceCompilerForInline(
                     codegen.signature.asmMethod
                 else
                     codegen.methodSignatureMapper.mapAsmMethod(rootFunction),
+                // In K1, evaluatorData?.evaluatorGeneratedFunction == null, but it's OK as in K1 non-public-api object inlining error
+                // does not appear in the first place, since all is being compiled in the single module
+                evaluatorData?.evaluatorGeneratedFunction == rootFunction,
                 rootFunction.inlineScopeVisibility,
                 rootFunction.fileParent.getIoFile(),
                 codegen.irFunction.fileParent.fileEntry.getLineNumber(callElement.startOffset),

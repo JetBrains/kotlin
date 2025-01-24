@@ -26,6 +26,7 @@ import java.io.File
 class InlineCallSiteInfo(
     val ownerClassName: String,
     val method: Method,
+    val suppressNonPublicApiObjectInliningError: Boolean,
     val inlineScopeVisibility: DescriptorVisibility?,
     val file: File?,
     val lineNumber: Int

@@ -1016,7 +1016,7 @@ internal class KaFirCompilerFacility(
             val irFile = irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
             val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
             val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
-            EvaluatorFragmentInfo(irClass.descriptor, irFunction.descriptor, emptyList())
+            EvaluatorFragmentInfo(irClass.descriptor, irFunction.descriptor, irFunction, emptyList())
         }
 
         return JvmIrCodegenFactory(

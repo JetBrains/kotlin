@@ -1568,7 +1568,7 @@ class ExpressionCodegen(
             }
 
         val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)
-        val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data)
+        val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data, context.evaluatorData)
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),

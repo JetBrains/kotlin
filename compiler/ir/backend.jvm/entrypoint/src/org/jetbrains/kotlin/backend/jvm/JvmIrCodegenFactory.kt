@@ -338,7 +338,7 @@ class JvmIrCodegenFactory(
             backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
         )
         if (evaluatorFragmentInfoForPsi2Ir != null) {
-            context.evaluatorData = JvmEvaluatorData(mutableMapOf())
+            context.evaluatorData = JvmEvaluatorData(mutableMapOf(), evaluatorFragmentInfoForPsi2Ir.methodIR)
         }
         val generationExtensions = IrGenerationExtension.getInstances(state.project)
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }

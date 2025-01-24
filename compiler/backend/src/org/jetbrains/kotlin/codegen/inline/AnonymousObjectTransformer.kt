@@ -122,7 +122,7 @@ class AnonymousObjectTransformer(
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
         val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toMetadataVersion())
-        assert(isSameModule || (header != null && isPublicAbi(header))) {
+        assert(isSameModule || (header != null && isPublicAbi(header)) || inliningContext.callSiteInfo.suppressNonPublicApiObjectInliningError) {
             "Trying to inline an anonymous object which is not part of the public ABI: ${oldObjectType.className}"
         }
 
@@ -348,6 +348,7 @@ class AnonymousObjectTransformer(
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,
                 Method(sourceNode.name, if (isConstructor) transformationInfo.newConstructorDescriptor else sourceNode.desc),
+                inliningContext.callSiteInfo.suppressNonPublicApiObjectInliningError,
                 inliningContext.callSiteInfo.inlineScopeVisibility,
                 inliningContext.callSiteInfo.file,
                 inliningContext.callSiteInfo.lineNumber
