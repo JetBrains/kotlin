@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import java.io.PrintStream
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec {
@@ -141,6 +142,34 @@ internal class ObjCExportCodeSpec(
         val files: List<ObjCClassForKotlinFile>,
         val types: List<ObjCTypeForKotlinType>
 )
+
+internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String) {
+    PrintStream(path).use { out ->
+        out.println("# Classes mapping")
+        for (type in types) {
+            val objcClass = type.binaryName
+            val kotlinClass = type.irClassSymbol.signature
+            out.println("$objcClass,$kotlinClass")
+        }
+        out.println("\n# Instance methods mapping")
+        for (type in types) {
+            val objcClass = type.binaryName
+            for (method in type.methods) {
+                val (objc, signature) = when (method) {
+                    is ObjCClassMethodForKotlinEnumValuesOrEntries -> { method.selector to method.valuesFunctionSymbol.signature }
+                    is ObjCFactoryMethodForKotlinArrayConstructor -> { method.baseMethod.selector to method.baseMethod.symbol.signature }
+                    is ObjCGetterForKotlinEnumEntry -> { method.selector to method.irEnumEntrySymbol.signature }
+                    is ObjCGetterForObjectInstance -> { method.selector to method.classSymbol.signature }
+                    is ObjCInitMethodForKotlinConstructor -> { method.baseMethod.selector to method.baseMethod.symbol.signature }
+                    is ObjCKotlinThrowableAsErrorMethod -> { continue }
+                    is ObjCMethodForKotlinMethod -> { method.baseMethod.selector to method.baseMethod.symbol.signature }
+                }
+                val kotlin = signature
+                out.println("$objcClass.$objc,$kotlin")
+            }
+        }
+    }
+}
 
 internal sealed class ObjCMethodSpec {
     /**

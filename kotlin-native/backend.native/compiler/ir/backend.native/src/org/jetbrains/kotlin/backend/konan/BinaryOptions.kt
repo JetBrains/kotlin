@@ -41,6 +41,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportEntryPointsPath by stringOption()
 
+    val dumpObjcSelectorToSignatureMapping by stringOption()
+
     val gc by option<GC>(shortcut = { it.shortcut })
 
     val gcSchedulerType by option<GCSchedulerType>(hideValue = { it.deprecatedWithReplacement != null })
