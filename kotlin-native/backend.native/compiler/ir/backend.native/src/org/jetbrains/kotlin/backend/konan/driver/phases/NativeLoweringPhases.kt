@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -139,20 +138,15 @@ private val annotationImplementationPhase = createFileLoweringPhase(
 )
 
 
-private val upgradeCallableReferencesFileWisePhase = createFileLoweringPhase(
+private val upgradeCallableReferencesPhase = createFileLoweringPhase(
         ::UpgradeCallableReferences,
-        name = "UpgradeCallableReferencesFileWisse",
-)
-
-private val upgradeCallableReferencesModuleWisePhase = makeIrModulePhase(
-        lowering = ::UpgradeCallableReferences,
-        name = "UpgradeCallableReferencesModuleWise"
+        name = "UpgradeCallableReferences",
 )
 
 private val arrayConstructorPhase = createFileLoweringPhase(
         ::ArrayConstructorLowering,
         name = "ArrayConstructor",
-        prerequisite = setOf(upgradeCallableReferencesFileWisePhase)
+        prerequisite = setOf(upgradeCallableReferencesPhase)
 )
 
 private val lateinitPhase = createFileLoweringPhase(
@@ -523,20 +517,15 @@ private val objectClassesPhase = createFileLoweringPhase(
         name = "ObjectClasses",
 )
 
-private val assertionWrapperFileWisePhase = createFileLoweringPhase(
+private val assertionWrapperPhase = createFileLoweringPhase(
         lowering = ::NativeAssertionWrapperLowering,
-        name = "AssertionWrapperLoweringFileWise",
-)
-
-private val assertionWrapperModuleWisePhase = makeIrModulePhase(
-        lowering = ::NativeAssertionWrapperLowering,
-        name = "AssertionWrapperLoweringModuleWise",
+        name = "AssertionWrapperLowering",
 )
 
 private val assertionRemoverPhase = createFileLoweringPhase(
         lowering = ::NativeAssertionRemoverLowering,
         name = "AssertionRemoverLowering",
-        prerequisite = setOf(assertionWrapperFileWisePhase),
+        prerequisite = setOf(assertionWrapperPhase),
 )
 
 internal val constEvaluationPhase = createFileLoweringPhase(
@@ -548,12 +537,9 @@ internal val constEvaluationPhase = createFileLoweringPhase(
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
-internal val nativeLoweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> =
-        listOf(upgradeCallableReferencesModuleWisePhase, assertionWrapperModuleWisePhase) + loweringsOfTheFirstPhase
-
 internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
-    upgradeCallableReferencesFileWisePhase,
-    assertionWrapperFileWisePhase,
+    upgradeCallableReferencesPhase,
+    assertionWrapperPhase,
     lateinitPhase,
     sharedVariablesPhase,
     extractLocalClassesFromInlineBodies,
