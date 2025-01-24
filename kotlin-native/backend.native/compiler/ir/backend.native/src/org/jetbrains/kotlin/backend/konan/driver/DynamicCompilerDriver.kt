@@ -63,11 +63,11 @@ internal class DynamicCompilerDriver(private val performanceManager: CommonCompi
         val (objCExportedInterface, psiToIrOutput, objCCodeSpec) = performanceManager.trackIRTranslation {
             val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
-            if (config.omitFrameworkBinary) {
-                return
-            }
             val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+            }
+            if (config.omitFrameworkBinary) {
+                return
             }
             require(psiToIrOutput is PsiToIrOutput.ForBackend)
             Triple(objCExportedInterface, psiToIrOutput, objCCodeSpec)
