@@ -52,6 +52,7 @@ public:
     ~ExternalRCRefImpl();
 
     // Create new reference for `obj` with initial reference counter `rc`.
+    // May only be called in the runnable state.
     [[nodiscard("must be manually disposed")]] static ExternalRCRefImpl& create(KRef obj, Rc rc) noexcept;
 
     // Dispose `this`. It's unsafe to use `this` after this call.
@@ -59,11 +60,18 @@ public:
 
     // Get the underlying Kotlin object.
     // The result is safe to use only when `rc_ > 0`
+    // May only be called in the runnable state.
     [[nodiscard("expensive pure function")]] KRef ref() const noexcept;
+
+    // Get the type of the underlying Kotlin object.
+    // Can only be called when `rc_ > 0`, or when `rc_ = 0`, but it is known that the underlying
+    // Kotiln object is kept in the roots in some other way (e.g. on the stack)
+    [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept;
 
     // Try to get the underlying Kotlin object.
     // If the object is not yet collected by the GC, return that object.
     // Otherwise, returns `nullptr`.
+    // May only be called in the runnable state.
     OBJ_GETTER0(tryRef) noexcept;
 
     // Increment `rc_`. Can only be called when `rc_ > 0`, or
@@ -148,11 +156,22 @@ inline void disposeExternalRCRef(RawExternalRCRef* ref) noexcept {
 // Return object that `RawExternalRCRef*` points to.
 // The result is only safe to use when the reference count is >0 or if the object is
 // known to be in the roots in some other way (e.g. on stack).
-// Can be called in any state.
+// May only be called in the runnable state.
 inline KRef dereferenceExternalRCRef(const RawExternalRCRef* ref) noexcept {
+    AssertThreadState(ThreadState::kRunnable);
     if (!ref) return nullptr;
     if (auto obj = externalRCRefAsPermanentObject(ref)) return obj;
     return ExternalRCRefImpl::fromRaw(ref)->ref();
+}
+
+// Return type of the object that `RawExternalRCRef*` points to.
+// Safe to call only when the reference count is >0 or if the object is
+// known to be in the roots in some other way (e.g. on stack).
+// Can be called in any state.
+inline const TypeInfo* typeOfExternalRCRef(const RawExternalRCRef* ref) noexcept {
+    if (!ref) return nullptr;
+    if (auto obj = externalRCRefAsPermanentObject(ref)) return obj->type_info();
+    return ExternalRCRefImpl::fromRaw(ref)->typeInfo();
 }
 
 // Increment the reference count.
@@ -253,6 +272,11 @@ public:
 
     KRef operator*() const noexcept { return ref(); }
     KRef* operator->() const noexcept { return &*this; }
+
+    // Return the underlying object.
+    // May only be called when reference count is >0, or there is a guarantee
+    // that the object is in roots in some other way (e.g. on stack)
+    const TypeInfo* typeInfo() const noexcept { return typeOfExternalRCRef(get()); }
 
     // Safely return the underlying object.
     // If the object is not collected by the GC, return it.

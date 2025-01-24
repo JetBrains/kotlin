@@ -5,6 +5,7 @@
 
 #include "ExternalRCRef.hpp"
 
+#include <atomic>
 #include <optional>
 
 #include "CompilerConstants.hpp"
@@ -116,6 +117,16 @@ KRef mm::ExternalRCRefImpl::ref() const noexcept {
         RuntimeAssert(rc >= 0, "Dereferencing ExternalRCRefImpl@%p with rc %d", this, rc);
     }
     return objAtomic().load(std::memory_order_relaxed);
+}
+
+const TypeInfo* mm::ExternalRCRefImpl::typeInfo() const noexcept {
+    if (compiler::runtimeAssertsEnabled()) {
+        auto rc = rc_.load(std::memory_order_relaxed);
+        RuntimeAssert(rc >= 0, "Getting TypeInfo from ExternalRCRefImpl@%p with rc %d", this, rc);
+    }
+    auto* obj = objAtomic().load(std::memory_order_relaxed);
+    RuntimeAssert(obj, "Getting TypeInfo from ExternalRCRefImpl@%p that already has nulled-out object", this);
+    return obj->type_info();
 }
 
 OBJ_GETTER0(mm::ExternalRCRefImpl::tryRef) noexcept {

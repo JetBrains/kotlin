@@ -178,7 +178,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
     auto externalRCRef = reinterpret_cast<kotlin::mm::RawExternalRCRef*>(ref);
     Class bestFittingClass =
-            kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::dereferenceExternalRCRef(externalRCRef)->type_info());
+            kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::typeOfExternalRCRef(externalRCRef));
     if ([self class] != bestFittingClass) {
         if ([[self class] isSubclassOfClass:bestFittingClass]) {
             konan::consoleErrorf(
