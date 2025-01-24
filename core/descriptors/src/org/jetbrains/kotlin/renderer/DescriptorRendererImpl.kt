@@ -367,6 +367,8 @@ internal class DescriptorRendererImpl(
             }
         }
 
+        renderModifier(this, isSuspend, "suspend")
+
         if (contextReceiversTypes.isNotEmpty()) {
             append("context(")
             val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
@@ -377,8 +379,6 @@ internal class DescriptorRendererImpl(
             renderNormalizedType(contextReceiversTypes.last())
             append(") ")
         }
-
-        renderModifier(this, isSuspend, "suspend")
 
         if (receiverType != null) {
             val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable ||
