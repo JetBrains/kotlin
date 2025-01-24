@@ -402,52 +402,37 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
 
-        val realArgumentsNumber = declaration.parameters.count { it.canHaveDefaultValue() }
-        val maskValues = IntArray((realArgumentsNumber + 31) / 32)
+        val defaultableParametersSize = declaration.parameters.count { it.canHaveDefaultValue() }
+        val maskValues = IntArray((defaultableParametersSize + 31) / 32)
 
         assert(stubFunction.parameters.size - declaration.parameters.size - maskValues.size in listOf(0, 1)) {
-            "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
+            "argument count mismatch: expected $defaultableParametersSize arguments + ${maskValues.size} masks + optional handler/marker, " +
                     "got ${stubFunction.parameters.size} total in ${stubFunction.render()}"
         }
 
-        var sourceParameterIndex = -1
+        var defaultableParameterIndex = -1
         return buildMap {
-            val stubFunctionReceiverParameters =
-                stubFunction.parameters.filter { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
-            val stubFunctionValueParameters =
-                stubFunction.parameters - stubFunctionReceiverParameters
-            val valueParametersPrefix: List<IrValueParameter> = if (isStatic(declaration)) {
-                stubFunctionReceiverParameters
-            } else {
-                stubFunctionReceiverParameters.forEach {
-                    put(
-                        it,
-                        expression.arguments.zip(expression.symbol.owner.parameters).single { (_, param) -> param.kind == it.kind }.first
-                    )
-                }
-                listOf()
-            }
-            for (parameter in (valueParametersPrefix + stubFunctionValueParameters)) {
-                if (parameter.canHaveDefaultValue() && parameter !in stubFunctionReceiverParameters) {
-                    ++sourceParameterIndex
+            for (parameter in stubFunction.parameters) {
+                if (parameter.canHaveDefaultValue()) {
+                    ++defaultableParameterIndex
                 }
                 val newArgument = when {
-                    sourceParameterIndex >= realArgumentsNumber + maskValues.size -> IrConstImpl.constNull(
+                    defaultableParameterIndex >= defaultableParametersSize + maskValues.size -> IrConstImpl.constNull(
                         startOffset,
                         endOffset,
                         parameter.type
                     )
-                    sourceParameterIndex >= realArgumentsNumber -> IrConstImpl.int(
+                    defaultableParameterIndex >= defaultableParametersSize -> IrConstImpl.int(
                         startOffset,
                         endOffset,
                         parameter.type,
-                        maskValues[sourceParameterIndex - realArgumentsNumber]
+                        maskValues[defaultableParameterIndex - defaultableParametersSize]
                     )
                     else -> {
                         val valueArgument = expression.arguments[parameter.indexInParameters]
                         if (valueArgument == null) {
-                            maskValues[sourceParameterIndex / 32] =
-                                maskValues[sourceParameterIndex / 32] or (1 shl (sourceParameterIndex % 32))
+                            maskValues[defaultableParameterIndex / 32] =
+                                maskValues[defaultableParameterIndex / 32] or (1 shl (defaultableParameterIndex % 32))
                         }
                         valueArgument ?: nullConst(startOffset, endOffset, parameter)?.let {
                             IrCompositeImpl(
