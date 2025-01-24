@@ -11,13 +11,13 @@ internal interface Inter {
 
 class Wrapper<T>(val it: T)
 
-fun <T: Inter?> public(a: T & Any) = Wrapper(a)
+fun <T: <!EXPOSED_TYPE_PARAMETER_BOUND!>Inter?<!>> public(a: T & Any) = Wrapper(a)
 
-@Suppress("EXPOSED_FUNCTION_RETURN_TYPE")
+@Suppress(<!ERROR_SUPPRESSION!>"EXPOSED_FUNCTION_RETURN_TYPE"<!>)
 fun other() = public(object : Inter {})
 
 // MODULE: b(a)
 
 fun test() {
-    other().it.foo() // ok in K1, invisible reference in K2
+    other().it.<!INVISIBLE_REFERENCE!>foo<!>() // ok in K1, invisible reference in K2
 }

@@ -1990,6 +1990,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
+    @TestMetadata("typeExposureAsAnInternalBound.kt")
+    public void testTypeExposureAsAnInternalBound() {
+      runTest("compiler/testData/diagnostics/tests/typeExposureAsAnInternalBound.kt");
+    }
+
+    @Test
     @TestMetadata("TypeInference.kt")
     public void testTypeInference() {
       runTest("compiler/testData/diagnostics/tests/TypeInference.kt");
