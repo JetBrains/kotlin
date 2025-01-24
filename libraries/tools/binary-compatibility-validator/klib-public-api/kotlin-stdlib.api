@@ -12771,7 +12771,13 @@ final fun kotlin.native.concurrent/waitWorkerTermination(kotlin.native.concurren
 final fun kotlin.native.internal.ref/createRetainedExternalRCRef(kotlin/Any?): kotlin.native.internal/NativePtr // kotlin.native.internal.ref/createRetainedExternalRCRef|createRetainedExternalRCRef(kotlin.Any?){}[0]
 
 // Targets: [native]
+final fun kotlin.native.internal.ref/createUnretainedExternalRCRef(kotlin/Any?): kotlin.native.internal/NativePtr // kotlin.native.internal.ref/createUnretainedExternalRCRef|createUnretainedExternalRCRef(kotlin.Any?){}[0]
+
+// Targets: [native]
 final fun kotlin.native.internal.ref/dereferenceExternalRCRef(kotlin.native.internal/NativePtr): kotlin/Any? // kotlin.native.internal.ref/dereferenceExternalRCRef|dereferenceExternalRCRef(kotlin.native.internal.NativePtr){}[0]
+
+// Targets: [native]
+final fun kotlin.native.internal.ref/dereferenceExternalRCRefOrNull(kotlin.native.internal/NativePtr): kotlin/Any? // kotlin.native.internal.ref/dereferenceExternalRCRefOrNull|dereferenceExternalRCRefOrNull(kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
 final fun kotlin.native.internal.ref/disposeExternalRCRef(kotlin.native.internal/NativePtr) // kotlin.native.internal.ref/disposeExternalRCRef|disposeExternalRCRef(kotlin.native.internal.NativePtr){}[0]
@@ -12781,9 +12787,6 @@ final fun kotlin.native.internal.ref/releaseExternalRCRef(kotlin.native.internal
 
 // Targets: [native]
 final fun kotlin.native.internal.ref/retainExternalRCRef(kotlin.native.internal/NativePtr) // kotlin.native.internal.ref/retainExternalRCRef|retainExternalRCRef(kotlin.native.internal.NativePtr){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal.ref/tryRetainExternalRCRef(kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal.ref/tryRetainExternalRCRef|tryRetainExternalRCRef(kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
 final fun kotlin.native.internal.test/main(kotlin/Array<kotlin/String>) // kotlin.native.internal.test/main|main(kotlin.Array<kotlin.String>){}[0]
