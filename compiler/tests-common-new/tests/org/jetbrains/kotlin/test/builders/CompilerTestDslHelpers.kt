@@ -60,20 +60,8 @@ fun TestConfigurationBuilder.classicFrontendStep() {
     facadeStep(::ClassicFrontendFacade)
 }
 
-fun TestConfigurationBuilder.firFrontendStep() {
-    facadeStep(::FirFrontendFacade)
-}
-
 fun TestConfigurationBuilder.psi2IrStep() {
     facadeStep(::ClassicFrontend2IrConverter)
-}
-
-fun TestConfigurationBuilder.fir2IrStep() {
-    facadeStep(::Fir2IrResultsConverter)
-}
-
-fun TestConfigurationBuilder.jvmIrBackendStep() {
-    facadeStep(::JvmIrBackendFacade)
 }
 
 // --------------------- default handlers steps ---------------------
