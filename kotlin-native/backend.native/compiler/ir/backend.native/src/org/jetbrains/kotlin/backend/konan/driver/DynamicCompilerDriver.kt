@@ -69,6 +69,9 @@ internal class DynamicCompilerDriver(private val performanceManager: CommonCompi
             val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
+            if (config.dumpObjcSelectorToSignatureMapping != null) {
+                return
+            }
             require(psiToIrOutput is PsiToIrOutput.ForBackend)
             Triple(objCExportedInterface, psiToIrOutput, objCCodeSpec)
         }
