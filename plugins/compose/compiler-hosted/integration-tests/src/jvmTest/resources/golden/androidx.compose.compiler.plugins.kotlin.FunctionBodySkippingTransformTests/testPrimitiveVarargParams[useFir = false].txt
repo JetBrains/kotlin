@@ -44,6 +44,6 @@ fun B(values: IntArray, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    B(*values, %composer, updateChangedFlags(%changed or 0b0001))
+    B(values, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }

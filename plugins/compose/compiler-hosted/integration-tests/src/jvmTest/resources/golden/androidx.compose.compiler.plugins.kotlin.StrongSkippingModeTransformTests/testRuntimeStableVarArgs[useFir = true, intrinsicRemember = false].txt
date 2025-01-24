@@ -53,7 +53,7 @@ class Holder<T>  {
     }
     val tmp0_rcvr = <this>
     %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-      tmp0_rcvr.Test(*x, %composer, updateChangedFlags(%changed or 0b0001))
+      tmp0_rcvr.Test(x, %composer, updateChangedFlags(%changed or 0b0001))
     }
   }
   static val %stable: Int = 0

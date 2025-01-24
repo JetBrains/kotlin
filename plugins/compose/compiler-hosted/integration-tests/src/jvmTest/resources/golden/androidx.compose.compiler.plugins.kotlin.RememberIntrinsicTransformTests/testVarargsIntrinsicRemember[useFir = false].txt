@@ -62,6 +62,6 @@ fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(*strings, %composer, updateChangedFlags(%changed or 0b0001))
+    Test(strings, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
