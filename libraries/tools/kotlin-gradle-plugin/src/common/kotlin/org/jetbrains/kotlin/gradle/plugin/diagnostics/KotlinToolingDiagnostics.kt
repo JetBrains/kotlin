@@ -1483,6 +1483,18 @@ object KotlinToolingDiagnostics {
                 }
         }
     }
+
+    object SwiftExportInvalidModuleName : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(moduleName: String) = build {
+            title("Invalid Swift Module Name")
+                .description {
+                    "The Swift module name '$moduleName' is invalid"
+                }
+                .solution {
+                    "Use only alphanumeric characters and underscores."
+                }
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
