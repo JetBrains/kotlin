@@ -86,7 +86,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gc: GC get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
-    private val defaultDisableMmap get() = target.family == Family.MINGW
+    private val defaultDisableMmap get() = target.family == Family.MINGW || !pagedAllocator
     val disableMmap: Boolean by lazy {
         when (configuration.get(BinaryOptions.disableMmap)) {
             null -> defaultDisableMmap
@@ -258,6 +258,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val genericSafeCasts: Boolean by lazy {
         configuration.get(BinaryOptions.genericSafeCasts)
                 ?: false // For now disabled by default due to performance penalty.
+    }
+
+    internal val defaultPagedAllocator: Boolean get() = true
+
+    val pagedAllocator: Boolean by lazy {
+        configuration.get(BinaryOptions.pagedAllocator) ?: true
     }
 
     internal val bridgesPolicy: BridgesPolicy by lazy {
@@ -550,6 +556,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-gc_mark_single_threaded${if (gcMarkSingleThreaded) "TRUE" else "FALSE"}")
         if (fixedBlockPageSize != defaultFixedBlockPageSize)
             append("-fixed_block_page_size$fixedBlockPageSize")
+        if (pagedAllocator != defaultPagedAllocator)
+            append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
     }
 
     private val userCacheFlavorString = buildString {

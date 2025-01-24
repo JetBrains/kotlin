@@ -14,6 +14,7 @@
 #include "AllocationSize.hpp"
 #include "CustomFinalizerProcessor.hpp"
 #include "FixedBlockPage.hpp"
+#include "SingleObjectPage.hpp"
 #include "GCStatistics.hpp"
 
 namespace kotlin::alloc::test_support {
@@ -86,5 +87,6 @@ constexpr auto kExtraObjCellSize = AllocationSize::bytesExactly(sizeof(kotlin::a
 
 ExtraObjectCell* initExtraObjectCell(uint8_t* ptr);
 ExtraObjectCell* allocExtraObjectCell(kotlin::alloc::FixedBlockPage* page);
+ExtraObjectCell* allocExtraObjectCell(kotlin::alloc::SingleObjectPage* page);
 
 }

@@ -17,7 +17,7 @@ namespace kotlin::alloc {
 
 SingleObjectPage* SingleObjectPage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("SingleObjectPage::Create(%" PRIu64 ")", cellCount);
-    RuntimeAssert(cellCount > NextFitPage::maxBlockSize(), "blockSize too small for SingleObjectPage");
+    RuntimeAssert(!compiler::pagedAllocator() || cellCount > NextFitPage::maxBlockSize(), "blockSize too small for SingleObjectPage");
     auto objectSize = AllocationSize::cells(cellCount);
     return new (SafeAlloc(pageSize(objectSize).inBytes())) SingleObjectPage(objectSize);
 }

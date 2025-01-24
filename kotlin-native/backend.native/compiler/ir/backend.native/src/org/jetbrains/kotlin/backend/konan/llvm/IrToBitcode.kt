@@ -2874,6 +2874,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
     setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
     setRuntimeConstGlobal("Kotlin_fixedBlockPageSize", llvm.constInt32(config.fixedBlockPageSize.toInt()))
+    setRuntimeConstGlobal("Kotlin_pagedAllocator", llvm.constInt32(if (config.pagedAllocator) 1 else 0))
 
     return llvmModule
 }

@@ -98,6 +98,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val enableDebugTransparentStepping by booleanOption()
 
     val debugCompilationDir by stringOption()
+
+    val pagedAllocator by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

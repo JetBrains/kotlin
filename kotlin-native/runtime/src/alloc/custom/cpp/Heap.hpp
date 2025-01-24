@@ -34,8 +34,9 @@ public:
 
     FixedBlockPage* GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     NextFitPage* GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
-    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
-    FixedBlockPage* GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
+    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount) noexcept;
+    FixedBlockPage* GetFixedBlockExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
+    SingleObjectPage* GetSingleExtraObjectPage() noexcept;
 
     void AddToFinalizerQueue(FinalizerQueue queue) noexcept;
     FinalizerQueue ExtractFinalizerQueue() noexcept;
@@ -69,7 +70,12 @@ public:
 
     template <typename T>
     void TraverseAllocatedExtraObjects(T process) noexcept(noexcept(process(std::declval<kotlin::mm::ExtraObjectData*>()))) {
-        extraObjectPages_.TraversePages([process](auto *page) {
+        fixedBlockExtraObjectPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedBlocks([process](uint8_t* block) {
+                process(reinterpret_cast<ExtraObjectCell*>(block)->Data());
+            });
+        });
+        singleExtraObjectPages_.TraversePages([process](auto *page) {
             page->TraverseAllocatedBlocks([process](uint8_t* block) {
                 process(reinterpret_cast<ExtraObjectCell*>(block)->Data());
             });
@@ -80,7 +86,8 @@ private:
     PageStore<FixedBlockPage, ObjectSweepTraits> fixedBlockPages_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
     PageStore<NextFitPage, ObjectSweepTraits> nextFitPages_;
     PageStore<SingleObjectPage, ObjectSweepTraits> singleObjectPages_;
-    PageStore<FixedBlockPage, ExtraDataSweepTraits> extraObjectPages_;
+    PageStore<FixedBlockPage, ExtraDataSweepTraits> fixedBlockExtraObjectPages_;
+    PageStore<SingleObjectPage, ExtraDataSweepTraits> singleExtraObjectPages_;
 
     FinalizerQueue pendingFinalizerQueue_;
     std::mutex pendingFinalizerQueueMutex_;

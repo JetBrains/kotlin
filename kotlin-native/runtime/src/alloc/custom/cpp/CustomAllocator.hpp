@@ -45,7 +45,7 @@ private:
     uint8_t* AllocateInSingleObjectPage(uint64_t cellCount) noexcept;
     uint8_t* AllocateInNextFitPage(uint32_t cellCount) noexcept;
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
-    ExtraObjectCell* AllocateExtraObjectData() noexcept;
+    uint8_t* AllocateExtraObjectData() noexcept;
 
     Heap& heap_;
     NextFitPage* nextFitPage_;

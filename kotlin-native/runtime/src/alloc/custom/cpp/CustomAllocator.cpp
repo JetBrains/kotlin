@@ -59,8 +59,9 @@ ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t cou
 }
 
 mm::ExtraObjectData* CustomAllocator::CreateExtraObjectDataForObject(ObjHeader* baseObject, const TypeInfo* type) noexcept {
-    auto* extraObjectMemory = AllocateExtraObjectData();
-    return new (extraObjectMemory->data_) mm::ExtraObjectData(baseObject, type);
+    CustomAllocDebug("CustomAllocator@%p::CreateExtraObjectDataForObject(%p)", this ,baseObject);
+    auto* extraObjectCell = reinterpret_cast<ExtraObjectCell*>(AllocateExtraObjectData());
+    return new (extraObjectCell->data_) mm::ExtraObjectData(baseObject, type);
 }
 
 FinalizerQueue CustomAllocator::ExtractFinalizerQueue() noexcept {
@@ -83,18 +84,21 @@ uint8_t* CustomAllocator::Allocate(AllocationSize size) noexcept {
     RuntimeAssert(size > AllocationSize::cells(0), "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size.inBytes());
     uint64_t cellCount = size.inCells();
+    if (!compiler::pagedAllocator()) {
+        return AllocateInSingleObjectPage(cellCount);
+    }
     if (cellCount <= FixedBlockPage::MAX_BLOCK_SIZE) {
         return AllocateInFixedBlockPage(cellCount);
-    } else if (cellCount > NextFitPage::maxBlockSize()) {
-        return AllocateInSingleObjectPage(cellCount);
-    } else {
-        return AllocateInNextFitPage(cellCount);
     }
+    if (cellCount > NextFitPage::maxBlockSize()) {
+        return AllocateInSingleObjectPage(cellCount);
+    }
+    return AllocateInNextFitPage(cellCount);
 }
 
 uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
-    uint8_t* block = heap_.GetSingleObjectPage(cellCount, finalizerQueue_)->Allocate();
+    uint8_t* block = heap_.GetSingleObjectPage(cellCount)->Allocate();
     return block;
 }
 
@@ -130,17 +134,22 @@ uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept 
     return nullptr;
 }
 
-ExtraObjectCell* CustomAllocator::AllocateExtraObjectData() noexcept {
+uint8_t* CustomAllocator::AllocateExtraObjectData() noexcept {
     CustomAllocDebug("CustomAllocator::AllocateExtraObjectData()");
+
+    if (!compiler::pagedAllocator()) {
+        return heap_.GetSingleExtraObjectPage()->Allocate();
+    }
+
     auto* page = extraObjectPage_;
     if (page) {
-        ExtraObjectCell* block = reinterpret_cast<ExtraObjectCell*>(page->TryAllocate());
+        uint8_t* block = page->TryAllocate();
         if (block) return block;
     }
 
     CustomAllocDebug("Failed to allocate in current ExtraObjectPage");
-    while ((page = heap_.GetExtraObjectPage(finalizerQueue_))) {
-        ExtraObjectCell* block = reinterpret_cast<ExtraObjectCell*>(page->TryAllocate());
+    while ((page = heap_.GetFixedBlockExtraObjectPage(finalizerQueue_))) {
+        uint8_t* block = page->TryAllocate();
         if (block) {
             extraObjectPage_ = page;
             return block;

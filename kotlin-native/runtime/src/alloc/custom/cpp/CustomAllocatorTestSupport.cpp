@@ -39,3 +39,11 @@ kotlin::alloc::ExtraObjectCell* kotlin::alloc::test_support::allocExtraObjectCel
     }
     return nullptr;
 }
+
+kotlin::alloc::ExtraObjectCell* kotlin::alloc::test_support::allocExtraObjectCell(kotlin::alloc::SingleObjectPage* page) {
+    uint8_t* ptr = page->Allocate();
+    if (ptr) {
+        return initExtraObjectCell(ptr);
+    }
+    return nullptr;
+}

@@ -43,6 +43,8 @@ TEST_F(CustomAllocatorTest, SmallAllocNonNull) {
 }
 
 TEST_F(CustomAllocatorTest, SmallAllocSameFixedBlockPage) {
+    if (!kotlin::compiler::pagedAllocator()) GTEST_SKIP() << "Skipping for non-paged allocator";
+
     const int N = FixedBlockPage::cellCount() / FixedBlockPage::MAX_BLOCK_SIZE;
     for (int blocks = MIN_BLOCK_SIZE; blocks < FixedBlockPage::MAX_BLOCK_SIZE; ++blocks) {
         Heap heap;
@@ -85,6 +87,8 @@ TEST_F(CustomAllocatorTest, NextFitPageThreshold) {
 }
 
 TEST_F(CustomAllocatorTest, TwoAllocatorsDifferentPages) {
+    if (!kotlin::compiler::pagedAllocator()) GTEST_SKIP() << "Skipping for non-paged allocator";
+
     for (int blocks = MIN_BLOCK_SIZE; blocks < 2000; ++blocks) {
         Heap heap;
         CustomAllocator ca1(heap);
