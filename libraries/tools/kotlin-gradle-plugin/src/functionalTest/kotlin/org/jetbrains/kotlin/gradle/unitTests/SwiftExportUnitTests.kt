@@ -482,6 +482,28 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export invalid module name`() {
+        val project = swiftExportProject {
+            moduleName.set("Shared.Module")
+        }
+        project.evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
+    fun `test swift export invalid exported module name`() {
+        val project = swiftExportProject {
+            export("com.arkivanov.decompose:decompose:3.1.0") {
+                moduleName.set("Custom.Decompose")
+            }
+        }
+        project.evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
     fun `test swift export custom compiler options`() {
         val project = swiftExportProject(
             multiplatform = {
