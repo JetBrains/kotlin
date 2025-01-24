@@ -4,7 +4,6 @@ Kotlin to JVM Compiler performance report
     IR LOWERING     INT_NUMBER ms       REAL_NUMBER loc/s
   IR GENERATION     INT_NUMBER ms       REAL_NUMBER loc/s
  IR TRANSLATION     INT_NUMBER ms       REAL_NUMBER loc/s
- IR TRANSLATION     INT_NUMBER ms       REAL_NUMBER loc/s
 Binary class from Kotlin file performed INT_NUMBER times, total time INT_NUMBER ms
 Find Java class performed INT_NUMBER times
 GC time for PS MarkSweep is INT_NUMBER ms, INT_NUMBER collections
