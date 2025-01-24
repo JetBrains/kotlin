@@ -9,8 +9,12 @@ fun box(): String {
         "group" {
             "a" from { it }
         }
+        group("group1") {
+            "b" from { it }
+        }
     }
 
     df.group.a
+    df.group1.b
     return "OK"
 }
