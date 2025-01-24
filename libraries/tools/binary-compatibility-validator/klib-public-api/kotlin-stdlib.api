@@ -12768,10 +12768,10 @@ final fun kotlin.native.concurrent/detachObjectGraphInternal(kotlin/Int, kotlin/
 final fun kotlin.native.concurrent/waitWorkerTermination(kotlin.native.concurrent/Worker) // kotlin.native.concurrent/waitWorkerTermination|waitWorkerTermination(kotlin.native.concurrent.Worker){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal.ref/createRetainedExternalRCRef(kotlin/Any): kotlin.native.internal/NativePtr // kotlin.native.internal.ref/createRetainedExternalRCRef|createRetainedExternalRCRef(kotlin.Any){}[0]
+final fun kotlin.native.internal.ref/createRetainedExternalRCRef(kotlin/Any?): kotlin.native.internal/NativePtr // kotlin.native.internal.ref/createRetainedExternalRCRef|createRetainedExternalRCRef(kotlin.Any?){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal.ref/dereferenceExternalRCRef(kotlin.native.internal/NativePtr): kotlin/Any // kotlin.native.internal.ref/dereferenceExternalRCRef|dereferenceExternalRCRef(kotlin.native.internal.NativePtr){}[0]
+final fun kotlin.native.internal.ref/dereferenceExternalRCRef(kotlin.native.internal/NativePtr): kotlin/Any? // kotlin.native.internal.ref/dereferenceExternalRCRef|dereferenceExternalRCRef(kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
 final fun kotlin.native.internal.ref/disposeExternalRCRef(kotlin.native.internal/NativePtr) // kotlin.native.internal.ref/disposeExternalRCRef|disposeExternalRCRef(kotlin.native.internal.NativePtr){}[0]

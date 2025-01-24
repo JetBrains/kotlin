@@ -12,7 +12,7 @@ public fun org_kotlin_foo_Clazz_init_allocate(): kotlin.native.internal.NativePt
 
 @ExportedBridge("org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, org.kotlin.foo.Clazz())
 }
 

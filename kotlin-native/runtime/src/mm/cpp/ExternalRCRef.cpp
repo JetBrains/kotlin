@@ -29,34 +29,29 @@ constexpr unsigned kPermanentTag = 1;
 }
 
 RUNTIME_NOTHROW extern "C" mm::RawExternalRCRef* Kotlin_native_internal_ref_createRetainedExternalRCRef(KRef obj) {
-    RuntimeAssert(obj != nullptr, "Cannot handle nullptr");
     return mm::createRetainedExternalRCRef(obj);
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_disposeExternalRCRef(mm::RawExternalRCRef* ref) {
-    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
     return mm::disposeExternalRCRef(ref);
 }
 
 RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_native_internal_ref_dereferenceExternalRCRef, mm::RawExternalRCRef* ref) {
     AssertThreadState(ThreadState::kRunnable);
-    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
     RETURN_OBJ(mm::dereferenceExternalRCRef(ref));
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_retainExternalRCRef(mm::RawExternalRCRef* ref) {
-    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
     mm::retainExternalRCRef(ref);
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_native_internal_ref_releaseExternalRCRef(mm::RawExternalRCRef* ref) {
-    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
     mm::releaseExternalRCRef(ref);
 }
 
 RUNTIME_NOTHROW extern "C" bool Kotlin_native_internal_ref_tryRetainExternalRCRef(mm::RawExternalRCRef* ref) {
-    RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
     AssertThreadState(ThreadState::kRunnable);
+    if (!ref) return false;
     if (externalRCRefAsPermanentObject(ref)) return true;
     auto refImpl = mm::ExternalRCRefImpl::fromRaw(ref);
     ObjHolder holder;

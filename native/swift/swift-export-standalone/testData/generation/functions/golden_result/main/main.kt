@@ -20,7 +20,7 @@ public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, Foo())
 }
 
@@ -110,7 +110,7 @@ public fun overload_Foo_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("overload_Foo_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun overload_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, overload.Foo())
 }
 

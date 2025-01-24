@@ -26,7 +26,7 @@ public fun __root___CLASS_ACROSS_MODULES_init_allocate(): kotlin.native.internal
 
 @ExportedBridge("__root___CLASS_ACROSS_MODULES_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
 public fun __root___CLASS_ACROSS_MODULES_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, value: Int): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = value
     kotlin.native.internal.initInstance(____kt, CLASS_ACROSS_MODULES(__value))
 }

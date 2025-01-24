@@ -344,14 +344,14 @@ public fun __root___Child_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
 public fun __root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, value: Int): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = value
     kotlin.native.internal.initInstance(____kt, Child(__value))
 }
 
 @ExportedBridge("__root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32_overrides_Parent_overrides_Parent__")
 public fun __root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32_overrides_Parent_overrides_Parent__(__kt: kotlin.native.internal.NativePtr, nullable: Int, poly: kotlin.native.internal.NativePtr, nullablePoly: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __nullable = nullable
     val __poly = kotlin.native.internal.ref.dereferenceExternalRCRef(poly) as Parent
     val __nullablePoly = kotlin.native.internal.ref.dereferenceExternalRCRef(nullablePoly) as Parent
@@ -360,7 +360,7 @@ public fun __root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_In
 
 @ExportedBridge("__root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__")
 public fun __root___Child_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__(__kt: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = interpretObjCPointer<kotlin.String>(value)
     kotlin.native.internal.initInstance(____kt, Child(__value))
 }
@@ -373,7 +373,7 @@ public fun __root___GrandChild_init_allocate(): kotlin.native.internal.NativePtr
 
 @ExportedBridge("__root___GrandChild_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
 public fun __root___GrandChild_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, value: Int): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = value
     kotlin.native.internal.initInstance(____kt, GrandChild(__value))
 }
@@ -386,13 +386,13 @@ public fun __root___OpenDerived1_init_allocate(): kotlin.native.internal.NativeP
 
 @ExportedBridge("__root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UInt__")
 public fun __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, OpenDerived1())
 }
 
 @ExportedBridge("__root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__")
 public fun __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, x: Int): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __x = x
     kotlin.native.internal.initInstance(____kt, OpenDerived1(__x))
 }
@@ -405,7 +405,7 @@ public fun __root___Parent_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___Parent_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__")
 public fun __root___Parent_init_initialize__TypesOfArguments__Swift_UInt_Swift_String__(__kt: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = interpretObjCPointer<kotlin.String>(value)
     kotlin.native.internal.initInstance(____kt, Parent(__value))
 }

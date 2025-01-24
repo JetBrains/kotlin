@@ -22,8 +22,6 @@ namespace kotlin::mm {
 class ExternalRCRefRegistry;
 
 // `RawExternalRCRef*` is `kotlin.native.internal.ref.ExternalRCRef`.
-// NOTE: operations on `RawExternalRCRef*` support `nullptr`, while
-//       operations on `kotlin.native.internal.ref.ExternalRCRef` do not support `null`.
 //
 // See also: ExternalRCRefImpl, OwningExternalRCRef, WeakExternalRCRef.
 struct RawExternalRCRef;
