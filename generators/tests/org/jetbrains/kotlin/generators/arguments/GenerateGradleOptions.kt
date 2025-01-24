@@ -644,6 +644,8 @@ private fun Printer.generateCompilerOptionsHelper(
         withIndent {
             if (parentHelperName != null) println("$parentHelperName.fillCompilerArguments(from, args)")
             for (property in properties) {
+                if (property.findAnnotation<GradleDeprecatedOption>()?.level == DeprecationLevel.HIDDEN) continue
+
                 val defaultValue = property.gradleValues
                 if (property.name != "freeCompilerArgs") {
                     val getter = if (property.gradleReturnType.endsWith("?")) ".orNull" else ".get()"
@@ -672,6 +674,7 @@ private fun Printer.generateCompilerOptionsHelper(
             )
             if (parentHelperName != null) println("$parentHelperName.syncOptionsAsConvention(from, into)")
             for (property in properties) {
+                if (property.findAnnotation<GradleDeprecatedOption>()?.level == DeprecationLevel.HIDDEN) continue
 
                 // Behaviour of ListProperty, SetProperty, MapProperty append operators in regard to convention value
                 // is confusing for users: https://github.com/gradle/gradle/issues/18352

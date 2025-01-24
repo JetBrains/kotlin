@@ -47,4 +47,13 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
      */
     @get:org.gradle.api.tasks.Input
     val progressiveMode: org.gradle.api.provider.Property<kotlin.Boolean>
+
+    /**
+     * Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
+     *
+     * Default value: false
+     */
+    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.HIDDEN)
+    @get:org.gradle.api.tasks.Input
+    val useK2: org.gradle.api.provider.Property<kotlin.Boolean>
 }

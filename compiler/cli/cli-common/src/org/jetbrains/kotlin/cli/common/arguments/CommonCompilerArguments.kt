@@ -482,13 +482,13 @@ They should be a subset of sources passed as free arguments."""
 
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        level = DeprecationLevel.ERROR,
-        removeAfter = LanguageVersion.KOTLIN_2_1,
+        level = DeprecationLevel.HIDDEN,
+        removeAfter = LanguageVersion.KOTLIN_2_2,
     )
     @GradleOption(
         DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
+        shouldGenerateDeprecatedKotlinOptions = false,
     )
     @Argument(
         value = "-Xuse-k2",
