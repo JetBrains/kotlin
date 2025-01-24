@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Aggregate
@@ -255,6 +256,7 @@ internal inline fun <reified T> String.load(): T {
         "FlattenDefault" -> FlattenDefault()
         "AddId" -> AddId()
         "AddDslStringInvoke" -> AddDslStringInvoke()
+        "AddDslNamedGroup" -> AddDslNamedGroup()
         "MapToFrame" -> MapToFrame()
         "Move0" -> Move0()
         "ToTop" -> ToTop()
