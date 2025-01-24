@@ -69,6 +69,6 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    VarargComposable(state, *values, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    VarargComposable(state, values, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }

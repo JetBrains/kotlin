@@ -1774,29 +1774,8 @@ class ComposableFunctionBodyTransformer(
                     irCall(function.symbol).apply {
                         symbol.owner
                             .valueParameters
-                            .fastForEachIndexed { index, param ->
-                                if (param.isVararg) {
-                                    putValueArgument(
-                                        index,
-                                        IrVarargImpl(
-                                            UNDEFINED_OFFSET,
-                                            UNDEFINED_OFFSET,
-                                            param.type,
-                                            param.varargElementType!!,
-                                            elements = listOf(
-                                                IrSpreadElementImpl(
-                                                    UNDEFINED_OFFSET,
-                                                    UNDEFINED_OFFSET,
-                                                    irGet(param)
-                                                )
-                                            )
-                                        )
-                                    )
-                                } else {
-                                    // NOTE(lmr): should we be using the parameter here, or the temporary
-                                    // with the default value?
-                                    putValueArgument(index, irGet(param))
-                                }
+                            .fastForEach { param ->
+                                arguments[param.indexInParameters] = irGet(param)
                             }
 
                         // new composer
