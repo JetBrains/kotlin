@@ -60,22 +60,19 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
 
-        val realArgumentsNumber = declaration.valueParameters.filter { it.canHaveDefaultValue() }.size
-        val maskValues = IntArray((realArgumentsNumber + 31) / 32)
+        val defaultableParametersSize = declaration.parameters.count { it.canHaveDefaultValue() }
+        val maskValues = IntArray((defaultableParametersSize + 31) / 32)
 
-        val oldArguments: Map<IrValueParameter, IrExpression?> = buildMap {
-            declaration.dispatchReceiverParameter?.let { put(it, expression.dispatchReceiver) }
-            declaration.extensionReceiverParameter?.let { put(it, expression.extensionReceiver) }
-            putAll(declaration.valueParameters.mapIndexed { index, parameter -> parameter to expression.getValueArgument(index) })
-        }
-
-        val indexes = declaration.valueParameters.filter { it.canHaveDefaultValue() }.withIndex().associate { it.value to it.index }
+        var defaultableParameterIndex = -1
         val mainArguments = this@JvmDefaultParameterInjector.context.multiFieldValueClassReplacements
             .mapFunctionMfvcStructures(this, stubFunction, declaration) { sourceParameter: IrValueParameter, targetParameterType: IrType ->
-                val valueArgument = oldArguments[sourceParameter]
+                if (sourceParameter.canHaveDefaultValue()) {
+                    ++defaultableParameterIndex
+                }
+                val valueArgument = expression.arguments[sourceParameter.indexInParameters]
                 if (valueArgument == null) {
-                    val index = indexes[sourceParameter]!!
-                    maskValues[index / 32] = maskValues[index / 32] or (1 shl (index % 32))
+                    maskValues[defaultableParameterIndex / 32] =
+                        maskValues[defaultableParameterIndex / 32] or (1 shl (defaultableParameterIndex % 32))
                 }
                 valueArgument ?: IrCompositeImpl(
                     expression.startOffset,
@@ -88,13 +85,13 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
 
 
         assert(stubFunction.parameters.size - mainArguments.size - maskValues.size in listOf(0, 1)) {
-            "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
+            "argument count mismatch: expected $defaultableParametersSize arguments + ${maskValues.size} masks + optional handler/marker, " +
                     "got ${stubFunction.parameters.size} total in ${stubFunction.render()}"
         }
 
         return buildMap {
             putAll(mainArguments)
-            val restParameters = stubFunction.valueParameters.filterNot { it in mainArguments }
+            val restParameters = stubFunction.parameters.filterNot { it in mainArguments }
             for ((maskParameter, maskValue) in restParameters zip maskValues.asList()) {
                 put(maskParameter, IrConstImpl.int(startOffset, endOffset, maskParameter.type, maskValue))
             }
