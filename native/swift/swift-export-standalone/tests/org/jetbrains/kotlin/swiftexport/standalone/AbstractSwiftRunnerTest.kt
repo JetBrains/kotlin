@@ -30,7 +30,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
     ) {
         val flattenModules = swiftExportOutputs.flatMapToSet { it.dependencies.toSet() + it }
 
-        flattenModules.forEach {
+        assertAll(flattenModules.flatMap {
             when (it) {
                 is SwiftExportModule.BridgesToKotlin -> {
                     val files = it.files
@@ -40,7 +40,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
                     val expectedCHeader = expectedFiles / it.name / "${it.name}.h"
                     val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
 
-                    assertAll(
+                    listOf(
                         { KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText()) },
                         { KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText()) },
                         { KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText()) }
@@ -50,10 +50,11 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
                     val expectedFiles = testPathFull.toPath() / "golden_result/"
                     val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
 
-                    KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText())
+                    listOf { KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
                 }
+                else -> emptyList()
             }
-        }
+        })
     }
 
     override fun constructSwiftExportConfig(module: TestModule.Exclusive): SwiftExportConfig {
