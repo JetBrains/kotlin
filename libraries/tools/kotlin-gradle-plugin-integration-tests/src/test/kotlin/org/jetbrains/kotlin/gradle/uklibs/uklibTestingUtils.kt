@@ -156,6 +156,16 @@ fun TestProject.include(
     }
 }
 
+fun TestProject.includeBuild(
+    subproject: TestProject,
+) {
+    val includeBuildIdentifier = "included_${generateIdentifier()}"
+    Files.createSymbolicLink(projectPath.resolve(includeBuildIdentifier), subproject.projectPath)
+    settingsBuildScriptInjection {
+        settings.includeBuild(includeBuildIdentifier)
+    }
+}
+
 fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     val dumpName = "dump_${UUID.randomUUID().toString().replace("-", "_")}"
     val outputFile = projectPath.resolve(dumpName).toFile()

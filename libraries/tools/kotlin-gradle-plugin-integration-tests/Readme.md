@@ -189,7 +189,7 @@ It is possible to inject code from IT test directly into the build files of the 
 See [BuildScriptInjectionIT.kt](src/test/kotlin/org/jetbrains/kotlin/gradle/BuildScriptInjectionIT.kt) for examples of how to write a test 
 with injections including:
 * Generating a multiplatform project with sources from scratch
-* Building a multi-project setup
+* Building a multi-project and composite build setups
 * Publishing a project in a Maven repository and consuming it in another project as a dependency
 * Catching execution and configuration time exceptions
 
