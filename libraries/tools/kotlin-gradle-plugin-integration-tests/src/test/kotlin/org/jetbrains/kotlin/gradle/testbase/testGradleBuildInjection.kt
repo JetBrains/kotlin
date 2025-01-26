@@ -567,7 +567,7 @@ fun GradleProject.buildScriptBuildscriptBlockInjection(
  * build.gradle.kts
  */
 private const val transferPluginRepositoriesIntoProjectRepositories = "transferPluginRepositoriesIntoProjectRepositories"
-private fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
+fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
     markAsUsingInjections()
     settingsBuildScriptInjection {
         if (!settings.extraProperties.has(transferPluginRepositoriesIntoProjectRepositories)) {
@@ -575,6 +575,24 @@ private fun GradleProject.transferPluginRepositoriesIntoBuildScript() {
             settings.pluginManagement.repositories.all { rep ->
                 settings.gradle.beforeProject { project ->
                     project.buildscript.repositories.add(rep)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Transfer dependencyResolutionManagement into project for compatibility with Gradle <8.1 because we emit repositories in the
+ * build script there
+ */
+private const val transferDependencyResolutionRepositoriesIntoProjectRepositories = "transferDependencyResolutionRepositoriesIntoProjectRepositories"
+fun GradleProject.transferDependencyResolutionRepositoriesIntoProjectRepositories() {
+    settingsBuildScriptInjection {
+        if (!settings.extraProperties.has(transferDependencyResolutionRepositoriesIntoProjectRepositories)) {
+            settings.extraProperties.set(transferDependencyResolutionRepositoriesIntoProjectRepositories, true)
+            settings.gradle.beforeProject { project ->
+                settings.dependencyResolutionManagement.repositories.all { rep ->
+                    project.repositories.add(rep)
                 }
             }
         }
