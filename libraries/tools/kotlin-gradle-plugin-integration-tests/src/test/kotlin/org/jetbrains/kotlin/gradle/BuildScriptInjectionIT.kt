@@ -286,6 +286,51 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun compositeBuild(version: GradleVersion) {
+        val parent = "Parent"
+        val child = "Child"
+        val parentGroup = "foo"
+        val parentId = "includeme"
+
+        // Declare a Parent class in a project
+        val parentClassProducer = project("empty", version) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = parentId
+            }
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.group = parentGroup
+                project.applyMultiplatform {
+                    jvm()
+                    sourceSets.getByName("commonMain").compileSource("open class ${parent}")
+                }
+            }
+        }
+
+        // Inherit from Parent in Child and consumer the project above as a modular dependency
+        val consumer = project("empty", version) {
+            includeBuild(parentClassProducer)
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    sourceSets.getByName("commonMain").compileSource("class ${child} : ${parent}()")
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation("${parentGroup}:${parentId}:1.0")
+                    }
+                }
+            }
+        }
+
+        // Check we managed to compile the Child class
+        assertFileExists(
+            consumer.buildScriptReturn {
+                kotlinMultiplatform.jvm().compilations.getByName("main").output.classesDirs.singleFile.resolve("${child}.class")
+            }.buildAndReturn("compileKotlinJvm")
+        )
+    }
+
     @Test
     fun testPrependToOrCreateBuildscriptBlock() {
         assertEquals(
@@ -381,7 +426,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     }
 
                     sourceSets.commonMain.dependencies {
-                        implementation(publishedProject.coordinate)
+                        implementation(publishedProject.rootCoordinate)
                     }
                 }
             }
