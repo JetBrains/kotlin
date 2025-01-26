@@ -17,6 +17,12 @@ import kotlin.test.*
  * Asserts file under [file] path exists and is a regular file.
  */
 fun assertFileExists(
+    file: java.io.File,
+) = assertFileExists(
+    file.toPath(),
+)
+
+fun assertFileExists(
     file: Path,
 ) {
     assert(file.exists()) {

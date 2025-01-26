@@ -11,7 +11,6 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import java.io.File
@@ -31,7 +30,6 @@ fun Project.applyMultiplatform(
 
 data class PublisherConfiguration(
     val group: String = "foo",
-    val name: String = "producer",
     val version: String = "1.0",
     val repoPath: String = "repo",
 ) : Serializable
@@ -42,14 +40,30 @@ data class PublishedProject(
     val name: String,
     val version: String,
 ) : Serializable {
-    val coordinate: String = "$group:$name:$version"
+    data class Component(
+        private val path: File,
+        private val artifactsPrefix: String,
+    ) {
+        val pom: File get() = path.resolve("${artifactsPrefix}.pom")
+        val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
+        val jar: File get() = path.resolve("${artifactsPrefix}.jar")
+    }
 
-    val rootComponent: File get() = repository.resolve(group).resolve(name).resolve(version)
-    val pom: File get() = rootComponent.resolve("${name}-${version}.pom")
-    val uklib: File get() = rootComponent.resolve("${name}-${version}.uklib")
+    val rootCoordinate: String = "$group:$name:$version"
+    val rootComponent: Component
+        get() = Component(
+            repository.resolve(group).resolve(name).resolve(version),
+            "${name}-${version}",
+        )
+    val jvmMultiplatformComponent: Component
+        get() = Component(
+            repository.resolve(group).resolve("${name}-jvm").resolve(version),
+            "${name}-jvm-${version}",
+        )
 }
 
-fun Project.applyMavenPublish(
+fun Project.setupMavenPublication(
+    repositoryName: String,
     publisherConfiguration: PublisherConfiguration,
 ) {
     plugins.apply("maven-publish")
@@ -59,34 +73,9 @@ fun Project.applyMavenPublish(
 
     val publishingExtension = extensions.getByType(PublishingExtension::class.java)
     publishingExtension.repositories.maven {
+        it.name = repositoryName
         it.url = uri(
             layout.projectDirectory.dir(publisherConfiguration.repoPath)
-        )
-    }
-
-    publishingExtension.publications.withType(MavenPublication::class.java).configureEach {
-        val components = it.artifactId.split("-", limit = 2)
-        if (components.size > 1) {
-            it.artifactId = "${publisherConfiguration.name}-${components[1]}"
-        } else {
-            it.artifactId = publisherConfiguration.name
-        }
-    }
-}
-
-fun TestProject.publishReturn(
-    publisherConfiguration: PublisherConfiguration,
-): ReturnFromBuildScriptAfterExecution<PublishedProject> {
-    buildScriptInjection {
-        project.applyMavenPublish(publisherConfiguration)
-    }
-
-    return buildScriptReturn {
-        PublishedProject(
-            project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
-            publisherConfiguration.group,
-            publisherConfiguration.name,
-            publisherConfiguration.version,
         )
     }
 }
@@ -94,30 +83,65 @@ fun TestProject.publishReturn(
 fun TestProject.publish(
     publisherConfiguration: PublisherConfiguration,
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
-): PublishedProject = publishReturn(publisherConfiguration).buildAndReturn(
-    "publishAllPublicationsToMavenRepository",
-    deriveBuildOptions = deriveBuildOptions,
-)
+): PublishedProject {
+    val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
+    buildScriptInjection {
+        if (project.hasProperty(repositoryIdentifier)) {
+            project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
+        }
+    }
+    return buildScriptReturn {
+        PublishedProject(
+            project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
+            publisherConfiguration.group,
+            project.name,
+            publisherConfiguration.version,
+        )
+    }.buildAndReturn(
+        "publishAllPublicationsTo${repositoryIdentifier}Repository",
+        "-P${repositoryIdentifier}",
+        deriveBuildOptions = deriveBuildOptions,
+    )
+}
 
-private const val transferDependencyResolutionRepositoriesIntoProjectRepositories = "transferDependencyResolutionRepositoriesIntoProjectRepositories"
+fun TestProject.publishJava(
+    publisherConfiguration: PublisherConfiguration,
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): PublishedProject {
+    val repositoryIdentifier = "_JavaPublication_${generateIdentifier()}_"
+    buildScriptInjection {
+        if (project.hasProperty(repositoryIdentifier)) {
+            project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
+            val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
+
+            publishingExtension.publications.create("java", MavenPublication::class.java) {
+                it.from(project.components.getByName("java"))
+            }
+        }
+    }
+    return buildScriptReturn {
+        PublishedProject(
+            project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
+            publisherConfiguration.group,
+            project.name,
+            publisherConfiguration.version,
+        )
+    }.buildAndReturn(
+        "publishAllPublicationsTo${repositoryIdentifier}Repository",
+        "-P${repositoryIdentifier}",
+        deriveBuildOptions = deriveBuildOptions,
+    )
+}
+
 fun TestProject.addPublishedProjectToRepositories(
     publishedProject: PublishedProject,
     configuration: MavenArtifactRepository.() -> Unit = {},
 ) {
+    transferDependencyResolutionRepositoriesIntoProjectRepositories()
     settingsBuildScriptInjection {
         settings.dependencyResolutionManagement.repositories.maven {
             it.url = publishedProject.repository.toURI()
             it.configuration()
-        }
-        if (!settings.extraProperties.has(transferDependencyResolutionRepositoriesIntoProjectRepositories)) {
-            settings.extraProperties.set(transferDependencyResolutionRepositoriesIntoProjectRepositories, true)
-            // Transfer dependencyResolutionManagement into project for compatibility with Gradle <8.1 because we emit repositories in the
-            // build script there
-            settings.gradle.beforeProject { project ->
-                settings.dependencyResolutionManagement.repositories.all { rep ->
-                    project.repositories.add(rep)
-                }
-            }
         }
     }
 }

@@ -16,6 +16,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.gradle.testbase.useAsZipFile
 import java.io.File
 import kotlin.test.*
 
@@ -257,6 +258,32 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             "empty",
             version,
         )
+    }
+
+    @GradleTest
+    fun publishGeneratedJavaSource(version: GradleVersion) {
+        project("empty", version) {
+            buildScriptInjection {
+                project.plugins.apply("java")
+                java.sourceSets.getByName("main").compileJavaSource(
+                    project,
+                    className = "Generated",
+                    """
+                        public class Generated { }
+                    """.trimIndent()
+                )
+            }
+
+            assertEquals(
+                setOf(
+                    "META-INF/MANIFEST.MF",
+                    "Generated.class",
+                ),
+                publishJava(PublisherConfiguration()).rootComponent.jar.useAsZipFile {
+                    it.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet()
+                }
+            )
+        }
     }
 
     @Test
