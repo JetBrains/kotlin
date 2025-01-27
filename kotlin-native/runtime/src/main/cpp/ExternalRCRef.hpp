@@ -293,3 +293,11 @@ using OwningExternalRCRef = ExternalRCRef<internal::OwningTraits>;
 using WeakExternalRCRef = ExternalRCRef<internal::WeakTraits>;
 
 } // namespace kotlin::mm
+
+extern "C" {
+
+RUNTIME_NOTHROW kotlin::mm::RawExternalRCRef* Kotlin_mm_createRetainedExternalRCRef(KRef);
+RUNTIME_NOTHROW void Kotlin_mm_releaseExternalRCRef(kotlin::mm::RawExternalRCRef*);
+RUNTIME_NOTHROW void Kotlin_mm_disposeExternalRCRef(kotlin::mm::RawExternalRCRef*);
+
+}
