@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
-import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.SirAndKaSession
 import org.jetbrains.sir.lightclasses.extensions.withSessions
@@ -42,7 +41,7 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
                 { error("Error translating type") },
                 { error("Unsupported type") },
                 {})
-            val param = SirParameter(argumentName = outType.swiftName, type = outType)
+            val param = SirParameter(argumentName = "outer", type = outType)
             param
         } else null
 
