@@ -138,7 +138,8 @@ internal object LLContainingClassCalculator {
         is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
         is FirPropertySymbol -> !symbol.isLocal
         is FirNamedFunctionSymbol -> !symbol.isLocal
-        is FirCallableSymbol, is FirClassLikeSymbol, is FirDanglingModifierSymbol -> true
+        is FirClassLikeSymbol -> symbol.classId.isNestedClass
+        is FirCallableSymbol, is FirDanglingModifierSymbol -> true
         else -> false
     }
 
