@@ -112,7 +112,7 @@ OBJ_GETTER0(TheEmptyString) {
     RETURN_OBJ(reinterpret_cast<KRef>(&theEmptyStringImpl));
 }
 
-RUNTIME_NORETURN OBJ_GETTER(makeRegularWeakReferenceImpl, void*) {
+RUNTIME_NORETURN OBJ_GETTER(makeRegularWeakReferenceImpl, KRef, void*) {
     throw std::runtime_error("Not implemented for tests");
 }
 
