@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.artifacts
 
 import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -40,7 +39,7 @@ internal val KotlinLegacyCompatibilityMetadataArtifact = KotlinTargetArtifact { 
     target.project.configurations.createConsumable(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
         usesPlatformOf(target)
 
-        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+        KotlinUsages.configureProducerApiUsage(this, target)
         attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
 
         val commonMainApiConfiguration = target.project.configurations.sourceSetDependencyConfigurationByScope(

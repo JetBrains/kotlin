@@ -116,7 +116,7 @@ internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinT
     // to be either JAVA_RUNTIME (for jvm) or KOTLIN_RUNTIME (for other targets)
     // the latter isn't a strong requirement since there is no tooling that consume kotlin sources through gradle variants at the moment
     // so consistency with Java Gradle Plugin seemed most desirable choice.
-    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
+    KotlinUsages.configureProducerRuntimeUsage(this, target)
     attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.attributeValueByName(Category.DOCUMENTATION))
     attributes.setAttribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.attributeValueByName(DocsType.SOURCES))
     // Bundling attribute is about component dependencies, external means that they are provided as separate components

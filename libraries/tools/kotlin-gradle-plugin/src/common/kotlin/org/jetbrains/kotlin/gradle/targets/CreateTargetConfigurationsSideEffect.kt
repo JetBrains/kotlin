@@ -41,7 +41,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     configurations.maybeCreateConsumable(target.apiElementsConfigurationName).apply {
         description = "API elements for main."
         isVisible = false
-        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+        KotlinUsages.configureProducerApiUsage(this, target)
         attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         extendsFrom(apiElementScope)
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
@@ -64,7 +64,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         configurations.maybeCreateConsumable(target.runtimeElementsConfigurationName).apply {
             description = "Elements of runtime for main."
             isVisible = false
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
+            KotlinUsages.configureProducerRuntimeUsage(this, target)
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             extendsFrom(implementationConfiguration)
@@ -126,7 +126,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         ).apply {
             description = "Common Fake API elements for main."
             isVisible = false
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            KotlinUsages.configureProducerApiUsage(this, target)
             attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         }
     }
