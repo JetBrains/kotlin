@@ -84,6 +84,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
@@ -156,6 +157,16 @@ object FirErrors {
     // Miscellaneous
     val OTHER_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("OTHER_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val OTHER_ERROR_WITH_REASON: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("OTHER_ERROR_WITH_REASON", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+
+    // Compiler configuration
+    val INVALID_DIAGNOSTIC_NAME_FOR_GLOBAL_SUPPRESSION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INVALID_DIAGNOSTIC_NAME_FOR_GLOBAL_SUPPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val GLOBAL_ERROR_SUPPRESSION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("GLOBAL_ERROR_SUPPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val UNRESOLVED_OPT_IN_MARKER: KtDiagnosticFactory1<FqName> = KtDiagnosticFactory1("UNRESOLVED_OPT_IN_MARKER", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val OPT_IN_FQNAME_IS_NOT_MARKER: KtDiagnosticFactory1<FqName> = KtDiagnosticFactory1("OPT_IN_FQNAME_IS_NOT_MARKER", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val OPT_IN_FQNAME_IS_DEPRECATED: KtDiagnosticFactory2<FqName, String> = KtDiagnosticFactory2("OPT_IN_FQNAME_IS_DEPRECATED", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val OPT_IN_FQNAME_IS_DEPRECATED_ERROR: KtDiagnosticFactory2<FqName, String> = KtDiagnosticFactory2("OPT_IN_FQNAME_IS_DEPRECATED_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val CONTEXT_RECEIVER_ENABLED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("CONTEXT_RECEIVER_ENABLED", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val CONTEXT_RECEIVERS_AND_PARAMETERS_ENABLED_AT_THE_SAME_TIME: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONTEXT_RECEIVERS_AND_PARAMETERS_ENABLED_AT_THE_SAME_TIME", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // General syntax
     val ILLEGAL_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

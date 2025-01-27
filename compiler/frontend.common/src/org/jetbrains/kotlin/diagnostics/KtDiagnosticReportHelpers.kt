@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 
 fun DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
@@ -128,4 +129,51 @@ fun <F : AbstractKtDiagnosticFactory> KtDiagnosticFactoryForDeprecation<F>.choos
     } else {
         warningFactory
     }
+}
+
+val NoSourceElement = KtOffsetsOnlySourceElement(0, 0)
+
+fun DiagnosticReporter.reportGlobal(
+    factory: KtDiagnosticFactory0,
+    context: DiagnosticContext,
+) {
+    report(factory.on(NoSourceElement, null), context)
+}
+
+fun <A> DiagnosticReporter.reportGlobal(
+    factory: KtDiagnosticFactory1<A>,
+    a: A,
+    context: DiagnosticContext,
+) {
+    report(factory.on(NoSourceElement, a, null), context)
+}
+
+fun <A, B> DiagnosticReporter.reportGlobal(
+    factory: KtDiagnosticFactory2<A, B>,
+    a: A,
+    b: B,
+    context: DiagnosticContext,
+) {
+    report(factory.on(NoSourceElement, a, b, null), context)
+}
+
+fun <A, B, C> DiagnosticReporter.reportGlobal(
+    factory: KtDiagnosticFactory3<A, B, C>,
+    a: A,
+    b: B,
+    c: C,
+    context: DiagnosticContext,
+) {
+    report(factory.on(NoSourceElement, a, b, c, null), context)
+}
+
+fun <A, B, C, D> DiagnosticReporter.reportGlobal(
+    factory: KtDiagnosticFactory4<A, B, C, D>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    context: DiagnosticContext,
+) {
+    report(factory.on(NoSourceElement, a, b, c, d, null), context)
 }

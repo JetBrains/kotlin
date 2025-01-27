@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -66,6 +67,36 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val OTHER_ERROR_WITH_REASON by error<PsiElement> {
             parameter<String>("reason")
         }
+    }
+
+    val CompilerConfiguration by object : DiagnosticGroup("Compiler configuration") {
+        val INVALID_DIAGNOSTIC_NAME_FOR_GLOBAL_SUPPRESSION by error<PsiElement>() {
+            parameter<String>("diagnosticName")
+        }
+        val GLOBAL_ERROR_SUPPRESSION by error<PsiElement>() {
+            parameter<String>("diagnosticName")
+        }
+
+        val UNRESOLVED_OPT_IN_MARKER by warning<PsiElement>() {
+            parameter<FqName>("optInMarkerFqName")
+        }
+        val OPT_IN_FQNAME_IS_NOT_MARKER by warning<PsiElement>() {
+            parameter<FqName>("optInMarkerFqName")
+        }
+        val OPT_IN_FQNAME_IS_DEPRECATED by warning<PsiElement>() {
+            parameter<FqName>("optInMarkerFqName")
+            parameter<String>("message")
+        }
+        val OPT_IN_FQNAME_IS_DEPRECATED_ERROR by error<PsiElement>() {
+            parameter<FqName>("optInMarkerFqName")
+            parameter<String>("message")
+            isSuppressible = true
+        }
+
+        val CONTEXT_RECEIVER_ENABLED by warning<PsiElement>() {
+            parameter<String>("message")
+        }
+        val CONTEXT_RECEIVERS_AND_PARAMETERS_ENABLED_AT_THE_SAME_TIME by warning<PsiElement>()
     }
 
     val GENERAL_SYNTAX by object : DiagnosticGroup("General syntax") {

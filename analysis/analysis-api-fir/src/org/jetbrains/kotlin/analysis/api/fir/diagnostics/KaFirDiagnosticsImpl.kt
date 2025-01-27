@@ -135,6 +135,55 @@ internal class OtherErrorWithReasonImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OtherErrorWithReason
 
+internal class InvalidDiagnosticNameForGlobalSuppressionImpl(
+    override val diagnosticName: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidDiagnosticNameForGlobalSuppression
+
+internal class GlobalErrorSuppressionImpl(
+    override val diagnosticName: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.GlobalErrorSuppression
+
+internal class UnresolvedOptInMarkerImpl(
+    override val optInMarkerFqName: FqName,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnresolvedOptInMarker
+
+internal class OptInFqnameIsNotMarkerImpl(
+    override val optInMarkerFqName: FqName,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OptInFqnameIsNotMarker
+
+internal class OptInFqnameIsDeprecatedImpl(
+    override val optInMarkerFqName: FqName,
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OptInFqnameIsDeprecated
+
+internal class OptInFqnameIsDeprecatedErrorImpl(
+    override val optInMarkerFqName: FqName,
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OptInFqnameIsDeprecatedError
+
+internal class ContextReceiverEnabledImpl(
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ContextReceiverEnabled
+
+internal class ContextReceiversAndParametersEnabledAtTheSameTimeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ContextReceiversAndParametersEnabledAtTheSameTime
+
 internal class IllegalConstExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

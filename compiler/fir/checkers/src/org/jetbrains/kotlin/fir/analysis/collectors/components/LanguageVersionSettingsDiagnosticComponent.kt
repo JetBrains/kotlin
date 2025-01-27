@@ -18,9 +18,8 @@ class LanguageVersionSettingsDiagnosticComponent(
     private val checkers: LanguageVersionSettingsCheckers = session.checkersComponent.languageVersionSettingsCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun checkSettings(data: CheckerContext) {
-        val rawReporter = (reporter as? BaseDiagnosticsCollector)?.rawReporter ?: return
         for (checker in checkers.languageVersionSettingsCheckers) {
-            checker.check(data, rawReporter)
+            checker.check(data, reporter)
         }
     }
 }
