@@ -14,6 +14,8 @@ interface Box<T>
 
 interface BoxedConcreteType : Box<InaccessibleConcreteSuperType>
 interface BoxedGenericType : Box<InaccessibleGenericSuperType<Nothing>>
+interface BoxedGenericTypeWithGeneric<T> : Box<T>
+interface ConcreteSuperType : InaccessibleConcreteSuperType
 
 // MODULE: end(middle)
 // FILE: end.kt
@@ -21,3 +23,5 @@ interface BoxedGenericType : Box<InaccessibleGenericSuperType<Nothing>>
 interface BoxedConcreteTypeImplementation : BoxedConcreteType
 
 interface BoxedGenericTypeImplementation : BoxedGenericType
+
+interface BoxedGenericTypeWithGenericImplementation : BoxedGenericTypeWithGeneric<ConcreteSuperType>

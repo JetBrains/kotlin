@@ -21,7 +21,13 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
         }
 
     enum class SupertypeOrigin {
+        /** One of direct superclasses (interfaces) */
+        DIRECT,
+
+        /** One of direct supertypes arguments or any superclasses (interfaces) of these arguments */
         TYPE_ARGUMENT,
+
+        /** One of indirect superclasses (interfaces) */
         OTHER
     }
 
@@ -47,8 +53,11 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
             for (superTypeRef in symbol.resolvedSuperTypeRefs) {
                 val superType = superTypeRef.coneType
                 if (!superType.isAny && result.add(TypeWithOrigin(superType, origin))) {
-                    superType.toClassSymbol(session)?.let { collect(it, origin) }
+                    superType.toClassSymbol(session)?.let {
+                        collect(it, if (origin == SupertypeOrigin.DIRECT) SupertypeOrigin.OTHER else origin)
+                    }
                 }
+                if (origin != SupertypeOrigin.DIRECT) continue
                 for (typeArgument in superType.typeArguments) {
                     if (typeArgument !is ConeKotlinTypeProjection) continue
                     val type = typeArgument.type
@@ -58,7 +67,7 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
                 }
             }
         }
-        collect(this, SupertypeOrigin.OTHER)
+        collect(this, SupertypeOrigin.DIRECT)
         return result
     }
 }
