@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
-import org.jetbrains.kotlin.backend.common.lower.WrapInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningOnlyPrivateFunctionsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
@@ -36,25 +35,9 @@ private val localClassesInInlineLambdasPhase = makeIrModulePhase(
     name = "LocalClassesInInlineLambdasPhase",
 )
 
-private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
-    lowering = { context: LoweringContext ->
-        CommonInlineCallableReferenceToLambdaPhase(
-            context,
-            PreSerializationPrivateInlineFunctionResolver(context)
-        )
-    },
-    name = "InlineCallableReferenceToLambdaPhase",
-)
-
 private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
-    prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
-)
-
-private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeIrModulePhase(
-    ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    name = "WrapInlineDeclarationsWithReifiedTypeParametersLowering",
 )
 
 /**
@@ -69,7 +52,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
         )
     },
     name = "InlineOnlyPrivateFunctions",
-    prerequisite = setOf(wrapInlineDeclarationsWithReifiedTypeParametersLowering, arrayConstructorPhase)
+    prerequisite = setOf(arrayConstructorPhase)
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
@@ -129,9 +112,7 @@ fun loweringsOfTheFirstPhase(
     lateinitPhase,
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
-    inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
-    wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     inlineOnlyPrivateFunctionsPhase,
     checkInlineDeclarationsAfterInliningOnlyPrivateFunctions,
     outerThisSpecialAccessorInInlineFunctionsPhase,
