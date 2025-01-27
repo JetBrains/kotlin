@@ -1,20 +1,14 @@
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-// DISABLE_IR_VISIBILITY_CHECKS: ANY
-// ^^^ Muted because a private type is leaked from the declaring file, and the visibility validator detects this.
-//     This test should be converted to a test that checks reporting private types exposure. To be done in KT-69681 and KT-71416.
-
-// KT-72862: java.lang.IllegalStateException: No class fields for CLASS CLASS name:A
-// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// ISSUE: KT-71416
+// FIR_IDENTICAL
+// DIAGNOSTICS: -NOTHING_TO_INLINE
 
 // MODULE: lib
 // FILE: a.kt
 private class Private
 
 private inline fun <reified T> parameterized(): String {
-    if (T::class == Private::class) return "OK"
-    return T::class.simpleName ?: "Unknown type"
+    if (<!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>T::class<!> == <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>Private::class<!>) return "OK"
+    return <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>T::class<!>.simpleName ?: "Unknown type"
 }
 
 internal inline fun inlineFun() = parameterized<Private>()
