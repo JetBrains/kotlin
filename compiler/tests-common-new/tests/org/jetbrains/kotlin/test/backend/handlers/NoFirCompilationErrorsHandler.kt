@@ -48,11 +48,15 @@ class NoFirCompilationErrorsHandler(
                     if (diagnostic.severity == Severity.ERROR) {
                         if (!ignoreErrors) {
                             val diagnosticText = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
-                            val range = diagnostic.textRanges.first()
-                            val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
-                                PsiDiagnosticUtils.atLocation(psiFile, range)
-                            } ?: "${firFile.name}:$range"
-                            error("${diagnostic.factory.name}: $diagnosticText at $locationText")
+                            if (firFile != null) {
+                                val range = diagnostic.textRanges.first()
+                                val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
+                                    PsiDiagnosticUtils.atLocation(psiFile, range)
+                                } ?: "${firFile.name}:$range"
+                                error("${diagnostic.factory.name}: $diagnosticText at $locationText")
+                            } else {
+                                error(diagnostic.factory.name)
+                            }
                         }
                     }
                 }
