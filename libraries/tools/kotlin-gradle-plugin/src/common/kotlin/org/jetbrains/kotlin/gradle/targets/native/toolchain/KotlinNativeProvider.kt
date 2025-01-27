@@ -11,6 +11,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -33,6 +34,10 @@ internal sealed class KotlinNativeProvider(project: Project) {
     @get:Internal
     //Using DirectoryProperty causes the native directory to be included in the configuration cache input.
     internal val bundleDirectory: Provider<String> = project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath }
+
+    @get:Internal
+    //Access konanDistributionProvider will lead to native dependency download.
+    internal open val konanDistributionProvider: Provider<KonanDistribution> = project.nativeProperties.actualNativeHomeDirectory.map { KonanDistribution(it.absolutePath) }
 }
 
 /**
@@ -119,9 +124,15 @@ internal class KotlinNativeFromToolchainProvider(
                 }
             }
         )
+
+    override val konanDistributionProvider: Provider<KonanDistribution>
+        get() = super.bundleDirectory.zip(kotlinNativeDependencies) { bundleDir, _ -> KonanDistribution(bundleDir) }
 }
 
-internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(enabledOnCurrenHost: Boolean, konanTarget: KonanTarget, ): KotlinNativeProvider {
+internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(
+    enabledOnCurrenHost: Boolean,
+    konanTarget: KonanTarget,
+): KotlinNativeProvider {
     if (enabledOnCurrenHost) {
         return KotlinNativeFromToolchainProvider(project, konanTarget, kotlinNativeBundleBuildService)
     } else {

@@ -96,8 +96,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         }
 
         BuildMetricsService.registerIfAbsent(project)
-        KotlinNativeBundleBuildService.registerIfAbsent(project)
-        KotlinNativeDistributionBuildService.registerIfAbsent(project)
+        val kotlinNativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
+        KotlinNativeDistributionBuildService.registerIfAbsent(project, kotlinNativeBundleBuildService)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -20,8 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeDistributionBuildService
-import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -48,15 +50,14 @@ private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDe
 ) {
 
     val commonizerTarget = commonizerTarget.await() ?: return
-    val nativeBuildService = KotlinNativeDistributionBuildService.registerIfAbsent(project)
+    val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
+    val nativeBuildService = KotlinNativeDistributionBuildService.registerIfAbsent(project, nativeBundleBuildService)
 
     val nativeDependency =
         nativeBuildService.orNull?.getNativeDistributionDependencies(
-                project,
-                commonizerTarget
-            )
-
-
+            project,
+            commonizerTarget
+        )
 
     val updatedCompileDependencyFiles = project.files().from(
         stdlib,
@@ -90,29 +91,41 @@ internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjec
 
     val stdlib = project.files(project.konanDistribution.stdlib)
     sourceSets.forEach { sourceSet ->
-        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
-        val nativeDistributionDependencies = getNativeDistributionDependencies(commonizerTarget)
-        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
+//        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
+//        val nativeDistributionDependencies = getNativeDistributionDependencies(commonizerTarget)
+//        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies.get())
         sourceSet.addDependencyForLegacyImport(stdlib)
     }
 }
 
-internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
+internal fun Project.getNativeDistributionDependencies(konanDistribution: Provider<KonanDistribution>, target: CommonizerTarget): FileCollection {
     return when (target) {
-        is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
+        is LeafCommonizerTarget -> project.objects.getOriginalPlatformLibrariesFor(
+            konanDistribution,
+            target
+        )
         is SharedCommonizerTarget -> {
-            val klibs = project.commonizedNativeDistributionKlibsOrNull(target) ?: return project.files()
-            project.files(klibs)
+            val klibs = project.commonizedNativeDistributionKlibsOrNull(target) ?: return objects.fileCollection()
+            objects.fileCollection().from(klibs)
         }
     }
 }
 
-private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection =
-    getOriginalPlatformLibrariesFor(target.konanTarget)
+private fun ObjectFactory.getOriginalPlatformLibrariesFor(
+    konanDistribution: Provider<KonanDistribution>,
+    target: LeafCommonizerTarget,
+): FileCollection =
+    getOriginalPlatformLibrariesFor(konanDistribution, target.konanTarget)
 
-internal fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
-    konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
-}
+internal fun ObjectFactory.getOriginalPlatformLibrariesFor(
+    konanDistribution: Provider<KonanDistribution>,
+    konanTarget: KonanTarget,
+): FileCollection =
+    fileCollection()
+        .from(
+            konanDistribution.map { it.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet() }
+        )
+
 
 private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
     .filter { it.isDirectory || it.extension == "klib" }

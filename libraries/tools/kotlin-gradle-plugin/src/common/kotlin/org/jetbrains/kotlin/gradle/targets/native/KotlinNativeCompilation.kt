@@ -10,19 +10,17 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
-import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesFor
-import org.jetbrains.kotlin.gradle.targets.native.internal.inferCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import javax.inject.Inject
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
@@ -57,7 +55,10 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
         get() = project.nativeProperties.shouldUseEmbeddableCompilerJar.get()
 
     internal val nativeDependencies: ConfigurableFileCollection
-        get() = compilation.project.objects.fileCollection().from(compilation.project.getOriginalPlatformLibrariesFor(konanTarget))
+        get() = compilation.project.objects.fileCollection()
+            .from(compilation.project.objects.getOriginalPlatformLibrariesFor(project.nativeProperties.actualNativeHomeDirectory.map {
+                KonanDistribution(it)
+            }, konanTarget))
 
 }
 

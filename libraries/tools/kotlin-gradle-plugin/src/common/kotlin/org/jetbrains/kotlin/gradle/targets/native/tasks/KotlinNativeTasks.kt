@@ -49,8 +49,6 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
-import org.jetbrains.kotlin.gradle.targets.native.internal.inferCommonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
@@ -361,7 +359,8 @@ internal constructor(
             // For KT-66452 we need to get rid of invocation of 'Task.project'.
             // That is why we moved setting this property to task registration
             // and added convention for backwards compatibility.
-            NoopKotlinNativeProvider(project))
+            NoopKotlinNativeProvider(project)
+        )
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
@@ -515,7 +514,6 @@ internal constructor(
             args.libraries = runSafe {
                 //filterKlibsPassedToCompiler call exists on files
                 val filteredLibraries = libraries.exclude(originalPlatformLibraries()).files.filterKlibsPassedToCompiler().toMutableList()
-//                nativeDistributionDependencies.orNull?.files?.also { filteredLibraries.addAll(it) }
                 filteredLibraries.toPathsArray()
             }
             args.friendModules = runSafe {
@@ -553,7 +551,8 @@ internal constructor(
             null
         } else {
             objectFactory.fileCollection()
-                .from(KonanDistribution(konanDistribution.get()).platformLibsDir.resolve(konanTarget.name).listLibraryFiles())
+                .from(kotlinNativeProvider.flatMap { it.bundleDirectory }
+                          .map { KonanDistribution(it).platformLibsDir.resolve(konanTarget.name).listLibraryFiles() })
         }
 
     private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
