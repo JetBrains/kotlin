@@ -958,6 +958,48 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("stringConcatenation.kt")
+    public void testStringConcatenation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenation_lhs1.kt")
+    public void testStringConcatenation_lhs1() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation_lhs1.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenation_lhs2.kt")
+    public void testStringConcatenation_lhs2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation_lhs2.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenation_op1.kt")
+    public void testStringConcatenation_op1() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation_op1.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenation_op2.kt")
+    public void testStringConcatenation_op2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation_op2.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenation_rhs1.kt")
+    public void testStringConcatenation_rhs1() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation_rhs1.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenation_rhs2.kt")
+    public void testStringConcatenation_rhs2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation_rhs2.kt");
+    }
+
+    @Test
     @TestMetadata("stringLiteral.kt")
     public void testStringLiteral() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringLiteral.kt");
