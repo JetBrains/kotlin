@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.util.CodeGenerationMeasurement
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import org.jetbrains.kotlin.util.GarbageCollectionMeasurement
-import org.jetbrains.kotlin.util.IRMeasurement
+import org.jetbrains.kotlin.util.IrTranslationMeasurement
+import org.jetbrains.kotlin.util.IrLoweringMeasurement
+import org.jetbrains.kotlin.util.IrGenerationMeasurement
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -338,18 +341,17 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
             val analysisMeasurement = measurements.filterIsInstance<CodeAnalysisMeasurement>().firstOrNull()
             val initMeasurement = measurements.filterIsInstance<CompilerInitializationMeasurement>().firstOrNull()
-            val irMeasurements = measurements.filterIsInstance<IRMeasurement>()
 
             val components = buildMap {
                 put("Init", initMeasurement?.milliseconds ?: 0)
                 put("Analysis", analysisMeasurement?.milliseconds ?: 0)
 
-                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.TRANSLATION }?.milliseconds?.let { put("Translation", it) }
-                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.LOWERING }?.milliseconds?.let { put("Lowering", it) }
+                measurements.firstIsInstanceOrNull<IrTranslationMeasurement>()?.milliseconds?.let { put("Translation", it) }
+                measurements.firstIsInstanceOrNull<IrLoweringMeasurement>()?.milliseconds?.let { put("Lowering", it) }
 
                 val generationTime =
-                    irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.GENERATION }?.milliseconds ?:
-                    measurements.filterIsInstance<CodeGenerationMeasurement>().firstOrNull()?.milliseconds
+                    measurements.firstIsInstanceOrNull<IrGenerationMeasurement>()?.milliseconds
+                        ?: measurements.filterIsInstance<CodeGenerationMeasurement>().firstOrNull()?.milliseconds
 
                 if (generationTime != null) {
                     put("Generation", generationTime)

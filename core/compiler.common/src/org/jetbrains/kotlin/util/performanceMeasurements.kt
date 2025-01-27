@@ -33,12 +33,16 @@ class PerformanceCounterMeasurement(private val counterReport: String) : Perform
     override fun render(): String = counterReport
 }
 
-class IRMeasurement(val lines: Int?, val milliseconds: Long, val kind: Kind) : PerformanceMeasurement {
-    override fun render(): String = formatMeasurement("IR $kind", milliseconds, lines)
+class IrTranslationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("IR TRANSLATION", milliseconds, lines)
+}
 
-    enum class Kind {
-        TRANSLATION, LOWERING, GENERATION
-    }
+class IrLoweringMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("IR LOWERING", milliseconds, lines)
+}
+
+class IrGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("IR GENERATION", milliseconds, lines)
 }
 
 sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
