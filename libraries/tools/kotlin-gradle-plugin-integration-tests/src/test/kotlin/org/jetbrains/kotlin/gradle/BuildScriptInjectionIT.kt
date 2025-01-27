@@ -8,17 +8,24 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.plugins.UnknownPluginException
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
-import org.gradle.api.plugins.UnknownPluginException
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
-import org.jetbrains.kotlin.gradle.testbase.useAsZipFile
 import java.io.File
-import kotlin.test.*
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
+import kotlin.concurrent.thread
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.fail
+
 
 @MppGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
@@ -329,6 +336,69 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 kotlinMultiplatform.jvm().compilations.getByName("main").output.classesDirs.singleFile.resolve("${child}.class")
             }.buildAndReturn("compileKotlinJvm")
         )
+    }
+
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MAX_SUPPORTED,
+    )
+    @GradleTest
+    fun continuousBuild(version: GradleVersion) {
+        project("empty", version) {
+            val firstCompilationRoundSucceeded = projectPath.resolve("firstCompilation").toFile()
+            val secondCompilationRoundSucceeded = projectPath.resolve("secondCompilation").toFile()
+            val sourcesDir = projectPath.resolve("build/generatedJavaSourceDir_main_0").toFile()
+
+            buildScriptInjection {
+                // E.g. timeout
+                thread {
+                    Thread.sleep(100000)
+                    val pid = ProcessHandle.current().pid().toString()
+                    ProcessBuilder("kill", pid).start().waitFor()
+                }
+
+                project.plugins.apply("java-library")
+                java.sourceSets.getByName("main").compileJavaSource(
+                    project,
+                    className = "Foo",
+                    """
+                       public class Foo {} 
+                    """.trimIndent()
+                )
+                project.gradle.buildFinished {
+                    if (!firstCompilationRoundSucceeded.exists()) {
+                        firstCompilationRoundSucceeded.createNewFile()
+                    } else {
+                        secondCompilationRoundSucceeded.createNewFile()
+                    }
+                }
+            }
+
+            val daemonRelease = PipedOutputStream()
+            val daemonStdin = PipedInputStream(daemonRelease)
+
+            val checker = thread {
+                while (!firstCompilationRoundSucceeded.exists()) {
+                    Thread.sleep(1000)
+                }
+                sourcesDir.resolve("Bar.java").writeText("public class Bar { }")
+                while (!secondCompilationRoundSucceeded.exists()) {
+                    Thread.sleep(1000)
+                }
+                daemonRelease.close()
+            }
+
+            runCatching {
+                build(
+                    "compileJava",
+                    "--continuous",
+                    buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+                    inputStream = daemonStdin,
+                )
+            }
+            checker.join()
+
+            assertFileExists(projectPath.resolve("build/classes/java/main/Bar.class"))
+        }
     }
 
     @Test
