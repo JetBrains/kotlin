@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
-import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -699,10 +698,11 @@ private class CallInlining(
             val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
 
             // inline parameters should never be stored to temporaries, as it would prevent their inlining
-            val shouldCreateTemporaryVariable = !argument.doesNotNeedTemporaryVariable() && !argument.isLoadOfInlineParameter()
-            if (shouldCreateTemporaryVariable) {
+            if (variableInitializer is IrGetValue && (variableInitializer.symbol as? IrValueParameterSymbol)?.owner?.isInlineParameter() == true) {
+                substituteMap[parameter] = irGetValueWithoutLocation(variableInitializer.symbol)
+            } else {
                 val (newVariable, copiedParameter) = createTemporaryVariable(
-                    parameter, variableInitializer, argument.isDefaultArg, callee
+                    parameter, variableInitializer, argument.isDefaultArg
                 )
                 container += newVariable
                 copiedParameter?.let { copiedParameters[parameter] = it }
@@ -710,11 +710,7 @@ private class CallInlining(
                 return@forEach
             }
 
-            substituteMap[parameter] = if (variableInitializer is IrGetValue) {
-                irGetValueWithoutLocation(variableInitializer.symbol)
-            } else {
-                variableInitializer
-            }
+
         }
 
         copiedParameters.forEach { (parameter, variable) ->
@@ -724,21 +720,10 @@ private class CallInlining(
         return Triple(evaluationStatements, evaluationStatementsFromDefault, copiedParameters.values.toList())
     }
 
-    private fun ParameterToArgument.doesNotNeedTemporaryVariable(): Boolean =
-        argumentExpression.isPure(false, symbols = context.ir.symbols)
-                && (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS || parameter.isInlineParameter())
-
-    private fun ParameterToArgument.isLoadOfInlineParameter(): Boolean {
-        val expression = argumentExpression as? IrGetValue ?: return false
-        val parameter = expression.symbol.owner as? IrValueParameter ?: return false
-        return parameter.isInlineParameter()
-    }
-
     private fun createTemporaryVariable(
         parameter: IrValueParameter,
         variableInitializer: IrExpression,
-        isDefaultArg: Boolean,
-        callee: IrFunction
+        isDefaultArg: Boolean
     ): Pair<IrVariable, IrVariable?> {
         val tmpVar = currentScope.scope.createTemporaryVariable(
             irExpression = IrBlockImpl(
