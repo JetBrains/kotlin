@@ -20,7 +20,7 @@ interface KotlinContextInterface {
 }
 
 fun usage(a: JavaWithOverride, b: JavaWithFakeOverride) {
-    a.foo("", 1, true)
+    a.<!UNRESOLVED_REFERENCE!>foo<!>("", 1, true)
     b.<!UNRESOLVED_REFERENCE!>foo<!>("", 1, true)
     with("OK") {
         with(a) {

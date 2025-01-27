@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirSignatureEnhancement(
@@ -283,6 +284,10 @@ class FirSignatureEnhancement(
                 unwrapFakeOverrides<FirCallableSymbol<*>>().origin is FirDeclarationOrigin.Enhancement
     }
 
+    private val overriddenComparator: Comparator<FirCallableDeclaration> =
+        compareByDescending<FirCallableDeclaration> { it.contextParameters.size }
+            .thenByDescending { it.receiverParameter != null }
+
     private fun enhanceMethod(
         firMethod: FirFunction,
         methodId: CallableId,
@@ -308,27 +313,42 @@ class FirSignatureEnhancement(
         val defaultQualifiers = firMethod.computeDefaultQualifiers()
         val overriddenMembers = precomputedOverridden ?: (firMethod as? FirSimpleFunction)?.overridden().orEmpty()
 
-        // TODO(KT-66195) handle context receivers
-        val hasReceiver = overriddenMembers.any { it.receiverParameter != null }
-
-        val newReceiverTypeRef = if (firMethod is FirSimpleFunction && hasReceiver) {
-            enhanceReceiverType(firMethod, overriddenMembers, defaultQualifiers)
-        } else null
         val (newReturnTypeRef, deferredCalc) = if (firMethod is FirSimpleFunction) {
             enhanceReturnType(firMethod, overriddenMembers, defaultQualifiers, predefinedEnhancementInfo)
         } else {
             firMethod.returnTypeRef to null
         }
 
+        // Overridden declarations can have different shapes (number of context parameters, receivers and value parameters)
+        // (but we assume that the number of context parameters + receiver + value parameters is invariant).
+        // We pick the shape of the declaration with the most context parameters, followed by one with receiver.
+        // In any case, we mustn't pick the number of context parameters and receivers from different declarations because it could violate
+        // the invariant context parameters + receiver + value parameters.
+        val representative = overriddenMembers.minWithOrNull(overriddenComparator)
+        val contextParameterCount = representative?.contextParameters?.size ?: 0
+        val hasReceiver = representative?.receiverParameter != null
+
+        var newReceiverTypeRef: FirResolvedTypeRef? = null
+        val enhancedContextParameterTypes = mutableListOf<FirResolvedTypeRef>()
         val enhancedValueParameterTypes = mutableListOf<FirResolvedTypeRef>()
 
         for ((index, valueParameter) in firMethod.valueParameters.withIndex()) {
-            if (hasReceiver && index == 0) continue
-            enhancedValueParameterTypes += enhanceValueParameterType(
-                firMethod, overriddenMembers, hasReceiver,
-                defaultQualifiers, predefinedEnhancementInfo, valueParameter,
-                if (hasReceiver) index - 1 else index
+            val enhancedType = enhanceValueParameterType(
+                ownerFunction = firMethod,
+                overriddenMembers = overriddenMembers,
+                defaultQualifiers = defaultQualifiers,
+                predefinedEnhancementInfo = predefinedEnhancementInfo,
+                ownerParameter = valueParameter,
+                index = index
             )
+
+            if (index < contextParameterCount) {
+                enhancedContextParameterTypes += enhancedType
+            } else if (hasReceiver && index == contextParameterCount) {
+                newReceiverTypeRef = enhancedType
+            } else {
+                enhancedValueParameterTypes += enhancedType
+            }
         }
 
         val functionSymbol: FirFunctionSymbol<*>
@@ -453,33 +473,32 @@ class FirSignatureEnhancement(
                 withFirEntry("firMethod", firMethod)
             }
         }.apply {
-            val newValueParameters = firMethod.valueParameters.zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
-                // Java annotation default values with binary expressions like `1.0 / 0.0`
-                // are not properly supported and produce error expressions, see IDEA-207252.
-                // Updating the type of an error expression causes an exception.
-                if (valueParameter.defaultValue !is FirErrorExpression) {
-                    valueParameter.defaultValue?.replaceConeTypeOrNull(enhancedReturnType.coneType)
-                }
-
-                buildValueParameter {
-                    source = valueParameter.source
-                    containingDeclarationSymbol = functionSymbol
-                    moduleData = this@FirSignatureEnhancement.moduleData
-                    origin = declarationOrigin
-                    returnTypeRef = enhancedReturnType.withReplacedConeType(
-                        typeParameterSubstitutor?.substituteOrNull(enhancedReturnType.coneType)
-                    )
-                    this.name = valueParameter.name
-                    symbol = FirValueParameterSymbol(this.name)
-                    defaultValue = valueParameter.defaultValue
-                    isCrossinline = valueParameter.isCrossinline
-                    isNoinline = valueParameter.isNoinline
-                    isVararg = valueParameter.isVararg
-                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    annotations += valueParameter.annotations
-                }
+            if (contextParameterCount > 0) {
+                contextParameters += firMethod.valueParameters
+                    .take(contextParameterCount)
+                    .zip(enhancedContextParameterTypes) { valueParameter, enhancedReturnType ->
+                        buildEnhancedValueParameter(
+                            valueParameter,
+                            enhancedReturnType,
+                            functionSymbol,
+                            declarationOrigin,
+                            typeParameterSubstitutor,
+                            FirValueParameterKind.ContextParameter,
+                        )
+                    }
             }
-            this.valueParameters += newValueParameters
+            valueParameters += firMethod.valueParameters
+                .drop(contextParameterCount + (if (hasReceiver) 1 else 0))
+                .zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
+                    buildEnhancedValueParameter(
+                        valueParameter,
+                        enhancedReturnType,
+                        functionSymbol,
+                        declarationOrigin,
+                        typeParameterSubstitutor,
+                        FirValueParameterKind.Regular,
+                    )
+                }
             annotations += firMethod.annotations
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true)
         }.build().apply {
@@ -490,6 +509,41 @@ class FirSignatureEnhancement(
         }
 
         return function.symbol
+    }
+
+    private fun buildEnhancedValueParameter(
+        valueParameter: FirValueParameter,
+        enhancedReturnType: FirResolvedTypeRef,
+        functionSymbol: FirFunctionSymbol<*>,
+        declarationOrigin: FirDeclarationOrigin,
+        typeParameterSubstitutor: ConeSubstitutor?,
+        valueParameterKind: FirValueParameterKind,
+    ): FirValueParameter {
+        // Java annotation default values with binary expressions like `1.0 / 0.0`
+        // are not properly supported and produce error expressions, see IDEA-207252.
+        // Updating the type of an error expression causes an exception.
+        if (valueParameter.defaultValue !is FirErrorExpression) {
+            valueParameter.defaultValue?.replaceConeTypeOrNull(enhancedReturnType.coneType)
+        }
+
+        return buildValueParameter {
+            source = valueParameter.source
+            containingDeclarationSymbol = functionSymbol
+            moduleData = this@FirSignatureEnhancement.moduleData
+            origin = declarationOrigin
+            returnTypeRef = enhancedReturnType.withReplacedConeType(
+                typeParameterSubstitutor?.substituteOrNull(enhancedReturnType.coneType)
+            )
+            this.name = valueParameter.name
+            symbol = FirValueParameterSymbol(this.name)
+            defaultValue = valueParameter.defaultValue
+            isCrossinline = valueParameter.isCrossinline
+            isNoinline = valueParameter.isNoinline
+            isVararg = valueParameter.isVararg
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            annotations += valueParameter.annotations
+            this.valueParameterKind = valueParameterKind
+        }
     }
 
     private fun <T : FirTypeParameterRef> MutableList<T>.copyTypeParametersWithNewContainingDeclaration(
@@ -777,25 +831,9 @@ class FirSignatureEnhancement(
 
     // ================================================================================================
 
-    private fun enhanceReceiverType(
-        ownerFunction: FirSimpleFunction,
-        overriddenMembers: List<FirCallableDeclaration>,
-        defaultQualifiers: JavaTypeQualifiersByElementType?,
-    ): FirResolvedTypeRef {
-        return ownerFunction.enhanceValueParameter(
-            overriddenMembers,
-            ownerFunction,
-            defaultQualifiers,
-            TypeInSignature.Receiver,
-            predefined = null,
-            forAnnotationMember = false
-        )
-    }
-
     private fun enhanceValueParameterType(
         ownerFunction: FirFunction,
         overriddenMembers: List<FirCallableDeclaration>,
-        hasReceiver: Boolean,
         defaultQualifiers: JavaTypeQualifiersByElementType?,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
         ownerParameter: FirValueParameter,
@@ -805,7 +843,7 @@ class FirSignatureEnhancement(
             overriddenMembers,
             ownerParameter,
             defaultQualifiers,
-            TypeInSignature.ValueParameter(hasReceiver, index),
+            TypeInSignature.ValueParameter(index),
             predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
             forAnnotationMember = owner.classKind == ClassKind.ANNOTATION_CLASS
         )
@@ -896,25 +934,32 @@ class FirSignatureEnhancement(
             }
         }
 
-        object Receiver : TypeInSignature() {
-            override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
-                if (member is FirSimpleFunction && member.isJava) {
-                    return member.valueParameters[0].returnTypeRef
-                }
-                return member.receiverParameter?.typeRef!!
-            }
-        }
-
-        class ValueParameter(val hasReceiver: Boolean, val index: Int) : TypeInSignature() {
+        class ValueParameter(val index: Int) : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
                 // When we enhance a setter override, the overridden property's return type corresponds to the setter's value parameter.
                 if (member is FirProperty) {
                     return member.returnTypeRef
                 }
-                if (hasReceiver && member is FirSimpleFunction && member.isJava) {
-                    return member.valueParameters[index + 1].returnTypeRef
+
+                checkWithAttachment(member is FirFunction, { "Declaration is not a function" }) {
+                    withFirEntry("member", member)
                 }
-                return (member as FirFunction).valueParameters[index].returnTypeRef
+
+                // The index refers to the unenhanced Java declaration.
+                // If `member` is a Kotlin or enhanced Java declaration, it could have context parameters and/or a receiver.
+                // Therefore, we need to index into [...context parameters, receiver, ...value parameters].
+                val contextParameters = member.contextParameters
+                val receiver = member.receiverParameter
+
+                if (index < contextParameters.size) {
+                    return contextParameters[index].returnTypeRef
+                }
+
+                if (receiver != null && index == contextParameters.size) {
+                    return receiver.typeRef
+                }
+
+                return member.valueParameters[index - contextParameters.size - (if (receiver != null) 1 else 0)].returnTypeRef
             }
         }
     }

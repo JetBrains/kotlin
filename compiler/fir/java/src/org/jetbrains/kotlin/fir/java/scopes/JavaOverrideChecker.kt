@@ -319,8 +319,11 @@ class JavaOverrideChecker internal constructor(
     }
 
     private fun FirSimpleFunction.collectValueParameterTypes(): List<FirTypeRef> {
-        val receiverTypeRef = receiverParameter?.typeRef
-        return listOfNotNull(receiverTypeRef) + valueParameters.map { it.returnTypeRef }
+        return buildList {
+            contextParameters.mapTo(this) { it.returnTypeRef }
+            receiverParameter?.typeRef?.let { add(it) }
+            valueParameters.mapTo(this) { it.returnTypeRef }
+        }
     }
 
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {

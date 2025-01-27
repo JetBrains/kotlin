@@ -67,6 +67,7 @@ class FirRenderer(
             bodyRenderer = null,
             propertyAccessorRenderer = null,
             callArgumentsRenderer = FirCallNoArgumentsRenderer(),
+            lineBreakAfterContextParameters = false,
         )
 
         fun withResolvePhase(): FirRenderer = FirRenderer(

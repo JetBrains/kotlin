@@ -23,7 +23,7 @@ fun usage(a: JavaWithOverride, b: JavaWithFakeOverride) {
     a.<!NO_CONTEXT_ARGUMENT!>foo<!>(1)
     b.<!NO_CONTEXT_ARGUMENT!>foo<!>(1)
 
-    a.foo("", 1)
+    a.<!NO_CONTEXT_ARGUMENT!>foo<!>(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!TOO_MANY_ARGUMENTS!>1<!>)
     b.<!NO_CONTEXT_ARGUMENT!>foo<!>(1, <!TOO_MANY_ARGUMENTS!>""<!>)
 
     with("OK") {

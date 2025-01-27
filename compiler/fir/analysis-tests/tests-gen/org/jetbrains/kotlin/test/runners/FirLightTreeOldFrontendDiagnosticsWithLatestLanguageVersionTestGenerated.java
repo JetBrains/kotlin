@@ -24517,6 +24517,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("heterogeneousReceiverOverrides.kt")
+      public void testHeterogeneousReceiverOverrides() {
+        runTest("compiler/testData/diagnostics/tests/j+k/heterogeneousReceiverOverrides.kt");
+      }
+
+      @Test
       @TestMetadata("inheritAbstractSamAdapter.kt")
       public void testInheritAbstractSamAdapter() {
         runTest("compiler/testData/diagnostics/tests/j+k/inheritAbstractSamAdapter.kt");

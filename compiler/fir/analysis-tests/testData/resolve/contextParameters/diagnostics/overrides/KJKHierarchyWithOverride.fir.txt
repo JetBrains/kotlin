@@ -3,7 +3,39 @@ FILE: KotlinContextInterface.kt
 
     public abstract interface KotlinContextInterface : R|kotlin/Any| {
         context(a: R|kotlin/String|)
-        public abstract fun foo(b: R|kotlin/String|): R|kotlin/String|
+        public abstract fun foo(b: R|kotlin/Int|): R|kotlin/String|
+
+        context(a: R|kotlin/String|)
+        public abstract fun R|kotlin/Int|.bar(b: R|kotlin/Boolean|): R|kotlin/String|
+
+        context(a: R|kotlin/String|)
+        public abstract fun baz(): R|kotlin/String|
+
+        context(a: R|kotlin/String|, b: R|kotlin/String|)
+        public abstract fun qux(): R|kotlin/String|
+
+        context(a: R|kotlin/String|, b: R|kotlin/String|)
+        public abstract fun quux(c: R|kotlin/String|): R|kotlin/String|
+
+    }
+    public abstract interface KotlinInterface2 : R|kotlin/Any| {
+        context(a: R|kotlin/String|, b: R|kotlin/Int|)
+        public abstract fun foo(): R|kotlin/String|
+
+        context(a: R|kotlin/String|, b: R|kotlin/Int|, c: R|kotlin/Boolean|)
+        public abstract fun bar(): R|kotlin/String|
+
+        public abstract fun baz(a: R|kotlin/String|): R|kotlin/String|
+
+        context(a: R|kotlin/String|, b: R|kotlin/String|)
+        public abstract fun qux(): R|kotlin/String|
+
+        context(a: R|kotlin/String|, b: R|kotlin/String|)
+        public abstract fun R|kotlin/String|.quux(): R|kotlin/String|
+
+    }
+    public abstract interface KotlinInterface3 : R|kotlin/Any| {
+        public abstract fun R|kotlin/String|.baz(): R|kotlin/String|
 
     }
 FILE: test.kt
