@@ -139,6 +139,10 @@ RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpad, KRef) {
     throw std::runtime_error("Not implemented for tests");
 }
 
+kotlin::mm::RawExternalRCRef* RUNTIME_NORETURN WorkerExecuteLaunchpad(KRef (*job)(KRef, ObjHeader**), kotlin::mm::RawExternalRCRef* jobArgument) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 void RUNTIME_NORETURN ThrowWorkerAlreadyTerminated() {
     throw std::runtime_error("Not implemented for tests");
 }
