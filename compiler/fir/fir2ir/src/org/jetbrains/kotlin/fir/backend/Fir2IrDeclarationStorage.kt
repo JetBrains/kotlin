@@ -1460,6 +1460,7 @@ class Fir2IrDeclarationStorage(
                             is FirProperty -> {
                                 return getIrPropertySymbol(unwrapped.symbol)
                             }
+                            else -> {}
                         }
                     }
                 }
