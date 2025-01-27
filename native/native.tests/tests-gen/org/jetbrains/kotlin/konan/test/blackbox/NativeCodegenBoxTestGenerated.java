@@ -43559,9 +43559,15 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
-      @TestMetadata("diamondWithGenericSpecialization.kt")
-      public void testDiamondWithGenericSpecialization() {
-        runTest("compiler/testData/codegen/box/super/diamondWithGenericSpecialization.kt");
+      @TestMetadata("diamondWithGenericParameterType.kt")
+      public void testDiamondWithGenericParameterType() {
+        runTest("compiler/testData/codegen/box/super/diamondWithGenericParameterType.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondWithGenericReturnType.kt")
+      public void testDiamondWithGenericReturnType() {
+        runTest("compiler/testData/codegen/box/super/diamondWithGenericReturnType.kt");
       }
 
       @Test
