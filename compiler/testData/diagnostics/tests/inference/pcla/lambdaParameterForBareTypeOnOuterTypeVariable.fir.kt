@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-64840
+// LATEST_LV_DIFFERENCE
 class Controller<T> {
     val t: T get() = TODO()
     fun yield(t: T): Boolean = true

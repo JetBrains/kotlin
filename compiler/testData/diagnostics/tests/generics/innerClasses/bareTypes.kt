@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// LATEST_LV_DIFFERENCE
 class Outer<E> {
     inner class Inner<F, G> {
         inner abstract class Inner2Base

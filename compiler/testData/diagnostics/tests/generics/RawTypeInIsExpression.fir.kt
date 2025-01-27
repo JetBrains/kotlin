@@ -1,11 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
 package p
 
 public fun foo(a: Any) {
     a is Map<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>
     a is <!NO_TYPE_ARGUMENTS_ON_RHS!>Map<!>
-    a is Map<out Any?, Any?>
+    a is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING!>Map<out Any?, Any?><!>
     a is Map<*, *>
     a is Map<<!SYNTAX!><!>>
     a is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING!>List<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>><!>

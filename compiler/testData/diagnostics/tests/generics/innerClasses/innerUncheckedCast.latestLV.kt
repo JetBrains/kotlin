@@ -13,10 +13,10 @@ class Outer<E> {
             x.prop.checkType { _<E>() }
         }
 
-        if (y is Inner) return
+        if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) return
 
-        if (z is Inner) {
-            z.prop.checkType { _<Any?>() }
+        if (z is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) {
+            z.<!UNRESOLVED_REFERENCE!>prop<!>.<!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Any?<!>>() }
             return
         }
 
@@ -27,7 +27,7 @@ class Outer<E> {
 
     fun bar(x: InnerBase<String>, y: Any?, z: Outer<*>.InnerBase<String>) {
         x as Inner
-        y as Inner
-        z as Inner
+        y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>
+        z as <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>
     }
 }

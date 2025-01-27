@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 open class Base
 class Derived<E : CharSequence> : Base()

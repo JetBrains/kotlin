@@ -1,0 +1,11 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
+// ISSUE: KT-57095
+
+open class ValueType<T> {
+    class Optional<T>: ValueType<T?>()
+}
+
+private fun checkType(type: ValueType<out Any?>) {
+    type as <!NO_TYPE_ARGUMENTS_ON_RHS!>ValueType.Optional<!>
+}

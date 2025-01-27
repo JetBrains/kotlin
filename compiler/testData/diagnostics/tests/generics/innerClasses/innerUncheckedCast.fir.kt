@@ -15,7 +15,7 @@ class Outer<E> {
 
         if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) return
 
-        if (z is Inner) {
+        if (z is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING!>Inner<!>) {
             z.prop.checkType { _<Any?>() }
             return
         }
@@ -28,6 +28,6 @@ class Outer<E> {
     fun bar(x: InnerBase<String>, y: Any?, z: Outer<*>.InnerBase<String>) {
         x as Inner
         y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>
-        z as Inner
+        z <!UNCHECKED_CAST!>as Inner<!>
     }
 }

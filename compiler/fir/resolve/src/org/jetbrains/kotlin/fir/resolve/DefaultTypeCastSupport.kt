@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -84,6 +85,13 @@ class DefaultTypeCastSupport : TypeCastSupport {
             // substitution
             val constraints = constraintsWithVariable.constraints.filter {
                 !constraintSystem.isTrivial(it) && constraintSystem.isProperType(it.type)
+                        && it.position.initialConstraint.position !is ConeDeclaredUpperBoundConstraintPosition
+            }
+
+            // We only want to let users benefit from bare type inference if there is
+            // some non-trivial information about the arguments.
+            if (constraints.isEmpty()) {
+                return null
             }
 
             constraints.firstOrNull { it.kind == ConstraintKind.EQUALITY }?.let {
@@ -141,7 +149,7 @@ class DefaultTypeCastSupport : TypeCastSupport {
         for ((parameter, variable) in parametersToFreshVariables) {
             for (bound in parameter.resolvedBounds) {
                 val boundWithVariables = parametersToVariablesSubstitutor.substituteOrSelf(bound.coneType)
-                constraintSystem.addSubtypeConstraint(variable.defaultType, boundWithVariables, SimpleConstraintSystemConstraintPosition)
+                constraintSystem.addSubtypeConstraint(variable.defaultType, boundWithVariables, ConeDeclaredUpperBoundConstraintPosition())
             }
         }
 

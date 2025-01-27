@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-64840 (K2/PCLA difference)
+// LATEST_LV_DIFFERENCE
 class Controller<T> {
     fun yield(t: T): Boolean = true
 }

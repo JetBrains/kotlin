@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 interface FirDeclaration
 
 interface FirSymbolOwner<E : FirSymbolOwner<E>> {

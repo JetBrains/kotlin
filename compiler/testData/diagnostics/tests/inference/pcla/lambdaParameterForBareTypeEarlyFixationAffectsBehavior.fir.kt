@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 // ISSUE: KT-64840
+// LATEST_LV_DIFFERENCE
 
 class Controller<T> {
     fun yield(t: T): Boolean = true

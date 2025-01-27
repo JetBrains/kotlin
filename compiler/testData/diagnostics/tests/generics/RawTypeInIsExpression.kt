@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
 package p
 
 public fun foo(a: Any) {

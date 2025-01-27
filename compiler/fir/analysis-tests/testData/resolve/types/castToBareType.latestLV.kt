@@ -1,0 +1,19 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+interface FirDeclaration
+
+interface FirSymbolOwner<E : FirSymbolOwner<E>> {
+    val symbol: AbstractFirBasedSymbol<<!UPPER_BOUND_VIOLATED!>E<!>>
+}
+interface FirFunction<F : FirFunction<F>> : FirSymbolOwner<F>, FirDeclaration
+
+interface AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
+    val fir: E
+}
+
+fun foo(firAdaptee: FirFunction<*>) {}
+
+fun test(symbol: AbstractFirBasedSymbol<*>) {
+    val firAdaptee = symbol.fir as <!NO_TYPE_ARGUMENTS_ON_RHS!>FirFunction<!>
+    foo(firAdaptee)
+}

@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
 interface FirTargetElement
 
 interface FirFunction<F : FirFunction<F>> : FirTargetElement
