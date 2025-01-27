@@ -300,4 +300,21 @@ class IrInterpreterCommonChecker : IrInterpreterChecker() {
     override fun visitClassReference(expression: IrClassReference, data: IrInterpreterCheckerData): Boolean {
         return data.mode.canEvaluateClassReference(expression)
     }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrInterpreterCheckerData): Boolean {
+        if (!data.mode.canEvaluateRichFunctionReference(expression)) return false
+        val body = expression.invokeFunction.body ?: return false
+        val functionIsComputable = expression.invokeFunction.asVisited { body.accept(this, data) }
+        val boundValuesAreComputable = expression.boundValues.all { it.accept(this, data) }
+        return boundValuesAreComputable && functionIsComputable
+
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: IrInterpreterCheckerData): Boolean {
+        if (!data.mode.canEvaluateRichPropertyReference(expression)) return false
+
+        val getterIsComputable = data.mode.canEvaluateFunction(expression.getterFunction)
+        val boundValuesAreComputable = expression.boundValues.all { it.accept(this, data) }
+        return boundValuesAreComputable && getterIsComputable
+    }
 }

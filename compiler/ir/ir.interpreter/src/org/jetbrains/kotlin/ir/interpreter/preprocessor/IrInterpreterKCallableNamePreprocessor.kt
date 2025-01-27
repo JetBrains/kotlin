@@ -23,21 +23,32 @@ import org.jetbrains.kotlin.name.SpecialNames
 class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
         if (!expression.isKCallableNameCall(data.irBuiltIns)) return super.visitCall(expression, data)
+        return handleCallableReference(expression, data)
+    }
 
-        val callableReference = expression.dispatchReceiver as? IrCallableReference<*> ?: return super.visitCall(expression, data)
-
-        val boundArgs = callableReference.arguments.filterNotNull()
+    private fun handleCallableReference(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
+        val callableReference = expression.dispatchReceiver
+        val boundArgs = when (callableReference) {
+            is IrCallableReference<*> -> callableReference.arguments.filterNotNull()
+            is IrRichPropertyReference -> callableReference.boundValues.toList() // make a copy
+            is IrRichFunctionReference -> callableReference.boundValues.toList() // make a copy
+            else -> return super.visitCall(expression, data)
+        }
 
         // Transform reference from bound to unbound one
         val typeArguments = (callableReference.type as IrSimpleType).arguments.map { it.typeOrNull!! }
         if (boundArgs.isNotEmpty() && callableReference.type.isKFunction()) {
+            val newTypeArgs = when (callableReference) {
+                is IrCallableReference<*> -> {
+                    val typeArgIterator = typeArguments.iterator()
+                    callableReference.arguments
+                        .mapTo(mutableListOf()) { it?.type ?: typeArgIterator.next() }
+                        .also { it.add(typeArgIterator.next()) /* add the return type */ }
+                }
+                else -> boundArgs.map { it.type } + typeArguments
+            }
+
             val kFunction = data.irBuiltIns.kFunctionN(typeArguments.size)
-
-            val typeArgIterator = typeArguments.iterator()
-            val newTypeArgs = callableReference.arguments
-                .mapTo(mutableListOf()) { it?.type ?: typeArgIterator.next() }
-                .also { it.add(typeArgIterator.next()) /* add the return type */ }
-
             callableReference.type = kFunction.typeWith(*newTypeArgs.toTypedArray<IrType>())
         }
 
@@ -45,7 +56,12 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
         expression.symbol = data.irBuiltIns.kCallableClass.owner.properties.single { it.name.asString() == "name" }.getter!!.symbol
 
         // Callable reference shouldn't have any bound arguments
-        callableReference.arguments.fill(null)
+        when (callableReference) {
+            is IrCallableReference<*> -> callableReference.arguments.fill(null)
+            is IrRichPropertyReference -> callableReference.boundValues.clear()
+            is IrRichFunctionReference -> callableReference.boundValues.clear()
+            else -> return super.visitCall(expression, data)
+        }
 
         val boundArgsWithoutThis = boundArgs.filterNot { it is IrGetValue && it.symbol.owner.name == SpecialNames.THIS }
         if (boundArgsWithoutThis.isEmpty()) return expression
@@ -58,7 +74,10 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
 
     companion object {
         fun IrCall.isKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
-            if (this.dispatchReceiver !is IrCallableReference<*>) return false
+            val receiver = this.dispatchReceiver
+            if (receiver !is IrCallableReference<*> && receiver !is IrRichPropertyReference && receiver !is IrRichFunctionReference) {
+                return false
+            }
 
             val directMember: IrOverridableMember = this.symbol.owner.let { it.property ?: it }
 

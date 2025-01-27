@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
@@ -48,6 +49,17 @@ internal class KFunctionState(
         boundValues: List<State?>,
     ) : this(
         functionReference.symbol.owner,
+        functionReference.type.classOrNull!!.owner,
+        environment,
+        boundValues,
+    )
+
+    constructor(
+        functionReference: IrRichFunctionReference,
+        environment: IrInterpreterEnvironment,
+        boundValues: List<State?>,
+    ) : this(
+        functionReference.invokeFunction,
         functionReference.type.classOrNull!!.owner,
         environment,
         boundValues,

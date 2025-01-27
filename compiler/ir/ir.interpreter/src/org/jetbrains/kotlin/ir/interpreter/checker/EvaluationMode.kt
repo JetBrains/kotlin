@@ -29,6 +29,8 @@ sealed class EvaluationMode {
     open fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = false
     open fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = false
     open fun canEvaluateCallableReference(reference: IrCallableReference<*>): Boolean = false
+    open fun canEvaluateRichFunctionReference(reference: IrRichFunctionReference): Boolean = false
+    open fun canEvaluateRichPropertyReference(reference: IrRichPropertyReference): Boolean = false
     open fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = false
 
     open fun canEvaluateBlock(block: IrBlock): Boolean = false
@@ -55,6 +57,8 @@ sealed class EvaluationMode {
         override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = true
         override fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = true
         override fun canEvaluateCallableReference(reference: IrCallableReference<*>): Boolean = true
+        override fun canEvaluateRichFunctionReference(reference: IrRichFunctionReference): Boolean = true
+        override fun canEvaluateRichPropertyReference(reference: IrRichPropertyReference): Boolean = true
         override fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = true
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = true
