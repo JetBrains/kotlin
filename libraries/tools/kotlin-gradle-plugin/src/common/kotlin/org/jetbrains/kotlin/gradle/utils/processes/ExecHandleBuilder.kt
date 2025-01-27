@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companio
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 /**
@@ -55,7 +56,7 @@ internal class ExecHandleBuilder(
      * The executor must be multithreaded, otherwise simultaneously handling IO streams and the process
      * will cause a deadlock.
      */
-    var executor: Executor = Executors.newCachedThreadPool()
+    var executor: Executor = defaultExecHandleExecutor
 
     /** Arguments for the command to be executed. */
     val arguments: MutableList<String> = mutableListOf()
@@ -100,6 +101,17 @@ internal class ExecHandleBuilder(
     }
 
     companion object {
+        /**
+         * A default shared thread pool for all exec handles.
+         *
+         * Note: We re-use a pool to try to minimise resource use.
+         * Trying to manually shut down an executor is technically challenging
+         * (the pool is used for IO and the launched process, so there's no clear moment when everything stops.)
+         * The docs say "a pool that remains idle for long enough will not consume any resources", so a shared pool
+         * should have minimal impact.
+         */
+        private val defaultExecHandleExecutor: ExecutorService by lazy { Executors.newCachedThreadPool() }
+
         /**
          * Create a new instance of [ExecHandleBuilder].
          */
