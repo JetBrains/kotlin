@@ -56,6 +56,18 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_native_internal_ref_dereferenceExte
     RETURN_RESULT_OF(mm::tryRefExternalRCRef, ref);
 }
 
+RUNTIME_NOTHROW extern "C" mm::RawExternalRCRef* Kotlin_mm_createRetainedExternalRCRef(KRef obj) {
+    return mm::createRetainedExternalRCRef(obj);
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_mm_releaseExternalRCRef(mm::RawExternalRCRef* ref) {
+    mm::releaseExternalRCRef(ref);
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_mm_disposeExternalRCRef(mm::RawExternalRCRef* ref) {
+    mm::disposeExternalRCRef(ref);
+}
+
 mm::ExternalRCRefImpl::ExternalRCRefImpl(mm::ExternalRCRefRegistry& registry, KRef obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
     RuntimeAssert(obj != nullptr, "Creating ExternalRCRefImpl for null object");
     RuntimeAssert(rc >= 0, "Creating ExternalRCRefImpl with negative rc %d", rc);
