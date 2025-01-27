@@ -3886,13 +3886,6 @@ internal class CannotCheckForErasedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CannotCheckForErased
 
-internal class UnsafeDowncastWrtVarianceImpl(
-    override val currentType: KaType,
-    override val futureType: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsafeDowncastWrtVariance
-
 internal class CannotCheckForErasedDeprecationWarningImpl(
     override val type: KaType,
     firDiagnostic: KtPsiDiagnostic,

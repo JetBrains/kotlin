@@ -3232,12 +3232,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val type: KaType
     }
 
-    interface UnsafeDowncastWrtVariance : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = UnsafeDowncastWrtVariance::class
-        val currentType: KaType
-        val futureType: KaType
-    }
-
     interface CannotCheckForErasedDeprecationWarning : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CannotCheckForErasedDeprecationWarning::class
         val type: KaType

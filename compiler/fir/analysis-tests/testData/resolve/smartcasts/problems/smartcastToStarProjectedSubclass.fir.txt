@@ -10,7 +10,7 @@ FILE: test.kt
     }
     public final fun test_2(option: R|Option<kotlin/Pair<kotlin/String, kotlin/String>>?|): R|kotlin/Unit| {
         when () {
-            (R|<local>/option| is R|Option.Some<kotlin/Pair<kotlin/String, kotlin/String>>|) ->  {
+            (R|<local>/option| is R|Option.Some<ft<kotlin/Pair<kotlin/String, kotlin/String>, kotlin/Pair<kotlin/String, kotlin/String>?>>|) ->  {
                 lval x: R|kotlin/String| = R|<local>/option|.R|SubstitutionOverride</Option.Some.get: R|ft<kotlin/Pair<kotlin/String, kotlin/String>, kotlin/Pair<kotlin/String, kotlin/String>?>|>|().R|SubstitutionOverride<kotlin/Pair.first: R|kotlin/String|>|
                 R|<local>/x|.R|kotlin/String.length|
             }

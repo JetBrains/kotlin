@@ -1,5 +1,5 @@
 // LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 interface A<out T>
 
 interface MutableA<T> : A<T> {
