@@ -393,6 +393,14 @@ fun main() {
                     }
                 }
             }
+            testClass<AbstractNativeCExportInterfaceV1HeaderTest>(
+                "CExportInterfaceV1HeaderTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                )
+            ) {
+                model("InterfaceV1HeaderTests")
+            }
         }
         // Stress tests
         testGroup("native/native.tests/stress/tests-gen", "native/native.tests/stress/testData") {
