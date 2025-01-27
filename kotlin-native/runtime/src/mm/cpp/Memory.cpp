@@ -9,23 +9,20 @@
 #include "Allocator.hpp"
 #include "CallsChecker.hpp"
 #include "Exceptions.h"
+#include "ExternalRCRef.hpp"
 #include "ExtraObjectData.hpp"
 #include "GC.hpp"
 #include "GlobalsRegistry.hpp"
 #include "KAssert.h"
 #include "Natives.h"
-#include "ObjCBackRef.hpp"
 #include "ObjectOps.hpp"
 #include "Porting.h"
 #include "ReferenceOps.hpp"
 #include "Runtime.h"
 #include "SafePoint.hpp"
-#include "ExternalRCRefRegistry.hpp"
-#include "StableRef.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadState.hpp"
-#include "Utils.hpp"
 #include "MemoryDump.hpp"
 
 using namespace kotlin;
@@ -371,27 +368,23 @@ extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 
-extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
-    if (!object)
-        return nullptr;
-
+// Used in C export.
+extern "C" RUNTIME_NOTHROW mm::RawExternalRCRef* CreateStablePointer(ObjHeader* object) {
     AssertThreadState(ThreadState::kRunnable);
-    return static_cast<mm::ExternalRCRefImpl*>(mm::StableRef::create(object));
+    return mm::createRetainedExternalRCRef(object);
 }
 
-extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
-    if (!pointer) return;
-
+// Used in C export.
+extern "C" RUNTIME_NOTHROW void DisposeStablePointer(mm::RawExternalRCRef* pointer) {
     // Can be safely called in any thread state.
-    mm::StableRef(static_cast<mm::ExternalRCRefImpl*>(pointer)).dispose();
+    mm::releaseExternalRCRef(pointer);
+    mm::disposeExternalRCRef(pointer);
 }
 
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
-    if (!pointer)
-        RETURN_OBJ(nullptr);
-
+// Used in C export.
+extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, mm::RawExternalRCRef* pointer) {
     AssertThreadState(ThreadState::kRunnable);
-    RETURN_OBJ(*mm::StableRef(static_cast<mm::ExternalRCRefImpl*>(pointer)));
+    RETURN_OBJ(mm::dereferenceExternalRCRef(pointer));
 }
 
 // it would be inlined manually in RemoveRedundantSafepointsPass
