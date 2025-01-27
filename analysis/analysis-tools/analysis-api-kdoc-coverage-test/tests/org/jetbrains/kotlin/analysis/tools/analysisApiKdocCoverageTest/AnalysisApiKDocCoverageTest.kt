@@ -8,9 +8,16 @@ package org.jetbrains.kotlin.analysis.tools.analysisApiKdocCoverageTest
 import org.jetbrains.kotlin.util.KDocCoverageTest
 
 class AnalysisApiKDocCoverageTest() : KDocCoverageTest() {
-    override val sourceCodePath: String = "/analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api"
-    override val generatedFilePath: String =
-        "/analysis/analysis-tools/analysis-api-kdoc-coverage-test/undocumented/analysis-api.undocumented"
+    override val sourceDirectories: List<SourceDirectoryWithOutput> = listOf(
+        SourceDirectoryWithOutput(
+            "/analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api",
+            "/analysis/analysis-api/api/analysis-api.undocumented"
+        ),
+        SourceDirectoryWithOutput(
+            "/analysis/analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform",
+            "/analysis/analysis-api/api/analysis-api-platform-interface.undocumented"
+        ),
+    )
 
     fun testKDocCoverage() {
         doTest()

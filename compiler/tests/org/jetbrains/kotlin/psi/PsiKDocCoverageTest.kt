@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.KDocCoverageTest
 
 class PsiKDocCoverageTest() : KDocCoverageTest() {
-    override val sourceCodePath: String = "/compiler/psi/src/org/jetbrains/kotlin"
-    override val generatedFilePath: String =
-        "/compiler/testData/psiKdocCoverage/psi.undocumented"
+    override val sourceDirectories: List<SourceDirectoryWithOutput> = listOf(
+        SourceDirectoryWithOutput("/compiler/psi/src/org/jetbrains/kotlin", "/compiler/testData/psiKdocCoverage/psi.undocumented")
+    )
 
     override val ignoredPackages: List<FqName> = listOf(
         FqName("org.jetbrains.kotlin.idea"),

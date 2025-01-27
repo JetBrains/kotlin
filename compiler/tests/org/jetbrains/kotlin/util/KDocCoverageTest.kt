@@ -17,19 +17,20 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 /**
  * This test was introduced to automatically check that every public API from some module
  * is documented (i.e., has a KDoc attached).
  *
- * The test iterates through all the files in the source folder [sourceCodePath] and builds a resulting file
+ * The test iterates through all the source directories [sourceDirectories] and
+ * for each directory [SourceDirectoryWithOutput.sourceCodeDirectoryPath] builds a separate resulting file
  * containing all the undocumented public declarations along with
  * file paths, names of containing classes, annotations, keywords and signatures.
  *
  * Then the test compares the contents of the resulting file
- * and the master file [generatedFilePath]
+ * and the master file [SourceDirectoryWithOutput.outputFilePath]
  *
  * The test is intended to prevent developers from writing undocumented APIs.
  * If the lack of documentation for some declaration is intentional,
@@ -37,32 +38,36 @@ import java.io.File
  */
 abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
     protected fun doTest() {
-        val path = testDataPath + sourceCodePath
-        val root = File(path)
+        sourceDirectories.forEach { (sourceCodeDirectoryPath, outputFilePath) ->
+            val actualText = buildList {
+                val path = testDataPath + sourceCodeDirectoryPath
+                val root = File(path)
 
-        val actualText = buildList {
-            for (file in root.walkTopDown()) {
-                if (file.isDirectory) continue
-                if (file.extension != "kt") continue
+                for (file in root.walkTopDown()) {
+                    if (file.isDirectory) continue
+                    if (file.extension != "kt" && file.extension != "java") continue
 
-                val relativePath = file.relativeTo(root).invariantSeparatorsPath
+                    val relativePath = file.relativeTo(root).invariantSeparatorsPath
 
-                try {
-                    val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-                    val file = getPsiFile(text, file.path)
-                    if (file.packageFqName in ignoredPackages)
-                        continue
-                    addAll(getUndocumentedDeclarationsByFile(file, relativePath))
-                } catch (e: Exception) {
-                    throw IllegalStateException(relativePath, e)
+                    try {
+                        val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+                        val file = getPsiFile(text, file.path)
+                        if (file.packageFqName in ignoredPackages)
+                            continue
+                        addAll(getUndocumentedDeclarationsByFile(file, relativePath))
+                    } catch (e: Exception) {
+                        throw IllegalStateException(relativePath, e)
+                    }
                 }
-            }
-        }.sorted().joinToString("\n")
+            }.sorted().joinToString("\n")
 
-        val expectedFile = File(testDataPath + generatedFilePath)
-        assertEqualsToFile(expectedFile, actualText, message = {
-            "Some newer public declarations from `$sourceCodePath` are undocumented. Please, consider either documenting them or adding them to `$generatedFilePath`"
-        })
+            val expectedFile = File(testDataPath + outputFilePath)
+            KotlinTestUtils.assertEqualsToFile(
+                "Some newer public declarations from `$sourceCodeDirectoryPath` are undocumented. Please, consider either documenting them or adding them to `$outputFilePath`",
+                expectedFile,
+                actualText
+            )
+        }
     }
 
     private fun getUndocumentedDeclarationsByFile(file: KtFile, relativePathFromRoot: String): List<String> =
@@ -121,9 +126,7 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
         return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(path)), text) as KtFile
     }
 
-    abstract val sourceCodePath: String
-
-    abstract val generatedFilePath: String
+    abstract val sourceDirectories: List<SourceDirectoryWithOutput>
 
     protected open val ignoredPropertyNames: List<String> = listOf()
 
@@ -133,5 +136,10 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
 
     protected open val nonRenderedModifiers: List<String> = listOf(
         "public"
+    )
+
+    data class SourceDirectoryWithOutput(
+        val sourceCodeDirectoryPath: String,
+        val outputFilePath: String,
     )
 }
