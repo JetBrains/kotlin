@@ -4,7 +4,7 @@
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 // LATEST_LV_DIFFERENCE
 
-fun <E> Iterable<E>.windowed() = this is RandomAccess && this is <!CANNOT_CHECK_FOR_ERASED!>List<!>
+fun <E> Iterable<E>.windowed() = this is RandomAccess && this is List
 
 abstract class TransformingSequence<T, R> : Sequence<R>
 

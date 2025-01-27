@@ -173,7 +173,21 @@ class DefaultTypeCastSupport : TypeCastSupport {
         val parametersToVariableTypes = parametersToFreshVariables.mapValues { it.value.defaultType }
         val subType = subTypeClassSymbol.constructType(parametersToVariableTypes.values.toTypedArray())
 
-        constraintSystem.addSubtypeConstraint(subType, supertype, SimpleConstraintSystemConstraintPosition)
+        val supertypeComponents = when {
+            supertype is ConeIntersectionType -> supertype.intersectedTypes
+            else -> listOf(supertype)
+        }
+
+        for (superTypeComponent in supertypeComponents) {
+            if (superTypeComponent !is ConeClassLikeType) {
+                continue
+            }
+
+            if (subTypeClassSymbol.isSubclassOf(superTypeComponent.lookupTag, session, isStrict = false, lookupInterfaces = true)) {
+                constraintSystem.addSubtypeConstraint(subType, superTypeComponent, SimpleConstraintSystemConstraintPosition)
+            }
+        }
+
         return SubtypeArgumentsInferenceData(constraintSystem, parametersToFreshVariables, subType)
     }
 
