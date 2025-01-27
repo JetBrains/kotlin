@@ -9,6 +9,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.api.renameToCamelCase
 
 class Rename : AbstractInterpreter<RenameClauseApproximation>() {
     private val Arguments.receiver by dataFrame()
@@ -79,4 +82,12 @@ internal fun SimpleFrameColumn.map(selected: ColumnsSet, path: List<String>, nex
         name,
         f(columns(), nextName, selected, path)
     )
+}
+
+class RenameToCamelCase : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver by dataFrame()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.asDataFrame().renameToCamelCase().toPluginDataFrameSchema()
+    }
 }
