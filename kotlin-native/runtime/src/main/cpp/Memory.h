@@ -256,8 +256,6 @@ void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
 void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
 // Translate stable pointer to object reference.
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
-// Move stable pointer ownership.
-OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
 // Add TLS object storage, called by the generated code.
 void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.
