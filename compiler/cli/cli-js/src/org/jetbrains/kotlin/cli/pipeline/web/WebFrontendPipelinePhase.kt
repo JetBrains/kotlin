@@ -47,13 +47,12 @@ import java.nio.file.Paths
 
 object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, WebFrontendPipelineArtifact>(
     name = "JsFrontendPipelinePhase",
+    preActions = setOf(PerformanceNotifications.AnalysisStarted),
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): WebFrontendPipelineArtifact? {
         val configuration = input.configuration
-        val performanceManager = configuration.perfManager
         val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-        performanceManager?.notifyAnalysisStarted()
         val messageCollector = configuration.messageCollector
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries
@@ -65,8 +64,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         runStandardLibrarySpecialCompatibilityChecks(moduleStructure.allDependencies, isWasm = isWasm, messageCollector)
 
         val lookupTracker = configuration.lookupTracker ?: LookupTracker.DO_NOTHING
-
-        performanceManager?.notifyAnalysisStarted()
 
         val kotlinPackageUsageIsFine: Boolean
         val analyzedOutput = if (configuration.useLightTree) {
@@ -127,7 +124,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         if (!kotlinPackageUsageIsFine) return null
 
-        performanceManager?.notifyAnalysisFinished()
         return WebFrontendPipelineArtifact(
             analyzedOutput,
             configuration,
