@@ -221,6 +221,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceByFileTestGenerate
   }
 
   @Test
+  @TestMetadata("stringConcatenation.kt")
+  public void testStringConcatenation() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/stringConcatenation.kt");
+  }
+
+  @Test
   @TestMetadata("syntheticProperty.kt")
   public void testSyntheticProperty() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/syntheticProperty.kt");
