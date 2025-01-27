@@ -407,6 +407,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("renameToCamelCase.kt")
+  public void testRenameToCamelCase() {
+    runTest("testData/box/renameToCamelCase.kt");
+  }
+
+  @Test
   @TestMetadata("Schema.kt")
   public void testSchema() {
     runTest("testData/box/Schema.kt");
