@@ -463,20 +463,22 @@ open class FunctionInlining(
         }
 
         private fun isLambdaCall(irCall: IrCall): Boolean {
+            if (irCall.symbol.isBound) {
+                val callee = irCall.symbol.owner
+                val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
+                // Uncomment or delete depending on KT-57249 status
+                // assert(!dispatchReceiver.type.isKFunction())
+
+                return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
+                        && callee.name == OperatorNameConventions.INVOKE
+                        && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
+            }
+
             val signature = irCall.symbol.signature?.asPublic() ?: return false
             return signature.packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString() && signature.declarationFqName.endsWith(".invoke") &&
                     (signature.declarationFqName.startsWith("Function") || signature.declarationFqName.startsWith("SuspendFunction")
                             || signature.declarationFqName.startsWith("KFunction") || signature.declarationFqName.startsWith("KSuspendFunction"))
                     && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
-
-//            val callee = irCall.symbol.owner
-//            val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
-//            // Uncomment or delete depending on KT-57249 status
-////            assert(!dispatchReceiver.type.isKFunction())
-//
-//            return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
-//                    && callee.name == OperatorNameConventions.INVOKE
-//                    && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
         }
 
         private inner class ParameterToArgument(
