@@ -204,6 +204,8 @@
 /compiler/testData/type-checker-test.kt "Kotlin Frontend"
 /compiler/testData/type-substitutor.kt "Kotlin Frontend"
 /compiler/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/tests/org/jetbrains/kotlin/psi/PsiKDocCoverageTest.kt "Kotlin IDE Analysis Core"
+/compiler/tests/org/jetbrains/kotlin/util/KDocCoverageTest.kt "Kotlin IDE Analysis Core"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
 /compiler/tests-common/tests/org/jetbrains/kotlin/asJava/ "Kotlin IDE Analysis Core"
