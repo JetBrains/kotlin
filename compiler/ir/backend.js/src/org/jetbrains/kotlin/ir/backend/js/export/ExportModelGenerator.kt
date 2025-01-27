@@ -57,7 +57,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportDeclaration(declaration: IrDeclaration): ExportedDeclaration? {
         val candidate = getExportCandidate(declaration) ?: return null
-        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context)) return null
+        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, declaration)) return null
 
         return when (candidate) {
             is IrSimpleFunction -> exportFunction(candidate)
@@ -332,7 +332,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         for (declaration in klass.declarations) {
             val candidate = getExportCandidate(declaration) ?: continue
             if (isImplicitlyExportedClass && candidate !is IrClass) continue
-            if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context)) continue
+            if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, declaration)) continue
             if (candidate.isFakeOverride && klass.isInterface) continue
 
             val processingResult = specialProcessing(candidate)
@@ -758,11 +758,19 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     return declaration
 }
 
-private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
-   return declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration, context)
+private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(
+    declaration: IrDeclarationWithName,
+    context: JsIrBackendContext,
+    source: IrDeclaration = declaration
+): Boolean {
+    return declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration, context, source)
 }
 
-private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+private fun shouldDeclarationBeExported(
+    declaration: IrDeclarationWithName,
+    context: JsIrBackendContext,
+    source: IrDeclaration = declaration
+): Boolean {
     // Formally, user have no ability to annotate EnumEntry as exported, without Enum Class
     // But, when we add @file:JsExport, the annotation appears on the all of enum entries
     // what make a wrong behaviour on non-exported members inside Enum Entry (check exportEnumClass and exportFileWithEnumClass tests)
@@ -778,15 +786,13 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     if (context.additionalExportedDeclarations.contains(declaration))
         return true
 
-    if (declaration is IrOverridableDeclaration<*>) {
-        val overriddenNonEmpty = declaration
-            .overriddenSymbols
-            .isNotEmpty()
+    if (source is IrOverridableDeclaration<*>) {
+        val overriddenNonEmpty = source.overriddenSymbols.isNotEmpty()
 
         if (overriddenNonEmpty) {
-            return declaration.isOverriddenExported(context) ||
-                    (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
-                    || declaration.isAllowedFakeOverriddenDeclaration(context)
+            return source.isOverriddenExported(context) ||
+                    (source as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
+                    || source.isAllowedFakeOverriddenDeclaration(context)
         }
     }
 
@@ -821,16 +827,20 @@ fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIr
 
 fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext): Boolean =
     overriddenSymbols
-        .any { shouldDeclarationBeExported(it.owner as IrDeclarationWithName, context) }
+        .any {
+            val owner = it.owner as IrDeclarationWithName
+            val candidate = getExportCandidate(owner) ?: owner
+            shouldDeclarationBeExported(candidate, context, owner)
+        }
 
 fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
     val candidate = getExportCandidate(this) ?: return false
-    return shouldDeclarationBeExported(candidate, context)
+    return shouldDeclarationBeExported(candidate, context, this)
 }
 
 fun IrDeclaration.isExportedImplicitlyOrExplicitly(context: JsIrBackendContext): Boolean {
     val candidate = getExportCandidate(this) ?: return false
-    return shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context)
+    return shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, this)
 }
 
 fun DescriptorVisibility.toExportedVisibility() =

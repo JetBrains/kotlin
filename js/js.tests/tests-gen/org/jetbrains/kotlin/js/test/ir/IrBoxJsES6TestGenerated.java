@@ -3346,6 +3346,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
+    @TestMetadata("exportedAbstractClassWithInheritance.kt")
+    public void testExportedAbstractClassWithInheritance() {
+      runTest("js/js.translator/testData/box/export/exportedAbstractClassWithInheritance.kt");
+    }
+
+    @Test
     @TestMetadata("nonIndetifierModuleName.kt")
     public void testNonIndetifierModuleName() {
       runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");

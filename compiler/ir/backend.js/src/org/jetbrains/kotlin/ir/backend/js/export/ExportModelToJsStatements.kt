@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -190,6 +191,10 @@ class ExportModelToJsStatements(
                 listOfNotNull(classInitialization, klassExport) + staticsExport + innerClassesAssignments
             }
         }
+    }
+
+    private fun IrDeclaration?.isOverridden(): Boolean {
+        return this == null || this is IrOverridableDeclaration<*> && this.overriddenSymbols.isNotEmpty()
     }
 
     private fun ExportedProperty.generateTopLevelGetters(): JsVars.JsVar {
