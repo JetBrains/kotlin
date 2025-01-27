@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.NoSourceElement
 
 @OptIn(DiagnosticLossRisk::class)
 class SourceElementPositioningStrategy(
@@ -21,6 +22,7 @@ class SourceElementPositioningStrategy(
         return when (val element = diagnostic.element) {
             is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
             is KtLightSourceElement -> lightTreeStrategy.markKtDiagnostic(element, diagnostic)
+            is NoSourceElement -> emptyList()
             else -> offsetsOnlyPositioningStrategy.markKtDiagnostic(element, diagnostic)
         }
     }

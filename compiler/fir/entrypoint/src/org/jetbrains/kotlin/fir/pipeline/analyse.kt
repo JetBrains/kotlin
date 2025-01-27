@@ -30,7 +30,7 @@ fun FirSession.runCheckers(
     firFiles: Collection<FirFile>,
     reporter: BaseDiagnosticsCollector,
     mppCheckerKind: MppCheckerKind
-): Map<FirFile, List<KtDiagnostic>> {
+): Map<FirFile?, List<KtDiagnostic>> {
     val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {
@@ -41,7 +41,7 @@ fun FirSession.runCheckers(
     return firFiles.associateWith {
         val path = it.sourceFile?.path ?: return@associateWith emptyList()
         reporter.diagnosticsByFilePath[path] ?: emptyList()
-    }
+    } + (null to reporter.diagnosticsByFilePath[null].orEmpty())
 }
 
 fun FirSession.collectLostDiagnosticsOnFile(
