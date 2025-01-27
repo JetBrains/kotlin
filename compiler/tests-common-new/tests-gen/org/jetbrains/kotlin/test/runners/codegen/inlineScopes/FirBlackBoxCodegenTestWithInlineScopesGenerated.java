@@ -15815,6 +15815,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("inlineClassAsLambdaParameter.kt")
+      public void testInlineClassAsLambdaParameter() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/inlineClassAsLambdaParameter.kt");
+      }
+
+      @Test
       @TestMetadata("kt19475.kt")
       public void testKt19475() {
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt19475.kt");
