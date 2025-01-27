@@ -68,7 +68,7 @@ external internal fun executeInternal(
 
 @GCUnsafeCall("Kotlin_Worker_executeAfterInternal")
 @ObsoleteWorkersApi
-external internal fun executeAfterInternal(id: Int, operation: () -> Unit, afterMicroseconds: Long): Unit
+external internal fun executeAfterInternal(id: Int, operation: ExternalRCRef, afterMicroseconds: Long): Unit
 
 @GCUnsafeCall("Kotlin_Worker_processQueueInternal")
 @ObsoleteWorkersApi
@@ -114,6 +114,16 @@ internal fun WorkerExecuteLaunchpad(job: CPointer<CFunction<*>>, jobArgument: Ex
     disposeExternalRCRef(jobArgument)
     val result = invokeCFunction(job, arg)
     return createRetainedExternalRCRef(result)
+}
+
+@ExportForCppRuntime
+@ObsoleteWorkersApi
+internal fun WorkerExecuteAfterLaunchpad(job: ExternalRCRef) {
+    @Suppress("UNCHECKED_CAST")
+    val func = dereferenceExternalRCRef(job) as () -> Unit
+    releaseExternalRCRef(job)
+    disposeExternalRCRef(job)
+    func()
 }
 
 @GCUnsafeCall("Kotlin_Worker_invokeCFunction")

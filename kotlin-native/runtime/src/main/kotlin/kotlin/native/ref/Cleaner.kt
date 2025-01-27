@@ -12,6 +12,7 @@ import kotlin.native.internal.*
 import kotlinx.cinterop.NativePtr
 import kotlinx.cinterop.*
 import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.internal.ref.*
 
 /**
  * The marker interface for objects that have a cleanup action associated with them.
@@ -101,7 +102,7 @@ internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cle
     }
 
     // Make sure there's an extra reference to clean, so it's definitely alive when CleanerImpl is destroyed.
-    val cleanPtr = createStablePointer(clean)
+    val cleanPtr = createRetainedExternalRCRef(clean)
 
     // Make sure cleaner worker is initialized.
     getCleanerWorker()
@@ -117,9 +118,3 @@ internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cle
 private class CleanerImpl(
         private val cleanPtr: NativePtr,
 ): Cleaner, kotlin.native.internal.Cleaner {}
-
-
-@GCUnsafeCall("CreateStablePointer")
-@Escapes(0b01) // obj escapes into stable ref.
-external private fun createStablePointer(obj: Any): NativePtr
-
