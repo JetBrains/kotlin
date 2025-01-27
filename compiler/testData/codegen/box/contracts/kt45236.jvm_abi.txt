@@ -1,6 +1,16 @@
 MODULE main
 	CLASS Kt45236Kt.class
 		PACKAGE METADATA
+			FUNCTION isError(LNetRequestStatus;)Z
+				Property: class.metadata.function.contract
+					K1
+						contract {
+						  returns(true) implies (p#0 is NetRequestStatus.Error<T#0>)
+						}
+					K2
+						contract {
+						  returns(true) implies (p#0 is NetRequestStatus.Error<out T#0>)
+						}
 			FUNCTION successOrThrow()V
 				Property: class.metadata.function.typeParameters
 					K1

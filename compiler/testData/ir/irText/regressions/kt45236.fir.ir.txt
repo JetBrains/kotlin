@@ -186,7 +186,7 @@ FILE fqName:<root> fileName:/kt45236.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus<T of <root>.isError>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun isError <T> (): kotlin.Boolean declared in <root>'
-        TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.NetRequestStatus.Error<T of <root>.isError>
+        TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.NetRequestStatus.Error<out T of <root>.isError>
           GET_VAR '<this>: <root>.NetRequestStatus<T of <root>.isError> declared in <root>.isError' type=<root>.NetRequestStatus<T of <root>.isError> origin=null
   FUN name:successOrThrow visibility:public modality:FINAL <T> () returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
@@ -202,5 +202,5 @@ FILE fqName:<root> fileName:/kt45236.kt
             $receiver: GET_VAR 'val nextTerminal: <root>.NetRequestStatus<T of <root>.successOrThrow> declared in <root>.successOrThrow' type=<root>.NetRequestStatus<T of <root>.successOrThrow> origin=null
           then: THROW type=kotlin.Nothing
             CALL 'public final fun <get-error> (): kotlin.Throwable declared in <root>.NetRequestStatus.Error' type=kotlin.Throwable origin=GET_PROPERTY
-              $this: TYPE_OP type=<root>.NetRequestStatus.Error<T of <root>.successOrThrow> origin=IMPLICIT_CAST typeOperand=<root>.NetRequestStatus.Error<T of <root>.successOrThrow>
+              $this: TYPE_OP type=<root>.NetRequestStatus.Error<out T of <root>.successOrThrow> origin=IMPLICIT_CAST typeOperand=<root>.NetRequestStatus.Error<out T of <root>.successOrThrow>
                 GET_VAR 'val nextTerminal: <root>.NetRequestStatus<T of <root>.successOrThrow> declared in <root>.successOrThrow' type=<root>.NetRequestStatus<T of <root>.successOrThrow> origin=null
