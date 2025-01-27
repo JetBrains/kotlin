@@ -2,9 +2,9 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/FlexibleTypes, fqName=test.FlexibleTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleTypes, superNames=[]]
+  CLASS[classId=test/FlexibleTypes, fqName=test.FlexibleTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleTypes, superNames=[]]
     MODIFIER_LIST[abstract public]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=FlexibleTypes]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=FlexibleTypes]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY

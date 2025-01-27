@@ -11,6 +11,8 @@ fun f2(g: @MyAnnotation context(A, B) Int.(Int) -> Int) {}
 
 fun f3(g: (context(A, B) Int.(Int) -> Int)?) {}
 
+fun f4(g: suspend context(A, B) Int.(Int) -> Int) {}
+
 class A {
     val valueA: Int = 10
 }

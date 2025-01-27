@@ -117,8 +117,8 @@ internal data class TestData(
         return InTextDirectivesUtils.isDirectiveDefined(mainKotlinFile.readText(), "// $directive")
     }
 
-    fun <R : Any> withFirIgnoreDirective(action: () -> R): R? {
-        val directive = "FIR_IGNORE"
+    fun <R : Any> withFirIgnoreDirective(k2: Boolean, action: () -> R): R? {
+        val directive = if (k2) "FIR_IGNORE" else "FE10_IGNORE"
         if (containsDirective(directive)) return null
         return action()
     }

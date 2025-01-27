@@ -96,6 +96,18 @@ public class DecompiledKnmStubConsistencyFe10TestGenerated extends AbstractDecom
   }
 
   @Test
+  @TestMetadata("ContextParametersOnCallableMembers")
+  public void testContextParametersOnCallableMembers() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextParametersOnCallableMembers/");
+  }
+
+  @Test
+  @TestMetadata("ContextParametersOnTopLevelCallables")
+  public void testContextParametersOnTopLevelCallables() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextParametersOnTopLevelCallables/");
+  }
+
+  @Test
   @TestMetadata("ContextReceiversCallableMembers")
   public void testContextReceiversCallableMembers() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
