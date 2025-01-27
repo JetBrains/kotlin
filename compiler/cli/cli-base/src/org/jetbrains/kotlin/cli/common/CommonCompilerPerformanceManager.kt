@@ -89,10 +89,9 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     open fun notifyIRTranslationFinished() {
         val time = deltaTime(irTranslationStart)
-        measurements += IRMeasurement(
+        measurements += IrTranslationMeasurement(
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
-            IRMeasurement.Kind.TRANSLATION
         )
     }
 
@@ -102,10 +101,9 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     open fun notifyIRLoweringFinished() {
         val time = deltaTime(irLoweringStart)
-        measurements += IRMeasurement(
+        measurements += IrLoweringMeasurement(
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
-            IRMeasurement.Kind.LOWERING
         )
     }
 
@@ -115,10 +113,9 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     open fun notifyIRGenerationFinished() {
         val time = deltaTime(irGenerationStart)
-        measurements += IRMeasurement(
+        measurements += IrGenerationMeasurement(
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
-            IRMeasurement.Kind.GENERATION
         )
     }
 
