@@ -405,12 +405,10 @@ public fun <T> Iterable<T>.last(): T {
     when (this) {
         is List -> return this.last()
         else -> {
-            val iterator = iterator()
+            val iterator = reversed().iterator()
             if (!iterator.hasNext())
                 throw NoSuchElementException("Collection is empty.")
-            var last = iterator.next()
-            while (iterator.hasNext())
-                last = iterator.next()
+            val last = iterator.next()
             return last
         }
     }
