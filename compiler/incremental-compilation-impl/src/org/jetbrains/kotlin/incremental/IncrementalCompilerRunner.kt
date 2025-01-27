@@ -674,20 +674,31 @@ abstract class IncrementalCompilerRunner<
                         }
                     }
                 }
-                is IRMeasurement -> {
-                    when (it.kind) {
-                        IRMeasurement.Kind.TRANSLATION -> reportIrMeasurements(it, GradleBuildTime.IR_TRANSLATION, GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER)
-                        IRMeasurement.Kind.LOWERING -> reportIrMeasurements(it, GradleBuildTime.IR_LOWERING, GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER)
-                        IRMeasurement.Kind.GENERATION -> reportIrMeasurements(it, GradleBuildTime.IR_GENERATION, GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER)
-                    }
-                }
+                is IrTranslationMeasurement -> reportIrMeasurements(
+                    it.milliseconds,
+                    it.lines,
+                    GradleBuildTime.IR_TRANSLATION,
+                    GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER
+                )
+                is IrLoweringMeasurement -> reportIrMeasurements(
+                    it.milliseconds,
+                    it.lines,
+                    GradleBuildTime.IR_LOWERING,
+                    GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER
+                )
+                is IrGenerationMeasurement -> reportIrMeasurements(
+                    it.milliseconds,
+                    it.lines,
+                    GradleBuildTime.IR_GENERATION,
+                    GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER
+                )
             }
         }
     }
 
-    private fun reportIrMeasurements(it: IRMeasurement, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
-        reporter.addTimeMetricMs(timeMetric, it.milliseconds)
-        it.lines?.also {
+    private fun reportIrMeasurements(milliseconds: Long, lines: Int?, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
+        reporter.addTimeMetricMs(timeMetric, milliseconds)
+        lines?.also {
             reporter.addMetric(lineMetric, it.toLong())
         }
     }
