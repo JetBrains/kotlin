@@ -5,14 +5,20 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlinx.cinterop
 
-import kotlin.native.internal.GCUnsafeCall
+import kotlin.native.internal.ref.*
 
-@GCUnsafeCall("Kotlin_Interop_createStablePointer")
-internal external fun createStablePointer(any: Any): COpaquePointer
+internal fun createStablePointer(any: Any): COpaquePointer {
+    return interpretCPointer<CPointed>(createRetainedExternalRCRef(any))!!
+}
 
-@GCUnsafeCall("Kotlin_Interop_disposeStablePointer")
-internal external fun disposeStablePointer(pointer: COpaquePointer)
+internal fun disposeStablePointer(pointer: COpaquePointer) {
+    val ref: ExternalRCRef = pointer.getRawValue()
+    releaseExternalRCRef(ref)
+    disposeExternalRCRef(ref)
+}
 
 @PublishedApi
-@GCUnsafeCall("Kotlin_Interop_derefStablePointer")
-internal external fun derefStablePointer(pointer: COpaquePointer): Any
+internal fun derefStablePointer(pointer: COpaquePointer): Any {
+    val ref: ExternalRCRef = pointer.getRawValue()
+    return dereferenceExternalRCRef(ref)!!
+}
