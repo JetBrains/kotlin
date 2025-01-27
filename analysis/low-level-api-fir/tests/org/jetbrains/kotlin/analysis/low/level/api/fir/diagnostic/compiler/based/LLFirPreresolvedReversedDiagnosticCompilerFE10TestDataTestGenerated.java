@@ -24445,6 +24445,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("extensionEnhancement.kt")
+      public void testExtensionEnhancement() {
+        runTest("compiler/testData/diagnostics/tests/j+k/extensionEnhancement.kt");
+      }
+
+      @Test
       @TestMetadata("fieldOverridesField.kt")
       public void testFieldOverridesField() {
         runTest("compiler/testData/diagnostics/tests/j+k/fieldOverridesField.kt");
