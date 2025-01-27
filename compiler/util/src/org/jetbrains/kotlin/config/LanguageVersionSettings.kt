@@ -501,6 +501,7 @@ enum class LanguageFeature(
     AllowNamedCompanionForJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-82128"),
     AllowInterfaceNestedClassesInJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-84332"),
     NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
+    ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
 
     // 2.5
 
@@ -605,7 +606,6 @@ enum class LanguageFeature(
     CollectionLiterals(sinceVersion = null, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
-    ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, "KT-16768"),
