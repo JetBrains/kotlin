@@ -13,8 +13,6 @@ import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 import kotlin.native.internal.NativePtr
 
-// TODO(KT-67741): Move all stdlib usages of special refs to this API (this API is allowed to grow to accommodate)
-
 /**
  * An externally-reference-counted reference to a Kotlin object.
  *

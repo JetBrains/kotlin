@@ -38,8 +38,7 @@ namespace kotlin::mm {
 //   has `rc_ == disposedMarker` and it's not in the roots list.
 // * During global list traversal `ExternalRCRefImpl`s `obj_` referenced may get nulled out by the GC.
 // * Insertion into thread local lists happens in runnable state.
-// * Removal from thread local list happens during STW, thread destruction, or in the runnable state for `ExternalRCRefImpl`s that can never
-//   go through 0 -> 1 rc transition (created via mm::StableRef).
+// * Removal from thread local list happens during STW and thread destruction.
 // * `ExternalRCRefImpl`s are additionally linked into an intrusive global roots list.
 // * Any thread in any state can insert into the roots list. Insertion only happens into the head.
 // * Only the GC thread can remove from the roots list during root scanning. If after removal
