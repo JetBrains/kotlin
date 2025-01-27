@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.attributes.*
+import org.gradle.api.attributes.LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE
 import org.gradle.api.attributes.Usage.*
 import org.jetbrains.kotlin.gradle.internal.attributes.chooseCandidateByName
 import org.jetbrains.kotlin.gradle.internal.attributes.getCandidateNames
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.attributeValueByName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
@@ -81,38 +84,46 @@ object KotlinUsages {
 
     private fun producerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when (platformType) {
-            in jvmPlatformTypes -> "java-api-jars"
+            in jvmPlatformTypes -> JAVA_API
             else -> KOTLIN_API
         }
     )
 
-    internal fun producerApiUsage(target: KotlinTarget) = producerApiUsage(target.project, target.platformType)
+    internal fun configureProducerApiUsage(attributesHolder: HasAttributes, target: KotlinTarget) {
+        val apiUsage = producerApiUsage(target.project, target.platformType)
+        attributesHolder.setAttribute(USAGE_ATTRIBUTE, apiUsage)
+        if (apiUsage.name == JAVA_API) {
+            attributesHolder.setAttribute(LIBRARY_ELEMENTS_ATTRIBUTE, target.project.attributeValueByName(LibraryElements.JAR))
+        }
+    }
 
     private fun producerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when (platformType) {
-            // This attribute is deprecated in Gradle and additionally to Usage attribute
-            // it implicitly adds `org.gradle.libraryelements=jar`
-            in jvmPlatformTypes -> "java-runtime-jars"
+            in jvmPlatformTypes -> JAVA_RUNTIME
             else -> KOTLIN_RUNTIME
         }
     )
 
-    internal fun producerRuntimeUsage(target: KotlinTarget) = producerRuntimeUsage(target.project, target.platformType)
+    internal fun configureProducerRuntimeUsage(attributesHolder: HasAttributes, target: KotlinTarget) {
+        val runtimeUsage = producerRuntimeUsage(target.project, target.platformType)
+        attributesHolder.setAttribute(USAGE_ATTRIBUTE, runtimeUsage)
+        if (runtimeUsage.name == JAVA_RUNTIME) {
+            attributesHolder.setAttribute(LIBRARY_ELEMENTS_ATTRIBUTE, target.project.attributeValueByName(LibraryElements.JAR))
+        }
+    }
 
-    private class KotlinJavaRuntimeJarsCompatibility : AttributeCompatibilityRule<Usage> {
-        // When Gradle resolves a plain old JAR dependency with no metadata attached, the Usage attribute of that dependency
-        // is 'java-runtime-jars'. This rule tells Gradle that Kotlin consumers can consume plain old JARs:
+    private class KotlinUsagesCompatibility : AttributeCompatibilityRule<Usage> {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
             when {
-                consumerValue?.name == KOTLIN_API && producerValue?.name.let { it == JAVA_API || it == "java-api-jars" } ->
+                consumerValue?.name == KOTLIN_API && producerValue?.name == JAVA_API ->
                     compatible()
-                consumerValue?.name in values && producerValue?.name.let { it == JAVA_RUNTIME || it == "java-runtime-jars" } ->
+                consumerValue?.name in values && producerValue?.name == JAVA_RUNTIME ->
                     compatible()
             }
         }
     }
 
-    private val javaUsagesForKotlinMetadataConsumers = listOf("java-api-jars", JAVA_API, "java-runtime-jars", JAVA_RUNTIME)
+    private val javaUsagesForKotlinMetadataConsumers = listOf(JAVA_API, JAVA_RUNTIME)
 
     private class KotlinMetadataCompatibility : AttributeCompatibilityRule<Usage> {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
@@ -197,18 +208,13 @@ object KotlinUsages {
                 chooseCandidateByName(KOTLIN_RUNTIME)
             }
 
-            val javaApiUsages = setOf(JAVA_API, "java-api-jars")
-            val javaRuntimeUsages = setOf("java-runtime-jars", JAVA_RUNTIME)
-
-            if (javaApiUsages.any { it in candidateNames } &&
-                javaRuntimeUsages.any { it in candidateNames } &&
+            if (JAVA_API in candidateNames &&
+                JAVA_RUNTIME in candidateNames &&
                 values.none { it in candidateNames }
             ) {
                 when (consumerValue?.name) {
-                    KOTLIN_API, in javaApiUsages ->
-                        chooseCandidateByName(javaApiUsages.first { it in candidateNames })
-                    null, KOTLIN_RUNTIME, in javaRuntimeUsages ->
-                        chooseCandidateByName(javaRuntimeUsages.first { it in candidateNames })
+                    KOTLIN_API, JAVA_API -> chooseCandidateByName(JAVA_API)
+                    null, KOTLIN_RUNTIME, JAVA_RUNTIME -> chooseCandidateByName(JAVA_RUNTIME)
                 }
             }
 
@@ -224,7 +230,7 @@ object KotlinUsages {
         isKotlinResourcesCompatibilityRuleEnabled: Boolean,
     ) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
-            strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
+            strategy.compatibilityRules.add(KotlinUsagesCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
 
             strategy.compatibilityRules.add(KotlinCinteropCompatibility::class.java)

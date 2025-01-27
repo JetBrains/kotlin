@@ -230,13 +230,13 @@ internal abstract class AbstractKotlinPlugin(
             // platform-specific modules
             if (kotlinTarget.platformType != KotlinPlatformType.common) {
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
-                    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))
+                    KotlinUsages.configureProducerApiUsage(this, kotlinTarget)
                     attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                     usesPlatformOf(kotlinTarget)
                 }
 
                 project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).run {
-                    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(kotlinTarget))
+                    KotlinUsages.configureProducerRuntimeUsage(this, kotlinTarget)
                     attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                     usesPlatformOf(kotlinTarget)
                 }
