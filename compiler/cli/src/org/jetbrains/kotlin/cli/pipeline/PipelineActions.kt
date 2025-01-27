@@ -57,9 +57,9 @@ object PerformanceNotifications {
     object IrLoweringStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyIRLoweringStarted)
     object IrLoweringFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyIRLoweringFinished)
 
-    // backend codegen
-    object IrGenerationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyIRGenerationStarted)
-    object IrGenerationFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyIRGenerationFinished)
+    // backend or metadata codegen
+    object BackendOrMetadataGenerationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyBackendOrMetadataGenerationStarted)
+    object BackendOrMetadataGenerationFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyBackendOrMetadataGenerationFinished)
 
     // whole backend
     object GenerationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyGenerationStarted)

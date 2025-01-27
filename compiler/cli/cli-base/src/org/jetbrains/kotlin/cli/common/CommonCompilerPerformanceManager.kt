@@ -24,7 +24,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     private var irTranslationStart: Long = 0
     private var irLoweringStart: Long = 0
-    private var irGenerationStart: Long = 0
+    private var backendOrMetadataGenerationStart: Long = 0
 
     private var targetDescription: String? = null
     protected var files: Int? = null
@@ -107,13 +107,13 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         )
     }
 
-    open fun notifyIRGenerationStarted() {
-        irGenerationStart = PerformanceCounter.currentTime()
+    open fun notifyBackendOrMetadataGenerationStarted() {
+        backendOrMetadataGenerationStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyIRGenerationFinished() {
-        val time = deltaTime(irGenerationStart)
-        measurements += IrGenerationMeasurement(
+    open fun notifyBackendOrMetadataGenerationFinished() {
+        val time = deltaTime(backendOrMetadataGenerationStart)
+        measurements += BackendOrMetadataGenerationMeasurement(
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
         )

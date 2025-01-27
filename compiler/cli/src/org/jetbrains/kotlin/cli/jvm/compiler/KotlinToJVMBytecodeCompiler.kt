@@ -427,11 +427,11 @@ object KotlinToJVMBytecodeCompiler {
 
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
-        performanceManager?.notifyIRGenerationStarted()
+        performanceManager?.notifyBackendOrMetadataGenerationStarted()
         codegenFactory.invokeCodegen(codegenInput)
 
         if (reportGenerationFinished) {
-            performanceManager?.notifyIRGenerationFinished()
+            performanceManager?.notifyBackendOrMetadataGenerationFinished()
             performanceManager?.notifyGenerationFinished()
         }
 

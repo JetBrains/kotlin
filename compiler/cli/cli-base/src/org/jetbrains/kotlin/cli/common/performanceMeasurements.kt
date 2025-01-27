@@ -41,8 +41,8 @@ class IrLoweringMeasurement(val lines: Int?, val milliseconds: Long) : Performan
     override fun render(): String = formatMeasurement("IR LOWERING", milliseconds, lines)
 }
 
-class IrGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(): String = formatMeasurement("IR GENERATION", milliseconds, lines)
+class BackendOrMetadataGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("BACKEND or METADATA GENERATION", milliseconds, lines)
 }
 
 private fun formatMeasurement(name: String, time: Long, lines: Int?): String =

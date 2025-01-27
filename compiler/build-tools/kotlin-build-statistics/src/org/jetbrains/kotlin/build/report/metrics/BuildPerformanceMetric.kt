@@ -83,7 +83,7 @@ enum class GradleBuildPerformanceMetric(
     CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
     IR_TRANSLATION_LINES_NUMBER(COMPILE_ITERATION, "Compiler IR translation line number", ValueType.NUMBER),
     IR_LOWERING_LINES_NUMBER(COMPILE_ITERATION, "Compiler IR lowering line number", ValueType.NUMBER),
-    IR_GENERATION_LINES_NUMBER(COMPILE_ITERATION, "Compiler IR generation line number", ValueType.NUMBER),
+    BACKEND_OR_METADATA_GENERATION_LINES_NUMBER(COMPILE_ITERATION, "Compiler backend or metadata generation line number", ValueType.NUMBER),
 
 
     // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature

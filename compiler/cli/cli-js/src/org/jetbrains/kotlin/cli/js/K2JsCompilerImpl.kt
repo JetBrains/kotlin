@@ -103,7 +103,7 @@ class Ir2JsTransformer private constructor(
 
         val mode = TranslationMode.fromFlags(dce, granularity, minimizedMemberNames)
         return transformer
-            .also { performanceManager?.notifyIRGenerationStarted() }
+            .also { performanceManager?.notifyBackendOrMetadataGenerationStarted() }
             .makeJsCodeGenerator(ir.allModules, mode)
     }
 
@@ -111,7 +111,7 @@ class Ir2JsTransformer private constructor(
         return makeJsCodeGenerator()
             .generateJsCode(relativeRequirePath = true, outJsProgram = false)
             .also {
-                performanceManager?.notifyIRGenerationFinished()
+                performanceManager?.notifyBackendOrMetadataGenerationFinished()
                 performanceManager?.notifyGenerationFinished()
             }
     }

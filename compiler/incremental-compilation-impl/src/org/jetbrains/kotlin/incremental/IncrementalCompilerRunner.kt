@@ -703,29 +703,29 @@ abstract class IncrementalCompilerRunner<
                         }
                     }
                 }
-                is IrTranslationMeasurement -> reportIrMeasurements(
+                is IrTranslationMeasurement -> reportMeasurements(
                     it.milliseconds,
                     it.lines,
                     GradleBuildTime.IR_TRANSLATION,
                     GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER
                 )
-                is IrLoweringMeasurement -> reportIrMeasurements(
+                is IrLoweringMeasurement -> reportMeasurements(
                     it.milliseconds,
                     it.lines,
                     GradleBuildTime.IR_LOWERING,
                     GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER
                 )
-                is IrGenerationMeasurement -> reportIrMeasurements(
+                is BackendOrMetadataGenerationMeasurement -> reportMeasurements(
                     it.milliseconds,
                     it.lines,
-                    GradleBuildTime.IR_GENERATION,
-                    GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER
+                    GradleBuildTime.BACKEND_OR_METADATA_GENERATION,
+                    GradleBuildPerformanceMetric.BACKEND_OR_METADATA_GENERATION_LINES_NUMBER
                 )
             }
         }
     }
 
-    private fun reportIrMeasurements(milliseconds: Long, lines: Int?, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
+    private fun reportMeasurements(milliseconds: Long, lines: Int?, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
         reporter.addTimeMetricMs(timeMetric, milliseconds)
         lines?.also {
             reporter.addMetric(lineMetric, it.toLong())
