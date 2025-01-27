@@ -129,6 +129,47 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
+    interface InvalidDiagnosticNameForGlobalSuppression : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidDiagnosticNameForGlobalSuppression::class
+        val diagnosticName: String
+    }
+
+    interface GlobalErrorSuppression : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = GlobalErrorSuppression::class
+        val diagnosticName: String
+    }
+
+    interface UnresolvedOptInMarker : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnresolvedOptInMarker::class
+        val optInMarkerFqName: FqName
+    }
+
+    interface OptInFqnameIsNotMarker : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptInFqnameIsNotMarker::class
+        val optInMarkerFqName: FqName
+    }
+
+    interface OptInFqnameIsDeprecated : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptInFqnameIsDeprecated::class
+        val optInMarkerFqName: FqName
+        val message: String
+    }
+
+    interface OptInFqnameIsDeprecatedError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptInFqnameIsDeprecatedError::class
+        val optInMarkerFqName: FqName
+        val message: String
+    }
+
+    interface ContextReceiverEnabled : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ContextReceiverEnabled::class
+        val message: String
+    }
+
+    interface ContextReceiversAndParametersEnabledAtTheSameTime : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ContextReceiversAndParametersEnabledAtTheSameTime::class
+    }
+
     interface IllegalConstExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalConstExpression::class
     }

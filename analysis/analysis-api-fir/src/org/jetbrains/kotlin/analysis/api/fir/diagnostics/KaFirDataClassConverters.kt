@@ -115,6 +115,63 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INVALID_DIAGNOSTIC_NAME_FOR_GLOBAL_SUPPRESSION) { firDiagnostic ->
+        InvalidDiagnosticNameForGlobalSuppressionImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.GLOBAL_ERROR_SUPPRESSION) { firDiagnostic ->
+        GlobalErrorSuppressionImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNRESOLVED_OPT_IN_MARKER) { firDiagnostic ->
+        UnresolvedOptInMarkerImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.OPT_IN_FQNAME_IS_NOT_MARKER) { firDiagnostic ->
+        OptInFqnameIsNotMarkerImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.OPT_IN_FQNAME_IS_DEPRECATED) { firDiagnostic ->
+        OptInFqnameIsDeprecatedImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.OPT_IN_FQNAME_IS_DEPRECATED_ERROR) { firDiagnostic ->
+        OptInFqnameIsDeprecatedErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.CONTEXT_RECEIVER_ENABLED) { firDiagnostic ->
+        ContextReceiverEnabledImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.CONTEXT_RECEIVERS_AND_PARAMETERS_ENABLED_AT_THE_SAME_TIME) { firDiagnostic ->
+        ContextReceiversAndParametersEnabledAtTheSameTimeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ILLEGAL_CONST_EXPRESSION) { firDiagnostic ->
         IllegalConstExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,

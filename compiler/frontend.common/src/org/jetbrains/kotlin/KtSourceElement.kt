@@ -531,6 +531,11 @@ class KtOffsetsOnlySourceElement(
     override val endOffset: Int,
 ) : AbstractKtSourceElement()
 
+data object NoSourceElement : AbstractKtSourceElement() {
+    override val startOffset: Int get() = error("No offset is available")
+    override val endOffset: Int get() = error("No offset is available")
+}
+
 // TODO: consider renaming to something like AstBasedSourceElement
 sealed class KtSourceElement : AbstractKtSourceElement() {
     abstract val elementType: IElementType?

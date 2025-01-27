@@ -716,13 +716,21 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_RECEIVERS_AND_PARAMETERS_ENABLED_AT_THE_SAME_TIME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_RECEIVER_ENABLED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GLOBAL_ERROR_SUPPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DIAGNOSTIC_NAME_FOR_GLOBAL_SUPPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_FQNAME_IS_DEPRECATED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_FQNAME_IS_DEPRECATED_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_FQNAME_IS_NOT_MARKER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_OPT_IN_MARKER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -823,6 +831,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown error.")
         map.put(OTHER_ERROR_WITH_REASON, "Unknown error: {0}.", STRING)
+
+        // Compiler configuration
+        map.put(INVALID_DIAGNOSTIC_NAME_FOR_GLOBAL_SUPPRESSION, "Warning with name {0} does not exist.", STRING)
+        map.put(GLOBAL_ERROR_SUPPRESSION, "Diagnostic {0} is an error. Global suppression of errors is prohibited.", STRING)
+        map.put(CONTEXT_RECEIVERS_AND_PARAMETERS_ENABLED_AT_THE_SAME_TIME,
+            "Experimental language features for context receivers and context parameters cannot be enabled at the same time. " +
+                "Remove the '-Xcontext-receivers' compiler argument."
+        )
+        map.put(CONTEXT_RECEIVER_ENABLED, "{0}", STRING)
+        map.put(UNRESOLVED_OPT_IN_MARKER, "Opt-in requirement marker ''{0}'' is unresolved. Please make sure it's present in the module dependencies.", TO_STRING)
+        map.put(OPT_IN_FQNAME_IS_NOT_MARKER, "Class ''{0}'' is not an opt-in requirement marker.", TO_STRING)
+        map.put(OPT_IN_FQNAME_IS_DEPRECATED, "Opt-in requirement marker ''{0}'' is deprecated.{1}", TO_STRING, STRING)
+        map.put(OPT_IN_FQNAME_IS_DEPRECATED_ERROR, "Opt-in requirement marker ''{0}'' is deprecated.{1}", TO_STRING, STRING)
 
         // General syntax
         map.put(ILLEGAL_CONST_EXPRESSION, "Incorrect const expression.")

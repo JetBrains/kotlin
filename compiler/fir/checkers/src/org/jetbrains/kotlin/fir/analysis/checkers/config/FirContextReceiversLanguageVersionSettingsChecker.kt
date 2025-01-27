@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.config
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportGlobal
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 
 object FirContextReceiversLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
     private val shouldSuggestContextParameters: Boolean = LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_2
@@ -31,18 +33,15 @@ object FirContextReceiversLanguageVersionSettingsChecker : FirLanguageVersionSet
             This warning will become an error in future releases.""".trimIndent()
     }
 
-    override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
+    override fun check(context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             return
         }
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
-            reporter.reportError(
-                "Experimental language features for context receivers and context parameters cannot be enabled at the same time. " +
-                        "Remove the '-Xcontext-receivers' compiler argument."
-            )
+            reporter.reportGlobal(FirErrors.CONTEXT_RECEIVERS_AND_PARAMETERS_ENABLED_AT_THE_SAME_TIME, context)
         } else if (shouldSuggestContextParameters) {
-            reporter.reportWarning(CONTEXT_RECEIVER_MESSAGE)
+            reporter.reportGlobal(FirErrors.CONTEXT_RECEIVER_ENABLED, CONTEXT_RECEIVER_MESSAGE, context)
         }
     }
 }
