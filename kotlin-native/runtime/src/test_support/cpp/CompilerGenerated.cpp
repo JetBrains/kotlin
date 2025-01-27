@@ -135,10 +135,6 @@ void checkRangeIndexes(KInt from, KInt to, KInt size) {
     }
 }
 
-RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpad, KRef) {
-    throw std::runtime_error("Not implemented for tests");
-}
-
 kotlin::mm::RawExternalRCRef* RUNTIME_NORETURN WorkerExecuteLaunchpad(KRef (*job)(KRef, ObjHeader**), kotlin::mm::RawExternalRCRef* jobArgument) {
     throw std::runtime_error("Not implemented for tests");
 }
