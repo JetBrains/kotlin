@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.originalBeforeInline
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -152,7 +152,6 @@ private class CallInlining(
         InlineFunctionBodyPreprocessor(typeArguments, parent, inlineFunctionResolver.callInlinerStrategy)
     }
 
-    val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
     fun inline() = inlineFunction(callSite, callee, callee.originalFunction)
 
@@ -165,7 +164,8 @@ private class CallInlining(
             parent = callee.parent
         }
 
-        val (newStatementsFromCallSite, newStatementsFromDefault, copiedParameters) = evaluateArguments(callSite, copiedCallee)
+        val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
+        val (newStatementsFromCallSite, newStatementsFromDefault, copiedParameters) = evaluateArguments(callSite, copiedCallee, substituteMap)
         val statements = (copiedCallee.body as? IrBlockBody)?.statements
             ?: error("Body not found for function ${callee.render()}")
 
@@ -178,9 +178,6 @@ private class CallInlining(
 
         val returnType = callSite.type
 
-        val transformer = ParameterSubstitutor()
-        val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
-
         val inlineFunctionToStore = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee else callee.originalFunction
         val inlinedBlock = IrInlinedFunctionBlockImpl(
             startOffset = callSite.startOffset,
@@ -191,7 +188,7 @@ private class CallInlining(
             inlinedFunctionSymbol = inlineFunctionToStore.symbol.takeIf { originalInlinedElement is IrFunction },
             inlinedFunctionFileEntry = inlineFunctionToStore.fileEntry,
             origin = null,
-            statements = copiedParameters + newStatementsFromDefault + newStatements
+            statements = copiedParameters + newStatementsFromDefault + statements
         ).apply {
             // `inlineCall` and `inlinedElement` is required only for JVM backend only, but this inliner is common, so we need opt-in.
             @OptIn(JvmIrInlineExperimental::class)
@@ -217,7 +214,22 @@ private class CallInlining(
             symbol = irReturnableBlockSymbol,
             origin = null,
             statements = listOf(inlinedBlock),
-        ).apply {
+        )
+
+        val finalResult = if (newStatementsFromCallSite.isEmpty()) {
+            retBlock
+        } else {
+            IrBlockImpl(
+                startOffset = callSite.startOffset,
+                endOffset = callSite.endOffset,
+                type = callSite.type,
+                statements = newStatementsFromCallSite + retBlock,
+                origin = IrStatementOrigin.INLINE_ARGS_CONTAINER
+            )
+        }
+
+        return finalResult.apply {
+            transformChildrenVoid(ParameterSubstitutor(substituteMap))
             transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitReturn(expression: IrReturn): IrExpression {
                     expression.transformChildrenVoid(this)
@@ -235,23 +247,11 @@ private class CallInlining(
             })
             patchDeclarationParents(parent) // TODO: Why it is not enough to just run SetDeclarationsParentVisitor?
         }
-
-        if (newStatementsFromCallSite.isEmpty()) {
-            return retBlock
-        }
-
-        return IrBlockImpl(
-            startOffset = callSite.startOffset,
-            endOffset = callSite.endOffset,
-            type = callSite.type,
-            statements = newStatementsFromCallSite + retBlock,
-            origin = IrStatementOrigin.INLINE_ARGS_CONTAINER
-        )
     }
 
     //---------------------------------------------------------------------//
 
-    private inner class ParameterSubstitutor : IrElementTransformerVoid() {
+    private inner class ParameterSubstitutor(val substituteMap: Map<IrValueParameter, IrExpression>) : IrElementTransformerVoid() {
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val newExpression = super.visitGetValue(expression) as IrGetValue
             val argument = substituteMap[newExpression.symbol.owner] ?: return newExpression
@@ -326,7 +326,6 @@ private class CallInlining(
 
         fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrBlock {
             val irFunction = irBlock.statements[0].let {
-                it.transformChildrenVoid(this)
                 (it as IrFunction).deepCopyWithSymbols(it.parent)
             }
             val irFunctionReference = irBlock.statements[1] as IrFunctionReference
@@ -344,8 +343,6 @@ private class CallInlining(
             irFunctionReference: IrFunctionReference,
             inlinedFunction: IrFunction
         ): IrExpression {
-            irFunctionReference.transformChildrenVoid(this)
-
             val function = irFunctionReference.symbol.owner
             val functionParameters = function.parameters
             val boundFunctionParameters = irFunctionReference.getArgumentsWithIr()
@@ -433,11 +430,12 @@ private class CallInlining(
                 }
             }
 
+            immediateCall.transformChildrenVoid(this)
             return if (inlineFunctionResolver.needsInlining(inlinedFunction.symbol) || inlinedFunction.isStubForInline()) {
                 // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
                 inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId)
             } else {
-                super.visitExpression(immediateCall)
+                immediateCall
             }.doImplicitCastIfNeededTo(irCall.type)
         }
 
@@ -526,7 +524,8 @@ private class CallInlining(
                     (context as CommonBackendContext).innerClassesSupport.getOuterThisField(parameterClassDeclaration).symbol,
                     outerClassThis.type,
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, currentThisSymbol)
-                )
+                ),
+                isDefaultArg = true // corresponding temporary variable must be created inside inlined block, when variable for dispatch receiver is already created.
             )
 
             allParametersReplacements.add(parameterToArgument)
@@ -600,10 +599,8 @@ private class CallInlining(
     private fun evaluateArguments(reference: IrCallableReference<*>): List<IrVariable> {
         val arguments = reference.getArgumentsWithIr().map { ParameterToArgument(it.first, it.second) }
         val evaluationStatements = mutableListOf<IrVariable>()
-        val substitutor = ParameterSubstitutor()
         arguments.forEach {
-            // Arguments may reference the previous ones - substitute them.
-            val irExpression = it.argumentExpression.transform(substitutor, data = null)
+            val irExpression = it.argumentExpression
             val newArgument = if (it.isImmutableVariableLoad) {
                 irGetValueWithoutLocation((irExpression as IrGetValue).symbol)
             } else {
@@ -632,8 +629,7 @@ private class CallInlining(
     private fun evaluateCapturedValues(parameters: List<IrValueParameter>, expressions: MutableList<IrExpression>): List<IrVariable> {
         return buildList {
             for (i in expressions.indices) {
-                val irExpression = expressions[i].transform(ParameterSubstitutor(), data = null)
-
+                val irExpression = expressions[i]
                 val newVariable =
                     if (irExpression is IrGetValue && irExpression.symbol.owner.isImmutable && irExpression.type == parameters[i].type) {
                         irExpression.symbol.owner
@@ -652,7 +648,8 @@ private class CallInlining(
     }
 
     private fun evaluateArguments(
-        callSite: IrFunctionAccessExpression, callee: IrFunction
+        callSite: IrFunctionAccessExpression, callee: IrFunction,
+        substituteMap: MutableMap<IrValueParameter, IrExpression>
     ): Triple<List<IrVariable>, List<IrVariable>, List<IrVariable>> {
         // This list stores temp variables that represent non-default arguments of inline call.
         // The expressions that represent these arguments must be evaluated outside the inline block (at call-site).
@@ -665,7 +662,6 @@ private class CallInlining(
         val copiedParameters = mutableMapOf<IrValueParameter, IrVariable>()
 
         val arguments = buildParameterToArgument(callSite, callee)
-        val substitutor = ParameterSubstitutor()
         arguments.forEach { argument ->
             val parameter = argument.parameter
             val container = if (argument.isDefaultArg) evaluationStatementsFromDefault else evaluationStatements
@@ -694,8 +690,7 @@ private class CallInlining(
                 return@forEach
             }
 
-            // Arguments may reference the previous ones - substitute them.
-            val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
+            val variableInitializer = argument.argumentExpression
 
             // inline parameters should never be stored to temporaries, as it would prevent their inlining
             if (variableInitializer is IrGetValue && (variableInitializer.symbol as? IrValueParameterSymbol)?.owner?.isInlineParameter() == true) {
