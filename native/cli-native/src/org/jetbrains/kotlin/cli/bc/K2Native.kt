@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCustomKotlinAbiVersion
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -118,6 +119,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 arguments.duplicatedUniqueNameStrategy,
                 default = if (arguments.metadataKlib) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
             )
+        )
+
+        configuration.putIfNotNull(
+            KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION,
+            parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion, configuration.messageCollector)
         )
 
         return environment

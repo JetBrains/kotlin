@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.parseCustomKotlinAbiVersion
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.js.*
@@ -258,6 +259,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             arguments.duplicatedUniqueNameStrategy,
             default = DuplicatedUniqueNameStrategy.DENY
         )
+        configuration.customKlibAbiVersion = parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion, configuration.messageCollector)
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
             val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
             configuration.messageCollector.report(ERROR, message, location = null)

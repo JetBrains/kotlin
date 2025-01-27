@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -310,6 +311,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val metadataKlib get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
 
     internal val headerKlibPath get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
+
+    internal val customAbiVersion get() = configuration.get(CUSTOM_KLIB_ABI_VERSION)
 
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 

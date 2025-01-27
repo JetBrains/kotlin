@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.config
  * DO NOT MODIFY IT MANUALLY
  */
 
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 object KlibConfigurationKeys {
     @JvmField
@@ -31,6 +32,9 @@ object KlibConfigurationKeys {
 
     @JvmField
     val DUPLICATED_UNIQUE_NAME_STRATEGY = CompilerConfigurationKey.create<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
+
+    @JvmField
+    val CUSTOM_KLIB_ABI_VERSION = CompilerConfigurationKey.create<KotlinAbiVersion>("Custom klib abi version")
 
 }
 
@@ -57,4 +61,8 @@ var CompilerConfiguration.syntheticAccessorsWithNarrowedVisibility: Boolean
 var CompilerConfiguration.duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy?
     get() = get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY)
     set(value) { put(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.customKlibAbiVersion: KotlinAbiVersion?
+    get() = get(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION)
+    set(value) { putIfNotNull(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION, value) }
 

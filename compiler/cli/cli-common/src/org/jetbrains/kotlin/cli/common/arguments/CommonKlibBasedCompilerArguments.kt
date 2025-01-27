@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -82,6 +82,18 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xklib-abi-version",
+        valueDescription = "<version>",
+        description = """Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+The only observable effect is that a custom ABI version is written to KLIB manifest file."""
+    )
+    var customKlibAbiVersion: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
 
     override fun configureExtraLanguageFeatures(map: HashMap<LanguageFeature, LanguageFeature.State>) {
@@ -90,4 +102,24 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             map[LanguageFeature.IrInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
         }
     }
+}
+
+fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector: MessageCollector): KotlinAbiVersion? {
+    val versionParts = customKlibAbiVersion?.split('.') ?: return null
+    if (versionParts.size != 3) {
+        collector.report(
+            CompilerMessageSeverity.ERROR,
+            "Invalid ABI version format. Expected format: <major>.<minor>.<patch>"
+        )
+        return null
+    }
+    val version = versionParts.mapNotNull { it.toIntOrNull() }
+    if (version.size != 3 || version.any { it !in 0..255 }) {
+        collector.report(
+            CompilerMessageSeverity.ERROR,
+            "Invalid ABI version numbers. Each part must be in the range 0..255."
+        )
+        return null
+    }
+    return KotlinAbiVersion(version[0], version[1], version[2])
 }
