@@ -182,7 +182,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                 val subprojectSwiftPath = projectPath.resolve("shared/build/SwiftExport/iosArm64/Debug/files/Subproject/Subproject.swift")
                 assert(
                     subprojectSwiftPath.readText()
-                        .contains("public typealias LibFoo = ExportedKotlinPackages.com.subproject.library.LibFoo")
+                        .contains("public typealias LibFoo = ExportedKotlinPackages.com.github.jetbrains.library.LibFoo")
                 )
             }
         }
@@ -289,6 +289,51 @@ class SwiftExportDslIT : KGPBaseTest() {
                 assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
                 assertDirectoryExists(subprojectSwiftModule.toPath(), "Subproject.swiftmodule doesn't exist")
                 assertDirectoryExists(notGoodLookingProjectSwiftModule.toPath(), "NotGoodLookingProjectName.swiftmodule doesn't exist")
+            }
+        }
+    }
+
+    @DisplayName("KT-72450 Swift Export: flattenPackage intersection leads to ConcurrentModificationException")
+    @GradleTest
+    fun testSwiftExportFlattenPackageIntersection(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
+            projectPath.resolve("shared/build.gradle.kts").replaceText(
+                DSL_REPLACE_PLACEHOLDER,
+                """
+                |       swiftExport {
+                |           flattenPackage.set("com.github.jetbrains")
+                |       
+                |           export(project(":subproject"))
+                |       }
+                |       
+                |       sourceSets.commonMain {
+                |           enableSubprojectSrc("consumerSubproject")
+                |
+                |           dependencies {
+                |               implementation(project(":subproject"))
+                |           }
+                |       }
+                """.trimMargin()
+            )
+
+            buildAndFail(
+                ":shared:embedSwiftExportForXcode",
+                "-P${SimpleSwiftExportProperties.DSL_PLACEHOLDER}",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertOutputContains("ConcurrentModificationException")
             }
         }
     }

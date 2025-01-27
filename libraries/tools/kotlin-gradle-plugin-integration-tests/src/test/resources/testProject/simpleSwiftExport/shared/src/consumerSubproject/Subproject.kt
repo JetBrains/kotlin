@@ -1,7 +1,7 @@
 package com.github.jetbrains.swiftexport
 
-import com.subproject.library.libraryFoo
-import com.subproject.library.LibFoo
+import com.github.jetbrains.library.libraryFoo
+import com.github.jetbrains.library.LibFoo
 
 fun fooFromLibrary(): Int = libraryFoo()
 

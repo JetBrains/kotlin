@@ -1,4 +1,4 @@
-package com.subproject.library
+package com.github.jetbrains.library
 
 class LibFoo(val param1: String, val param2: Int) {
 

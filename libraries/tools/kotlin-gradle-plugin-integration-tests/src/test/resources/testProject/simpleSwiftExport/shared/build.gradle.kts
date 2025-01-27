@@ -46,7 +46,7 @@ kotlin {
             flattenPackage.set("com.github.jetbrains.swiftexport")
 
             export(project(":subproject")) {
-                flattenPackage.set("com.subproject.library")
+                flattenPackage.set("com.github.jetbrains.library")
             }
         }
 
@@ -68,7 +68,7 @@ kotlin {
 
             export(project(":subproject")) {
                 moduleName.set("Subproject")
-                flattenPackage.set("com.subproject.library")
+                flattenPackage.set("com.github.jetbrains.library")
             }
         }
 
