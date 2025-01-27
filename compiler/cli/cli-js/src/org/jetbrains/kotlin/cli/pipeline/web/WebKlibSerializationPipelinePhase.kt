@@ -40,7 +40,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             PhaseEngine(
                 configuration.phaseConfig!!,
                 PhaserState(),
-                JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration),
+                JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, diagnosticCollector),
             ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase)
         }
 

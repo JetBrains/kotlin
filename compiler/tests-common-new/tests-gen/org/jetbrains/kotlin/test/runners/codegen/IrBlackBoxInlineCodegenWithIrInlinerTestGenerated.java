@@ -6426,12 +6426,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         }
 
         @Test
-        @TestMetadata("leakingPrivateCompanionThroughInternalInlineFun.kt")
-        public void testLeakingPrivateCompanionThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateCompanionThroughInternalInlineFun.kt");
-        }
-
-        @Test
         @TestMetadata("leakingPrivateConstructorThroughInternalInlineFun.kt")
         public void testLeakingPrivateConstructorThroughInternalInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughInternalInlineFun.kt");
@@ -6471,12 +6465,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
         public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateInnerClassThroughInternalInlineFun.kt")
-        public void testLeakingPrivateInnerClassThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateInnerClassThroughInternalInlineFun.kt");
         }
 
         @Test
@@ -6579,12 +6567,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
         public void testLeakingPrivateMethodWithDifferentVisibility() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateNestedClassThroughInternalInlineFun.kt")
-        public void testLeakingPrivateNestedClassThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateNestedClassThroughInternalInlineFun.kt");
         }
 
         @Test
@@ -6724,12 +6706,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         }
 
         @Test
-        @TestMetadata("leakingPrivateCompanionThroughInternalInlineFun.kt")
-        public void testLeakingPrivateCompanionThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateCompanionThroughInternalInlineFun.kt");
-        }
-
-        @Test
         @TestMetadata("leakingPrivateConstructorThroughInternalInlineFun.kt")
         public void testLeakingPrivateConstructorThroughInternalInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughInternalInlineFun.kt");
@@ -6769,12 +6745,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
         public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateInnerClassThroughInternalInlineFun.kt")
-        public void testLeakingPrivateInnerClassThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateInnerClassThroughInternalInlineFun.kt");
         }
 
         @Test
@@ -6877,12 +6847,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
         public void testLeakingPrivateMethodWithDifferentVisibility() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateNestedClassThroughInternalInlineFun.kt")
-        public void testLeakingPrivateNestedClassThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateNestedClassThroughInternalInlineFun.kt");
         }
 
         @Test
@@ -7016,12 +6980,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         }
 
         @Test
-        @TestMetadata("usePrivateCompanionThroughInternalInlineFun.kt")
-        public void testUsePrivateCompanionThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateCompanionThroughInternalInlineFun.kt");
-        }
-
-        @Test
         @TestMetadata("usePrivateConstructorFromInternalInline.kt")
         public void testUsePrivateConstructorFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateConstructorFromInternalInline.kt");
@@ -7043,12 +7001,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("usePrivateFunInterfaceFromInternalFun.kt")
         public void testUsePrivateFunInterfaceFromInternalFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateFunInterfaceFromInternalFun.kt");
-        }
-
-        @Test
-        @TestMetadata("usePrivateInnerClassThroughInternalInlineFun.kt")
-        public void testUsePrivateInnerClassThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateInnerClassThroughInternalInlineFun.kt");
         }
 
         @Test
@@ -7085,12 +7037,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("usePrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt")
         public void testUsePrivateMethodThroughInlineMethodInLocalObjectInPublicInline() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt");
-        }
-
-        @Test
-        @TestMetadata("usePrivateNestedClassThroughInternalInlineFun.kt")
-        public void testUsePrivateNestedClassThroughInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateNestedClassThroughInternalInlineFun.kt");
         }
 
         @Test
@@ -7165,18 +7111,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
         public void testLeakingLateinitIsInitializedFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.kt")
-        public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
-          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassFromLocalObjectInsideInternalInline.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateClassThroughGenericType.kt")
-        public void testLeakingPrivateClassThroughGenericType() {
-          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughGenericType.kt");
         }
 
         @Test
@@ -7343,18 +7277,6 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
         public void testLeakingLateinitIsInitializedFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.kt")
-        public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
-          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassFromLocalObjectInsideInternalInline.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateClassThroughGenericType.kt")
-        public void testLeakingPrivateClassThroughGenericType() {
-          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughGenericType.kt");
         }
 
         @Test

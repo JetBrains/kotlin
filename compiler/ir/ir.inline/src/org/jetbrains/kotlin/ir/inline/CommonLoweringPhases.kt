@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
@@ -101,6 +102,12 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
 )
 
+private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
+    lowering = ::InlineDeclarationCheckerLowering,
+    name = "InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase",
+    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
+)
+
 ///**
 // * The second phase of inlining (inline all functions).
 // */
@@ -116,7 +123,7 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
 //    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 //)
 
-val loweringsOfTheFirstPhase: List<NamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
+val loweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
     lateinitPhase,
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
@@ -124,6 +131,7 @@ val loweringsOfTheFirstPhase: List<NamedCompilerPhase<LoweringContext, IrModuleF
     arrayConstructorPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     inlineOnlyPrivateFunctionsPhase,
+    checkInlineDeclarationsAfterInliningOnlyPrivateFunctions,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     syntheticAccessorGenerationPhase,
     validateIrAfterInliningOnlyPrivateFunctions,

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
@@ -18,7 +19,8 @@ import org.jetbrains.kotlin.types.Variance
 class JsPreSerializationLoweringContext(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
-) : PreSerializationLoweringContext(irBuiltIns, configuration) {
+    diagnosticReporter: DiagnosticReporter,
+) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics by lazy { JsIntrinsics(irBuiltIns) }
 

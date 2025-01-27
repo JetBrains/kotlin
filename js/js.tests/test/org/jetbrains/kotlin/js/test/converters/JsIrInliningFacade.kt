@@ -38,7 +38,11 @@ class JsIrInliningFacade(
         val transformedModule = PhaseEngine(
             phaseConfig,
             PhaserState(),
-            JsPreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration)
+            JsPreSerializationLoweringContext(
+                inputArtifact.irPluginContext.irBuiltIns,
+                configuration,
+                inputArtifact.diagnosticReporter,
+            ),
         ).runPreSerializationLoweringPhases(
             jsLoweringsOfTheFirstPhase,
             inputArtifact.irModuleFragment,

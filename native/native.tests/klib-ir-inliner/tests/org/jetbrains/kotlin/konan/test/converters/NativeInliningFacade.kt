@@ -37,7 +37,7 @@ class NativeInliningFacade(
         val transformedModule = PhaseEngine(
             phaseConfig,
             PhaserState(),
-            NativePreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration)
+            NativePreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration, inputArtifact.diagnosticReporter)
         ).runPreSerializationLoweringPhases(
             nativeLoweringsOfTheFirstPhase,
             inputArtifact.irModuleFragment,

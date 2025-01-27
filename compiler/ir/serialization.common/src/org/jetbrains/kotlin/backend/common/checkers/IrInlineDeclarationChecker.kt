@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTypeVisitor
 
 /**
  * Reports an IR-level diagnostic whenever a private type is used within an `inline` function with broader visibility.
+ * TODO: move class to :compiler:ir:ir.inline when no longer invoked from :compiler:ir.serialization.common
  */
 class IrInlineDeclarationChecker(
     private val diagnosticReporter: IrDiagnosticReporter,

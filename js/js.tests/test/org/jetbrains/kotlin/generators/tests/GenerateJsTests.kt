@@ -357,6 +357,14 @@ fun main(args: Array<String>) {
                     targetBackend = TargetBackend.JS_IR
                 )
             }
+
+            testClass<AbstractFirJsDiagnosticWithIrInlinerTest>(suiteTestClassName = "FirJsDiagnosticWithIrInlinerTestGenerated") {
+                model(
+                    relativeRootPath = "irInliner",
+                    pattern = "^([^_](.+))\\.kt$",
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {

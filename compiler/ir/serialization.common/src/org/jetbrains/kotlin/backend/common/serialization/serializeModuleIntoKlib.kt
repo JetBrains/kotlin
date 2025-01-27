@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -137,11 +138,14 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
             *platformKlibCheckers.toTypedArray(),
         )
 
-        // TODO(KT-71416): Move this after the first phase of KLIB inlining.
-        it.runIrLevelCheckers(
-            irDiagnosticReporter,
-            ::IrInlineDeclarationChecker,
-        )
+        if (!configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+            // With IrInlinerBeforeKlibSerialization feature, this check happens after the first phase of KLIB inlining.
+            // Without it, the check should happen here instead.
+            it.runIrLevelCheckers(
+                irDiagnosticReporter,
+                ::IrInlineDeclarationChecker,
+            )
+        }
 
         createModuleSerializer(
             irDiagnosticReporter,

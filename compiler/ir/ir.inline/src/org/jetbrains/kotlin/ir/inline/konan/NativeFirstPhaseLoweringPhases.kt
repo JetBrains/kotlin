@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.inline.konan
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
@@ -23,5 +23,5 @@ private val assertionWrapperPhase = makeIrModulePhase(
     name = "AssertionWrapperLowering",
 )
 
-val nativeLoweringsOfTheFirstPhase: List<NamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> =
+val nativeLoweringsOfTheFirstPhase: List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> =
     listOf(upgradeCallableReferencesPhase, assertionWrapperPhase) + loweringsOfTheFirstPhase

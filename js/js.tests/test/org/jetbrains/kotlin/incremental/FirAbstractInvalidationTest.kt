@@ -125,7 +125,7 @@ abstract class FirAbstractInvalidationTest(
         val transformedResult = PhaseEngine(
             configuration.phaseConfig ?: PhaseConfig(),
             PhaserState(),
-            JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
+            JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, diagnosticsReporter),
         ).runPreSerializationLoweringPhases(fir2IrActualizedResult, jsLoweringsOfTheFirstPhase)
 
         serializeFirKlib(
