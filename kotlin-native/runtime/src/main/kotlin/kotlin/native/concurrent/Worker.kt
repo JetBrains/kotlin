@@ -8,8 +8,8 @@ package kotlin.native.concurrent
 import kotlin.native.internal.VolatileLambda
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.ref.*
 import kotlinx.cinterop.*
-
 
 /**
  * Class representing a worker.
@@ -43,7 +43,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
          * @return worker object, usable across multiple concurrent contexts.
          */
         public fun start(errorReporting: Boolean = true, name: String? = null): Worker
-                = Worker(startInternal(errorReporting, name))
+                = Worker(startInternal(errorReporting, createRetainedExternalRCRef(name)))
 
         /**
          * Return the current worker. Worker context is accessible to any valid Kotlin context,
@@ -171,7 +171,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      */
     public val name: String
         get() {
-            val customName = getWorkerNameInternal(id)
+            val customName = dereferenceExternalRCRef(getWorkerNameInternal(id)) as String?
             return if (customName == null) "worker $id" else customName
         }
 

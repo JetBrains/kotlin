@@ -27,6 +27,7 @@
 #include "PthreadUtils.h"
 
 #include "Exceptions.h"
+#include "ExternalRCRef.hpp"
 #include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
@@ -124,11 +125,11 @@ typedef std::multiset<Job, JobCompare> DelayedJobSet;
 
 class Worker {
  public:
-  Worker(KInt id, WorkerExceptionHandling exceptionHandling, KRef customName, WorkerKind kind)
+  Worker(KInt id, WorkerExceptionHandling exceptionHandling, mm::OwningExternalRCRef name, WorkerKind kind)
       : id_(id),
         kind_(kind),
+        name_(std::move(name)),
         exceptionHandling_(exceptionHandling) {
-    name_ = customName != nullptr ? CreateStablePointer(customName) : nullptr;
     kotlin::ThreadStateGuard guard(ThreadState::kNative);
     pthread_mutex_init(&lock_, nullptr);
     pthread_cond_init(&cond_, nullptr);
@@ -157,7 +158,7 @@ class Worker {
 
   WorkerExceptionHandling exceptionHandling() const { return exceptionHandling_; }
 
-  KNativePtr name() const { return name_; }
+  mm::RawExternalRCRef* name() const { return name_.get(); }
 
   WorkerKind kind() const { return kind_; }
 
@@ -187,8 +188,7 @@ class Worker {
   WorkerKind kind_;
   std::deque<Job> queue_;
   DelayedJobSet delayed_;
-  // Stable pointer with worker's name.
-  KNativePtr name_;
+  mm::OwningExternalRCRef name_;
   // Lock and condition for waiting on the queue.
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
@@ -345,11 +345,11 @@ class State {
     pthread_cond_destroy(&cond_);
   }
 
-  Worker* addWorkerUnlocked(WorkerExceptionHandling exceptionHandling, KRef customName, WorkerKind kind) {
+  Worker* addWorkerUnlocked(WorkerExceptionHandling exceptionHandling, mm::OwningExternalRCRef name, WorkerKind kind) {
     Worker* worker = nullptr;
     {
       Locker locker(&lock_);
-      worker = new Worker(nextWorkerId(), exceptionHandling, customName, kind);
+      worker = new Worker(nextWorkerId(), exceptionHandling, std::move(name), kind);
       if (worker == nullptr) return nullptr;
       workers_[worker->id()] = worker;
     }
@@ -502,17 +502,13 @@ class State {
     return result;
   }
 
-  OBJ_GETTER(getWorkerNameUnlocked, KInt id) {
-    ObjHolder nameHolder;
-    {
-        Locker locker(&lock_);
-        auto it = workers_.find(id);
-        if (it == workers_.end()) {
-            ThrowWorkerAlreadyTerminated();
-        }
-        DerefStablePointer(it->second->name(), nameHolder.slot());
-    }
-    RETURN_OBJ(nameHolder.obj());
+  mm::RawExternalRCRef* getWorkerNameUnlocked(KInt id) {
+      Locker locker(&lock_);
+      auto it = workers_.find(id);
+      if (it == workers_.end()) {
+          ThrowWorkerAlreadyTerminated();
+      }
+      return it->second->name();
   }
 
   KBoolean waitForAnyFuture(KInt version, KInt millis) {
@@ -695,8 +691,8 @@ void Future::cancelUnlocked(MemoryState* memoryState) {
 // Defined in RuntimeUtils.kt.
 extern "C" void ReportUnhandledException(KRef e);
 
-KInt startWorker(WorkerExceptionHandling exceptionHandling, KRef customName) {
-  Worker* worker = theState()->addWorkerUnlocked(exceptionHandling, customName, WorkerKind::kNative);
+KInt startWorker(WorkerExceptionHandling exceptionHandling, mm::OwningExternalRCRef name) {
+  Worker* worker = theState()->addWorkerUnlocked(exceptionHandling, std::move(name), WorkerKind::kNative);
   if (worker == nullptr) return -1;
   worker->startEventLoop();
   return worker->id();
@@ -737,8 +733,8 @@ OBJ_GETTER(consumeFuture, KInt id) {
   RETURN_RESULT_OF(theState()->consumeFutureUnlocked, id);
 }
 
-OBJ_GETTER(getWorkerName, KInt id) {
-  RETURN_RESULT_OF(theState()->getWorkerNameUnlocked, id);
+mm::RawExternalRCRef* getWorkerName(KInt id) {
+  return theState()->getWorkerNameUnlocked(id);
 }
 
 KInt requestTermination(KInt id, KBoolean processScheduledJobs) {
@@ -850,9 +846,7 @@ Worker::~Worker() {
       DisposeStablePointer(job.executeAfter.operation);
   }
 
-  if (name_ != nullptr) {
-      DisposeStablePointer(name_);
-  }
+  name_.reset();
 
   kotlin::AssertThreadState(memoryState_, ThreadState::kNative);
   pthread_mutex_destroy(&lock_);
@@ -1071,8 +1065,8 @@ JobKind Worker::processQueueElement(bool blocking) {
 
 extern "C" {
 
-KInt Kotlin_Worker_startInternal(KBoolean errorReporting, KRef customName) {
-    return startWorker(errorReporting ? WorkerExceptionHandling::kDefault : WorkerExceptionHandling::kIgnore, customName);
+KInt Kotlin_Worker_startInternal(KBoolean errorReporting, mm::RawExternalRCRef* name) {
+    return startWorker(errorReporting ? WorkerExceptionHandling::kDefault : WorkerExceptionHandling::kIgnore, mm::OwningExternalRCRef(name));
 }
 
 KInt Kotlin_Worker_currentInternal() {
@@ -1099,8 +1093,8 @@ KBoolean Kotlin_Worker_parkInternal(KInt id, KLong timeoutMicroseconds, KBoolean
   return park(id, timeoutMicroseconds, process);
 }
 
-OBJ_GETTER(Kotlin_Worker_getNameInternal, KInt id) {
-  RETURN_RESULT_OF(getWorkerName, id);
+mm::RawExternalRCRef* Kotlin_Worker_getNameInternal(KInt id) {
+    return getWorkerName(id);
 }
 
 KInt Kotlin_Worker_stateOfFuture(KInt id) {

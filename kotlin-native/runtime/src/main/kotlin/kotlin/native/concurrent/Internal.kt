@@ -11,6 +11,7 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.native.internal.*
+import kotlin.native.internal.ref.*
 
 // Implementation details.
 
@@ -39,7 +40,7 @@ internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any
 
 @GCUnsafeCall("Kotlin_Worker_startInternal")
 @ObsoleteWorkersApi
-external internal fun startInternal(errorReporting: Boolean, name: String?): Int
+external internal fun startInternal(errorReporting: Boolean, name: ExternalRCRef): Int
 
 @GCUnsafeCall("Kotlin_Worker_currentInternal")
 @ObsoleteWorkersApi
@@ -68,7 +69,7 @@ external internal fun parkInternal(id: Int, timeoutMicroseconds: Long, process: 
 
 @GCUnsafeCall("Kotlin_Worker_getNameInternal")
 @ObsoleteWorkersApi
-external internal fun getWorkerNameInternal(id: Int): String?
+external internal fun getWorkerNameInternal(id: Int): ExternalRCRef
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
