@@ -668,7 +668,7 @@ class ComposerLambdaMemoization(
 
     override fun visitCall(expression: IrCall): IrExpression {
         val fn = expression.symbol.owner
-        if (fn.isLocal) {
+        if (fn.visibility == DescriptorVisibilities.LOCAL) {
             declarationContextStack.recordLocalCapture(fn)
         }
         return super.visitCall(expression)
