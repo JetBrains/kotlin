@@ -12,21 +12,18 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.at
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
+import org.jetbrains.kotlin.ir.builders.irGetObject
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.originalBeforeInline
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -34,116 +31,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-interface CallInlinerStrategy {
-    /**
-     * TypeOf function requires some custom backend-specific processing. This is a customization point for that.
-     *
-     * @param expression is a copy of original IrCall with types substituted by normal rules
-     * @param nonSubstitutedTypeArgument is typeArgument of call with only reified type parameters substituted
-     *
-     * @return new node to insert instead of typeOf call.
-     */
-    fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression
-    fun at(scope: Scope, expression: IrExpression) {}
-
-    object DEFAULT : CallInlinerStrategy {
-        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
-            return expression.apply {
-                typeArguments[0] = nonSubstitutedTypeArgument
-            }
-        }
-    }
-}
-
-enum class InlineMode {
-    PRIVATE_INLINE_FUNCTIONS,
-    ALL_INLINE_FUNCTIONS,
-    ALL_FUNCTIONS,
-}
-
-abstract class InlineFunctionResolver(val inlineMode: InlineMode) {
-    open val callInlinerStrategy: CallInlinerStrategy
-        get() = CallInlinerStrategy.DEFAULT
-    open val allowExternalInlining: Boolean
-        get() = false
-
-    open fun needsInlining(function: IrFunction) = function.isInline && (allowExternalInlining || !function.isExternal)
-
-    open fun needsInlining(expression: IrFunctionAccessExpression) = needsInlining(expression.symbol.owner)
-
-    open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        if (shouldExcludeFunctionFromInlining(symbol)) return null
-
-        val owner = symbol.owner
-        return (owner as? IrSimpleFunction)?.resolveFakeOverride() ?: owner
-    }
-
-    protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return !needsInlining(symbol.owner) || Symbols.isTypeOfIntrinsic(symbol)
-    }
-}
-
-abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
-    protected val context: Ctx,
-    inlineMode: InlineMode,
-) : InlineFunctionResolver(inlineMode) {
-    final override val allowExternalInlining: Boolean
-        get() = context.allowExternalInlining
-
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol) ?: return null
-        // TODO: Remove these hacks when coroutine intrinsics are fixed.
-        return when {
-            function.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
-                context.ir.symbols.suspendCoroutineUninterceptedOrReturn.owner
-
-            symbol == context.ir.symbols.coroutineContextGetter ->
-                context.ir.symbols.coroutineGetContext.owner
-
-            else -> function
-        }
-    }
-
-    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return super.shouldExcludeFunctionFromInlining(symbol) ||
-                (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !symbol.owner.isConsideredAsPrivateForInlining())
-    }
-}
-
-/**
- * These resolvers are supposed to be run at the first compilation stage for all non-JVM targets.
- */
-internal class PreSerializationPrivateInlineFunctionResolver(
-    context: LoweringContext,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol)
-        if (function != null) {
-            check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
-        }
-        return function
-    }
-}
-
-internal class PreSerializationNonPrivateInlineFunctionResolver(
-    context: LoweringContext,
-    irMangler: KotlinMangler.IrMangler,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
-
-    private val deserializer = NonLinkingIrInlineFunctionDeserializer(
-        irBuiltIns = context.irBuiltIns,
-        signatureComputer = PublicIdSignatureComputer(irMangler)
-    )
-
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol)
-        if (function != null && function.body == null) {
-            deserializer.deserializeInlineFunction(function)
-        }
-        return function
-    }
-}
 
 @PhaseDescription("FunctionInlining")
 open class FunctionInlining(
@@ -901,10 +788,3 @@ open class FunctionInlining(
         }
     }
 }
-
-/**
- * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions):
- * - Either the function is private.
- * - Or the function is declared inside a local class.
- */
-fun IrFunction.isConsideredAsPrivateForInlining(): Boolean = isPrivate(visibility) || isLocal
