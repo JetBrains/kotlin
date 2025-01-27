@@ -1,17 +1,19 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlinx.dataframe.api.rename
+import org.jetbrains.kotlinx.dataframe.api.renameToCamelCase
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.api.renameToCamelCase
 
 class Rename : AbstractInterpreter<RenameClauseApproximation>() {
     private val Arguments.receiver by dataFrame()
@@ -87,7 +89,20 @@ internal fun SimpleFrameColumn.map(selected: ColumnsSet, path: List<String>, nex
 class RenameToCamelCase : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by dataFrame()
 
+    override fun Arguments.interpret(): PluginDataFrameSchema =
+        receiver.asDataFrame().renameToCamelCase().toPluginDataFrameSchema()
+}
+
+class RenameToCamelCaseClause : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: RenameClauseApproximation by arg()
+
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.asDataFrame().renameToCamelCase().toPluginDataFrameSchema()
+        val columns = receiver.columns.resolve(receiver.schema)
+        return receiver.schema.map(
+            selected = columns.map { it.path }.toSet(),
+            transform = { _, column ->
+                column.rename(column.asDataColumn().renameToCamelCase().name())
+            },
+        )
     }
 }

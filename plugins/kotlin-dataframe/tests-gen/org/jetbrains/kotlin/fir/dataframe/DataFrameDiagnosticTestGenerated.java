@@ -33,6 +33,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
   }
 
   @Test
+  @TestMetadata("renameToCamelCase.kt")
+  public void testRenameToCamelCase() {
+    runTest("testData/diagnostics/renameToCamelCase.kt");
+  }
+
+  @Test
   @TestMetadata("selectDuringTyping.kt")
   public void testSelectDuringTyping() {
     runTest("testData/diagnostics/selectDuringTyping.kt");
