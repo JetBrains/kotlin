@@ -23,7 +23,7 @@ fun testInner(name: String, reason: String) {
 
 typealias CallMe = (String, String) -> Unit
 
-@Test fun testExceptionWrap(raise: CallMe) {
+fun testExceptionWrap(raise: CallMe) {
     val name = "Some native exception"
     val reason = "Illegal value"
     var finallyBlockTest = "FAILED"

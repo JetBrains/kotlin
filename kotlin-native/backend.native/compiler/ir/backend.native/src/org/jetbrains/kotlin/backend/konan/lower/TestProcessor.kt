@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class TestProcessor(private val generationState: NativeGenerationState): FileLoweringPass {
+internal class TestProcessor(private val context: Context) : FileLoweringPass {
     companion object {
         val TEST_SUITE_CLASS by IrDeclarationOriginImpl
         val TEST_SUITE_GENERATED_MEMBER by IrDeclarationOriginImpl
@@ -51,8 +51,6 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
 
         val IGNORE_FQ_NAME = FqName.fromSegments(listOf("kotlin", "test" , "Ignore"))
     }
-
-    private val context = generationState.context
 
     private val symbols = context.ir.symbols
 
@@ -642,42 +640,6 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
     }
     // endregion
 
-    // region test functions to be dumped
-    private fun recordTestFunctions(annotationCollector: AnnotationCollector) {
-        val testDumpFile = context.config.testDumpFile ?: return
-
-        /* test suite class -> test function names */
-        val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
-
-        fun recordFunction(suiteClassId: ClassId, function: TestFunction) {
-            if (function.kind == TestProcessorFunctionKind.TEST)
-                testCasesToDump.computeIfAbsent(suiteClassId) { mutableListOf() } += function.functionName
-        }
-
-        annotationCollector.topLevelFunctions.forEach { function ->
-            recordFunction(annotationCollector.topLevelSuiteClassId, function)
-        }
-
-        annotationCollector.testClasses.values.forEach { testClass ->
-            testClass.functions.forEach { function -> recordFunction(testClass.suiteClassId, function) }
-        }
-
-        if (!testDumpFile.exists)
-            testDumpFile.createNew()
-
-        if (testCasesToDump.isEmpty())
-            return
-
-        testDumpFile.appendLines(
-                testCasesToDump
-                        .flatMap { (suiteClassId, functionNames) ->
-                            val suiteName = suiteClassId.asString()
-                            functionNames.asSequence().map { "$suiteName:$it" }
-                        }
-        )
-    }
-    // endregion
-
     private fun shouldProcessFile(irFile: IrFile): Boolean = irFile.moduleDescriptor.let {
         // Process test annotations in source libraries too.
         it in context.sourcesModules
@@ -692,6 +654,5 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         val annotationCollector = AnnotationCollector(irFile)
         irFile.acceptChildrenVoid(annotationCollector)
         createTestSuites(irFile, annotationCollector)
-        recordTestFunctions(annotationCollector)
     }
 }

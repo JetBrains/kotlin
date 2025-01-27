@@ -272,6 +272,11 @@ private val testProcessorPhase = createFileLoweringPhase(
         name = "TestProcessor",
 )
 
+private val dumpTestsPhase = createFileLoweringPhase(
+        lowering = ::TestsDumper,
+        name = "TestsDumper",
+)
+
 private val delegatedPropertyOptimizationPhase = createFileLoweringPhase(
         lowering = ::DelegatedPropertyOptimizationLowering,
         name = "DelegatedPropertyOptimization",
@@ -537,6 +542,7 @@ internal val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
+    testProcessorPhase,
     upgradeCallableReferencesPhase,
     assertionWrapperPhase,
     lateinitPhase,
@@ -549,11 +555,11 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,
         volatilePhase,
-        testProcessorPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         delegatedPropertyOptimizationPhase,
         propertyReferencePhase,
         volatileLambdaPhase,
