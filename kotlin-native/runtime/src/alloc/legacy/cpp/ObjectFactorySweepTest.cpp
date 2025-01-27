@@ -15,7 +15,6 @@
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
-#include "WeakRef.hpp"
 
 using namespace kotlin;
 
@@ -255,7 +254,7 @@ public:
         auto& extraObjectData = InstallExtraData(objHeader);
         auto* setHeader = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
         EXPECT_EQ(setHeader, weakReference.header());
-        weakReference->weakRef = &externalRCRefRegistryThreadQueue_.createExternalRCRefImpl(objHeader, 0);
+        weakReference->weakRef = externalRCRefRegistryThreadQueue_.createExternalRCRefImpl(objHeader, 0).toRaw();
         weakReference->referred = objHeader;
         externalRCRefRegistryThreadQueue_.publish();
         return weakReference;

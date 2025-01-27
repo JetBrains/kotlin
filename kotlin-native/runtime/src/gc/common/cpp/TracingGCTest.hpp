@@ -26,7 +26,6 @@
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
-#include "WeakRef.hpp"
 
 using namespace kotlin;
 
