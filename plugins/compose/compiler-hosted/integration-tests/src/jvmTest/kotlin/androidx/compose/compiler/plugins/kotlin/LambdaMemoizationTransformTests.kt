@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.EnumTestProtos
-import androidx.compose.compiler.plugins.StabilityTestProtos
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -1092,5 +1091,25 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             Classpath.jarFor<EnumTestProtos>(), // protobuf-test-classes
             Classpath.jarFor<EnumLite>() // protobuf-lite
         )
+    )
+
+    @Test
+    fun testLocalObjectCapture() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+    
+            @Composable
+            fun Test(strings: List<String>) {
+                val objects = strings.map { string -> 
+                    val stringVar = string
+                    object {
+                        val value get() = stringVar
+                    }
+                }
+                val lambda = { 
+                    objects.forEach { println(it.value) }
+                }
+            }
+        """
     )
 }

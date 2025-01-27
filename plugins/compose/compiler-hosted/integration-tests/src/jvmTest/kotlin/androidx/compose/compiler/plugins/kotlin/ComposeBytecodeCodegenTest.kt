@@ -894,4 +894,52 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
         assertEquals(newBytecode.sanitize(), oldBytecode.sanitize())
     }
+
+    @Test
+    fun testLocalObjectCapture() = testCompile(
+        """
+            import androidx.compose.runtime.*
+    
+            @Composable
+            fun Test(strings: List<String>) {
+                val objects = strings.map { string -> 
+                    val stringVar = string
+                    object {
+                        val value get() = stringVar
+                    }
+                }
+                val lambda = { 
+                    objects.forEach { println(it.value) }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCaptureThisParameter() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            interface SomeHandler {
+              fun onClick(someItem: String)
+            }
+            fun setContent(content: @Composable () -> Unit) {}
+
+            class ComposeTest {
+              private var item: String = ""
+            
+              private val someHandler = object : SomeHandler {
+                override fun onClick(s: String) {
+                  item = s // this line captures `this` parameter from `ComposeTest`
+                }
+              }
+            
+              fun test() {
+                setContent {
+                  val a = { it: String -> someHandler.onClick(it) }
+                }
+              }
+            }
+        """,
+    )
 }

@@ -1,0 +1,69 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(strings: List<String>) {
+    val objects = strings.map { string -> 
+        val stringVar = string
+        object {
+            val value get() = stringVar
+        }
+    }
+    val lambda = { 
+        objects.forEach { println(it.value) }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(strings: List<String>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<{>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(strings)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val objects = strings.map { string: String ->
+      val stringVar = string
+      val tmp0_return = <block>{
+        object {
+          val value: String
+            get() {
+              return stringVar
+            }
+        }
+      }
+      tmp0_return
+    }
+    val lambda = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%composer.changedInstance(objects)) {
+        {
+          objects.forEach { it: <no name provided> ->
+            println(it.value)
+          }
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(strings, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
