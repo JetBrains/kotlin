@@ -323,7 +323,7 @@ private val enumEntryRemovalLoweringPhase = makeIrModulePhase(
 )
 
 private val upgradeCallableReferences = makeIrModulePhase(
-    { ctx: JsCommonBackendContext ->
+    { ctx: LoweringContext ->
         UpgradeCallableReferences(
             ctx,
             upgradeFunctionReferencesAndLambdas = true,
@@ -726,7 +726,7 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 )
 
 val jsLoweringsOfTheFirstPhase: List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> =
-    listOf(jsCodeOutliningPhaseOnFirstStage) + loweringsOfTheFirstPhase
+    listOf(upgradeCallableReferences, jsCodeOutliningPhaseOnFirstStage) + loweringsOfTheFirstPhase
 
 fun getJsLowerings(
     configuration: CompilerConfiguration
