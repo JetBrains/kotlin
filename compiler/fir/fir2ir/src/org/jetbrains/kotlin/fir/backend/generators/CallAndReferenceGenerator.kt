@@ -1383,7 +1383,7 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         if (statement == null) return this
 
-        val receiverInfo = applyReceivers(statement, declarationSiteSymbol, explicitReceiverExpression)
+        val receiverInfo = putReceivers(statement, declarationSiteSymbol, explicitReceiverExpression)
 
         return if (irAssignmentRhs != null && this is IrMemberAccessExpression<*>) {
             val contextArgumentCount = this.putContextArguments(statement, receiverInfo)
@@ -1394,7 +1394,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun IrExpression.applyReceivers(
+    private fun IrExpression.putReceivers(
         statement: FirStatement,
         declarationSiteSymbol: FirCallableSymbol<*>?,
         explicitReceiverExpression: IrExpression?,
