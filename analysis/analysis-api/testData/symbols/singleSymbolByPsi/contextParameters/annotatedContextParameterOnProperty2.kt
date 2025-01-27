@@ -1,5 +1,4 @@
-// IGNORE_FE10
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 
 annotation class Anno
 annotation class AnnoWithArguments(val i: Int)

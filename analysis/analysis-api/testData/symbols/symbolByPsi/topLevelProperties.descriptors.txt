@@ -158,7 +158,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TopLevelPropertiesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -211,7 +211,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TopLevelPropertiesKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -297,7 +297,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Short
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TopLevelPropertiesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -350,7 +350,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Short
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TopLevelPropertiesKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -423,7 +423,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Short
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TopLevelPropertiesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:

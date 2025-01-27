@@ -46,7 +46,7 @@ KaPropertyGetterSymbol:
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

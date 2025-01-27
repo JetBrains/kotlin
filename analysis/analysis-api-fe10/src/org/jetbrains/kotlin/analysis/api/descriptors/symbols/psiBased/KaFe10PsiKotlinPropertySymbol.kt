@@ -126,10 +126,10 @@ internal class KaFe10PsiKotlinPropertySymbol(
         }
 
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
+        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext).orEmpty() }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { psi.contextParameters(analysisContext) }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { psi.isExtensionDeclaration() }

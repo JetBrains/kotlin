@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -109,10 +109,6 @@ internal class KaFirSymbolRelationProvider(
                     }
                 }
 
-                is KaValueParameterSymbol -> {
-                    return firSymbolBuilder.buildSymbol(this.firSymbol.fir.containingDeclarationSymbol) as? KaDeclarationSymbol
-                }
-
                 is KaCallableSymbol -> {
                     val typeAliasForConstructor = (firSymbol as? FirConstructorSymbol)?.typeAliasConstructorInfo?.typeAliasSymbol
                     if (typeAliasForConstructor != null) {
@@ -194,15 +190,14 @@ internal class KaFirSymbolRelationProvider(
         return with(analysisSession) { containingDeclaration.symbol }
     }
 
-    private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
-        return when (symbol) {
-            is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
-            is KaBackingFieldSymbol -> symbol.owningProperty
-            is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
-            is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-            is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-            else -> null
-        }
+    private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? = when (symbol) {
+        is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
+        is KaBackingFieldSymbol -> symbol.owningProperty
+        is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
+        is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        is KaContextParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        else -> null
     }
 
     override val KaSymbol.containingFile: KaFileSymbol?

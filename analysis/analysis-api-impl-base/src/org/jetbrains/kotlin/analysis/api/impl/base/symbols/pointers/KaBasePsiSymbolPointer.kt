@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,10 +18,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.lang.ref.SoftReference
 import kotlin.reflect.KClass
 
@@ -40,8 +39,9 @@ class KaBasePsiSymbolPointer<S : KaSymbol> private constructor(
             when (psi) {
                 is KtDeclaration -> psi.symbol
                 is KtFile -> psi.symbol
-                else -> {
-                    error("Unexpected declaration to restore: ${psi::class}, text:\n ${psi.text}")
+                is KtContextReceiver -> psi.symbol
+                else -> errorWithAttachment("Unexpected declaration to restore: ${psi::class.simpleName}") {
+                    withPsiEntry("psi", psi)
                 }
             }
         }
@@ -76,8 +76,7 @@ class KaBasePsiSymbolPointer<S : KaSymbol> private constructor(
             if (symbol.origin != KaSymbolOrigin.SOURCE) return null
 
             val psi = when (val psi = symbol.psi) {
-                is KtDeclaration -> psi
-                is KtFile -> psi
+                is KtDeclaration, is KtFile, is KtContextReceiver -> psi
                 is KtObjectLiteralExpression -> psi.objectDeclaration
                 else -> return null
             }
@@ -89,7 +88,7 @@ class KaBasePsiSymbolPointer<S : KaSymbol> private constructor(
         fun <S : KaSymbol> createForSymbolFromPsi(
             ktElement: KtElement,
             expectedClass: KClass<S>,
-            originalSymbol: S?
+            originalSymbol: S?,
         ): KaBasePsiSymbolPointer<S>? {
             ifDisabled { return null }
 
@@ -140,7 +139,7 @@ private fun createCompatibleSmartPointer(element: KtElement): SmartPsiElementPoi
 
 private class SoftSmartPsiElementPointer<T : PsiElement>(
     element: T,
-    containingFile: PsiFile
+    containingFile: PsiFile,
 ) : SmartPsiElementPointer<T> {
     private val project = containingFile.project
     private val elementRef = SoftReference(element)

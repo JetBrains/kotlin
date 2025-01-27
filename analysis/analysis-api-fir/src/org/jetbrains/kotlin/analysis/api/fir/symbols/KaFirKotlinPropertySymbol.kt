@@ -238,6 +238,11 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
             KaFirReceiverParameterSymbol.create(backingPsi, analysisSession, this)
         }
 
+    override val contextParameters: List<KaContextParameterSymbol>
+        get() = withValidityAssertion {
+            createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
+        }
+
     override val isVal: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null)

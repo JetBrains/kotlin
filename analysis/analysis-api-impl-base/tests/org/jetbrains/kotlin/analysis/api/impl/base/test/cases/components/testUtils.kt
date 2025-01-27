@@ -55,10 +55,11 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
             }
 
             @Suppress("DEPRECATION")
-            (this@with as? KaCallableSymbol)?.dispatchReceiverType?.let { dispatchReceiverType ->
+            dispatchReceiverType?.let { dispatchReceiverType ->
                 append("<dispatch receiver>: ${dispatchReceiverType.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
+
             valueParameters.joinTo(this) { stringRepresentation(it) }
             append(")")
             append(": ${returnType.render()}")
@@ -66,6 +67,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         // Receiver parameter should be rendered as it is because it is hard to cover it with tests overwise
         is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
+        is KaParameterSymbol -> "$name: ${returnType.render()}"
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
         is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"

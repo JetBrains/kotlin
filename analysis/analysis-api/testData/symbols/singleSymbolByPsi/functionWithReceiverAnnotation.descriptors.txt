@@ -49,7 +49,7 @@ KaNamedFunctionSymbol:
       type: @R|ReceiverTypeAnnotation|()  kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(functionWithReceiverAnnotation.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: FunctionWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

@@ -642,7 +642,7 @@ KaNamedFunctionSymbol:
       type: T
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TypeAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -743,7 +743,7 @@ KaNamedFunctionSymbol:
       type: T
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TypeAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

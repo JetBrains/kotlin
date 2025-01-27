@@ -42,7 +42,7 @@ KaNamedFunctionSymbol:
       type: T
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

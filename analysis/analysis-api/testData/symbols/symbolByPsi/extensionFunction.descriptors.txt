@@ -43,7 +43,7 @@ KaNamedFunctionSymbol:
       type: kotlin/String
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(extensionFunction.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: ExtensionFunctionKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

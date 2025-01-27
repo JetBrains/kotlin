@@ -124,7 +124,7 @@ internal class KaFe10DescNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { descriptor.createContextParameters(analysisContext) }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { descriptor.isExtension }

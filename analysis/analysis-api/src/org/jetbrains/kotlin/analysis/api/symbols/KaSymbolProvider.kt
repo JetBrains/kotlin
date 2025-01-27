@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -40,6 +41,9 @@ public interface KaSymbolProvider : KaSessionComponent {
      *
      * If [KtParameter.isLoopParameter] is `true`, i.e. if the given [KtParameter] is a loop variable in `for` expression, then the function
      * returns [KaLocalVariableSymbol].
+     *
+     * If [KtParameter.isContextParameter] is `true`, i.e. if the given [KtParameter] is used as a context parameter, then the function
+     * returns [KaContextParameterSymbol].
      *
      * Otherwise, returns [KaValueParameterSymbol].
      */
@@ -150,6 +154,16 @@ public interface KaSymbolProvider : KaSessionComponent {
      * A [KaScriptSymbol] for a [KtScript].
      */
     public val KtScript.symbol: KaScriptSymbol
+
+    /**
+     * Represents [KtContextReceiver] as a [KaContextParameterSymbol].
+     *
+     * This is a temporary API for simplicity during the transition from context receivers to context parameters.
+     *
+     * **Note**: context receivers inside [KtFunctionType] are not supported.
+     */
+    @KaExperimentalApi
+    public val KtContextReceiver.symbol: KaContextParameterSymbol
 
     /**
      * Returns a [KaPackageSymbol] corresponding to the given [fqName] if that package exists and is visible from the current use site, or

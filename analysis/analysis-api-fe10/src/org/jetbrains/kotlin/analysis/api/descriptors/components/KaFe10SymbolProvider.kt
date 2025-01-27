@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,8 +45,14 @@ internal class KaFe10SymbolProvider(
             when {
                 isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")
                 isLoopParameter -> KaFe10PsiLoopParameterLocalVariableSymbol(this, analysisContext)
+                isContextParameter -> KaFe10PsiContextParameterSymbol(this, analysisContext)
                 else -> KaFe10PsiValueParameterSymbol(this, analysisContext)
             }
+        }
+
+    override val KtContextReceiver.symbol: KaContextParameterSymbol
+        get() = createPsiBasedSymbolWithValidityAssertion {
+            KaFe10PsiContextReceiverBasedContextParameterSymbol(this, analysisContext)
         }
 
     override val KtNamedFunction.symbol: KaFunctionSymbol

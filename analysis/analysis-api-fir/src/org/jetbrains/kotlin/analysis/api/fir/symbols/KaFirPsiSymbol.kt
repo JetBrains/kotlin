@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -257,6 +257,17 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaValueParameter
     ifNotLibrarySource {
         with(analysisSession) {
             backingPsi?.valueParameters?.map { it.symbol as KaValueParameterSymbol }
+        }
+    }
+
+internal fun KaFirKtBasedSymbol<KtTypeParameterListOwnerStub<*>, *>.createKaContextParameters(): List<KaContextParameterSymbol>? =
+    ifNotLibrarySource {
+        val psi = backingPsi ?: return null // no psi
+        val list = psi.contextReceiverList ?: return emptyList() // no context receivers/parameters
+        with(analysisSession) {
+            list.contextParameters().map { it.symbol as KaContextParameterSymbol }.ifEmpty {
+                list.contextReceivers().map { it.symbol }
+            }
         }
     }
 

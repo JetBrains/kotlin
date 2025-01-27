@@ -80,7 +80,7 @@ KtNameReferenceExpression(326,327): 'A'
 
 KtNameReferenceExpression(337,341): 'this'
   KtSimpleNameReference:
-    (in <local>: inc) extension receiver with type A
+    extension receiver with type A
 
 KtNameReferenceExpression(384,385): 'A'
   KtSimpleNameReference:
@@ -176,7 +176,7 @@ KtNameReferenceExpression(848,849): 'A'
 
 KtNameReferenceExpression(877,881): 'this'
   KtSimpleNameReference:
-    (in <local>: usage.<no name>) extension receiver with type A
+    extension receiver with type A
 
 KtOperationReferenceExpression(890,891): '+'
   KtSimpleNameReference:

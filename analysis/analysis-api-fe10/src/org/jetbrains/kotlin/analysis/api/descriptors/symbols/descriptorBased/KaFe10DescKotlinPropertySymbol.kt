@@ -129,7 +129,7 @@ internal class KaFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { descriptor.createContextParameters(analysisContext) }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.typeParameters.map { it.toKtTypeParameter(analysisContext) } }

@@ -493,6 +493,10 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
         }
 
         if (ktSymbol is KaCallableSymbol) {
+            for (parameter in ktSymbol.contextParameters) {
+                yieldAll(parameter.withImplicitSymbols())
+            }
+
             yieldAll(ktSymbol.receiverParameter.withImplicitSymbols())
         }
 

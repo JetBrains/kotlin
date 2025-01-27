@@ -35,7 +35,7 @@ KaNamedFunctionSymbol:
                 type: kotlin/Boolean
               visibility: LOCAL
               getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
-              getContainingJvmClassName: null
+              getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
   ]
@@ -77,7 +77,7 @@ KaNamedFunctionSymbol:
       type: kotlin/Boolean
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -326,14 +326,9 @@ internal class KaFirJavaInteroperabilityComponent(
                 if (!platform.has<JvmPlatform>()) return null
 
                 val containingSymbolOrSelf = when (symbol) {
-                    is KaValueParameterSymbol -> {
-                        symbol.containingDeclaration as? KaFunctionSymbol ?: symbol
-                    }
-                    is KaPropertyAccessorSymbol -> {
-                        symbol.containingDeclaration as? KaPropertySymbol ?: symbol
-                    }
+                    is KaParameterSymbol -> symbol.containingDeclaration as? KaCallableSymbol ?: symbol
+                    is KaPropertyAccessorSymbol -> symbol.containingDeclaration as? KaPropertySymbol ?: symbol
                     is KaBackingFieldSymbol -> symbol.owningProperty
-                    is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
                     else -> symbol
                 }
 

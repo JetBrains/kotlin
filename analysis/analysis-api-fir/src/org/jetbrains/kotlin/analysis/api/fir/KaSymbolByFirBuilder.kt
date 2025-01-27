@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -263,7 +263,7 @@ internal class KaSymbolByFirBuilder(
                 firSymbol is FirSyntheticPropertySymbol -> buildSyntheticJavaPropertySymbol(firSymbol)
                 else -> buildPropertySymbol(firSymbol)
             }
-            is FirValueParameterSymbol -> buildValueParameterSymbol(firSymbol)
+            is FirValueParameterSymbol -> buildParameterSymbol(firSymbol)
             is FirFieldSymbol -> buildFieldSymbol(firSymbol)
             is FirEnumEntrySymbol -> buildEnumEntrySymbol(firSymbol) // TODO enum entry should not be callable
             is FirBackingFieldSymbol -> buildBackingFieldSymbol(firSymbol)
@@ -310,8 +310,20 @@ internal class KaSymbolByFirBuilder(
             return KaFirSyntheticJavaPropertySymbol(firSymbol, analysisSession)
         }
 
-        // TODO(KT-72639) support context parameters
+        fun buildParameterSymbol(firSymbol: FirValueParameterSymbol): KaParameterSymbol = when (firSymbol.fir.valueParameterKind) {
+            FirValueParameterKind.Regular -> buildValueParameterSymbol(firSymbol)
+            FirValueParameterKind.ContextParameter, FirValueParameterKind.LegacyContextReceiver -> buildContextParameterSymbol(firSymbol)
+        }
+
         fun buildValueParameterSymbol(firSymbol: FirValueParameterSymbol): KaValueParameterSymbol {
+            requireWithAttachment(
+                firSymbol.fir.valueParameterKind == FirValueParameterKind.Regular,
+                { "${FirValueParameterKind.Regular} is expected, but found ${firSymbol.fir.valueParameterKind}" },
+            ) {
+                withFirSymbolEntry("symbol", firSymbol)
+            }
+
+
             val functionSymbol = firSymbol.containingDeclarationSymbol
 
             (functionSymbol as? FirFunctionSymbol)?.fir?.unwrapSubstitutionOverrideIfNeeded()?.let { unwrappedFunction ->
@@ -327,20 +339,47 @@ internal class KaSymbolByFirBuilder(
                 return buildValueParameterSymbol(unwrappedParameter)
             }
 
-            return if (functionSymbol is FirPropertyAccessorSymbol && functionSymbol.fir is FirDefaultPropertyAccessor) {
-                val owner = functionBuilder.buildPropertyAccessorSymbol(functionSymbol)
-                requireWithAttachment(
-                    owner is KaFirDefaultPropertySetterSymbol,
-                    { "Unexpected owner type: ${owner::class.simpleName}" }
-                ) {
-                    withFirSymbolEntry("function", functionSymbol)
+            return when (functionSymbol) {
+                is FirPropertyAccessorSymbol if functionSymbol.fir is FirDefaultPropertyAccessor -> {
+                    val owner = functionBuilder.buildPropertyAccessorSymbol(functionSymbol)
+                    requireWithAttachment(
+                        owner is KaFirDefaultPropertySetterSymbol,
+                        { "Unexpected owner type: ${owner::class.simpleName}" }
+                    ) {
+                        withFirSymbolEntry("function", functionSymbol)
+                    }
+
+                    KaFirDefaultSetterValueParameter(owner)
                 }
 
-                KaFirDefaultSetterValueParameter(owner)
-            } else
-                KaFirValueParameterSymbol(firSymbol, analysisSession)
+                else -> KaFirValueParameterSymbol(firSymbol, analysisSession)
+            }
         }
 
+        fun buildContextParameterSymbol(firSymbol: FirValueParameterSymbol): KaContextParameterSymbol {
+            requireWithAttachment(
+                firSymbol.fir.valueParameterKind != FirValueParameterKind.Regular,
+                { "${FirValueParameterKind.Regular} is not expected" },
+            ) {
+                withFirSymbolEntry("symbol", firSymbol)
+            }
+
+            val callableSymbol = firSymbol.containingDeclarationSymbol as? FirCallableSymbol<*>
+            callableSymbol?.fir?.unwrapSubstitutionOverrideIfNeeded()?.let { unwrappedCallable ->
+                val originalIndex = callableSymbol.fir.contextParameters.indexOf(firSymbol.fir)
+                if (originalIndex == -1) {
+                    errorWithAttachment("Containing callable doesn't have the corresponding parameter") {
+                        withFirSymbolEntry("contextParameter", firSymbol)
+                        withFirSymbolEntry("callable", callableSymbol)
+                    }
+                }
+
+                val unwrappedParameter = unwrappedCallable.contextParameters[originalIndex]
+                return buildContextParameterSymbol(unwrappedParameter.symbol)
+            }
+
+            return KaFirContextParameterSymbol(firSymbol, analysisSession)
+        }
 
         fun buildFieldSymbol(firSymbol: FirFieldSymbol): KaJavaFieldSymbol {
             firSymbol.unwrapImportedFromObjectOrStatic(::buildFieldSymbol)?.let { return it }

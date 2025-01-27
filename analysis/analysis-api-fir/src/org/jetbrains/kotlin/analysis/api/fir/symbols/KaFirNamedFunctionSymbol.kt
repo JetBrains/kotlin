@@ -89,7 +89,9 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { createContextReceivers() }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion {
+            createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
+        }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {

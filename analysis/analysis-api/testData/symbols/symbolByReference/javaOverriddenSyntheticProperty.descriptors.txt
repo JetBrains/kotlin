@@ -65,7 +65,7 @@ KaKotlinPropertySymbol:
         type: kotlin/String
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(main.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: SomeKotlinClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -122,7 +122,7 @@ KaKotlinPropertySymbol:
       type: kotlin/String
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(main.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: SomeKotlinClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

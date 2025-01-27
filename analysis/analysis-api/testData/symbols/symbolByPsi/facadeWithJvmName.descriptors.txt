@@ -81,7 +81,7 @@ KaNamedFunctionSymbol:
       type: kotlin/String
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -257,7 +257,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: DifferentFacadeName
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -310,7 +310,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

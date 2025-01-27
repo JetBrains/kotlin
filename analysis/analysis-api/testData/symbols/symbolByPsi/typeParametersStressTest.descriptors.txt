@@ -162,7 +162,7 @@ KaKotlinPropertySymbol:
         type: B
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TypeParametersStressTestKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaTypeParameterType:
@@ -213,7 +213,7 @@ KaKotlinPropertySymbol:
       type: B
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TypeParametersStressTestKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaTypeParameterType:
