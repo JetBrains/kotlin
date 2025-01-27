@@ -1,0 +1,37 @@
+KaValueParameterSymbol:
+  annotations: [
+    Anno()
+      psi: KtAnnotationEntry
+    AnnoWithArguments(i = 0)
+      psi: KtAnnotationEntry
+  ]
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isActual: false
+  isCrossinline: false
+  isExpect: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isNoinline: false
+  isVal: true
+  isVararg: false
+  location: LOCAL
+  modality: FINAL
+  name: parameter1
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
+      Anno()
+        psi: KtAnnotationEntry
+    ]
+    typeArguments: []
+    type: @R|Anno|()  kotlin/String
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(annotatedContextParameterOnFunction2.kt)
+  getContainingJvmClassName: AnnotatedContextParameterOnFunction2Kt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

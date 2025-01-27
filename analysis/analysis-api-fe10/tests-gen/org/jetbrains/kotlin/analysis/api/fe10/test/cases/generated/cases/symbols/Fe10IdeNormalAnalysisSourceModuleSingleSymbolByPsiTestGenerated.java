@@ -344,15 +344,33 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotatedContextParameterOnClass2.kt")
+    public void testAnnotatedContextParameterOnClass2() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnClass2.kt");
+    }
+
+    @Test
     @TestMetadata("annotatedContextParameterOnFunction.kt")
     public void testAnnotatedContextParameterOnFunction() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnFunction.kt");
     }
 
     @Test
+    @TestMetadata("annotatedContextParameterOnFunction2.kt")
+    public void testAnnotatedContextParameterOnFunction2() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnFunction2.kt");
+    }
+
+    @Test
     @TestMetadata("annotatedContextParameterOnProperty.kt")
     public void testAnnotatedContextParameterOnProperty() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedContextParameterOnProperty2.kt")
+    public void testAnnotatedContextParameterOnProperty2() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnProperty2.kt");
     }
 
     @Test
