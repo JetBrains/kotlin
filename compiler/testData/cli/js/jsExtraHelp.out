@@ -103,6 +103,7 @@ where advanced options include:
   -Xir-dce-dump-reachability-info-to-file=<path>
                              Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xklib-ir-inliner          Enable experimental support to invoke IR Inliner before Klib serialization.
+  -Xabi-version=<version>    Specify the custom ABI version for KLIB. If not set, the current version will be used.
   -Xlegacy-smart-cast-after-try Allow 'var' smart casts even in the presence of assignments in 'try' blocks.
   -Xlist-phases              List backend phases.
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.

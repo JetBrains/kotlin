@@ -13,6 +13,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     to.duplicatedUniqueNameStrategy = from.duplicatedUniqueNameStrategy
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
     to.irInlinerBeforeKlibSerialization = from.irInlinerBeforeKlibSerialization
+    to.klibAbiVersion = from.klibAbiVersion
     to.normalizeAbsolutePath = from.normalizeAbsolutePath
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode

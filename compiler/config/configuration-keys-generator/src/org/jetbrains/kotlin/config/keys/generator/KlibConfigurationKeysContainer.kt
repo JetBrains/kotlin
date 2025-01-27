@@ -24,4 +24,6 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
     )
 
     val DUPLICATED_UNIQUE_NAME_STRATEGY by key<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
+
+    val KLIB_ABI_VERSION by key<String>("Klib abi version")
 }

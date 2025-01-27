@@ -32,6 +32,9 @@ object KlibConfigurationKeys {
     @JvmField
     val DUPLICATED_UNIQUE_NAME_STRATEGY = CompilerConfigurationKey.create<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
 
+    @JvmField
+    val KLIB_ABI_VERSION = CompilerConfigurationKey.create<String>("Klib abi version")
+
 }
 
 var CompilerConfiguration.klibRelativePathBases: List<String>
@@ -57,4 +60,8 @@ var CompilerConfiguration.syntheticAccessorsWithNarrowedVisibility: Boolean
 var CompilerConfiguration.duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy?
     get() = get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY)
     set(value) { put(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.klibAbiVersion: String?
+    get() = get(KlibConfigurationKeys.KLIB_ABI_VERSION)
+    set(value) { put(KlibConfigurationKeys.KLIB_ABI_VERSION, requireNotNull(value) { "nullable values are not allowed" }) }
 

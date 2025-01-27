@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -77,6 +74,17 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
         description = "Enable experimental support to invoke IR Inliner before Klib serialization."
     )
     var irInlinerBeforeKlibSerialization = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xabi-version",
+        valueDescription = "<version>",
+        description = "Specify the custom ABI version for KLIB. If not set, the current version will be used."
+    )
+    var klibAbiVersion: String? = null
         set(value) {
             checkFrozen()
             field = value

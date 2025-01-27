@@ -22,7 +22,8 @@ import java.util.*
 internal data class KlibWriterInput(
         val serializerOutput: SerializerOutput,
         val customOutputPath: String?,
-        val produceHeaderKlib: Boolean
+        val produceHeaderKlib: Boolean,
+        val customAbiVersion: KotlinAbiVersion?,
 )
 internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
         "WriteKlib",
@@ -35,7 +36,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     val output = outputFiles.klibOutputFileName(!nopack)
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
-    val abiVersion = KotlinAbiVersion.CURRENT
+    val abiVersion = input.customAbiVersion ?: KotlinAbiVersion.CURRENT
     val compilerVersion = KotlinCompilerVersion.getVersion().toString()
     val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
     val versions = KotlinLibraryVersioning(
@@ -92,6 +93,7 @@ internal fun <T : PhaseContext> PhaseEngine<T>.writeKlib(
         serializationOutput: SerializerOutput,
         customOutputPath: String? = null,
         produceHeaderKlib: Boolean = false,
+        customAbiVersion: KotlinAbiVersion?,
 ) {
-    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath, produceHeaderKlib))
+    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath, produceHeaderKlib, customAbiVersion))
 }
