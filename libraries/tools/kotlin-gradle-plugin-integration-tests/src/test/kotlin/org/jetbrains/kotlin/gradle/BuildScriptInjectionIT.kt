@@ -393,10 +393,14 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         targetProject: String,
         version: GradleVersion,
     ) {
+        val producerName = "producer"
         val publishedProject = project(
             targetProject,
             version,
         ) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = producerName
+            }
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {
@@ -449,9 +453,9 @@ class BuildScriptInjectionIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    listOf("foo", "producer", "1.0", "linuxMain"),
-                    listOf("foo", "producer", "1.0", "nativeMain"),
-                    listOf("foo", "producer", "1.0", "commonMain"),
+                    listOf("foo", producerName, "1.0", "linuxMain"),
+                    listOf("foo", producerName, "1.0", "nativeMain"),
+                    listOf("foo", producerName, "1.0", "commonMain"),
                 ),
                 transformedFiles.map { it.nameWithoutExtension.split("-").take(4) },
             )
