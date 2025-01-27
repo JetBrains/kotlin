@@ -386,17 +386,16 @@ internal class KaFirCompilerFacility(
              * Create a new multi-file dangling file module, containing copies of [files], with the specified [contextModule].
              */
             fun appendDanglingChunk(isMain: Boolean, contextModule: KaModule, files: List<KtFile>) {
-                val (codeFragments, ordinaryFiles) = files.partition { it is KtCodeFragment }
-                val newOrdinaryFiles = ordinaryFiles.map { createFileCopy(it, emptyMap()) }
 
-                val newCodeFragments = if (codeFragments.isNotEmpty()) {
-                    val ordinaryFileSubstitutions = ordinaryFiles.zip(newOrdinaryFiles).toMap()
-                    codeFragments.map { createFileCopy(it, ordinaryFileSubstitutions) }
-                } else {
-                    emptyList()
+                val ordinaryFileToNewFile = files.filter { it !is KtCodeFragment }.associateWith { createFileCopy(it, emptyMap()) }
+
+                val newFiles = files.map {
+                    if (it is KtCodeFragment) {
+                        createFileCopy(it, ordinaryFileToNewFile)
+                    } else {
+                        ordinaryFileToNewFile[it]!!
+                    }
                 }
-
-                val newFiles = newOrdinaryFiles + newCodeFragments
 
                 val mainFile = if (isMain) {
                     val mainFileIndex = files.indexOf(originalMainFile)
@@ -409,7 +408,7 @@ internal class KaFirCompilerFacility(
                 val newModule = KaDanglingFileModuleImpl(newFiles, contextModule, KaDanglingFileResolutionMode.PREFER_SELF)
                 newFiles.forEach { it.explicitModule = newModule }
 
-                val chunk = ChunkToCompile(mainFile, codeFragments.isNotEmpty(), createFilesToCompile(newFiles))
+                val chunk = ChunkToCompile(mainFile, newFiles.any { it is KtCodeFragment }, createFilesToCompile(newFiles))
                 result[newModule] = chunk
             }
 
