@@ -11,8 +11,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ExternalRCRef.hpp"
 #include "ShadowStack.hpp"
-#include "StableRef.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;
@@ -103,12 +103,12 @@ TEST(GlobalRootSetTest, Basic) {
 
         mm::ExternalRCRefRegistry externalRCRefsRegistry;
         mm::ExternalRCRefRegistry::ThreadQueue stableRefsProducer(externalRCRefsRegistry);
-        ObjHeader* stableRef1 = reinterpret_cast<ObjHeader*>(3);
-        ObjHeader* stableRef2 = reinterpret_cast<ObjHeader*>(4);
-        ObjHeader* stableRef3 = reinterpret_cast<ObjHeader*>(5);
-        mm::StableRef stableRefHandle1(&stableRefsProducer.createExternalRCRefImpl(stableRef1, 1));
-        mm::StableRef stableRefHandle2(&stableRefsProducer.createExternalRCRefImpl(stableRef2, 1));
-        mm::StableRef stableRefHandle3(&stableRefsProducer.createExternalRCRefImpl(stableRef3, 1));
+        ObjHeader stableRef1;
+        ObjHeader stableRef2;
+        ObjHeader stableRef3;
+        mm::OwningExternalRCRef stableRefHandle1(stableRefsProducer.createExternalRCRefImpl(&stableRef1, 1).toRaw());
+        mm::OwningExternalRCRef stableRefHandle2(stableRefsProducer.createExternalRCRefImpl(&stableRef2, 1).toRaw());
+        mm::OwningExternalRCRef stableRefHandle3(stableRefsProducer.createExternalRCRefImpl(&stableRef3, 1).toRaw());
 
         globalsProducer.Publish();
         stableRefsProducer.publish();
@@ -121,15 +121,11 @@ TEST(GlobalRootSetTest, Basic) {
         }
 
         auto asGlobal = [](ObjHeader*& object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kGlobal}; };
-        auto asStableRef = [](ObjHeader*& object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kStableRef}; };
+        auto asStableRef = [](ObjHeader* object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kStableRef}; };
         EXPECT_THAT(
                 actual,
                 testing::UnorderedElementsAre(
-                        asGlobal(global1), asGlobal(global2), asStableRef(stableRef1), asStableRef(stableRef2), asStableRef(stableRef3)));
-
-        std::move(stableRefHandle1).dispose();
-        std::move(stableRefHandle2).dispose();
-        std::move(stableRefHandle3).dispose();
+                        asGlobal(global1), asGlobal(global2), asStableRef(&stableRef1), asStableRef(&stableRef2), asStableRef(&stableRef3)));
     });
 }
 
