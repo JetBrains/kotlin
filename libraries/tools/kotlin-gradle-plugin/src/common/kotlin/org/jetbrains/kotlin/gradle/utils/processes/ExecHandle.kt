@@ -59,7 +59,7 @@ internal class ExecHandle(
     private var state: ExecHandleState = ExecHandleState.Initial
         set(value) {
             lock.withLock {
-                logger.debug("Changing state to: $state")
+                logger.info("[ExecHandle $displayName] Changing state to: $state")
                 field = value
                 stateChanged.signalAll()
             }
@@ -96,7 +96,7 @@ internal class ExecHandle(
             executor.execute(runner)
 
             while (stateIn(ExecHandleState.Starting)) {
-                logger.debug("Waiting until process started: '$displayName'")
+                logger.info("[ExecHandle $displayName] Waiting until process started")
                 try {
                     stateChanged.await()
                 } catch (e: InterruptedException) {
@@ -109,7 +109,7 @@ internal class ExecHandle(
                 execResult!!.rethrowFailure()
             }
 
-            logger.info("Successfully started process '$displayName'")
+            logger.info("[ExecHandle $displayName] Successfully started process")
         }
         return this
     }
@@ -156,7 +156,7 @@ internal class ExecHandle(
             this.execResult = newResult
         }
 
-        logger.debug("Process '$displayName' finished with exit value $exitValue (state: $newState)")
+        logger.info("[ExecHandle $displayName] finished with exit value $exitValue (state: $newState)")
     }
 
     private fun execExceptionFor(failureCause: Throwable?, currentState: ExecHandleState): ExecException? {
@@ -284,7 +284,7 @@ internal class ExecHandle(
                 aborted = true
                 if (process != null) {
                     streamsHandler.disconnect()
-                    logger.debug("Abort requested. Destroying process: ${execHandle.displayName}.")
+                    logger.info("[ExecHandle ${execHandle.displayName}] Abort requested. Destroying process.")
                     process!!.destroy()
                 }
             }
@@ -295,7 +295,7 @@ internal class ExecHandle(
                 startProcess()
                 execHandle.started()
 
-                logger.debug("waiting until streams are handled...")
+                logger.info("[ExecHandle ${execHandle.displayName}] Started. Waiting until streams are handled...")
                 streamsHandler.start()
 
                 val exitValue = process!!.waitFor()
