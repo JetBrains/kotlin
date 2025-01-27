@@ -1,6 +1,7 @@
 #ifndef RUNTIME_WORKER_H
 #define RUNTIME_WORKER_H
 
+#include "ExternalRCRef.hpp"
 #include "Common.h"
 #include "Types.h"
 
@@ -17,6 +18,6 @@ void WaitNativeWorkersTermination();
 // Wait until terminating native worker `id` finishes termination. Expected to be called at most once for each worker.
 void WaitNativeWorkerTermination(KInt id);
 // Schedule the job without the result.
-bool WorkerSchedule(KInt id, KNativePtr jobStablePtr);
+bool WorkerSchedule(KInt id, kotlin::mm::OwningExternalRCRef job);
 
 #endif // RUNTIME_WORKER_H

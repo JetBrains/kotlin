@@ -47,6 +47,7 @@ RUNTIME_NORETURN void ThrowWrongWorkerOrAlreadyTerminated();
 RUNTIME_NORETURN void ThrowFutureInvalidState();
 OBJ_GETTER(WorkerLaunchpad, KRef);
 mm::RawExternalRCRef* WorkerExecuteLaunchpad(ExecuteJob job, mm::RawExternalRCRef* jobArgument);
+void WorkerExecuteAfterLaunchpad(mm::RawExternalRCRef* job);
 
 }  // extern "C"
 
@@ -100,7 +101,7 @@ struct Job {
     } terminationRequest;
 
     struct {
-      KNativePtr operation;
+      mm::RawExternalRCRef* operation;
       uint64_t whenExecute;
     } executeAfter;
   };
@@ -402,7 +403,7 @@ class State {
     return future;
   }
 
-  bool executeJobAfterInWorkerUnlocked(KInt id, KRef operation, KLong afterMicroseconds) {
+  bool executeJobAfterInWorkerUnlocked(KInt id, mm::OwningExternalRCRef operation, KLong afterMicroseconds) {
     Worker* worker = nullptr;
     Locker locker(&lock_);
 
@@ -415,7 +416,7 @@ class State {
     worker = it->second;
     Job job;
     job.kind = JOB_EXECUTE_AFTER;
-    job.executeAfter.operation = CreateStablePointer(operation);
+    job.executeAfter.operation = operation.release();
     if (afterMicroseconds == 0) {
       worker->putJob(job, false);
     } else {
@@ -425,7 +426,7 @@ class State {
     return true;
   }
 
-  bool scheduleJobInWorkerUnlocked(KInt id, KNativePtr operationStablePtr) {
+  bool scheduleJobInWorkerUnlocked(KInt id, mm::OwningExternalRCRef operation) {
       Worker* worker = nullptr;
       Locker locker(&lock_);
 
@@ -437,7 +438,7 @@ class State {
 
       Job job;
       job.kind = JOB_EXECUTE_AFTER;
-      job.executeAfter.operation = operationStablePtr;
+      job.executeAfter.operation = operation.release();
       worker->putJob(job, false);
       return true;
   }
@@ -698,8 +699,8 @@ KInt execute(KInt id, mm::OwningExternalRCRef jobArgument, ExecuteJob jobFunctio
   return future->id();
 }
 
-void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
-  if (!theState()->executeJobAfterInWorkerUnlocked(id, job, afterMicroseconds))
+void executeAfter(KInt id, mm::OwningExternalRCRef job, KLong afterMicroseconds) {
+  if (!theState()->executeJobAfterInWorkerUnlocked(id, std::move(job), afterMicroseconds))
     ThrowWorkerAlreadyTerminated();
 }
 
@@ -796,8 +797,8 @@ void WaitNativeWorkerTermination(KInt id) {
     theState()->waitNativeWorkersTerminationUnlocked(false, [id](KInt worker) { return worker == id; });
 }
 
-bool WorkerSchedule(KInt id, KNativePtr jobStablePtr) {
-    return theState()->scheduleJobInWorkerUnlocked(id, jobStablePtr);
+bool WorkerSchedule(KInt id, mm::OwningExternalRCRef job) {
+    return theState()->scheduleJobInWorkerUnlocked(id, std::move(job));
 }
 
 Worker::~Worker() {
@@ -812,7 +813,7 @@ Worker::~Worker() {
               break;
           case JOB_EXECUTE_AFTER: {
               // TODO: what do we do here? Shall we execute them?
-              DisposeStablePointer(job.executeAfter.operation);
+              mm::disposeExternalRCRef(job.executeAfter.operation);
               break;
           }
           case JOB_TERMINATE: {
@@ -829,7 +830,7 @@ Worker::~Worker() {
 
   for (auto job : delayed_) {
       RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
-      DisposeStablePointer(job.executeAfter.operation);
+      mm::disposeExternalRCRef(job.executeAfter.operation);
   }
 
   name_.reset();
@@ -996,11 +997,9 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_EXECUTE_AFTER: {
-      ObjHolder operationHolder, dummyHolder;
-      KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          WorkerLaunchpad(obj, dummyHolder.slot());
+          WorkerExecuteAfterLaunchpad(job.executeAfter.operation);
       } catch(ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
           case WorkerExceptionHandling::kIgnore: break;
@@ -1010,7 +1009,6 @@ JobKind Worker::processQueueElement(bool blocking) {
         }
       }
 
-      DisposeStablePointer(job.executeAfter.operation);
       break;
     }
     case JOB_REGULAR: {
@@ -1058,8 +1056,8 @@ KInt Kotlin_Worker_executeInternal(KInt id, mm::RawExternalRCRef* jobArgument, E
   return execute(id, mm::OwningExternalRCRef(jobArgument), job);
 }
 
-void Kotlin_Worker_executeAfterInternal(KInt id, KRef job, KLong afterMicroseconds) {
-  executeAfter(id, job, afterMicroseconds);
+void Kotlin_Worker_executeAfterInternal(KInt id, mm::RawExternalRCRef* job, KLong afterMicroseconds) {
+  executeAfter(id, mm::OwningExternalRCRef(job), afterMicroseconds);
 }
 
 KBoolean Kotlin_Worker_processQueueInternal(KInt id) {

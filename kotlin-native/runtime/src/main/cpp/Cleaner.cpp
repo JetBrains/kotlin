@@ -4,10 +4,14 @@
  */
 
 #include "Cleaner.h"
-#include "std_support/Atomic.hpp"
+
+#include "ExternalRCRef.hpp"
 #include "Memory.h"
 #include "Runtime.h"
 #include "Worker.h"
+#include "std_support/Atomic.hpp"
+
+using namespace kotlin;
 
 // Defined in Cleaner.kt
 extern "C" void Kotlin_CleanerImpl_shutdownCleanerWorker(KInt, bool);
@@ -17,7 +21,7 @@ namespace {
 
 struct CleanerImpl {
     ObjHeader header;
-    KNativePtr cleanerStablePtr;
+    mm::RawExternalRCRef* cleanerStablePtr;
 };
 
 constexpr KInt kCleanerWorkerUninitialized = 0;
@@ -44,7 +48,7 @@ void disposeCleaner(CleanerImpl* thiz) {
 
     RuntimeAssert(worker > 0, "Cleaner worker must be fully initialized here");
 
-    bool result = WorkerSchedule(worker, thiz->cleanerStablePtr);
+    bool result = WorkerSchedule(worker, mm::OwningExternalRCRef(thiz->cleanerStablePtr));
     RuntimeAssert(result, "Couldn't find Cleaner worker");
 }
 

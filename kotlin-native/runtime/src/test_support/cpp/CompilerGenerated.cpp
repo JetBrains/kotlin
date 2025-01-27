@@ -143,6 +143,10 @@ kotlin::mm::RawExternalRCRef* RUNTIME_NORETURN WorkerExecuteLaunchpad(KRef (*job
     throw std::runtime_error("Not implemented for tests");
 }
 
+void RUNTIME_NORETURN WorkerExecuteAfterLaunchpad(kotlin::mm::RawExternalRCRef* job) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 void RUNTIME_NORETURN ThrowWorkerAlreadyTerminated() {
     throw std::runtime_error("Not implemented for tests");
 }
