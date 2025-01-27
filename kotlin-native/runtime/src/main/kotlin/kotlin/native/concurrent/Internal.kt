@@ -104,10 +104,6 @@ internal fun ThrowWorkerUnsupported(): Unit =
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
-internal fun WorkerLaunchpad(function: () -> Any?) = function()
-
-@ExportForCppRuntime
-@ObsoleteWorkersApi
 internal fun WorkerExecuteLaunchpad(job: CPointer<CFunction<*>>, jobArgument: ExternalRCRef): ExternalRCRef {
     val arg = dereferenceExternalRCRef(jobArgument)
     releaseExternalRCRef(jobArgument)
@@ -131,14 +127,19 @@ internal fun WorkerExecuteAfterLaunchpad(job: ExternalRCRef) {
 external private fun invokeCFunction(job: CPointer<CFunction<*>>, jobArgument: Any?): Any?
 
 @PublishedApi
-@GCUnsafeCall("Kotlin_Worker_detachObjectGraphInternal")
 @ObsoleteWorkersApi
-external internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr
+internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr {
+    return createRetainedExternalRCRef(producer())
+}
 
 @PublishedApi
-@GCUnsafeCall("Kotlin_Worker_attachObjectGraphInternal")
 @ObsoleteWorkersApi
-external internal fun attachObjectGraphInternal(stable: NativePtr): Any?
+internal fun attachObjectGraphInternal(stable: NativePtr): Any? {
+    val result = dereferenceExternalRCRef(stable)
+    releaseExternalRCRef(stable)
+    disposeExternalRCRef(stable)
+    return result
+}
 
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_Worker_waitTermination")
