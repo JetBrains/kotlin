@@ -1733,6 +1733,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             // If the get call arguments are SAM converted, unwrap the SAM conversion.
             // Otherwise, we might fail resolution if the get and set operator parameter types are different
             // (different SAM types or one is a SAM type and the other isn't).
+            // See testData/ir/irText/expressions/callableReferences/caoWithAdaptationForSam.kt
             val unwrappedSamIndex = (index as? FirSamConversionExpression)?.expression ?: index
             generateTemporaryVariable(
                 session.moduleData,
@@ -1740,7 +1741,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 name = SpecialNames.subscribeOperatorIndex(i),
                 initializer = unwrappedSamIndex,
                 typeRef = unwrappedSamIndex.resolvedType.toFirResolvedTypeRef(),
-            )
+            ).apply {
+                // See compiler/testData/codegen/boxInline/reified/kt28234.kt
+                replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
+            }
         }
 
         arrayVariable.transformSingle(transformer, ResolutionMode.ContextIndependent)
