@@ -14,11 +14,21 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider.getTestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.XCTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.io.File
 
+/**
+ * Abstract swift export execution test
+ *
+ * Swift project provides a modern testing framework – swift-testing, integrated into SPM and Xcode.
+ * Unfortunately, those integrations aren't a good fit for us, for various reasons. Fortunately, swift-testing provides
+ * a separate ABI with a separate entrypoint, which we use here.
+ * See more at https://github.com/swiftlang/swift-testing/tree/main/Documentation/ABI.
+ * Harness is at native/native.tests/testData/framework/main-testing.swift
+ */
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
@@ -59,8 +69,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ): TestExecutable {
-        val configs = testRunSettings.configurables as AppleConfigurables
-        val sysFrameworksRoot = configs.absoluteTargetSysRoot + "/../../Library/Frameworks"
+        val sysFrameworksRoot = testRunSettings.get<XCTestRunner>().frameworksPath
 
         val swiftExtraOpts = swiftModules.flatMap {
             listOf(

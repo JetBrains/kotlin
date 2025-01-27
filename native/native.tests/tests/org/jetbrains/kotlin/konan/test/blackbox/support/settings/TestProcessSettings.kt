@@ -313,7 +313,7 @@ internal enum class CInterfaceMode(val compilerFlag: String) {
     NONE("-Xbinary=cInterfaceMode=none")
 }
 
-internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: KotlinNativeTargets) {
+class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: KotlinNativeTargets) {
     /**
      * Path to the developer frameworks directory.
      */
