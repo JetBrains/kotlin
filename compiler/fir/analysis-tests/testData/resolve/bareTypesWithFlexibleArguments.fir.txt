@@ -1,8 +1,8 @@
 FILE: bareTypesWithFlexibleArguments.kt
     public final fun <T> R|kotlin/collections/Collection<T>?|.concat(collection: R|kotlin/collections/Collection<T>|): R|kotlin/collections/Collection<T>?| {
         when () {
-            (this@R|/concat| is R|{kotlin/collections/LinkedHashSet=} (future {kotlin/collections/LinkedHashSet=} java/util/LinkedHashSet<out T>) java/util/LinkedHashSet<T>|) ->  {
-                this@R|/concat|.R|SubstitutionOverride<java/util/LinkedHashSet.addAll: R|kotlin/Boolean|>|(R|<local>/collection|)
+            (this@R|/concat| is R|{kotlin/collections/LinkedHashSet=} java/util/LinkedHashSet<out T>|) ->  {
+                this@R|/concat|.R|SubstitutionOverride<java/util/LinkedHashSet.addAll: R|kotlin/Boolean|><Inapplicable(INAPPLICABLE): java/util/LinkedHashSet.addAll>#|(R|<local>/collection|)
                 ^concat this@R|/concat|
             }
         }

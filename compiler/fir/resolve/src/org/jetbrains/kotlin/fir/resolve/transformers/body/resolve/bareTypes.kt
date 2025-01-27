@@ -72,8 +72,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
 
     return when {
         properStaticallyKnownType == null -> staticallyKnownType
-        staticallyKnownType.equalTypes(properStaticallyKnownType, session) -> staticallyKnownType
-        else -> staticallyKnownType.withAdditionalAttribute(UnsafeDowncastWrtVarianceAttribute(properStaticallyKnownType))
+        else -> properStaticallyKnownType
     }
 }
 

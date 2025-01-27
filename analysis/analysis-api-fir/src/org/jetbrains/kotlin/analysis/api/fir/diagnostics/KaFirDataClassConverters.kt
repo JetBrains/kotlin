@@ -4628,14 +4628,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.UNSAFE_DOWNCAST_WRT_VARIANCE) { firDiagnostic ->
-        UnsafeDowncastWrtVarianceImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING) { firDiagnostic ->
         CannotCheckForErasedDeprecationWarningImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

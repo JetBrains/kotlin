@@ -8,8 +8,8 @@ FILE: bareTypes.kt
     public abstract interface MutableString : R|MutableA<kotlin/String>| {
     }
     public final fun test(a: R|A<kotlin/String>|): R|kotlin/Unit| {
-        (R|<local>/a| as? R|(future MutableA<out kotlin/String>) MutableA<kotlin/String>|)?.{ $subj$.R|SubstitutionOverride</MutableA.add: R|kotlin/Unit|>|(String()) }
-        (R|<local>/a| as R|(future MutableA<out kotlin/String>) MutableA<kotlin/String>|).R|SubstitutionOverride</MutableA.add: R|kotlin/Unit|>|(String())
+        (R|<local>/a| as? R|MutableA<out kotlin/String>|)?.{ $subj$.R|SubstitutionOverride</MutableA.add: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /MutableA.add>#|(String()) }
+        (R|<local>/a| as R|MutableA<out kotlin/String>|).R|SubstitutionOverride</MutableA.add: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /MutableA.add>#|(String())
     }
     public final fun test2(a: R|A<kotlin/String>|): R|kotlin/Unit| {
         lval b: R|MutableString| = (R|<local>/a| as R|MutableString|)
@@ -17,8 +17,8 @@ FILE: bareTypes.kt
     }
     public final fun test3(a: R|A<kotlin/String>|): R|kotlin/Unit| {
         when () {
-            (R|<local>/a| is R|(future MutableA<out kotlin/String>) MutableA<kotlin/String>|) ->  {
-                R|<local>/a|.R|SubstitutionOverride</MutableA.add: R|kotlin/Unit|>|(String())
+            (R|<local>/a| is R|MutableA<out kotlin/String>|) ->  {
+                R|<local>/a|.R|SubstitutionOverride</MutableA.add: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /MutableA.add>#|(String())
             }
         }
 
