@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.KlibAbiCompatibilityLevel.ABI_LEVEL_2_2
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.descriptors.*
@@ -295,7 +296,7 @@ open class IrFileSerializer(
                             recordInSignatureClashDetector = isDeclared
                         )
 
-                        symbolOwner is IrReturnableBlock && settings.allow220Nodes ->
+                        symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
                             declarationTable.signatureByReturnableBlock(symbolOwner)
 
                         else -> error("Expected symbol owner: ${symbolOwner.render()}")
@@ -499,6 +500,8 @@ open class IrFileSerializer(
     }
 
     private fun serializeReturnableBlock(returnableBlock: IrReturnableBlock): ProtoReturnableBlock {
+        requireAbiAtLeast(ABI_LEVEL_2_2) { returnableBlock }
+
         val proto = ProtoReturnableBlock.newBuilder()
         proto.symbol = serializeIrSymbol(returnableBlock.symbol)
         proto.base = serializeBlock(returnableBlock)
@@ -506,6 +509,8 @@ open class IrFileSerializer(
     }
 
     private fun serializeInlinedFunctionBlock(inlinedFunctionBlock: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
+        requireAbiAtLeast(ABI_LEVEL_2_2) { inlinedFunctionBlock }
+
         val proto = ProtoInlinedFunctionBlock.newBuilder()
         inlinedFunctionBlock.inlinedFunctionSymbol?.let { proto.setInlinedFunctionSymbol(serializeIrSymbol(it)) }
         proto.inlinedFunctionFileEntry = serializeFileEntry(inlinedFunctionBlock.inlinedFunctionFileEntry)
@@ -623,6 +628,8 @@ open class IrFileSerializer(
     }
 
     private fun serializeRichFunctionReference(callable: IrRichFunctionReference): ProtoRichFunctionReference {
+        requireAbiAtLeast(ABI_LEVEL_2_2) { callable }
+
         return ProtoRichFunctionReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
             overriddenFunctionSymbol = serializeIrSymbol(callable.overriddenFunctionSymbol)
@@ -636,6 +643,8 @@ open class IrFileSerializer(
     }
 
     private fun serializeRichPropertyReference(callable: IrRichPropertyReference): ProtoRichPropertyReference {
+        requireAbiAtLeast(ABI_LEVEL_2_2) { callable }
+
         return ProtoRichPropertyReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
             for (boundValue in callable.boundValues) {
@@ -1034,15 +1043,9 @@ open class IrFileSerializer(
 
         // TODO: make me a visitor.
         when (expression) {
-            is IrBlock -> {
-                if (expression is IrReturnableBlock && settings.allow220Nodes) {
-                    operationProto.returnableBlock = serializeReturnableBlock(expression)
-                } else if (expression is IrInlinedFunctionBlock && settings.allow220Nodes) {
-                    operationProto.inlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
-                } else {
-                    operationProto.block = serializeBlock(expression)
-                }
-            }
+            is IrReturnableBlock -> operationProto.returnableBlock = serializeReturnableBlock(expression)
+            is IrInlinedFunctionBlock -> operationProto.inlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
+            is IrBlock -> operationProto.block = serializeBlock(expression)
             is IrBreak -> operationProto.`break` = serializeBreak(expression)
             is IrClassReference -> operationProto.classReference = serializeClassReference(expression)
             is IrCall -> operationProto.call = serializeCall(expression)
@@ -1055,8 +1058,8 @@ open class IrFileSerializer(
             is IrEnumConstructorCall -> operationProto.enumConstructorCall = serializeEnumConstructorCall(expression)
             is IrFunctionExpression -> operationProto.functionExpression = serializeFunctionExpression(expression)
             is IrFunctionReference -> operationProto.functionReference = serializeFunctionReference(expression)
-            is IrRichFunctionReference if settings.allow220Nodes -> operationProto.richFunctionReference = serializeRichFunctionReference(expression)
-            is IrRichPropertyReference if settings.allow220Nodes -> operationProto.richPropertyReference = serializeRichPropertyReference(expression)
+            is IrRichFunctionReference -> operationProto.richFunctionReference = serializeRichFunctionReference(expression)
+            is IrRichPropertyReference -> operationProto.richPropertyReference = serializeRichPropertyReference(expression)
             is IrGetClass -> operationProto.getClass = serializeGetClass(expression)
             is IrGetField -> operationProto.getField = serializeGetField(expression)
             is IrGetValue -> operationProto.getValue = serializeGetValue(expression)
@@ -1080,9 +1083,7 @@ open class IrFileSerializer(
             is IrDynamicOperatorExpression -> operationProto.dynamicOperator = serializeDynamicOperatorExpression(expression)
             is IrErrorCallExpression -> operationProto.errorCallExpression = serializeErrorCallExpression(expression)
             is IrErrorExpression -> operationProto.errorExpression = serializeErrorExpression(expression)
-            else -> {
-                TODO("Expression serialization not implemented yet: ${expression.render()}.")
-            }
+            else -> error("Expression serialization is not supported yet: ${expression.render()}")
         }
         proto.setOperation(operationProto)
 
@@ -1556,6 +1557,15 @@ open class IrFileSerializer(
 
         return name.replace(File.separatorChar, '/')
 
+    }
+
+    private inline fun requireAbiAtLeast(
+        @Suppress("SameParameterValue") abiCompatibilityLevel: KlibAbiCompatibilityLevel,
+        expression: () -> IrExpression
+    ) {
+        require(settings.abiCompatibilityLevel.isAtLeast(abiCompatibilityLevel)) {
+            "Expression serialization is not supported at ABI compatibility level ${settings.abiCompatibilityLevel}: ${expression().render()}"
+        }
     }
 }
 
