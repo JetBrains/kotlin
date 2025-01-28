@@ -407,6 +407,12 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       }
 
       @Test
+      @TestMetadata("recordAnnotation.kt")
+      public void testRecordAnnotation() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("recordDifferentPropertyOverride.kt")
       public void testRecordDifferentPropertyOverride() {
         runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordDifferentPropertyOverride.kt");

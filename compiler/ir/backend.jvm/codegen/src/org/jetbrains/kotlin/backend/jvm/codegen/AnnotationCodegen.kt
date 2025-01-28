@@ -54,8 +54,8 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
 
-    fun genAnnotations(annotated: IrDeclaration) {
-        for (annotation in annotated.annotations) {
+    fun genAnnotations(annotated: IrDeclaration, annotations: List<IrConstructorCall> = annotated.annotations) {
+        for (annotation in annotations) {
             val applicableTargets = annotation.annotationClass.applicableTargetSet()
             if (annotated is IrSimpleFunction &&
                 annotated.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
@@ -385,4 +385,11 @@ private fun IrClass.applicableTargetSet(): Set<KotlinTarget> {
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
         KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
     }.toSet()
+}
+
+internal fun IrClass.applicableJavaTargetSet(): Set<String>? {
+    val valueArgument = getAnnotation(JvmAnnotationNames.TARGET_ANNOTATION)
+        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.value) as? IrVararg
+        ?: return null
+    return valueArgument.elements.filterIsInstance<IrGetEnumValue>().map { it.symbol.owner.name.asString() }.toSet()
 }

@@ -42960,6 +42960,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("recordAnnotationsWrong.kt")
+        public void testRecordAnnotationsWrong() {
+          runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/recordAnnotationsWrong.kt");
+        }
+
+        @Test
         @TestMetadata("simpleRecords.kt")
         public void testSimpleRecords() {
           runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/simpleRecords.kt");

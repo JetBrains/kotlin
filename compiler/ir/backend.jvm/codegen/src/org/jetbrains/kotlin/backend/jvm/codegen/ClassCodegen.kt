@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.backend.jvm.extensions.descriptorOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -388,8 +389,17 @@ class ClassCodegen private constructor(
         }
 
         if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
-            // TODO: Write annotations to the component
-            visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+            val rcv = visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+            val annotationCodegen = object : AnnotationCodegen(this@ClassCodegen) {
+                override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+                    return rcv.visitAnnotation(descr, visible)
+                }
+            }
+            val recordAnnotations = field.annotations.filter { annotation ->
+                val applicableTargets = annotation.annotationClass.applicableJavaTargetSet()
+                applicableTargets == null || "RECORD_COMPONENT" in applicableTargets
+            }
+            annotationCodegen.genAnnotations(field, recordAnnotations)
         }
     }
 
