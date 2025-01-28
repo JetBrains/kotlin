@@ -8,12 +8,15 @@
 
 package kotlin
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
+
 /**
  * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class ByteArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -73,6 +76,7 @@ public constructor(size: Int) {
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class CharArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
@@ -132,6 +136,7 @@ public constructor(size: Int) {
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class ShortArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -191,6 +196,7 @@ public constructor(size: Int) {
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class IntArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -250,6 +256,7 @@ public constructor(size: Int) {
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class LongArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -309,6 +316,7 @@ public constructor(size: Int) {
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class FloatArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -368,6 +376,7 @@ public constructor(size: Int) {
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class DoubleArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to zero.
@@ -427,6 +436,7 @@ public constructor(size: Int) {
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
  */
+@ActualizeByJvmBuiltinProvider
 public expect class BooleanArray
 /**
  * Creates a new array of the specified [size], with all elements initialized to `false`.

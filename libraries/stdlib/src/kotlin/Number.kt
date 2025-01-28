@@ -5,10 +5,12 @@
 
 package kotlin
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * Superclass for all platform classes representing numeric values.
  */
+@ActualizeByJvmBuiltinProvider
 public expect abstract class Number() {
     /**
      * Returns the value of this number as a [Double], which may involve rounding.

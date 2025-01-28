@@ -700,7 +700,8 @@ if (buildProperties.isKotlinNativeEnabled) {
 
 if (!buildProperties.inJpsBuildIdeaSync) {
     // modules that we are currently cannot compile with jps
-    include ":kotlin-stdlib-common",
+    include ":core:builtins",
+            ":kotlin-stdlib-common",
             ":kotlin-stdlib",
             ":kotlin-dom-api-compat",
             ":kotlin-stdlib-js-ir-minimal-for-test",

@@ -55,6 +55,13 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 }
 
+val configurationBuiltins = resolvingConfiguration("builtins") {
+    attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
+}
+dependencies {
+    configurationBuiltins(project(":core:builtins"))
+}
+
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
 val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
 
@@ -132,9 +139,7 @@ kotlin {
                                 "-Xmultifile-parts-inherit",
                                 "-Xuse-14-inline-classes-mangling-scheme",
                                 "-Xno-new-java-annotation-targets",
-                                "-Xoutput-builtins-metadata",
-                                "-Xcompile-builtins-as-part-of-stdlib",
-                                diagnosticNamesArg
+                                diagnosticNamesArg,
                             )
                         )
                         mainCompilationOptions()
@@ -360,14 +365,13 @@ kotlin {
             kotlin.srcDir("jvm/compileOnly")
         }
         val jvmMain by getting {
-            project.configurations.getByName("jvmMainCompileOnly")
+            project.configurations.getByName("jvmMainCompileOnly").extendsFrom(configurationBuiltins)
             dependencies {
                 api("org.jetbrains:annotations:13.0")
             }
             val jvmSrcDirs = listOfNotNull(
                 "jvm/src",
                 "jvm/runtime",
-                "jvm/builtins",
             )
             project.sourceSets["main"].java.srcDirs(*jvmSrcDirs.toTypedArray())
             kotlin.setSrcDirs(jvmSrcDirs)
@@ -431,10 +435,20 @@ kotlin {
 
                 into(jsBuiltinsSrcDir)
 
+// Required to compile native builtins with the rest of runtime
+                val builtInsHeader = """@file:Suppress(
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
+    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "WRONG_MODIFIER_TARGET",
+    "UNUSED_PARAMETER"
+)
+"""
                 doLast {
                     unimplementedNativeBuiltIns.forEach { path ->
                         val file = File("$destinationDir/$path")
-                        val sourceCode = file.readText()
+                        val sourceCode = builtInsHeader + file.readText()
                         file.writeText(sourceCode)
                     }
                 }
@@ -616,35 +630,23 @@ tasks {
         archiveAppendix.set("metadata")
     }
     val jvmJar by existing(Jar::class) {
+        dependsOn(configurationBuiltins)
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
         manifestAttributes(manifest, "Main", multiRelease = true)
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib"))
+        from { zipTree(configurationBuiltins.singleFile) }
         from(kotlin.jvm().compilations["mainJdk7"].output.allOutputs)
         from(kotlin.jvm().compilations["mainJdk8"].output.allOutputs)
         from(project.sourceSets["java9"].output)
     }
 
-    val jvmRearrangedSourcesJar by registering(Jar::class) {
-        archiveClassifier.set("jvm-sources")
-        archiveVersion.set("")
-        destinationDirectory.set(layout.buildDirectory.dir("lib"))
-
-        includeEmptyDirs = false
+    val jvmSourcesJar by existing(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
-
-        into("commonMain") {
-            from(kotlin.sourceSets.commonMain.get().kotlin)
-        }
+        archiveAppendix.set(null as String?)
         into("jvmMain") {
-            from(kotlin.sourceSets["jvmMain"].kotlin) {
-                // relocate builtins sources that get placed in the root of the sources file tree
-                eachFile {
-                    val sourcePathSegments = relativeSourcePath.segments
-                    if (sourcePathSegments.size == 1) {
-                        relativePath = RelativePath(true, "jvmMain", "kotlin", *sourcePathSegments)
-                    }
-                }
+            from(jvmBuiltinsDir) {
+                into("kotlin")
             }
             from(kotlin.sourceSets["jvmMainJdk7"].kotlin) {
                 into("jdk7")
@@ -652,17 +654,6 @@ tasks {
             from(kotlin.sourceSets["jvmMainJdk8"].kotlin) {
                 into("jdk8")
             }
-        }
-    }
-
-    val jvmSourcesJar by existing(Jar::class) {
-        duplicatesStrategy = DuplicatesStrategy.FAIL
-        archiveAppendix.set(null as String?)
-
-        val jvmSourcesJarFile = jvmRearrangedSourcesJar.get().archiveFile
-        inputs.file(jvmSourcesJarFile)
-        doLast {
-            jvmSourcesJarFile.get().asFile.toPath().copyTo(archiveFile.get().asFile.toPath(), overwrite = true)
         }
     }
 

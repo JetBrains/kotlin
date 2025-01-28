@@ -3,10 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:kotlin.internal.JvmBuiltin
-@file:kotlin.internal.SuppressBytecodeGeneration
-@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE", "NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-
 package kotlin.concurrent.atomics
 
 /**
@@ -32,7 +28,7 @@ public actual class AtomicIntArray {
     /**
      * Returns the number of elements in the array.
      */
-    public actual val size: Int
+    public actual val size: Int get() = array.size
 
     /**
      * Atomically loads the value from the element of this [AtomicIntArray] at the given [index].
@@ -140,7 +136,7 @@ public actual class AtomicLongArray {
     /**
      * Returns the number of elements in the array.
      */
-    public actual val size: Int
+    public actual val size: Int get() = array.size
 
     /**
      * Atomically loads the value from the element of this [AtomicLongArray] at the given [index].
