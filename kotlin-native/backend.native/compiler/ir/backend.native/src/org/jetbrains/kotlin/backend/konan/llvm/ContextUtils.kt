@@ -9,7 +9,6 @@ import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
@@ -259,7 +258,7 @@ internal class InitializersGenerationState {
 
     var scopeState = ScopeInitializersGenerationState()
 
-    fun reset(newState: ScopeInitializersGenerationState) : ScopeInitializersGenerationState {
+    fun reset(newState: ScopeInitializersGenerationState): ScopeInitializersGenerationState {
         val t = scopeState
         scopeState = newState
         return t
@@ -347,12 +346,35 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         return LlvmCallable(functionType, returnsObjectType, function, attributesCopier)
     }
 
-    private fun importMemset(): LlvmCallable {
-        val functionType = functionType(voidType, false, int8PtrType, int8Type, int32Type, int1Type)
+    private fun importMemset(bitness: Int = 32): LlvmCallable {
+        val sizeType = if (bitness == 32) int32Type else int64Type
+        val functionType = functionType(voidType, false, int8PtrType, int8Type, sizeType, int1Type)
         return llvmIntrinsic(
-                if (context.config.useLlvmOpaquePointers) "llvm.memset.p0.i32"
-                else "llvm.memset.p0i8.i32",
+                if (context.config.useLlvmOpaquePointers) "llvm.memset.p0.i$bitness"
+                else "llvm.memset.p0i8.i$bitness",
                 functionType)
+    }
+
+    private fun importMemcpy(bitness: Int = 32): LlvmCallable {
+        val sizeType = if (bitness == 32) int32Type else int64Type
+        val functionType = functionType(voidType, false, int8PtrType, int8PtrType, sizeType, int1Type)
+        return llvmIntrinsic(
+                if (context.config.useLlvmOpaquePointers) "llvm.memcpy.p0.p0.i$bitness"
+                else "llvm.memcpy.p0i8.p0i8.i$bitness",
+                functionType)
+    }
+
+    private fun importMemmove(bitness: Int = 32): LlvmCallable {
+        val sizeType = if (bitness == 32) int32Type else int64Type
+        val functionType = functionType(voidType, false, int8PtrType, int8PtrType, sizeType, int1Type)
+        return llvmIntrinsic(
+                if (context.config.useLlvmOpaquePointers) "llvm.memmove.p0.p0.i$bitness"
+                else "llvm.memmove.p0i8.p0i8.i$bitness",
+                functionType)
+    }
+
+    private fun importMemcmp(): LlvmCallable {
+        return llvmIntrinsic("memcmp", functionType(int32Type, false, int8PtrType, int8PtrType, intptrType), "nounwind")
     }
 
     private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmCallable {
@@ -564,7 +586,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val kImmInt32Zero by lazy { int32(0) }
     val kImmInt32One by lazy { int32(1) }
 
+    val memcpyFunction = importMemcpy()
+    val memcpyFunction64 = importMemcpy(64)
+    val memmoveFunction = importMemmove()
+    val memmoveFunction64 = importMemmove(64)
     val memsetFunction = importMemset()
+    val memsetFunction64 = importMemset(64)
+    val memcmpFunction = importMemcmp()
 
     val llvmTrap = llvmIntrinsic(
             "llvm.trap",

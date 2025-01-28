@@ -79,6 +79,10 @@ internal class IntrinsicType {
         const val INTEROP_NARROW                = "INTEROP_NARROW"
         const val INTEROP_STATIC_C_FUNCTION     = "INTEROP_STATIC_C_FUNCTION"
         const val INTEROP_FUNPTR_INVOKE         = "INTEROP_FUNPTR_INVOKE"
+        const val INTEROP_COPY_MEMORY           = "INTEROP_COPY_MEMORY"
+        const val INTEROP_MOVE_MEMORY           = "INTEROP_MOVE_MEMORY"
+        const val INTEROP_SET_MEMORY            = "INTEROP_SET_MEMORY"
+        const val INTEROP_COMPARE_MEMORY        = "INTEROP_COMPARE_MEMORY"
 
         // Worker
         const val WORKER_EXECUTE                = "WORKER_EXECUTE"
