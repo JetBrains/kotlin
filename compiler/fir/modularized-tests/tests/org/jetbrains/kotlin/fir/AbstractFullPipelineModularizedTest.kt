@@ -341,7 +341,6 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
                 val generationTime =
                     measurements.firstIsInstanceOrNull<BackendOrMetadataGenerationMeasurement>()?.milliseconds
-                        ?: measurements.filterIsInstance<CodeGenerationMeasurement>().firstOrNull()?.milliseconds
 
                 if (generationTime != null) {
                     put("Generation", generationTime)

@@ -276,45 +276,66 @@ abstract class CompileServiceImplBase(
     }
 
     protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
-        val performanceMetrics = ArrayList<BuildMetricsValue>()
-        compiler.defaultPerformanceManager.getMeasurementResults().forEach {
+        val performanceMetrics = mutableListOf<BuildMetricsValue>()
+
+        for (it in compiler.defaultPerformanceManager.getMeasurementResults()) {
             when (it) {
                 is CompilerInitializationMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))
                 }
                 is CodeAnalysisMeasurement -> {
-                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds))
-                    it.lines?.apply {
-                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
-                        if (it.milliseconds > 0) {
-                            performanceMetrics.add(
-                                BuildMetricsValue(
-                                    CompilationPerformanceMetrics.ANALYSIS_LPS,
-                                    this * 1000 / it.milliseconds
-                                )
-                            )
-                        }
+                    // Report lines number only once to avoid duplicates
+                    it.lines?.let { lines ->
+                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, lines.toLong()))
                     }
-                }
-                is CodeGenerationMeasurement -> {
-                    performanceMetrics.add(
-                        BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
+                    performanceMetrics.addMetrics(
+                        CompilationPerformanceMetrics.CODE_ANALYSIS,
+                        CompilationPerformanceMetrics.ANALYSIS_LPS,
+                        it.lines,
+                        it.milliseconds
                     )
-                    it.lines?.apply {
-                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
-                        if (it.milliseconds > 0) {
-                            performanceMetrics.add(
-                                BuildMetricsValue(
-                                    CompilationPerformanceMetrics.CODE_GENERATION_LPS,
-                                    this * 1000 / it.milliseconds
-                                )
-                            )
-                        }
-                    }
+                }
+                is IrTranslationMeasurement -> {
+                    performanceMetrics.addMetrics(
+                        CompilationPerformanceMetrics.IR_TRANSLATION,
+                        CompilationPerformanceMetrics.IR_TRANSLATION_LPS,
+                        it.lines,
+                        it.milliseconds
+                    )
+                }
+                is IrLoweringMeasurement -> {
+                    performanceMetrics.addMetrics(
+                        CompilationPerformanceMetrics.IR_LOWERING,
+                        CompilationPerformanceMetrics.IR_LOWERING_LPS,
+                        it.lines,
+                        it.milliseconds
+                    )
+                }
+                is BackendOrMetadataGenerationMeasurement -> {
+                    performanceMetrics.addMetrics(
+                        CompilationPerformanceMetrics.BACKEND_OR_METADATA_GENERATION,
+                        CompilationPerformanceMetrics.BACKEND_OR_METADATA_GENERATION_LPS,
+                        it.lines,
+                        it.milliseconds
+                    )
                 }
             }
         }
         return performanceMetrics
+    }
+
+    private fun MutableList<BuildMetricsValue>.addMetrics(
+        timeMetric: CompilationPerformanceMetrics,
+        lpsMetric: CompilationPerformanceMetrics,
+        lines: Int?,
+        milliseconds: Long
+    ) {
+        add(BuildMetricsValue(timeMetric, milliseconds))
+        lines?.apply {
+            if (milliseconds > 0) {
+                add(BuildMetricsValue(lpsMetric, this * 1000 / milliseconds))
+            }
+        }
     }
 
     protected inline fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(

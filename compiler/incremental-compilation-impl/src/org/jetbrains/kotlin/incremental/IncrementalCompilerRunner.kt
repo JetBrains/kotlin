@@ -686,32 +686,44 @@ abstract class IncrementalCompilerRunner<
             when (it) {
                 is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
                 is CodeAnalysisMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.milliseconds)
-                    it.lines?.apply {
-                        reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, this.toLong())
-                        if (it.milliseconds > 0) {
-                            reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
-                        }
+                    // Report lines number only once to avoid duplicates
+                    it.lines?.let { lines ->
+                        reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, lines.toLong())
                     }
-                }
-                is CodeGenerationMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, it.milliseconds)
-                    it.lines?.apply {
-                        if (it.milliseconds > 0) {
-                            reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
-                        }
-                    }
+                    reportMeasurement(GradleBuildTime.CODE_ANALYSIS, it.milliseconds, GradleBuildPerformanceMetric.ANALYSIS_LPS, it.lines)
                 }
                 is IrTranslationMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.IR_TRANSLATION, it.milliseconds)
+                    reportMeasurement(
+                        GradleBuildTime.IR_TRANSLATION,
+                        it.milliseconds,
+                        GradleBuildPerformanceMetric.IR_TRANSLATION_LPS,
+                        it.lines
+                    )
                 }
                 is IrLoweringMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.IR_LOWERING, it.milliseconds)
+                    reportMeasurement(GradleBuildTime.IR_LOWERING, it.milliseconds, GradleBuildPerformanceMetric.IR_LOWERING_LPS, it.lines)
                 }
                 is BackendOrMetadataGenerationMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.BACKEND_OR_METADATA_GENERATION, it.milliseconds)
+                    reportMeasurement(
+                        GradleBuildTime.BACKEND_OR_METADATA_GENERATION,
+                        it.milliseconds,
+                        GradleBuildPerformanceMetric.BACKEND_OR_METADATA_LPS,
+                        it.lines
+                    )
                 }
             }
+        }
+    }
+
+    private fun reportMeasurement(
+        gradleBuildTime: GradleBuildTime,
+        milliseconds: Long,
+        lpsPerformanceMetric: GradleBuildPerformanceMetric,
+        lines: Int?
+    ) {
+        reporter.addTimeMetricMs(gradleBuildTime, milliseconds)
+        if (lines != null && milliseconds > 0) {
+            reporter.addMetric(lpsPerformanceMetric, lines * 1000 / milliseconds)
         }
     }
 }

@@ -407,7 +407,6 @@ object KotlinToJVMBytecodeCompiler {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         if (reportGenerationStarted) {
-            performanceManager?.notifyGenerationStarted()
             performanceManager?.notifyIRLoweringStarted()
         }
         return codegenFactory.invokeLowerings(state, backendInput)
@@ -432,7 +431,6 @@ object KotlinToJVMBytecodeCompiler {
 
         if (reportGenerationFinished) {
             performanceManager?.notifyBackendOrMetadataGenerationFinished()
-            performanceManager?.notifyGenerationFinished()
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

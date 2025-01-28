@@ -165,14 +165,19 @@ internal object KotlinTaskExecutionMetrics : FusMetrics {
 
         val linesOfCode = metricsMap[GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER]
         if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
+            fun GradleBuildPerformanceMetric.reportLps(numericalMetrics: NumericalMetrics) {
+                metricsMap[this]?.also { value ->
+                    metricsConsumer.report(numericalMetrics, value, null, linesOfCode)
+                }
+            }
+
             metricsConsumer.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
             metricsConsumer.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
-            metricsMap[GradleBuildPerformanceMetric.ANALYSIS_LPS]?.also { value ->
-                metricsConsumer.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, value, null, linesOfCode)
-            }
-            metricsMap[GradleBuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
-                metricsConsumer.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
-            }
+
+            GradleBuildPerformanceMetric.ANALYSIS_LPS.reportLps(NumericalMetrics.ANALYSIS_LINES_PER_SECOND)
+            GradleBuildPerformanceMetric.IR_TRANSLATION_LPS.reportLps(NumericalMetrics.IR_TRANSLATION_LINES_PER_SECOND)
+            GradleBuildPerformanceMetric.IR_LOWERING_LPS.reportLps(NumericalMetrics.IR_LOWERING_LINES_PER_SECOND)
+            GradleBuildPerformanceMetric.BACKEND_OR_METADATA_LPS.reportLps(NumericalMetrics.BACKEND_OR_METADATA_LINES_PER_SECOND)
         }
         metricsConsumer.report(
             NumericalMetrics.INCREMENTAL_COMPILATIONS_COUNT,

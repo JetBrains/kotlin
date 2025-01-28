@@ -61,10 +61,6 @@ object PerformanceNotifications {
     object BackendOrMetadataGenerationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyBackendOrMetadataGenerationStarted)
     object BackendOrMetadataGenerationFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyBackendOrMetadataGenerationFinished)
 
-    // whole backend
-    object GenerationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyGenerationStarted)
-    object GenerationFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyGenerationFinished)
-
     sealed class AbstractNotification(
         val notify: CommonCompilerPerformanceManager.() -> Unit
     ) : Action<PipelineArtifact, PipelineContext> {

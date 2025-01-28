@@ -18,7 +18,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         protected set
     private var initStartNanos = PerformanceCounter.currentTime()
     private var analysisStart: Long = 0
-    private var generationStart: Long = 0
 
     private var startGCData = mutableMapOf<String, GCData>()
 
@@ -72,15 +71,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     open fun notifyAnalysisFinished() {
         val time = PerformanceCounter.currentTime() - analysisStart
         measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
-    }
-
-    open fun notifyGenerationStarted() {
-        generationStart = PerformanceCounter.currentTime()
-    }
-
-    open fun notifyGenerationFinished() {
-        val time = PerformanceCounter.currentTime() - generationStart
-        measurements += CodeGenerationMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyIRTranslationStarted() {
@@ -165,7 +155,12 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     fun renderCompilerPerformance(): String {
         val relevantMeasurements = getMeasurementResults().filter {
-            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
+            it is CompilerInitializationMeasurement ||
+                    it is CodeAnalysisMeasurement ||
+                    it is IrTranslationMeasurement ||
+                    it is IrLoweringMeasurement ||
+                    it is BackendOrMetadataGenerationMeasurement ||
+                    it is PerformanceCounterMeasurement
         }
 
         return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }

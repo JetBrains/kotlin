@@ -28,13 +28,15 @@ class JpsCompilationResult : CompilationResults,
     private val log = JpsKotlinLogger(KotlinBuilder.LOG)
     @Throws(RemoteException::class)
     override fun add(compilationResultCategory: Int, value: Serializable) {
+        val buildTimes =  buildMetrics.buildTimes
+        val buildPerformanceMetrics = buildMetrics.buildPerformanceMetrics
         when (compilationResultCategory) {
             CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
                 @Suppress("UNCHECKED_CAST")
                 val compileIterationResult = value as? CompileIterationResult
                 if (compileIterationResult != null) {
                     val sourceFiles = compileIterationResult.sourceFiles
-                    buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.IC_COMPILE_ITERATION)
+                    buildPerformanceMetrics.add(JpsBuildPerformanceMetric.IC_COMPILE_ITERATION)
                     compiledFiles.addAll(sourceFiles.map { it.path })
                 }
             }
@@ -46,13 +48,38 @@ class JpsCompilationResult : CompilationResults,
             CompilationResultCategory.BUILD_METRICS.code -> {
                 (value as BuildMetricsValue).let {
                     when (it.key) {
-                        CompilationPerformanceMetrics.CODE_GENERATION -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.CODE_GENERATION, it.value)
-                        CompilationPerformanceMetrics.CODE_ANALYSIS -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.CODE_ANALYSIS, it.value)
-                        CompilationPerformanceMetrics.COMPILER_INITIALIZATION -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.COMPILER_INITIALIZATION, it.value)
+                        CompilationPerformanceMetrics.COMPILER_INITIALIZATION -> buildTimes.addTimeMs(
+                            JpsBuildTime.COMPILER_INITIALIZATION,
+                            it.value
+                        )
+                        CompilationPerformanceMetrics.CODE_ANALYSIS -> buildTimes.addTimeMs(JpsBuildTime.CODE_ANALYSIS, it.value)
+                        CompilationPerformanceMetrics.IR_TRANSLATION -> buildTimes.addTimeMs(JpsBuildTime.IR_TRANSLATION, it.value)
+                        CompilationPerformanceMetrics.IR_LOWERING -> buildTimes.addTimeMs(JpsBuildTime.IR_LOWERING, it.value)
+                        CompilationPerformanceMetrics.BACKEND_OR_METADATA_GENERATION -> buildTimes.addTimeMs(
+                            JpsBuildTime.BACKEND_OR_METADATA_GENERATION,
+                            it.value
+                        )
 
-                        CompilationPerformanceMetrics.SOURCE_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.SOURCE_LINES_NUMBER, it.value)
-                        CompilationPerformanceMetrics.ANALYSIS_LPS -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.ANALYSIS_LPS, it.value)
-                        CompilationPerformanceMetrics.CODE_GENERATION_LPS -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.CODE_GENERATION_LPS, it.value)
+                        CompilationPerformanceMetrics.SOURCE_LINES_NUMBER -> buildPerformanceMetrics.add(
+                            JpsBuildPerformanceMetric.SOURCE_LINES_NUMBER,
+                            it.value
+                        )
+                        CompilationPerformanceMetrics.ANALYSIS_LPS -> buildPerformanceMetrics.add(
+                            JpsBuildPerformanceMetric.ANALYSIS_LPS,
+                            it.value
+                        )
+                        CompilationPerformanceMetrics.IR_TRANSLATION_LPS -> buildPerformanceMetrics.add(
+                            JpsBuildPerformanceMetric.IR_TRANSLATION_LPS,
+                            it.value
+                        )
+                        CompilationPerformanceMetrics.IR_LOWERING_LPS -> buildPerformanceMetrics.add(
+                            JpsBuildPerformanceMetric.IR_LOWERING_LPS,
+                            it.value
+                        )
+                        CompilationPerformanceMetrics.BACKEND_OR_METADATA_GENERATION_LPS -> buildPerformanceMetrics.add(
+                            JpsBuildPerformanceMetric.BACKEND_OR_METADATA_GENERATION_LPS,
+                            it.value
+                        )
                     }
                 }
             }

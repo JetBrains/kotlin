@@ -29,7 +29,9 @@ enum class JpsBuildPerformanceMetric(
     IC_COMPILE_ITERATION(parent = COMPILE_ITERATION, "Total kotlin compiler iteration", type = ValueType.NUMBER),
     SOURCE_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
     ANALYSIS_LPS(parent = COMPILE_ITERATION, "Analysis lines per second", type = ValueType.NUMBER),
-    CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
+    IR_TRANSLATION_LPS(parent = COMPILE_ITERATION, "IR translation per second", type = ValueType.NUMBER),
+    IR_LOWERING_LPS(parent = COMPILE_ITERATION, "IR lowering lps", type = ValueType.NUMBER),
+    BACKEND_OR_METADATA_GENERATION_LPS(parent = COMPILE_ITERATION, "Backend generation", type = ValueType.NUMBER),
     ;
 
     override fun getReadableString(): String = readableString
@@ -78,7 +80,9 @@ enum class GradleBuildPerformanceMetric(
     COMPILE_ITERATION(parent = null, "Total compiler iteration", type = ValueType.NUMBER),
     SOURCE_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
     ANALYSIS_LPS(parent = COMPILE_ITERATION, "Analysis lines per second", type = ValueType.NUMBER),
-    CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
+    IR_TRANSLATION_LPS(parent = COMPILE_ITERATION, "IR translation lines per second", type = ValueType.NUMBER),
+    IR_LOWERING_LPS(parent = COMPILE_ITERATION, "IR lowering lines per second", type = ValueType.NUMBER),
+    BACKEND_OR_METADATA_LPS(parent = COMPILE_ITERATION, "Backend or metadata lines per second", type = ValueType.NUMBER),
 
     // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
     CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT(
