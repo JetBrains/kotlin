@@ -342,12 +342,14 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     open fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
-        for (superTypeRef in regularClass.superTypeRefs) {
+        for (superTypeRef in regularClass.superTypeRefs + additionalSuperTypes(regularClass)) {
             for (classifierSymbol in superTypeToSymbols(superTypeRef)) {
                 forceResolveStatusOfCorrespondingClass(classifierSymbol)
             }
         }
     }
+
+    open fun additionalSuperTypes(regularClass: FirClass): List<FirTypeRef> = emptyList()
 
     /**
      * @return symbols which should be resolved to [FirResolvePhase.STATUS] phase

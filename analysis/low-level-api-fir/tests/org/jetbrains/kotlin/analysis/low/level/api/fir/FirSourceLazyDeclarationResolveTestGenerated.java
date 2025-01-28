@@ -1512,6 +1512,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public void testJvmBuiltinAnnotation() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/jvmBuiltinAnnotation.kt");
     }
+
+    @Test
+    @TestMetadata("mappedTypeResolution.kt")
+    public void testMappedTypeResolution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/mappedTypeResolution.kt");
+    }
   }
 
   @Nested
