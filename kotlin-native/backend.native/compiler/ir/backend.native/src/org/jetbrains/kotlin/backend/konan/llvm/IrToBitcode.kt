@@ -509,6 +509,15 @@ internal class CodeGeneratorVisitor(
         }
     }
 
+    private fun mergeRuntimeInitializers(
+            runtimeInitializers: List<RuntimeInitializer>
+    ): RuntimeInitializer = generateRuntimeInitializer {
+        runtimeInitializers.forEach {
+            this.call(it.llvmCallable, listOf(param(0), param(1)), exceptionHandler = ExceptionHandler.Caller)
+        }
+        ret(null)
+    }
+
     private fun generateRuntimeInitializer(block: FunctionGenerationContext.() -> Unit): RuntimeInitializer {
         val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
         return RuntimeInitializer(generateFunction(codegen, initFunctionProto, code = block))
@@ -2714,8 +2723,10 @@ internal class CodeGeneratorVisitor(
 
         val ctorFunctions = dependencies.flatMap { dependency ->
             val library = dependency?.library
-            val initializers = libraryToInitializers.getValue(library)
-                    .map { createInitCtor(createInitNode(it)) }
+            val initializer = libraryToInitializers.getValue(library)
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { mergeRuntimeInitializers(it) }
+                    ?.let { createInitCtor(createInitNode(it)) }
 
             val ctorName = when {
                 // TODO: Try to not use moduleId.
@@ -2730,11 +2741,11 @@ internal class CodeGeneratorVisitor(
                 val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
 
                 listOf(
-                    appendStaticInitializers(ctorProto(ctorName), initializers + otherInitializers)
+                    appendStaticInitializers(ctorProto(ctorName), listOfNotNull(initializer) + otherInitializers)
                 )
             } else {
                 // A cached library.
-                check(initializers.isEmpty()) {
+                check(initializer == null) {
                     "found initializer from ${library.libraryFile}, which is not included into compilation"
                 }
 
