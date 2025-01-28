@@ -42,15 +42,10 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
 @implementation KotlinBase {
   BackRefFromAssociatedObject refHolder;
-  bool permanent;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  if (permanent) {
-    RETURN_OBJ(refHolder.refPermanent());
-  } else {
-    RETURN_OBJ(refHolder.ref());
-  }
+  RETURN_OBJ(refHolder.ref());
 }
 
 +(void)load {
@@ -96,8 +91,6 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
   ObjHolder holder;
   AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
   result->refHolder.initAndAddRef(holder.obj());
-  RuntimeAssert(!holder.obj()->permanent(), "dynamically allocated object is permanent");
-  result->permanent = false;
   return result;
 }
 
@@ -109,7 +102,6 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
   bool permanent = obj->permanent();
-  candidate->permanent = permanent;
 
   if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
     candidate->refHolder.initAndAddRef(obj);
@@ -129,7 +121,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 }
 
 -(instancetype)retain {
-  if (permanent) {
+  if (refHolder.isPermanent()) {
     [super retain];
   } else {
     refHolder.addRef();
@@ -138,7 +130,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 }
 
 -(BOOL)_tryRetain {
-  if (permanent) {
+  if (refHolder.isPermanent()) {
     return [super _tryRetain];
   } else {
     return refHolder.tryAddRef();
@@ -146,7 +138,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 }
 
 -(oneway void)release {
-  if (permanent) {
+  if (refHolder.isPermanent()) {
     [super release];
   } else {
     refHolder.releaseRef();
@@ -154,17 +146,10 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 }
 
 -(void)releaseAsAssociatedObject {
-  RuntimeAssert(!permanent, "Cannot be called on permanent objects");
+  RuntimeAssert(!refHolder.isPermanent(), "Cannot be called on permanent objects");
   // No need for any special handling. Weak reference handling machinery
   // has already cleaned up the reference to Kotlin object.
   [super release];
-}
-
--(void)dealloc {
-  if (!permanent) {
-    refHolder.dealloc();
-  }
-  [super dealloc];
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone {
@@ -203,8 +188,8 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
         return self;
     }
 
-    permanent = refHolder.initWithExternalRCRef(externalRCRef);
-    if (permanent) {
+    refHolder.initWithExternalRCRef(externalRCRef);
+    if (refHolder.isPermanent()) {
         // Cannot attach associated objects to permanent objects.
         return self;
     }
@@ -240,7 +225,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 }
 
 - (uintptr_t)externalRCRef {
-    return reinterpret_cast<uintptr_t>(refHolder.externalRCRef(permanent));
+    return reinterpret_cast<uintptr_t>(refHolder.externalRCRef());
 }
 
 - (NSString *)description {
