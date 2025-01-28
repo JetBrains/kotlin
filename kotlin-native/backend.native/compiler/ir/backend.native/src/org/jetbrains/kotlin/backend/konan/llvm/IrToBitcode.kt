@@ -446,9 +446,8 @@ internal class CodeGeneratorVisitor(
     val FILE_NOT_INITIALIZED = 0
     val FILE_INITIALIZED = 2
 
-    private fun createInitBody(state: ScopeInitializersGenerationState): LlvmCallable {
-        val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
-        return generateFunction(codegen, initFunctionProto) {
+    private fun createInitBody(state: ScopeInitializersGenerationState): RuntimeInitializer {
+        return generateRuntimeInitializer {
             using(FunctionScope(function, this)) {
                 val bbInit = basicBlock("init", null)
                 val bbLocalInit = basicBlock("local_init", null)
@@ -511,10 +510,16 @@ internal class CodeGeneratorVisitor(
         }
     }
 
+    private fun generateRuntimeInitializer(block: FunctionGenerationContext.() -> Unit): RuntimeInitializer {
+        val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
+        return RuntimeInitializer(generateFunction(codegen, initFunctionProto, code = block))
+    }
+
     //-------------------------------------------------------------------------//
     // Creates static struct InitNode $nodeName = {$initName, NULL};
 
-    private fun createInitNode(initFunction: LlvmCallable): LLVMValueRef {
+    private fun createInitNode(runtimeInitializer: RuntimeInitializer): LLVMValueRef {
+        val initFunction = runtimeInitializer.llvmCallable
         val nextInitNode = LLVMConstNull(pointerType(kNodeInitType))
         val argList = cValuesOf(initFunction.toConstPointer().llvm, nextInitNode)
         // Create static object of class InitNode.
