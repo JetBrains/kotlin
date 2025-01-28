@@ -39,12 +39,13 @@ internal data class KotlinWebpackRunner(
         }
 
     fun start(): ExecHandle {
-        val processRunnerBuilder = objects.execHandleBuilder {
+        val execHandleBuilder = objects.execHandleBuilder {
+            displayName = "webpack $tool ${npmProject.compilationName}"
             configureExec(this, null)
         }
-        val processRunner = processRunnerBuilder.build()
-        processRunner.execute()
-        return processRunner
+        val execHandle = execHandleBuilder.build()
+        execHandle.start()
+        return execHandle
     }
 
     private fun configureClient(
