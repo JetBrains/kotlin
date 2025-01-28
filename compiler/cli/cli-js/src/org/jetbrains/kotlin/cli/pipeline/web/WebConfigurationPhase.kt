@@ -36,6 +36,12 @@ object WebConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>
     postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
     configurationUpdaters = listOf(CommonWebConfigurationUpdater, JsConfigurationUpdater, WasmConfigurationUpdater)
 ) {
+    override fun executePhase(input: ArgumentsPipelineArtifact<K2JSCompilerArguments>): ConfigurationPipelineArtifact? {
+        return super.executePhase(input)?.also {
+            input.performanceManager.notifyCompilerInitialized(files = 0, lines = 0, targetDescription = input.arguments.moduleName ?: "")
+        }
+    }
+
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return KlibMetadataVersion(*versionArray)
     }
