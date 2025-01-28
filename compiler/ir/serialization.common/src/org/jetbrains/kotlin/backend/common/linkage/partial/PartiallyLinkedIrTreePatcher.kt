@@ -712,15 +712,75 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
-        protected inline fun IrMemberAccessExpression<IrFunctionSymbol>.checkArgumentsAndValueParameters(
+        protected inline fun IrFunctionAccessExpression.checkArgumentsAndValueParameters(
             checkDefaultArgument: (index: Int, defaultArgumentExpressionBody: IrExpressionBody?) -> Boolean =
                 { _, defaultArgumentExpressionBody -> defaultArgumentExpressionBody != null }
         ): PartialLinkageCase? {
             val function = symbol.owner
 
+            val expressionEffectivelyHasDispatchReceiver = dispatchReceiver != null
+            val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
+
+            if (expressionEffectivelyHasDispatchReceiver != functionHasDispatchReceiver)
+                return MemberAccessExpressionArgumentsMismatch(
+                    this,
+                    expressionEffectivelyHasDispatchReceiver,
+                    functionHasDispatchReceiver,
+                    0, // Does not matter here.
+                    0 // Does not matter here.
+                )
+
+            if (function.isExternal) {
+                // External functions may have the default arguments declared in native implementations,
+                // which are not available from Kotlin.
+                return null
+            } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
+                // This is a special case. IrEnumConstructorCall don't contain arguments.
+                return null
+            }
+
+
+            // Default values are not kept in value parameters of fake override/delegated/override functions.
+            // So we need to look up for default value across all overridden functions.
+            val functionsToCheckDefaultValues by lazy {
+                when (function) {
+                    is IrConstructor -> listOf(function)
+                    is IrSimpleFunction -> function.allOverridden(includeSelf = true)
+                        .filterNot { it.isFakeOverride || it.origin == IrDeclarationOrigin.DELEGATED_MEMBER }
+                }
+            }
+
+            val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
+                if (getValueArgument(index) != null)
+                    return@count true
+
+                val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
+                    it.valueParameters.getOrNull(index)?.defaultValue
+                }
+
+                return@count checkDefaultArgument(index, defaultArgumentExpressionBody)
+                        || function.valueParameters.getOrNull(index)?.isVararg == true
+            }
+            val functionValueParameterCount = function.valueParameters.size
+
+            return if (expressionValueArgumentCount != functionValueParameterCount)
+                MemberAccessExpressionArgumentsMismatch(
+                    this,
+                    expressionEffectivelyHasDispatchReceiver,
+                    functionHasDispatchReceiver,
+                    expressionValueArgumentCount,
+                    functionValueParameterCount
+                )
+            else
+                null
+        }
+
+        private fun IrFunctionReference.checkArgumentsAndValueParameters(): PartialLinkageCase? {
+            val function = symbol.owner
+
             val expressionEffectivelyHasDispatchReceiver = when {
                 dispatchReceiver != null -> true
-                this is IrFunctionReference -> run {
+                else -> run {
                     // For function references it really depends on whether the reference was obtained on a class or on an instance.
                     // Based on this the dispatch receiver may be null or non-null, but this is always reflected in the expression type.
                     // Example:
@@ -774,11 +834,10 @@ internal class PartiallyLinkedIrTreePatcher(
                     // expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier
                     actualDispatchReceiverClassifier?.isSubtypeOfClass(expectedDispatchReceiverClassifier) ?: false
                 }
-                else -> false
             }
             val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
 
-            if (expressionEffectivelyHasDispatchReceiver != functionHasDispatchReceiver)
+            if (expressionEffectivelyHasDispatchReceiver != functionHasDispatchReceiver) {
                 return MemberAccessExpressionArgumentsMismatch(
                     this,
                     expressionEffectivelyHasDispatchReceiver,
@@ -786,57 +845,9 @@ internal class PartiallyLinkedIrTreePatcher(
                     0, // Does not matter here.
                     0 // Does not matter here.
                 )
-
-            when (this) {
-                is IrFunctionAccessExpression -> {
-                    if (function.isExternal) {
-                        // External functions may have the default arguments declared in native implementations,
-                        // which are not available from Kotlin.
-                        return null
-                    } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
-                        // This is a special case. IrEnumConstructorCall don't contain arguments.
-                        return null
-                    }
-                }
-                is IrFunctionReference -> {
-                    // Function references don't contain arguments.
-                    return null
-                }
             }
 
-            // Default values are not kept in value parameters of fake override/delegated/override functions.
-            // So we need to look up for default value across all overridden functions.
-            val functionsToCheckDefaultValues by lazy {
-                when (function) {
-                    is IrConstructor -> listOf(function)
-                    is IrSimpleFunction -> function.allOverridden(includeSelf = true)
-                        .filterNot { it.isFakeOverride || it.origin == IrDeclarationOrigin.DELEGATED_MEMBER }
-                }
-            }
-
-            val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
-                if (getValueArgument(index) != null)
-                    return@count true
-
-                val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
-                    it.valueParameters.getOrNull(index)?.defaultValue
-                }
-
-                return@count checkDefaultArgument(index, defaultArgumentExpressionBody)
-                        || function.valueParameters.getOrNull(index)?.isVararg == true
-            }
-            val functionValueParameterCount = function.valueParameters.size
-
-            return if (expressionValueArgumentCount != functionValueParameterCount)
-                MemberAccessExpressionArgumentsMismatch(
-                    this,
-                    expressionEffectivelyHasDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    expressionValueArgumentCount,
-                    functionValueParameterCount
-                )
-            else
-                null
+            return null
         }
 
         private fun IrTypeOperatorCall.checkSamConversion(): PartialLinkageCase? {
