@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
@@ -25,6 +26,9 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
@@ -82,36 +86,97 @@ open class IrBlockBodyBuilder(
     }
 }
 
-class IrBlockBuilder(
+abstract class IrAbstractBlockBuilder<T : IrContainerExpression>(
     context: IrGeneratorContext,
     scope: Scope,
     startOffset: Int,
     endOffset: Int,
-    val origin: IrStatementOrigin? = null,
-    var resultType: IrType? = null,
-    val isTransparent:Boolean = false
-) : IrStatementsBuilder<IrContainerExpression>(context, scope, startOffset, endOffset) {
+    val origin: IrStatementOrigin?,
+    var resultType: IrType?,
+) : IrStatementsBuilder<T>(context, scope, startOffset, endOffset) {
 
     private val statements = ArrayList<IrStatement>()
-
-    inline fun block(body: IrBlockBuilder.() -> Unit): IrContainerExpression {
-        body()
-        return doBuild()
-    }
 
     override fun addStatement(irStatement: IrStatement) {
         statements.add(irStatement)
     }
 
-    override fun doBuild(): IrContainerExpression {
+    abstract fun createBlock(resultType: IrType, origin: IrStatementOrigin?): T
+
+    override fun doBuild(): T {
         val resultType = this.resultType
             ?: (statements.lastOrNull() as? IrExpression)?.type
             ?: context.irBuiltIns.unitType
-        val irBlock =
-            if (isTransparent) IrCompositeImpl(startOffset, endOffset, resultType, origin)
-            else IrBlockImpl(startOffset, endOffset, resultType, origin)
+        val irBlock = createBlock(resultType, origin)
         irBlock.statements.addAll(statements)
         return irBlock
+    }
+}
+
+class IrBlockBuilder(
+    context: IrGeneratorContext,
+    scope: Scope,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    val isTransparent: Boolean = false
+) : IrAbstractBlockBuilder<IrContainerExpression>(context, scope, startOffset, endOffset, origin, resultType) {
+    override fun createBlock(resultType: IrType, origin: IrStatementOrigin?): IrContainerExpression {
+        return if (isTransparent) {
+            IrCompositeImpl(startOffset, endOffset, resultType, origin)
+        } else {
+            IrBlockImpl(startOffset, endOffset, resultType, origin)
+        }
+    }
+
+    inline fun block(body: IrBlockBuilder.() -> Unit): IrContainerExpression {
+        body()
+        return doBuild()
+    }
+}
+
+class IrReturnableBlockBuilder(
+    context: IrGeneratorContext,
+    val blockStartOffset: Int,
+    val blockEndOffset: Int,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+) : IrAbstractBlockBuilder<IrReturnableBlock>(context, Scope(IrReturnableBlockSymbolImpl()), blockStartOffset, blockEndOffset, origin, resultType) {
+    override fun createBlock(resultType: IrType, origin: IrStatementOrigin?): IrReturnableBlock {
+        return IrReturnableBlockImpl(
+            startOffset = blockStartOffset,
+            endOffset = blockEndOffset,
+            type = resultType,
+            symbol = scope.scopeOwnerSymbol as IrReturnableBlockSymbolImpl,
+            origin = null,
+        )
+    }
+}
+
+class IrInlinedFunctionBlockBuilder(
+    context: IrGeneratorContext,
+    scope: Scope,
+    val blockStartOffset: Int,
+    val blockEndOffset: Int,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    val inlinedFunctionStartOffset: Int,
+    val inlinedFunctionEndOffset: Int,
+    val inlinedFunctionSymbol: IrFunctionSymbol?,
+    val inlinedFunctionFileEntry: IrFileEntry,
+) : IrAbstractBlockBuilder<IrInlinedFunctionBlock>(context, scope, blockStartOffset, blockEndOffset, origin, resultType) {
+    override fun createBlock(resultType: IrType, origin: IrStatementOrigin?): IrInlinedFunctionBlock {
+        return IrInlinedFunctionBlockImpl(
+            startOffset = blockStartOffset,
+            endOffset = blockEndOffset,
+            inlinedFunctionStartOffset = inlinedFunctionStartOffset,
+            inlinedFunctionEndOffset = inlinedFunctionEndOffset,
+            type = resultType,
+            inlinedFunctionSymbol = inlinedFunctionSymbol,
+            inlinedFunctionFileEntry = inlinedFunctionFileEntry,
+            origin = origin,
+        )
     }
 }
 
@@ -182,6 +247,44 @@ inline fun IrGeneratorWithScope.irBlockBody(
         startOffset,
         endOffset
     ).blockBody(body)
+
+inline fun IrBuilderWithScope.irReturnableBlock(
+    resultType: IrType,
+    origin: IrStatementOrigin? = null,
+    body: IrReturnableBlockBuilder.(IrReturnableBlockSymbol) -> Unit
+): IrReturnableBlock =
+    IrReturnableBlockBuilder(
+        context,
+        startOffset,
+        endOffset,
+        resultType = resultType,
+        origin = origin
+    ).apply {
+        body(scope.scopeOwnerSymbol as IrReturnableBlockSymbol)
+    }.doBuild()
+
+inline fun IrBuilderWithScope.irInlinedFunctionBlock(
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    inlinedFunctionStartOffset: Int,
+    inlinedFunctionEndOffset: Int,
+    inlinedFunctionSymbol: IrFunctionSymbol?,
+    inlinedFunctionFileEntry: IrFileEntry,
+    body: IrInlinedFunctionBlockBuilder.() -> Unit
+): IrInlinedFunctionBlock =
+    IrInlinedFunctionBlockBuilder(
+        context,
+        scope,
+        startOffset, endOffset,
+        resultType = resultType,
+        origin = origin,
+        inlinedFunctionEndOffset = inlinedFunctionEndOffset,
+        inlinedFunctionStartOffset = inlinedFunctionStartOffset,
+        inlinedFunctionSymbol = inlinedFunctionSymbol,
+        inlinedFunctionFileEntry = inlinedFunctionFileEntry,
+    ).apply {
+        body()
+    }.doBuild()
 
 fun IrBuilderWithScope.irWhile(origin: IrStatementOrigin? = null) =
     IrWhileLoopImpl(startOffset, endOffset, context.irBuiltIns.unitType, origin)
