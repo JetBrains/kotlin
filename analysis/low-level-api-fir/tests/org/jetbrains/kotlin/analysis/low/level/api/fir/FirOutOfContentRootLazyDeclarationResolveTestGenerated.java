@@ -1506,6 +1506,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     public void testIntegerLiteralCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/integerLiteralCall.kt");
     }
+
+    @Test
+    @TestMetadata("jvmBuiltinAnnotation.kt")
+    public void testJvmBuiltinAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/jvmBuiltinAnnotation.kt");
+    }
   }
 
   @Nested

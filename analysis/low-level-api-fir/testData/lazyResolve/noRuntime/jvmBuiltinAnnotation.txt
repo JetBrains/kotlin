@@ -1,0 +1,327 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] anno.kt
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] main.kt
+    @FILE:kotlin.internal.JvmBuiltin[Unresolved]()
+    public final? [ResolvedTo(RAW_FIR)] interface CharSequence : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class String : Comparable<String>, CharSequence {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] anno.kt
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @FILE:kotlin.internal.JvmBuiltin[Unresolved]()
+    public final? [ResolvedTo(RAW_FIR)] interface CharSequence : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class String : Comparable<String>, CharSequence {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] anno.kt
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @FILE:kotlin.internal.JvmBuiltin[Unresolved]()
+    public final? [ResolvedTo(RAW_FIR)] interface CharSequence : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class String : Comparable<String>, CharSequence {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun get([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] index: Int): Char
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] anno.kt
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @FILE:kotlin.internal.JvmBuiltin[Unresolved]()
+    public final? [ResolvedTo(RAW_FIR)] interface CharSequence : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class String : Comparable<String>, CharSequence {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] fun get([ResolvedTo(COMPANION_GENERATION)] index: Int): Char
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] anno.kt
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @FILE:kotlin.internal.JvmBuiltin[Unresolved]()
+    public final? [ResolvedTo(SUPER_TYPES)] interface CharSequence : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] fun get([ResolvedTo(SUPER_TYPES)] index: Int): Char
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] anno.kt
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(RAW_FIR)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @FILE:kotlin.internal.JvmBuiltin[Unresolved]()
+    public final? [ResolvedTo(SUPER_TYPES)] interface CharSequence : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] index: Int): Char
+
+    }
+    public final? [ResolvedTo(TYPES)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(TYPES)] fun get([ResolvedTo(TYPES)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(TYPES)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(STATUS)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(STATUS)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(TYPES)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(STATUS)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(STATUS)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun get([ResolvedTo(EXPECT_ACTUAL_MATCHING)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(TYPES)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(STATUS)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(STATUS)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(TYPES)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(STATUS)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(STATUS)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun get([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(TYPES)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(STATUS)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(STATUS)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(CONSTANT_EVALUATION)] fun get([ResolvedTo(CONSTANT_EVALUATION)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(TYPES)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(STATUS)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(STATUS)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun get([ResolvedTo(ANNOTATION_ARGUMENTS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(TYPES)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(STATUS)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(STATUS)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    @FILE:R|kotlin/internal/JvmBuiltin|[Types]()
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface CharSequence : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class String : R|java/lang/Comparable<kotlin/String>|, R|kotlin/CharSequence| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=String] constructor(): R|kotlin/String| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] index: <ERROR TYPE REF: Symbol not found for Int>): <ERROR TYPE REF: Symbol not found for Char>
+
+    }

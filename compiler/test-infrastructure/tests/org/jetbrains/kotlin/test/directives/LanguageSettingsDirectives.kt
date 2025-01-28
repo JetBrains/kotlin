@@ -68,6 +68,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
     )
 
+    val EXPECT_BUILTINS_AS_PART_OF_STDLIB by directive(
+        description = "Emulate kotlin-stdlib compilation"
+    )
+
     val PREFER_IN_TEST_OVER_STDLIB by directive(
         description = "Prefer in-test defined class over stdlib one if the names collide"
     )
