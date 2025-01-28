@@ -15,8 +15,6 @@
 
 namespace kotlin::mm {
 
-// TODO(KT-67741): Unify different ExternalRCRefs
-
 // Reference from an ObjC associated object back into a Kotlin object.
 //
 // Does not support permanent objects.

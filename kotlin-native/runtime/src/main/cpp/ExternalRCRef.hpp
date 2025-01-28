@@ -17,8 +17,6 @@
 
 namespace kotlin::mm {
 
-// TODO(KT-67741): Unify different ExternalRCRefs
-
 class ExternalRCRefRegistry;
 
 // `RawExternalRCRef*` is `kotlin.native.internal.ref.ExternalRCRef`.
