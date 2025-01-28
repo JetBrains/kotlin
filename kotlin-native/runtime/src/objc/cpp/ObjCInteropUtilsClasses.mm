@@ -7,10 +7,13 @@
 
 #import <objc/runtime.h>
 #import <Foundation/Foundation.h>
+
+#include "ExternalRCRef.hpp"
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
 #import "ObjCExportPrivate.h"
 #import "ObjCInteropUtilsPrivate.h"
+
+using namespace kotlin;
 
 // TODO: rework the interface to reduce the number of virtual calls
 // in Kotlin_Interop_createKotlinObjectHolder and Kotlin_Interop_unwrapKotlinObjectHolder
@@ -20,23 +23,18 @@
 @end
 
 @implementation KotlinObjectHolder {
-  KRefSharedHolder refHolder;
+  mm::OwningExternalRCRef refHolder;
 };
 
 -(id)initWithRef:(KRef)ref {
   if (self = [super init]) {
-    refHolder.init(ref);
+    refHolder.reset(ref);
   }
   return self;
 }
 
 -(KRef)ref {
   return refHolder.ref();
-}
-
--(void)dealloc {
-  refHolder.dispose();
-  [super dealloc];
 }
 
 @end

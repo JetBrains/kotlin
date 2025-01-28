@@ -9,36 +9,8 @@
 
 #include "ExternalRCRef.hpp"
 #include "ObjCBackRef.hpp"
-#include "StableRef.hpp"
 
 using namespace kotlin;
-
-void KRefSharedHolder::initLocal(ObjHeader* obj) {
-    RuntimeAssert(obj != nullptr, "must not be null");
-    ref_ = nullptr;
-    obj_ = obj;
-}
-
-void KRefSharedHolder::init(ObjHeader* obj) {
-    RuntimeAssert(obj != nullptr, "must not be null");
-    ref_ = static_cast<mm::ExternalRCRefImpl*>(mm::StableRef::create(obj));
-    obj_ = obj;
-}
-
-ObjHeader* KRefSharedHolder::ref() const {
-    AssertThreadState(ThreadState::kRunnable);
-    // ref_ may be null if created with initLocal.
-    return obj_;
-}
-
-void KRefSharedHolder::dispose() {
-    // Handles the case when it is not initialized. See [KotlinMutableSet/Dictionary dealloc].
-    if (!ref_) {
-        return;
-    }
-    std::move(mm::StableRef::reinterpret(ref_)).dispose();
-    // obj_ is dangling now.
-}
 
 void BackRefFromAssociatedObject::initForPermanentObject(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
