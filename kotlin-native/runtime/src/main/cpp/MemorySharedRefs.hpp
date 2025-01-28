@@ -6,20 +6,19 @@
 #ifndef RUNTIME_MEMORYSHAREDREFS_HPP
 #define RUNTIME_MEMORYSHAREDREFS_HPP
 
-#include <type_traits>
-
 #include "ManuallyScoped.hpp"
 #include "Memory.h"
 #include "ObjCBackRef.hpp"
 
 class BackRefFromAssociatedObject {
  public:
+  ~BackRefFromAssociatedObject();
+
   void initForPermanentObject(ObjHeader* obj);
 
   void initAndAddRef(ObjHeader* obj);
 
-  // Returns true if initialized as permanent.
-  bool initWithExternalRCRef(kotlin::mm::RawExternalRCRef* ref) noexcept;
+  void initWithExternalRCRef(kotlin::mm::RawExternalRCRef* ref) noexcept;
 
   void addRef();
 
@@ -27,23 +26,18 @@ class BackRefFromAssociatedObject {
 
   void releaseRef();
 
-  void dealloc();
-
   ObjHeader* ref() const;
 
-  ObjHeader* refPermanent() const;
+  kotlin::mm::RawExternalRCRef* externalRCRef() const noexcept;
 
-  kotlin::mm::RawExternalRCRef* externalRCRef(bool permanent) const noexcept;
+  bool isPermanent() const noexcept { return permanent; }
 
  private:
   union {
     kotlin::ManuallyScoped<kotlin::mm::ObjCBackRef> ref_; // Regular object.
     ObjHeader* permanentObj_; // Permanent object.
   };
+  bool permanent;
 };
-
-static_assert(
-        std::is_trivially_destructible_v<BackRefFromAssociatedObject>,
-        "BackRefFromAssociatedObject destructor is not guaranteed to be called.");
 
 #endif // RUNTIME_MEMORYSHAREDREFS_HPP
