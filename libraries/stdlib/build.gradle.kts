@@ -625,44 +625,16 @@ tasks {
         from(project.sourceSets["java9"].output)
     }
 
-    val jvmRearrangedSourcesJar by registering(Jar::class) {
-        archiveClassifier.set("jvm-sources")
-        archiveVersion.set("")
-        destinationDirectory.set(layout.buildDirectory.dir("lib"))
-
-        includeEmptyDirs = false
+    val jvmSourcesJar by existing(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
-
-        into("commonMain") {
-            from(kotlin.sourceSets.commonMain.get().kotlin)
-        }
+        archiveAppendix.set(null as String?)
         into("jvmMain") {
-            from(kotlin.sourceSets["jvmMain"].kotlin) {
-                // relocate builtins sources that get placed in the root of the sources file tree
-                eachFile {
-                    val sourcePathSegments = relativeSourcePath.segments
-                    if (sourcePathSegments.size == 1) {
-                        relativePath = RelativePath(true, "jvmMain", "kotlin", *sourcePathSegments)
-                    }
-                }
-            }
             from(kotlin.sourceSets["jvmMainJdk7"].kotlin) {
                 into("jdk7")
             }
             from(kotlin.sourceSets["jvmMainJdk8"].kotlin) {
                 into("jdk8")
             }
-        }
-    }
-
-    val jvmSourcesJar by existing(Jar::class) {
-        duplicatesStrategy = DuplicatesStrategy.FAIL
-        archiveAppendix.set(null as String?)
-
-        val jvmSourcesJarFile = jvmRearrangedSourcesJar.get().archiveFile
-        inputs.file(jvmSourcesJarFile)
-        doLast {
-            jvmSourcesJarFile.get().asFile.toPath().copyTo(archiveFile.get().asFile.toPath(), overwrite = true)
         }
     }
 
