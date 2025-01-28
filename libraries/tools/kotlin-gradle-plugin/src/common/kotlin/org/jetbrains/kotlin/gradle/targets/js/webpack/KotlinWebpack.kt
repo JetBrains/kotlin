@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.RegularFile
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -301,7 +302,7 @@ constructor(
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
             val deploymentHandle = deploymentRegistry.get("webpack", Handle::class.java)
             if (deploymentHandle == null) {
-                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner)
+                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner, path)
             }
         } else {
             runner.copy(
@@ -324,17 +325,25 @@ constructor(
         }
     }
 
-    internal open class Handle @Inject constructor(val runner: KotlinWebpackRunner) : DeploymentHandle {
-        var process: ExecHandle? = null
+    internal abstract class Handle @Inject constructor(
+        private val runner: KotlinWebpackRunner,
+        /** [KotlinWebpack.getPath], used for logging. */
+        private val taskPath: String,
+    ) : DeploymentHandle {
+        private var process: ExecHandle? = null
 
-        override fun isRunning() = process != null
+        private val logger = Logging.getLogger(Handle::class.java)
+
+        override fun isRunning(): Boolean = process != null
 
         override fun start(deployment: Deployment) {
             process = runner.start()
+            logger.info("[$taskPath] webpack-dev-server started ${process?.displayName}")
         }
 
         override fun stop() {
             process?.abort()
+            logger.info("[$taskPath] webpack-dev-server stopped ${process?.displayName}")
         }
     }
 }
