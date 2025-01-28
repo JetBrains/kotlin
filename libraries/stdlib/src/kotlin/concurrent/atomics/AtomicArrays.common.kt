@@ -10,6 +10,8 @@
 
 package kotlin.concurrent.atomics
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
+
 /**
  * An array of ints in which elements may be updated atomically.
  *
@@ -25,6 +27,7 @@ package kotlin.concurrent.atomics
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
+@ActualizeByJvmBuiltinProvider
 public expect class AtomicIntArray {
     /**
      * Creates a new [AtomicIntArray] of the specified [size], with all elements initialized to zero.
@@ -204,6 +207,7 @@ public fun AtomicIntArray.fetchAndDecrementAt(index: Int): Int = this.fetchAndAd
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
+@ActualizeByJvmBuiltinProvider
 public expect class AtomicLongArray {
     /**
      * Creates a new [AtomicLongArray] of the specified [size], with all elements initialized to zero.
@@ -383,6 +387,7 @@ public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAnd
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
+@ActualizeByJvmBuiltinProvider
 public expect class AtomicArray<T> {
 
     /**

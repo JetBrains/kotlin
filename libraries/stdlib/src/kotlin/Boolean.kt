@@ -8,7 +8,10 @@
 
 package kotlin
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
+
 /** Represents a value which is either `true` or `false`. */
+@ActualizeByJvmBuiltinProvider
 public expect class Boolean : Comparable<Boolean> {
     @SinceKotlin("1.3")
     public companion object {}

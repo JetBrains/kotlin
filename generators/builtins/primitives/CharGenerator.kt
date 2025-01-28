@@ -15,15 +15,8 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
         writer.print(generateFile().build())
     }
 
-    protected open val fileAnnotations: List<String> = emptyList()
-
     private fun generateFile(): FileBuilder {
-        return file(this::class) {
-            for (fileAnnotation in fileAnnotations) {
-                annotate(fileAnnotation)
-            }
-            generateClass()
-        }.apply { this.modifyGeneratedFile() }
+        return file(this::class) { generateClass() }.apply { this.modifyGeneratedFile() }
     }
 
     private fun FileBuilder.generateClass() {
@@ -343,9 +336,13 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
 }
 
 class CommonCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
+    override fun FileBuilder.modifyGeneratedFile() {
+        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
+    }
 
     override fun ClassBuilder.modifyGeneratedClass() {
         expectActual = ExpectActualModifier.Expect
+        annotations += "ActualizeByJvmBuiltinProvider"
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
@@ -356,14 +353,8 @@ class CommonCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 class JvmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.")
-        expectActual = ExpectActualModifier.Actual
+        expectActual = ExpectActualModifier.Unspecified
     }
-
-    override val fileAnnotations = listOf(
-        "kotlin.internal.JvmBuiltin",
-        "kotlin.internal.SuppressBytecodeGeneration",
-        "Suppress(\"NON_ABSTRACT_FUNCTION_WITH_NO_BODY\")"
-    )
 }
 
 class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {

@@ -5,12 +5,14 @@
 
 package kotlin
 
+import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * The common base class of all enum classes.
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/enum-classes.html) for more
  * information on enum classes.
  */
+@ActualizeByJvmBuiltinProvider
 public expect abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
     public companion object {}
 
