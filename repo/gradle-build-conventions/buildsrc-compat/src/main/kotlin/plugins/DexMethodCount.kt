@@ -114,7 +114,7 @@ abstract class DexMethodCountStats : DefaultTask() {
     private val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
 
     @TaskAction
-    private fun printStats() {
+    internal fun printStats() {
         val artifactOrArchiveName = artifactOrArchiveName.get()
         inputFile.get().asFile.reader().useLines { lines ->
             fun String.getStatValue() = substringBefore("\t").trim()

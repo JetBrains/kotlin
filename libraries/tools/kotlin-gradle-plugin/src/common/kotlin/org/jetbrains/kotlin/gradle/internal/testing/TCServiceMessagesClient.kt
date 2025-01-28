@@ -13,6 +13,7 @@ import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdErr
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
+import org.gradle.internal.time.Time
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
@@ -212,7 +213,7 @@ internal open class TCServiceMessagesClient(
         if (settings.treatFailedTestOutputAsStacktrace) {
             stackTraceOutput.append(text)
         } else {
-            results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
+            results.output(descriptor.id, DefaultTestOutputEvent(Time.clock().currentTime, destination, text))
         }
     }
 

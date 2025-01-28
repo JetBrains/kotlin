@@ -180,7 +180,7 @@ fun prepareDeps(
         }
     }
 
-    val mergeSources = tasks.create("mergeSources${intellij.name.replaceFirstChar(Char::uppercase)}", Jar::class.java) {
+    val mergeSources = tasks.register("mergeSources${intellij.name.replaceFirstChar(Char::uppercase)}", Jar::class.java) {
         dependsOn(sources)
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
@@ -194,7 +194,7 @@ fun prepareDeps(
         archiveVersion.set(intellijVersion)
     }
 
-    val sourcesFile = mergeSources.outputs.files.singleFile
+    val sourcesFile = mergeSources.get().outputs.files.singleFile
 
     val makeIde = if (androidStudioBuild != null) {
         buildIvyRepositoryTask(

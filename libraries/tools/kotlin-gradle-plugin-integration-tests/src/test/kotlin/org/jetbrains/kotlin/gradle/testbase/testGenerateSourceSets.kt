@@ -22,7 +22,7 @@ fun KotlinSourceSet.compileSource(
     val identifier = "${name}_${project.generateIdentifier()}"
     val identifierPath = project.layout.buildDirectory.dir("generatedSourceDir_${identifier}")
     kotlin.srcDir(
-        project.tasks.create("generateSourceIn_${identifier}") { task ->
+        project.tasks.register("generateSourceIn_${identifier}") { task ->
             task.outputs.dir(identifierPath)
             task.doLast {
                 identifierPath.get().asFile.resolve("generatedSource_${identifier}.kt").writeText(sourceContent)
@@ -40,7 +40,7 @@ fun SourceSet.compileJavaSource(
     val identifier = "${name}_${project.generateIdentifier()}"
     val identifierPath = project.layout.buildDirectory.dir("generatedJavaSourceDir_${identifier}")
     java.srcDir(
-        project.tasks.create("generateJavaSourceIn_${identifier}") { task ->
+        project.tasks.register("generateJavaSourceIn_${identifier}") { task ->
             task.outputs.dir(identifierPath)
             task.doLast {
                 identifierPath.get().asFile.resolve("${className}.java").writeText(sourceContent)
