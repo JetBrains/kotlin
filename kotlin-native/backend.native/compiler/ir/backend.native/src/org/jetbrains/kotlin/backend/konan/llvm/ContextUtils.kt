@@ -640,7 +640,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 }
 
-class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LlvmCallable)
+class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializer: RuntimeInitializer)
 
 /**
  * Function of the [CodeGeneratorVisitor.kInitFuncType] type (aka `Initializer` in `Runtime.h`).
