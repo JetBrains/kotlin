@@ -688,7 +688,7 @@ abstract class IncrementalCompilerRunner<
                 is CodeAnalysisMeasurement -> {
                     reporter.addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.milliseconds)
                     it.lines?.apply {
-                        reporter.addMetric(GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER, this.toLong())
+                        reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, this.toLong())
                         if (it.milliseconds > 0) {
                             reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
                         }
@@ -697,38 +697,21 @@ abstract class IncrementalCompilerRunner<
                 is CodeGenerationMeasurement -> {
                     reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, it.milliseconds)
                     it.lines?.apply {
-                        reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATED_LINES_NUMBER, this.toLong())
                         if (it.milliseconds > 0) {
                             reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
                         }
                     }
                 }
-                is IrTranslationMeasurement -> reportMeasurements(
-                    it.milliseconds,
-                    it.lines,
-                    GradleBuildTime.IR_TRANSLATION,
-                    GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER
-                )
-                is IrLoweringMeasurement -> reportMeasurements(
-                    it.milliseconds,
-                    it.lines,
-                    GradleBuildTime.IR_LOWERING,
-                    GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER
-                )
-                is BackendOrMetadataGenerationMeasurement -> reportMeasurements(
-                    it.milliseconds,
-                    it.lines,
-                    GradleBuildTime.BACKEND_OR_METADATA_GENERATION,
-                    GradleBuildPerformanceMetric.BACKEND_OR_METADATA_GENERATION_LINES_NUMBER
-                )
+                is IrTranslationMeasurement -> {
+                    reporter.addTimeMetricMs(GradleBuildTime.IR_TRANSLATION, it.milliseconds)
+                }
+                is IrLoweringMeasurement -> {
+                    reporter.addTimeMetricMs(GradleBuildTime.IR_LOWERING, it.milliseconds)
+                }
+                is BackendOrMetadataGenerationMeasurement -> {
+                    reporter.addTimeMetricMs(GradleBuildTime.BACKEND_OR_METADATA_GENERATION, it.milliseconds)
+                }
             }
-        }
-    }
-
-    private fun reportMeasurements(milliseconds: Long, lines: Int?, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
-        reporter.addTimeMetricMs(timeMetric, milliseconds)
-        lines?.also {
-            reporter.addMetric(lineMetric, it.toLong())
         }
     }
 }
