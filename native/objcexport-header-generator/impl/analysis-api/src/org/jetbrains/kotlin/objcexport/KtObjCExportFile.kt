@@ -28,11 +28,25 @@ interface KtObjCExportFile {
  * under [classifierSymbols] and [callableSymbols].
  */
 data class KtResolvedObjCExportFile(
+    val file: KtFile?,
     val fileName: String,
     val packageFqName: FqName,
     val classifierSymbols: List<KaClassSymbol>,
     val callableSymbols: List<KaCallableSymbol>,
-)
+) {
+    constructor(
+        fileName: String,
+        packageFqName: FqName,
+        classifierSymbols: List<KaClassSymbol>,
+        callableSymbols: List<KaCallableSymbol>,
+    ) : this(
+        file = null,
+        fileName = fileName,
+        packageFqName = packageFqName,
+        classifierSymbols = classifierSymbols,
+        callableSymbols = callableSymbols
+    )
+}
 
 /* Factory functions */
 
@@ -88,6 +102,7 @@ private class KtPsiObjCExportFile(
     override fun KaSession.resolve(): KtResolvedObjCExportFile {
         val symbol = file.symbol
         return KtResolvedObjCExportFile(
+            file = file,
             fileName = fileName,
             packageFqName = packageFqName,
             classifierSymbols = getAllVisibleInObjClassifiers(symbol),
