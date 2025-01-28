@@ -13,25 +13,6 @@
 #include "Memory.h"
 #include "concurrent/Mutex.hpp"
 
-class KRefSharedHolder {
- public:
-  void initLocal(ObjHeader* obj);
-
-  void init(ObjHeader* obj);
-
-  ObjHeader* ref() const;
-
-  void dispose();
-
-  OBJ_GETTER0(describe) const;
-
- private:
-  ObjHeader* obj_;
-  kotlin::mm::ExternalRCRefImpl* ref_;
-};
-
-static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
-
 class BackRefFromAssociatedObject {
  public:
   void initForPermanentObject(ObjHeader* obj);

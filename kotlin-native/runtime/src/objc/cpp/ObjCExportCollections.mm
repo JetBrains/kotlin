@@ -15,7 +15,6 @@
  */
 
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
 #import "Types.h"
 
 #if KONAN_OBJC_INTEROP
@@ -25,10 +24,13 @@
 #import <Foundation/Foundation.h>
 
 #import "Exceptions.h"
+#include "ExternalRCRef.hpp"
 #import "Runtime.h"
 #import "ObjCExport.h"
 #import "ObjCExportCollections.h"
 #import "ObjCExportPrivate.h"
+
+using namespace kotlin;
 
 extern "C" {
 
@@ -140,17 +142,12 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end
 
 @implementation KIteratorAsNSEnumerator {
-  KRefSharedHolder iteratorHolder;
-}
-
--(void)dealloc {
-  iteratorHolder.dispose();
-  [super dealloc];
+  mm::OwningExternalRCRef iteratorHolder;
 }
 
 +(id)createWithKIterator:(KRef)iterator {
   KIteratorAsNSEnumerator* result = [[[KIteratorAsNSEnumerator alloc] init] autorelease];
-  result->iteratorHolder.init(iterator);
+  result->iteratorHolder.reset(iterator);
   return result;
 }
 
@@ -170,17 +167,12 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end
 
 @implementation KListAsNSArray {
-  KRefSharedHolder listHolder;
-}
-
--(void)dealloc {
-  listHolder.dispose();
-  [super dealloc];
+  mm::OwningExternalRCRef listHolder;
 }
 
 +(id)createRetainedWithKList:(KRef)list {
   KListAsNSArray* result = [[KListAsNSArray alloc] init];
-  result->listHolder.init(list);
+  result->listHolder.reset(list);
   return result;
 }
 
@@ -206,17 +198,12 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end
 
 @implementation KMutableListAsNSMutableArray {
-  KRefSharedHolder listHolder;
-}
-
--(void)dealloc {
-  listHolder.dispose();
-  [super dealloc];
+  mm::OwningExternalRCRef listHolder;
 }
 
 +(id)createRetainedWithKList:(KRef)list {
   KMutableListAsNSMutableArray* result = [[KMutableListAsNSMutableArray alloc] init];
-  result->listHolder.init(list);
+  result->listHolder.reset(list);
   return result;
 }
 
@@ -286,17 +273,12 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 
 @implementation KSetAsNSSet {
-  KRefSharedHolder setHolder;
-}
-
--(void)dealloc {
-  setHolder.dispose();
-  [super dealloc];
+  mm::OwningExternalRCRef setHolder;
 }
 
 +(id)createRetainedWithKSet:(KRef)set {
   KSetAsNSSet* result = [[KSetAsNSSet alloc] init];
-  result->setHolder.init(set);
+  result->setHolder.reset(set);
   return result;
 }
 
@@ -332,7 +314,7 @@ static inline id KSet_getElement(KRef set, id object) {
 @end
 
 @implementation KotlinMutableSet {
-  KRefSharedHolder setHolder;
+  mm::OwningExternalRCRef setHolder;
 }
 
 -(instancetype)init {
@@ -341,7 +323,7 @@ static inline id KSet_getElement(KRef set, id object) {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
     ObjHolder holder;
     KRef set = Kotlin_MutableSet_createWithCapacity(8, holder.slot());
-    self->setHolder.init(set);
+    self->setHolder.reset(set);
   }
 
   return self;
@@ -353,7 +335,7 @@ static inline id KSet_getElement(KRef set, id object) {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
     ObjHolder holder;
     KRef set = Kotlin_MutableSet_createWithCapacity(objCCapacityToKotlin(numItems), holder.slot());
-    self->setHolder.init(set);
+    self->setHolder.reset(set);
   }
 
   return self;
@@ -374,17 +356,9 @@ static inline id KSet_getElement(KRef set, id object) {
 // - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder
 // ?
 
--(void)dealloc {
-  // Note: since setHolder initialization is not performed directly with alloc,
-  // it is possible that it wasn't initialized properly.
-  // Fortunately setHolder.dispose() handles the zero-initialized case too.
-  setHolder.dispose();
-  [super dealloc];
-}
-
 -(instancetype)initWithKSet:(KRef)set {
   if (self = [super init]) {
-    setHolder.init(set);
+    setHolder.reset(set);
   }
 
   return self;
@@ -448,17 +422,12 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 @implementation KMapAsNSDictionary {
-  KRefSharedHolder mapHolder;
-}
-
--(void)dealloc {
-  mapHolder.dispose();
-  [super dealloc];
+  mm::OwningExternalRCRef mapHolder;
 }
 
 +(id)createRetainedWithKMap:(KRef)map {
   KMapAsNSDictionary* result = [[KMapAsNSDictionary alloc] init];
-  result->mapHolder.init(map);
+  result->mapHolder.reset(map);
   return result;
 }
 
@@ -491,15 +460,7 @@ static inline id KMap_get(KRef map, id aKey) {
 @end
 
 @implementation KotlinMutableDictionary {
-  KRefSharedHolder mapHolder;
-}
-
--(void)dealloc {
-  // Note: since mapHolder initialization is not performed directly with alloc,
-  // it is possible that it wasn't initialized properly.
-  // Fortunately mapHolder.dispose() handles the zero-initialized case too.
-  mapHolder.dispose();
-  [super dealloc];
+  mm::OwningExternalRCRef mapHolder;
 }
 
 -(instancetype)init {
@@ -508,7 +469,7 @@ static inline id KMap_get(KRef map, id aKey) {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
     ObjHolder holder;
     KRef map = Kotlin_MutableMap_createWithCapacity(8, holder.slot());
-    self->mapHolder.init(map);
+    self->mapHolder.reset(map);
   }
   return self;
 }
@@ -525,14 +486,14 @@ static inline id KMap_get(KRef map, id aKey) {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
     ObjHolder holder;
     KRef map = Kotlin_MutableMap_createWithCapacity(objCCapacityToKotlin(numItems), holder.slot());
-    self->mapHolder.init(map);
+    self->mapHolder.reset(map);
   }
   return self;
 }
 
 -(instancetype)initWithKMap:(KRef)map {
   if (self = [super init]) {
-    mapHolder.init(map);
+    mapHolder.reset(map);
   }
 
   return self;
