@@ -593,7 +593,7 @@ allprojects {
                 return@eachDependency
             }
 
-            val isReflect = requested.name == "kotlin-reflect" || requested.name == "kotlin-reflect-api"
+            val isReflect = requested.name == "kotlin-reflect"
             // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
             // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
             if (project.path in @Suppress("UNCHECKED_CAST") (rootProject.extra["compilerModules"] as Array<String>)) {

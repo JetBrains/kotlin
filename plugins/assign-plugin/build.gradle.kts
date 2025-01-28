@@ -21,8 +21,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(libs.junit.jupiter.api)
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testRuntimeOnly(libs.junit.jupiter.engine)
