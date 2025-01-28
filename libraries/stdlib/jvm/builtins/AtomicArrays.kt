@@ -28,7 +28,7 @@ public actual class AtomicIntArray {
     /**
      * Returns the number of elements in the array.
      */
-    public actual val size: Int
+    public actual val size: Int get() = array.size
 
     /**
      * Atomically loads the value from the element of this [AtomicIntArray] at the given [index].
@@ -136,7 +136,7 @@ public actual class AtomicLongArray {
     /**
      * Returns the number of elements in the array.
      */
-    public actual val size: Int
+    public actual val size: Int get() = array.size
 
     /**
      * Atomically loads the value from the element of this [AtomicLongArray] at the given [index].
