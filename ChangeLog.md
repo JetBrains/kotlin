@@ -160,6 +160,14 @@
 - [`KT-58437`](https://youtrack.jetbrains.com/issue/KT-58437) K2: Do not use descriptors in KonanSymbols
 - [`KT-18563`](https://youtrack.jetbrains.com/issue/KT-18563) Do not generate inline reified functions as private in bytecode
 
+### Compose compiler
+
+- [`b/388505454`](https://issuetracker.google.com/issues/388505454) Change order of $changed bits with context parameters
+- [`b/165812010`](https://issuetracker.google.com/issues/165812010) Support default values in open @Composable functions (K2 only)
+- [`b/285336821`](https://issuetracker.google.com/issues/285336821) Use stability of parent class in stability inference
+- [`b/353744956`](https://issuetracker.google.com/issues/353744956) Fix context receiver/parameter handling in Compose
+- [`b/195200551`](https://issuetracker.google.com/issues/195200551) Call `Enum#ordinal` on enum values passed to Composer#changed
+
 ### IR. Inlining
 
 - [`KT-72776`](https://youtrack.jetbrains.com/issue/KT-72776) [JS] Add lowerings around inlining of private functions to the common prefix at the 1st phase of compilation
