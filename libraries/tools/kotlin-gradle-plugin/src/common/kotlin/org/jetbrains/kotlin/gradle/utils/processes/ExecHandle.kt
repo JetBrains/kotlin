@@ -81,6 +81,9 @@ internal class ExecHandle(
         }
     }
 
+    /**
+     * Start the process, blocking until the process has started.
+     */
     fun start(): ExecHandle {
         logger.info("Starting process '$displayName'. Working directory: $directory Command: $command ${arguments.joinToString(" ")}")
         lock.withLock {
@@ -114,6 +117,9 @@ internal class ExecHandle(
         return this
     }
 
+    /**
+     * Start the process, blocking until the process has finished (successfully or not).
+     */
     fun execute(): ExecResult {
         val execResult = start().waitForFinish()
         if (!ignoreExitValue) {
@@ -124,15 +130,41 @@ internal class ExecHandle(
 
     fun abort() {
         lock.withLock {
-            if (stateIn(ExecHandleState.Succeeded, ExecHandleState.Failed, ExecHandleState.Aborted)) {
+            if (state.isTerminal) {
+                // process has already terminated, so just return
                 return
             }
             check(stateIn(ExecHandleState.Started)) {
                 "Cannot abort process '$displayName' because it is not started"
             }
             execHandleRunner!!.abortProcess()
-            this.waitForFinish()
+            waitForFinish()
         }
+    }
+
+    /**
+     * Block until the process has finished.
+     *
+     * This method is private because there's no current need to make it public,
+     * but should you find a need to get the result then make it public.
+     */
+    private fun waitForFinish(): ExecResult {
+        lock.withLock {
+            while (!state.isTerminal) {
+                try {
+                    stateChanged.await()
+                } catch (e: InterruptedException) {
+                    execHandleRunner!!.abortProcess()
+                    throw e
+                }
+            }
+        }
+
+        // At this point:
+        // If in daemon mode, the process has started successfully and all streams to the process have been closed
+        // If in fork mode, the process has completed and all cleanup has been done
+        // In both cases, all asynchronous work for the process has completed and we're done
+        return result()
     }
 
     private fun stateIn(vararg states: ExecHandleState): Boolean =
@@ -153,7 +185,7 @@ internal class ExecHandle(
 
         lock.withLock {
             state = newState
-            this.execResult = newResult
+            execResult = newResult
         }
 
         logger.info("[ExecHandle $displayName] finished with exit value $exitValue (state: $newState)")
@@ -174,25 +206,6 @@ internal class ExecHandle(
         }
 
         return ExecException(message = failureMessage, cause = failureCause)
-    }
-
-    private fun waitForFinish(): ExecResult {
-        lock.withLock {
-            while (!state.isTerminal) {
-                try {
-                    stateChanged.await()
-                } catch (e: InterruptedException) {
-                    execHandleRunner!!.abortProcess()
-                    throw e
-                }
-            }
-        }
-
-        // At this point:
-        // If in daemon mode, the process has started successfully and all streams to the process have been closed
-        // If in fork mode, the process has completed and all cleanup has been done
-        // In both cases, all asynchronous work for the process has completed and we're done
-        return result()
     }
 
     private fun result(): ExecResult {
