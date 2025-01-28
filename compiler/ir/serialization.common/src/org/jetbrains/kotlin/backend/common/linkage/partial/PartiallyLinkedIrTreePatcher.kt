@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -775,72 +774,28 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun IrFunctionReference.checkArgumentsAndValueParameters(): PartialLinkageCase? {
             val function = symbol.owner
 
-            val expressionEffectivelyHasDispatchReceiver = when {
-                arguments.getOrNull(0) != null -> true
-                else -> run {
-                    // For function references it really depends on whether the reference was obtained on a class or on an instance.
-                    // Based on this the dispatch receiver may be null or non-null, but this is always reflected in the expression type.
-                    // Example:
-                    //   class C {
-                    //     fun foo(i: Int): String = i.toString()
-                    //     inner class I {
-                    //       fun bar(i: Int): String = i.toString()
-                    //     }
-                    //   }
-                    //
-                    //   fun test() {
-                    //     val a: KFunction0<C> = ::C                     //    IrConstructor.dispatchReceiverParameter == null, IrFunctionReference.dispatchReceiver == null
-                    //     val b: KFunction2<C, Int, String> = C::foo     // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val c: KFunction1<Int, String> = C()::foo      // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //     val d: KFunction1<C, C.I> = C::I               //    IrConstructor.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val e: KFunction0<C.I> = C()::I                //    IrConstructor.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //     val f: KFunction2<C.I, Int, String> = C.I::bar // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val g: KFunction1<Int, String> = C().I()::bar  // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //   }
-                    val expectedDispatchReceiverClassifier: IrClassSymbol = when (symbol) {
-                        is IrSimpleFunctionSymbol -> function.parent as? IrClass
-                        is IrConstructorSymbol -> (function.parent as? IrClass)?.takeIf { it.isInner }?.parent as? IrClass
-                    }?.symbol ?: return@run false
+            val referenceType = type as? IrSimpleType
+            if (referenceType != null && referenceType.classifier.isKFunction()) {
+                // How many parameters were already provided (via binding) when the reference was created.
+                // In practise, it can be either 0 or 1, because the language currently doesn't allow binding more.
+                val boundParameters = arguments.count { it != null }
+                // How many parameters were left to be provided by the caller, via the created KFunctionN.
+                val unboundParameters = (referenceType.classifier.owner as IrClass).typeParameters.size - 1
+                // Both bound and unbound parameters, as seen by the reference creation site, should add up to the actual number
+                // of parameters of the target function.
+                val expectedParameters = boundParameters + unboundParameters
 
-                    val referenceType: IrSimpleType = type as? IrSimpleType ?: return@run false
-                    if (!referenceType.classifier.isKFunction() && !referenceType.classifier.isKSuspendFunction()) return@run false
-
-                    val actualDispatchReceiverClassifier: IrClassifierSymbol? =
-                        (referenceType.arguments.firstOrNull() as? IrSimpleType)?.classifier
-
-                    /*
-                     * FIR generates function references for certain overridden functions in a different way than K1. Example:
-                     *   class A
-                     *
-                     *   fun test(a: A): Boolean {
-                     *       return (A::equals)(a, a)
-                     *       //         ^^^ IrFunctionReferenceImpl slightly differs:
-                     *       // | Frontend | Attribute                | Value                          |
-                     *       // +----------+--------------------------+--------------------------------+
-                     *       // | K1       | dispatchReceiver         | null                           |
-                     *       // | K1       | symbol.parent as IrClass | "class A"                      |
-                     *       // | K1       | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
-                     *       // | FIR      | dispatchReceiver         | null                           |
-                     *       // | FIR      | symbol.parent as IrClass | "class Any"                    |
-                     *       // | FIR      | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
-                     *   }
-                     *
-                     * So instead of checking that `expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier` it's
-                     * safer to check that `actualDispatchReceiverClassifier` is the same or subclass of `expectedDispatchReceiverClassifier`.
-                     */
-                    // expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier
-                    actualDispatchReceiverClassifier?.isSubtypeOfClass(expectedDispatchReceiverClassifier) ?: false
+                if (expectedParameters > function.parameters.size) {
+                    return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(
+                        this,
+                        expectedParameters - function.parameters.size
+                    )
+                } else if (expectedParameters < function.parameters.size) {
+                    return MemberAccessExpressionArgumentsMismatch.MissingArguments(
+                        this,
+                        function.parameters.dropLast(expectedParameters)
+                    )
                 }
-            }
-            val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
-
-            if (!expressionEffectivelyHasDispatchReceiver && functionHasDispatchReceiver) {
-                return MemberAccessExpressionArgumentsMismatch.MissingArguments(
-                    this,
-                    listOf(function.dispatchReceiverParameter!!)
-                )
-            } else if (expressionEffectivelyHasDispatchReceiver && !functionHasDispatchReceiver) {
-                return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(this, 1)
             }
 
             return null
