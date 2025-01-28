@@ -718,13 +718,13 @@ internal class PartiallyLinkedIrTreePatcher(
         ): PartialLinkageCase? {
             val function = symbol.owner
 
-            val expressionEffectivelyHasDispatchReceiver = dispatchReceiver != null
+            val expressionMayHaveDispatchReceiver = arguments.getOrNull(0) != null
             val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
 
-            if (expressionEffectivelyHasDispatchReceiver != functionHasDispatchReceiver)
+            if (expressionMayHaveDispatchReceiver != functionHasDispatchReceiver)
                 return MemberAccessExpressionArgumentsMismatch(
                     this,
-                    expressionEffectivelyHasDispatchReceiver,
+                    expressionMayHaveDispatchReceiver,
                     functionHasDispatchReceiver,
                     0, // Does not matter here.
                     0 // Does not matter here.
@@ -750,23 +750,24 @@ internal class PartiallyLinkedIrTreePatcher(
                 }
             }
 
-            val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
-                if (getValueArgument(index) != null)
+            val expressionValueArgumentCount = arguments.withIndex().count { (index, arg) ->
+                if (arg != null) {
                     return@count true
+                }
 
                 val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
-                    it.valueParameters.getOrNull(index)?.defaultValue
+                    it.parameters.getOrNull(index)?.defaultValue
                 }
 
                 return@count checkDefaultArgument(index, defaultArgumentExpressionBody)
-                        || function.valueParameters.getOrNull(index)?.isVararg == true
+                        || function.parameters.getOrNull(index)?.isVararg == true
             }
-            val functionValueParameterCount = function.valueParameters.size
+            val functionValueParameterCount = function.parameters.size
 
             return if (expressionValueArgumentCount != functionValueParameterCount)
                 MemberAccessExpressionArgumentsMismatch(
                     this,
-                    expressionEffectivelyHasDispatchReceiver,
+                    expressionMayHaveDispatchReceiver,
                     functionHasDispatchReceiver,
                     expressionValueArgumentCount,
                     functionValueParameterCount
@@ -779,7 +780,7 @@ internal class PartiallyLinkedIrTreePatcher(
             val function = symbol.owner
 
             val expressionEffectivelyHasDispatchReceiver = when {
-                dispatchReceiver != null -> true
+                arguments.getOrNull(0) != null -> true
                 else -> run {
                     // For function references it really depends on whether the reference was obtained on a class or on an instance.
                     // Based on this the dispatch receiver may be null or non-null, but this is always reflected in the expression type.
@@ -955,7 +956,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 when {
                     defaultArgument == null -> {
                         // A workaround for KT-59030. See also KT-58651.
-                        val valueParameter = symbol.owner.valueParameters.getOrNull(index)
+                        val valueParameter = symbol.owner.parameters.getOrNull(index)
                         return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
                     }
                     defaultArgument is IrConst -> {
