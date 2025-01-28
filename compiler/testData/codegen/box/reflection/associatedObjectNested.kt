@@ -2,7 +2,6 @@
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
 
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ISSUE: KT-70132
 
 // MODULE: lib1

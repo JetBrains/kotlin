@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -487,17 +488,18 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun generateAssociatedObjectKey(): JsIntLiteral? {
-        return context.getAssociatedObjectKey(irClass)?.let { JsIntLiteral(it) }
+        if (!irClass.isAssociatedObjectAnnotatedAnnotation) return null
+        val key = context.staticContext.backendContext.nextAssociatedObjectKey++
+        irClass.associatedObjectKey = key
+        return JsIntLiteral(key)
     }
 
     private fun generateAssociatedObjects(): JsObjectLiteral? {
         val associatedObjects = irClass.annotations.mapNotNull { annotation ->
             val annotationClass = annotation.symbol.owner.constructedClass
-            context.getAssociatedObjectKey(annotationClass)?.let { key ->
-                annotation.associatedObject()?.let { obj ->
-                    obj.objectGetInstanceFunction?.let { factory ->
-                        JsPropertyInitializer(JsIntLiteral(key), context.staticContext.getNameForStaticFunction(factory).makeRef())
-                    }
+            annotationClass.associatedObjectKey?.let { key ->
+                annotation.associatedObject()?.objectGetInstanceFunction?.let { factory ->
+                    JsPropertyInitializer(JsIntLiteral(key), context.staticContext.getNameForStaticFunction(factory).makeRef())
                 }
             }
         }.toSmartList()
@@ -563,3 +565,5 @@ class JsIrIcClassModel(val superClasses: List<JsName>) {
     val preDeclarationBlock = JsCompositeBlock()
     val postDeclarationBlock = JsCompositeBlock()
 }
+
+private var IrClass.associatedObjectKey: Int? by irAttribute(followAttributeOwner = false)

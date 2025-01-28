@@ -319,4 +319,6 @@ class JsIrBackendContext(
         irBuiltIns,
         configuration.messageCollector
     )
+
+    internal var nextAssociatedObjectKey = 0
 }

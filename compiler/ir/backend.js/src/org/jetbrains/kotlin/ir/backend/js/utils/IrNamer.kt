@@ -21,7 +21,6 @@ interface IrNamer {
     fun getNameForClass(klass: IrClass): JsName
     fun getRefForExternalClass(klass: IrClass): JsNameRef
     fun getNameForProperty(property: IrProperty): JsName
-    fun getAssociatedObjectKey(irClass: IrClass): Int?
 }
 
 abstract class IrNamerBase : IrNamer {
@@ -76,15 +75,5 @@ abstract class IrNamerBase : IrNamer {
         } else {
             getNameForStaticDeclaration(property)
         }
-    }
-
-    private val associatedObjectKeyMap = hashMapOf<IrClass, Int>()
-
-    override fun getAssociatedObjectKey(irClass: IrClass): Int? {
-        if (irClass.isAssociatedObjectAnnotatedAnnotation) {
-
-            return associatedObjectKeyMap.getOrPut(irClass) { associatedObjectKeyMap.size }
-        }
-        return null
     }
 }
