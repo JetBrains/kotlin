@@ -37,3 +37,10 @@ internal var IrConstructor.constructorFactory: IrSimpleFunction? by irAttribute(
  * @see org.jetbrains.kotlin.ir.backend.js.lower.MainFunctionCallWrapperLowering
  */
 internal var IrSimpleFunction.mainFunctionWrapper: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+/**
+ * If `this` is an object, contains the corresponding `getInstance` function that returns the single instance of the object.
+ *
+ * @see org.jetbrains.kotlin.ir.backend.js.lower.ObjectDeclarationLowering
+ */
+var IrClass.objectGetInstanceFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)

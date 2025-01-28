@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -106,7 +107,7 @@ private fun compileIrFile(
 
     fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
         val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->
-            backendContext.mapping.objectToGetInstanceFunction[obj]?.let {
+            obj.objectGetInstanceFunction?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, false)
             } ?: backendContext.mapping.wasmExternalObjectToGetInstanceFunction[obj]?.let {
                 AssociatedObjectBySymbols(key.symbol, it.symbol, true)

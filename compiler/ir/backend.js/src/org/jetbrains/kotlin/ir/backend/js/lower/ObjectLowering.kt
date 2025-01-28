@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -47,7 +48,7 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
             return null
 
-        val getInstanceFun = context.getOrCreateGetInstanceFunction(declaration)
+        val getInstanceFun = getOrCreateGetInstanceFunction(declaration)
 
         val instanceField = context.irFactory.buildField {
             name = Name.identifier(declaration.name.asString() + "_instance")
@@ -113,7 +114,7 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
             override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
                 val obj: IrClass = expression.symbol.owner
                 if (obj.isEffectivelyExternal()) return expression
-                return JsIrBuilder.buildCall(context.getOrCreateGetInstanceFunction(obj).symbol)
+                return JsIrBuilder.buildCall(getOrCreateGetInstanceFunction(obj).symbol)
             }
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
@@ -146,9 +147,9 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
     }
 }
 
-private fun JsCommonBackendContext.getOrCreateGetInstanceFunction(obj: IrClass) =
-    mapping.objectToGetInstanceFunction.getOrPut(obj) {
-        irFactory.buildFun {
+private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
+    obj::objectGetInstanceFunction.getOrSetIfNull {
+        obj.factory.buildFun {
             name = Name.identifier(obj.name.asString() + "_getInstance")
             returnType = obj.defaultType
             origin = JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
