@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
-import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.test.blackbox.support.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider.getTestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.XCTestRunner
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.io.File
 
@@ -69,8 +68,6 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ): TestExecutable {
-        val sysFrameworksRoot = testRunSettings.get<XCTestRunner>().frameworksPath
-
         val swiftExtraOpts = swiftModules.flatMap {
             listOf(
                 "-I", it.rootDir.absolutePath,
@@ -82,8 +79,8 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
             "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")}",
 
-            "-F", sysFrameworksRoot,
-            "-Xlinker", "-rpath", "-Xlinker", sysFrameworksRoot,
+            "-F", testRunSettings.systemFrameworksPath,
+            "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath,
             "-framework", "Testing"
         )
 

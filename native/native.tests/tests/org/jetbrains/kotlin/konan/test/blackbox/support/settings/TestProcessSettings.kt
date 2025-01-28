@@ -313,7 +313,7 @@ internal enum class CInterfaceMode(val compilerFlag: String) {
     NONE("-Xbinary=cInterfaceMode=none")
 }
 
-class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: KotlinNativeTargets) {
+internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: KotlinNativeTargets) {
     /**
      * Path to the developer frameworks directory.
      */
@@ -343,6 +343,8 @@ class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: KotlinNati
         return result.stdout.trim()
     }
 }
+
+val Settings.systemFrameworksPath: String get() = get<XCTestRunner>().frameworksPath
 
 internal class ReleasedCompiler(private val lazyNativeHome: Lazy<KotlinNativeHome>) {
     val nativeHome: KotlinNativeHome get() = lazyNativeHome.value
