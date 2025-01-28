@@ -13,24 +13,15 @@ dependencies {
     embedded(project(":kotlin-assignment-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-assignment-compiler-plugin.cli")) { isTransitive = false }
 
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":kotlin-assignment-compiler-plugin.cli"))
-    testFixturesImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
-
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testFixturesImplementation(project(":kotlin-reflect"))
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(toolsJar())
-
-    testFixturesApi(intellijCore())
 }
 
 optInToExperimentalCompilerApi()

@@ -14,20 +14,14 @@ dependencies {
     embedded(project(":kotlin-noarg-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlin-noarg-compiler-plugin.cli")) { isTransitive = false }
 
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":kotlin-noarg-compiler-plugin.cli"))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     testFixturesApi(intellijCore())

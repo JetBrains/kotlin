@@ -24,13 +24,8 @@ dependencies {
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend")) { isTransitive = false }
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli")) { isTransitive = false }
 
-    testImplementation(project(":compiler:backend"))
-    testImplementation(project(":compiler:cli"))
     testImplementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
 
-    testImplementation(testFixtures(project(":compiler:test-infrastructure")))
-    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
     testImplementation(testFixtures(project(":js:js.tests")))
@@ -50,8 +45,6 @@ dependencies {
         }
         isTransitive = false
     }
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 optInToExperimentalCompilerApi()

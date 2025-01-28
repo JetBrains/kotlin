@@ -17,11 +17,8 @@ dependencies {
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k1"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
-    testFixturesImplementation(project(":compiler:backend"))
-    testFixturesImplementation(project(":compiler:cli"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testFixturesImplementation(intellijCore())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
@@ -29,12 +26,6 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesImplementation(project(":compiler:fir:checkers"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 optInToExperimentalCompilerApi()

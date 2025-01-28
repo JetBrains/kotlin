@@ -20,24 +20,10 @@ dependencies {
 
     testFixturesApi(commonDependency("org.projectlombok:lombok"))
 
-    testFixturesApi(project(":compiler:util"))
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:ir.backend.common"))
-    testFixturesApi(project(":compiler:backend.jvm"))
-    testFixturesApi(project(":compiler:cli"))
-
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    // FIR dependencies
-    testFixturesApi(project(":compiler:fir:checkers"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesApi(libs.junit4)

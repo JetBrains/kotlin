@@ -70,17 +70,10 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.cli")) { isTransitive = false }
 
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
-    testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
@@ -105,9 +98,6 @@ dependencies {
     serializationPluginForTests(project(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     // Dependencies for Kotlin/Native test infra:
     testFixturesApi(testFixtures(project(":native:native.tests")))

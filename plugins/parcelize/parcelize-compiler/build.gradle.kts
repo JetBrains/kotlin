@@ -31,30 +31,12 @@ dependencies {
 
     testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
 
-    testFixturesApi(project(":compiler:util"))
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:ir.backend.common"))
-    testFixturesApi(project(":compiler:backend.jvm"))
-    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":compiler:frontend"))
+    testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesApi(project(":plugins:parcelize:parcelize-runtime"))
-    testFixturesApi(kotlinTest())
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
-
-    // FIR dependencies
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
-    testFixturesApi(project(":compiler:fir:entrypoint"))
-    testFixturesApi(project(":compiler:fir:checkers"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
