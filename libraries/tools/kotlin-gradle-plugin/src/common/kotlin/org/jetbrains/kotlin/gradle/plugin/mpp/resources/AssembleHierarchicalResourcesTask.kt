@@ -133,6 +133,7 @@ internal abstract class AssembleHierarchicalResourcesTask : DefaultTask() {
                         is Result.Collision -> return Result.Collision(result.left, result.right)
                         is Result.NotDirectory -> return Result.NotDirectory(result.path)
                         is Result.ToCopy -> directoriesToCopy.add(result.value)
+                        null -> Unit
                     }
                 }
             }

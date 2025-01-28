@@ -13,7 +13,7 @@ internal object D8Platform {
 
     val name: String
         get() {
-            val osName = property("os.name").toLowerCase()
+            val osName = property("os.name").lowercase()
             return when {
                 osName.contains("windows") -> WIN
                 osName.contains("mac") -> DARWIN

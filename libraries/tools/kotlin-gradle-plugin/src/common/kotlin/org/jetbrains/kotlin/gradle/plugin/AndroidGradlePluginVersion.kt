@@ -50,8 +50,8 @@ data class AndroidGradlePluginVersion(
         if (this.classifier == null) return 1
         if (other.classifier == null) return -1
 
-        val thisClassifierLowercase = this.classifier.toLowerCase(Locale.ROOT)
-        val otherClassifierLowercase = other.classifier.toLowerCase(Locale.ROOT)
+        val thisClassifierLowercase = this.classifier.lowercase()
+        val otherClassifierLowercase = other.classifier.lowercase()
         if (thisClassifierLowercase == otherClassifierLowercase) return 0
         return thisClassifierLowercase.compareTo(otherClassifierLowercase)
     }

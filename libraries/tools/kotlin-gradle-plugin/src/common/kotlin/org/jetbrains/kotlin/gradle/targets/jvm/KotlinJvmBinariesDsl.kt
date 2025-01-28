@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import javax.inject.Inject
 
 // Should be as much close to Gradle 'JavaApplication' spec as possible
@@ -209,7 +210,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
     // null is only used in JS only projects
     private fun KotlinJvmCompilation.runTaskName(
         disambiguationSuffix: String
-    ) = "run${disambiguateName(disambiguationSuffix.capitalize()).capitalize()}"
+    ) = "run${disambiguateName(disambiguationSuffix.capitalizeAsciiOnly()).capitalizeAsciiOnly()}"
 
     private fun KotlinJvmCompilation.distributionName(
         disambiguationSuffix: String
@@ -335,7 +336,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
         jvmCompilation: KotlinJvmCompilation,
         compilationJarTask: TaskProvider<Jar>,
     ): TaskProvider<CreateStartScripts> {
-        return taskContainer.register("startScriptsFor${distributionName.capitalize()}", CreateStartScripts::class.java) { task ->
+        return taskContainer.register("startScriptsFor${distributionName.capitalizeAsciiOnly()}", CreateStartScripts::class.java) { task ->
             task.description = "Creates OS specific scripts to run the project/${distributionName} as a JVM application."
 
             task.classpath = jarOnlyClasspath(jvmCompilation, compilationJarTask)

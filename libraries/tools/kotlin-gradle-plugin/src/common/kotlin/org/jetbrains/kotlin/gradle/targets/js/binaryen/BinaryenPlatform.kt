@@ -26,9 +26,9 @@ internal data class BinaryenPlatform(
 
         internal fun parseBinaryenPlatform(name: String, arch: String, uname: Provider<String>): BinaryenPlatform {
             return BinaryenPlatform(
-                parseOsName(name.toLowerCase()),
+                parseOsName(name.lowercase()),
                 parseOsArch(
-                    arch.toLowerCase(),
+                    arch.lowercase(),
                     uname
                 )
             )
