@@ -17,8 +17,6 @@
 
 namespace kotlin::mm {
 
-// TODO(KT-67741): Unify different ExternalRCRefs
-
 class ExternalRCRefRegistry;
 
 // `RawExternalRCRef*` is `kotlin.native.internal.ref.ExternalRCRef`.
@@ -271,7 +269,6 @@ public:
     KRef ref() const noexcept { return dereferenceExternalRCRef(get()); }
 
     KRef operator*() const noexcept { return ref(); }
-    KRef* operator->() const noexcept { return &*this; }
 
     // Return the underlying object.
     // May only be called when reference count is >0, or there is a guarantee

@@ -8,10 +8,9 @@
 
 #include <type_traits>
 
-#include "ExternalRCRef.hpp"
 #include "ManuallyScoped.hpp"
 #include "Memory.h"
-#include "concurrent/Mutex.hpp"
+#include "ObjCBackRef.hpp"
 
 class BackRefFromAssociatedObject {
  public:
@@ -38,10 +37,7 @@ class BackRefFromAssociatedObject {
 
  private:
   union {
-    struct {
-      kotlin::mm::ExternalRCRefImpl* ref_;
-      kotlin::ManuallyScoped<kotlin::RWSpinLock> deallocMutex_;
-    }; // Regular object.
+    kotlin::ManuallyScoped<kotlin::mm::ObjCBackRef> ref_; // Regular object.
     ObjHeader* permanentObj_; // Permanent object.
   };
 };
