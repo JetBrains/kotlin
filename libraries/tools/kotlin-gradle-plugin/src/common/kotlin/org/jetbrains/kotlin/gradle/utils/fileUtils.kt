@@ -25,7 +25,6 @@ import kotlin.use
  *
  * Useful to create for [org.gradle.api.tasks.util.PatternFilterable] Ant-style patterns.
  */
-@OptIn(ExperimentalStdlibApi::class)
 internal fun String.fileExtensionCasePermutations(): List<String> {
     val lowercaseInput = lowercase()
     val length = lowercaseInput.length

@@ -1262,7 +1262,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     }
 
     // Task action.
-    @OptIn(ExperimentalStdlibApi::class)
     @TaskAction
     fun processInterop() {
         val buildMetrics = metrics.get()
