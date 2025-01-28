@@ -139,6 +139,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitErrorProperty(errorProperty: FirErrorProperty, data: Nothing?) {
+        withAnnotationContainer(errorProperty) {
+            visitWithDeclaration(errorProperty)
+        }
+    }
+
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
         withAnnotationContainer(typeAlias) {
             visitWithDeclaration(typeAlias)
