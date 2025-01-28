@@ -71,7 +71,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     val staticallyKnownType = expandedCastType.withArguments(newArguments.toTypedArray())
 
     return when {
-        properStaticallyKnownType == null -> staticallyKnownType
+        properStaticallyKnownType == null -> staticallyKnownType.withAdditionalAttribute(DeprecatedBareDowncastAttribute)
         else -> properStaticallyKnownType
     }
 }

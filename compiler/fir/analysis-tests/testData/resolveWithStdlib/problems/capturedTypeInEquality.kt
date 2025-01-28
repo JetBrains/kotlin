@@ -16,7 +16,7 @@ interface FirTarget<E : FirTargetElement> {
 
 fun foo(target: FirTarget<FirFunction<*>>, property: FirProperty) {
     val functionTarget = target.labeledElement
-    val x = (functionTarget <!USELESS_CAST!>as? FirFunction<!>)?.let {
+    val x = (functionTarget <!USELESS_CAST!>as? <!DEPRECATED_BARE_DOWNCAST!>FirFunction<!><!>)?.let {
         if (property.getter === functionTarget) {
             return@let 1
         }

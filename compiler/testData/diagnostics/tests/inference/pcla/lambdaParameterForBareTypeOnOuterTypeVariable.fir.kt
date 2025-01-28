@@ -17,6 +17,6 @@ interface B<G> : A<G>
 fun main(a: A<*>) {
     generate {
         yield(a)
-        t is B
+        t is <!DEPRECATED_BARE_DOWNCAST!>B<!>
     }.a
 }

@@ -1612,6 +1612,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CANNOT_CHECK_FOR_ERASED by error<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+        val DEPRECATED_BARE_DOWNCAST by warning<PsiElement> {
+            parameter<ConeKotlinType>("currentType")
+        }
         val CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING by warning<PsiElement> {
             parameter<ConeKotlinType>("type")
         }

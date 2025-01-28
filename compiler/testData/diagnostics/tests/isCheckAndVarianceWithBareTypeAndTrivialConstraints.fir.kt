@@ -5,4 +5,4 @@
 
 interface MyList<out E> : List<E>
 
-fun test(a: List<Any?>) = a is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING!>MyList<!>
+fun test(a: List<Any?>) = a is <!CANNOT_CHECK_FOR_ERASED_DEPRECATION_WARNING, DEPRECATED_BARE_DOWNCAST!>MyList<!>

@@ -18,7 +18,7 @@ interface C : B<C> {
 fun test(x: A<*>) {
     when ((x as? C)?.field) {
         is String -> {
-            if ((x as? B)?.cond == true) {
+            if ((x as? <!DEPRECATED_BARE_DOWNCAST!>B<!>)?.cond == true) {
                 x.foo()
             }
         }

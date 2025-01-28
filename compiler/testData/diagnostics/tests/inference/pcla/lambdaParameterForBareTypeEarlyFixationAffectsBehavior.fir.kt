@@ -35,7 +35,7 @@ fun main(a: A<*>, c: C) {
     // Without the last `yield` call, it would be even green in K2
     val x2 = generate {
         predicate(a, this) { x ->
-            x is B
+            x is <!DEPRECATED_BARE_DOWNCAST!>B<!>
         }
 
         // For Sv we've got an EQUALITY constraint to A<*>

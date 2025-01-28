@@ -3232,6 +3232,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val type: KaType
     }
 
+    interface DeprecatedBareDowncast : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecatedBareDowncast::class
+        val currentType: KaType
+    }
+
     interface CannotCheckForErasedDeprecationWarning : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CannotCheckForErasedDeprecationWarning::class
         val type: KaType

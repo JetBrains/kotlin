@@ -167,6 +167,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
         get() = setOf(
+            FirDeprecatedBareDowncastChecker,
             FirCastOperatorsChecker,
         )
 
