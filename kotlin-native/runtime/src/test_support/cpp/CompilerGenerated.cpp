@@ -209,10 +209,6 @@ void ReportUnhandledException(KRef throwable) {
     return reportUnhandledExceptionMock->Call(throwable);
 }
 
-RUNTIME_NORETURN OBJ_GETTER(DescribeObjectForDebugging, KConstNativePtr typeInfo, KConstNativePtr address) {
-    throw std::runtime_error("Not implemented for tests");
-}
-
 void Kotlin_runUnhandledExceptionHook(KRef throwable) {
     if (!Kotlin_runUnhandledExceptionHookMock) throw std::runtime_error("Not implemented for tests");
 
