@@ -72,6 +72,6 @@ class <!CONFLICTING_OVERLOADS!>mest<!>
 private <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 
 class ErrorDestructuring {
-    val <!SYNTAX!>(a, b)<!> = 1 to 2
-    val <!SYNTAX!>(c, d)<!> = 1 to 2
+    val <!SYNTAX!>(a, b)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
+    val <!SYNTAX!>(c, d)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
 }
