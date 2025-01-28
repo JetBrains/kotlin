@@ -102,7 +102,6 @@ class PropertiesBuildServiceTest {
                 is PropertiesBuildService.NullableStringGradleProperty -> properties.property(property, project).orNull
                 is PropertiesBuildService.IntGradleProperty -> properties.property(property, project).get()
                 is PropertiesBuildService.NullableBooleanGradleProperty -> properties.property(property, project).orNull
-                else -> error("Unexpected property type ${property::class}")
             }
         )
     }

@@ -52,6 +52,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 dependencies {
                     implementation(project())
                     implementation(gradleKotlinDsl())
+                    implementation(project(":compiler:cli-common"))
                     implementation(platform(libs.junit.bom))
                     implementation(libs.junit.jupiter.api)
                     implementation(project(":kotlin-test"))
