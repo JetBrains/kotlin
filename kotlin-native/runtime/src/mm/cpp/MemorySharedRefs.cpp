@@ -5,59 +5,66 @@
 
 #include "MemorySharedRefs.hpp"
 
-using namespace kotlin;
+#include "ExternalRCRef.hpp"
 
-BackRefFromAssociatedObject::~BackRefFromAssociatedObject() {
-    if (!permanent) {
-        ref_.destroy();
-    }
-}
+using namespace kotlin;
 
 void BackRefFromAssociatedObject::initForPermanentObject(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
     RuntimeAssert(obj->permanent(), "Can only be called with permanent object");
-    permanentObj_ = obj;
-    permanent = true;
+    ref_.emplace<PermanentRef>(obj);
 }
 
 void BackRefFromAssociatedObject::initAndAddRef(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
     RuntimeAssert(!obj->permanent(), "Can only be called with non-permanent object");
-    ref_.construct(obj);
-    permanent = false;
+    ref_.emplace<RegularRef>(obj);
 }
 
 void BackRefFromAssociatedObject::initWithExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
     if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
-        permanentObj_ = obj;
-        permanent = true;
+        ref_.emplace<PermanentRef>(obj);
     }
-    ref_.construct(mm::ExternalRCRefImpl::fromRaw(ref));
-    permanent = false;
+    ref_.emplace<RegularRef>(mm::ExternalRCRefImpl::fromRaw(ref));
 }
 
 void BackRefFromAssociatedObject::addRef() {
-    ref_->retain();
+    if (auto* ref = std::get_if<RegularRef>(&ref_)) {
+        ref->retain();
+    }
 }
 
 bool BackRefFromAssociatedObject::tryAddRef() {
-    return ref_->tryRetain();
+    if (auto* ref = std::get_if<RegularRef>(&ref_)) {
+        return ref->tryRetain();
+    }
+    return false;
 }
 
 void BackRefFromAssociatedObject::releaseRef() {
-    ref_->release();
+    if (auto* ref = std::get_if<RegularRef>(&ref_)) {
+        ref->release();
+    }
 }
 
 ObjHeader* BackRefFromAssociatedObject::ref() const {
-    if (permanent) {
-        return permanentObj_;
-    }
-    return **ref_;
+    return std::visit([](auto&& arg) noexcept -> KRef {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, PermanentRef>) {
+            return arg;
+        } else if constexpr (std::is_same_v<T, RegularRef>) {
+            return *arg;
+        }
+    }, ref_);
 }
 
 mm::RawExternalRCRef* BackRefFromAssociatedObject::externalRCRef() const noexcept {
-    if (permanent) {
-        return mm::permanentObjectAsExternalRCRef(permanentObj_);
-    }
-    return ref_->get()->toRaw();
+    return std::visit([](auto&& arg) noexcept -> mm::RawExternalRCRef*{
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, PermanentRef>) {
+            return mm::permanentObjectAsExternalRCRef(arg);
+        } else if constexpr (std::is_same_v<T, RegularRef>) {
+            return arg.get()->toRaw();
+        }
+    }, ref_);
 }
