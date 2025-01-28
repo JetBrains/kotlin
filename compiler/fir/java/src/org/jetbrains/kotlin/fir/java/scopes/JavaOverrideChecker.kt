@@ -96,7 +96,7 @@ class JavaOverrideChecker internal constructor(
             // like containsAll(Collection<?>) vs containsAll(Collection<E>)
             // or putAll(Map<? extends K, ?>) vs putAll(Map<? extends K, V>)
             // We do the same in pre-2.2 mode (as it worked so at this period of time in K2)
-            if (baseFromBuiltins ||
+            if (/*baseFromBuiltins || */
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.ProperHandlingOfGenericAndRawTypesInJavaOverrides)
             ) {
                 return true
