@@ -17,9 +17,10 @@
 #include <string>
 
 #include "Memory.h"
-#include "MemorySharedRefs.hpp"
 
+#include "ManuallyScoped.hpp"
 #include "Natives.h"
+#include "ObjCBackRef.hpp"
 #include "ObjCInterop.h"
 #include "ObjCExportPrivate.h"
 #include "ObjCMMAPI.h"
@@ -53,12 +54,14 @@ static inline struct KotlinObjCClassData* GetKotlinClassData(id objOrClass) {
 
 namespace {
 
-BackRefFromAssociatedObject* getBackRef(id obj, KotlinObjCClassData* classData) {
+using BackRef = ManuallyScoped<mm::ObjCBackRef>;
+
+BackRef& getBackRef(id obj, KotlinObjCClassData* classData) {
   void* body = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(obj) + classData->bodyOffset);
-  return reinterpret_cast<BackRefFromAssociatedObject*>(body);
+  return *reinterpret_cast<ManuallyScoped<mm::ObjCBackRef>*>(body);
 }
 
-BackRefFromAssociatedObject* getBackRef(id obj) {
+BackRef& getBackRef(id obj) {
   // TODO: suboptimal; consider specializing methods for each class.
   auto* classData = GetKotlinClassData(obj);
   return getBackRef(obj, classData);
@@ -81,38 +84,22 @@ id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
   ObjHolder holder;
   auto kotlinObj = AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
 
-  getBackRef(result, classData)->initAndAddRef(kotlinObj);
+  getBackRef(result, classData).construct(kotlinObj);
 
   return result;
 }
 
 id retainImp(id self, SEL _cmd) {
-  getBackRef(self)->addRef();
+  getBackRef(self)->retain();
   return self;
 }
 
 BOOL _tryRetainImp(id self, SEL _cmd) {
-  // TODO: [tryAddRef] currently works only on the owner thread for non-shared objects;
-  // this is a regression for instances of Kotlin subclasses of Obj-C classes:
-  // loading a reference to such an object from Obj-C weak reference now fails on "wrong" thread
-  // unless the object is frozen.
-  try {
-    return getBackRef(self)->tryAddRef();
-  } catch (ExceptionObjHolder& e) {
-    // TODO: check for IncorrectDereferenceException and possible weak property access
-    // Cannot use SourceInfo here, because CoreSymbolication framework (CSSymbolOwnerGetSymbolWithAddress)
-    // fails at recursive retain lock. Similarly, cannot use objc exception here, because its unhandled
-    // exception handler might fail at recursive retain lock too.
-    // TODO: Refactor to be more explicit. Instead of relying on an unhandled exception termination
-    // (and effectively setting a global to alter its behavior), just call an appropriate termination
-    // function by hand.
-    kotlin::DisallowSourceInfo();
-    std::terminate();
-  }
+    return getBackRef(self)->tryRetain();
 }
 
 void releaseImp(id self, SEL _cmd) {
-  getBackRef(self)->releaseRef();
+  getBackRef(self)->release();
 }
 
 void releaseAsAssociatedObjectImp(id self, SEL _cmd) {
@@ -128,7 +115,7 @@ void releaseAsAssociatedObjectImp(id self, SEL _cmd) {
 }
 
 void deallocImp(id self, SEL _cmd) {
-  getBackRef(self)->dealloc();
+  getBackRef(self).destroy();
 
   // [super dealloc]
   auto* classData = GetKotlinClassData(self);
@@ -275,7 +262,7 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
 
   const TypeInfo* actualTypeInfo = Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo);
 
-  int bodySize = sizeof(BackRefFromAssociatedObject);
+  int bodySize = sizeof(BackRef);
   char bodyTypeEncoding[16];
   snprintf(bodyTypeEncoding, sizeof(bodyTypeEncoding), "[%dc]", bodySize);
   BOOL added = class_addIvar(newClass, "kotlinBody", bodySize, /* log2(align) = */ 3, bodyTypeEncoding);
