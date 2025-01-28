@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.gradle.util
  * cartesianProductOf(listOf("a", "b"), listOf(1, 2), listOf(4.3, 6.3)).map { list ->
  *    list[0] // will contain elements of the first argument e.g. "a"
  *    list[1] // will contain elements of the second argument e.g. 2
- *    list[2] // will contain elements of the second argument e.g. 4.3
+ *    list[2] // will contain elements of the third argument e.g. 4.3
  *    // and so on
  * }
  * ```

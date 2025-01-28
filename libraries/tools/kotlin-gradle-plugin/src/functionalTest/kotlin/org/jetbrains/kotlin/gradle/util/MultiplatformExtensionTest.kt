@@ -37,6 +37,14 @@ abstract class MultiplatformExtensionTest {
         project.enableCInteropCommonization()
     }
 
+    protected fun enabledOnCurrentHostForKlibCompilation() {
+        project.enabledOnCurrentHostForKlibCompilation()
+    }
+
+    protected fun disableOnCurrentHostForKlibCompilation() {
+        project.enabledOnCurrentHostForKlibCompilation(false)
+    }
+
     internal suspend fun expectCInteropCommonizerDependent(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent {
         return assertNotNull(
             CInteropCommonizerDependent.from(compilation), "Can't find SharedInterops for ${compilation.name} compilation"

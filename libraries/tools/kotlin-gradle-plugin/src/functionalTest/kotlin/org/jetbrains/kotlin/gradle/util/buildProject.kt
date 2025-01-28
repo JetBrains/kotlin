@@ -186,3 +186,7 @@ fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
 fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
 }
+
+fun Project.enabledOnCurrentHostForKlibCompilation(enabled: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, enabled.toString())
+}

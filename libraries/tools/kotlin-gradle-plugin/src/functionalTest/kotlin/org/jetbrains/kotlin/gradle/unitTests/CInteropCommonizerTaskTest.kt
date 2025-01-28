@@ -34,6 +34,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     @BeforeTest
     override fun setup() {
         enableCInteropCommonization()
+        enabledOnCurrentHostForKlibCompilation()
         super.setup()
     }
 
