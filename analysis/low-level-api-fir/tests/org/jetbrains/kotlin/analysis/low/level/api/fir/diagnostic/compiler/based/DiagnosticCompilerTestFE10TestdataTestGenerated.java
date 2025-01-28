@@ -982,6 +982,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("isCheckAndVarianceWithBareTypeAndTrivialConstraints.kt")
+    public void testIsCheckAndVarianceWithBareTypeAndTrivialConstraints() {
+      runTest("compiler/testData/diagnostics/tests/isCheckAndVarianceWithBareTypeAndTrivialConstraints.kt");
+    }
+
+    @Test
     @TestMetadata("isCheckAndVarianceWithRecursiveBound.kt")
     public void testIsCheckAndVarianceWithRecursiveBound() {
       runTest("compiler/testData/diagnostics/tests/isCheckAndVarianceWithRecursiveBound.kt");
