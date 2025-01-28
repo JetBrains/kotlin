@@ -42,7 +42,7 @@ enum class NativeBuildType(
      *
      * @return The name of the build type.
      */
-    override fun getName(): String = name.toLowerCase(Locale.ENGLISH)
+    override fun getName(): String = name.lowercase()
 
     /** @suppress **/
     @OptIn(InternalKotlinGradlePluginApi::class)

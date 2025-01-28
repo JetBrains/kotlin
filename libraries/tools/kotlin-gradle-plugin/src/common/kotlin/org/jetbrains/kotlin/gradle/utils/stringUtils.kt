@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import kotlin.text.toUpperCase
 
 internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
@@ -19,7 +18,7 @@ internal fun lowerCamelCaseName(vararg nameParts: String?): String {
 }
 
 internal fun dashSeparatedToUpperCamelCase(name: String): String {
-    return name.split("-").joinToString("") { it.capitalize() }
+    return name.split("-").joinToString("") { it.capitalizeAsciiOnly() }
 }
 
 internal fun dashSeparatedName(nameParts: Iterable<String?>) = dashSeparatedName(*nameParts.toList().toTypedArray())
@@ -83,7 +82,7 @@ internal fun escapeStringCharacters(
             } else if (additionalChars != null && additionalChars.indexOf(ch) > -1 && (escapeSlash || prev != '\\')) {
                 buffer.append("\\").append(ch)
             } else if (escapeUnicode && !isPrintableUnicode(ch)) {
-                val hexCode: CharSequence = Integer.toHexString(ch.code).toUpperCase()
+                val hexCode: CharSequence = Integer.toHexString(ch.code).uppercase()
                 buffer.append("\\u")
                 var paddingCount = 4 - hexCode.length
                 while (paddingCount-- > 0) {

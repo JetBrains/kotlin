@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -123,10 +124,10 @@ class FrameworkBinariesTests {
         val buildTypes = listOf("release", "debug")
         testCases.forEach { testCase ->
             buildTypes.forEach { buildType ->
-                val mainFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}Framework${testCase.target.capitalize()}")
+                val mainFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalizeAsciiOnly()}Framework${testCase.target.capitalizeAsciiOnly()}")
                 mainFrameworkConfiguration.validateOutgoing(
                     OutgoingArtifactCheck(
-                        buildType = buildType.toUpperCase(),
+                        buildType = buildType.uppercase(),
                         frameworkTargets = setOf(testCase.targetAttribute),
                         frameworkName = "main.framework",
                         disambiguation1Attribute = testCase.expectedDisambiguation1Attribute,
@@ -167,10 +168,10 @@ class FrameworkBinariesTests {
 
         val buildTypes = listOf("release", "debug")
         buildTypes.forEach { buildType ->
-            val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}FrameworkIosFat")
+            val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalizeAsciiOnly()}FrameworkIosFat")
             universalFrameworkConfiguration.validateOutgoing(
                 OutgoingArtifactCheck(
-                    buildType = buildType.toUpperCase(),
+                    buildType = buildType.uppercase(),
                     frameworkTargets = setOf("ios_x64", "ios_arm64"),
                     frameworkName = "main.framework",
                     disambiguation1Attribute = null,

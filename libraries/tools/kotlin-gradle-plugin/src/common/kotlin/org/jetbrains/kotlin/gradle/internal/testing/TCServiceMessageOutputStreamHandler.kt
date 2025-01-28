@@ -56,7 +56,7 @@ internal class TCServiceMessageOutputStreamHandler(
 
         while (i < end) {
             val c = b[i++]
-            if (c == '\n'.toByte()) {
+            if (c == '\n'.code.toByte()) {
                 append()
                 flushLine()
             } else if (buffer.size() + bytesToAppend() >= messageLimitBytes) {

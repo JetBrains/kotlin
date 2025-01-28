@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.provider.Provider
 import java.io.File
+import java.util.*
 
 internal data class Platform(
     val name: String,
@@ -22,8 +23,8 @@ internal enum class OsType(val osName: String) {
 
 internal fun parsePlatform(name: String, arch: String, uname: Provider<String>): Platform {
     val osType = parseOsType(name)
-    val osArch = if (osType == OsType.WINDOWS) parseWindowsArch(arch.toLowerCase(), uname)
-    else parseOsArch(arch.toLowerCase(), uname)
+    val osArch = if (osType == OsType.WINDOWS) parseWindowsArch(arch.lowercase(), uname)
+    else parseOsArch(arch.lowercase(), uname)
 
     return Platform(
         osType.osName,
@@ -32,7 +33,7 @@ internal fun parsePlatform(name: String, arch: String, uname: Provider<String>):
 }
 
 internal fun parseOsType(type: String): OsType {
-    val name = type.toLowerCase()
+    val name = type.lowercase()
     return when {
         name.contains("windows") -> OsType.WINDOWS
         name.contains("mac") -> OsType.MAC

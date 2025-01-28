@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ModuleCoordinates
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import java.util.*
 
 internal const val UNSPECIFIED_GAV_FIELD = "unspecified"
 
@@ -53,7 +54,7 @@ internal fun getCoordinatesFromPublicationDelegateAndProject(
     project: Project,
     target: KotlinTarget?,
 ): ModuleVersionIdentifier {
-    val moduleName = publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.toLowerCase())
+    val moduleName = publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.lowercase())
     val moduleGroup = publication?.groupId ?: project.group.toString()
     val moduleVersion = publication?.version ?: project.version.toString()
     return getCoordinatesFromGroupNameAndVersion(moduleGroup, moduleName, moduleVersion)

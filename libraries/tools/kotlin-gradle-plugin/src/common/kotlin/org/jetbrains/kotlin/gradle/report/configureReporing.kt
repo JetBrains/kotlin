@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
+import java.util.*
 
 private val availableMetrics = GradleBuildTime.values().map { it.name } + GradleBuildPerformanceMetric.values().map { it.name }
 
@@ -71,7 +72,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
     val buildScanSettings = if (buildReportOutputTypes.contains(BuildReportType.BUILD_SCAN)) {
         val metrics = properties.buildReportBuildScanMetrics?.split(",")?.toSet()
         metrics?.forEach {
-            if (!availableMetrics.contains(it.trim().toUpperCase())) {
+            if (!availableMetrics.contains(it.trim().uppercase())) {
                 throw IllegalStateException("Unknown metric: '$it', list of available metrics: $availableMetrics")
             }
         }

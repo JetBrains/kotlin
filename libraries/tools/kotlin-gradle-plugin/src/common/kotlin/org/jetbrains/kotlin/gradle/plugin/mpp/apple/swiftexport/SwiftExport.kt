@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 internal object SwiftExportConstants {
     const val SWIFT_EXPORT_COMPILATION = "swiftExportMain"
@@ -290,7 +291,7 @@ private fun Project.registerMergeLibraryTask(
     }
 
     val mergeTask = locateOrRegisterTask<MergeStaticLibrariesTask>(mergeTaskName) { task ->
-        task.description = "Merges multiple ${configuration.capitalize()} Swift Export libraries into one"
+        task.description = "Merges multiple ${configuration.capitalizeAsciiOnly()} Swift Export libraries into one"
         task.group = taskGroup
 
         // Output
@@ -327,7 +328,7 @@ private fun Project.registerCopyTask(
     )
 
     val copyTask = locateOrRegisterTask<CopySwiftExportIntermediatesForConsumer>(copyTaskName) { task ->
-        task.description = "Copy ${configuration.capitalize()} SPM intermediates"
+        task.description = "Copy ${configuration.capitalizeAsciiOnly()} SPM intermediates"
         task.group = taskGroup
 
         // Input

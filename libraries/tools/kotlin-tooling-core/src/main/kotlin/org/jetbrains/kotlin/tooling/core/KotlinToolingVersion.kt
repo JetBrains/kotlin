@@ -59,8 +59,7 @@ class KotlinToolingVersion(
     }
 
     val maturity: Maturity = run {
-        @Suppress("DEPRECATION_ERROR") // needed when compiled with AV > 1.4
-        val classifier = this.classifier?.toLowerCase(Locale.ROOT)
+        val classifier = this.classifier?.lowercase()
         when {
             classifier == null || classifier.matches(Regex("""(release-)?\d+""")) -> Maturity.STABLE
             classifier == "snapshot" -> Maturity.SNAPSHOT
@@ -130,8 +129,7 @@ class KotlinToolingVersion(
         if (this.major != other.major) return false
         if (this.minor != other.minor) return false
         if (this.patch != other.patch) return false
-        @Suppress("DEPRECATION_ERROR") // needed when compiled with AV > 1.4
-        if (this.classifier?.toLowerCase(Locale.ROOT) != other.classifier?.toLowerCase(Locale.ROOT)) return false
+        if (this.classifier?.lowercase() != other.classifier?.lowercase()) return false
         return true
     }
 

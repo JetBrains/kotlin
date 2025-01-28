@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.d8
 
+import java.util.*
+
 /**
  * Provides platform and architecture names that is used to download D8.
  */
@@ -13,7 +15,7 @@ internal object D8Platform {
 
     val name: String
         get() {
-            val osName = property("os.name").toLowerCase()
+            val osName = property("os.name").lowercase()
             return when {
                 osName.contains("windows") -> WIN
                 osName.contains("mac") -> DARWIN

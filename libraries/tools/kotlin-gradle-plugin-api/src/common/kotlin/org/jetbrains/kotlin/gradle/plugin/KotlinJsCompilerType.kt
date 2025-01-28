@@ -50,7 +50,7 @@ enum class KotlinJsCompilerType {
  */
 @Deprecated("This method is planned to be removed")
 val KotlinJsCompilerType.lowerName
-    get() = name.toLowerCase(Locale.ENGLISH)
+    get() = name.lowercase()
 
 /**
  * @suppress
