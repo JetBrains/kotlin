@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.utils.*
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.relativeTo
 
 /**
@@ -21,7 +20,6 @@ import kotlin.io.path.relativeTo
  */
 internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChecker : KotlinAndroidSourceSetLayoutChecker {
 
-    @OptIn(ExperimentalPathApi::class)
     override fun checkCreatedSourceSet(
         diagnosticsCollector: KotlinToolingDiagnosticsCollector,
         target: KotlinAndroidTarget,
