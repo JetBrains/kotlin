@@ -17,14 +17,18 @@ public class SirTrampolineDeclarationsProviderImpl(
     private val sirSession: SirSession,
     private val targetPackageFqName: FqName?,
 ) : SirTrampolineDeclarationsProvider {
+    private var isNewGenerationsAllowed = true
     private val generatedDeclarations: MutableMap<SirDeclaration, List<SirDeclaration>> = mutableMapOf()
 
     override fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = generateDeclarations(this)
 
-    private fun generateDeclarations(declaration: SirDeclaration): List<SirDeclaration> = generatedDeclarations.getOrPut(declaration) {
-        if (targetPackageFqName == null)
-            return emptyList()
+    override fun forbidFurtherTrampolineGenerations() {
+        isNewGenerationsAllowed = false
+    }
 
+    private fun generateDeclarations(declaration: SirDeclaration): List<SirDeclaration> = generatedDeclarations.getOrPut(declaration) {
+        if (targetPackageFqName == null || !isNewGenerationsAllowed)
+            return emptyList()
 
         with(sirSession) {
             val targetEnum = if (declaration is SirEnum && declaration.isNamespace(targetPackageFqName)) {

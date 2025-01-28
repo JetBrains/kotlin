@@ -76,6 +76,7 @@ private fun traverseTopLevelDeclarationsInScopes(
             }
         }
     }
+    sirSession.forbidFurtherTrampolineGenerations()
 }
 
 /**

@@ -84,6 +84,8 @@ public interface SirSession :
 
     override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
         with(childrenProvider) { this@extractDeclarations.extractDeclarations(ktAnalysisSession) }
+
+    override fun forbidFurtherTrampolineGenerations(): Unit = trampolineDeclarationsProvider.forbidFurtherTrampolineGenerations()
 }
 
 /**
@@ -125,6 +127,7 @@ public interface SirParentProvider {
  */
 public interface SirTrampolineDeclarationsProvider {
     public fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration>
+    public fun forbidFurtherTrampolineGenerations()
 }
 
 /**

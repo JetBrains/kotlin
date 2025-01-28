@@ -100,6 +100,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("kt-72450")
+  public void testKt_72450() {
+    runTest("native/swift/swift-export-standalone/testData/generation/kt-72450/");
+  }
+
+  @Test
   @TestMetadata("list")
   public void testList() {
     runTest("native/swift/swift-export-standalone/testData/generation/list/");
