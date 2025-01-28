@@ -29,9 +29,9 @@
 
 /K.kt:(376,397): warning: 'AtomicReference' uses identity equality, but 'Long' does not have a consistent identity. Consider using 'AtomicLong' instead.
 
-/K.kt:(425,447): warning: 'AtomicReference' uses identity equality, but 'Boolean' does not have a consistent identity.
+/K.kt:(425,447): warning: 'AtomicReference' uses identity equality, but 'Boolean' does not have a consistent identity. Consider using 'AtomicBoolean' instead.
 
-/K.kt:(461,485): warning: 'AtomicReference' uses identity equality, but 'Boolean' does not have a consistent identity.
+/K.kt:(461,485): warning: 'AtomicReference' uses identity equality, but 'Boolean' does not have a consistent identity. Consider using 'AtomicBoolean' instead.
 
 /K.kt:(539,564): warning: 'AtomicArray' uses identity equality, but 'Int' does not have a consistent identity. Consider using 'AtomicIntArray' instead.
 

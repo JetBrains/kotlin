@@ -162,11 +162,13 @@ object StandardClassIds {
 
     val EnumEntries = "EnumEntries".enumsId()
 
+    val AtomicBoolean = "AtomicBoolean".atomicsId()
     val AtomicInt = "AtomicInt".atomicsId()
     val AtomicLong = "AtomicLong".atomicsId()
     val AtomicReference = "AtomicReference".atomicsId()
 
     val atomicByPrimitive = mapOf(
+        Boolean to AtomicBoolean,
         Int to AtomicInt,
         Long to AtomicLong,
     )
