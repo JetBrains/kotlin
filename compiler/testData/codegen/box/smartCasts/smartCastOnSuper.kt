@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
-
 open class AbstractDocument {
     fun foo() = "OK"
 }

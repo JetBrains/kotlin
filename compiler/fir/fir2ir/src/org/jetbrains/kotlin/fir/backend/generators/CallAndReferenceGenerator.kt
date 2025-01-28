@@ -511,6 +511,10 @@ class CallAndReferenceGenerator(
         val dispatchReceiver = qualifiedAccess.dispatchReceiver
         val calleeReference = qualifiedAccess.calleeReference
 
+        if (calleeReference is FirSuperReference && dispatchReceiver != null) {
+            return visitor.convertToIrExpression(dispatchReceiver)
+        }
+
         val firSymbol = calleeReference.extractDeclarationSiteSymbol(c)
         val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
@@ -548,11 +552,6 @@ class CallAndReferenceGenerator(
         }
 
         return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
-            if (calleeReference is FirSuperReference) {
-                if (dispatchReceiver != null) {
-                    return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
-                }
-            }
             val irSymbol = firSymbol?.toIrSymbolForCall(
                 c,
                 dispatchReceiver,
