@@ -90,6 +90,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 libraries = libraries,
                 friendLibraries = friendLibraries,
                 diagnosticsReporter = input.diagnosticCollector,
+                performanceManager = configuration.perfManager,
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 lookupTracker = lookupTracker,
                 useWasmPlatform = isWasm,
@@ -167,6 +168,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         libraries: List<String>,
         friendLibraries: List<String>,
         diagnosticsReporter: BaseDiagnosticsCollector,
+        performanceManager: CommonCompilerPerformanceManager?,
         incrementalDataProvider: IncrementalDataProvider?,
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
@@ -181,7 +183,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
+                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, performanceManager?.let { it::addSourcesStats })
             },
             useWasmPlatform = useWasmPlatform,
         )
