@@ -26,6 +26,7 @@ internal fun ServiceRegistry.execWithProgress(
     val stdout = StringBuilder()
     val stdInPipe = PipedInputStream()
     val processRunnerBuilder = objects.execHandleBuilder {
+        displayName = description
         standardOutput = PipedOutputStream(stdInPipe)
         redirectErrorStream = readStdErr
         ignoreExitValue = true
@@ -77,7 +78,9 @@ internal fun ServiceRegistry.execWithErrorLogger(
 ): ExecResult {
     return operation(description) {
         progress(description)
-        val processHandleBuilder = objects.execHandleBuilder()
+        val processHandleBuilder = objects.execHandleBuilder {
+            displayName = description
+        }
         val (standardClient, errorClient) = body(processHandleBuilder, this@operation)
         processHandleBuilder.ignoreExitValue = true
         val processHandle = processHandleBuilder.build()

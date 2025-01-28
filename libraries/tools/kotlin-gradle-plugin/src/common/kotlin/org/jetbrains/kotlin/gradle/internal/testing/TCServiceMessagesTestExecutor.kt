@@ -10,9 +10,9 @@ import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.utils.processes.ExecHandle
+import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder.Companion.execHandleBuilder
 import org.jetbrains.kotlin.gradle.utils.processes.ExecResult
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
-import org.jetbrains.kotlin.gradle.utils.processes.ExecHandleBuilder.Companion.execHandleBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.OutputStream
@@ -39,6 +39,7 @@ open class TCServiceMessagesTestExecutionSpec(
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing")
 
 class TCServiceMessagesTestExecutor(
+    val description: String,
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreTcsmOverflow: Boolean,
     val ignoreRunFailures: Boolean,
@@ -56,6 +57,8 @@ class TCServiceMessagesTestExecutor(
 
             if (spec.dryRunArgs != null) {
                 execHandle = objects.execHandleBuilder {
+                    displayName = description
+
                     setArguments(spec.dryRunArgs)
 
                     launchOpts {

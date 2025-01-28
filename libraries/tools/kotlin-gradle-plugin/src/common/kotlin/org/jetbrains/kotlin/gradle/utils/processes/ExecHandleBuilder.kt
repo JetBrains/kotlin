@@ -25,6 +25,7 @@ import java.util.concurrent.Executors
 internal class ExecHandleBuilder(
     val launchOpts: ProcessLaunchOptions,
 ) {
+    var displayName: String = ""
 
     /** Sets whether a non-zero exit value is ignored, else throw an exception. */
     var ignoreExitValue: Boolean = false
@@ -87,7 +88,7 @@ internal class ExecHandleBuilder(
         val environment = launchOpts.environment.orNull.orEmpty()
 
         return ExecHandle(
-            displayName = "command '$executable'",
+            displayName = displayName.ifBlank { "command '$executable'" },
             directory = workingDir,
             command = executable,
             arguments = arguments,

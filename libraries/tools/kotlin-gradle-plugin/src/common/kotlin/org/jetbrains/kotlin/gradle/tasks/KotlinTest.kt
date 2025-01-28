@@ -83,9 +83,10 @@ constructor(
     // This method is called on execution time
     override fun createTestExecuter(): TestExecuter<*> =
         TCServiceMessagesTestExecutor(
-            runListeners,
-            ignoreTcsmOverflow.get(),
-            ignoreRunFailures,
-            objects,
+            description = path,
+            runListeners = runListeners,
+            ignoreTcsmOverflow = ignoreTcsmOverflow.get(),
+            ignoreRunFailures = ignoreRunFailures,
+            objects = objects,
         )
 }
