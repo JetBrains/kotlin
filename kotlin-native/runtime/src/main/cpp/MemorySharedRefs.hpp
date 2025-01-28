@@ -6,14 +6,13 @@
 #ifndef RUNTIME_MEMORYSHAREDREFS_HPP
 #define RUNTIME_MEMORYSHAREDREFS_HPP
 
-#include "ManuallyScoped.hpp"
+#include <variant>
+
 #include "Memory.h"
 #include "ObjCBackRef.hpp"
 
 class BackRefFromAssociatedObject {
  public:
-  ~BackRefFromAssociatedObject();
-
   void initForPermanentObject(ObjHeader* obj);
 
   void initAndAddRef(ObjHeader* obj);
@@ -30,14 +29,12 @@ class BackRefFromAssociatedObject {
 
   kotlin::mm::RawExternalRCRef* externalRCRef() const noexcept;
 
-  bool isPermanent() const noexcept { return permanent; }
+  bool isPermanent() const noexcept { return std::holds_alternative<PermanentRef>(ref_); }
 
  private:
-  union {
-    kotlin::ManuallyScoped<kotlin::mm::ObjCBackRef> ref_; // Regular object.
-    ObjHeader* permanentObj_; // Permanent object.
-  };
-  bool permanent;
+  using PermanentRef = KRef;
+  using RegularRef = kotlin::mm::ObjCBackRef;
+  std::variant<RegularRef, PermanentRef> ref_;
 };
 
 #endif // RUNTIME_MEMORYSHAREDREFS_HPP
