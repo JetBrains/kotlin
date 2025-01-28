@@ -2,6 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-73508
 // FULL_JDK
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.atomicfu.*
 
@@ -20,3 +21,5 @@ fun testTypealiased() {
     val aa: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicfuAtomicReference<Int><!>
     aa = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>atomic<Int>(127)<!>
 }
+
+fun testArray(a: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray<Int><!>) {}
