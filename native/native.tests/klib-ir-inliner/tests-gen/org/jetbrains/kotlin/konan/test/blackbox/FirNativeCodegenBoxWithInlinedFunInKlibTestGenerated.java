@@ -44239,6 +44239,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("smartCastOnSuper.kt")
+      public void testSmartCastOnSuper() {
+        runTest("compiler/testData/codegen/box/smartCasts/smartCastOnSuper.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastedGenericWhenSubjectInRangeCheck.kt")
       public void testSmartCastedGenericWhenSubjectInRangeCheck() {
         runTest("compiler/testData/codegen/box/smartCasts/smartCastedGenericWhenSubjectInRangeCheck.kt");
