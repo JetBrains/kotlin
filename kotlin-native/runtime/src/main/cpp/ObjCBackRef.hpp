@@ -74,7 +74,7 @@ public:
     }
 
     // Try incrementing refcount. Will fail if the underlying object is not alive.
-    // Must be called in the runnable state.
+    // Must be called in the native state.
     [[nodiscard("refcount change must be processed")]] bool tryRetain() noexcept {
         // Only this method can be called in parallel with the destructor.
         std::shared_lock guard(deallocMutex_, std::try_to_lock);
