@@ -508,7 +508,7 @@ private class LibraryDeserializer(
 
             return when (proto.annotationCount) {
                 0 -> return AbiAnnotationListImpl.EMPTY
-                else -> AbiAnnotationListImpl(proto.annotationList.memoryOptimizedMap(::deserialize))
+                else -> AbiAnnotationListImpl(TODO("Deserialize also new format") /*proto.annotationOldList.memoryOptimizedMap(::deserialize)*/)
             }
         }
 

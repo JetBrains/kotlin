@@ -43,16 +43,30 @@ public interface IrFileOrBuilder extends
   int getFqName(int index);
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation_old = 4;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationOldList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation_old = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotationOld(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation_old = 4;</code>
+   */
+  int getAnnotationOldCount();
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage annotation = 7;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage> 
       getAnnotationList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage annotation = 7;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage getAnnotation(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage annotation = 7;</code>
    */
   int getAnnotationCount();
 

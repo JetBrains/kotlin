@@ -31,14 +31,13 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoTy
 class IrFileDeserializer(
     val file: IrFile,
     private val libraryFile: IrLibraryFile,
-    fileProto: ProtoFile,
+    private val fileProto: ProtoFile,
     val symbolDeserializer: IrSymbolDeserializer,
     val declarationDeserializer: IrDeclarationDeserializer,
 ) {
     val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
 
-    /** Once deserialized this property is set to `null`. */
-    private var protoAnnotationsPendingDeserialization: List<ProtoConstructorCall>? = fileProto.annotationList
+    private var deserializedFileAnnotations = false
 
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
         return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig)).also {
@@ -60,13 +59,11 @@ class IrFileDeserializer(
      * @return If the annotations have been actually deserialized on this invocation.
      */
     fun deserializeFileImplicitDataIfFirstUse(): Boolean {
-        protoAnnotationsPendingDeserialization?.let {
-            file.annotations += declarationDeserializer.deserializeAnnotations(it)
-            protoAnnotationsPendingDeserialization = null
-
+        if (!deserializedFileAnnotations) {
+            file.annotations += declarationDeserializer.deserializeAnnotations(fileProto.annotationOldList, fileProto.annotationList)
+            deserializedFileAnnotations = true
             return true
         }
-
         return false
     }
 }

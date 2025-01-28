@@ -18,7 +18,8 @@ message IrFile {
   repeated int32 declaration_id = 1 [packed=true];
   required FileEntry file_entry = 2;
   repeated int32 fq_name = 3 [packed=true];
-  repeated IrConstructorCall annotation = 4;
+  repeated IrConstructorCall annotation_old = 4;
+  repeated IrAnnotationUsage annotation = 7;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
 
   // WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
@@ -80,7 +81,8 @@ message IdSignature {
 // If x...xxx00 -> *
 
 message IrSimpleTypeLegacy {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrConstructorCall annotation_old = 1;
+  repeated IrAnnotationUsage annotation = 6;
   required int64 classifier = 2;
   required bool has_question_mark = 3;
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
@@ -94,7 +96,8 @@ enum IrSimpleTypeNullability {
 }
 
 message IrSimpleType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrConstructorCall annotation_old = 1;
+  repeated IrAnnotationUsage annotation = 6;
   required int64 classifier = 2;
   optional IrSimpleTypeNullability nullability = 3 [default=NOT_SPECIFIED];
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
@@ -102,14 +105,16 @@ message IrSimpleType {
 }
 
 message IrTypeAbbreviation {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrConstructorCall annotation_old = 1;
+  repeated IrAnnotationUsage annotation = 5;
   required int64 type_alias = 2;
   required bool has_question_mark = 3;
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
 }
 
 message IrDynamicType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrConstructorCall annotation_old = 1;
+  repeated IrAnnotationUsage annotation = 2;
 }
 
 message IrDefinitelyNotNullType {
@@ -118,7 +123,8 @@ message IrDefinitelyNotNullType {
 }
 
 message IrErrorType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrConstructorCall annotation_old = 1;
+  repeated IrAnnotationUsage annotation = 2;
 }
 
 message IrType {
@@ -507,12 +513,23 @@ message NullableIrExpression {
 
 /* ------ Declarations --------------------------------------------- */
 
+message IrAnnotationUsage {
+  required int64 class_symbol = 1;
+  repeated IrAnnotationUsageProperty property = 2;
+}
+
+message IrAnnotationUsageProperty {
+  required string name = 1;
+  required NullableIrExpression value = 2;
+}
+
 message IrDeclarationBase {
   required int64 symbol = 1;
   required int32 origin_name = 2;
   required int64 coordinates = 3;
   optional int64 flags = 4 [default = 0];
-  repeated IrConstructorCall annotation = 5;
+  repeated IrConstructorCall annotation_old = 5;
+  repeated IrAnnotationUsage annotation = 6;
 }
 
 message IrFunctionBase {

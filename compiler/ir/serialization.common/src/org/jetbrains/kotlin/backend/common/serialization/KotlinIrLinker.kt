@@ -10,24 +10,33 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.annotation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
@@ -268,8 +277,36 @@ abstract class KotlinIrLinker(
         }
     }
 
+    private fun fixAnnotationConstructors() {
+        fun fixAnnotation(annotation: IrConstructorCall) {
+            val ctor = annotation.symbol.owner
+            val clazzSymbol = ctor.returnType.classOrFail
+            if (clazzSymbol.isBound && ctor !in clazzSymbol.owner.declarations) {
+                clazzSymbol.owner.declarations += ctor
+                ctor.parent = clazzSymbol.owner
+            }
+        }
+
+        deserializersForModules.values.forEach {
+            it.moduleFragment.accept(object : IrTypeVisitorVoid() {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                    element.acceptChildren(this, null)
+                    if (element is IrAnnotationContainer) {
+                        element.annotations.forEach(::fixAnnotation)
+                    }
+                }
+
+                override fun visitType(container: IrElement, type: IrType) {
+                    type.annotations.forEach(::fixAnnotation)
+                }
+            }, null)
+        }
+    }
+
     override fun postProcess(inOrAfterLinkageStep: Boolean) {
         if (inOrAfterLinkageStep) {
+            fixAnnotationConstructors()
             // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
             // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
             partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
@@ -281,6 +318,7 @@ abstract class KotlinIrLinker(
 
         if (inOrAfterLinkageStep) {
             fixCallableReferences()
+            fixAnnotationConstructors()
 
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
             partialLinkageSupport.generateStubsAndPatchUsages(symbolTable)

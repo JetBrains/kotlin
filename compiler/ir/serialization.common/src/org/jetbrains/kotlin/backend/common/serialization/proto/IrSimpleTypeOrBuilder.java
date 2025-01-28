@@ -8,16 +8,30 @@ public interface IrSimpleTypeOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation_old = 1;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationOldList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation_old = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotationOld(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation_old = 1;</code>
+   */
+  int getAnnotationOldCount();
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage annotation = 6;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage> 
       getAnnotationList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage annotation = 6;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage getAnnotation(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage annotation = 6;</code>
    */
   int getAnnotationCount();
 

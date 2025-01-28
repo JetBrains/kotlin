@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsageProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
@@ -312,16 +315,24 @@ open class IrFileSerializer(
     /* ------- IrTypes ---------------------------------------------------------- */
 
     // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
-    private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
-        annotations.map {
-            for (param in it.arguments) {
-                if (param != null) {
-                    require(param.isValidConstantAnnotationArgument()) {
-                        "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${param.render()}"
+    private fun serializeAnnotations(annotations: List<IrConstructorCall>): List<IrAnnotationUsage> =
+        annotations.map { annotation ->
+            IrAnnotationUsage.newBuilder().apply {
+                this.classSymbol = serializeIrSymbol(annotation.symbol.owner.constructedClass.symbol)
+                for ((param, value) in annotation.symbol.owner.parameters zip annotation.arguments) {
+                    if (value != null) {
+                        require(value.isValidConstantAnnotationArgument()) {
+                            "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${annotation.render()}\nPARAM: ${param.render()}"
+                        }
                     }
+
+                    val property = IrAnnotationUsageProperty.newBuilder().apply {
+                        this.name = param.name.asString()
+                        this.value = serializeNullableExpression(value)
+                    }.build()
+                    addProperty(property)
                 }
-            }
-            serializeConstructorCall(it)
+            }.build()
         }
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
@@ -554,8 +565,6 @@ open class IrFileSerializer(
         }
         for (index in 0 until call.valueArgumentsCount) {
             val arg = call.getValueArgument(index)
-            val argProto = arg?.let { serializeExpression(it) }
-            val argOrNullProto = ProtoNullableIrExpression.newBuilder()
             if (arg == null) {
                 // Am I observing an IR generation regression?
                 // I see a lack of arg for an empty vararg,
@@ -563,14 +572,13 @@ open class IrFileSerializer(
 
                 // TODO: how do we assert that without descriptor?
                 //assert(it.varargElementType != null || it.hasDefaultValue())
-            } else {
-                argOrNullProto.expression = argProto
             }
 
+            val argProto = serializeNullableExpression(arg)
             if (index < call.contextArgumentsCount) {
-                proto.addContextArgument(argOrNullProto)
+                proto.addContextArgument(argProto)
             } else {
-                proto.addRegularArgument(argOrNullProto)
+                proto.addRegularArgument(argProto)
             }
         }
 
@@ -1088,6 +1096,13 @@ open class IrFileSerializer(
 
         return proto.build()
     }
+
+    private fun serializeNullableExpression(expression: IrExpression?) =
+        ProtoNullableIrExpression.newBuilder().also {
+            if (expression != null) {
+                it.expression = serializeExpression(expression)
+            }
+        }.build()
 
     private fun serializeStatement(statement: IrElement): ProtoStatement {
 

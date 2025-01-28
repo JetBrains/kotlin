@@ -11,26 +11,35 @@ import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettin
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationUsage
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
@@ -64,7 +73,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoVariable
 
 class IrDeclarationDeserializer(
-    builtIns: IrBuiltIns,
+    private val builtIns: IrBuiltIns,
     private val symbolTable: SymbolTable,
     val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
@@ -84,6 +93,7 @@ class IrDeclarationDeserializer(
     private fun deserializeName(index: Int): Name = irInterner.name(Name.guessByFirstCharacter(libraryFile.string(index)))
 
     private val irTypeCache = hashMapOf<Int, IrType>()
+    private val irAnnotationConstructorCache = hashMapOf<IrClassSymbol, IrConstructor>()
 
     fun deserializeNullableIrType(index: Int): IrType? = if (index == -1) null else deserializeIrType(index)
 
@@ -103,8 +113,53 @@ class IrDeclarationDeserializer(
     }
 
     // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
-    internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrConstructorCall> {
-        return annotations.memoryOptimizedMap { bodyDeserializer.deserializeAnnotation(it) }
+    internal fun deserializeAnnotations(annotationsOld: List<ProtoConstructorCall>, annotations: List<IrAnnotationUsage>): List<IrConstructorCall> {
+        return if (annotationsOld.isNotEmpty())
+            annotationsOld.memoryOptimizedMap { bodyDeserializer.deserializeAnnotationOld(it) }
+        else
+            annotations.memoryOptimizedMap { deserializeAnnotation(it) }
+    }
+
+    internal fun deserializeAnnotation(proto: IrAnnotationUsage): IrConstructorCallImpl {
+        val classSymbol = deserializeIrSymbol(proto.classSymbol).checkSymbolType<IrClassSymbol>(CLASS_SYMBOL)
+        val properties = proto.propertyList.associate {
+            it.name to if (it.value.hasExpression()) bodyDeserializer.deserializeExpression(it.value.expression) else null
+        }
+        val constructor = irAnnotationConstructorCache.computeIfAbsent(classSymbol) {
+            IrFactoryImpl.createConstructor(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                symbol = IrConstructorSymbolImpl(),
+                origin = IrDeclarationOrigin.DEFINED,
+                name = SpecialNames.INIT,
+                visibility = DescriptorVisibilities.PUBLIC,
+                isInline = false,
+                isExpect = false,
+                returnType = IrSimpleTypeImpl(classSymbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
+                isExternal = false,
+                isPrimary = true,
+                containerSource = null,
+            ).also { constructor ->
+                constructor.parameters = properties.map { (name, value) ->
+                    buildValueParameter(constructor) {
+                        this.name = Name.identifier(name)
+                        type = value?.type ?: builtIns.anyNType
+                        kind = IrParameterKind.Regular
+                    }
+                }
+            }
+        }
+        val constructorCall = IrConstructorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = constructor.returnType,
+            symbol = constructor.symbol,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+            origin = null,
+        )
+        constructorCall.arguments.assignFrom(properties.values)
+        return constructorCall
     }
 
     private fun deserializeSimpleTypeNullability(proto: ProtoSimpleTypeNullablity) = when (proto) {
@@ -118,7 +173,7 @@ class IrDeclarationDeserializer(
             .checkSymbolType<IrClassifierSymbol>(fallbackSymbolKind = /* just the first possible option */ CLASS_SYMBOL)
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
-        val annotations = deserializeAnnotations(proto.annotationList)
+        val annotations = deserializeAnnotations(proto.annotationOldList, proto.annotationList)
         val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
@@ -135,7 +190,7 @@ class IrDeclarationDeserializer(
             .checkSymbolType<IrClassifierSymbol>(fallbackSymbolKind = /* just the first possible option */ CLASS_SYMBOL)
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
-        val annotations = deserializeAnnotations(proto.annotationList)
+        val annotations = deserializeAnnotations(proto.annotationOldList, proto.annotationList)
         val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
@@ -152,7 +207,7 @@ class IrDeclarationDeserializer(
             deserializeIrSymbol(proto.typeAlias).checkSymbolType(TYPEALIAS_SYMBOL),
             proto.hasQuestionMark,
             proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) },
-            deserializeAnnotations(proto.annotationList)
+            deserializeAnnotations(proto.annotationOldList, proto.annotationList)
         )
 
     private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
@@ -161,14 +216,14 @@ class IrDeclarationDeserializer(
         return if (proto.annotationCount == 0) {
             SIMPLE_DYNAMIC_TYPE
         } else {
-            val annotations = deserializeAnnotations(proto.annotationList)
+            val annotations = deserializeAnnotations(proto.annotationOldList, proto.annotationList)
             IrDynamicTypeImpl(annotations, Variance.INVARIANT)
         }
     }
 
     private fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
         if (!settings.allowErrorNodes) throw IrDisallowedErrorNode(IrErrorType::class.java)
-        val annotations = deserializeAnnotations(proto.annotationList)
+        val annotations = deserializeAnnotations(proto.annotationOldList, proto.annotationList)
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
@@ -232,7 +287,7 @@ class IrDeclarationDeserializer(
             deserializeIrDeclarationOrigin(proto.originName), proto.flags
         )
         // avoid duplicate annotations for local variables
-        result.annotations = deserializeAnnotations(proto.annotationList)
+        result.annotations = deserializeAnnotations(proto.annotationOldList, proto.annotationList)
         if (setParent) {
             result.parent = currentParent
         }
@@ -285,7 +340,7 @@ class IrDeclarationDeserializer(
 
         // make sure this symbol is known to linker
         symbolDeserializer.referenceLocalIrSymbol(result.symbol, sig)
-        result.annotations = deserializeAnnotations(proto.base.annotationList)
+        result.annotations = deserializeAnnotations(proto.base.annotationOldList, proto.base.annotationList)
         if (setParent) result.parent = currentParent
         return result
     }
