@@ -1,0 +1,9 @@
+/ErrorProneAtomicRefPrimitives.kt:(163,179): warning: 'AtomicRef' uses identity equality, but 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(271,285): warning: 'AtomicRef' uses identity equality, but 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(389,417): warning: 'AtomicRef' uses identity equality, but 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(427,443): warning: 'AtomicRef' uses identity equality, but 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(464,480): warning: 'AtomicArray' uses identity equality, but 'Int' does not have a consistent identity. Consider using 'AtomicIntArray' instead.
