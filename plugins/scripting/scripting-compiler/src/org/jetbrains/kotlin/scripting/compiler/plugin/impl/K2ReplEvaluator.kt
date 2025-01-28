@@ -36,7 +36,7 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         } ?: configuration
 
         return compiledSnippet.getClass(currentConfiguration).onSuccess { snippetClass ->
-            evalSnippet(snippetClass).let { evaluationResult ->
+            evalSnippet(snippetClass, currentConfiguration).let { evaluationResult ->
                 LinkedSnippetImpl(
                     KJvmEvaluatedSnippet(compiledSnippet, currentConfiguration, evaluationResult),
                     lastEvaluatedSnippet
@@ -47,14 +47,20 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         }
     }
 
-    private fun evalSnippet(snippetClass: KClass<*>): ResultValue {
+    private fun evalSnippet(snippetClass: KClass<*>, configuration: ScriptEvaluationConfiguration): ResultValue {
         val evalFunName = REPL_SNIPPET_EVAL_FUN_NAME.asString()
         val eval = snippetClass.java.methods.find { it.name == evalFunName }!!
 
         val snippet = snippetClass.java.getField("INSTANCE").get(null)
 
+        val args = mutableListOf<Any?>()
+
+        configuration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
+            args.addAll(it)
+        }
+
         return try {
-            val result = eval.invoke(snippet)
+            val result = eval.invoke(snippet, *args.toTypedArray())
 
             // TODO: consider generalizing snippet and script evaluation result handling (KT-74300)
             // (currently scripts are using result fields while snippets - return value from eval fun, but approach is stricter in

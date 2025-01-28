@@ -746,6 +746,7 @@ class Fir2IrVisitor(
         when (val declarationSymbol = calleeReference.referencedMemberSymbol) {
             is FirClassSymbol -> generateThisReceiverAccessForClass(thisReceiverExpression, declarationSymbol)
             is FirScriptSymbol -> generateThisReceiverAccessForScript(thisReceiverExpression, declarationSymbol)
+            is FirReplSnippetSymbol -> generateThisReceiverAccessForReplSnippet(thisReceiverExpression, declarationSymbol)
             is FirCallableSymbol -> generateThisReceiverAccessForCallable(thisReceiverExpression, declarationSymbol)
             else -> null
         } ?: visitQualifiedAccessExpression(thisReceiverExpression, data)
@@ -848,6 +849,26 @@ class Fir2IrVisitor(
             }
         } else {
             error("No script receiver found") // TODO: check if any valid situations possible here
+        }
+    }
+
+    private fun generateThisReceiverAccessForReplSnippet(
+        thisReceiverExpression: FirThisReceiverExpression,
+        firSnippetSymbol: FirReplSnippetSymbol
+    ): IrElement {
+        val calleeReference = thisReceiverExpression.calleeReference
+        val firSnippet = firSnippetSymbol.fir
+        val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
+        val irSnippet = declarationStorage.getCachedIrReplSnippet(firSnippet) ?: error("IrReplSnippet for ${firSnippet.name} not found")
+        val contextParameterNumber = firSnippetSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
+        val receiverParameter =
+            irSnippet.receiverParameters.find { it.indexInParameters == contextParameterNumber }
+        if (receiverParameter != null) {
+            return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol, origin)
+            }
+        } else {
+            error("Unexpected REPL snippet receiver")
         }
     }
 
