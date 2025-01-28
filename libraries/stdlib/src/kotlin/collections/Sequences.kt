@@ -93,7 +93,7 @@ public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> = flatten { it.itera
 
 private fun <T, R> Sequence<T>.flatten(iterator: (T) -> Iterator<R>): Sequence<R> {
     if (this is TransformingSequence<*, *>) {
-        return (this as TransformingSequence<*, T>).flatten(iterator)
+        return (this as TransformingSequence<*, out T>).flatten(iterator)
     }
     return FlatteningSequence(this, { it }, iterator)
 }
@@ -641,7 +641,7 @@ private class GeneratorSequence<T : Any>(private val getInitialValue: () -> T?, 
 public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
     // as? does not work in js
     //return this as? ConstrainedOnceSequence<T> ?: ConstrainedOnceSequence(this)
-    return if (this is ConstrainedOnceSequence<T>) this else ConstrainedOnceSequence(this)
+    return if (this is ConstrainedOnceSequence<out T>) this else ConstrainedOnceSequence(this)
 }
 
 
