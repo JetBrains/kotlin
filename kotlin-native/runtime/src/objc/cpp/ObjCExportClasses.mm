@@ -5,9 +5,10 @@
 
 #import "Types.h"
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
 
 #if KONAN_OBJC_INTEROP
+
+#include <variant>
 
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
@@ -15,6 +16,7 @@
 #import <dispatch/dispatch.h>
 
 #import "CallsChecker.hpp"
+#include "ObjCBackRef.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
@@ -36,16 +38,31 @@ extern "C" KInt Kotlin_hashCode(KRef str);
 extern "C" KBoolean Kotlin_equals(KRef lhs, KRef rhs);
 extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
+namespace {
+
+using PermanentRef = KRef;
+using RegularRef = kotlin::mm::ObjCBackRef;
+
+}
+
 // Note: `KotlinBase`'s `toKotlin` and `_tryRetain` methods will terminate if
 // called with non-frozen object on a wrong worker. `retain` will also terminate
 // in these conditions if backref's refCount is zero.
 
 @implementation KotlinBase {
-  BackRefFromAssociatedObject refHolder;
+  std::variant<RegularRef, PermanentRef> refHolder;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(refHolder.ref());
+    auto obj = std::visit([](auto&& arg) noexcept -> KRef {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, PermanentRef>) {
+            return arg;
+        } else if constexpr (std::is_same_v<T, RegularRef>) {
+            return *arg;
+        }
+    }, refHolder);
+    RETURN_OBJ(obj);
 }
 
 +(void)load {
@@ -89,8 +106,10 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
           class_getName(object_getClass(self))];
   }
   ObjHolder holder;
-  AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
-  result->refHolder.initAndAddRef(holder.obj());
+  auto obj = AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
+  RuntimeAssert(obj != nullptr, "Allocated null");
+  RuntimeAssert(!obj->permanent(), "Allocated permanent object");
+  result->refHolder.emplace<RegularRef>(obj);
   return result;
 }
 
@@ -104,52 +123,52 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
   bool permanent = obj->permanent();
 
   if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
-    candidate->refHolder.initAndAddRef(obj);
+    auto& candidateRegularRef = candidate->refHolder.emplace<RegularRef>(obj);
     if (id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate)) {
       {
         kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-        candidate->refHolder.releaseRef();
+        candidateRegularRef.release();
         [candidate releaseAsAssociatedObject];
       }
       return objc_retain(old);
     }
   } else {
-    candidate->refHolder.initForPermanentObject(obj);
+    candidate->refHolder.emplace<PermanentRef>(obj);
   }
 
   return candidate;
 }
 
 -(instancetype)retain {
-  if (refHolder.isPermanent()) {
-    [super retain];
-  } else {
-    refHolder.addRef();
-  }
-  return self;
+    if (auto* ref = std::get_if<RegularRef>(&refHolder)) {
+        ref->retain();
+    } else {
+        [super retain];
+    }
+    return self;
 }
 
 -(BOOL)_tryRetain {
-  if (refHolder.isPermanent()) {
-    return [super _tryRetain];
-  } else {
-    return refHolder.tryAddRef();
-  }
+    if (auto* ref = std::get_if<RegularRef>(&refHolder)) {
+        return ref->tryRetain();
+    } else {
+        return [super _tryRetain];
+    }
 }
 
 -(oneway void)release {
-  if (refHolder.isPermanent()) {
-    [super release];
-  } else {
-    refHolder.releaseRef();
-  }
+    if (auto* ref = std::get_if<RegularRef>(&refHolder)) {
+        ref->release();
+    } else {
+        [super release];
+    }
 }
 
 -(void)releaseAsAssociatedObject {
-  RuntimeAssert(!refHolder.isPermanent(), "Cannot be called on permanent objects");
-  // No need for any special handling. Weak reference handling machinery
-  // has already cleaned up the reference to Kotlin object.
-  [super release];
+    RuntimeAssert(std::holds_alternative<RegularRef>(refHolder), "Can only be called for regular objects");
+    // No need for any special handling. Weak reference handling machinery
+    // has already cleaned up the reference to Kotlin object.
+    [super release];
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone {
@@ -188,18 +207,20 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
         return self;
     }
 
-    refHolder.initWithExternalRCRef(externalRCRef);
-    if (refHolder.isPermanent()) {
+    if (auto obj = kotlin::mm::externalRCRefAsPermanentObject(externalRCRef)) {
+        refHolder.emplace<PermanentRef>(obj);
         // Cannot attach associated objects to permanent objects.
         return self;
     }
+
+    auto& regularRef = refHolder.emplace<RegularRef>(kotlin::mm::ExternalRCRefImpl::fromRaw(externalRCRef));
 
     id newSelf = nil;
     {
         // TODO: Make it okay to get/replace associated objects w/o runnable state.
         kotlin::CalledFromNativeGuard guard;
         // `ref` holds a strong reference to obj, no need to place obj onto a stack.
-        KRef obj = refHolder.ref();
+        KRef obj = regularRef.ref();
         newSelf = AtomicCompareAndSwapAssociatedObject(obj, nullptr, self);
     }
 
@@ -211,7 +232,7 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
     RuntimeAssert(
             [[newSelf class] isSubclassOfClass:[self class]],
             "During initialization of %p (%s) for Kotlin object %p trying to replace self with %p (%s) that is not a subclass", self,
-            class_getName([self class]), refHolder.ref(), newSelf, class_getName([newSelf class]));
+            class_getName([self class]), regularRef.ref(), newSelf, class_getName([newSelf class]));
 
     KotlinBase* retiredSelf = self; // old `self`
     self = [newSelf retain]; // new `self`, retained.
@@ -225,7 +246,15 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 }
 
 - (uintptr_t)externalRCRef {
-    return reinterpret_cast<uintptr_t>(refHolder.externalRCRef());
+    auto ref = std::visit([](auto&& arg) noexcept -> kotlin::mm::RawExternalRCRef* {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, PermanentRef>) {
+            return kotlin::mm::permanentObjectAsExternalRCRef(arg);
+        } else if constexpr (std::is_same_v<T, RegularRef>) {
+            return arg.get()->toRaw();
+        }
+    }, refHolder);
+    return reinterpret_cast<uintptr_t>(ref);
 }
 
 - (NSString *)description {
