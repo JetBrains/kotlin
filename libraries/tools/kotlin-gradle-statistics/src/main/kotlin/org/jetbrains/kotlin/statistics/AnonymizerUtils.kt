@@ -21,7 +21,7 @@ internal val salt: String by lazy {
 }
 
 fun anonymizeComponentVersion(version: String): String {
-    val parts = version.toLowerCase().replace('-', '.')
+    val parts = version.lowercase().replace('-', '.')
         .split(".")
         .plus(listOf("0", "0", "0")) // pad with zeros
         .take(4)

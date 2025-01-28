@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import java.util.*
 
 /**
  * This checker is used to ensure that there are no duplicate source sets in MPP project.
@@ -23,7 +24,7 @@ internal object DuplicateSourceSetChecker : KotlinGradleProjectChecker {
         val kotlin = project.multiplatformExtensionOrNull ?: return
         val sourceSetNames = kotlin.awaitSourceSets().map { it.name }
         val duplicateSourceSets = sourceSetNames
-            .groupBy { it.toLowerCase() }
+            .groupBy { it.lowercase() }
             .filter { (_, values) -> values.size > 1 }
 
         if (duplicateSourceSets.isNotEmpty()) {

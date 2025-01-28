@@ -72,7 +72,11 @@ internal inline fun <reified T : Any?> ObjectFactory.listPropertyWithConvention(
 
 internal inline fun <reified T : Any?> ObjectFactory.providerWithLazyConvention(
     noinline lazyConventionValue: () -> T
-) = property(lazyConventionValue).map { it.invoke() }
+) = property(lazyConventionValue).map {
+    // Gradle has problems with nullability annotations: https://github.com/gradle/gradle/issues/24767
+    @Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
+    it.invoke()
+}
 
 internal inline fun <reified T : Any> ObjectFactory.newInstance() = newInstance(T::class.java)
 

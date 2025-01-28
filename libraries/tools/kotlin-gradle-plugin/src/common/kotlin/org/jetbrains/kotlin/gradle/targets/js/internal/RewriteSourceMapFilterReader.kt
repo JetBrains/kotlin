@@ -168,7 +168,7 @@ open class RewriteSourceMapFilterReader(
                 return read
             }
         }
-        return buffer[bufferReadPos++].toInt()
+        return buffer[bufferReadPos++].code
     }
 
     override fun read(dest: CharArray, initialDestOffset: Int, n: Int): Int {

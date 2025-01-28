@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
 import org.gradle.api.provider.Provider
+import java.util.*
 
 /**
  * Provides platform and architecture names that is used to download Binaryen.
@@ -26,9 +27,9 @@ internal data class BinaryenPlatform(
 
         internal fun parseBinaryenPlatform(name: String, arch: String, uname: Provider<String>): BinaryenPlatform {
             return BinaryenPlatform(
-                parseOsName(name.toLowerCase()),
+                parseOsName(name.lowercase()),
                 parseOsArch(
-                    arch.toLowerCase(),
+                    arch.lowercase(),
                     uname
                 )
             )
