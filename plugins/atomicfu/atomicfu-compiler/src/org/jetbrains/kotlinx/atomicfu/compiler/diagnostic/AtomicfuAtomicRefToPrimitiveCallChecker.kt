@@ -13,7 +13,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
 
 object AtomicfuAtomicRefToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
     AtomicfuStandardClassIds.AtomicRef,
-    emptyMap(),
+    AtomicfuStandardClassIds.atomicByPrimitive,
     MppCheckerKind.Platform,
 ) {
     override val FirBasedSymbol<*>.canInstantiateProblematicAtomicReference: Boolean

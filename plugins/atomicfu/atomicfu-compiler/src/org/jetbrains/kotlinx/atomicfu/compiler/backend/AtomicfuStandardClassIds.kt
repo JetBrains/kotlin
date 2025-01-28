@@ -9,12 +9,33 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object AtomicfuStandardClassIds {
     val BASE_KOTLINX_PACKAGE = FqName("kotlinx")
     val BASE_ATOMICFU_PACKAGE = BASE_KOTLINX_PACKAGE.child(Name.identifier("atomicfu"))
 
+    val AtomicBoolean = "AtomicBoolean".atomicsId()
+    val AtomicInt = "AtomicInt".atomicsId()
+    val AtomicLong = "AtomicLong".atomicsId()
     val AtomicRef = "AtomicRef".atomicsId()
+
+    val atomicByPrimitive = mapOf(
+        StandardClassIds.Boolean to AtomicBoolean,
+        StandardClassIds.Int to AtomicInt,
+        StandardClassIds.Long to AtomicLong,
+    )
+
+    val AtomicBooleanArray = "AtomicBooleanArray".atomicsId()
+    val AtomicIntArray = "AtomicIntArray".atomicsId()
+    val AtomicLongArray = "AtomicLongArray".atomicsId()
+    val AtomicArray = "AtomicArray".atomicsId()
+
+    val atomicArrayByPrimitive = mapOf(
+        StandardClassIds.Boolean to AtomicBooleanArray,
+        StandardClassIds.Int to AtomicIntArray,
+        StandardClassIds.Long to AtomicLongArray,
+    )
 
     object Callables {
         val atomic = "atomic".callableId(BASE_ATOMICFU_PACKAGE)
