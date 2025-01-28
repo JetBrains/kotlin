@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.psmArtifactsForAllDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.projectDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.utils.future
 
 internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -52,6 +51,6 @@ internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyR
     }
 
     override fun dependencies(project: Project): Iterable<Any> {
-        return project.future { project.psmArtifactsForAllDependencies() }.getOrThrow()
+        return project.psmArtifactsForAllDependencies()
     }
 }
