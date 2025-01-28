@@ -26999,6 +26999,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("multipleSuspendFunctionType.kt")
+      public void testMultipleSuspendFunctionType() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/multipleSuspendFunctionType.kt");
+      }
+
+      @Test
       @TestMetadata("NoLocalVisibility.kt")
       public void testNoLocalVisibility() {
         runTest("compiler/testData/diagnostics/tests/modifiers/NoLocalVisibility.kt");

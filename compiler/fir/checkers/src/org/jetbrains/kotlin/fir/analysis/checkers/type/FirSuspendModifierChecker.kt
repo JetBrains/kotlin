@@ -5,23 +5,32 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRefWithNullability
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
+    private val suspendTokenElementSet = setOf(KtTokens.SUSPEND_KEYWORD)
+
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         // We are only interested in source type refs (i.e., Fir(Dynamic|User|Function)TypeRef).
         if (typeRef !is FirTypeRefWithNullability) return
 
-        val suspendModifier = typeRef.getModifier(KtTokens.SUSPEND_KEYWORD) ?: return
+        val suspendModifierSources = mutableListOf<KtSourceElement>()
+        typeRef.source?.getChild(KtStubElementTypes.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
+            suspendModifierSources += it
+        }
+        if (suspendModifierSources.isEmpty()) return
 
         // `suspend` is invalid for non-function types (i.e., FirDynamicTypeRef or FirUserTypeRef).
         //
@@ -37,11 +46,18 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
         // In both cases, the FirFunctionTypeRef is marked nullable. But it is invalid to have the `suspend` modifier on the source element.
         if (typeRef !is FirFunctionTypeRef || typeRef.isMarkedNullable) {
             reporter.reportOn(
-                suspendModifier.source,
+                suspendModifierSources.first(),
                 FirErrors.WRONG_MODIFIER_TARGET,
-                suspendModifier.token,
+                KtTokens.SUSPEND_KEYWORD,
                 "non-functional type",
                 context
+            )
+        } else if (suspendModifierSources.size > 1) {
+            reporter.reportOn(
+                suspendModifierSources.first(),
+                FirErrors.REPEATED_MODIFIER,
+                KtTokens.SUSPEND_KEYWORD,
+                context,
             )
         }
     }
