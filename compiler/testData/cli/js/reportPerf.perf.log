@@ -1,8 +1,8 @@
 Kotlin to JS Compiler performance report
-        ANALYZE        $INT>>$ ms
-       GENERATE        $INT>>$ ms
-  IR GENERATION        $INT>>$ ms
- IR TRANSLATION        $INT>>$ ms
+        ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
+       GENERATE        $INT>>$ ms            $REAL>>$ loc/s
+  IR GENERATION        $INT>>$ ms            $REAL>>$ loc/s
+ IR TRANSLATION        $INT>>$ ms            $REAL>>$ loc/s
 GC time for PS MarkSweep is $INT$ ms, $INT$ collections
 GC time for PS Scavenge is $INT$ ms, $INT$ collections
 JIT time is $INT$ ms

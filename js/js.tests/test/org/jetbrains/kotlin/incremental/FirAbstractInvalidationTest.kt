@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase.transformFirToIr
 import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase.compileModulesToAnalyzedFirWithLightTree
@@ -110,6 +111,7 @@ abstract class FirAbstractInvalidationTest(
             libraries = libraries,
             friendLibraries = friendLibraries,
             diagnosticsReporter = diagnosticsReporter,
+            performanceManager = configuration.perfManager,
             incrementalDataProvider = null,
             lookupTracker = null,
             useWasmPlatform = false,
