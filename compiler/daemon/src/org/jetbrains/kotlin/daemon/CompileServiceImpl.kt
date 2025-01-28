@@ -288,7 +288,7 @@ abstract class CompileServiceImplBase(
                 is CodeAnalysisMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds))
                     it.lines?.apply {
-                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.ANALYZED_LINES_NUMBER, this.toLong()))
+                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
                         if (it.milliseconds > 0) {
                             performanceMetrics.add(
                                 BuildMetricsValue(
@@ -304,7 +304,7 @@ abstract class CompileServiceImplBase(
                         BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
                     )
                     it.lines?.apply {
-                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATED_LINES_NUMBER, this.toLong()))
+                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
                         if (it.milliseconds > 0) {
                             performanceMetrics.add(
                                 BuildMetricsValue(
