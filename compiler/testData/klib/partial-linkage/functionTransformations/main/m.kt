@@ -33,12 +33,12 @@ fun box() = abiTest {
     expectSuccess(-58) { firstDefaultValueInFunctionInStableClassImpl2(sci2, 100) }
     expectSuccess(58) { lastDefaultValueInFunctionInStableClassImpl2(sci2, 100) }
 
-    expectFailure(linkage("Function 'removedFirstDefaultValue' can not be called: The call site provides less value arguments (1) than the function requires (2)")) { removedFirstDefaultValueInFunction(1) }
+    expectFailure(linkage("Function 'removedFirstDefaultValue' can not be called: The function has some value parameters for which neither the call site provides an argument, nor do they have a default value: a")) { removedFirstDefaultValueInFunction(1) }
     expectSuccess(100) { removedVarargFirstDefaultValueInFunction(100) } // Default IntArray value disappears. So it contrinutes 0 to the sum.
-    expectFailure(linkage("Function 'removedLastDefaultValue' can not be called: The call site provides less value arguments (1) than the function requires (2)")) { removedLastDefaultValueInFunction(1) }
+    expectFailure(linkage("Function 'removedLastDefaultValue' can not be called: The function has some value parameters for which neither the call site provides an argument, nor do they have a default value: b")) { removedLastDefaultValueInFunction(1) }
     expectSuccess(100) { removedVarargLastDefaultValueInFunction(100) } // Default IntArray value disappears. So it contrinutes 0 to the sum.
-    expectFailure(linkage("Constructor 'RemovedFirstDefaultValueInConstructor.<init>' can not be called: The call site provides less value arguments (1) than the constructor requires (2)")) { removedFirstDefaultValueInConstructor(1) }
-    expectFailure(linkage("Constructor 'RemovedLastDefaultValueInConstructor.<init>' can not be called: The call site provides less value arguments (1) than the constructor requires (2)")) { removedLastDefaultValueInConstructor(1) }
+    expectFailure(linkage("Constructor 'RemovedFirstDefaultValueInConstructor.<init>' can not be called: The constructor has some value parameters for which neither the call site provides an argument, nor do they have a default value: a")) { removedFirstDefaultValueInConstructor(1) }
+    expectFailure(linkage("Constructor 'RemovedLastDefaultValueInConstructor.<init>' can not be called: The constructor has some value parameters for which neither the call site provides an argument, nor do they have a default value: b")) { removedLastDefaultValueInConstructor(1) }
 
     expectSuccess(0) { singleVarargArgument() }
     expectSuccess(1) { singleVarargArgument(1) }

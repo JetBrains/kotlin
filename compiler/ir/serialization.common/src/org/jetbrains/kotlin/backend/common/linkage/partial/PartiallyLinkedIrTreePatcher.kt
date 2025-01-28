@@ -718,17 +718,17 @@ internal class PartiallyLinkedIrTreePatcher(
         ): PartialLinkageCase? {
             val function = symbol.owner
 
-            val expressionMayHaveDispatchReceiver = arguments.getOrNull(0) != null
-            val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
-
-            if (expressionMayHaveDispatchReceiver != functionHasDispatchReceiver)
-                return MemberAccessExpressionArgumentsMismatch(
+            if (arguments.size > function.parameters.size) {
+                return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(
                     this,
-                    expressionMayHaveDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    0, // Does not matter here.
-                    0 // Does not matter here.
+                    arguments.size - function.parameters.size
                 )
+            } else if (arguments.size < function.parameters.size) {
+                return MemberAccessExpressionArgumentsMismatch.MissingArguments(
+                    this,
+                    function.parameters.drop(arguments.size)
+                )
+            }
 
             if (function.isExternal) {
                 // External functions may have the default arguments declared in native implementations,
@@ -750,30 +750,26 @@ internal class PartiallyLinkedIrTreePatcher(
                 }
             }
 
-            val expressionValueArgumentCount = arguments.withIndex().count { (index, arg) ->
+            val missingValues = arguments.withIndex().filterNot { (index, arg) ->
                 if (arg != null) {
-                    return@count true
+                    return@filterNot true
                 }
 
                 val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
-                    it.parameters.getOrNull(index)?.defaultValue
+                    it.parameters[index].defaultValue
                 }
 
-                return@count checkDefaultArgument(index, defaultArgumentExpressionBody)
-                        || function.parameters.getOrNull(index)?.isVararg == true
+                return@filterNot checkDefaultArgument(index, defaultArgumentExpressionBody)
+                        || function.parameters[index].isVararg
             }
-            val functionValueParameterCount = function.parameters.size
-
-            return if (expressionValueArgumentCount != functionValueParameterCount)
-                MemberAccessExpressionArgumentsMismatch(
+            if (missingValues.isNotEmpty()) {
+                return MemberAccessExpressionArgumentsMismatch.MissingArgumentValues(
                     this,
-                    expressionMayHaveDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    expressionValueArgumentCount,
-                    functionValueParameterCount
+                    missingValues.map { function.parameters[it.index] }
                 )
-            else
-                null
+            }
+
+            return null
         }
 
         private fun IrFunctionReference.checkArgumentsAndValueParameters(): PartialLinkageCase? {
@@ -838,14 +834,13 @@ internal class PartiallyLinkedIrTreePatcher(
             }
             val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
 
-            if (expressionEffectivelyHasDispatchReceiver != functionHasDispatchReceiver) {
-                return MemberAccessExpressionArgumentsMismatch(
+            if (!expressionEffectivelyHasDispatchReceiver && functionHasDispatchReceiver) {
+                return MemberAccessExpressionArgumentsMismatch.MissingArguments(
                     this,
-                    expressionEffectivelyHasDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    0, // Does not matter here.
-                    0 // Does not matter here.
+                    listOf(function.dispatchReceiverParameter!!)
                 )
+            } else if (expressionEffectivelyHasDispatchReceiver && !functionHasDispatchReceiver) {
+                return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(this, 1)
             }
 
             return null

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
 import org.jetbrains.kotlin.ir.symbols.*
@@ -89,19 +90,30 @@ sealed interface PartialLinkageCase {
     ) : PartialLinkageCase
 
     /**
-     * Expression that refers to an IR function has an excessive or a missing dispatch receiver parameter,
-     * or the number of value arguments in expression does not match the number of value parameters in function
+     * Expression whose value arguments do not match the number of value parameters in a function,
+     * or if argument's value has not been provided and there is no default value either
      * (which may happen, for example, is a default value for a value parameter was removed).
      *
      * Applicable to: Expressions.
      */
-    class MemberAccessExpressionArgumentsMismatch(
+    sealed class MemberAccessExpressionArgumentsMismatch(
         val expression: IrMemberAccessExpression<IrFunctionSymbol>,
-        val expressionHasDispatchReceiver: Boolean,
-        val functionHasDispatchReceiver: Boolean,
-        val expressionValueArgumentCount: Int,
-        val functionValueParameterCount: Int
-    ) : PartialLinkageCase
+    ) : PartialLinkageCase {
+        class ExcessiveArguments(
+            expression: IrMemberAccessExpression<IrFunctionSymbol>,
+            val count: Int,
+        ) : MemberAccessExpressionArgumentsMismatch(expression)
+
+        class MissingArguments(
+            expression: IrMemberAccessExpression<IrFunctionSymbol>,
+            val forParameters: List<IrValueParameter>,
+        ) : MemberAccessExpressionArgumentsMismatch(expression)
+
+        class MissingArgumentValues(
+            expression: IrMemberAccessExpression<IrFunctionSymbol>,
+            val forParameters: List<IrValueParameter>,
+        ) : MemberAccessExpressionArgumentsMismatch(expression)
+    }
 
     /**
      * SAM-conversion to a function interface that effectively has more than one abstract function or at least one abstract property.

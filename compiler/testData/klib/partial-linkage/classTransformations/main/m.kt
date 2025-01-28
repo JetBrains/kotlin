@@ -111,27 +111,27 @@ fun box() = abiTest {
     expectSuccess("Foo") { getCompanionAndNestedObjectsSwap() }
     expectSuccess("Foo") { getCompanionAndNestedObjectsSwapInline() }
 
-    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerName() }
-    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerNameInline() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site has 1 less value argument(s) than the constructor requires. Those arguments are missing: <this>")) { getNestedToInnerName() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site has 1 less value argument(s) than the constructor requires. Those arguments are missing: <this>")) { getNestedToInnerNameInline() }
     expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectName() }
     expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectNameInline() }
     expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionName() }
     expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionNameInline() }
-    expectFailure(linkage("Constructor 'Nested.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerNestedName() }
-    expectFailure(linkage("Constructor 'Nested.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerNestedNameInline() }
-    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerInnerName() }
-    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerInnerNameInline() }
+    expectFailure(linkage("Constructor 'Nested.<init>' can not be called: The call site has 1 less value argument(s) than the constructor requires. Those arguments are missing: <this>")) { getNestedToInnerNestedName() }
+    expectFailure(linkage("Constructor 'Nested.<init>' can not be called: The call site has 1 less value argument(s) than the constructor requires. Those arguments are missing: <this>")) { getNestedToInnerNestedNameInline() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site has 1 less value argument(s) than the constructor requires. Those arguments are missing: <this>")) { getNestedToInnerInnerName() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site has 1 less value argument(s) than the constructor requires. Those arguments are missing: <this>")) { getNestedToInnerInnerNameInline() }
 
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedName() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedNameInline() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedObjectName() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedObjectNameInline() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedCompanionName() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedCompanionNameInline() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedNestedName() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedNestedNameInline() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedInnerName() }
-    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedInnerNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedObjectName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedObjectNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedCompanionName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedCompanionNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedNestedName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedNestedNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedInnerName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides 1 more value argument(s) than the constructor expects")) { getInnerToNestedInnerNameInline() }
 
     expectFailure(linkage("Constructor 'AnnotationClassWithChangedParameterType.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithChangedParameterType.<init>'")) { getAnnotationClassWithChangedParameterType() }
     expectFailure(linkage("Constructor 'AnnotationClassWithChangedParameterType.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithChangedParameterType.<init>'")) { getAnnotationClassWithChangedParameterTypeInline() }
