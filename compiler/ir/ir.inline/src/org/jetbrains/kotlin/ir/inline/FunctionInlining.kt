@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.at
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
-import org.jetbrains.kotlin.ir.builders.irGetObject
-import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -164,89 +162,65 @@ private class CallInlining(
             parent = callee.parent
         }
 
+        val outerIrBuilder = context.createIrBuilder(copiedCallee.symbol, callSite.startOffset, callSite.endOffset)
+        val inlineFunctionToStore = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee else callee.originalFunction
+
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
         val (newStatementsFromCallSite, newStatementsFromDefault, copiedParameters) = evaluateArguments(callSite, copiedCallee, substituteMap)
-        val statements = (copiedCallee.body as? IrBlockBody)?.statements
+        val functionStatements = (copiedCallee.body as? IrBlockBody)?.statements
             ?: error("Body not found for function ${callee.render()}")
-
-        val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl()
-        val endOffset = statements.lastOrNull()?.endOffset ?: callee.endOffset
-        /* creates irBuilder appending to the end of the given returnable block: thus why we initialize
-         * irBuilder with (..., endOffset, endOffset).
-         */
-        val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, endOffset, endOffset)
 
         val returnType = callSite.type
 
-        val inlineFunctionToStore = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee else callee.originalFunction
-        val inlinedBlock = IrInlinedFunctionBlockImpl(
-            startOffset = callSite.startOffset,
-            endOffset = callSite.endOffset,
-            inlinedFunctionStartOffset = inlineFunctionToStore.startOffset,
-            inlinedFunctionEndOffset = inlineFunctionToStore.endOffset,
-            type = returnType,
-            inlinedFunctionSymbol = inlineFunctionToStore.symbol.takeIf { originalInlinedElement is IrFunction },
-            inlinedFunctionFileEntry = inlineFunctionToStore.fileEntry,
-            origin = null,
-            statements = copiedParameters + newStatementsFromDefault + statements
-        ).apply {
-            // `inlineCall` and `inlinedElement` is required only for JVM backend only, but this inliner is common, so we need opt-in.
-            @OptIn(JvmIrInlineExperimental::class)
-            this.inlineCall = callSite
-            @OptIn(JvmIrInlineExperimental::class)
-            this.inlinedElement = originalInlinedElement
-
-            // Insert a return statement for the function that is supposed to return Unit
-            if (inlineFunctionToStore.returnType.isUnit()) {
-                val potentialReturn = this.statements.lastOrNull() as? IrReturn
-                if (potentialReturn == null) {
-                    irBuilder.at(inlineFunctionToStore.endOffset, inlineFunctionToStore.endOffset).run {
-                        this@apply.statements += irReturn(irGetObject(context.irBuiltIns.unitClass))
-                    }
-                }
-            }
-        }
-
-        val retBlock = IrReturnableBlockImpl(
-            startOffset = callSite.startOffset,
-            endOffset = callSite.endOffset,
-            type = returnType,
-            symbol = irReturnableBlockSymbol,
-            origin = null,
-            statements = listOf(inlinedBlock),
-        )
-
-        val finalResult = if (newStatementsFromCallSite.isEmpty()) {
-            retBlock
-        } else {
-            IrBlockImpl(
-                startOffset = callSite.startOffset,
-                endOffset = callSite.endOffset,
-                type = callSite.type,
-                statements = newStatementsFromCallSite + retBlock,
-                origin = IrStatementOrigin.INLINE_ARGS_CONTAINER
-            )
-        }
-
-        return finalResult.apply {
-            transformChildrenVoid(ParameterSubstitutor(substituteMap))
-            transformChildrenVoid(object : IrElementTransformerVoid() {
-                override fun visitReturn(expression: IrReturn): IrExpression {
-                    expression.transformChildrenVoid(this)
-
-                    if (expression.returnTargetSymbol == copiedCallee.symbol) {
-                        val expr = if (returnType.isUnit()) {
-                            expression.value.coerceToUnit(context.irBuiltIns)
-                        } else {
-                            expression.value.doImplicitCastIfNeededTo(returnType)
+        val inlineResult = outerIrBuilder.irBlockOrSingleExpression(origin = IrStatementOrigin.INLINE_ARGS_CONTAINER) {
+            +newStatementsFromCallSite
+            +irReturnableBlock(returnType) {
+                val inlinedFunctionBlock = irInlinedFunctionBlock(
+                    inlinedFunctionStartOffset = inlineFunctionToStore.startOffset,
+                    inlinedFunctionEndOffset = inlineFunctionToStore.endOffset,
+                    resultType = returnType,
+                    inlinedFunctionSymbol = inlineFunctionToStore.symbol.takeIf { originalInlinedElement is IrFunction },
+                    inlinedFunctionFileEntry = inlineFunctionToStore.fileEntry,
+                    origin = null,
+                ) {
+                    +copiedParameters
+                    +newStatementsFromDefault
+                    +functionStatements
+                    // Insert a return statement for the function that is supposed to return Unit
+                    if (inlineFunctionToStore.returnType.isUnit()) {
+                        val potentialReturn = functionStatements.lastOrNull() as? IrReturn
+                        if (potentialReturn == null) {
+                            at(inlineFunctionToStore.endOffset, inlineFunctionToStore.endOffset)
+                            +irReturn(irGetObject(context.irBuiltIns.unitClass))
                         }
-                        return irBuilder.at(expression).irReturn(expr)
                     }
-                    return expression
                 }
-            })
-            patchDeclarationParents(parent) // TODO: Why it is not enough to just run SetDeclarationsParentVisitor?
-        }
+                // `inlineCall` and `inlinedElement` is required only for JVM backend only, but this inliner is common, so we need opt-in.
+                @OptIn(JvmIrInlineExperimental::class)
+                inlinedFunctionBlock.inlineCall = callSite
+                @OptIn(JvmIrInlineExperimental::class)
+                inlinedFunctionBlock.inlinedElement = originalInlinedElement
+                inlinedFunctionBlock.transformChildrenVoid(object : IrElementTransformerVoid() {
+                    override fun visitReturn(expression: IrReturn): IrExpression {
+                        expression.transformChildrenVoid(this)
+
+                        if (expression.returnTargetSymbol == copiedCallee.symbol) {
+                            val expr = if (returnType.isUnit()) {
+                                expression.value.coerceToUnit(context.irBuiltIns)
+                            } else {
+                                expression.value.doImplicitCastIfNeededTo(returnType)
+                            }
+                            return at(expression).irReturn(expr)
+                        }
+                        return expression
+                    }
+                })
+                inlinedFunctionBlock.transformChildrenVoid(ParameterSubstitutor(substituteMap))
+                +inlinedFunctionBlock
+            }
+        } as IrBlock
+
+        return inlineResult.patchDeclarationParents(parent)
     }
 
     //---------------------------------------------------------------------//

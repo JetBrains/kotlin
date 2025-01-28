@@ -399,6 +399,17 @@ inline fun IrBuilderWithScope.irBlock(
         origin, resultType
     ).block(body)
 
+inline fun IrBuilderWithScope.irBlockOrSingleExpression(
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
+    body: IrBlockBuilder.() -> Unit
+): IrExpression =
+    irBlock(startOffset, endOffset, origin, resultType, body).let {
+        it.statements.singleOrNull() as? IrExpression ?: it
+    }
+
 inline fun IrBuilderWithScope.irComposite(
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
