@@ -7,25 +7,33 @@
 
 using namespace kotlin;
 
+BackRefFromAssociatedObject::~BackRefFromAssociatedObject() {
+    if (!permanent) {
+        ref_.destroy();
+    }
+}
+
 void BackRefFromAssociatedObject::initForPermanentObject(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
     RuntimeAssert(obj->permanent(), "Can only be called with permanent object");
     permanentObj_ = obj;
+    permanent = true;
 }
 
 void BackRefFromAssociatedObject::initAndAddRef(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
     RuntimeAssert(!obj->permanent(), "Can only be called with non-permanent object");
     ref_.construct(obj);
+    permanent = false;
 }
 
-bool BackRefFromAssociatedObject::initWithExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
+void BackRefFromAssociatedObject::initWithExternalRCRef(mm::RawExternalRCRef* ref) noexcept {
     if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
         permanentObj_ = obj;
-        return true;
+        permanent = true;
     }
     ref_.construct(mm::ExternalRCRefImpl::fromRaw(ref));
-    return false;
+    permanent = false;
 }
 
 void BackRefFromAssociatedObject::addRef() {
@@ -40,19 +48,14 @@ void BackRefFromAssociatedObject::releaseRef() {
     ref_->release();
 }
 
-void BackRefFromAssociatedObject::dealloc() {
-    ref_.destroy();
-}
-
 ObjHeader* BackRefFromAssociatedObject::ref() const {
+    if (permanent) {
+        return permanentObj_;
+    }
     return **ref_;
 }
 
-ObjHeader* BackRefFromAssociatedObject::refPermanent() const {
-    return permanentObj_;
-}
-
-mm::RawExternalRCRef* BackRefFromAssociatedObject::externalRCRef(bool permanent) const noexcept {
+mm::RawExternalRCRef* BackRefFromAssociatedObject::externalRCRef() const noexcept {
     if (permanent) {
         return mm::permanentObjectAsExternalRCRef(permanentObj_);
     }
