@@ -12,7 +12,6 @@ class JsMapping : Mapping() {
     val outerThisFieldSymbols: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
     val innerClassConstructors: DeclarationMapping<IrConstructor, IrConstructor> by AttributeBasedMappingDelegate()
     val originalInnerClassPrimaryConstructorByClass: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
-    val objectToInstanceField: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
     val classToSyntheticPrimaryConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
 
     val enumEntryToGetInstanceFun: DeclarationMapping<IrEnumEntry, IrSimpleFunction> by AttributeBasedMappingDelegate()
