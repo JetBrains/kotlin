@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import java.lang.reflect.ParameterizedType
@@ -24,7 +24,7 @@ annotation class PhaseDescription(
 
 fun <Context : LoweringContext> createFilePhases(
     vararg phases: ((Context) -> FileLoweringPass)?
-): List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>> {
+): List<NamedCompilerPhase<Context, IrFile, IrFile>> {
     val createdPhases = hashSetOf<Class<out FileLoweringPass>>()
     return phases.filterNotNull().map { phase ->
         val loweringClass = phase.extractReturnTypeArgument()
@@ -35,7 +35,7 @@ fun <Context : LoweringContext> createFilePhases(
 
 fun <Context : LoweringContext> createModulePhases(
     vararg phases: ((Context) -> ModuleLoweringPass)?
-): List<SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>> {
+): List<NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>> {
     val createdPhases = hashSetOf<Class<out ModuleLoweringPass>>()
     return phases.filterNotNull().map { phase ->
         val loweringClass = phase.extractReturnTypeArgument()
@@ -75,7 +75,7 @@ private fun <Context : LoweringContext> createFilePhase(
     loweringClass: Class<*>,
     previouslyCreatedPhases: Set<Class<out FileLoweringPass>>,
     createLoweringPass: (Context) -> FileLoweringPass,
-): SimpleNamedCompilerPhase<Context, IrFile, IrFile> {
+): NamedCompilerPhase<Context, IrFile, IrFile> {
     val annotation = loadAnnotationAndCheckPrerequisites(loweringClass, previouslyCreatedPhases)
 
     return createSimpleNamedCompilerPhase(
@@ -95,7 +95,7 @@ private fun <Context : LoweringContext> createModulePhase(
     loweringClass: Class<*>,
     previouslyCreatedPhases: Set<Class<out ModuleLoweringPass>>,
     createLoweringPass: (Context) -> ModuleLoweringPass,
-): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
+): NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
     val annotation = loadAnnotationAndCheckPrerequisites(loweringClass, previouslyCreatedPhases)
 
     return makeIrModulePhase(createLoweringPass, annotation.name)

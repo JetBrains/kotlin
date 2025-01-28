@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class PerformByIrFilePhase<Context : LoweringContext>(
-    private val lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
-) : SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>(name = "PerformByIrFilePhase") {
+    private val lower: List<NamedCompilerPhase<Context, IrFile, IrFile>>,
+) : NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>(name = "PerformByIrFilePhase") {
     override fun outputIfNotEnabled(
         phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: IrModuleFragment,
     ): IrModuleFragment {

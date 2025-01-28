@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.WrapInlineDeclarationsWithReifi
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningOnlyPrivateFunctionsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 
@@ -116,7 +116,7 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
 //    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 //)
 
-val loweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
+val loweringsOfTheFirstPhase: List<NamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
     lateinitPhase,
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 
@@ -23,5 +23,5 @@ private val assertionWrapperPhase = makeIrModulePhase(
     name = "AssertionWrapperLowering",
 )
 
-val nativeLoweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> =
+val nativeLoweringsOfTheFirstPhase: List<NamedCompilerPhase<LoweringContext, IrModuleFragment, IrModuleFragment>> =
     listOf(upgradeCallableReferencesPhase, assertionWrapperPhase) + loweringsOfTheFirstPhase

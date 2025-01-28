@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -59,7 +59,7 @@ abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
     name: String,
     preActions: Set<Action<I, PipelineContext>> = emptySet(),
     postActions: Set<Action<O, PipelineContext>> = emptySet(),
-) : SimpleNamedCompilerPhase<PipelineContext, I, O>(
+) : NamedCompilerPhase<PipelineContext, I, O>(
     name = name,
     preactions = preActions,
     postactions = postActions.mapTo(mutableSetOf()) { it.toPostAction() }

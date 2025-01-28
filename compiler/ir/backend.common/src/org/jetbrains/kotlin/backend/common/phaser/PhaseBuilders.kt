@@ -43,7 +43,7 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
     outputIfNotEnabled: (PhaseConfig, PhaserState, Context, Input) -> Output,
     op: (Context, Input) -> Output
-): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
+): NamedCompilerPhase<Context, Input, Output> = object : NamedCompilerPhase<Context, Input, Output>(
     name,
     preactions = preactions,
     postactions = postactions.map { f ->
@@ -64,7 +64,7 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
     postactions: Set<Action<Input, Context>> = emptySet(),
     prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
     op: (Context, Input) -> Unit
-): SimpleNamedCompilerPhase<Context, Input, Unit> = object : SimpleNamedCompilerPhase<Context, Input, Unit>(
+): NamedCompilerPhase<Context, Input, Unit> = object : NamedCompilerPhase<Context, Input, Unit>(
     name,
     preactions = preactions,
     postactions = postactions.map { f ->
@@ -84,7 +84,7 @@ fun <Context : LoweringContext> makeIrModulePhase(
     prerequisite: Set<NamedCompilerPhase<Context, *, *>> = emptySet(),
     preconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
     postconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
-): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
+): NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
     createSimpleNamedCompilerPhase(
         name = name,
         preactions = DEFAULT_IR_ACTIONS + preconditions,

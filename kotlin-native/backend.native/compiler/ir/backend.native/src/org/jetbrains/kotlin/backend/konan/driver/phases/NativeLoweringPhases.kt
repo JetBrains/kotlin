@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 
 internal typealias LoweringList = List<NamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
-internal typealias ModuleLowering = SimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>
+internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>
 
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: LoweringList, modules: List<IrModuleFragment>) {
     for (module in modules) {
@@ -606,7 +605,7 @@ private fun createFileLoweringPhase(
         name: String,
         lowering: (NativeGenerationState) -> FileLoweringPass,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+): NamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
@@ -622,7 +621,7 @@ private fun createFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+): NamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
@@ -638,7 +637,7 @@ private fun createFileLoweringPhase(
         op: (context: Context, irFile: IrFile) -> Unit,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+): NamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),

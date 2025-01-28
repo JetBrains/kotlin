@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -724,12 +724,12 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
     name = "MainFunctionCallWrapperLowering",
 )
 
-val jsLoweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> =
+val jsLoweringsOfTheFirstPhase: List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> =
     listOf(jsCodeOutliningPhaseOnFirstStage) + loweringsOfTheFirstPhase
 
 fun getJsLowerings(
     configuration: CompilerConfiguration
-): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
+): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     // BEGIN: Common Native/JS/Wasm prefix.
     validateIrBeforeLowering,
     noDispatchReceiverApplyingPhase,
@@ -886,7 +886,7 @@ private val inlineObjectsWithPureInitialization = makeIrModulePhase(
     prerequisite = setOf(purifyObjectInstanceGetters)
 )
 
-val optimizationLoweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
+val optimizationLoweringList = listOf<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
     es6CollectConstructorsWhichNeedBoxParameterLowering,
     es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
     es6BoxParameterOptimization,
