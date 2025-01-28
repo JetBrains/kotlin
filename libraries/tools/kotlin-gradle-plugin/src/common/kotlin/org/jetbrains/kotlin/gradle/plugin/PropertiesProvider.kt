@@ -574,7 +574,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val useNonPackedKlibs: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS) ?: true
 
-    @OptIn(ExperimentalTime::class)
     private val defaultClassLoaderCacheTimeout = 120.minutes.inWholeSeconds
 
     val classLoaderCacheTimeoutInSeconds: Provider<Long>

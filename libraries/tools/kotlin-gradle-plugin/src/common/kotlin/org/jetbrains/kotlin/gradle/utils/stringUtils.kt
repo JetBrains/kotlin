@@ -59,7 +59,6 @@ internal fun Appendable.appendLine(): Appendable =
 internal fun String.removingTrailingNewline(): String = this.dropLastWhile { it == '\n' }
 
 // copied from IJ
-@OptIn(ExperimentalStdlibApi::class)
 internal fun escapeStringCharacters(
     str: String,
     length: Int = str.length,
