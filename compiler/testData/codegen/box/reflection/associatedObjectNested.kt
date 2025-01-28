@@ -28,11 +28,13 @@ annotation class Annotation2(val kClass: KClass<out Any>)
 import kotlin.reflect.*
 
 @Annotation1(Outer.Inner1.Companion::class)
+@Annotation2(Outer.Inner2.Companion::class)
 class Outer {
     class Inner1 {
         companion object {}
     }
 
+    @Annotation1(Outer.Inner1.Companion::class)
     @Annotation2(Outer.Inner2.Companion::class)
     class Inner2 {
         companion object {}
@@ -41,6 +43,8 @@ class Outer {
 
 fun box(): String {
     if (Outer::class.findAssociatedObject<Annotation1>() != Outer.Inner1.Companion) return "fail1"
-    if (Outer.Inner2::class.findAssociatedObject<Annotation2>() != Outer.Inner2.Companion) return "fail2"
+    if (Outer::class.findAssociatedObject<Annotation2>() != Outer.Inner2.Companion) return "fail2"
+    if (Outer.Inner2::class.findAssociatedObject<Annotation1>() != Outer.Inner1.Companion) return "fail3"
+    if (Outer.Inner2::class.findAssociatedObject<Annotation2>() != Outer.Inner2.Companion) return "fail4"
     return "OK"
 }
