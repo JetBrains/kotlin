@@ -52,8 +52,6 @@ fun <Context : LoggingContext, Input, Output> CompilerPhase<Context, Input, Outp
     input: Input
 ): Output = invoke(phaseConfig, PhaserState(), context, input)
 
-interface SameTypeCompilerPhase<in Context : LoggingContext, Data> : CompilerPhase<Context, Data, Data>
-
 // A failing checker should just throw an exception.
 typealias Checker<Data> = (Data) -> Unit
 
@@ -134,47 +132,8 @@ abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     override fun toString() = "Compiler Phase @$name"
 }
 
-class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
-    name: String,
-    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-    private val lower: CompilerPhase<Context, Data, Data>,
-    preconditions: Set<Checker<Data>> = emptySet(),
-    postconditions: Set<Checker<Data>> = emptySet(),
-    private val actions: Set<Action<Data, Context>> = emptySet(),
-    nlevels: Int = 0
-) : NamedCompilerPhase<Context, Data, Data>(
-    name, prerequisite, preconditions, postconditions, nlevels
-) {
-    override fun phaseBody(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Data): Data =
-        lower.invoke(phaseConfig, phaserState, context, input)
-
-    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Data): Data =
-        input
-
-    override fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Data) {
-        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.BEFORE)
-        for (action in actions) action(state, input, context)
-
-        if (phaseConfig.checkConditions) {
-            for (pre in preconditions) pre(input)
-        }
-    }
-
-    override fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Data, output: Data) {
-        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
-        for (action in actions) action(state, output, context)
-
-        if (phaseConfig.checkConditions) {
-            for (post in postconditions) post(output)
-        }
-    }
-
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
-        listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
-}
-
 /**
- * [NamedCompilerPhase] with different [Input] and [Output] types (unlike [SameTypeNamedCompilerPhase]).
+ * [NamedCompilerPhase] with different [Input] and [Output] types.
  * Preferred when data should be explicitly passed between phases.
  * Actively used in a new dynamic Kotlin/Native driver.
  */
