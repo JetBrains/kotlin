@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.objcexport.testUtils.analyzeWithObjCExport
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -116,6 +117,32 @@ class ObjCExportStubOriginTest(
                 companionProperty.origin,
                 "Class companion property should has the same origin as its companion class"
             )
+        }
+    }
+
+
+    // Test for the scenario covered in KT-74721
+    @Test
+    fun `test - top level function wrapper has origin pointing to kotlin file psi`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+                fun someGlobalFunction() {
+                    println("Hello, world!")
+                }
+            """.trimIndent()
+        )
+
+        analyzeWithObjCExport(file) {
+            val header = translateToObjCHeader(listOf(KtObjCExportFile(file)))
+            val stub = header.stubs.firstOrNull {
+                it.name.endsWith("Kt") // Top level facade has a name ending with "Kt"
+            }
+
+            assertNotNull(stub, "Top level facade should be present")
+
+            val origin = stub.origin
+            assertIs<ObjCExportStubOrigin.Source>(origin, "Top level facade should have a source origin")
+            assertEquals(file, origin.psi, "Top level facade origin should point to the kotlin file psi")
         }
     }
 }

@@ -32,6 +32,7 @@ data class KtResolvedObjCExportFile(
     val packageFqName: FqName,
     val classifierSymbols: List<KaClassSymbol>,
     val callableSymbols: List<KaCallableSymbol>,
+    val file: KtFile? = null,
 )
 
 /* Factory functions */
@@ -91,7 +92,8 @@ private class KtPsiObjCExportFile(
             fileName = fileName,
             packageFqName = packageFqName,
             classifierSymbols = getAllVisibleInObjClassifiers(symbol),
-            callableSymbols = symbol.fileScope.callables.toList()
+            callableSymbols = symbol.fileScope.callables.toList(),
+            file = file,
         )
     }
 }
