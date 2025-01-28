@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import java.util.Locale
+
 /**
  * Name of a preset used in the 'kotlin-multiplatform' Gradle plugin to represent this target.
  */
@@ -21,3 +23,5 @@ private fun evaluatePresetName(targetName: String): String {
     val nameParts = targetName.split('_').mapNotNull { it.takeIf(String::isNotEmpty) }
     return nameParts.asSequence().drop(1).joinToString("", nameParts.firstOrNull().orEmpty()) { it.capitalize() }
 }
+
+private fun String.capitalize(): String = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
