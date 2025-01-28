@@ -14,7 +14,7 @@ plugins {
 }
 
 configureCommonPublicationSettingsForGradle(signLibraryPublication)
-configureKotlinCompileTasksGradleCompatibility()
+configureRunViaKotlinBuildToolsApi()
 addBomCheckTask()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 

@@ -21,6 +21,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -36,8 +37,10 @@ import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.plugin.use.resolve.internal.ArtifactRepositoriesPluginResolver.PLUGIN_MARKER_SUFFIX
+import org.gradle.testing.base.TestingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -145,6 +148,7 @@ private val testPlugins = internalPlugins + setOf(
  * Should contain classes that are independent of the Gradle API version or using the maximum supported Gradle API.
  */
 fun Project.createGradleCommonSourceSet(): SourceSet {
+    val commonVariant = GradlePluginVariant.GRADLE_MIN
     val commonSourceSet = sourceSets.create(commonSourceSetName) {
         excludeGradleCommonDependencies(this)
 
@@ -157,7 +161,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         configurations[compileClasspathConfigurationName].extendsFrom(commonGradleApiConfiguration)
 
         dependencies {
-            compileOnlyConfigurationName(kotlinStdlib())
+            compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${commonVariant.bundledKotlinVersion}.0")
             "commonGradleApiCompileOnly"(gradleApi())
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
@@ -177,11 +181,13 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
             }
         }
     }
-
-    // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
-    // files clash
-    tasks.named<KotlinJvmCompile>("compile${commonSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+    val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
+    val compilation = kotlinJvmTarget.compilations.getByName(commonSourceSet.name)
+    tasks.named<KotlinJvmCompile>(compilation.compileKotlinTaskName) {
+        // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
+        // files clash
         compilerOptions.moduleName.set("${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}")
+        configureGradleCompatibility(commonVariant)
     }
 
     registerValidatePluginTasks(commonSourceSet)
@@ -298,6 +304,7 @@ private const val FIXED_CONFIGURATION_SUFFIX = "WithFixedAttribute"
 fun Project.reconfigureMainSourcesSetForGradlePlugin(
     commonSourceSet: SourceSet,
 ) {
+    val commonVariant = GradlePluginVariant.GRADLE_MIN
     sourceSets.named(SourceSet.MAIN_SOURCE_SET_NAME) {
         plugins.withType<JavaGradlePluginPlugin>().configureEach {
             // Removing Gradle api default dependency added by 'java-gradle-plugin'
@@ -305,10 +312,10 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
         }
 
         dependencies {
-            "compileOnly"(kotlinStdlib())
+            "compileOnly"("org.jetbrains.kotlin:kotlin-stdlib:${commonVariant.bundledKotlinVersion}.0")
             // Decoupling gradle-api artifact from current project Gradle version. Later would be useful for
             // gradle plugin variants
-            "compileOnly"("dev.gradleplugins:gradle-api:${GradlePluginVariant.GRADLE_MIN.gradleApiVersion}")
+            "compileOnly"("dev.gradleplugins:gradle-api:${commonVariant.gradleApiVersion}")
             if (this@reconfigureMainSourcesSetForGradlePlugin.name !in testPlugins) {
                 "api"(project(":kotlin-gradle-plugin-api"))
             }
@@ -428,6 +435,19 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
             }
     }
 
+    val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
+    val mainCompilation = kotlinJvmTarget.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    tasks.named<KotlinJvmCompile>(mainCompilation.compileKotlinTaskName) {
+        configureGradleCompatibility(commonVariant)
+    }
+    val testingExtension = project.extensions.getByType<TestingExtension>()
+    testingExtension.suites.withType<JvmTestSuite>().configureEach {
+        val testCompilation = kotlinJvmTarget.compilations.getByName(this@configureEach.name)
+        tasks.named<KotlinJvmCompile>(testCompilation.compileKotlinTaskName) {
+            configureGradleCompatibility(commonVariant)
+        }
+    }
+
     // Fix common sources visibility for tests
     sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
         compileClasspath += commonSourceSet.output
@@ -435,7 +455,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
     }
 
     // Allowing to use 'internal' classes/methods from common source code
-    (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target.compilations.run {
+    kotlinJvmTarget.compilations.run {
         getByName(SourceSet.TEST_SOURCE_SET_NAME).associateWith(getByName(commonSourceSet.name))
     }
 }
@@ -505,13 +525,16 @@ fun Project.createGradlePluginVariant(
         }
     }
 
-    // KT-52138: Make module name the same for all variants, so KSP could access internal methods/properties
-    tasks.named<KotlinJvmCompile>("compile${variantSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+    val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
+    val compilation = kotlinJvmTarget.compilations.getByName(variantSourceSet.name)
+    tasks.named<KotlinJvmCompile>(compilation.compileKotlinTaskName) {
+        // KT-52138: Make module name the same for all variants, so KSP could access internal methods/properties
         compilerOptions.moduleName.set(this@createGradlePluginVariant.name)
+        configureGradleCompatibility(variant)
     }
 
     dependencies {
-        variantSourceSet.compileOnlyConfigurationName(kotlinStdlib())
+        variantSourceSet.compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${variant.bundledKotlinVersion}.0")
         variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
         if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
@@ -540,32 +563,48 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
     }
 }
 
+/**
+ * Configures the JVM compile task to be compatible with the Gradle version specified in [variant].
+ */
+fun KotlinJvmCompile.configureGradleCompatibility(variant: GradlePluginVariant = GradlePluginVariant.GRADLE_MIN) {
+    compilerOptions {
+        if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
+            // we should keep control of the language version for compatibility with bundled Kotlin compiler for Gradle Kotlin scripts.
+            languageVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
+            // we should not use stdlib symbols not available in the bundled Kotlin runtime
+            apiVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
+        }
+        freeCompilerArgs.addAll(
+            listOf(
+                "-Xskip-prerelease-check",
+                "-Xsuppress-version-warnings",
+                // We have to override the default value for `-Xsam-conversions` to `class`
+                // otherwise the compiler would compile lambdas using invokedynamic,
+                // such lambdas are not serializable so are not compatible with Gradle configuration cache.
+                // It doesn't lead to a significant difference in binaries sizes, and previously (before LV 1.5) the `class` value was set by default.
+                "-Xsam-conversions=class",
+            )
+        )
+    }
+}
+
+/**
+ * Configures all the JVM compile tasks in the project to use specific setup for compatibility with [GradlePluginVariant.GRADLE_MIN]
+ * Consider using [configureGradleCompatibility] together with [configureRunViaKotlinBuildToolsApi] for a more granular configuration.
+ */
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
     tasks.withType<KotlinCompile>().configureEach {
-        compilerOptions {
-            if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-                // check https://docs.gradle.org/current/userguide/compatibility.html#kotlin for Kotlin-Gradle versions matrix
-                @Suppress("DEPRECATION", "DEPRECATION_ERROR") // we can't use language version greater than 1.8 as our minimal supported Gradle 7.6 embeds Kotlin 1.7.10
-                languageVersion.set(KotlinVersion.KOTLIN_1_8)
-                @Suppress("DEPRECATION", "DEPRECATION_ERROR") // we can't use api version greater than 1.7 as our minimal supported Gradle version 7.6 uses kotlin-stdlib 1.7
-                apiVersion.set(KotlinVersion.KOTLIN_1_7)
-            }
-            freeCompilerArgs.addAll(
-                listOf(
-                    "-Xskip-prerelease-check",
-                    "-Xsuppress-version-warnings",
-                    // We have to override the default value for `-Xsam-conversions` to `class`
-                    // otherwise the compiler would compile lambdas using invokedynamic,
-                    // such lambdas are not serializable so are not compatible with Gradle configuration cache.
-                    // It doesn't lead to a significant difference in binaries sizes, and previously (before LV 1.5) the `class` value was set by default.
-                    "-Xsam-conversions=class",
-                )
-            )
-        }
+        configureGradleCompatibility()
     }
     configureRunViaKotlinBuildToolsApi()
 }
 
+/**
+ * Configures the project to execute the Kotlin compiler via the Kotlin Build Tools API.
+ *
+ * This way, we use an older bootstrap compiler controlled by the `kotlin-for-gradle-plugins-compilation`
+ * version catalog entry to ensure compatibility with older language versions
+ */
 fun Project.configureRunViaKotlinBuildToolsApi() {
     project.extra["kotlin.compiler.runViaBuildToolsApi"] = true
     tasks.withType<KotlinCompile>().configureEach {
