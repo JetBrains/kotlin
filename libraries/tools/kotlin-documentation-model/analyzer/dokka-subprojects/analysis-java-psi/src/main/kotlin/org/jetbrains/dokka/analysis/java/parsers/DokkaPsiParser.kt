@@ -107,15 +107,11 @@ internal class DokkaPsiParser(
              * - superMethods
              * - superFieldsKeys
              * - superKeys
+             *
+             * First processes the list of [PsiClassType]s to add their methods and fields to the maps mentioned above,
+             * then filters the list to return a pair of the optional superclass type and a list of interface types.
              */
-            /**
-             * Caution! This method mutates
-             * - superMethodsKeys
-             * - superMethods
-             * - superFieldsKeys
-             * - superKeys
-             */
-            fun Array<PsiClassType>.getSuperTypesPsiClasses(): List<Pair<PsiClass, JavaClassKindTypes>> {
+            fun List<PsiClassType>.getSuperclassAndInterfaces(): Pair<PsiClassType?, List<PsiClassType>> {
                 forEach { type ->
                     type.resolve()?.let {
                         val definedAt = DRI.from(it)
@@ -137,38 +133,61 @@ internal class DokkaPsiParser(
                         }
                     }
                 }
-                return filter { !it.shouldBeIgnored }.mapNotNull { supertypePsi ->
+                val supertypesToKinds = filter { !it.shouldBeIgnored }.mapNotNull { supertypePsi ->
                     supertypePsi.resolve()?.let { supertypePsiClass ->
                         val javaClassKind = when {
                             supertypePsiClass.isInterface -> JavaClassKindTypes.INTERFACE
                             else -> JavaClassKindTypes.CLASS
                         }
-                        supertypePsiClass to javaClassKind
+                        supertypePsi to javaClassKind
                     }
                 }
+                val (superclassPairs, interfacePairs) =
+                    supertypesToKinds.partition { it.second == JavaClassKindTypes.CLASS }
+                return superclassPairs.firstOrNull()?.first to interfacePairs.map { it.first}
             }
 
-            fun traversePsiClassForAncestorsAndInheritedMembers(psiClass: PsiClass): AncestryNode {
-                val (classes, interfaces) = psiClass.superTypes.getSuperTypesPsiClasses()
-                    .partition { it.second == JavaClassKindTypes.CLASS }
+            /**
+             * Creates an [AncestryNode] for the [type] given the list of all [supertypes].
+             *
+             * Also processes all super methods and fields using the getSuperclassAndInterfaces function defined above.
+             */
+            fun createAncestryNode(type: GenericTypeConstructor, supertypes: List<PsiClassType>): AncestryNode {
+                fun createAncestryNodeForPsiClassType(psiClassType: PsiClassType): AncestryNode {
+                    return createAncestryNode(
+                        type = GenericTypeConstructor(
+                            DRI.from(psiClassType.resolve()!!),
+                            psiClassType.parameters.map { getProjection(it) }
+                        ),
+                        supertypes = psiClassType.superTypes.filterIsInstance<PsiClassType>()
+                    )
+                }
 
+                val (superclass, interfaces) = supertypes.getSuperclassAndInterfaces()
                 return AncestryNode(
-                    typeConstructor = GenericTypeConstructor(
-                        DRI.from(psiClass),
-                        psiClass.typeParameters.map { typeParameter ->
-                            TypeParameter(
-                                dri = DRI.from(typeParameter),
-                                name = typeParameter.name.orEmpty(),
-                                extra = typeParameter.annotations()
-                            )
-                        }
-                    ),
-                    superclass = classes.singleOrNull()?.first?.let(::traversePsiClassForAncestorsAndInheritedMembers),
-                    interfaces = interfaces.map { traversePsiClassForAncestorsAndInheritedMembers(it.first) }
+                    typeConstructor = type,
+                    superclass = superclass?.let(::createAncestryNodeForPsiClassType),
+                    interfaces = interfaces.map { createAncestryNodeForPsiClassType(it) }
                 )
             }
 
-            val ancestry: AncestryNode = traversePsiClassForAncestorsAndInheritedMembers(this)
+            // Creates the AncestryNode for this class. The AncestryNodes for this class's supertypes will be done using
+            // PsiClassTypes, not PsiClasses. This is important because the type parameters used in the class hierarchy
+            // should reflect the usage in the extends/implements clause, not the type parameters in the supertype
+            // class definitions, which the PsiClasses would use.
+            val ancestry = createAncestryNode(
+                type = GenericTypeConstructor(
+                    DRI.from(this),
+                    typeParameters.map { typeParameter ->
+                        TypeParameter(
+                            dri = DRI.from(typeParameter),
+                            name = typeParameter.name.orEmpty(),
+                            extra = typeParameter.annotations()
+                        )
+                    }
+                ),
+                supertypes = superTypes.toList()
+            )
 
             val (regularFunctions, accessors) = splitFunctionsAndAccessors(psi.fields, psi.methods)
             val (regularSuperFunctions, superAccessors) = splitFunctionsAndAccessors(
