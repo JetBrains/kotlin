@@ -325,6 +325,8 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     private inner class CompilerPerformanceManager : CommonCompilerPerformanceManager("Modularized test performance manager") {
 
         fun reportCumulativeTime(): CumulativeTime {
+            val measurements = getMeasurementResults()
+
             val gcInfo = measurements.filterIsInstance<GarbageCollectionMeasurement>()
                 .associate { it.garbageCollectionKind to GCInfo(it.garbageCollectionKind, it.milliseconds, it.count) }
 

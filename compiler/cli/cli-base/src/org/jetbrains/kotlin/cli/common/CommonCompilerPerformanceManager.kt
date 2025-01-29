@@ -11,9 +11,19 @@ import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
+/**
+ * Generally, the class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
+ * to get reliable performance measurements.
+ * However, [measureFindJavaClassTime] written to be thread-safe because there is no absolute guarantee
+ * that external measurements are collected in a single thread.
+ */
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
+    // The lock object is located not in a companion object because every module has its own instance of the performance manager
+    private val findJavaClassLock = Any()
+
     @Suppress("MemberVisibilityCanBePrivate")
-    protected val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
+    private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
+    private var findJavaClassMeasurement: FindJavaClassMeasurement = FindJavaClassMeasurement(0, 0)
     protected var isEnabled: Boolean = false
     private var initStartNanos = PerformanceCounter.currentTime()
     private var analysisStart: Long = 0
@@ -32,7 +42,15 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
-    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements
+    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + findJavaClassMeasurement
+
+    fun addMeasurementResults(newMeasurements:  List<PerformanceMeasurement>) {
+        measurements += newMeasurements
+    }
+
+    fun clearMeasurementResults() {
+        measurements.clear()
+    }
 
     fun enableCollectingPerformanceStatistics() {
         isEnabled = true
@@ -156,9 +174,24 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
     }
 
+    internal fun <T> measureFindJavaClassTime(block: () -> T): T {
+        if (!isEnabled) block()
+
+        val startTime = PerformanceCounter.currentTime()
+        try {
+            return block()
+        } finally {
+            val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(PerformanceCounter.currentTime() - startTime)
+            synchronized(findJavaClassLock) {
+                findJavaClassMeasurement =
+                    FindJavaClassMeasurement(findJavaClassMeasurement.count + 1, findJavaClassMeasurement.milliseconds + elapsedMillis)
+            }
+        }
+    }
+
     private fun createPerformanceReport(): ByteArray = buildString {
         append("$presentableName performance report\n")
-        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
+        getMeasurementResults().map { it.render() }.sorted().forEach { append("$it\n") }
     }.toByteArray()
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
@@ -167,9 +200,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     fun renderCompilerPerformance(): String {
         val relevantMeasurements = getMeasurementResults().filter {
-            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
+            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement ||
+                    it is FindJavaClassMeasurement
         }
 
         return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
     }
+}
+
+fun <T> CommonCompilerPerformanceManager?.tryMeasureFindJavaClassTime(block: () -> T): T {
+    return if (this == null) return block() else measureFindJavaClassTime(block)
 }

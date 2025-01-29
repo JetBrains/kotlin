@@ -32,16 +32,12 @@ class K2NativeCompilerPerformanceManager : CommonCompilerPerformanceManager("Kot
      */
     fun collectChildMeasurements() {
         children.forEach {
-            measurements += it.getMeasurementResults()
-            it.clearMeasurements()
+            addMeasurementResults(it.getMeasurementResults())
+            it.clearMeasurementResults()
         }
     }
 
-    private inner class ChildCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Native Compiler per single thread") {
-        fun clearMeasurements() {
-            measurements.clear()
-        }
-    }
+    private inner class ChildCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Native Compiler per single thread")
 }
 
 var CompilerConfiguration.performanceManager: CommonCompilerPerformanceManager?

@@ -25,6 +25,8 @@ import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.cli.common.tryMeasureFindJavaClassTime
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
@@ -39,7 +41,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
-import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -47,7 +48,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
 // which is indirectly invoked from PsiPackage.getSubPackages
 class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
-    private val perfCounter = PerformanceCounter.create("Find Java class")
+    private var perfManager: CommonCompilerPerformanceManager? = null
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<JvmPackagePartProvider>
@@ -71,16 +72,20 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         index: JvmDependenciesIndex,
         packagePartProviders: List<JvmPackagePartProvider>,
         singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
-        usePsiClassFilesReading: Boolean
+        usePsiClassFilesReading: Boolean,
+        perfManager: CommonCompilerPerformanceManager?,
     ) {
         this.index = index
         this.packagePartProviders = packagePartProviders
         this.singleJavaFileRootsIndex = singleJavaFileRootsIndex
         this.usePsiClassFilesReading = usePsiClassFilesReading
+        this.perfManager = perfManager
     }
 
-    private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? = perfCounter.time {
-        findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+    private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
+        return perfManager.tryMeasureFindJavaClassTime {
+            findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+        }
     }
 
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
@@ -193,7 +198,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
-    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> = perfCounter.time {
+    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> = perfManager.tryMeasureFindJavaClassTime {
         val result = ArrayList<PsiClass>(1)
         forEachClassId(qName) { classId ->
             val relativeClassName = classId.relativeClassName.asString()
@@ -219,7 +224,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             }
 
             if (result.isNotEmpty()) {
-                return@time result.toTypedArray()
+                return@tryMeasureFindJavaClassTime result.toTypedArray()
             }
         }
 

@@ -210,7 +210,8 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
             JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE)), shouldOnlyFindFirstClass = true),
             emptyList(),
             SingleJavaFileRootsIndex(emptyList()),
-            usePsiClassFilesReading = false
+            usePsiClassFilesReading = false,
+            perfManager = null, // Don't care about performance measurements in these custom tests
         )
 
         return coreJavaFileManager
