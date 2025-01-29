@@ -139,6 +139,7 @@ open class FirDeclarationsResolveTransformer(
             property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.setter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.backingField?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
+            property.transformContextParameters(this, data)
             context.withProperty(property) {
                 doTransformTypeParameters(property)
             }

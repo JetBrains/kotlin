@@ -85,3 +85,14 @@ fun contextHasDefaultValue() {}
 
 context(<!WRONG_MODIFIER_TARGET!>vararg<!> x: String, <!VAL_OR_VAR_ON_FUN_PARAMETER!>var<!> y: String, <!VAL_OR_VAR_ON_FUN_PARAMETER!>val<!> z: String, <!WRONG_MODIFIER_TARGET!>crossinline<!> f1: () -> Unit, <!WRONG_MODIFIER_TARGET!>noinline<!> f2: () -> Unit)
 <!NOTHING_TO_INLINE!>inline<!> fun contextHasModifier() {}
+
+fun test() {
+    <!UNSUPPORTED!>context(s: String)<!>
+    val x = 1
+
+    <!UNSUPPORTED!>context(s: String)<!> val y = 1
+
+    when (<!UNSUPPORTED!>context(s: String)<!> val z = 1) {
+        else -> {}
+    }
+}

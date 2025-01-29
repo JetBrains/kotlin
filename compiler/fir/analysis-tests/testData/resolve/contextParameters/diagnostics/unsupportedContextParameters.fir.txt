@@ -131,3 +131,14 @@ FILE: unsupportedContextParameters.kt
     context(vararg x: R|kotlin/Array<out kotlin/String>|, y: R|kotlin/String|, z: R|kotlin/String|, crossinline f1: R|() -> kotlin/Unit|, noinline f2: R|() -> kotlin/Unit|)
     public final inline fun contextHasModifier(): R|kotlin/Unit| {
     }
+    public final fun test(): R|kotlin/Unit| {
+        context(s: R|kotlin/String|)
+        lval x: R|kotlin/Int| = Int(1)
+        context(s: R|kotlin/String|)
+        lval y: R|kotlin/Int| = Int(1)
+        when (lval z: R|kotlin/Int| = Int(1)) {
+            else ->  {
+            }
+        }
+
+    }

@@ -24,7 +24,7 @@ object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppChec
         }
         if (declaration.contextParameters.isEmpty()) return
 
-        if (declaration.hasBackingField && !declaration.isLateInit) {
+        if (declaration.hasBackingField && !declaration.isLateInit && !declaration.isLocal) {
             reporter.reportOn(
                 declaration.initializer?.source ?: declaration.source,
                 FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD,
