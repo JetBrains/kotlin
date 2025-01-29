@@ -35,12 +35,18 @@ sealed class Field(
      */
     var deepCopyExcludeFromApply: Boolean = false
 
+    /**
+     * Specifies whether field with a symbol should not be processed by `SymbolRemapper`.
+     */
+    var deepCopyExcludeFromSymbolRemapper: Boolean = false
+
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         copy.customSetter = customSetter
         copy.symbolFieldRole = symbolFieldRole
         copy.deepCopyExcludeFromConstructor = deepCopyExcludeFromConstructor
         copy.deepCopyExcludeFromApply = deepCopyExcludeFromApply
+        copy.deepCopyExcludeFromSymbolRemapper = deepCopyExcludeFromSymbolRemapper
     }
 }
 
