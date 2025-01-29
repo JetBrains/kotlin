@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
@@ -51,7 +52,7 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
     IrValueParameterBuilder().run {
         this.type = type
         this.origin = origin
-        this.name = "receiver".synthesizedName
+        this.name = SpecialNames.EXTENSION_RECEIVER
         factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
             extensionReceiverParameter = receiver
         }
@@ -61,7 +62,7 @@ fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclaration
     IrValueParameterBuilder().run {
         this.type = type
         this.origin = origin
-        this.name = "receiver".synthesizedName
+        this.name = SpecialNames.EXTENSION_RECEIVER
         this.kind = IrParameterKind.ExtensionReceiver
         factory.buildValueParameter(this, this@createExtensionReceiver)
     }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.ReadWriteProperty
 
@@ -28,7 +29,7 @@ interface IrLazyDeclarationBase : IrDeclaration {
     fun KotlinType.toIrType(): IrType =
         typeTranslator.translateType(this)
 
-    fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
+    fun ReceiverParameterDescriptor.generateReceiverParameterStub(name: Name = this.name): IrValueParameter =
         factory.createValueParameter(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,

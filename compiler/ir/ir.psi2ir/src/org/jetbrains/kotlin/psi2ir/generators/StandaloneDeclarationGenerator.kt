@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
@@ -127,13 +129,14 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         }
     }
 
-    protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
+    protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement, name: Name? = null): IrValueParameter {
         return symbolTable.descriptorExtension.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,
             descriptor, descriptor.type.toIrType(),
-            (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
+            (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
+            name,
         )
     }
 
@@ -150,7 +153,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         }
 
         irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            declareParameter(it, null, irFunction)
+            declareParameter(it, null, irFunction, SpecialNames.EXTENSION_RECEIVER)
         }
 
         // Declare all the value parameters up first.

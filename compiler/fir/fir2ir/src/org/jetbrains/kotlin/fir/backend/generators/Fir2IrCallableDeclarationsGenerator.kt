@@ -688,10 +688,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 else parentPropertyReceiver
             if (receiver != null) {
                 extensionReceiverParameter = receiver.convertWithOffsets { startOffset, endOffset ->
-                    val name = (function as? FirAnonymousFunction)?.label?.name?.let {
-                        val suffix = it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
-                        Name.identifier("\$this\$$suffix")
-                    } ?: SpecialNames.THIS
+                    val name = (function as? FirAnonymousFunction)?.label?.name?.takeIf { Name.isValidIdentifier(it) }?.let {
+                        Name.identifier("${SpecialNames.EXTENSION_RECEIVER}\$$it")
+                    } ?: SpecialNames.EXTENSION_RECEIVER
                     declareThisReceiverParameter(
                         c,
                         kind = IrParameterKind.ExtensionReceiver,

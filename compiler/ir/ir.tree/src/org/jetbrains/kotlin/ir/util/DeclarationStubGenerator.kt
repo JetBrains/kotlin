@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isValueClass
@@ -279,9 +280,12 @@ abstract class DeclarationStubGenerator(
         parameter: ReceiverParameterDescriptor?,
         kind: IrParameterKind,
     ): IrValueParameter? = typeTranslator.buildWithScope(this) {
-        parameter?.generateReceiverParameterStub()?.also {
-            it.kind = kind
-            it.parent = this@createReceiverParameter
+        parameter?.let {
+            val name = if (kind == IrParameterKind.ExtensionReceiver) SpecialNames.EXTENSION_RECEIVER else parameter.name
+            parameter.generateReceiverParameterStub(name).also {
+                it.kind = kind
+                it.parent = this@createReceiverParameter
+            }
         }
     }
 

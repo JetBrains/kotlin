@@ -964,11 +964,9 @@ fun IrFunction.copyValueParametersToStatic(
     assert(target.parameters.isEmpty())
 
     target.parameters += source.parameters.map { param ->
-        val name = when (param.kind) {
-            IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
-            IrParameterKind.ExtensionReceiver -> Name.identifier("\$receiver")
-            IrParameterKind.Context, IrParameterKind.Regular -> param.name
-        }
+        val name = if (param.kind == IrParameterKind.DispatchReceiver)
+            Name.identifier("\$this")
+        else param.name
         val origin = when (param.kind) {
             IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> param.origin
             IrParameterKind.Context, IrParameterKind.Regular -> origin
@@ -1251,11 +1249,9 @@ fun IrFactory.createStaticFunctionWithReceivers(
         annotations = oldFunction.annotations
 
         parameters = oldFunction.parameters.map { oldParam ->
-            val name = when (oldParam.kind) {
-                IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
-                IrParameterKind.ExtensionReceiver -> Name.identifier("\$receiver")
-                IrParameterKind.Context, IrParameterKind.Regular -> oldParam.name
-            }
+            val name = if (oldParam.kind == IrParameterKind.DispatchReceiver)
+                Name.identifier("\$this")
+            else oldParam.name
             val origin = when (oldParam.kind) {
                 IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                 IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER

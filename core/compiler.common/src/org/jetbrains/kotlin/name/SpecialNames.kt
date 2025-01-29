@@ -70,6 +70,9 @@ object SpecialNames {
     @JvmField
     val RECEIVER = Name.special("<receiver>")
 
+    @JvmField
+    val EXTENSION_RECEIVER = Name.identifier("\$extension_receiver")
+
     /**
      * Kotlin-generated `entries` read-only property
      */

@@ -48,7 +48,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     kind: IrParameterKind,
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
-    name: Name = SpecialNames.THIS,
+    name: Name = if (kind == IrParameterKind.ExtensionReceiver) SpecialNames.EXTENSION_RECEIVER else SpecialNames.THIS,
     explicitReceiver: FirReceiverParameter? = null,
     isAssignable: Boolean = false
 ): IrValueParameter {

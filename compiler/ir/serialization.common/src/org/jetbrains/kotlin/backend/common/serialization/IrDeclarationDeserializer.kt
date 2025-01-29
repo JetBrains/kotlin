@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -294,12 +295,23 @@ class IrDeclarationDeserializer(
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = ValueParameterFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
+            var name = deserializeName(nameAndType.nameIndex)
+            if (kind == IrParameterKind.ExtensionReceiver) {
+                // Fix extension receiver's name when reading an older klib to conform with a new naming schema.
+                // This change should only have a real effect on IR dumps used as test data.
+                name = when {
+                    name == SpecialNames.THIS -> SpecialNames.EXTENSION_RECEIVER
+                    name.asString().startsWith("\$this\$") -> Name.identifier(SpecialNames.EXTENSION_RECEIVER.asString() + name.asString().removePrefix("\$this"))
+                    else -> name
+                }
+            }
+
             irFactory.createValueParameter(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
                 kind = kind,
-                name = deserializeName(nameAndType.nameIndex),
+                name = name,
                 type = deserializeIrType(nameAndType.typeIndex),
                 isAssignable = flags.isAssignable,
                 symbol = symbol.checkSymbolType(fallbackSymbolKind = null),

@@ -379,7 +379,7 @@ class IrDescriptorBasedFunctionFactory(
         }
     }
 
-    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
+    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor, name: Name = descriptor.name): IrValueParameter = with(descriptor) {
         irFactory.createValueParameter(
             startOffset = offset,
             endOffset = offset,
@@ -434,10 +434,16 @@ class IrDescriptorBasedFunctionFactory(
             newFunction.parent = this
             newFunction.overriddenSymbols =
                 descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
-            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
+            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let {
+                newFunction.createValueParameter(it)
+            }
+            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let {
+                newFunction.createValueParameter(it, SpecialNames.EXTENSION_RECEIVER)
+            }
             newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap { newFunction.createValueParameter(it) }
+            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap {
+                newFunction.createValueParameter(it)
+            }
             newFunction.correspondingPropertySymbol = property
             newFunction.annotations = descriptor.annotations.mapNotNull(
                 typeTranslator.constantValueGenerator::generateAnnotationConstructorCall

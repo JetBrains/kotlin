@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -203,7 +204,7 @@ class MemoizedInlineClassReplacements(
                     IrParameterKind.ExtensionReceiver -> {
                         parameter.copyTo(
                             this,
-                            name = Name.identifier(function.extensionReceiverName(context.config)),
+                            name = parameter.name,
                             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )

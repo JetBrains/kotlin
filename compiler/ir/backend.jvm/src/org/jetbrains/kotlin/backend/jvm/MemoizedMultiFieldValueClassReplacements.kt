@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -140,7 +141,7 @@ class MemoizedMultiFieldValueClassReplacements(
             val name = when (param.kind) {
                 IrParameterKind.DispatchReceiver -> "\$dispatchReceiver"
                 IrParameterKind.Context -> "contextReceiver${contextParameterIndex++}"
-                IrParameterKind.ExtensionReceiver -> sourceFunction.extensionReceiverName(context.config)
+                IrParameterKind.ExtensionReceiver -> SpecialNames.EXTENSION_RECEIVER.asString()
                 IrParameterKind.Regular -> null
             }
             val origin = when (param.kind) {

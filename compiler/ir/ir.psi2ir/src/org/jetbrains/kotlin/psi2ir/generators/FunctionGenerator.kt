@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.SKIP_BODIES_ERROR_DESCRIPTION
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
@@ -334,11 +335,11 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         val functionDescriptor = irFunction.descriptor
 
         irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktParameterOwner, irFunction)
+            generateReceiverParameterDeclaration(it, ktParameterOwner, irFunction, IrParameterKind.DispatchReceiver)
         }
 
         irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktReceiverParameterElement ?: ktParameterOwner, irFunction)
+            generateReceiverParameterDeclaration(it, ktReceiverParameterElement ?: ktParameterOwner, irFunction, IrParameterKind.ExtensionReceiver)
         }
 
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
@@ -388,17 +389,20 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
     private fun generateReceiverParameterDeclaration(
         receiverParameterDescriptor: ReceiverParameterDescriptor,
         ktElement: KtPureElement?,
-        irOwnerElement: IrElement
+        irOwnerElement: IrElement,
+        kind: IrParameterKind,
     ): IrValueParameter {
-        val name = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-            if (ktElement is KtFunctionLiteral) {
-                val label = getCallLabelForLambdaArgument(ktElement, this.context.bindingContext)?.let {
-                    it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
+        var name = if (kind == IrParameterKind.ExtensionReceiver) SpecialNames.EXTENSION_RECEIVER else receiverParameterDescriptor.name
+        if (kind == IrParameterKind.ExtensionReceiver) {
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+                if (ktElement is KtFunctionLiteral) {
+                    val label = getCallLabelForLambdaArgument(ktElement, this.context.bindingContext)
+                    if (label != null && Name.isValidIdentifier(label)) {
+                        name = Name.identifier("${SpecialNames.EXTENSION_RECEIVER}\$$label")
+                    }
                 }
-                // TODO: this can produce `$this$null` - expected?
-                Name.identifier("\$this\$$label")
-            } else null
-        } else null
+            }
+        }
         return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, name)
     }
 
