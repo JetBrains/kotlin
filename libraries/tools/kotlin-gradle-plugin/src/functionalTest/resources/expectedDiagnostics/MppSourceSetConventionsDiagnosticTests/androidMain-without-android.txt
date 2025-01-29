@@ -1,4 +1,5 @@
-[AndroidMainSourceSetConventionUsedWithoutAndroidTarget | ERROR] Accessed 'source set androidMain' without registering the Android target
+[AndroidMainSourceSetConventionUsedWithoutAndroidTarget | ERROR] Android Source Set Used Without an Android Target
+Accessed 'source set androidMain' without registering the Android target
 Please apply a given Android Gradle plugin (e.g. com.android.library) and register an Android target
 
 Example using the 'com.android.library' plugin:
@@ -17,7 +18,8 @@ Example using the 'com.android.library' plugin:
     }
 Please register the Android target.
 ----
-[UnusedSourceSetsWarning | WARNING] The Kotlin source set androidMain was configured but not added to any Kotlin compilation.
+[UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
+The Kotlin source set androidMain was configured but not added to any Kotlin compilation.
 
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
 See https://kotl.in/connecting-source-sets

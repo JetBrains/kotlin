@@ -1,4 +1,5 @@
-[AndroidStyleSourceDirUsageWarning | WARNING] Usage of 'Android Style' source directory src/main/kotlin is deprecated.
+[AndroidStyleSourceDirUsageWarning | WARNING] Deprecated 'Android Style' Source Directory
+Usage of 'Android Style' source directory src/main/kotlin is deprecated.
 Use src/androidMain/kotlin instead.
 
 To suppress this warning: put the following in your gradle.properties:
@@ -6,7 +7,8 @@ kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn=true
 Please migrate to the new source directory: src/androidMain/kotlin
 Learn more: https://kotl.in/android-source-set-layout-v2
 ----
-[AndroidStyleSourceDirUsageWarning | WARNING] Usage of 'Android Style' source directory src/test/kotlin is deprecated.
+[AndroidStyleSourceDirUsageWarning | WARNING] Deprecated 'Android Style' Source Directory
+Usage of 'Android Style' source directory src/test/kotlin is deprecated.
 Use src/androidUnitTest/kotlin instead.
 
 To suppress this warning: put the following in your gradle.properties:

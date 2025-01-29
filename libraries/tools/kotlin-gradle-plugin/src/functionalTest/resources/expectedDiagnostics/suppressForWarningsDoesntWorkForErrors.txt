@@ -1,4 +1,5 @@
-[TEST_DIAGNOSTIC | ERROR] This is a test diagnostic
+[TEST_DIAGNOSTIC | ERROR] Test
+This is a test diagnostic
 
 It has multiple lines of text
 Solution 1

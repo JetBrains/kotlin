@@ -1,2 +1,3 @@
-[KotlinJvmMainRunTaskConflict | WARNING] Target 'jvm': Unable to create run task 'jvmRun' as there is already such a task registered
+[KotlinJvmMainRunTaskConflict | WARNING] JVM Main Run Task Conflict
+Target 'jvm': Unable to create run task 'jvmRun' as there is already such a task registered
 Please remove the conflicting task or rename the new task

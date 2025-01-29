@@ -51,17 +51,16 @@ private fun ToolingDiagnostic.render(
     showStacktrace: Boolean = renderingOptions.showStacktrace,
 ): String = buildString {
     with(renderingOptions) {
-        if (!useParsableFormat && showSeverityEmoji) {
-            when (severity) {
-                WARNING -> appendLine("""⚠️ ${identifier.displayName}""")
-                ERROR, FATAL -> appendLine("""❌ ${identifier.displayName}""")
-            }
-        }
-
-        // Main message
         if (useParsableFormat) {
             appendLine(this@render)
         } else {
+            if (showSeverityEmoji) {
+                when (severity) {
+                    WARNING -> append("⚠️ ")
+                    ERROR, FATAL -> append("❌ ")
+                }
+            }
+            appendLine(identifier.displayName)
             appendLine(message)
             solutions.filter { it.isNotBlank() }.forEach {
                 appendLine(it)
@@ -77,7 +76,7 @@ private fun ToolingDiagnostic.render(
         // Separator, if in verbose mode
         if (useParsableFormat) appendLine(DIAGNOSTIC_SEPARATOR)
     }
-}
+}.trimEnd()
 
 private fun StringBuilder.renderStacktrace(throwable: Throwable?, useParsableFormatting: Boolean) {
     if (throwable == null) return

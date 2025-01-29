@@ -1,4 +1,5 @@
-[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set linuxX64Main', but linuxX64 target used a custom name 'linuxArm64' (expected 'linuxX64'):
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Source Set used with custom target name
+Accessed 'source set linuxX64Main', but linuxX64 target used a custom name 'linuxArm64' (expected 'linuxX64'):
 
 Replace:
 ```
@@ -15,7 +16,8 @@ kotlin {
 ```
 Please use the linuxX64() target name.
 ----
-[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set linuxX64Test', but linuxX64 target used a custom name 'linuxArm64' (expected 'linuxX64'):
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Source Set used with custom target name
+Accessed 'source set linuxX64Test', but linuxX64 target used a custom name 'linuxArm64' (expected 'linuxX64'):
 
 Replace:
 ```
@@ -32,7 +34,8 @@ kotlin {
 ```
 Please use the linuxX64() target name.
 ----
-[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set linuxArm64Main', but linuxArm64 target used a custom name 'linuxX64' (expected 'linuxArm64'):
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Source Set used with custom target name
+Accessed 'source set linuxArm64Main', but linuxArm64 target used a custom name 'linuxX64' (expected 'linuxArm64'):
 
 Replace:
 ```
@@ -49,7 +52,8 @@ kotlin {
 ```
 Please use the linuxArm64() target name.
 ----
-[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set linuxArm64Test', but linuxArm64 target used a custom name 'linuxX64' (expected 'linuxArm64'):
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Source Set used with custom target name
+Accessed 'source set linuxArm64Test', but linuxArm64 target used a custom name 'linuxX64' (expected 'linuxArm64'):
 
 Replace:
 ```
