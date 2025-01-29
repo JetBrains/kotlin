@@ -55,6 +55,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     //   slightly before the corresponding receiver parameter is added to a declaration.
     //   In order not to break such code, we assume the shape specified on call is,
     //   or will eventually be right.
+    private var targetParametersShapeInitialized: Boolean = false
     internal var targetContextParameterCount: Int = 0
         private set
     internal var targetHasDispatchReceiver: Boolean = false
@@ -68,53 +69,35 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         hasExtensionReceiver: Boolean,
         contextParameterCount: Int,
         regularParameterCount: Int,
-        isFromTargetUpdate: Boolean = false,
     ) {
-        if (isFromTargetUpdate) {
+        if (targetParametersShapeInitialized) {
             require(hasDispatchReceiver == targetHasDispatchReceiver)
             { "New symbol has different shape w.r.t. dispatch receiver" }
             require(hasExtensionReceiver == targetHasExtensionReceiver)
             { "New symbol has different shape w.r.t. extension receiver" }
             require(regularParameterCount + contextParameterCount == targetRegularParameterCount + targetContextParameterCount)
             { "New symbol has different shape w.r.t. value parameter count" }
+        } else {
+            //require(!targetParametersShapeInitialized) { "Target shape already initialized" }
+
+            val newAllParametersCount =
+                (if (hasDispatchReceiver) 1 else 0) +
+                        contextParameterCount +
+                        (if (hasExtensionReceiver) 1 else 0) +
+                        regularParameterCount
+            repeat((newAllParametersCount - arguments.size).coerceAtLeast(0)) {
+                arguments.add(null)
+            }
+
+            targetHasDispatchReceiver = hasDispatchReceiver
+            targetHasExtensionReceiver = hasExtensionReceiver
+            targetContextParameterCount = contextParameterCount
+            targetRegularParameterCount = regularParameterCount
+            targetParametersShapeInitialized = true
         }
-
-        // Make a snapshot of current arguments, segregated by kind.
-        var i = 0
-        val existingNonReceiverParameters = ArrayList<IrExpression?>(targetRegularParameterCount + targetContextParameterCount)
-        val existingDispatchReceiver = if (targetHasDispatchReceiver) arguments[i++] else null
-        existingNonReceiverParameters += arguments.subList(i, i + targetContextParameterCount)
-        i += targetContextParameterCount
-        val existingExtensionReceiver = if (targetHasExtensionReceiver) arguments[i++] else null
-        existingNonReceiverParameters += arguments.subList(i, i + targetRegularParameterCount)
-
-        targetHasDispatchReceiver = hasDispatchReceiver
-        targetHasExtensionReceiver = hasExtensionReceiver
-        targetContextParameterCount = contextParameterCount
-        targetRegularParameterCount = regularParameterCount
-
-        val newAllParametersCount =
-            (if (targetHasDispatchReceiver) 1 else 0) +
-                    targetContextParameterCount +
-                    (if (targetHasExtensionReceiver) 1 else 0) +
-                    targetRegularParameterCount
-
-        // Reapply the snapshot to [arguments]. In case we received different numbers of individual
-        // argument kinds than it was before, either trim them or fill with nulls.
-        arguments.clear()
-        arguments.ensureCapacity(newAllParametersCount)
-        existingNonReceiverParameters.setSize(regularParameterCount + contextParameterCount)
-        if (hasDispatchReceiver) {
-            arguments.add(existingDispatchReceiver)
-        }
-        arguments.addAll(existingNonReceiverParameters.take(contextParameterCount))
-        if (hasExtensionReceiver) {
-            arguments.add(existingExtensionReceiver)
-        }
-        arguments.addAll(existingNonReceiverParameters.drop(contextParameterCount))
     }
 
-    internal fun initializeTargetShapeFromSymbol(isFromTargetUpdate: Boolean = false) {
+    fun initializeTargetShapeFromSymbol() {
         @Suppress("UNCHECKED_CAST")
         val target = (symbol as IrBindableSymbol<*, IrSymbolOwner>).getRealOwner()
         when (target) {
@@ -125,7 +108,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                     targetShape.hasExtensionReceiver,
                     targetShape.contextParameterCount,
                     targetShape.regularParameterCount,
-                    isFromTargetUpdate = isFromTargetUpdate,
                 )
             }
             is IrProperty -> {
@@ -151,21 +133,19 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                     hasExtensionReceiver,
                     0,
                     0,
-                    isFromTargetUpdate = isFromTargetUpdate,
                 )
             }
         }
     }
 
     protected fun updateTargetSymbol() {
-        initializeTargetShapeFromSymbol(isFromTargetUpdate = true)
+        initializeTargetShapeFromSymbol()
     }
 
-    /**
-     * Like [updateTargetSymbol], but doesn't validate that the initial shape is the same as that of the symbol.
-     */
-    fun forceUpdateShapeFromTargetSymbol() {
-        initializeTargetShapeFromSymbol(isFromTargetUpdate = false)
+    private fun ensureTargetShapeInitialized() {
+        if (!targetParametersShapeInitialized) {
+            initializeTargetShapeFromSymbol()
+        }
     }
 
     internal fun rawCopyValueArgumentsFrom(other: IrMemberAccessExpression<*>) {
@@ -175,6 +155,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         targetHasExtensionReceiver = other.targetHasExtensionReceiver
         targetContextParameterCount = other.targetContextParameterCount
         targetRegularParameterCount = other.targetRegularParameterCount
+        targetParametersShapeInitialized = other.targetParametersShapeInitialized
     }
 
     private fun <S : IrBindableSymbol<*, D>, D : IrSymbolOwner> S.getRealOwner(): D {
@@ -202,7 +183,10 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      */
     @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     val valueArgumentsCount: Int
-        get() = targetRegularParameterCount + targetContextParameterCount
+        get() {
+            ensureTargetShapeInitialized()
+            return targetRegularParameterCount + targetContextParameterCount
+        }
 
     /**
      * Argument corresponding to the [IrParameterKind.DispatchReceiver] parameter, if any.
@@ -244,6 +228,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      */
     var dispatchReceiver: IrExpression?
         get() {
+            ensureTargetShapeInitialized()
             return if (targetHasDispatchReceiver) {
                 arguments[0]
             } else {
@@ -251,6 +236,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
             }
         }
         set(value) {
+            ensureTargetShapeInitialized()
             if (targetHasDispatchReceiver) {
                 arguments[0] = value
             } else {
@@ -277,6 +263,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     var extensionReceiver: IrExpression?
         get() {
+            ensureTargetShapeInitialized()
             return if (targetHasExtensionReceiver) {
                 val index = getExtensionReceiverIndex()
                 arguments[index]
@@ -285,6 +272,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
             }
         }
         set(value) {
+            ensureTargetShapeInitialized()
             if (targetHasExtensionReceiver) {
                 arguments[getExtensionReceiverIndex()] = value
             } else {
@@ -334,6 +322,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * For details see the comments above.
      */
     fun insertDispatchReceiver(value: IrExpression?) {
+        ensureTargetShapeInitialized()
         if (targetHasDispatchReceiver) {
             arguments[0] = value
         } else {
@@ -349,6 +338,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * For details see the comments above.
      */
     fun removeDispatchReceiver() {
+        ensureTargetShapeInitialized()
         if (targetHasDispatchReceiver) {
             arguments.removeAt(0)
             targetHasDispatchReceiver = false
@@ -362,6 +352,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * For details see the comments above.
      */
     fun insertExtensionReceiver(value: IrExpression?) {
+        ensureTargetShapeInitialized()
         val index = getExtensionReceiverIndex()
         if (targetHasExtensionReceiver) {
             arguments[index] = value
@@ -378,6 +369,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * For details see the comments above.
      */
     fun removeExtensionReceiver() {
+        ensureTargetShapeInitialized()
         if (targetHasExtensionReceiver) {
             arguments.removeAt(getExtensionReceiverIndex())
             targetHasExtensionReceiver = false
@@ -409,6 +401,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      */
     @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun getValueArgument(index: Int): IrExpression? {
+        ensureTargetShapeInitialized()
         val actualIndex = getRealValueArgumentIndex(index)
         checkArgumentSlotAccess("value", actualIndex, this.arguments.size)
         return this.arguments[actualIndex]
@@ -438,6 +431,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      */
     @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
     fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+        ensureTargetShapeInitialized()
         val actualIndex = getRealValueArgumentIndex(index)
         checkArgumentSlotAccess("value", actualIndex, this.arguments.size)
         this.arguments[actualIndex] = valueArgument
