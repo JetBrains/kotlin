@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.setSize
 
 internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectActualMap) : SymbolRemapper {
     override fun getDeclaredClass(symbol: IrClassSymbol) = symbol
@@ -227,6 +228,13 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
             processAttributes(expression)
+
+            // This is a hack to allow actualizing annotation constructors without parameters with constructors with default arguments.
+            // Without it, attempting to call such a constructor in common code will result in either a backend exception or in linkage error.
+            // See KT-67488 for details.
+            if (constructorSymbol.isBound) {
+                arguments.setSize(constructorSymbol.owner.parameters.size)
+            }
         }
     }
 }
