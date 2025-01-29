@@ -1,0 +1,11 @@
+FILE: contextInLocalFunction.kt
+    public final fun test(): R|kotlin/Unit| {
+        context(c: R|kotlin/String|)
+        local final fun local(): R|kotlin/Unit| {
+        }
+
+        context(c: R|kotlin/String|)
+        local final fun local2(): R|kotlin/Unit| {
+        }
+
+    }
