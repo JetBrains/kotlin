@@ -9,6 +9,7 @@ import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
+import java.io.InputStream
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.lang.management.ManagementFactory
@@ -174,6 +176,7 @@ fun TestProject.build(
     enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    inputStream: InputStream? = null,
     assertions: BuildResult.() -> Unit = {},
 ) = buildWithAction(
     parameters = BuildParameterization(
@@ -189,6 +192,7 @@ fun TestProject.build(
         environmentVariables = environmentVariables,
     ),
     assertions = assertions,
+    inputStream = inputStream,
     action = GradleRunner::build,
 )
 
@@ -206,6 +210,7 @@ fun TestProject.buildAndFail(
     enableGradleDaemonMemoryLimitInMb: Int? = this.enableGradleDaemonMemoryLimitInMb,
     enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    inputStream: InputStream? = null,
     assertions: BuildResult.() -> Unit = {},
 ) = buildWithAction(
     parameters = BuildParameterization(
@@ -221,6 +226,7 @@ fun TestProject.buildAndFail(
         environmentVariables = environmentVariables,
     ),
     assertions = assertions,
+    inputStream = inputStream,
     action = GradleRunner::buildAndFail,
 )
 
@@ -239,6 +245,7 @@ private data class BuildParameterization(
 
 private fun TestProject.buildWithAction(
     parameters: BuildParameterization,
+    inputStream: InputStream?,
     assertions: BuildResult.() -> Unit = {},
     action: GradleRunner.() -> BuildResult = GradleRunner::build,
 ) {
@@ -251,7 +258,8 @@ private fun TestProject.buildWithAction(
             fail("Please don't set `enableGradleDebug = true` in teamcity run, this can fail build")
         }
 
-        val connectSubprocessVMToDebugger = runWithDebug && environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace != null
+        val connectSubprocessVMToDebugger =
+            runWithDebug && (environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace != null || buildArguments.contains("--continuous"))
         val allBuildArguments = commonBuildSetup(
             buildArguments = buildArguments,
             buildOptions = buildOptions,
@@ -264,10 +272,15 @@ private fun TestProject.buildWithAction(
             kotlinDaemonDebugPort = kotlinDaemonDebugPort
         )
         val gradleRunnerForBuild = gradleRunner
-            .also { if (forceOutput.toBooleanFlag()) it.forwardOutput() }
+            .also { it.forwardOutput() }
             .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
             .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
             .withArguments(allBuildArguments)
+
+        inputStream?.let {
+            (gradleRunnerForBuild as DefaultGradleRunner).withStandardInput(it)
+        }
+
         withBuildSummary(allBuildArguments) {
             val buildResult = if (connectSubprocessVMToDebugger) {
                 validateDebuggingSocketIsListeningForTestsWithEnv(
