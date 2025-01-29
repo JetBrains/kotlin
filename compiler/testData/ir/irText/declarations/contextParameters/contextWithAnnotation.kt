@@ -21,3 +21,7 @@ val annotationOnContextProperty: String
 context(@AnnotationWithConstructor("") a: @AnnotationWithConstructor("") String)
 val annotationWithConstructorProperty: String
     get() = ""
+
+fun functionType(f: context(@Ann String) () -> Unit) {}
+
+fun functionTypeWithConstructor(f: context(@AnnotationWithConstructor("") String) () -> Unit) {}

@@ -608,7 +608,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
             }
             else if (at(CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) == LPAR) {
-                parseContextReceiverList();
+                parseContextReceiverList(false);
             }
             else if (tryParseModifier(tokenConsumer, noModifiersBefore, modifierKeywords)) {
                 // modifier advanced
@@ -680,7 +680,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * contextReceiverList
      *   : "context" "(" (contextReceiver{","})+ ")"
      */
-    private void parseContextReceiverList() {
+    private void parseContextReceiverList(boolean inFunctionType) {
         assert _at(CONTEXT_KEYWORD);
         PsiBuilder.Marker contextReceiverList = mark();
         advance(); // CONTEXT_KEYWORD
@@ -692,7 +692,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (at(COMMA)) {
                 errorAndAdvance("Expecting a type reference");
             }
-            parseContextReceiver();
+            parseContextReceiver(inFunctionType);
             if (at(RPAR)) {
                 advance();
                 break;
@@ -715,13 +715,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * contextReceiver
      *   : label? typeReference
      */
-    private void parseContextReceiver() {
+    private void parseContextReceiver(boolean inFunctionType) {
         if (tryParseValueParameter(true)) {
             return;
         }
 
         PsiBuilder.Marker contextReceiver = mark();
-        if (myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
+        if (!inFunctionType && myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
             myExpressionParsing.parseLabelDefinition();
         }
         parseTypeRef();
@@ -2196,7 +2196,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker contextReceiversStart = mark();
 
         if (withContextReceiver) {
-            parseContextReceiverList();
+            parseContextReceiverList(true);
         }
 
         PsiBuilder.Marker typeElementMarker = mark();

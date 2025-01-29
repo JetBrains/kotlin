@@ -65,6 +65,12 @@ FILE fqName:<root> fileName:/contextWithAnnotation.kt
       annotations:
         AnnotationWithConstructor(k = "")
     BLOCK_BODY
+  FUN name:functionType visibility:public modality:FINAL <> (f:kotlin.Function1<@[Ann] kotlin.String, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<@[Ann] kotlin.String, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:functionTypeWithConstructor visibility:public modality:FINAL <> (f:kotlin.Function1<@[AnnotationWithConstructor(k = "")] kotlin.String, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<@[AnnotationWithConstructor(k = "")] kotlin.String, kotlin.Unit>
+    BLOCK_BODY
   PROPERTY name:annotationOnContextProperty visibility:public modality:FINAL [val]
     FUN name:<get-annotationOnContextProperty> visibility:public modality:FINAL <> (a:@[Ann] kotlin.String) returnType:kotlin.String
       correspondingProperty: PROPERTY name:annotationOnContextProperty visibility:public modality:FINAL [val]

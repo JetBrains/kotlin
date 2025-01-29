@@ -28,6 +28,12 @@ fun annotationOnContext(@Ann a: @Ann String) {
 fun annotationWithConstructor(@AnnotationWithConstructor(k = "") a: @AnnotationWithConstructor(k = "") String) {
 }
 
+fun functionType(f: Function1<@Ann String, Unit>) {
+}
+
+fun functionTypeWithConstructor(f: Function1<@AnnotationWithConstructor(k = "") String, Unit>) {
+}
+
 val annotationOnContextProperty: String
   get(@Ann a: @Ann String): String {
     return ""

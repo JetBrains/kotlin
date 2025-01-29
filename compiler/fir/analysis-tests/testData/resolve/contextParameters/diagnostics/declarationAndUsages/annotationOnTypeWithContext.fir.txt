@@ -20,16 +20,13 @@ FILE: annotationOnTypeWithContext.kt
         }
 
     }
-    public final fun annotationOnContextType(a: R|A|): R|kotlin/Unit|
-    public final fun <no name provided>(): R|kotlin/Unit| {
+    public final fun annotationOnContextType(a: R|@ContextFunctionTypeParams (@R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams (AnnotationWithConstructor, ERROR CLASS: Incomplete code) -> A|): R|kotlin/Unit|
-    public final fun <no name provided>(): R|kotlin/Unit| {
+    public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams (@R|AnnotationWithConstructor|(k = String())  A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun annotationOnTypeWithContext(a: R|@R|AnnotationWithTypeTarget|()  @ContextFunctionTypeParams (A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationOnFunWithMoreThenOneContextType(a: R|A|, @R|AnnotationWithTypeTarget|() String: <ERROR TYPE REF: No type for parameter>): R|kotlin/Unit|
-    public final fun <no name provided>(): R|kotlin/Unit| {
+    public final fun annotationOnFunWithMoreThenOneContextType(a: R|@ContextFunctionTypeParams (@R|AnnotationWithTypeTarget|()  A, @R|AnnotationWithTypeTarget|()  kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun annotationOnValueParameterWithContextType(a: R|@ContextFunctionTypeParams (A, @R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
     }

@@ -18,3 +18,5 @@ final val /annotationWithConstructorProperty // /annotationWithConstructorProper
     final fun context(kotlin/String) <get-annotationWithConstructorProperty>(): kotlin/String // /annotationWithConstructorProperty.<get-annotationWithConstructorProperty>|<get-annotationWithConstructorProperty>(kotlin.String)(){}[0]
 final fun context(kotlin/String) /annotationOnContext() // /annotationOnContext|annotationOnContext(kotlin.String)(){}[0]
 final fun context(kotlin/String) /annotationWithConstructor() // /annotationWithConstructor|annotationWithConstructor(kotlin.String)(){}[0]
+final fun /functionType(kotlin/Function1<kotlin/String, kotlin/Unit>) // /functionType|functionType(kotlin.Function1<kotlin.String,kotlin.Unit>){}[0]
+final fun /functionTypeWithConstructor(kotlin/Function1<kotlin/String, kotlin/Unit>) // /functionTypeWithConstructor|functionTypeWithConstructor(kotlin.Function1<kotlin.String,kotlin.Unit>){}[0]

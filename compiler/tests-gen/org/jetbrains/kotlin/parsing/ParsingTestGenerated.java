@@ -1355,6 +1355,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contextParameters/functions.kt");
       }
 
+      @TestMetadata("labelInFunctionTypeContext.kt")
+      public void testLabelInFunctionTypeContext() {
+        runTest("compiler/testData/psi/contextParameters/labelInFunctionTypeContext.kt");
+      }
+
       @TestMetadata("properties.kt")
       public void testProperties() {
         runTest("compiler/testData/psi/contextParameters/properties.kt");
