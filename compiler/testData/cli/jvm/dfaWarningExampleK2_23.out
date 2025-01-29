@@ -1,0 +1,5 @@
+warning: language version 2.3 is experimental, there are no backwards compatibility guarantees for new language and library features
+compiler/testData/cli/jvm/dfaWarningExampleK2.kt:3:14: warning: no cast needed.
+        (arg as String).length
+             ^^^^^^^^^
+OK

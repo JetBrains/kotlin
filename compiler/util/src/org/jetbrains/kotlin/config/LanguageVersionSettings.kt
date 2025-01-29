@@ -384,6 +384,7 @@ enum class LanguageFeature(
     ForbidJvmSerializableLambdaOnInlinedFunctionLiterals(KOTLIN_2_3, kind = BUG_FIX), // KT-71906
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_3, kind = BUG_FIX), // KT-11914 Deprecation phase 2
     ReportExposedTypeForInternalTypeParameterBounds(KOTLIN_2_3, kind = BUG_FIX), // KTLC-275
+    EnableDfaWarningsInK2(KOTLIN_2_3, kind = OTHER), // KT-50965
 
     // End of 2.* language features --------------------------------------------------
 
@@ -444,7 +445,6 @@ enum class LanguageFeature(
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = OTHER),
     CustomEqualsInValueClasses(sinceVersion = null, kind = OTHER), // KT-24874
-    EnableDfaWarningsInK2(sinceVersion = null, kind = OTHER), // KT-50965
     ContractSyntaxV2(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-56127
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, kind = TEST_ONLY), // KT-56583
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, kind = BUG_FIX), // KT-51221

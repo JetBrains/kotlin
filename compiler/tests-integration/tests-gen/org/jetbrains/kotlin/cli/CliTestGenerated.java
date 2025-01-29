@@ -1433,6 +1433,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/coroutinesWarn.args");
     }
 
+    @TestMetadata("dfaWarningExampleK2_22.args")
+    public void testDfaWarningExampleK2_22() {
+      runTest("compiler/testData/cli/jvm/dfaWarningExampleK2_22.args");
+    }
+
+    @TestMetadata("dfaWarningExampleK2_23.args")
+    public void testDfaWarningExampleK2_23() {
+      runTest("compiler/testData/cli/jvm/dfaWarningExampleK2_23.args");
+    }
+
     @TestMetadata("disabledFeatureFromUnsupportedVersion.args")
     public void testDisabledFeatureFromUnsupportedVersion() {
       runTest("compiler/testData/cli/jvm/disabledFeatureFromUnsupportedVersion.args");
