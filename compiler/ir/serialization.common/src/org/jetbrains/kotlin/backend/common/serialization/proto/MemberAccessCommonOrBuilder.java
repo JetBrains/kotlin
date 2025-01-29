@@ -8,42 +8,47 @@ public interface MemberAccessCommonOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> 
+      getArgumentList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getArgument(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  int getArgumentCount();
+
+  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme before 2.2.0
+   * </pre>
    */
   boolean hasDispatchReceiver();
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme before 2.2.0
+   * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getDispatchReceiver();
-
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> 
-      getContextArgumentList();
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getContextArgument(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression context_argument = 5;</code>
-   *
-   * <pre>
-   * Context parameters cannot have default values but we use NullableIrExpression here just in case
-   * that will be allowed in the future, to help with compatibility.
-   * </pre>
-   */
-  int getContextArgumentCount();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression extension_receiver = 2;</code>

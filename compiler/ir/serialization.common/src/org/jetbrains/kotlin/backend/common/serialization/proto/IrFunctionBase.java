@@ -338,12 +338,20 @@ public final class IrFunctionBase extends
   private int body_;
   /**
    * <code>optional int32 body = 7;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
    */
   public boolean hasBody() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
    * <code>optional int32 body = 7;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
    */
   public int getBody() {
     return body_;
@@ -1358,18 +1366,30 @@ public final class IrFunctionBase extends
     private int body_ ;
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public boolean hasBody() {
       return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public int getBody() {
       return body_;
     }
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public Builder setBody(int value) {
       bitField0_ |= 0x00000080;
@@ -1379,6 +1399,10 @@ public final class IrFunctionBase extends
     }
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public Builder clearBody() {
       bitField0_ = (bitField0_ & ~0x00000080);

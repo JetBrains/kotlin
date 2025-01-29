@@ -158,13 +158,18 @@ message IrInlinedFunctionBlock {
 }
 
 message MemberAccessCommon {
+  // Value argument serialization scheme after 2.2.0
+  repeated NullableIrExpression argument = 6;
+
+  // Value argument serialization scheme before 2.2.0
   optional IrExpression dispatch_receiver = 1;
-  // Context parameters cannot have default values but we use NullableIrExpression here just in case
-  // that will be allowed in the future, to help with compatibility.
-  repeated NullableIrExpression context_argument = 5;
   optional IrExpression extension_receiver = 2;
   repeated NullableIrExpression regular_argument = 3;
+
   repeated int32 type_argument = 4 [packed=true];
+
+  // Previously used fields:
+  //repeated NullableIrExpression context_argument = 5;
 }
 
 message IrCall {

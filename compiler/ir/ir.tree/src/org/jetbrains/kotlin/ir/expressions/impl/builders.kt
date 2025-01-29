@@ -907,6 +907,27 @@ fun IrCallImplWithShape(
 }
 
 /**
+ * Does not initialize arguments (in neither new and old API).
+ * Only to be used in specific cases, like where both the [symbol] may be unbound, and the information about callee's shape is missing.
+ */
+fun IrCallImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrSimpleFunctionSymbol,
+    origin: IrStatementOrigin?,
+    superQualifierSymbol: IrClassSymbol?,
+): IrCallImpl = IrCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    superQualifierSymbol = superQualifierSymbol,
+)
+
+/**
  * Note: This functions requires [symbol] to be bound.
  * If it may be not, use [IrConstructorCallImplWithShape].
  */
@@ -969,6 +990,29 @@ fun IrConstructorCallImplWithShape(
 }
 
 /**
+ * Does not initialize arguments (in neither new and old API).
+ * Only to be used in specific cases, like where both the [symbol] may be unbound, and the information about callee's shape is missing.
+ */
+fun IrConstructorCallImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    constructorTypeArgumentsCount: Int,
+    origin: IrStatementOrigin?,
+    source: SourceElement,
+): IrConstructorCallImpl = IrConstructorCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+)
+
+/**
  * Note: This functions requires [symbol] to be bound.
  * If it may be not, use [IrDelegatingConstructorCallImplWithShape].
  */
@@ -1023,6 +1067,25 @@ fun IrDelegatingConstructorCallImplWithShape(
 }
 
 /**
+ * Does not initialize arguments (in neither new and old API).
+ * Only to be used in specific cases, like where both the [symbol] may be unbound, and the information about callee's shape is missing.
+ */
+fun IrDelegatingConstructorCallImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    origin: IrStatementOrigin?,
+): IrDelegatingConstructorCallImpl = IrDelegatingConstructorCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+)
+
+/**
  * Note: This functions requires [symbol] to be bound.
  * If it may be not, use [IrEnumConstructorCallImplWithShape].
  */
@@ -1075,6 +1138,25 @@ fun IrEnumConstructorCallImplWithShape(
     )
     initializeEmptyTypeArguments(typeArgumentsCount)
 }
+
+/**
+ * Does not initialize arguments (in neither new and old API).
+ * Only to be used in specific cases, like where both the [symbol] may be unbound, and the information about callee's shape is missing.
+ */
+fun IrEnumConstructorCallImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    origin: IrStatementOrigin?,
+): IrEnumConstructorCallImpl = IrEnumConstructorCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+)
 
 
 /**
@@ -1134,6 +1216,27 @@ fun IrFunctionReferenceImplWithShape(
     )
     initializeEmptyTypeArguments(typeArgumentsCount)
 }
+
+/**
+ * Does not initialize arguments (in neither new and old API).
+ * Only to be used in specific cases, like where both the [symbol] may be unbound, and the information about callee's shape is missing.
+ */
+fun IrFunctionReferenceImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrFunctionSymbol,
+    reflectionTarget: IrFunctionSymbol?,
+    origin: IrStatementOrigin?,
+): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    symbol = symbol,
+    reflectionTarget = reflectionTarget,
+)
 
 fun IrLocalDelegatedPropertyReferenceImpl(
     startOffset: Int,
@@ -1227,6 +1330,30 @@ fun IrPropertyReferenceImplWithShape(
     initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
+/**
+ * Does not initialize arguments (in neither new and old API).
+ * Only to be used in specific cases, like where both the [symbol] may be unbound, and the information about callee's shape is missing.
+ */
+fun IrPropertyReferenceImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrPropertySymbol,
+    field: IrFieldSymbol?,
+    getter: IrSimpleFunctionSymbol?,
+    setter: IrSimpleFunctionSymbol?,
+    origin: IrStatementOrigin?,
+): IrPropertyReferenceImpl = IrPropertyReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    field = field,
+    getter = getter,
+    setter = setter,
+    origin = origin,
+)
 
 @ObsoleteDescriptorBasedAPI
 fun IrCallImpl.Companion.fromSymbolDescriptor(

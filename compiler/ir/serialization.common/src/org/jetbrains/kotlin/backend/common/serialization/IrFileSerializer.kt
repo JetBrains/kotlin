@@ -547,18 +547,8 @@ open class IrFileSerializer(
     private fun serializeMemberAccessCommon(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommon {
         val proto = ProtoMemberAccessCommon.newBuilder()
 
-        // It is not possible to use the new parameter API in this code, because there the call doesn't
-        // store an information about its arguments' kinds. Only the function does, but here the callee's
-        // symbol may be unbound, so it's not possible to obtain that function.
-        if (call.dispatchReceiver != null) {
-            proto.dispatchReceiver = serializeExpression(call.dispatchReceiver!!)
-        }
-        if (call.extensionReceiver != null) {
-            proto.extensionReceiver = serializeExpression(call.extensionReceiver!!)
-        }
-        for (index in 0 until call.valueArgumentsCount) {
-            val arg = call.getValueArgument(index)
-            val argProto = arg?.let { serializeExpression(it) }
+        requireAbiAtLeast(ABI_LEVEL_2_2, { "Single-list argument" }) { call }
+        for (arg in call.arguments) {
             val argOrNullProto = ProtoNullableIrExpression.newBuilder()
             if (arg == null) {
                 // Am I observing an IR generation regression?
@@ -568,14 +558,9 @@ open class IrFileSerializer(
                 // TODO: how do we assert that without descriptor?
                 //assert(it.varargElementType != null || it.hasDefaultValue())
             } else {
-                argOrNullProto.expression = argProto
+                argOrNullProto.expression = serializeExpression(arg)
             }
-
-            if (index < call.contextArgumentsCount) {
-                proto.addContextArgument(argOrNullProto)
-            } else {
-                proto.addRegularArgument(argOrNullProto)
-            }
+            proto.addArgument(argOrNullProto)
         }
 
         for (typeArg in call.typeArguments) {
