@@ -328,6 +328,7 @@ class FunctionCallTransformer(
                 return if (element is FirResolvedNamedReference) {
                     @Suppress("UNCHECKED_CAST")
                     buildResolvedNamedReference {
+                        source = call.calleeReference.source
                         this.name = element.name
                         resolvedSymbol = originalSymbol
                     } as E
