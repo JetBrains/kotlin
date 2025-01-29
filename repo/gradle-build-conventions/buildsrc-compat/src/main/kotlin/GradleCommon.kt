@@ -157,7 +157,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         configurations[compileClasspathConfigurationName].extendsFrom(commonGradleApiConfiguration)
 
         dependencies {
-            compileOnlyConfigurationName(kotlinStdlib())
+            compileOnlyConfigurationName(kotlinStdlibForGradleDependencyDeclaration)
             "commonGradleApiCompileOnly"(gradleApi())
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
@@ -305,7 +305,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
         }
 
         dependencies {
-            "compileOnly"(kotlinStdlib())
+            "compileOnly"(kotlinStdlibForGradleDependencyDeclaration)
             // Decoupling gradle-api artifact from current project Gradle version. Later would be useful for
             // gradle plugin variants
             "compileOnly"("dev.gradleplugins:gradle-api:${GradlePluginVariant.GRADLE_MIN.gradleApiVersion}")
@@ -511,7 +511,7 @@ fun Project.createGradlePluginVariant(
     }
 
     dependencies {
-        variantSourceSet.compileOnlyConfigurationName(kotlinStdlib())
+        variantSourceSet.compileOnlyConfigurationName(kotlinStdlibForGradleDependencyDeclaration)
         variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
         if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
@@ -540,6 +540,11 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
     }
 }
 
+@Suppress("DEPRECATION", "DEPRECATION_ERROR") // we can't use api version greater than 1.7 as our minimal supported Gradle version 7.6 uses kotlin-stdlib 1.7
+val apiVersionForGradleCompatibility = KotlinVersion.KOTLIN_1_7
+
+val kotlinStdlibForGradleDependencyDeclaration = "org.jetbrains.kotlin:kotlin-stdlib:${apiVersionForGradleCompatibility.version}.0"
+
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
@@ -547,8 +552,7 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
                 // check https://docs.gradle.org/current/userguide/compatibility.html#kotlin for Kotlin-Gradle versions matrix
                 @Suppress("DEPRECATION", "DEPRECATION_ERROR") // we can't use language version greater than 1.8 as our minimal supported Gradle 7.6 embeds Kotlin 1.7.10
                 languageVersion.set(KotlinVersion.KOTLIN_1_7)
-                @Suppress("DEPRECATION", "DEPRECATION_ERROR") // we can't use api version greater than 1.7 as our minimal supported Gradle version 7.6 uses kotlin-stdlib 1.7
-                apiVersion.set(KotlinVersion.KOTLIN_1_7)
+                apiVersion.set(apiVersionForGradleCompatibility)
             }
             freeCompilerArgs.addAll(
                 listOf(
