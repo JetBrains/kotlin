@@ -165,6 +165,11 @@ object JvmStandardClassIds {
 
     object Callables {
         val JavaClass = CallableId(BASE_JVM_PACKAGE, Name.identifier("javaClass"))
+
+        val atomicReferenceCompareAndSet = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("compareAndSet"))
+        val atomicReferenceCompareAndExchange = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("compareAndExchange"))
+        val atomicReferenceArrayCompareAndSet = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("compareAndSet"))
+        val atomicReferenceArrayCompareAndExchange = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("compareAndExchange"))
     }
 }
 

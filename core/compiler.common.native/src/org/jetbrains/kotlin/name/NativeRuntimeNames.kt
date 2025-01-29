@@ -31,6 +31,11 @@ object NativeRuntimeNames {
 
     object Callables {
         val AtomicArray = "AtomicArray".callableId(StandardClassIds.BASE_CONCURRENT_PACKAGE)
+
+        val atomicReferenceCompareAndSet = "compareAndSet".callableId(AtomicReference)
+        val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
+        val atomicArrayCompareAndSet = "compareAndSet".callableId(NativeRuntimeNames.AtomicArray)
+        val atomicArrayCompareAndExchange = "compareAndExchange".callableId(NativeRuntimeNames.AtomicArray)
     }
 
     object Annotations {
@@ -56,3 +61,4 @@ object NativeRuntimeNames {
 }
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
+private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))

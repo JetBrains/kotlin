@@ -10,31 +10,37 @@ import java.util.concurrent.atomic.AtomicReferenceArray
 import java.util.concurrent.atomic.AtomicReference
 
 fun testJavaReference() {
-    val ji = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int>(1)<!>
-    val jji: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int><!>
+    val ji = AtomicReference<Int>(1)
+    val jji: AtomicReference<Int>
     jji = ji
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ji.compareAndSet(1, 2)<!>
 
-    val jl = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Long>(1L)<!>
-    val jjl: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Long><!>
+    val jl = AtomicReference<Long>(1L)
+    val jjl: AtomicReference<Long>
     jjl = jl
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>jl.compareAndSet(1L, 2L)<!>
 
-    val jb = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Char>('c')<!>
-    val jjb: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Char><!>
+    val jb = AtomicReference<Char>('c')
+    val jjb: AtomicReference<Char>
     jjb = jb
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>jb.compareAndSet('c', 'd')<!>
 }
 
 fun testJavaArray() {
-    val ji = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReferenceArray<Int>(1)<!>
-    val jji: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReferenceArray<Int><!>
+    val ji = AtomicReferenceArray<Int>(1)
+    val jji: AtomicReferenceArray<Int>
     jji = ji
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ji.compareAndSet(0, 1, 2)<!>
 
-    val jl = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReferenceArray<Long>(1)<!>
-    val jjl: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReferenceArray<Long><!>
+    val jl = AtomicReferenceArray<Long>(1)
+    val jjl: AtomicReferenceArray<Long>
     jjl = jl
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>jl.compareAndSet(0, 1L, 2L)<!>
 
-    val jb = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReferenceArray<Boolean>(1)<!>
-    val jjb: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReferenceArray<Boolean><!>
+    val jb = AtomicReferenceArray<Boolean>(1)
+    val jjb: AtomicReferenceArray<Boolean>
     jjb = jb
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>jb.compareAndSet(0, true, false)<!>
 }
 
 // FILE: K.kt
@@ -45,29 +51,35 @@ import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.AtomicArray
 
 fun testKotlinReference() {
-    val ki = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference(127)<!>
-    val kki: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int><!>
+    val ki = AtomicReference(127)
+    val kki: AtomicReference<Int>
     kki = ki
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ki.compareAndSet(127, 2)<!>
 
-    val kl = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference(127L)<!>
-    val kkl: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Long><!>
+    val kl = AtomicReference(127L)
+    val kkl: AtomicReference<Long>
     kkl = kl
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>kl.compareAndSet(127L, 2L)<!>
 
-    val kb = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference(false)<!>
-    val kkb: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Boolean><!>
+    val kb = AtomicReference(false)
+    val kkb: AtomicReference<Boolean>
     kkb = kb
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>kb.compareAndSet(false, true)<!>
 }
 
 fun testKotlinArray() {
-    val ki = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray(arrayOf(127))<!>
-    val kki: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray<Int><!>
+    val ki = AtomicArray(arrayOf(127))
+    val kki: AtomicArray<Int>
     kki = ki
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ki.compareAndSetAt(0, 127, 2)<!>
 
-    val kl = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray(arrayOf(127L))<!>
-    val kkl: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray<Long><!>
+    val kl = AtomicArray(arrayOf(127L))
+    val kkl: AtomicArray<Long>
     kkl = kl
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>kl.compareAndSetAt(0, 127L, 2L)<!>
 
-    val kb = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray(arrayOf(false))<!>
-    val kkb: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray<Boolean><!>
+    val kb = AtomicArray(arrayOf(false))
+    val kkb: AtomicArray<Boolean>
     kkb = kb
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>kb.compareAndSetAt(0, false, true)<!>
 }
