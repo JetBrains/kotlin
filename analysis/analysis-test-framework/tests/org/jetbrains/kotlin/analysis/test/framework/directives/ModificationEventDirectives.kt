@@ -125,6 +125,10 @@ private fun publishModificationEventByKind(modificationEventKind: KotlinModifica
                 project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION).onModification()
             }
 
+            KotlinModificationEventKind.GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION -> {
+                project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION).onModification()
+            }
+
             KotlinModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION -> {
                 project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION).onModification()
             }

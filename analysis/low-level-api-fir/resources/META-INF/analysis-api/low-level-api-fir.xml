@@ -69,6 +69,10 @@
         topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener"
     />
     <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalScriptModuleStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalScriptModuleStateModificationListener"
+    />
+    <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalSourceOutOfBlockModificationListener"
         topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener"
     />
@@ -87,10 +91,6 @@
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker$Listener"
         topic="org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalScriptModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalScriptModuleStateModificationListener"
     />
   </projectListeners>
 </idea-plugin>

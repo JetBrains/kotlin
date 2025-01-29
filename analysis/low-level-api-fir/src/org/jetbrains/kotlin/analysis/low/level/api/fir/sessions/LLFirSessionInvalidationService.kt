@@ -71,6 +71,13 @@ class LLFirSessionInvalidationService(private val project: Project) {
         }
     }
 
+    internal class LLKotlinGlobalScriptModuleStateModificationListener(val project: Project) :
+        KotlinGlobalScriptModuleStateModificationListener {
+        override fun onModification() {
+            getInstance(project).invalidateScriptSessions()
+        }
+    }
+
     internal class LLKotlinGlobalSourceOutOfBlockModificationListener(val project: Project) :
         KotlinGlobalSourceOutOfBlockModificationListener {
         override fun onModification() {
@@ -87,13 +94,6 @@ class LLFirSessionInvalidationService(private val project: Project) {
     internal class LLPsiModificationTrackerListener(val project: Project) : PsiModificationTracker.Listener {
         override fun modificationCountChanged() {
             getInstance(project).invalidateUnstableDanglingFileSessions()
-        }
-    }
-
-    internal class LLKotlinGlobalScriptModuleStateModificationListener(val project: Project) :
-        KotlinGlobalScriptModuleStateModificationListener {
-        override fun onModification() {
-            getInstance(project).invalidateScriptSessions()
         }
     }
 
