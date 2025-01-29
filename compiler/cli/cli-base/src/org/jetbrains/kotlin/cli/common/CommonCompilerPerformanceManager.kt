@@ -12,8 +12,13 @@ import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
+    companion object {
+        val findJavaClassLock = Any()
+    }
+
     @Suppress("MemberVisibilityCanBePrivate")
-    protected val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
+    private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
+    private var findJavaClassMeasurement: FindJavaClassMeasurement = FindJavaClassMeasurement(0, 0)
     var isEnabled: Boolean = false
         protected set
     private var initStartNanos = PerformanceCounter.currentTime()
@@ -32,7 +37,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
-    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements
+    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + findJavaClassMeasurement
 
     fun enableCollectingPerformanceStatistics() {
         isEnabled = true
@@ -149,6 +154,21 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
     }
 
+    internal fun <T> measureFindJavaClassTime(block: () -> T): T {
+        if (!isEnabled) block()
+
+        val startTime = PerformanceCounter.currentTime()
+        try {
+            return block()
+        } finally {
+            val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(PerformanceCounter.currentTime() - startTime)
+            synchronized(findJavaClassLock) {
+                findJavaClassMeasurement =
+                    FindJavaClassMeasurement(findJavaClassMeasurement.count + 1, findJavaClassMeasurement.milliseconds + elapsedMillis)
+            }
+        }
+    }
+
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
     }
@@ -160,9 +180,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
                     it is IrTranslationMeasurement ||
                     it is IrLoweringMeasurement ||
                     it is BackendOrMetadataGenerationMeasurement ||
-                    it is PerformanceCounterMeasurement
+                    it is PerformanceCounterMeasurement ||
+                    it is FindJavaClassMeasurement
         }
 
         return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
     }
+}
+
+fun <T> CommonCompilerPerformanceManager?.tryMeasureFindJavaClassTime(block: () -> T): T {
+    return if (this == null) return block() else measureFindJavaClassTime(block)
 }
