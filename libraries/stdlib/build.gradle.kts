@@ -779,6 +779,9 @@ tasks {
             @Suppress("DEPRECATION")
             kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
         }
+        named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+            enabled = false  // Causes out-of-memory in CI: KTI-2150
+        }
     }
     val wasmWasiNodeTest by existing {
         if (!kotlinBuildProperties.getBoolean("kotlin.stdlib.wasi.tests")) {
