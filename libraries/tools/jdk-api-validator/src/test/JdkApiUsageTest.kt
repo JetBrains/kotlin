@@ -112,6 +112,7 @@ private val undefinedReferencesToIgnore = listOf(
     "int Long.hashCode(long)",
     "int Float.hashCode(float)",
     "int Double.hashCode(double)",
+    "int Character.hashCode(char)",
 )
 
 private class TestLogger : Logger {

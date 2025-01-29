@@ -1,6 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 description = "Kotlin JVM metadata manipulation library"
 group = "org.jetbrains.kotlin"
 
@@ -45,6 +42,12 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 }
 
 publish()
+
+val unshaded by task<Jar> {
+    archiveClassifier.set("unshaded")
+    from(mainSourceSet.output)
+}
+project.addArtifact("unshaded", unshaded, unshaded)
 
 val runtimeJar = runtimeJarWithRelocation {
     from(mainSourceSet.output)

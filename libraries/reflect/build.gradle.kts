@@ -69,6 +69,13 @@ dependencies {
     embedded(protobufLite()) { isTransitive = false }
 
     compileOnly("org.jetbrains:annotations:13.0")
+
+    // Declaring kotlin-metadata-jvm dependency as `embedded` is undesirable because it leads to protobuf-generated classes packed twice in
+    // the resulting jar. So we declare it as `compileOnly` and pack its output manually in the shadow configuration.
+    // Also, we need to compile against the unshaded configuration to avoid having incompatible (located in different packages)
+    // protobuf-generated classes because then we would not be able to pass protobuf obtained from descriptors to kotlin-metadata.
+    compileOnly(project(":kotlin-metadata-jvm", "unshaded"))
+    compileOnly(project(":kotlin-metadata"))
 }
 
 if (kotlinBuildProperties.includeJava9) {
@@ -155,12 +162,19 @@ val reflectShadowJar by task<ShadowJar> {
     if (kotlinBuildProperties.includeJava9) {
         from(sourceSets["java9"].output)
     }
+    from(project(":kotlin-metadata").sourceSets["main"].output) {
+        exclude("META-INF/metadata.kotlin_module")
+    }
+    from(project(":kotlin-metadata-jvm").sourceSets["main"].output) {
+        exclude("META-INF/metadata.jvm.kotlin_module")
+    }
     exclude("**/*.proto")
     exclude("org/jetbrains/annotations/Nls*.class")
 
     if (kotlinBuildProperties.relocation) {
         mergeServiceFiles()
         transform(KotlinModuleShadowTransformer(logger))
+        relocate("kotlin.metadata", "kotlin.reflect.jvm.internal.impl.km")
         relocate("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
         relocate("javax.inject", "kotlin.reflect.jvm.internal.impl.javax.inject")
     }
@@ -280,6 +294,7 @@ val result by task<Jar> {
     from(zipTree(provider { reflectShadowJar.get().archiveFile.get().asFile })) {
         include("META-INF/versions/**")
     }
+    includeEmptyDirs = false
     manifestAttributes(
         manifest,
         component = "Main",
