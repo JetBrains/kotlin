@@ -14,10 +14,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.createAllLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolBasedFakeLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForScript
@@ -107,7 +108,11 @@ private fun KaModule.isLightClassSupportAvailable(): Boolean {
 }
 
 internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KaModule>(project) {
-    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.Companion.getInstance(project) }
+    @KaCachedService
+    private val projectStructureProvider by lazyPub { KotlinProjectStructureProvider.getInstance(project) }
+
+    @KaCachedService
+    private val providerCache by lazyPub { SymbolKotlinProviderCache.getInstance(project) }
 
     private fun PsiElement.getModuleIfSupportEnabled(): KaModule? {
         return projectStructureProvider.getModule(
@@ -166,10 +171,10 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
     }
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
-        project.createPackageProvider(scope).doesKotlinOnlyPackageExist(fqName)
+        providerCache.getPackageProvider(scope).doesKotlinOnlyPackageExist(fqName)
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> =
-        project.createPackageProvider(scope)
+        providerCache.getPackageProvider(scope)
             .getKotlinOnlySubpackageNames(fqn)
             .map { fqn.child(it) }
 
