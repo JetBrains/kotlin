@@ -46,12 +46,6 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.utils.DFS
 
-object KonanStubGeneratorExtensions : StubGeneratorExtensions() {
-    override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean {
-        return super.isPropertyWithPlatformField(descriptor) || descriptor.isLateInit
-    }
-}
-
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun PsiToIrContext.psiToIr(
         input: PsiToIrInput,

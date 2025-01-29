@@ -12,6 +12,7 @@ dependencies {
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(projectTests(":native:native.tests"))
     testImplementation(projectTests(":kotlin-util-klib-abi"))
+    testImplementation(projectTests(":compiler:test-infrastructure"))
 }
 
 sourceSets {

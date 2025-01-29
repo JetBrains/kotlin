@@ -172,12 +172,39 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
  * The Native KLIB facade suitable for FIR frontend.
  */
 class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNativeKlibSerializerFacade(testServices) {
+    override fun updateTestConfiguration(
+        configuration: CompilerConfiguration,
+        module: TestModule,
+        outputArtifact: BinaryArtifacts.KLib
+    ) {
+        val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
+
+        val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
+
+        val library = resolveLibraries(
+            configuration, dependencyPaths + outputArtifact.outputFile.path,
+        ).last().library
+
+        val moduleDescriptor = nativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            library,
+            configuration.languageVersionSettings,
+            LockBasedStorageManager("ModulesStructure"),
+            null,
+            packageAccessHandler = null,
+            lookupTracker = LookupTracker.DO_NOTHING
+        )
+        moduleDescriptor.setDependencies(dependencyPaths.map { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl } + moduleDescriptor)
+
+        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
+        testServices.libraryProvider.setDescriptorAndLibraryByName(outputArtifact.outputFile.path, moduleDescriptor, library)
+    }
+
     override fun serialize(
         configuration: CompilerConfiguration,
         usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
         inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
-    ) = serializeModuleIntoKlib(
+    ): SerializerOutput<KotlinLibrary> = serializeModuleIntoKlib(
         moduleName = inputArtifact.irModuleFragment.name.asString(),
         inputArtifact.irModuleFragment,
         inputArtifact.irPluginContext.irBuiltIns,
