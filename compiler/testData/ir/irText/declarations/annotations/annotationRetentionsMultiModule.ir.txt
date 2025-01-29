@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/main.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun source (x: @[Source] kotlin.Short): @[Source] kotlin.Short declared in <root>' type=@[Source] kotlin.Short origin=null
+        CALL 'public final fun source (x: kotlin.Short): kotlin.Short declared in <root>' type=kotlin.Short origin=null
           x: CONST Short type=kotlin.Short value=0
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun binary (x: @[Binary] kotlin.Short): @[Binary] kotlin.Short declared in <root>' type=@[Binary] kotlin.Short origin=null

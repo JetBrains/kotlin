@@ -105,13 +105,13 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.C, o:kotlin.Any?) returnType:kotlin.Unit
       overridden:
-        public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
+        public abstract fun bar (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:o index:0 type:kotlin.Any?
       BLOCK_BODY
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.C, o:kotlin.Int) returnType:kotlin.Unit
       overridden:
-        public abstract fun bar (o: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
+        public abstract fun bar (p0: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:o index:0 type:kotlin.Int
       BLOCK_BODY
@@ -153,7 +153,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.D, o:kotlin.Int) returnType:kotlin.Unit
       overridden:
-        public abstract fun bar (o: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
+        public abstract fun bar (p0: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       VALUE_PARAMETER name:o index:0 type:kotlin.Int
       BLOCK_BODY
@@ -316,7 +316,7 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.G, o:kotlin.Any?) returnType:kotlin.Unit
       overridden:
         public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
-        public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
+        public abstract fun bar (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
       $this: VALUE_PARAMETER name:<this> type:<root>.G
       VALUE_PARAMETER name:o index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -393,7 +393,7 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.H, o:kotlin.Any) returnType:kotlin.Unit
       overridden:
         public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
-        public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
+        public abstract fun bar (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
       $this: VALUE_PARAMETER name:<this> type:<root>.H
       VALUE_PARAMETER name:o index:0 type:kotlin.Any
       BLOCK_BODY

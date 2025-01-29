@@ -36,16 +36,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:B modality:ABSTRACT visibility:public superTypes:[<root>.SeparateModuleJava1; <root>.SeparateModuleJava2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.SeparateModuleJava1, o:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.SeparateModuleJava1, p0:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
+        public abstract fun bar (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
       $this: VALUE_PARAMETER name:<this> type:<root>.SeparateModuleJava1
-      VALUE_PARAMETER name:o index:0 type:@[FlexibleNullability] kotlin.Any?
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.SeparateModuleJava2, o:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Any?
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.SeparateModuleJava2, p0:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun bar (o: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
+        public abstract fun bar (p0: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
       $this: VALUE_PARAMETER name:<this> type:<root>.SeparateModuleJava2
-      VALUE_PARAMETER name:o index:0 type:kotlin.Int
+      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.SeparateModuleJava1
@@ -74,11 +74,11 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:o index:0 type:@[FlexibleNullability] kotlin.Any?
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.SeparateModuleJava2, o:kotlin.Int) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.SeparateModuleJava2, p0:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun bar (o: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
+        public abstract fun bar (p0: kotlin.Int): kotlin.Unit declared in <root>.SeparateModuleJava2
       $this: VALUE_PARAMETER name:<this> type:<root>.SeparateModuleJava2
-      VALUE_PARAMETER name:o index:0 type:kotlin.Int
+      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.Java1, o:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
-        public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
+        public abstract fun bar (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.SeparateModuleJava1
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:o index:0 type:@[FlexibleNullability] kotlin.Any?
     FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, o:kotlin.Int) returnType:kotlin.Unit [fake_override]
@@ -380,17 +380,17 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public abstract fun foo (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k6 type:kotlin.Unit [val]
-        CALL 'public abstract fun bar (o: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        CALL 'public abstract fun bar (p0: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-          o: CONST Int type=kotlin.Int value=1
+          p0: CONST Int type=kotlin.Int value=1
       VAR name:k7 type:kotlin.Unit [val]
-        CALL 'public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        CALL 'public abstract fun bar (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-          o: CONST String type=kotlin.String value=""
+          p0: CONST String type=kotlin.String value=""
       VAR name:k8 type:kotlin.Unit [val]
-        CALL 'public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        CALL 'public abstract fun bar (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-          o: CONST Null type=kotlin.Nothing? value=null
+          p0: CONST Null type=kotlin.Nothing? value=null
       VAR name:k9 type:kotlin.Any [val]
         TYPE_OP type=kotlin.Any origin=IMPLICIT_NOTNULL typeOperand=kotlin.Any
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] kotlin.Any? visibility:public [final,static] declared in <root>.Java1' type=@[FlexibleNullability] kotlin.Any? superQualifierSymbol=<root>.Java1 origin=null
@@ -405,9 +405,9 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public abstract fun foo (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       VAR name:k14 type:kotlin.Unit [val]
-        CALL 'public abstract fun bar (o: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        CALL 'public abstract fun bar (p0: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-          o: CONST Int type=kotlin.Int value=1
+          p0: CONST Int type=kotlin.Int value=1
       VAR name:k15 type:kotlin.Unit [val]
         CALL 'public abstract fun bar (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null

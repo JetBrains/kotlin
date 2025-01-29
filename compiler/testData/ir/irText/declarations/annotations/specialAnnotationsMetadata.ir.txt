@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/main.kt
         CALL 'public final fun exact (): @[Exact] kotlin.String declared in <root>' type=@[Exact] kotlin.String origin=null
       VAR name:mainNoInfer type:@[NoInfer] kotlin.String [val]
         CALL 'public final fun noInfer (): @[NoInfer] kotlin.String declared in <root>' type=@[NoInfer] kotlin.String origin=null
-      VAR name:mainUnsafeVariance type:@[UnsafeVariance] kotlin.String [val]
-        CALL 'public final fun unsafeVariance (): @[UnsafeVariance] kotlin.String declared in <root>' type=@[UnsafeVariance] kotlin.String origin=null
+      VAR name:mainUnsafeVariance type:kotlin.String [val]
+        CALL 'public final fun unsafeVariance (): kotlin.String declared in <root>' type=kotlin.String origin=null
       VAR name:mainExtensionFunctionType type:@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
         CALL 'public final fun <get-extensionFunctionType> (): @[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=GET_PROPERTY

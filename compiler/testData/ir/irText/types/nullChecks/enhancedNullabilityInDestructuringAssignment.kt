@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// DISABLE_JAVA_FACADE
 
 // FILE: enhancedNullabilityInDestructuringAssignment.kt
 
@@ -50,7 +51,7 @@ fun test4() {
 import java.util.*;
 import org.jetbrains.annotations.*;
 
-public static class J {
+public class J {
     public static @NotNull P notNullP() { return null; }
 
     public static Q<@NotNull String, @NotNull String> notNullComponents() { return null; }

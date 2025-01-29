@@ -17,17 +17,13 @@ open class KClass {
 // FILE: JKClass.java
 public class JKClass extends KClass {
     public void test() {
-        var valuePub = this.publicProp;
-        var valueProt = this.protectedProp;
-
-        var valuePriv = this.privateProp;
+        String valuePub = this.publicProp;
+        String valueProt = this.protectedProp;
     }
 
     public void test(KClass instance) {
-        var valuePub = instance.publicProp;
-        var valueProt = instance.protectedProp;
-
-        var valuePriv = instance.privateProp;
+        String valuePub = instance.publicProp;
+        String valueProt = instance.protectedProp;
     }
 }
 

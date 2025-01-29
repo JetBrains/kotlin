@@ -4,7 +4,7 @@
 // IGNORE_BACKEND_K1: JS_IR
 // LANGUAGE: +BreakContinueInInlineLambdas
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND_K2: JS_IR, NATIVE
 // STATUS: K2 reports a false-positive `CANNOT_INFER_PARAMETER_TYPE` on things like `{break}()`
 
 inline fun foo(block: () -> Unit) { block() }

@@ -22,6 +22,6 @@ public interface X {
 public abstract class AX extends A implements X {
     @Override
     public AX getA() {
-        return (AX) super.getA();
+        return null;
     }
 }
