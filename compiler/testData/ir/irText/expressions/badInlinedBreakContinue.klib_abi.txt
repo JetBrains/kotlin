@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final inline fun /bar(kotlin/Function0<kotlin/Unit>, noinline kotlin/Function0<kotlin/Unit>) // /bar|bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}[0]
+final inline fun /baz(crossinline kotlin/Function0<kotlin/Unit>) // /baz|baz(kotlin.Function0<kotlin.Unit>){}[0]
+final inline fun /foo(kotlin/Function0<kotlin/Unit>) // /foo|foo(kotlin.Function0<kotlin.Unit>){}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.collections/Iterable<#A>)./myForEach(kotlin/Function1<#A, kotlin/Unit>) // /myForEach|myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun /test1() // /test1|test1(){}[0]
+final fun /test2() // /test2|test2(){}[0]
+final fun /test3() // /test3|test3(){}[0]
+final fun /test4() // /test4|test4(){}[0]
+final fun /test5() // /test5|test5(){}[0]
+final fun /test6() // /test6|test6(){}[0]
+final fun /test7() // /test7|test7(){}[0]
+final fun /test8() // /test8|test8(){}[0]

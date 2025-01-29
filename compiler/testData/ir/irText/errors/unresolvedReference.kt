@@ -4,6 +4,7 @@
 // IGNORE_BACKEND_K1: JS_IR
 // SKIP_GENERATING_KLIB
 // REASON: Cannot serialize error type: ERROR CLASS: Unresolved name: unresolved
+// RUN_PIPELINE_TILL: FIR2IR
 
 val test1 = unresolved
 

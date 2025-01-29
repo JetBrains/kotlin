@@ -16,11 +16,15 @@ import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.configuration.commonHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrTextTest
 import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
+import org.jetbrains.kotlin.test.services.TestPhaseLabel
+import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
     val targetFrontend: FrontendKind<FrontendOutput>
@@ -37,8 +41,13 @@ abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.Frontend
             setupIrTextDumpHandlers()
         }
 
+        defaultDirectives {
+            LATEST_PHASE_IN_PIPELINE with TestPhaseLabel.BACKEND
+        }
+
         useAfterAnalysisCheckers(
-            ::BlackBoxCodegenSuppressor
+            ::BlackBoxCodegenSuppressor,
+            ::PhasedPipelineChecker.bind(TestPhaseLabel.BACKEND)
         )
         enableMetaInfoHandler()
     }
