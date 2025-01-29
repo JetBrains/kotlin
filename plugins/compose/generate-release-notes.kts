@@ -62,7 +62,8 @@ fun Commit.asReleaseNote(): String {
     val commitLink = "[`${commit.take(7)}`](${commitToGitHubUrl(commit)})"
     val issueLinks = issues.map { issue -> "[`b/$issue`](${issueToBuganizerUrl(issue)})" }.joinToString(", ")
     val link = if (issueLinks.isEmpty()) commitLink else issueLinks
-    return "- $link ${relnote ?: title}"
+    val text = (relnote ?: title).split(" ").joinToString(" ") { if (it.startsWith('@')) "`$it`" else it }
+    return "- $link $text"
 }
 
 if (args.isEmpty()) {
