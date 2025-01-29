@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -131,6 +132,22 @@ class FirScriptConfiguratorExtensionImpl(
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType)
                     name = Name.identifier(propertyName)
+                    symbol = FirPropertySymbol(name)
+                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    isLocal = true
+                    isVar = false
+                }
+            )
+        }
+
+        configuration[ScriptCompilationConfiguration.explainField]?.let {
+            parameters.add(
+                buildProperty {
+                    moduleData = session.moduleData
+                    source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                    origin = FirDeclarationOrigin.ScriptCustomization.Parameter
+                    returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class))
+                    name = Name.identifier(it)
                     symbol = FirPropertySymbol(name)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
