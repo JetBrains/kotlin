@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -251,16 +252,16 @@ abstract class KotlinIrLinker(
 
                     override fun visitFunctionReference(expression: IrFunctionReference) {
                         if (expression.symbol.isBound) {
-                            expression.forceUpdateShapeFromTargetSymbol()
+                            expression.initializeTargetShapeFromSymbol()
                         }
-                        expression.acceptChildrenVoid(this)
+                        super.visitFunctionReference(expression)
                     }
 
                     override fun visitPropertyReference(expression: IrPropertyReference) {
                         if (expression.symbol.isBound) {
-                            expression.forceUpdateShapeFromTargetSymbol()
+                            expression.initializeTargetShapeFromSymbol()
                         }
-                        expression.acceptChildrenVoid(this)
+                        super.visitPropertyReference(expression)
                     }
                 }
             )
