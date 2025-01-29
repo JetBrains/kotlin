@@ -1175,8 +1175,11 @@ open class IrFileSerializer(
         function.typeParameters.forEach {
             proto.addTypeParameter(serializeIrTypeParameter(it))
         }
+
+        val isAnnotationClass = ((function as? IrConstructor)?.returnType?.classifierOrNull as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS
+
         for (parameter in function.parameters) {
-            if (((function as? IrConstructor)?.returnType?.classifierOrNull as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS) {
+            if (isAnnotationClass) {
                 require(parameter.isValidConstantAnnotationArgument()) {
                     "This is a compiler bug, please report it to https://kotl.in/issue : default value of annotation construction parameter must have const initializer:\n${parameter.render()}"
                 }
