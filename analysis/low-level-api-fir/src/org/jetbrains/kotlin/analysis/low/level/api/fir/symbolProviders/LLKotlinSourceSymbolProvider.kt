@@ -267,6 +267,14 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     override fun hasPackage(fqName: FqName): Boolean {
         if (!allowKotlinPackage && fqName.isKotlinPackage()) return false
+
+        // While package names currently cannot be computed for source modules in the IDE, they *can* be computed for library modules. When
+        // we have a resolvable library session (see `LLFirAbstractSessionFactory.doCreateLibrarySession`), the package names for it are
+        // already available.
+        symbolNamesProvider.getPackageNames()?.let { packageNames ->
+            return fqName.asString() in packageNames
+        }
+
         return packageProvider.doesKotlinOnlyPackageExist(fqName)
     }
 }

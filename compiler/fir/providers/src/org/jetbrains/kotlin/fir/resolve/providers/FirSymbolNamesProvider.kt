@@ -33,6 +33,14 @@ abstract class FirSymbolNamesProvider {
      * [getPackageNames] is used as the default implementation for [getPackageNamesWithTopLevelClassifiers] and
      * [getPackageNamesWithTopLevelCallables]. It depends on the symbol names provider whether it's worth computing separate package sets
      * for classifiers and callables, or just one set containing all package names.
+     *
+     * TODO (marco): Require this to be the full closure of packages so that it can be used to check `hasPackage`. Downside: This makes the
+     *  "has top-level declaration" check technically worse, because the set is now wider and might accept additional class/callable IDs.
+     *  An alternative here would be to build the closure at the use site. But that'd mean we have to cache duplicate sets. Another
+     *  alternative would be to use a different data structure, such as a tree of package segments which are marked with "has top-level
+     *  declaration".
+     *
+     * TODO (marco): Require this to be precise, or wrap in a class with a preciseness marker (`isPrecise`).
      */
     open fun getPackageNames(): Set<String>? = null
 
