@@ -1143,6 +1143,10 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrValueParameter(parameter: IrValueParameter): ProtoValueParameter {
+        if (parameter.kind == IrParameterKind.Context) {
+            requireAbiAtLeast(ABI_LEVEL_2_2, { "Context parameter" }) { parameter.parent }
+        }
+
         val proto = ProtoValueParameter.newBuilder()
             .setBase(serializeIrDeclarationBase(parameter, ValueParameterFlags.encode(parameter)))
             .setNameType(serializeNameAndType(parameter.name, parameter.type))
@@ -1562,12 +1566,14 @@ open class IrFileSerializer(
 
     }
 
-    private inline fun requireAbiAtLeast(
+    private inline fun <T : IrElement> requireAbiAtLeast(
         @Suppress("SameParameterValue") abiCompatibilityLevel: KlibAbiCompatibilityLevel,
-        expression: () -> IrExpression
+        prefix: (T) -> String = { it::class.simpleName ?: "IrElement" },
+        irNode: () -> T,
     ) {
         require(settings.abiCompatibilityLevel.isAtLeast(abiCompatibilityLevel)) {
-            "Expression serialization is not supported at ABI compatibility level ${settings.abiCompatibilityLevel}: ${expression().render()}"
+            val irNode = irNode()
+            "${prefix(irNode)} serialization is not supported at ABI compatibility level ${settings.abiCompatibilityLevel}: ${irNode.render()}"
         }
     }
 }
