@@ -15,6 +15,8 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     companion object {
         val findJavaClassLock = Any()
         val binaryClassFromKotlinFileLock = Any()
+
+        fun currentTime(): Long = System.nanoTime()
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
@@ -23,7 +25,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var binaryClassFromKotlinFileMeasurement: BinaryClassFromKotlinFileMeasurement = BinaryClassFromKotlinFileMeasurement(0, 0)
     var isEnabled: Boolean = false
         protected set
-    private var initStartNanos = PerformanceCounter.currentTime()
+    private var initStartNanos = currentTime()
     private var analysisStart: Long = 0
 
     private var startGCData = mutableMapOf<String, GCData>()
@@ -43,11 +45,10 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     fun enableCollectingPerformanceStatistics() {
         isEnabled = true
-        PerformanceCounter.setTimeCounterEnabled(true)
         ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
 
-    private fun deltaTime(start: Long): Long = PerformanceCounter.currentTime() - start
+    private fun deltaTime(start: Long): Long = currentTime() - start
 
     open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
         if (!isEnabled) return
@@ -62,7 +63,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         if (!isEnabled) return
         recordGcTime()
         recordJitCompilationTime()
-        recordPerfCountersMeasurements()
     }
 
     open fun addSourcesStats(files: Int, lines: Int) {
@@ -72,16 +72,16 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     open fun notifyAnalysisStarted() {
-        analysisStart = PerformanceCounter.currentTime()
+        analysisStart = currentTime()
     }
 
     open fun notifyAnalysisFinished() {
-        val time = PerformanceCounter.currentTime() - analysisStart
+        val time = currentTime() - analysisStart
         measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyIRTranslationStarted() {
-        irTranslationStart = PerformanceCounter.currentTime()
+        irTranslationStart = currentTime()
     }
 
     open fun notifyIRTranslationFinished() {
@@ -93,7 +93,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     open fun notifyIRLoweringStarted() {
-        irLoweringStart = PerformanceCounter.currentTime()
+        irLoweringStart = currentTime()
     }
 
     open fun notifyIRLoweringFinished() {
@@ -105,7 +105,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     open fun notifyBackendOrMetadataGenerationStarted() {
-        backendOrMetadataGenerationStart = PerformanceCounter.currentTime()
+        backendOrMetadataGenerationStart = currentTime()
     }
 
     open fun notifyBackendOrMetadataGenerationFinished() {
@@ -152,18 +152,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         measurements += CompilerInitializationMeasurement(time)
     }
 
-    private fun recordPerfCountersMeasurements() {
-        PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
-    }
-
     internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
 
-        val startTime = PerformanceCounter.currentTime()
+        val startTime = currentTime()
         try {
             return block()
         } finally {
-            val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(PerformanceCounter.currentTime() - startTime)
+            val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(currentTime() - startTime)
             when (measurementClass) {
                 FindJavaClassMeasurement::class -> {
                     synchronized(findJavaClassLock) {
@@ -200,7 +196,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
                     it is IrTranslationMeasurement ||
                     it is IrLoweringMeasurement ||
                     it is BackendOrMetadataGenerationMeasurement ||
-                    it is PerformanceCounterMeasurement ||
                     it is FindJavaClassMeasurement ||
                     it is BinaryClassFromKotlinFileMeasurement
         }
