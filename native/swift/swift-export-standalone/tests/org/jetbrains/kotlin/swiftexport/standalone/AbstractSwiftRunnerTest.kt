@@ -54,6 +54,10 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
 
                             listOf { KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
                         }
+                        SwiftExportModule.SwiftOnly.Kind.KotlinRuntimeSupport -> {
+                            // No need to verify predefined files.
+                            emptyList()
+                        }
                     }
 
                 }

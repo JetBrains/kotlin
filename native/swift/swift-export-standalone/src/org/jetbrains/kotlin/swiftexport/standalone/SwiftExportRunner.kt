@@ -42,6 +42,7 @@ public data class SwiftExportConfig(
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
     val moduleForPackagesName: String = "ExportedKotlinPackages",
+    val runtimeSupportModuleName: String = "KotlinRuntimeSupport",
 ) {
     public companion object {
         /**
@@ -127,6 +128,7 @@ public sealed class SwiftExportModule(
     ) : SwiftExportModule(name, emptyList()) {
         public enum class Kind {
             KotlinPackages,
+            KotlinRuntimeSupport,
         }
 
         override fun equals(other: Any?): Boolean =
@@ -199,8 +201,11 @@ public fun runSwiftExport(
         sirModule = translatedModules.createModuleForPackages(),
         outputPath = config.outputPath.parent / config.moduleForPackagesName / "${config.moduleForPackagesName}.swift"
     )
-
-    return@runCatching setOf(packagesModule) + translatedModules.map(TranslationResult::writeModule)
+    val runtimeSupportModule = writeRuntimeSupportModule(
+        config = config,
+        outputPath = config.outputPath.parent / config.runtimeSupportModuleName / "${config.runtimeSupportModuleName}.swift",
+    )
+    return@runCatching setOf(packagesModule, runtimeSupportModule) + translatedModules.map(TranslationResult::writeModule)
 }
 
 private fun translateModule(module: InputModule, dependencies: Set<InputModule>): TranslationResult {
@@ -267,6 +272,22 @@ private fun writeKotlinPackagesModule(
         name = sirModule.name,
         swiftApi = outputPath,
         kind = SwiftExportModule.SwiftOnly.Kind.KotlinPackages,
+    )
+}
+
+private fun writeRuntimeSupportModule(
+    config: SwiftExportConfig,
+    outputPath: Path
+): SwiftExportModule.SwiftOnly {
+
+    val runtimeSupportContent = config.javaClass.getResource("/swift/KotlinRuntimeSupport.swift")?.readText()
+        ?: error("Can't find runtime support module")
+    dumpTextAtFile(sequenceOf(runtimeSupportContent), outputPath.toFile())
+
+    return SwiftExportModule.SwiftOnly(
+        swiftApi = outputPath,
+        name = config.runtimeSupportModuleName,
+        kind = SwiftExportModule.SwiftOnly.Kind.KotlinRuntimeSupport,
     )
 }
 
