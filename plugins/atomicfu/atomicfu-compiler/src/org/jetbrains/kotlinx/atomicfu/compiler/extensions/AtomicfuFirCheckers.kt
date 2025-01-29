@@ -22,14 +22,14 @@ class AtomicfuFirCheckers(session: FirSession) : FirAdditionalCheckersExtension(
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker>
-            get() = setOf(AtomicfuAtomicRefToPrimitiveCallChecker)
+            get() = setOf(
+                AtomicfuAtomicRefToPrimitiveCallChecker,
+            )
     }
 
     override val typeCheckers: TypeCheckers = object : TypeCheckers() {
         override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
             get() = setOf(
-                AtomicfuAtomicRefToPrimitiveTypeChecker,
-                AtomicfuAtomicArrayToPrimitiveTypeChecker,
             )
     }
 }

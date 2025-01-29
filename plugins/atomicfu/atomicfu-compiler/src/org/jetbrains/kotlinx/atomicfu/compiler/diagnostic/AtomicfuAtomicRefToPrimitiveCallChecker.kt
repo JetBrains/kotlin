@@ -7,15 +7,11 @@ package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractAtomicReferenceToPrimitiveCallChecker
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
 
 object AtomicfuAtomicRefToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
-    AtomicfuStandardClassIds.AtomicRef,
     AtomicfuStandardClassIds.atomicByPrimitive,
     MppCheckerKind.Platform,
-) {
-    override val FirBasedSymbol<*>.canInstantiateProblematicAtomicReference: Boolean
-        get() = this is FirFunctionSymbol<*> && callableId == AtomicfuStandardClassIds.Callables.atomic
-}
+    AtomicfuStandardClassIds.Callables.atomicRefCompareAndSet,
+    AtomicfuStandardClassIds.Callables.atomicRefCompareAndExchange,
+)

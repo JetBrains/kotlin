@@ -1494,7 +1494,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY,
-            "''{0}'' uses identity equality, but ''{1}'' does not have a consistent identity.{2}",
+            "This call may have inconsistent results because ''{0}'' uses identity equality and ''{1}'' does not have a consistent identity.{2}",
             CLASS_ID_RELATIVE_NAME_ONLY,
             RENDER_TYPE,
             suggestIfNotNull(" Consider using ''{0}'' instead.", CLASS_ID_RELATIVE_NAME_ONLY),

@@ -275,6 +275,11 @@ object StandardClassIds {
         val not = "not".callableId(Boolean)
 
         val contract = "contract".callableId(BASE_CONTRACTS_PACKAGE)
+
+        val atomicReferenceCompareAndSet = "compareAndSet".callableId(AtomicReference)
+        val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
+        val atomicArrayCompareAndSetAt = "compareAndSetAt".callableId(AtomicArray)
+        val atomicArrayCompareAndExchangeAt = "compareAndExchangeAt".callableId(AtomicArray)
     }
 
     object Collections {

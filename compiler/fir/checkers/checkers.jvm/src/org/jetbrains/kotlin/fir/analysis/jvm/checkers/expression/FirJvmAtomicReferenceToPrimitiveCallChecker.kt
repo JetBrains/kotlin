@@ -11,14 +11,16 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmAtomicReferenceToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
-        JvmStandardClassIds.ATOMIC_REFERENCE_CLASS_ID,
         JvmStandardClassIds.atomicByPrimitive,
         MppCheckerKind.Platform,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchange,
     )
 
 object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
-        JvmStandardClassIds.ATOMIC_REFERENCE_ARRAY_CLASS_ID,
         JvmStandardClassIds.atomicArrayByPrimitive,
         MppCheckerKind.Platform,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchange,
     )

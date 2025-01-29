@@ -7,21 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractAtomicReferenceToPrimitiveCallChecker
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 object FirNativeAtomicReferenceToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
-    NativeRuntimeNames.AtomicReference,
     NativeRuntimeNames.atomicByPrimitive,
     MppCheckerKind.Platform,
+    NativeRuntimeNames.Callables.atomicReferenceCompareAndSet,
+    NativeRuntimeNames.Callables.atomicReferenceCompareAndExchange,
 )
 
 object FirNativeAtomicArrayToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
-    NativeRuntimeNames.AtomicArray,
     NativeRuntimeNames.atomicArrayByPrimitive,
     MppCheckerKind.Platform,
-) {
-    override val FirBasedSymbol<*>.canInstantiateProblematicAtomicReference: Boolean
-        get() = this is FirFunctionSymbol<*> && callableId == NativeRuntimeNames.Callables.AtomicArray
-}
+    NativeRuntimeNames.Callables.atomicArrayCompareAndSet,
+    NativeRuntimeNames.Callables.atomicArrayCompareAndExchange,
+)
