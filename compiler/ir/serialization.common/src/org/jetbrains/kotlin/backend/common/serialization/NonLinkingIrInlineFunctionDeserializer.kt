@@ -132,6 +132,16 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         function.body = bodyWithRemappedSymbols
         function.parameters.forEachIndexed { index, parameter -> parameter.defaultValue = defaultValuesWithRemappedSymbols[index] }
+        function.parentsWithSelf.forEach {
+            if (it is IrDeclaration && it.parent is IrExternalPackageFragment) {
+                val deserializedFile = deserializedFunction.file
+                it.parent = IrFileImpl(
+                    fileEntry = deserializedFile.fileEntry,
+                    symbol = IrFileSymbolImpl(),
+                    packageFqName = deserializedFile.packageFqName
+                )
+            }
+        }
     }
 
     private fun referencePublicSymbol(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
@@ -156,7 +166,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         private val dummyFileSymbol = IrFileSymbolImpl().apply {
             IrFileImpl(
-                fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name),
+                fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name, fileProto.fileEntry.lineStartOffsetList.toIntArray()),
                 symbol = this,
                 packageFqName = FqName(irInterner.string(fileReader.deserializeFqName(fileProto.fqNameList)))
             )
