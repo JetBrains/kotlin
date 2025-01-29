@@ -67,9 +67,15 @@ fun isCastErased(
     }
 
     if (!makeOldFashionedCheck) {
+        // Bare types calculation reuses the same logic, so we must use the correctly
+        // inferred type for consistency (otherwise we may produce warnings that will
+        // later disappear instead of warning about code that is going to become red).
+        val targetType = subtype.attributes.unsafeDowncastWrtVariance?.coneType ?: subtype
+//        val targetType = subtype
+
         return when {
             regularClassSymbol.typeParameterSymbols.isEmpty() -> false
-            else -> context.session.typeCastSupport.isCastToTargetTypeErased(subtype, supertype, context.session)
+            else -> context.session.typeCastSupport.isCastToTargetTypeErased(targetType, supertype, context.session)
         }
     }
 
