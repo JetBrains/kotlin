@@ -261,6 +261,16 @@ private fun compileImpl(
             allSourceFiles,
             initialScriptCompilationConfiguration
         )
+
+    // CM: Unclear exactly what this does exactly, but it seems to allow us to use updateClasspath
+    // Without this, using `updateClasspath` doesn't work either
+    val (refineSourceFiles, newSourceDeps) = collectRefinedSourcesAndUpdateEnvironment(
+        state.compilerContext,
+        snippetKtFile,
+        initialScriptCompilationConfiguration,
+        messageCollector
+    )
+
     allSourceFiles.addAll(newSources)
 
     var hasSyntaxErrors = false

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal.What
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
@@ -31,7 +32,17 @@ import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.isIncomplete
+import kotlin.script.experimental.jvm.withUpdatedClasspath
 import kotlin.script.experimental.util.LinkedSnippet
+
+@Target(AnnotationTarget.FILE)
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class DependsOn(val value: String = "")
+
+class ReplBaseClass() {
+    fun helloFromBase() = println("Hello World")
+}
 
 /**
  * Test K2 REPL implementation. Very Experimental! Do not use! May break at any moment!
@@ -56,11 +67,27 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
     private val messageCollector = ScriptDiagnosticsMessageCollector(ReplMessageCollector(replConfiguration))
     private var lineCounter = 0
 
+    val mutableClassPath: MutableList<File> = mutableListOf()
+
+    fun onAnnotationsHandler(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+         mutableClassPath.add(File("/Users/christian.melchior/JetBrains/kotlin-jupyter-2/src/test/testData/kernelTestPackage-1.0.jar"))
+        return context.compilationConfiguration.withUpdatedClasspath(listOf<File>(
+            File("/Users/christian.melchior/JetBrains/kotlin-jupyter-2/src/test/testData/kernelTestPackage-1.0.jar")
+        )).asSuccess()
+    }
+
     private val scriptCompilationConfiguration = ScriptCompilationConfiguration {
         jvm {
             updateClasspath(
-                listOf(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests())
+                listOf(
+                    StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests(),
+                    File("/Users/christian.melchior/JetBrains/kotlin/plugins/scripting/scripting-tests/build/classes/kotlin/test"),
+                )
             )
+        }
+        implicitReceivers(ReplBaseClass::class)
+        refineConfiguration {
+            onAnnotations(DependsOn::class, handler = ::onAnnotationsHandler)
         }
     }
 
@@ -78,6 +105,7 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
             jvm {
                 baseClassLoader( ExampleRepl::class.java.classLoader)
             }
+            implicitReceivers.invoke(ReplBaseClass())
         }
 
     val replEvaluator = K2ReplEvaluator()
@@ -166,6 +194,7 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
                 repl {
                     currentLineId(lineId)
                 }
+                updateClasspath(mutableClassPath)
             }
         )
     }
