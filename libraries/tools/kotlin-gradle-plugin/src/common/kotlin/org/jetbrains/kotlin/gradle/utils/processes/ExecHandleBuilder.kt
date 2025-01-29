@@ -25,7 +25,8 @@ import java.util.concurrent.Executors
 internal class ExecHandleBuilder(
     val launchOpts: ProcessLaunchOptions,
 ) {
-    var displayName: String = ""
+    /** Optional display name, used in logging output. */
+    var displayName: String? = null
 
     /** Sets whether a non-zero exit value is ignored, else throw an exception. */
     var ignoreExitValue: Boolean = false
@@ -88,7 +89,7 @@ internal class ExecHandleBuilder(
         val environment = launchOpts.environment.orNull.orEmpty()
 
         return ExecHandle(
-            displayName = displayName.ifBlank { "command '$executable'" },
+            displayName = displayName ?: "command '$executable'",
             directory = workingDir,
             command = executable,
             arguments = arguments,
