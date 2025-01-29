@@ -7,32 +7,23 @@ package org.jetbrains.kotlin.test.runners.ir
 
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.KlibFacades
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrTextTest
+import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.configuration.configureAbstractIrTextSettings
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
+abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
     protected val targetPlatform: TargetPlatform,
     targetBackend: TargetBackend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
@@ -48,10 +39,16 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
 
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {
-            frontend = this@AbstractIrTextTest.frontend
-            targetPlatform = this@AbstractIrTextTest.targetPlatform
+            frontend = this@AbstractNonJvmIrTextTest.frontend
+            targetPlatform = this@AbstractNonJvmIrTextTest.targetPlatform
+            targetBackend = this@AbstractNonJvmIrTextTest.targetBackend
+            artifactKind = ArtifactKind.NoArtifact
+            dependencyKind = when (targetBackend) {
+                TargetBackend.JS_IR, TargetBackend.WASM -> DependencyKind.KLib // these irText pipelines register Klib artifacts during *KlibSerializerFacade
+                else -> DependencyKind.Source
+            }
         }
 
         applyConfigurators()
@@ -75,25 +72,32 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
             )
         }
 
-        configureAbstractIrTextSettings(
-            targetBackend, converter, klibFacades,
-            includeAllDumpHandlers = true,
+        setupDefaultDirectivesForIrTextTest()
+        useAfterAnalysisCheckers(
+            ::BlackBoxCodegenSuppressor,
+            ::FirIrDumpIdenticalChecker,
         )
-    }
-
-    protected fun TestConfigurationBuilder.commonConfigurationForK2(parser: FirParser) {
-        configureFirParser(parser)
-
-        configureFirHandlersStep {
-            useHandlersAtFirst(
-                ::FirDumpHandler,
-                ::FirScopeDumpHandler,
-            )
+        enableMetaInfoHandler()
+        useAdditionalSourceProviders(
+            ::CodegenHelpersSourceFilesProvider,
+        )
+        facadeStep(converter)
+        irHandlersStep {
+            setupIrTextDumpHandlers()
         }
+        klibFacades?.let {klibFacades ->
+            irHandlersStep {
+                useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+            }
 
-        forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
-            defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+            facadeStep(klibFacades.serializerFacade)
+            klibArtifactsHandlersStep {
+                this.useHandlers(::KlibAbiDumpHandler)
+            }
+            facadeStep(klibFacades.deserializerFacade)
+
+            deserializedIrHandlersStep {
+                useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
             }
         }
     }

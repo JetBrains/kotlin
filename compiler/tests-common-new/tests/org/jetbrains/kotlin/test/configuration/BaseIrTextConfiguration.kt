@@ -5,90 +5,29 @@
 
 package org.jetbrains.kotlin.test.configuration
 
-import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.HandlersStepBuilder
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.FirIrDumpIdenticalChecker
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrSourceRangesDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
-import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
-import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
-import org.jetbrains.kotlin.test.model.ArtifactKind
-import org.jetbrains.kotlin.test.model.BackendKind
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
-import org.jetbrains.kotlin.test.model.ResultingArtifact
-import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
+import org.jetbrains.kotlin.test.model.BackendKinds
 
-/**
- * Adds IR text handlers to the IR handlers step
- */
-fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.useIrTextHandlers(
-    testConfigurationBuilder: TestConfigurationBuilder,
-    includeAllDumpHandlers: Boolean = true,
-) where InputArtifactKind : BackendKind<IrBackendInput> {
-    useHandlers(
-        ::IrTextDumpHandler,
-        ::IrTreeVerifierHandler,
-        ::IrPrettyKotlinDumpHandler,
-    )
-    if (includeAllDumpHandlers) {
-        useHandlers(
-            ::IrSourceRangesDumpHandler,
-        )
-    }
-    testConfigurationBuilder.useAfterAnalysisCheckers(
-        ::FirIrDumpIdenticalChecker,
-    )
-}
-
-/**
- * General configuration for all IR text tests for all backends
- * Steps (JVM):
- * - FIR frontend
- * - FIR2IR
- *
- * Steps (non-JVM):
- * - FIR frontend
- * - FIR2IR
- * - KLib serializer
- * - KLib deserializer
- *
- * IR text handlers are set up for:
- * - IR produced by fir2ir
- * - IR deserialized from KLibs (if present)
- */
-fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConfigurationBuilder.configureAbstractIrTextSettings(
-    targetBackend: TargetBackend,
-    converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>,
-    klibFacades: KlibFacades?,
-    includeAllDumpHandlers: Boolean,
-) {
-    globalDefaults {
-        artifactKind = ArtifactKind.NoArtifact
-        this.targetBackend = targetBackend
-        dependencyKind = when (targetBackend) {
-            TargetBackend.JS_IR, TargetBackend.WASM -> DependencyKind.KLib // these irText pipelines register Klib artifacts during *KlibSerializerFacade
-            else -> DependencyKind.Source
-        }
-    }
-
+fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
     defaultDirectives {
         +DUMP_IR
         +DUMP_KT_IR
@@ -97,34 +36,30 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
         DIAGNOSTICS with "-warnings"
         DUMP_KLIB_ABI with KlibAbiDumpMode.DEFAULT
     }
+}
 
-    useAfterAnalysisCheckers(
-        ::BlackBoxCodegenSuppressor
+fun HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.setupIrTextDumpHandlers() {
+    useHandlers(
+        ::IrTextDumpHandler,
+        ::IrTreeVerifierHandler,
+        ::IrPrettyKotlinDumpHandler,
+        ::IrSourceRangesDumpHandler,
     )
+}
 
-    enableMetaInfoHandler()
+fun TestConfigurationBuilder.additionalK2ConfigurationForIrTextTest(parser: FirParser) {
+    configureFirParser(parser)
 
-    useAdditionalSourceProviders(
-        ::CodegenHelpersSourceFilesProvider,
-    )
+    configureFirHandlersStep {
+        useHandlersAtFirst(
+            ::FirDumpHandler,
+            ::FirScopeDumpHandler,
+        )
+    }
 
-    facadeStep(converter)
-
-    irHandlersStep { useIrTextHandlers(this@configureAbstractIrTextSettings, includeAllDumpHandlers) }
-
-    if (klibFacades != null) {
-        irHandlersStep {
-            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
-        }
-
-        facadeStep(klibFacades.serializerFacade)
-        klibArtifactsHandlersStep {
-            useHandlers(::KlibAbiDumpHandler)
-        }
-        facadeStep(klibFacades.deserializerFacade)
-
-        deserializedIrHandlersStep {
-            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
+    forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
+        defaultDirectives {
+            LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
         }
     }
 }
