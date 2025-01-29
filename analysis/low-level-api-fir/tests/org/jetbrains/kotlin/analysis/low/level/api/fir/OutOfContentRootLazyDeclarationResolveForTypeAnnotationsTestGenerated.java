@@ -348,6 +348,18 @@ public class OutOfContentRootLazyDeclarationResolveForTypeAnnotationsTestGenerat
     }
 
     @Test
+    @TestMetadata("contextParameterAsImplicitReturnType.kt")
+    public void testContextParameterAsImplicitReturnType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/contextParameterAsImplicitReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterAsImplicitReturnTypePropagation.kt")
+    public void testContextParameterAsImplicitReturnTypePropagation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/contextParameterAsImplicitReturnTypePropagation.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/contextReceiver.kt");

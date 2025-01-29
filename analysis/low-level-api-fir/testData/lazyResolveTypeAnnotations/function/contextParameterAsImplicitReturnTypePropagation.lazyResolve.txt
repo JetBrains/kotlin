@@ -1,0 +1,229 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] String.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun [ResolvedTo(COMPANION_GENERATION)] String.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun [ResolvedTo(SUPER_TYPES)] String.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(TYPES)] fun [ResolvedTo(TYPES)] R|kotlin/String|.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/String|.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/String|.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.bar(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(RAW_FIR)] parameter: @Anno[Unresolved](LAZY_EXPRESSION) String)
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
+        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] parameter: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
+        ^foo R|<local>/parameter|
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/String|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
+        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] parameter: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
+        ^foo R|<local>/parameter|
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.bar(): R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String| {
+        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String| {
+        ^foo R|<local>/parameter|
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String| {
+        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String| {
+        ^foo R|<local>/parameter|
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] contextParameterAsImplicitReturnTypePropagation.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String| {
+        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    context([ResolvedTo(BODY_RESOLVE)] parameter: R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String| {
+        ^foo R|<local>/parameter|
+    }

@@ -1,33 +1,33 @@
 @Ann()
-owner -> FirNamedFunctionSymbol /annotationOnContext
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
 
 @Ann()
-owner -> FirNamedFunctionSymbol /annotationOnContext
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
 
 @AnnotationWithConstructor(String())
-owner -> FirNamedFunctionSymbol /annotationWithConstructor
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
 
 @AnnotationWithConstructor(String())
-owner -> FirNamedFunctionSymbol /annotationWithConstructor
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
 
 @Ann()
-owner -> FirPropertySymbol /annotationOnContextProperty
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
 context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
 
 @Ann()
-owner -> FirPropertySymbol /annotationOnContextProperty
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
 context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
 
 @AnnotationWithConstructor(String())
-owner -> FirPropertySymbol /annotationWithConstructorProperty
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
 context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
 
 @AnnotationWithConstructor(String())
-owner -> FirPropertySymbol /annotationWithConstructorProperty
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
 context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
 
 @Ann()

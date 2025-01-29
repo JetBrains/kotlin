@@ -669,7 +669,7 @@ open class PsiRawFirBuilder(
                 isVararg = isVarArg
                 this.name = name
                 symbol = FirValueParameterSymbol(name)
-                withContainerSymbol(symbol, isLocal = valueParameterDeclaration != ValueParameterDeclaration.FUNCTION) {
+                withContainerSymbol(symbol, isLocal = !valueParameterDeclaration.isAnnotationOwner) {
                     returnTypeRef = when {
                         typeReference != null -> typeReference.toFirOrErrorType()
                         defaultTypeRef != null -> defaultTypeRef

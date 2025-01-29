@@ -1,6 +1,6 @@
 @R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
   context -> FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo
-  anchor -> [FirNamedFunctionSymbol /foo]
+  anchor -> [FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextParameter.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

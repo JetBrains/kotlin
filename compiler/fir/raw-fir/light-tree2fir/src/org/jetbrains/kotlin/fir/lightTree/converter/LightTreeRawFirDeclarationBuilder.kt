@@ -2584,7 +2584,7 @@ class LightTreeRawFirDeclarationBuilder(
 
         val name = convertValueParameterName(identifier.nameAsSafeName(), valueParameterDeclaration) { identifier }
         val valueParameterSymbol = FirValueParameterSymbol(name)
-        withContainerSymbol(valueParameterSymbol, isLocal = valueParameterDeclaration != ValueParameterDeclaration.FUNCTION) {
+        withContainerSymbol(valueParameterSymbol, isLocal = !valueParameterDeclaration.isAnnotationOwner) {
             valueParameter.forEachChildren {
                 when (it.tokenType) {
                     TYPE_REFERENCE -> firType = convertType(it)
