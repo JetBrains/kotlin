@@ -39,8 +39,12 @@ object AtomicfuStandardClassIds {
 
     object Callables {
         val atomic = "atomic".callableId(BASE_ATOMICFU_PACKAGE)
+
+        val atomicRefCompareAndSet = "compareAndSet".callableId(AtomicRef)
+        val atomicRefCompareAndExchange = "compareAndExchange".callableId(AtomicRef)
     }
 }
 
 private fun String.atomicsId() = ClassId(AtomicfuStandardClassIds.BASE_ATOMICFU_PACKAGE, Name.identifier(this))
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
+private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))

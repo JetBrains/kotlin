@@ -7,19 +7,22 @@
 import kotlinx.atomicfu.*
 
 fun test() {
-    val a = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>atomic<Int>(127)<!>
-    a.compareAndSet(127, 128) // true
-    a.compareAndSet(128, 7777) // false
+    val a = atomic<Int>(127)
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a.compareAndSet(127, 128)<!> // true
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a.compareAndSet(128, 7777)<!> // false
 
-    val aa: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicRef<Int><!>
+    val aa: AtomicRef<Int>
     aa = a
 }
 
 typealias AtomicfuAtomicReference<T> = AtomicRef<T>
 
 fun testTypealiased() {
-    val aa: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicfuAtomicReference<Int><!>
-    aa = <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>atomic<Int>(127)<!>
+    val aa: AtomicfuAtomicReference<Int>
+    aa = atomic<Int>(127)
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>aa.compareAndSet(127, 128)<!>
 }
 
-fun testArray(a: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicArray<Int><!>) {}
+fun testArray(a: AtomicArray<Int>) {
+    a[0].compareAndSet(1, 2) // A call on `AtomicRef<Int?>`
+}

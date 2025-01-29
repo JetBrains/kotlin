@@ -9,7 +9,7 @@
 import kotlin.concurrent.atomics.AtomicReference
 
 open class KotlinClass {
-    open fun foo(a: <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference<Int><!>) { }
+    open fun foo(a: AtomicReference<Int>) { }
 }
 
 // FILE: JavaClass.java
@@ -28,5 +28,5 @@ import kotlin.concurrent.atomics.AtomicReference
 
 fun usage(a: JavaClass) {
     a.foo(java.util.concurrent.atomic.AtomicReference(""))
-    a.foo(<!ARGUMENT_TYPE_MISMATCH, ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>AtomicReference(1)<!>)
+    a.foo(<!ARGUMENT_TYPE_MISMATCH!>AtomicReference(1)<!>)
 }
