@@ -151,7 +151,7 @@ class OutputDirectoryTests : BaseKotlinGradleTest() {
         }
 
         runner.buildAndFail().apply {
-            Assertions.assertThat(output).contains("'dumpDir' should be a subdirectory of the build root directory")
+            Assertions.assertThat(output).contains("'referenceDir' must be a subdirectory of the build root directory")
         }
     }
 }
