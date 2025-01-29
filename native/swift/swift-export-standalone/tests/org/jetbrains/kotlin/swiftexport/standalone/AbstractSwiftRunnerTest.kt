@@ -47,10 +47,15 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
                     )
                 }
                 is SwiftExportModule.SwiftOnly -> {
-                    val expectedFiles = testPathFull.toPath() / "golden_result/"
-                    val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
+                    when (it.kind) {
+                        SwiftExportModule.SwiftOnly.Kind.KotlinPackages -> {
+                            val expectedFiles = testPathFull.toPath() / "golden_result/"
+                            val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
 
-                    listOf { KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
+                            listOf { KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
+                        }
+                    }
+
                 }
                 else -> emptyList()
             }

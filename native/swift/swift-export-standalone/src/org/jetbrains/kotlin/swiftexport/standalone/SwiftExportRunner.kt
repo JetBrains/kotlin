@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
-import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -121,11 +120,15 @@ public sealed class SwiftExportModule(
         public val name: String
     )
 
-    // used by packages module only
     public class SwiftOnly(
         public val swiftApi: Path,
+        public val kind: Kind,
         name: String,
     ) : SwiftExportModule(name, emptyList()) {
+        public enum class Kind {
+            KotlinPackages,
+        }
+
         override fun equals(other: Any?): Boolean =
             other is SwiftOnly && swiftApi == other.swiftApi && name == other.name
 
@@ -190,12 +193,11 @@ public fun runSwiftExport(
             val dependencies = input - rootModule
             translateModule(rootModule, dependencies)
         }
-
-    val packagesModule = writeSwiftModule(
+    // we don't have "general" config, so we have to calculate this from nearest module KT-70205
+    val config = input.first().config
+    val packagesModule = writeKotlinPackagesModule(
         sirModule = translatedModules.createModuleForPackages(),
-        outputPath = input.first().config.let { // we don't have "general" config, so we have to calculate this from nearest module KT-70205
-            it.outputPath.parent / it.moduleForPackagesName / "${it.moduleForPackagesName}.swift"
-        }
+        outputPath = config.outputPath.parent / config.moduleForPackagesName / "${config.moduleForPackagesName}.swift"
     )
 
     return@runCatching setOf(packagesModule) + translatedModules.map(TranslationResult::writeModule)
@@ -247,7 +249,7 @@ private fun Collection<TranslationResult>.createModuleForPackages(): SirModule =
         .forEach { with(enumGenerator) { it.sirPackageEnum() } }
 }
 
-private fun writeSwiftModule(
+private fun writeKotlinPackagesModule(
     sirModule: SirModule,
     outputPath: Path,
 ): SwiftExportModule.SwiftOnly {
@@ -264,6 +266,7 @@ private fun writeSwiftModule(
     return SwiftExportModule.SwiftOnly(
         name = sirModule.name,
         swiftApi = outputPath,
+        kind = SwiftExportModule.SwiftOnly.Kind.KotlinPackages,
     )
 }
 
