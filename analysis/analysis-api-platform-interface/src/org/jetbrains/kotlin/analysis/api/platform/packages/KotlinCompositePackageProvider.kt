@@ -30,20 +30,16 @@ public class KotlinCompositePackageProvider private constructor(
         return providers.any { it.doesPlatformSpecificPackageExist(packageFqName, platform) }
     }
 
-    override fun getSubPackageFqNames(packageFqName: FqName, platform: TargetPlatform, nameFilter: (Name) -> Boolean): Set<Name> {
-        return providers.flatMapTo(mutableSetOf()) { it.getSubPackageFqNames(packageFqName, platform, nameFilter) }
+    override fun getSubpackageNames(packageFqName: FqName, platform: TargetPlatform): Set<Name> {
+        return providers.flatMapTo(mutableSetOf()) { it.getSubpackageNames(packageFqName, platform) }
     }
 
-    override fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
-        return providers.flatMapTo(mutableSetOf()) { it.getKotlinOnlySubPackagesFqNames(packageFqName, nameFilter) }
+    override fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name> {
+        return providers.flatMapTo(mutableSetOf()) { it.getKotlinOnlySubpackageNames(packageFqName) }
     }
 
-    override fun getPlatformSpecificSubPackagesFqNames(
-        packageFqName: FqName,
-        platform: TargetPlatform,
-        nameFilter: (Name) -> Boolean
-    ): Set<Name> {
-        return providers.flatMapTo(mutableSetOf()) { it.getPlatformSpecificSubPackagesFqNames(packageFqName, platform, nameFilter) }
+    override fun getPlatformSpecificSubpackageNames(packageFqName: FqName, platform: TargetPlatform): Set<Name> {
+        return providers.flatMapTo(mutableSetOf()) { it.getPlatformSpecificSubpackageNames(packageFqName, platform) }
     }
 
     public companion object {

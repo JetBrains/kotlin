@@ -41,8 +41,8 @@ class KotlinStandalonePackageProvider(
         return packageFqName.isRoot || packageFqName in kotlinPackageToSubPackages
     }
 
-    override fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
-        return kotlinPackageToSubPackages[packageFqName]?.filterTo(mutableSetOf()) { nameFilter(it) } ?: emptySet()
+    override fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name> {
+        return kotlinPackageToSubPackages[packageFqName] ?: emptySet()
     }
 }
 
