@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -131,7 +132,8 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val projectEnvironment = VfsBasedProjectEnvironment(
             project,
             VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-            environment::createPackagePartProvider
+            environment::createPackagePartProvider,
+            configuration.perfManager
         )
         val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
 

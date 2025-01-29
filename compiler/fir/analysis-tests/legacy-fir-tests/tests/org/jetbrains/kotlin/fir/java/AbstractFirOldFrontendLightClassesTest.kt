@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -83,8 +84,10 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
             )
             val projectEnvironment = VfsBasedProjectEnvironment(
                 project,
-                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-            ) { environment.createPackagePartProvider(it) }
+                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                { environment.createPackagePartProvider(it) },
+                perfManager = environment.configuration.perfManager,
+            )
 
             FirSessionFactoryHelper.createSessionWithDependencies(
                 Name.identifier(info.name.asString().removeSurrounding("<", ">")),

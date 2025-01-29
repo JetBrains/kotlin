@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.getLogger
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -174,7 +175,8 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val environment = VfsBasedProjectEnvironment(
             testServices.compilerConfigurationProvider.getProject(emptyModule),
             VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-            testServices.compilerConfigurationProvider.getPackagePartProviderFactory(emptyModule)
+            testServices.compilerConfigurationProvider.getPackagePartProviderFactory(emptyModule),
+            configuration.perfManager
         )
         val moduleName = Name.identifier(emptyModule.name)
         val binaryModuleData = BinaryModuleData.initialize(

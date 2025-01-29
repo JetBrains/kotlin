@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
@@ -114,14 +115,18 @@ class K2ReplCompiler(
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
             val project = compilerContext.environment.project
-            val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
+            val configuration = compilerContext.environment.configuration
+            val languageVersionSettings = configuration.languageVersionSettings
             val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
                 (it as? JvmDependency)?.classpath ?: emptyList()
             }
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = VfsBasedProjectEnvironment(
-                project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-            ) { compilerContext.environment.createPackagePartProvider(it) }
+                project,
+                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                { compilerContext.environment.createPackagePartProvider(it) },
+                configuration.perfManager,
+            )
             val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
             val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
             val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)

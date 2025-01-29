@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
-import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -78,9 +78,12 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 
         val projectEnvironment =
-            VfsBasedProjectEnvironment(project, VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL)) {
-                packagePartProviderFactory.invoke(it)
-            }
+            VfsBasedProjectEnvironment(
+                project,
+                VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL),
+                { packagePartProviderFactory.invoke(it) },
+            configuration.perfManager
+            )
 
         FirJvmSessionFactory.createLibrarySession(
             Name.special("<${testModule.name}>"),

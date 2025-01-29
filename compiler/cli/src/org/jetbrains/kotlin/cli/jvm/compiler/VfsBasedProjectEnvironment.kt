@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import java.io.File
 
 class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : AbstractProjectFileSearchScope {
@@ -53,11 +55,12 @@ class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : Ab
 open class VfsBasedProjectEnvironment(
     val project: Project,
     val localFileSystem: VirtualFileSystem,
-    private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
+    private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
+    private val perfManager: CommonCompilerPerformanceManager?,
 ) : AbstractProjectEnvironment {
 
     override fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder =
-        VirtualFileFinderFactory.getInstance(project).create(fileSearchScope.asPsiSearchScope())
+        VirtualFileFinderFactory.getInstance(project).create(fileSearchScope.asPsiSearchScope(), perfManager)
 
     override fun getJavaModuleResolver(): JavaModuleResolver =
         JavaModuleResolver.getInstance(project)
@@ -152,7 +155,8 @@ private fun AbstractProjectFileSearchScope.asPsiSearchScope() =
 fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnvironment =
     VfsBasedProjectEnvironment(
         project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-        { createPackagePartProvider(it) }
+        { createPackagePartProvider(it) },
+        configuration.perfManager,
     )
 
 fun GlobalSearchScope.toAbstractProjectFileSearchScope(): AbstractProjectFileSearchScope =

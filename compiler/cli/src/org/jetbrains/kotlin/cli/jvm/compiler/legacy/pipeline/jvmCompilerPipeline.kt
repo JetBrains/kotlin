@@ -226,7 +226,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
     val initialRoots: List<JavaRoot>,
     val configuration: CompilerConfiguration
-) : VfsBasedProjectEnvironment(project, localFileSystem, getPackagePartProviderFn) {
+) : VfsBasedProjectEnvironment(project, localFileSystem, getPackagePartProviderFn, configuration.perfManager) {
 
     val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
 
@@ -304,7 +304,7 @@ fun createProjectEnvironment(
 
     val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
     project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
-    project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
+    project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory, configuration.perfManager))
 
     project.setupHighestLanguageLevel()
 

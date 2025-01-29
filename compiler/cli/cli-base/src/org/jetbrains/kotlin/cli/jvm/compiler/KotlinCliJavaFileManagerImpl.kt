@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
-import org.jetbrains.kotlin.util.tryMeasureFindJavaClassTime
+import org.jetbrains.kotlin.util.FindJavaClassMeasurement
+import org.jetbrains.kotlin.util.tryMeasureTime
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -83,7 +84,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     }
 
     private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
-        return perfManager.tryMeasureFindJavaClassTime {
+        return perfManager.tryMeasureTime(FindJavaClassMeasurement::class) {
             findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
         }
     }
@@ -198,7 +199,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
-    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> = perfManager.tryMeasureFindJavaClassTime {
+    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> = perfManager.tryMeasureTime(FindJavaClassMeasurement::class) {
             val result = ArrayList<PsiClass>(1)
             forEachClassId(qName) { classId ->
                 val relativeClassName = classId.relativeClassName.asString()
@@ -224,7 +225,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 }
 
                 if (result.isNotEmpty()) {
-                    return@tryMeasureFindJavaClassTime result.toTypedArray()
+                    return@tryMeasureTime result.toTypedArray()
                 }
             }
 

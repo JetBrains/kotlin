@@ -25,16 +25,17 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.utils.sure
 
-abstract class VirtualFileFinder : KotlinClassFinder {
+abstract class VirtualFileFinder(private val perfManager: CommonCompilerPerformanceManager?) : KotlinClassFinder {
     abstract fun findVirtualFileWithHeader(classId: ClassId): VirtualFile?
 
     abstract fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile?
 
     override fun findKotlinClassOrContent(classId: ClassId, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
         val file = findVirtualFileWithHeader(classId) ?: return null
-        return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, metadataVersion)
+        return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, metadataVersion, perfManager = perfManager)
     }
 
     override fun findKotlinClassOrContent(javaClass: JavaClass, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {

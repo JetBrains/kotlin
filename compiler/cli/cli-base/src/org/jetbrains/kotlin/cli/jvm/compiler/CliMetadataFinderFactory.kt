@@ -10,11 +10,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 
-class CliMetadataFinderFactory(private val fileFinderFactory: CliVirtualFileFinderFactory) : MetadataFinderFactory {
+class CliMetadataFinderFactory(
+    private val fileFinderFactory: CliVirtualFileFinderFactory,
+    private val perfManager: CommonCompilerPerformanceManager?,
+) : MetadataFinderFactory {
     override fun create(scope: GlobalSearchScope): KotlinMetadataFinder =
-        fileFinderFactory.create(scope)
+        fileFinderFactory.create(scope, perfManager)
 
     override fun create(project: Project, module: ModuleDescriptor): KotlinMetadataFinder =
-        fileFinderFactory.create(project, module)
+        fileFinderFactory.create(project, module, perfManager)
 }

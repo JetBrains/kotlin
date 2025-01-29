@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.toLogger
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.common.prepareCommonSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -118,8 +119,10 @@ internal abstract class AbstractFirMetadataSerializer(
         } else {
             val projectEnvironment = VfsBasedProjectEnvironment(
                 environment.project,
-                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-            ) { environment.createPackagePartProvider(it) }
+                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                { environment.createPackagePartProvider(it) },
+                configuration.perfManager,
+            )
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
             val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
             val psiFiles = environment.getSourceFiles()

@@ -9,15 +9,18 @@ import java.io.File
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
 
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
     companion object {
         val findJavaClassLock = Any()
+        val binaryClassFromKotlinFileLock = Any()
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
     private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
     private var findJavaClassMeasurement: FindJavaClassMeasurement = FindJavaClassMeasurement(0, 0)
+    private var binaryClassFromKotlinFileMeasurement: BinaryClassFromKotlinFileMeasurement = BinaryClassFromKotlinFileMeasurement(0, 0)
     var isEnabled: Boolean = false
         protected set
     private var initStartNanos = PerformanceCounter.currentTime()
@@ -36,7 +39,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
-    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + findJavaClassMeasurement
+    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + findJavaClassMeasurement + binaryClassFromKotlinFileMeasurement
 
     fun enableCollectingPerformanceStatistics() {
         isEnabled = true
@@ -153,7 +156,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
     }
 
-    internal fun <T> measureFindJavaClassTime(block: () -> T): T {
+    internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
 
         val startTime = PerformanceCounter.currentTime()
@@ -161,9 +164,27 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
             return block()
         } finally {
             val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(PerformanceCounter.currentTime() - startTime)
-            synchronized(findJavaClassLock) {
-                findJavaClassMeasurement =
-                    FindJavaClassMeasurement(findJavaClassMeasurement.count + 1, findJavaClassMeasurement.milliseconds + elapsedMillis)
+            when (measurementClass) {
+                FindJavaClassMeasurement::class -> {
+                    synchronized(findJavaClassLock) {
+                        findJavaClassMeasurement =
+                            FindJavaClassMeasurement(
+                                findJavaClassMeasurement.count + 1,
+                                findJavaClassMeasurement.milliseconds + elapsedMillis
+                            )
+                    }
+                }
+                BinaryClassFromKotlinFileMeasurement::class -> {
+                    synchronized(binaryClassFromKotlinFileLock) {
+                        binaryClassFromKotlinFileMeasurement = BinaryClassFromKotlinFileMeasurement(
+                            binaryClassFromKotlinFileMeasurement.count + 1,
+                            binaryClassFromKotlinFileMeasurement.milliseconds + elapsedMillis
+                        )
+                    }
+                }
+                else -> {
+                    error("The measurement for $measurementClass is not supposed")
+                }
             }
         }
     }
@@ -180,13 +201,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
                     it is IrLoweringMeasurement ||
                     it is BackendOrMetadataGenerationMeasurement ||
                     it is PerformanceCounterMeasurement ||
-                    it is FindJavaClassMeasurement
+                    it is FindJavaClassMeasurement ||
+                    it is BinaryClassFromKotlinFileMeasurement
         }
 
         return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
     }
 }
 
-fun <T> CommonCompilerPerformanceManager?.tryMeasureFindJavaClassTime(block: () -> T): T {
-    return if (this == null) return block() else measureFindJavaClassTime(block)
+fun <T> CommonCompilerPerformanceManager?.tryMeasureTime(measurementClass: KClass<*>, block: () -> T): T {
+    return if (this == null) return block() else measureTime(measurementClass, block)
 }

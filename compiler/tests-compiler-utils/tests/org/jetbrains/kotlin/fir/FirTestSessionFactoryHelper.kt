@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import java.nio.file.Path
 
 object FirTestSessionFactoryHelper {
@@ -29,7 +30,7 @@ object FirTestSessionFactoryHelper {
         librariesScope: AbstractProjectFileSearchScope = !javaSourceScope,
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirSession = FirSessionFactoryHelper.createSessionWithDependencies(
         Name.identifier(moduleName),
         JvmPlatforms.unspecifiedJvmPlatform,
@@ -57,6 +58,7 @@ object FirTestSessionFactoryHelper {
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
         getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        perfManager: CommonCompilerPerformanceManager?,
     ): FirSession {
         return FirSessionFactoryHelper.createSessionWithDependencies(
             Name.identifier(moduleName),
@@ -65,7 +67,8 @@ object FirTestSessionFactoryHelper {
             VfsBasedProjectEnvironment(
                 project,
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-                getPackagePartProvider
+                getPackagePartProvider,
+                perfManager,
             ),
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             PsiBasedProjectFileSearchScope(sourceScope),

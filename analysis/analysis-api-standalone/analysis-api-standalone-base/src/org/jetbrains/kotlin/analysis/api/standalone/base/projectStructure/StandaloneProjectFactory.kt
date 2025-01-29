@@ -277,7 +277,8 @@ object StandaloneProjectFactory {
 
         val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
-        project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
+        // Don't care about pure compiler performance in Analysis API
+        project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory, perfManager = null))
     }
 
     fun getDefaultJdkModulePaths(

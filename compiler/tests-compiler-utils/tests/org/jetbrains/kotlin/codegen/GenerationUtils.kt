@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -102,7 +103,8 @@ object GenerationUtils {
             scope,
             librariesScope,
             "main",
-            getPackagePartProvider = packagePartProvider
+            getPackagePartProvider = packagePartProvider,
+            perfManager = configuration.perfManager,
         )
 
         // TODO: add running checkers and check that it's safe to compile

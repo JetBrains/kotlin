@@ -13,6 +13,7 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.getLogger
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -177,8 +178,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             isCommon || targetPlatform.isJvm() -> {
                 val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
                 projectEnvironment = VfsBasedProjectEnvironment(
-                    project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-                ) { packagePartProviderFactory.invoke(it) }
+                    project,
+                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                    { packagePartProviderFactory.invoke(it) },
+                    configuration.perfManager,
+                )
                 val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
                 val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 

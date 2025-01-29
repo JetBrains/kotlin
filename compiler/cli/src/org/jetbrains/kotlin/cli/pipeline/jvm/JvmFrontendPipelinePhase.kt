@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.DefaultDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -219,8 +218,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
                 val projectEnvironment = VfsBasedProjectEnvironment(
                     kotlinCoreEnvironment.project,
-                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-                ) { kotlinCoreEnvironment.createPackagePartProvider(it) }
+                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                    { kotlinCoreEnvironment.createPackagePartProvider(it) },
+                    configuration.perfManager
+                )
 
                 val sources = {
                     val ktFiles = kotlinCoreEnvironment.getSourceFiles()

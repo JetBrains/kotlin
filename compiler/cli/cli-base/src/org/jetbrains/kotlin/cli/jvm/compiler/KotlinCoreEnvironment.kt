@@ -296,7 +296,7 @@ class KotlinCoreEnvironment private constructor(
 
         val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
-        project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
+        project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory, configuration.perfManager))
 
         project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, fun(roots: List<File>) {
             updateClasspath(roots.map { JavaSourceRoot(it, null) })
