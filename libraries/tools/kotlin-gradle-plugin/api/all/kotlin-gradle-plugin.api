@@ -5680,6 +5680,118 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverP
 	public final fun apply (Lorg/gradle/api/Project;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/targets/wasm/runtime/ArchiveOperationsProvider {
+	public abstract fun provideOperation (Lorg/gradle/api/file/ArchiveOperations;Ljava/nio/file/Path;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/wasm/runtime/ArgsProvider {
+	public abstract fun provideArgs (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
+	public fun <init> (ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/io/File;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Z
+	public final fun copy (ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnv;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnv;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAllowInsecureProtocol ()Z
+	public fun getDir ()Ljava/io/File;
+	public fun getDownload ()Z
+	public fun getDownloadBaseUrl ()Ljava/lang/String;
+	public fun getExecutable ()Ljava/lang/String;
+	public fun getIvyDependency ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
+	public fun <init> (Ljava/lang/String;)V
+	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getExecutableCommand ()Lorg/gradle/api/provider/Property;
+	public abstract fun getExtension ()Lorg/gradle/api/provider/Property;
+	public final fun getModuleGroup ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnvironmentConfigurator : org/jetbrains/kotlin/gradle/targets/js/ir/JsEnvironmentConfigurator {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/KotlinCommonSubTarget;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonKotlinWasmTestFramework : org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Ljava/lang/String;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;)V
+	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/gradle/process/ProcessForkOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
+	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
+	public final fun getArgsProperty ()Lorg/gradle/api/provider/Property;
+	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
+	public fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public synthetic fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public fun getPath ()Ljava/lang/String;
+	public fun getRequiredNpmDependencies ()Ljava/util/Set;
+	public fun getSettingsState ()Ljava/lang/String;
+	public fun getWorkingDir ()Lorg/gradle/api/provider/Provider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonSetupTask : org/jetbrains/kotlin/gradle/targets/js/AbstractSetupTask {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnvSpec;)V
+	public fun extract (Ljava/io/File;)V
+	public abstract fun getArch ()Lorg/gradle/api/provider/Property;
+	public abstract fun getArchiveOperation ()Lorg/gradle/api/provider/Property;
+	protected fun getArtifactModule ()Ljava/lang/String;
+	protected fun getArtifactName ()Ljava/lang/String;
+	protected fun getArtifactPattern ()Ljava/lang/String;
+	public abstract fun getExtractionAction ()Lorg/gradle/api/provider/Property;
+	public abstract fun getOs ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/runtime/KotlinCommonSubTarget : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTarget {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;Ljava/lang/String;Ljava/lang/String;)V
+	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
+	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
+	public final fun getArch ()Lorg/gradle/api/provider/Provider;
+	public final fun getArchiveOperation ()Lorg/gradle/api/provider/Property;
+	public final fun getEnvSpec ()Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/CommonEnvSpec;
+	public final fun getOs ()Lorg/gradle/api/provider/Provider;
+	public final fun getRunArgs ()Lorg/gradle/api/provider/Property;
+	public final fun getSetupTask ()Lorg/gradle/api/tasks/TaskProvider;
+	public final fun getTestArgs ()Lorg/gradle/api/provider/Property;
+	public fun getTestTaskDescription ()Ljava/lang/String;
+	public final fun getVersion ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/runtime/dsl/RuntimeDslKt {
+	public static final fun runtime (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/KotlinCommonSubTarget;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/wasm/runtime/dsl/WasmWasiRuntimeDsl {
+	public abstract fun archiveOperation (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun download (Lkotlin/jvm/functions/Function3;)V
+	public abstract fun executable (Lkotlin/jvm/functions/Function4;)V
+	public abstract fun extractAction (Lkotlin/jvm/functions/Function4;)V
+	public abstract fun getAllowInsecureProtocol ()Lorg/gradle/api/provider/Property;
+	public abstract fun getExtension ()Lorg/gradle/api/provider/Property;
+	public abstract fun runArgs (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun testArgs (Lkotlin/jvm/functions/Function2;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/runtime/dsl/WasmWasiRuntimeImpl : org/jetbrains/kotlin/gradle/targets/wasm/runtime/dsl/WasmWasiRuntimeDsl {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/wasm/runtime/KotlinCommonSubTarget;)V
+	public fun archiveOperation (Lkotlin/jvm/functions/Function2;)V
+	public fun download (Lkotlin/jvm/functions/Function3;)V
+	public fun executable (Lkotlin/jvm/functions/Function4;)V
+	public fun extractAction (Lkotlin/jvm/functions/Function4;)V
+	public fun getAllowInsecureProtocol ()Lorg/gradle/api/provider/Property;
+	public fun getExtension ()Lorg/gradle/api/provider/Property;
+	public fun runArgs (Lkotlin/jvm/functions/Function2;)V
+	public fun testArgs (Lkotlin/jvm/functions/Function2;)V
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin$Companion;
 	public synthetic fun apply (Ljava/lang/Object;)V
