@@ -83,6 +83,7 @@ class Fir2IrDataClassMembersGenerator(
         fun generateDispatchReceiverParameter(irFunction: IrFunction): IrValueParameter =
             irFunction.declareThisReceiverParameter(
                 c,
+                kind = IrParameterKind.DispatchReceiver,
                 thisType = irClass.defaultType,
                 thisOrigin = IrDeclarationOrigin.DEFINED,
                 startOffset = UNDEFINED_OFFSET,

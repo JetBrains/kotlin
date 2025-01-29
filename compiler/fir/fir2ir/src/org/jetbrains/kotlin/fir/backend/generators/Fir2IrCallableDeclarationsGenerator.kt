@@ -694,6 +694,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                     } ?: SpecialNames.THIS
                     declareThisReceiverParameter(
                         c,
+                        kind = IrParameterKind.ExtensionReceiver,
                         thisType = receiver.typeRef.toIrType(c, typeOrigin),
                         thisOrigin = thisOrigin,
                         startOffset = startOffset,
@@ -709,6 +710,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
                 dispatchReceiverParameter = declareThisReceiverParameter(
                     c,
+                    kind = IrParameterKind.DispatchReceiver,
                     thisType = dispatchReceiverType,
                     thisOrigin = thisOrigin
                 )
@@ -719,6 +721,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             if (containingClass?.isInner == true && outerClass != null) {
                 dispatchReceiverParameter = declareThisReceiverParameter(
                     c,
+                    kind = IrParameterKind.DispatchReceiver,
                     thisType = outerClass.thisReceiver!!.type,
                     thisOrigin = thisOrigin
                 )

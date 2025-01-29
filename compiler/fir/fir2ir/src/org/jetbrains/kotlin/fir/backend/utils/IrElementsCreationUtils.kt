@@ -45,7 +45,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     c: Fir2IrComponents,
     thisType: IrType,
     thisOrigin: IrDeclarationOrigin,
-    kind: IrParameterKind? = null,
+    kind: IrParameterKind,
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
     name: Name = SpecialNames.THIS,

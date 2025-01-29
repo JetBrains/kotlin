@@ -256,6 +256,7 @@ class Fir2IrLazyProperty(
         if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
             accessor.dispatchReceiverParameter = accessor.declareThisReceiverParameter(
                 c,
+                kind = IrParameterKind.DispatchReceiver,
                 thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
                 thisOrigin = accessor.origin,
             )
@@ -264,6 +265,7 @@ class Fir2IrLazyProperty(
         accessor.extensionReceiverParameter = fir.receiverParameter?.let {
             accessor.declareThisReceiverParameter(
                 c,
+                kind = IrParameterKind.ExtensionReceiver,
                 thisType = it.typeRef.toIrType(typeConverter, typeOrigin),
                 thisOrigin = accessor.origin,
                 explicitReceiver = it
