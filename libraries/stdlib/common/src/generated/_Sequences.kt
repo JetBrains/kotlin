@@ -408,7 +408,7 @@ public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     return when {
         n == 0 -> this
-        this is DropTakeSequence -> this.drop(n)
+        this is DropTakeSequence<out T> -> this.drop(n)
         else -> DropSequence(this, n)
     }
 }
@@ -561,7 +561,7 @@ public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     return when {
         n == 0 -> emptySequence()
-        this is DropTakeSequence -> this.take(n)
+        this is DropTakeSequence<out T> -> this.take(n)
         else -> TakeSequence(this, n)
     }
 }
