@@ -390,7 +390,8 @@ open class PsiRawFirBuilder(
                     )
                 }
                 is KtDestructuringDeclaration -> {
-                    buildErrorTopLevelDestructuringDeclaration(toFirSourceElement())
+                    val initializer = toInitializerExpression()
+                    buildErrorTopLevelDestructuringDeclaration(toFirSourceElement(), initializer)
                 }
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
@@ -1246,7 +1247,10 @@ open class PsiRawFirBuilder(
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
                             is KtScript -> convertScriptOrSnippets(declaration, this@buildFile)
-                            is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
+                            is KtDestructuringDeclaration -> {
+                                val initializer = declaration.toInitializerExpression()
+                                buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement(), initializer)
+                            }
                             else -> declaration.convert()
                         }
                     }
@@ -2249,7 +2253,7 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun KtDeclarationWithInitializer.toInitializerExpression() =
+        protected fun KtDeclarationWithInitializer.toInitializerExpression() =
             runIf(hasInitializer()) {
                 this@PsiRawFirBuilder.context.calleeNamesForLambda += null
 

@@ -101,7 +101,10 @@ class LightTreeRawFirDeclarationBuilder(
                 KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
-                DESTRUCTURING_DECLARATION -> firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement())
+                DESTRUCTURING_DECLARATION -> {
+                    val initializer = buildFirDestructuringDeclarationInitializer(child)
+                    firDeclarationList += buildErrorTopLevelDestructuringDeclaration(child.toFirSourceElement(), initializer)
+                }
                 SCRIPT -> {
                     // TODO: scripts aren't supported yet
                 }
@@ -918,7 +921,10 @@ class LightTreeRawFirDeclarationBuilder(
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper) //anonymousInitializer
                 SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
                 MODIFIER_LIST -> modifierLists += node
-                DESTRUCTURING_DECLARATION -> container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
+                DESTRUCTURING_DECLARATION -> {
+                    val initializer = buildFirDestructuringDeclarationInitializer(node)
+                    container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement(), initializer)
+                }
             }
         }
 
@@ -928,6 +934,11 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
         return firDeclarations
+    }
+
+    private fun buildFirDestructuringDeclarationInitializer(destructuringDeclaration: LighterASTNode): FirExpression {
+        val initializer = destructuringDeclaration.getChildExpression().takeUnless { it?.tokenType == PROPERTY_DELEGATE }
+        return expressionConverter.getAsFirExpression(initializer, "Initializer required for destructuring declaration")
     }
 
     private fun buildErrorTopLevelDeclarationForDanglingModifierList(node: LighterASTNode) = buildDanglingModifierList {
