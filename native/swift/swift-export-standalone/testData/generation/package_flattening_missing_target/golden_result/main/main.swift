@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.org.kotlin {
     public final class Foo: KotlinRuntime.KotlinBase {

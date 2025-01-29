@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_flattened
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public typealias FlattenedPackageClass = ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass
 public func flattenedPackageClass(

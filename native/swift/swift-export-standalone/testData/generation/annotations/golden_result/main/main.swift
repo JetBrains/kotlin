@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 @available(*, deprecated, message: "Deprecated")
 public typealias deprecatedA = Swift.Void

@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 open class Foo: KotlinRuntime.KotlinBase {
     public override init() {

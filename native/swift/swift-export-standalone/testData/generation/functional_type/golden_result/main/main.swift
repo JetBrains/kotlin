@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_main
+import KotlinRuntimeSupport
 
 public var closure_property: () -> Swift.Void {
     get {

@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_dependency_deeper_neighbor_exported
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.dependency.four {
     public final class AnotherBar: KotlinRuntime.KotlinBase {

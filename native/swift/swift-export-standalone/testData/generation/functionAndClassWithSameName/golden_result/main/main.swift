@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 import dep
 import flattened
 

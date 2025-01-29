@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public final class MyObject: KotlinRuntime.KotlinBase {
     public static var shared: main.MyObject {

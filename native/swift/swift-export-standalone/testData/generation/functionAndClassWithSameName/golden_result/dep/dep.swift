@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_dep
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.test.factory.modules {
     public final class ClassFromDependency: KotlinRuntime.KotlinBase {

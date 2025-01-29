@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_bad_overrides
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.weird {
     open class A: KotlinRuntime.KotlinBase {
@@ -13,7 +14,6 @@ public extension ExportedKotlinPackages.weird {
         public init() throws {
             let __kt = weird_A_init_allocate()
             super.init(__externalRCRef: __kt)
-            struct KotlinError: Error { var wrapped: KotlinRuntime.KotlinBase }
             var __error: UInt = 0
             weird_A_init_initialize__TypesOfArguments__Swift_UInt__(__kt, &__error)
             guard __error == 0 else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: __error)) }
@@ -28,7 +28,6 @@ public extension ExportedKotlinPackages.weird {
             return weird_A_foo(self.__externalRCRef())
         }
         open func `throws`() throws -> Swift.Void {
-            struct KotlinError: Error { var wrapped: KotlinRuntime.KotlinBase }
             var _out_error: UInt = 0
             let _result = weird_A_throws(self.__externalRCRef(), &_out_error)
             guard _out_error == 0 else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase(__externalRCRef: _out_error)) }

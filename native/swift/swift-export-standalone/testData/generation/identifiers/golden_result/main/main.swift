@@ -1,5 +1,6 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
+import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.u30 {
     public static var u30_times: Swift.String {

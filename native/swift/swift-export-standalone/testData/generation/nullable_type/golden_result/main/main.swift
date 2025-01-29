@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public typealias NonoptionalRef = main.Bar
 public typealias OptOptRef = main.OptionalRef

@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public typealias Clazz = ExportedKotlinPackages.org.kotlin.foo.Clazz
 public typealias Typealias = ExportedKotlinPackages.org.kotlin.foo.Typealias

@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public final class Outer: KotlinRuntime.KotlinBase {
     public override init() {

@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_inheritance
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public final class INHERITANCE_SINGLE_CLASS: inheritance.OPEN_CLASS {
     public var value: Swift.Int32 {

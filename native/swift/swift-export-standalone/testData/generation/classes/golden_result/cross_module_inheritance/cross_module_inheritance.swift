@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_cross_module_inheritance
+import KotlinRuntimeSupport
 import inheritance
 
 public final class CLASS_ACROSS_MODULES: inheritance.OPEN_CLASS {

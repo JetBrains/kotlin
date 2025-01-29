@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public typealias DefaultInteger = main.RegularInteger
 public typealias RegularInteger = Swift.Int32

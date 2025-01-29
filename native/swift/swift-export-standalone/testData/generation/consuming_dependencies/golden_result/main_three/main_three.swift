@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_main_three
+import KotlinRuntimeSupport
 import dependency_deeper_neighbor_exported
 
 public typealias Foo = ExportedKotlinPackages.dependency.four.AnotherBar

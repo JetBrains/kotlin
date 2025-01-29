@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_overrides_across_modules
+import KotlinRuntimeSupport
 import overrides
 
 open class Cousin: overrides.Parent {

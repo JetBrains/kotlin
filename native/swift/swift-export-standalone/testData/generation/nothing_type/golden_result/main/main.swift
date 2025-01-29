@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 public typealias Foo = Swift.Never
 public typealias OptionalNothing = Swift.Never?

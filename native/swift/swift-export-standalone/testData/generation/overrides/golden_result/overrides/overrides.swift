@@ -1,5 +1,6 @@
 @_implementationOnly import KotlinBridges_overrides
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 open class AbstractBase: KotlinRuntime.KotlinBase {
     open var abstractVal: Swift.Int32 {

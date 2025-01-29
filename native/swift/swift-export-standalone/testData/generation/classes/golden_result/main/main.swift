@@ -1,6 +1,7 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
+import KotlinRuntimeSupport
 
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package override init() {
