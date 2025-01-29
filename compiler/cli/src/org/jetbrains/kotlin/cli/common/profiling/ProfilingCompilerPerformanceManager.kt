@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.profiling
 
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat

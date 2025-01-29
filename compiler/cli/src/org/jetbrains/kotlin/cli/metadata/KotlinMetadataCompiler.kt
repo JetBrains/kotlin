@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import java.io.File
 
 /**

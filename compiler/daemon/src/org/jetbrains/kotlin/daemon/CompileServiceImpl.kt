@@ -50,6 +50,11 @@ import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.BackendOrMetadataGenerationMeasurement
+import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
+import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
+import org.jetbrains.kotlin.util.IrLoweringMeasurement
+import org.jetbrains.kotlin.util.IrTranslationMeasurement
 import java.io.File
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
