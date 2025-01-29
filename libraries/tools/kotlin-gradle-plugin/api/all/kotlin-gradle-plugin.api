@@ -5657,6 +5657,21 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverP
 	public final fun apply (Lorg/gradle/api/Project;)V
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/wasm/runtime/dsl/RuntimeDslKt {
+	public static final fun runtime (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTarget;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/wasm/runtime/dsl/WasmWasiRuntimeDsl {
+	public abstract fun archiveOperation (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun download (Lkotlin/jvm/functions/Function3;)V
+	public abstract fun executable (Lkotlin/jvm/functions/Function4;)V
+	public abstract fun extractAction (Lkotlin/jvm/functions/Function4;)V
+	public abstract fun getAllowInsecureProtocol ()Lorg/gradle/api/provider/Property;
+	public abstract fun getExtension ()Lorg/gradle/api/provider/Property;
+	public abstract fun runArgs (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun testArgs (Lkotlin/jvm/functions/Function2;)V
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin$Companion;
 	public synthetic fun apply (Ljava/lang/Object;)V
