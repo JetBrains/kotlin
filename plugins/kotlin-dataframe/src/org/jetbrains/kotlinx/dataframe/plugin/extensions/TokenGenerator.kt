@@ -59,7 +59,6 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                     val callableId = CallableId(k.classId, propertyName.identifier)
                     val dataRowExtension = generateExtensionProperty(
                         callableId = callableId,
-                        symbol = k,
                         receiverType = ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
                             typeArguments = arrayOf(schemaProperty.marker),
@@ -67,7 +66,9 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         ),
                         propertyName = propertyName,
                         returnTypeRef = schemaProperty.dataRowReturnType.toFirResolvedTypeRef(),
-                        effectiveVisibility = EffectiveVisibility.Local
+                        symbol = k,
+                        effectiveVisibility = EffectiveVisibility.Local,
+                        source = callShapeData.source
                     )
 
                     val columnContainerExtension = generateExtensionProperty(
@@ -80,7 +81,8 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         propertyName = propertyName,
                         returnTypeRef = schemaProperty.columnContainerReturnType.toFirResolvedTypeRef(),
                         symbol = k,
-                        effectiveVisibility = EffectiveVisibility.Local
+                        effectiveVisibility = EffectiveVisibility.Local,
+                        source = callShapeData.source
                     )
                     propertyName.identifier to listOf(dataRowExtension, columnContainerExtension)
                 }
