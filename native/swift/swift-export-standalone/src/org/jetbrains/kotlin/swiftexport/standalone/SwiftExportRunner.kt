@@ -213,13 +213,17 @@ private fun translateModule(module: InputModule, dependencies: Set<InputModule>)
     val buildResult = createModuleWithScopeProviderFromBinary(module, dependencies)
         .initializeSirModule(module.config, moduleProvider)
 
+    // Assume that parts of the KotlinRuntimeSupport module are used.
+    // It might not be the case, but precise tracking seems like an overkill at the moment.
+    buildResult.module.updateImport(SirImport(module.config.runtimeSupportModuleName))
+
     // KT-68253: bridge generation could be better
     val bridgeRequests = buildBridgeRequests(module.config.bridgeGenerator, buildResult.module)
     if (bridgeRequests.isNotEmpty()) {
         buildResult.module.updateImport(
             SirImport(
                 moduleName = module.bridgesModuleName,
-                mode = org.jetbrains.kotlin.sir.SirImport.Mode.ImplementationOnly
+                mode = SirImport.Mode.ImplementationOnly
             )
         )
     }

@@ -95,7 +95,6 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 val errorParameter = descriptor.errorParameter
 
                 if (errorParameter != null) {
-                    add("struct KotlinError: Error { var wrapped: KotlinRuntime.KotlinBase }")
                     add("var ${errorParameter.name}: UInt = 0")
                     add("let _result = ${descriptor.swiftInvoke(typeNamer)}")
                     val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
@@ -113,7 +112,6 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add("super.init(__externalRCRef: ${obj.name})")
 
                 if (errorParameter != null) {
-                    add("struct KotlinError: Error { var wrapped: KotlinRuntime.KotlinBase }")
                     add("var ${errorParameter.name}: UInt = 0")
                     add(initDescriptor.swiftCall(typeNamer))
                     val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
