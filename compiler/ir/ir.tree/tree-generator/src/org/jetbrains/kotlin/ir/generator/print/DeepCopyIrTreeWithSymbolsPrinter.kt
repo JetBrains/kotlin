@@ -169,10 +169,11 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             symbolFieldClass != null -> {
                 val symbolRemapperFunction =
                     symbolRemapperMethodName(symbolFieldClass, field.symbolFieldRole ?: AbstractField.SymbolFieldRole.REFERENCED)
-                if (typeRef.nullable) {
-                    print(*valueArgs, "?.let(", symbolRemapperParameter.name, "::", symbolRemapperFunction, ")")
-                } else {
-                    print(symbolRemapperParameter.name, ".", symbolRemapperFunction, "(", *valueArgs, ")")
+                when {
+                    field.deepCopyExcludeFromSymbolRemapper -> print(*valueArgs)
+                    typeRef.nullable ->
+                        print(*valueArgs, "?.let(", symbolRemapperParameter.name, "::", symbolRemapperFunction, ")")
+                    else -> print(symbolRemapperParameter.name, ".", symbolRemapperFunction, "(", *valueArgs, ")")
                 }
             }
             typeRef.isSameClassAs(IrTree.loop) -> {
