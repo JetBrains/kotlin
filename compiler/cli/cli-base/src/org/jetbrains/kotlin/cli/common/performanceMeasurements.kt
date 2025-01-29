@@ -41,6 +41,15 @@ class IRMeasurement(val lines: Int?, val milliseconds: Long, val kind: Kind) : P
     }
 }
 
+sealed class JvmMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
+    abstract val description: String
+    override fun render(): String = "$description performed $count times" + (if (milliseconds == 0L) "" else ", total time $milliseconds ms\"")
+}
+
+class FindJavaClassMeasurement(count: Int, milliseconds: Long) : JvmMeasurement(count, milliseconds) {
+    override val description: String = "Find Java class"
+}
+
 private fun formatMeasurement(name: String, time: Long, lines: Int?): String =
     "%15s%8s ms".format(name, time) +
             (lines?.let {
