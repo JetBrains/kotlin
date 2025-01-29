@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.test.utils.reversedTestDataFile
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class PhasedPipelineChecker(
+    testServices: TestServices,
+    val defaultRunPipelineTill: TestPhaseLabel? = null,
+) : AfterAnalysisChecker(testServices) {
     override val order: Order
         get() = Order.P4
 
@@ -33,7 +36,7 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         checkLatestPhaseDirective()?.let { return failedAssertions + it }
-        val targetedPhase = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull()
+        val targetedPhase = getTargetedPhase()
         if (targetedPhase == null) {
             return failedAssertions + reportMissingDirective(failedAssertions)
         }
@@ -44,6 +47,10 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
             suppressibleFailures.isEmpty() && !hasFailuresInNonLeafModule -> checkPhaseConsistency()
             else -> emptyList()
         }
+    }
+
+    private fun getTargetedPhase(): TestPhaseLabel? {
+        return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull() ?: defaultRunPipelineTill
     }
 
     private fun TestArtifactKind<*>.toPhase(): TestPhaseLabel? = when (this) {
@@ -67,14 +74,18 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
         val directives = testServices.moduleStructure.allDirectives
         if (DISABLE_NEXT_PHASE_SUGGESTION in directives) return emptyList()
         val expectedLastPhase = directives[LATEST_PHASE_IN_PIPELINE].first()
-        val targetedPhase = directives[RUN_PIPELINE_TILL].firstOrNull()
+        val targetedPhase = getTargetedPhase()
         if (targetedPhase != null && targetedPhase > expectedLastPhase) {
             val message = "RUN_PIPELINE_TILL ($targetedPhase) cannot be greater than $LATEST_PHASE_IN_PIPELINE ($expectedLastPhase)"
             return listOf(WrappedException.FromAfterAnalysisChecker(IllegalStateException(message)))
         }
 
         return createDiffsForAllTestDataFiles("Phase $targetedPhase could be promoted to $expectedLastPhase") {
-            it.replace("// RUN_PIPELINE_TILL: $targetedPhase", "// RUN_PIPELINE_TILL: $expectedLastPhase")
+            val proposedDirectiveDeclaration = when (targetedPhase) {
+                defaultRunPipelineTill -> ""
+                else -> "// RUN_PIPELINE_TILL: $expectedLastPhase\n"
+            }
+            it.replace("// RUN_PIPELINE_TILL: $targetedPhase\n", proposedDirectiveDeclaration)
         }
     }
 
@@ -141,7 +152,7 @@ class PhasedPipelineChecker(testServices: TestServices) : AfterAnalysisChecker(t
     private fun sortFailures(failedAssertions: List<WrappedException>): SortedFailures {
         val suppressibleFailures = mutableListOf<WrappedException>()
         val nonSuppressibleFailures = mutableListOf<WrappedException>()
-        val targetedPhase = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].first()
+        val targetedPhase = getTargetedPhase()!!
         var hasFailuresInNonLeafModule = false
 
         fun processFailure(module: TestModule?, kind: TestArtifactKind<*>, exception: WrappedException): MutableList<WrappedException> {
