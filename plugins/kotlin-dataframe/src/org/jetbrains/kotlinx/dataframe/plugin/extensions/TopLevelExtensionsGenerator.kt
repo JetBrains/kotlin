@@ -120,7 +120,8 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                         isNullable = false
                     ),
                     propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
-                    returnTypeRef = resolvedReturnTypeRef
+                    returnTypeRef = resolvedReturnTypeRef,
+                    source = owner.source
                 )
 
                 val columnReturnType = when {
@@ -142,7 +143,8 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                         isNullable = false
                     ),
                     propertyName = PropertyName.of(name, columnName?.let { PropertyName.buildAnnotation(it) }),
-                    returnTypeRef = columnReturnType
+                    returnTypeRef = columnReturnType,
+                    source = owner.source
                 )
                 listOf(rowExtension.symbol, columnsContainerExtension.symbol)
             }

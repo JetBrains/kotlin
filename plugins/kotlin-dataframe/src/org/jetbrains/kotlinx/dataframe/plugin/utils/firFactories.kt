@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.utils
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -30,10 +31,12 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     propertyName: PropertyName,
     returnTypeRef: FirResolvedTypeRef,
     symbol: FirClassSymbol<*>? = null,
-    effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public
+    effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public,
+    source: KtSourceElement?
 ): FirProperty {
     val firPropertySymbol = FirPropertySymbol(callableId)
     return buildProperty {
+        this.source = source
         propertyName.columnNameAnnotation?.let {
             annotations += it
         }

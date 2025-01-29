@@ -556,7 +556,7 @@ class FunctionCallTransformer(
                 }
             }
             schema.callShapeData = CallShapeData.Schema(properties)
-            scope.callShapeData = CallShapeData.Scope(properties)
+            scope.callShapeData = CallShapeData.Scope(properties, call.calleeReference.source)
             val schemaApi = DataSchemaApi(schema, scope)
             dataSchemaApis.add(schemaApi)
             return schemaApi
