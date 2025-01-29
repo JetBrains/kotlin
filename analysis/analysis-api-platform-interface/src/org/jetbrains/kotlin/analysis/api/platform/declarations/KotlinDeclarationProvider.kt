@@ -24,6 +24,15 @@ import org.jetbrains.kotlin.psi.*
  * of declaration providers, such as those created by [KotlinForwardDeclarationProviderFactory].
  *
  * Declaration providers are critical for performance, so implementations should cache results.
+ *
+ * ### Lifetime
+ *
+ * If a [KotlinDeclarationProvider] has been created for a specific [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule],
+ * its lifetime does not exceed the lifetime of the underlying LL FIR session. For other declaration providers, the Analysis API guarantees
+ * that their lifetime is constrained by the next out-of-block or module state modification (see [KotlinModificationTopics][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics]).
+ *
+ * This allows a declaration provider to cache values without worrying about invalidation as it can assume an immutable module/project
+ * state.
  */
 public interface KotlinDeclarationProvider : KotlinComposableProvider {
     public fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration?

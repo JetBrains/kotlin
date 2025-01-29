@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  * package providers, such as those created by [KotlinForwardDeclarationsPackageProviderFactory].
  *
  * Package providers are critical for performance, so implementations should cache results.
+ *
+ * ### Lifetime
+ *
+ * [KotlinPackageProvider] has the same lifetime guarantees as [KotlinDeclarationProvider][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider].
  */
 public interface KotlinPackageProvider : KotlinComposableProvider {
     /**
