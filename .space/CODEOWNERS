@@ -13,7 +13,6 @@
 # OWNER_LIST: "Kotlin IDE Analysis Core"
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Language Evolution"
-# OWNER_LIST: "Kotlin in Fleet"
 # OWNER_LIST: Compose
 # OWNER_LIST: Parcelize
 # OWNER_LIST: Mikhail.Glukhikh Dmitriy.Novozhilov Kirill.Rakhman
@@ -366,7 +365,7 @@
 /libraries/tools/kotlin-stdlib-docs/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /libraries/tools/kotlin-stdlib-docs-legacy/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /libraries/tools/kotlin-stdlib-gen/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools" "Kotlin in Fleet"
+/libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools"
 /libraries/tools/kotlin-tooling-metadata/ "Kotlin Build Tools"
 /libraries/tools/kotlinp/ "Kotlin JVM" "Kotlin Common Backend"
 /libraries/tools/kotlinp/jvm/ "Kotlin JVM"
@@ -386,7 +385,7 @@
 /license/ "Kotlin Build Infrastructure"
 
 /native/ "Kotlin Native"
-/native/analysis-api-klib-reader/ "Kotlin Native" "Kotlin in Fleet"
+/native/analysis-api-klib-reader/ "Kotlin Native"
 /native/commonizer/ "Kotlin Frontend"
 /native/commonizer-api/ "Kotlin Frontend"
 /native/commonizer-embeddable/ "Kotlin Frontend"
@@ -397,8 +396,8 @@
 /native/native.tests/stress/ "Kotlin Native"
 /native/native.tests/klib-compatibility/ "Kotlin Common Backend"
 /native/native.tests/klib-ir-inliner/ "Kotlin Common Backend"
-/native/objcexport-header-generator/ "Kotlin Native" "Kotlin in Fleet"
-/native/objcexport-header-generator/impl/analysis-api/ "Kotlin in Fleet"
+/native/objcexport-header-generator/ "Kotlin Native"
+/native/objcexport-header-generator/impl/analysis-api/ "Kotlin Native"
 
 /plugins/allopen/ "Kotlin Frontend"
 /plugins/android-extensions/ "Kotlin Frontend"
