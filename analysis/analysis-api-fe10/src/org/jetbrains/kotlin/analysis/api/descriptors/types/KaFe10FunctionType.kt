@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseRegularFunctionValueParameter
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -97,7 +97,6 @@ internal class KaFe10FunctionType(
             }.map { it.type.toKtType(analysisContext) }
         }
 
-    @KaExperimentalApi
     override val parameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion {
             parameterTypes.map { type ->
@@ -108,7 +107,7 @@ internal class KaFe10FunctionType(
                     Name.identifier(it)
                 }
 
-                KaBaseRegularFunctionValueParameter(name, type)
+                KaBaseFunctionValueParameter(name, type)
             }
         }
 

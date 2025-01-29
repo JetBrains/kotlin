@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.types.KaRegularFunctionValueParameter
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.Name
 
 @KaExperimentalApi
-class KaBaseRegularFunctionValueParameter(override val name: Name?, override val type: KaType) : KaRegularFunctionValueParameter {
+class KaBaseFunctionValueParameter(override val name: Name?, override val type: KaType) : KaFunctionValueParameter() {
     override fun toString(): String = "KaRegularFunctionValueParameter [name: $name, type: ${type.symbol?.classId}]"
 }

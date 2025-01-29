@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQual
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseReceiverFunctionValueParameter
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseRegularFunctionValueParameter
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -93,22 +92,14 @@ internal class KaFirFunctionType(
             coneType.valueParameterTypesWithoutReceivers(builder.rootSession).map { it.buildKtType() }
         }
 
-    @KaExperimentalApi
     override val parameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion {
-            val parameters = mutableListOf<KaFunctionValueParameter>()
-
-            receiverType?.let {
-                if (isReflectType)
-                    parameters.add(KaBaseReceiverFunctionValueParameter(it))
+            buildList {
+                parameterTypes.mapIndexedTo(this) { index, parameterType ->
+                    val name = (parameterType as? KaFirType)?.coneType?.parameterName
+                    KaBaseFunctionValueParameter(name, parameterType)
+                }
             }
-
-            parameterTypes.mapIndexedTo(parameters) { index, parameterType ->
-                val name = (parameterType as? KaFirType)?.coneType?.parameterName
-                KaBaseRegularFunctionValueParameter(name, parameterType)
-            }
-
-            parameters
         }
 
     override val returnType: KaType
