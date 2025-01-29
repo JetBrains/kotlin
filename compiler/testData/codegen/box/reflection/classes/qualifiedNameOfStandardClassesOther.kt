@@ -5,6 +5,8 @@
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ KT-74799: extra FUNCTION_INTERFACE_CLASS modifier on class reference to Function42
 
 import kotlin.test.assertEquals
 

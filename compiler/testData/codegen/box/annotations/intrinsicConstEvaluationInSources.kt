@@ -4,6 +4,8 @@
 // ISSUE: KT-65415, KT-66432
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ IrClassSymbolImpl is already bound. Signature: kotlin.internal/IntrinsicConstEvaluation|null[0]. Owner: CLASS ANNOTATION_CLASS name:IntrinsicConstEvaluation modality:OPEN visibility:public superTypes:[kotlin.Annotation]
 
 // FILE: IntrinsicConstEvaluation.kt
 package kotlin.internal

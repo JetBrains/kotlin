@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
@@ -42,6 +43,9 @@ import org.jetbrains.kotlin.util.metadataVersion
 abstract class AbstractNativeKlibSerializerFacade(
     testServices: TestServices
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::ModuleDescriptorProvider))
+
     final override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
     }
@@ -88,11 +92,32 @@ abstract class AbstractNativeKlibSerializerFacade(
         inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
     ): SerializerOutput<KotlinLibrary>
 
-    protected open fun updateTestConfiguration(
+    fun updateTestConfiguration(
         configuration: CompilerConfiguration,
         module: TestModule,
         outputArtifact: BinaryArtifacts.KLib
-    ) = Unit
+    ) {
+        val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
+
+        val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
+
+        val library = resolveLibraries(
+            configuration, dependencyPaths + outputArtifact.outputFile.path, knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER),
+        ).last().library
+
+        val moduleDescriptor = nativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            library,
+            configuration.languageVersionSettings,
+            LockBasedStorageManager("ModulesStructure"),
+            null,
+            packageAccessHandler = null,
+            lookupTracker = LookupTracker.DO_NOTHING
+        )
+        moduleDescriptor.setDependencies(dependencyPaths.map { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl } + moduleDescriptor)
+
+        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
+        testServices.libraryProvider.setDescriptorAndLibraryByName(outputArtifact.outputFile.path, moduleDescriptor, library)
+    }
 }
 
 /**
@@ -139,72 +164,18 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
             neededLibraries = usedLibrariesForManifest,
         )
     }
-
-    override fun updateTestConfiguration(
-        configuration: CompilerConfiguration,
-        module: TestModule,
-        outputArtifact: BinaryArtifacts.KLib
-    ) {
-        val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-
-        val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
-
-        val library = resolveLibraries(
-            configuration, dependencyPaths + outputArtifact.outputFile.path,
-        ).last().library
-
-        val moduleDescriptor = nativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-            library,
-            configuration.languageVersionSettings,
-            LockBasedStorageManager("ModulesStructure"),
-            testServices.moduleDescriptorProvider.getModuleDescriptor(module).builtIns,
-            packageAccessHandler = null,
-            lookupTracker = LookupTracker.DO_NOTHING
-        )
-        moduleDescriptor.setDependencies(dependencyPaths.map { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl } + moduleDescriptor)
-
-        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
-        testServices.libraryProvider.setDescriptorAndLibraryByName(outputArtifact.outputFile.path, moduleDescriptor, library)
-    }
 }
 
 /**
  * The Native KLIB facade suitable for FIR frontend.
  */
 class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNativeKlibSerializerFacade(testServices) {
-    override fun updateTestConfiguration(
-        configuration: CompilerConfiguration,
-        module: TestModule,
-        outputArtifact: BinaryArtifacts.KLib
-    ) {
-        val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-
-        val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
-
-        val library = resolveLibraries(
-            configuration, dependencyPaths + outputArtifact.outputFile.path,
-        ).last().library
-
-        val moduleDescriptor = nativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-            library,
-            configuration.languageVersionSettings,
-            LockBasedStorageManager("ModulesStructure"),
-            null,
-            packageAccessHandler = null,
-            lookupTracker = LookupTracker.DO_NOTHING
-        )
-        moduleDescriptor.setDependencies(dependencyPaths.map { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl } + moduleDescriptor)
-
-        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
-        testServices.libraryProvider.setDescriptorAndLibraryByName(outputArtifact.outputFile.path, moduleDescriptor, library)
-    }
-
     override fun serialize(
         configuration: CompilerConfiguration,
         usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
         inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
-    ): SerializerOutput<KotlinLibrary> = serializeModuleIntoKlib(
+    ) = serializeModuleIntoKlib(
         moduleName = inputArtifact.irModuleFragment.name.asString(),
         inputArtifact.irModuleFragment,
         inputArtifact.irPluginContext.irBuiltIns,
