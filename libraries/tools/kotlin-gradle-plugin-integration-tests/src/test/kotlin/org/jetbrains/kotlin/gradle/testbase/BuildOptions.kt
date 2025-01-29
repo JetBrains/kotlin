@@ -12,8 +12,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -71,6 +71,12 @@ data class BuildOptions(
      * @see [KGPDaemonsBaseTest]
      */
     val customKotlinDaemonRunFilesDirectory: File? = null,
+    /**
+     * Enable verbose VFS logging to view information about Virtual File System (VFS) changes at the beginning and end of a build.
+     *
+     * https://docs.gradle.org/current/userguide/file_system_watching.html#logging
+     */
+    val verboseVfs: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -206,6 +212,10 @@ data class BuildOptions(
             arguments.add("--watch-fs")
         } else {
             arguments.add("--no-watch-fs")
+        }
+
+        if (verboseVfs != null) {
+            arguments.add("-Dorg.gradle.vfs.verbose=$verboseVfs")
         }
 
         arguments.add(if (buildCacheEnabled) "--build-cache" else "--no-build-cache")
