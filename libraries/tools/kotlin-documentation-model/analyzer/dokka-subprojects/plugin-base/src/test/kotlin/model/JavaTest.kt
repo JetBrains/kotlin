@@ -80,6 +80,26 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         }
     }
 
+    @Test fun allImplementedInterfacesWithGenericsInJava() {
+        inlineModelTest(
+            """
+            |interface Highest<H> { }
+            |interface Lower<L> extends Highest<L> { }
+            |class Extendable { }
+            |class Tested<T> extends Extendable implements Lower<T> { }
+        """, configuration = configuration){
+            with((this / "java" / "Tested").cast<DClass>()){
+                val implementedInterfaces = extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value!!
+                implementedInterfaces.map { it.dri.sureClassNames }.sorted() equals listOf("Highest", "Lower").sorted()
+                for (implementedInterface in implementedInterfaces) {
+                    // The type parameter T from Tested should be used for each interface, not the type parameters in
+                    // the interface definitions.
+                    assertEquals((implementedInterface.projections.single() as TypeParameter).name, "T")
+                }
+            }
+        }
+    }
+
     @Test fun multipleClassInheritanceWithInterface() {
         inlineModelTest(
             """
@@ -90,6 +110,25 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         """, configuration = configuration){
             with((this / "java" / "Tested").cast<DClass>()) {
                 supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }.sortedBy { it.first } equals listOf("Extendable" to JavaClassKindTypes.CLASS, "Lower" to JavaClassKindTypes.INTERFACE)
+            }
+        }
+    }
+
+    @Test
+    fun interfaceWithGeneric() {
+        inlineModelTest(
+            """
+            |interface Bar<T> {}
+            |public class Foo implements Bar<String> {}
+            """, configuration = configuration
+        ) {
+            with((this / "java" / "Foo").cast<DClass>()) {
+                val interfaceType = supertypes.values.flatten().single()
+                assertEquals(interfaceType.kind, JavaClassKindTypes.INTERFACE)
+                assertEquals(interfaceType.typeConstructor.dri.classNames, "Bar")
+                // The interface type should be Bar<String>, and not use Bar<T> like the interface definition
+                val generic = interfaceType.typeConstructor.projections.single() as GenericTypeConstructor
+                assertEquals(generic.dri.classNames, "String")
             }
         }
     }
@@ -106,6 +145,25 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
                 assertTrue(
                     sups.all { s -> supertypes.values.flatten().any { it.typeConstructor.dri.classNames == s } })
                 "Foo must extend ${sups.joinToString(", ")}"
+            }
+        }
+    }
+
+    @Test
+    fun superclassWithGeneric() {
+        inlineModelTest(
+            """
+            |class Bar<T> {}
+            |public class Foo extends Bar<String> {}
+            """, configuration = configuration
+        ) {
+            with((this / "java" / "Foo").cast<DClass>()) {
+                val superclassType = supertypes.values.flatten().single()
+                assertEquals(superclassType.kind, JavaClassKindTypes.CLASS)
+                assertEquals(superclassType.typeConstructor.dri.classNames, "Bar")
+                // The superclass type should be Bar<String>, and not use Bar<T> like the class definition
+                val generic = superclassType.typeConstructor.projections.single() as GenericTypeConstructor
+                assertEquals(generic.dri.classNames, "String")
             }
         }
     }
