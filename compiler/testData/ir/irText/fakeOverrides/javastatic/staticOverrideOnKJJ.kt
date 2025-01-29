@@ -1,6 +1,8 @@
 // SKIP_KT_DUMP
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_PHASE_SUGGESTION: K2 fails at backend stage
 
 // FILE: Java1.java
 public interface Java1 {

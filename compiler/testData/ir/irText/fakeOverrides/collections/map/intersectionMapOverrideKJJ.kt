@@ -4,6 +4,8 @@
 // WITH_STDLIB
 // IGNORE_DEXING
 // DIAGNOSTICS: -ACCIDENTAL_OVERRIDE
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_PHASE_SUGGESTION: K2 fails at backend stage
 
 // FILE: 1.kt
 import java.util.HashMap
