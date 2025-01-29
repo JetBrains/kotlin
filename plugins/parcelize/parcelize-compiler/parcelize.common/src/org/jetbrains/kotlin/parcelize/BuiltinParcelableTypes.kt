@@ -50,6 +50,7 @@ object BuiltinParcelableTypes {
         "kotlin.ranges.CharRange",
         "kotlin.ranges.IntRange",
         "kotlin.ranges.LongRange",
+        "kotlin.uuid.Uuid",
     )
 
     val PARCELABLE_BASE_TYPE_FQNAMES = setOf(
