@@ -510,8 +510,8 @@ class FirCallResolver(
         val chosenCandidate = reducedCandidates.single()
         chosenCandidate.updateSourcesOfReceivers()
 
-        // Due to CandidateFactory.Companion.creteForCallableReferenceCandidate, it's guaranteed that
-        // all callable reference candidates' CS are effectively clones of the contain call ones.
+        // Due to CandidateFactory.Companion.createForCallableReferenceCandidate, it's guaranteed that
+        // all callable reference candidates' CS are effectively clones of the containing call's constraint systems.
         //
         // And after we processed the reference candidate, its CS becomes a superset of the original one.
         // Thus, we apply it back for the single successful chosen candidate

@@ -359,6 +359,12 @@ class NewConstraintSystemImpl(
         doAddOtherSystem(otherSystem)
     }
 
+    /**
+     * This function is only expected to be called when [otherSystem] is a superset of this CS,
+     * or in other words _this_ CS has used as a base/outer CS of the [otherSystem].
+     *
+     * Or one might say that [otherSystem] is expected to be a clone of the current CS with some additions: new variables, constraints, etc.
+     */
     fun replaceContentWith(otherSystem: ConstraintStorage) {
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)

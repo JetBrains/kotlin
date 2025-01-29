@@ -1,0 +1,64 @@
+// RUN_PIPELINE_TILL: BACKEND
+// WITH_STDLIB
+// ISSUE: KT-74369
+
+// FILE: main.kt
+import kotlin.reflect.KProperty
+
+class MyEither<out A, out B>
+
+data object BlankValue
+
+fun <E1> buildSomething(transform: Something<E1>.() -> Unit) {}
+
+class Something<E2> {
+    interface MyValue<out A1>
+
+    fun <A2> MyEither<E2, A2>.bindOrAccumulate(): MyValue<A2> = TODO()
+
+    operator fun <A3> MyValue<A3>.getValue(thisRef: Nothing?, property: KProperty<*>): A3 = TODO()
+}
+
+fun processRows(m: MyEither<BlankValue, String>) {
+    buildSomething {
+        val extra1 by m.bindOrAccumulate()
+        val extra2 by m.bindOrAccumulate()
+        val extra3 by m.bindOrAccumulate()
+        val extra4 by m.bindOrAccumulate()
+        val extra5 by m.bindOrAccumulate()
+        val extra6 by m.bindOrAccumulate()
+        val extra7 by m.bindOrAccumulate()
+        val extra8 by m.bindOrAccumulate()
+        val extra9 by m.bindOrAccumulate()
+        val extra10 by m.bindOrAccumulate()
+        val extra11 by m.bindOrAccumulate()
+        val extra12 by m.bindOrAccumulate()
+        val extra13 by m.bindOrAccumulate()
+        val extra14 by m.bindOrAccumulate()
+        val extra15 by m.bindOrAccumulate()
+        val extra16 by m.bindOrAccumulate()
+        val extra17 by m.bindOrAccumulate()
+        val extra18 by m.bindOrAccumulate()
+        val extra19 by m.bindOrAccumulate()
+        val extra20 by m.bindOrAccumulate()
+        val extra21 by m.bindOrAccumulate()
+        val extra22 by m.bindOrAccumulate()
+        val extra23 by m.bindOrAccumulate()
+        val extra24 by m.bindOrAccumulate()
+        val extra25 by m.bindOrAccumulate()
+        val extra26 by m.bindOrAccumulate()
+        val extra27 by m.bindOrAccumulate()
+        val extra28 by m.bindOrAccumulate()
+        val extra29 by m.bindOrAccumulate()
+        val extra30 by m.bindOrAccumulate()
+        val extra31 by m.bindOrAccumulate()
+        val extra32 by m.bindOrAccumulate()
+        val extra33 by m.bindOrAccumulate()
+        val extra34 by m.bindOrAccumulate()
+        val extra35 by m.bindOrAccumulate()
+        val extra36 by m.bindOrAccumulate()
+        val extra37 by m.bindOrAccumulate()
+        val extra38 by m.bindOrAccumulate()
+        val extra39 by m.bindOrAccumulate()
+    }
+}
