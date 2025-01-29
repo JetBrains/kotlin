@@ -1,0 +1,4 @@
+KtNameReferenceExpression(112,115): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) context(string@kotlin.String)
+    val foo: kotlin.Boolean

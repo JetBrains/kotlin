@@ -1,0 +1,4 @@
+KtNameReferenceExpression(96,99): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) context(string@kotlin.String)
+    fun foo()

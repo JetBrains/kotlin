@@ -1,0 +1,7 @@
+Diagnostics from elements:
+  for PSI element of type KtCallExpression at (37,9-20)
+    NO_CONTEXT_ARGUMENT      text ranges: [(546,555)]
+      PSI: KtCallExpression at (37,9-20)
+  for PSI element of type KtNameReferenceExpression at (38,9-23)
+    NO_CONTEXT_ARGUMENT      text ranges: [(566,580)]
+      PSI: KtNameReferenceExpression at (38,9-23)

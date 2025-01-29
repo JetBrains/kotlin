@@ -76,6 +76,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationReturnTypeTestGen
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("declarationInPrimaryConstructor.kt")
   public void testDeclarationInPrimaryConstructor() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/declarationInPrimaryConstructor.kt");

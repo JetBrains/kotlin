@@ -1,0 +1,16 @@
+KtNameReferenceExpression(97,100): 'foo'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = val foo: kotlin.Boolean
+          callableId = /foo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'String' found.>
+    isInBestCandidates = true
