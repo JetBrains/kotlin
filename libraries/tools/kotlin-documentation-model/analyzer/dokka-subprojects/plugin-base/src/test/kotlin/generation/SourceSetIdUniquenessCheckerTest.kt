@@ -4,22 +4,19 @@
 
 package generation
 
+import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.DokkaException
+import org.jetbrains.dokka.base.generation.SingleModuleGeneration
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.plugability.DokkaContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class SourceSetIdUniquenessCheckerTest : BaseAbstractTest() {
     @Test
-    fun `pre-generation check should fail if there are sourceSets with the same id`() = testInline(
-        """
-        |/src/main1/file1.kt
-        |fun someFunction2()
-        |/src/main2/file2.kt
-        |fun someFunction2()
-        """.trimMargin(),
-        dokkaConfiguration {
+    fun `pre-generation check should fail if there are sourceSets with the same id`() {
+        val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main1")
@@ -33,25 +30,19 @@ class SourceSetIdUniquenessCheckerTest : BaseAbstractTest() {
                 }
             }
         }
-    ) {
-        verificationStage = { verification ->
-            val exception = assertFailsWith(DokkaException::class, verification)
-            assertEquals(
-                exception.message,
-                "Pre-generation validity check failed: Source sets 'S1' and 'S2' have the same `sourceSetID=root/JVM`. Every source set should have unique sourceSetID."
-            )
-        }
+        val context = DokkaContext.create(configuration, logger, emptyList())
+        val generation = context.single(CoreExtensions.generation) as SingleModuleGeneration
+
+        val exception = assertFailsWith<DokkaException> { generation.validityCheck(context) }
+        assertEquals(
+            exception.message,
+            "Pre-generation validity check failed: Source sets 'S1' and 'S2' have the same `sourceSetID=root/JVM`. Every source set should have unique sourceSetID."
+        )
     }
 
     @Test
-    fun `pre-generation check should not fail if sourceSets have different ids`() = testInline(
-        """
-        |/src/main1/file1.kt
-        |fun someFunction2()
-        |/src/main2/file2.kt
-        |fun someFunction2()
-        """.trimMargin(),
-        dokkaConfiguration {
+    fun `pre-generation check should not fail if sourceSets have different ids`() {
+        val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main1")
@@ -65,10 +56,11 @@ class SourceSetIdUniquenessCheckerTest : BaseAbstractTest() {
                 }
             }
         }
-    ) {
-        verificationStage = { verification ->
-            // we check that there is no error thrown
-            assertEquals(verification(), Unit)
-        }
+        val context = DokkaContext.create(configuration, logger, emptyList())
+        val generation = context.single(CoreExtensions.generation) as SingleModuleGeneration
+
+        // check no error thrown
+        // assertEquals is needed not to have a dangling declaration, it has `assertNotFails` semantics.
+        assertEquals(generation.validityCheck(context), Unit)
     }
 }
