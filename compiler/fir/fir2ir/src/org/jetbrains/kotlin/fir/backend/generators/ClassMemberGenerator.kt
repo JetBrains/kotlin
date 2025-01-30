@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
+import org.jetbrains.kotlin.fir.backend.utils.prepareExpressionForGivenExpectedType
 import org.jetbrains.kotlin.fir.backend.utils.unwrapCallRepresentative
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
@@ -277,7 +278,8 @@ internal class ClassMemberGenerator(
                             val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
                             if (property.delegate == null) {
                                 with(visitor.implicitCastInserter) {
-                                    irExpression.insertSpecialCast(
+                                    irExpression.prepareExpressionForGivenExpectedType(
+                                        this,
                                         initializerExpression,
                                         initializerExpression.resolvedType,
                                         property.returnTypeRef.coneType

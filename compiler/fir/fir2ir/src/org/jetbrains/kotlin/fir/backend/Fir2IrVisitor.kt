@@ -67,8 +67,6 @@ class Fir2IrVisitor(
     private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, Any?>() {
-    internal val implicitCastInserter = Fir2IrImplicitCastInserter(c)
-
     private val memberGenerator = ClassMemberGenerator(c, this, conversionScope)
 
     private val operatorGenerator = OperatorExpressionGenerator(c, this, conversionScope)
@@ -529,20 +527,19 @@ class Fir2IrVisitor(
         if (initializer != null) {
             irVariable.initializer =
                 convertToIrExpression(initializer)
-                    .insertImplicitCast(initializer, initializer.resolvedType, variable.returnTypeRef.coneType)
+                    .prepareExpressionForGivenExpectedType(initializer, initializer.resolvedType, variable.returnTypeRef.coneType)
         }
         annotationGenerator.generate(irVariable, variable)
         return irVariable
     }
 
-    private fun IrExpression.insertImplicitCast(
+    private fun IrExpression.prepareExpressionForGivenExpectedType(
         baseExpression: FirExpression,
         valueType: ConeKotlinType,
         expectedType: ConeKotlinType,
-    ) =
-        with(implicitCastInserter) {
-            this@insertImplicitCast.insertSpecialCast(baseExpression, valueType, expectedType)
-        }
+    ): IrExpression = prepareExpressionForGivenExpectedType(
+        this@Fir2IrVisitor, baseExpression, valueType, expectedType
+    )
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement = whileAnalysing(session, property) {
         if (property.isLocal) return visitLocalVariable(property)
@@ -1304,7 +1301,7 @@ class Fir2IrVisitor(
                         arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
                     },
                     convertToIrExpression(elvisExpression.rhs)
-                        .insertImplicitCast(elvisExpression, elvisExpression.rhs.resolvedType, elvisExpression.resolvedType)
+                        .prepareExpressionForGivenExpectedType(elvisExpression, elvisExpression.rhs.resolvedType, elvisExpression.resolvedType)
                 ),
                 IrElseBranchImpl(
                     IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
@@ -1456,7 +1453,7 @@ class Fir2IrVisitor(
     private fun FirWhenBranch.toIrWhenBranch(whenExpressionType: ConeKotlinType): IrBranch {
         return convertWithOffsets { startOffset, endOffset ->
             val condition = condition
-            val irResult = convertToIrExpression(result).insertImplicitCast(result, result.resolvedType, whenExpressionType)
+            val irResult = convertToIrExpression(result).prepareExpressionForGivenExpectedType(result, result.resolvedType, whenExpressionType)
             if (condition is FirElseIfTrueCondition) {
                 IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, builtins.booleanType, true), irResult)
             } else {
