@@ -17,7 +17,6 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec.Companion
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
@@ -76,7 +75,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         ): TaskProvider<BinaryenExec> {
             val target = compilation.target
             val project = target.project
-            val binaryen = BinaryenRootPlugin.apply(project.rootProject)
+            val binaryen = BinaryenPlugin.apply(project)
             return project.registerTask(
                 name,
             ) {
@@ -87,6 +86,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             }
         }
 
+        @ExperimentalWasmDsl
         @Deprecated(
             "Use register instead",
             ReplaceWith("register(compilation, name, configuration)")
@@ -94,7 +94,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         fun create(
             compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: NodeJsExec.() -> Unit = {},
-        ): TaskProvider<NodeJsExec> = NodeJsExec.register(compilation, name, configuration)
+            configuration: BinaryenExec.() -> Unit = {},
+        ): TaskProvider<BinaryenExec> = register(compilation, name, configuration)
     }
 }

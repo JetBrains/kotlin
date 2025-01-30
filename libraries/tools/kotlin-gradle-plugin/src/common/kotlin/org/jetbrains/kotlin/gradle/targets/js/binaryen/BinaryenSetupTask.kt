@@ -20,8 +20,8 @@ abstract class BinaryenSetupTask
 @Inject
 @InternalKotlinGradlePluginApi
 constructor(
-    settings: BinaryenRootEnvSpec,
-) : AbstractSetupTask<BinaryenEnv, BinaryenRootEnvSpec>(settings) {
+    settings: BinaryenEnvSpec,
+) : AbstractSetupTask<BinaryenEnv, BinaryenEnvSpec>(settings) {
 
     @get:Internal
     override val artifactPattern: String

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
  * Specification for executing Binaryen, an optimization tool for wasm files.
  */
 @ExperimentalWasmDsl
-abstract class BinaryenRootEnvSpec : EnvSpec<BinaryenEnv>() {
+abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
 
     /**
      * Specify Binaryen platform information, with name and architecture.
@@ -67,3 +67,6 @@ abstract class BinaryenRootEnvSpec : EnvSpec<BinaryenEnv>() {
         const val EXTENSION_NAME: String = "kotlinBinaryenSpec"
     }
 }
+
+@OptIn(ExperimentalWasmDsl::class)
+typealias BinaryenRootEnvSpec = BinaryenEnvSpec
