@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.nonDispatchArguments
 
 class JsDefaultParameterInjector(context: JsIrBackendContext) :
     DefaultParameterInjector<JsIrBackendContext>(
@@ -39,7 +40,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
         }
 
     override fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean {
-        return super.shouldReplaceWithSyntheticFunction(functionAccess) || functionAccess.symbol.owner.run {
+        return functionAccess.nonDispatchArguments.any { it == null } || functionAccess.symbol.owner.run {
             origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT &&
                     !isTopLevel &&
                     functionAccess.origin != JsStatementOrigins.IMPLEMENTATION_DELEGATION_CALL &&
