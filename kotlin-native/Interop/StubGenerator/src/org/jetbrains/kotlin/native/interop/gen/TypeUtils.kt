@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.native.interop.indexer.*
  * TODO: use libclang to implement?
  */
 fun Type.getStringRepresentation(): String = when (this) {
-    VoidType -> "void"
-    CharType -> "char"
-    CBoolType -> "_Bool"
-    ObjCBoolType -> "BOOL"
+    is VoidType -> "void"
+    is CharType -> "char"
+    is CBoolType -> "_Bool"
+    is ObjCBoolType -> "BOOL"
     is IntegerType -> this.spelling
     is FloatingType -> this.spelling
 

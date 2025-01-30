@@ -38,7 +38,7 @@ private class FirTypeArgumentListPointer(typeArgumentList: FirTypeArgumentList, 
                 val coneTypeArgument = typeArgumentPointer.restore(session) ?: return null
 
                 val typeArgument = when (coneTypeArgument) {
-                    ConeStarProjection -> buildStarProjection()
+                    is ConeStarProjection -> buildStarProjection()
                     is ConeKotlinTypeProjection -> {
                         buildTypeProjectionWithVariance {
                             typeRef = buildResolvedTypeRef { this.coneType = coneTypeArgument.type }
