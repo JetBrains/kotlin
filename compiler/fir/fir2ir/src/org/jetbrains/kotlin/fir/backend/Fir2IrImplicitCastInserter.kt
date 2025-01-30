@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.buildSubstitutorByCalledCallable
-import org.jetbrains.kotlin.fir.backend.utils.implicitCast
-import org.jetbrains.kotlin.fir.backend.utils.unwrapCallRepresentative
+import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -156,18 +153,25 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     override fun visitTryExpression(tryExpression: FirTryExpression, data: IrElement): IrElement {
         val irTry = data as IrTry
 
-        irTry.tryResult = irTry.tryResult.insertSpecialCast(
+        irTry.tryResult = irTry.tryResult.prepareExpressionForGivenExpectedType(
+            this,
             tryExpression.tryBlock, tryExpression.tryBlock.resolvedType, tryExpression.resolvedType
         )
         for ((irCatch, firCatch) in irTry.catches.zip(tryExpression.catches)) {
-            irCatch.result = irCatch.result.insertSpecialCast(firCatch.block, firCatch.block.resolvedType, tryExpression.resolvedType)
+            irCatch.result = irCatch.result.prepareExpressionForGivenExpectedType(
+                this,
+                firCatch.block, firCatch.block.resolvedType, tryExpression.resolvedType
+            )
         }
         (irTry.finallyExpression as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
         return data
     }
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: IrElement): IrElement =
-        (data as IrThrow).insertSpecialCast(throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType)
+        (data as IrThrow).prepareExpressionForGivenExpectedType(
+            this,
+            throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType
+        )
 
     override fun visitBlock(block: FirBlock, data: IrElement): IrElement =
         (data as? IrContainerExpression)?.insertImplicitCasts() ?: data
@@ -175,7 +179,8 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: IrElement): IrElement {
         val irReturn = data as? IrReturn ?: return data
         val expectedType = returnExpression.target.labeledElement.returnTypeRef
-        irReturn.value = irReturn.value.insertSpecialCast(
+        irReturn.value = irReturn.value.prepareExpressionForGivenExpectedType(
+            this,
             returnExpression.result,
             returnExpression.result.resolvedType,
             expectedType.coneType
@@ -186,11 +191,25 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     // ==================================================================================
 
     /**
+     * Currently, it's a bit vaguely defined how implicit casts differ from conversion (e.g., SAM or suspend ones).
+     *
+     * But the current assumption is that whenever ones need the former they need the latter, too.
+     *
+     * And for that case, there's an utility [org.jetbrains.kotlin.fir.backend.utils.prepareExpressionForGivenExpectedType].
+     */
+    @RequiresOptIn
+    annotation class NoConversionsExpected
+
+    /**
      * This functions processes the following casts:
      * - coercion to Unit
      * - nullability casts based on nullability annotations
      * - casts for dynamic types
+     *
+     * This function doesn't apply conversion operations, for which one might use
+     * [org.jetbrains.kotlin.fir.backend.utils.prepareExpressionForGivenExpectedType]
      */
+    @NoConversionsExpected
     internal fun IrExpression.insertSpecialCast(
         expression: FirExpression,
         valueType: ConeKotlinType,

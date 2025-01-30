@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -66,4 +65,7 @@ class Fir2IrComponentsStorage(
     override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses = Fir2IrSymbolsMappingForLazyClasses()
 
     override val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar = Fir2IrIrGeneratedDeclarationsRegistrar(this)
+
+    override val adapterGenerator: AdapterGenerator = AdapterGenerator(this, conversionScope)
+    override val implicitCastInserter: Fir2IrImplicitCastInserter = Fir2IrImplicitCastInserter(this)
 }
