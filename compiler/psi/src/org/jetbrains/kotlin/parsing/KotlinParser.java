@@ -42,14 +42,23 @@ public class KotlinParser implements PsiParser {
     @NotNull
     public static ASTNode parse(PsiBuilder psiBuilder, PsiFile psiFile) {
         KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        String extension = FileUtilRt.getExtension(psiFile.getName());
-        if (extension.isEmpty() || extension.equals(KotlinFileType.EXTENSION) || isCompiledFile(psiFile)) {
+        if (shouldCreateRegularKtFile(psiFile)) {
             ktParsing.parseFile();
         }
         else {
             ktParsing.parseScript();
         }
         return psiBuilder.getTreeBuilt();
+    }
+
+    /**
+     * Determines whether to create a regular Kotlin file or a script
+     *
+     * @return true if a regular Kotlin file should be created, false if a script should be created instead
+     */
+    public static boolean shouldCreateRegularKtFile(PsiFile psiFile) {
+        String extension = FileUtilRt.getExtension(psiFile.getName());
+        return extension.isEmpty() || extension.equals(KotlinFileType.EXTENSION) || isCompiledFile(psiFile);
     }
 
     @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})

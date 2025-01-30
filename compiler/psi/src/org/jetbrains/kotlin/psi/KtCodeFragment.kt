@@ -80,6 +80,11 @@ abstract class KtCodeFragment(
 
     override fun isValid() = true
 
+    override fun isScript(): Boolean {
+        // see the kdoc inside `org.jetbrains.kotlin.psi.KtCommonFile.isScript`
+        return false
+    }
+
     override fun getContext(): PsiElement? {
         if (fakeContextForJavaFile != null) return fakeContextForJavaFile
         if (context != null && context !is KtElement) {

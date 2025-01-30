@@ -126,7 +126,6 @@ psi/KtCommonFile.kt:KtCommonFile:findImportByAlias(String)
 psi/KtCommonFile.kt:KtCommonFile:getNameForGivenImportAlias(Name)
 psi/KtCommonFile.kt:KtCommonFile:hasImportAlias()
 psi/KtCommonFile.kt:KtCommonFile:hasTopLevelCallables()
-psi/KtCommonFile.kt:KtCommonFile:isScript()
 psi/KtCommonFile.kt:KtCommonFile:open importDirectives
 psi/KtCommonFile.kt:KtCommonFile:open importList
 psi/KtCommonFile.kt:KtCommonFile:packageDirective

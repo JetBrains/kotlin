@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -41,9 +42,6 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     KtAnnotated,
     KtElement,
     PsiNamedElement {
-
-    @Volatile
-    private var isScript: Boolean? = null
 
     @Volatile
     private var hasTopLevelCallables: Boolean? = null
@@ -96,15 +94,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
     val script: KtScript?
         get() {
-            isScript?.let { if (!it) return null }
+            if (!isScript()) return null
             greenStub?.let { if (!it.isScript()) return null }
 
-            val result = findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtStubElementTypes.SCRIPT)
-            if (isScript == null) {
-                isScript = result != null
-            }
-
-            return result
+            return findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtStubElementTypes.SCRIPT)
         }
 
     val virtualFilePath
@@ -261,13 +254,30 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun clearCaches() {
         @Suppress("RemoveExplicitSuperQualifier")
         super<PsiFileBase>.clearCaches()
-        isScript = null
         hasTopLevelCallables = null
         pathCached = null
         hasImportAlias = null
     }
 
-    fun isScript(): Boolean = isScript ?: greenStub?.isScript() ?: (script != null)
+    /**
+     * Checks if a current [KtFile] is a script.
+     *
+     * If [KtFile] is a script, it will have [KtScriptInitializer] inside with top-level expressions.
+     *
+     * Script files usually (but not necessary) have the `.kts` extension
+     */
+    open fun isScript(): Boolean {
+        /*
+        For a non-code-fragment Kotlin file,
+        the Kotlin parser creates a `KtScript` if and only if `KotlinParser.shouldCreateRegularKtFile` returns `false`.
+        This allows us to quickly determine whether a file is a script and avoid accessing stubs,
+        which may cause IDE issues like KTIJ-32912.
+
+        IntelliJ IDEA may also consider some files matching this pattern as `KtCodeFragment` by overriding `KotlinParserDefinition`,
+        so the `KtFile.isScript()` function is overridden in `KtCodeFragment` to handle this case.
+         */
+        return !KotlinParser.shouldCreateRegularKtFile(this)
+    }
 
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }
