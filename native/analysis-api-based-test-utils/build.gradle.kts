@@ -9,6 +9,9 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     testApi(project(":analysis:analysis-api-standalone"))
+    testApi(libs.junit.jupiter.api)
+    testApi(libs.junit.jupiter.engine)
+    testApi(libs.junit.jupiter.params)
 }
 
 sourceSets {

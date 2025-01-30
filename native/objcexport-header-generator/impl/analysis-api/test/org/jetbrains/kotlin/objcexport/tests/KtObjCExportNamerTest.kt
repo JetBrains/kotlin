@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolNa
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCPrimitiveType
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.bridgeParameter
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.analyzeWithObjCExport
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.junit.jupiter.api.Test

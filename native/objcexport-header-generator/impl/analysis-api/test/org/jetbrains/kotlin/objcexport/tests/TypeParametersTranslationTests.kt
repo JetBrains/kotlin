@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCGenericTypeParameterUsa
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCIdType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolType
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.objcexport.testUtils.*
 import org.jetbrains.kotlin.psi.KtFile

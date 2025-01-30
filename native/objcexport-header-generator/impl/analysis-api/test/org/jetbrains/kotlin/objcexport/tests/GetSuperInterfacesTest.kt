@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfaceSymbols
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -22,10 +22,10 @@ class GetSuperInterfacesTest(
             interface A
             interface B 
             interface C
-            
+
             interface X: A, B
             interface Y : C
-        
+
             class Foo: X, Y
         """.trimIndent()
         )

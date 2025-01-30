@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
 import org.junit.jupiter.api.Test
@@ -50,7 +50,7 @@ class GetInlineTargetTypeOrNullTest(
             """
             value class A(val value: Int)
             value class B(val value: A)
-            
+
             val foo: B get() = error("stub")
         """.trimIndent()
         )
@@ -67,7 +67,7 @@ class GetInlineTargetTypeOrNullTest(
             """
             value class A(val value: Int)
             value class B(val value: A?)
-            
+
             val foo: B get() = error("stub")
         """.trimIndent()
         )

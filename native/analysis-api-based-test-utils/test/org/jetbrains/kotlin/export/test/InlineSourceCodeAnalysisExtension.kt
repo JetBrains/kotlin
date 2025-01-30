@@ -1,14 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.objcexport.testUtils
+package org.jetbrains.kotlin.export.test
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.export.test.createStandaloneAnalysisApiSession
-import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -39,10 +36,7 @@ import java.nio.file.Files
  * ```
  */
 interface InlineSourceCodeAnalysis {
-
     fun createKtFile(@Language("kotlin") sourceCode: String): KtFile
-
-    fun createObjCExportFile(@Language("kotlin") sourceCode: String, run: ObjCExportContext.(KtResolvedObjCExportFile) -> Unit)
 
     fun createKtFiles(
         builder: KtModuleBuilder.() -> Unit,
@@ -77,9 +71,6 @@ class InlineSourceCodeAnalysisExtension : ParameterResolver, AfterEachCallback {
     }
 }
 
-/**
- * Simple implementation [InlineSourceCodeAnalysis]
- */
 private class InlineSourceCodeAnalysisImpl(private val tempDir: File) : InlineSourceCodeAnalysis {
     override fun createKtFile(@Language("kotlin") sourceCode: String): KtFile {
         return createStandaloneAnalysisApiSession(tempDir = tempDir, kotlinSources = mapOf("TestSources.kt" to sourceCode))
@@ -87,17 +78,6 @@ private class InlineSourceCodeAnalysisImpl(private val tempDir: File) : InlineSo
             .value.single() as KtFile
     }
 
-    override fun createObjCExportFile(@Language("kotlin") sourceCode: String, run: ObjCExportContext.(KtResolvedObjCExportFile) -> Unit) {
-        val ktFile = createKtFile(sourceCode)
-        analyze(ktFile) {
-            val kaSession = this
-            withKtObjCExportSession(KtObjCExportConfiguration()) {
-                with(ObjCExportContext(analysisSession = kaSession, exportSession = this)) {
-                    run(analyze(ktFile) { with(KtObjCExportFile(ktFile)) { resolve() } })
-                }
-            }
-        }
-    }
 
     override fun createKtFiles(builder: InlineSourceCodeAnalysis.KtModuleBuilder.() -> Unit): Map<String, KtFile> {
         val sources = KtModuleBuilderImpl().also(builder).sources.toMap()

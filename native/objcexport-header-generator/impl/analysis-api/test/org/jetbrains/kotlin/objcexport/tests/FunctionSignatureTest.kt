@@ -2,8 +2,8 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getStringSignature
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.Test
