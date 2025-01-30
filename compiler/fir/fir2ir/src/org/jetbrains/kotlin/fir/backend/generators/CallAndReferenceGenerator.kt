@@ -57,8 +57,6 @@ class CallAndReferenceGenerator(
     private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by c {
 
-    private val adapterGenerator = AdapterGenerator(c, conversionScope)
-
     private fun FirTypeRef.toIrType(): IrType = toIrType(c, conversionScope.defaultConversionTypeOrigin())
 
     private fun ConeKotlinType.toIrType(): IrType = toIrType(c, conversionScope.defaultConversionTypeOrigin())
@@ -764,7 +762,8 @@ class CallAndReferenceGenerator(
 
         val irRhsWithCast = with(visitor.implicitCastInserter) {
             wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
-                .insertSpecialCast(
+                .prepareExpressionForGivenExpectedType(
+                    this,
                     variableAssignment.rValue,
                     variableAssignment.rValue.resolvedType,
                     variableAssignment.lValue.resolvedType
@@ -1069,11 +1068,10 @@ class CallAndReferenceGenerator(
             // However, for deserialized annotations it's possible to have an imprecise Array<Any> type
             // for empty integer literal arguments.
             // In this case we have to use a parameter type itself which is more precise, like Array<String> or IntArray.
-            // See KT-62598 and its fix for details.
+            // See KT-62598 and its fix for details
             expectedTypeForAnnotationArgument =
                 unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
         )
-
         if (unsubstitutedParameterType != null) {
             // Unsubstituted parameter type is only used for generating nullability check if the argument being used is flexible,
             // while the value parameter doesn't accept nulls.
@@ -1102,16 +1100,9 @@ class CallAndReferenceGenerator(
                 irArgument = insertCastToArgument(argument)
                 // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
                 // to properly insert nullability check
-                irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)
-            }
-
-            with(adapterGenerator) {
-                val samFunctionType = getFunctionTypeForPossibleSamType(substitutedParameterType)
-                irArgument = irArgument.applySuspendConversionIfNeeded(
-                    argument,
-                    samFunctionType ?: substitutedParameterType
+                irArgument = irArgument.prepareExpressionForGivenExpectedType(
+                    this, argument, argumentType, unsubstitutedParameterType, substitutedParameterType
                 )
-                irArgument = irArgument.applySamConversionIfNeeded(argument)
             }
         }
 
@@ -1450,7 +1441,8 @@ class CallAndReferenceGenerator(
                                 with(visitor.implicitCastInserter) {
                                     val extensionReceiver = statement.extensionReceiver!!
                                     val substitutor = statement.buildSubstitutorByCalledCallable(c)
-                                    it.insertSpecialCast(
+                                    it.prepareExpressionForGivenExpectedType(
+                                        this,
                                         extensionReceiver,
                                         extensionReceiver.resolvedType,
                                         substitutor.substituteOrSelf(receiverType.coneType),

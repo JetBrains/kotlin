@@ -40654,6 +40654,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
       runTest("compiler/testData/codegen/box/sam/samWithAbstractToString.kt");
     }
 
+    @Test
+    @TestMetadata("topLevelConversions.kt")
+    public void testTopLevelConversions() {
+      runTest("compiler/testData/codegen/box/sam/topLevelConversions.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/adapters")
     @TestDataPath("$PROJECT_ROOT")
