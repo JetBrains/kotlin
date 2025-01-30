@@ -1,14 +1,14 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlinx.dataframe.plugin.classId
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -256,7 +256,7 @@ internal fun KotlinTypeFacade.toDataFrame(
         return declarations
             .filterNot { excludes.contains(it.first) }
             .filterNot { excludedClasses.contains(it.first.resolvedReturnType) }
-            .filter { it.first.effectiveVisibility == EffectiveVisibility.Public }
+            .filter { it.first.visibility == Visibilities.Public }
             .map { (it, name) ->
                 var returnType = it.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
                     .coneType.upperBoundIfFlexible()
