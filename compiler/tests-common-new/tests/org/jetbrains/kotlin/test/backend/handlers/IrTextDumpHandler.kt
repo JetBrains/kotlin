@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.FlagsFilter
@@ -36,7 +31,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPath
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
@@ -97,6 +91,16 @@ class IrTextDumpHandler(
 
         fun isHiddenDeclaration(declaration: IrDeclaration, irBuiltIns: IrBuiltIns): Boolean =
             (declaration as? IrSimpleFunction)?.isHiddenEnumMethod(irBuiltIns) == true
+
+        fun renderFilePathForIrFile(
+            testFileToIrFile: List<Pair<Pair<TestModule, TestFile>?, IrFile>>,
+            testServices: TestServices,
+            irFile: IrFile,
+            fullPath: String,
+        ): String {
+            val (correspondingModule, _) = testFileToIrFile.firstOrNull { it.second == irFile }?.first ?: return fullPath
+            return fullPath.removePrefix(correspondingModule.independentSourceDirectoryPath(testServices))
+        }
     }
 
     override val directiveContainers: List<DirectivesContainer>
@@ -130,9 +134,8 @@ class IrTextDumpHandler(
             printTypeAbbreviations = false,
             isHiddenDeclaration = { isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
             stableOrder = true,
-            filePathRenderer = l@{ irFile, fullPath ->
-                val (correspondingModule, _) = testFileToIrFile.firstOrNull { it.second == irFile }?.first ?: return@l fullPath
-                fullPath.removePrefix(correspondingModule.independentSourceDirectoryPath(testServices))
+            filePathRenderer = { irFile, fullPath ->
+                renderFilePathForIrFile(testFileToIrFile, testServices, irFile, fullPath)
             }
         )
         val builder = baseDumper.builderForModule(module.name)
