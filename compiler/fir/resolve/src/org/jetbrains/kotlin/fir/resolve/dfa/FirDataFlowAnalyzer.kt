@@ -546,6 +546,9 @@ abstract class FirDataFlowAnalyzer(
             if (operand.resolvedType.isBoolean) {
                 flow.addImplication((expressionVariable eq !isEq) implies (operandVariable eq !expected))
             }
+            if (operandVariable is RealVariable) {
+                flow.addImplication((expressionVariable eq !isEq) implies (operandVariable booleanNotEq expected))
+            }
         } else {
             // expression == non-null const -> expression != null
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable notEq null))
@@ -556,10 +559,6 @@ abstract class FirDataFlowAnalyzer(
             // We can imply type information if the constant is the left operand and is a supported primitive type.
             if (const == expression.arguments[0] && equalsOverrideAnalyzer.isSmartcastPrimitive(const.resolvedType.classId)) {
                 flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeEq const.resolvedType))
-            }
-            if (const.kind == ConstantValueKind.Boolean) {
-                val booleanValue = const.value as Boolean
-                flow.addImplication((expressionVariable eq !isEq) implies (operandVariable booleanNotEq booleanValue))
             }
         }
     }
