@@ -64,7 +64,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
             is KotlinJvmTarget -> {
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                 @Suppress("UNCHECKED_CAST")
-                val jarTask = (target.project.tasks.named(target.artifactsTaskName) as TaskProvider<Jar>)
+                val jarTask = (project.tasks.named(target.artifactsTaskName) as TaskProvider<Jar>)
                 val jarArtifact = jarTask.flatMap { it.archiveFile.map { it.asFile } }
                 fragments.add(kgpUklibFragment(mainCompilation, jarTask, jarArtifact))
             }
@@ -101,9 +101,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
             KGPUklibFragment(
                 fragment = UklibFragment(
                     identifier = metadataCompilation.metadataFragmentIdentifier,
-                    attributes = metadataCompilation.metadataFragmentAttributes.filter {
-                        it !is UklibFragmentPlatformAttribute.FailOnPublicationAndUseTargetNameForMetadataCompilations
-                    }.map {
+                    attributes = metadataCompilation.metadataFragmentAttributes.map {
                         it.safeToPublish()
                     }.toSet(),
                     file = {
