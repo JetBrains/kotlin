@@ -468,7 +468,7 @@ enum class LanguageFeature(
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, kind = OTHER), // KT-64358
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, kind = OTHER), // KT-59138
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, kind = OTHER), // KT-56386
-    IrInlinerBeforeKlibSerialization(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-69765
+    IrInlinerBeforeKlibSerialization(sinceVersion = KOTLIN_2_2, kind = UNSTABLE_FEATURE), // KT-69765
     NestedTypeAliases(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-45285
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, kind = BUG_FIX), // KT-66691, KT-66742
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, kind = TEST_ONLY), // KT-16768
