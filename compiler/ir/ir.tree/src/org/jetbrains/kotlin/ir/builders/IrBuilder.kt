@@ -94,7 +94,6 @@ abstract class IrAbstractBlockBuilder<T : IrContainerExpression>(
     val origin: IrStatementOrigin?,
     var resultType: IrType?,
 ) : IrStatementsBuilder<T>(context, scope, startOffset, endOffset) {
-
     private val statements = ArrayList<IrStatement>()
 
     override fun addStatement(irStatement: IrStatement) {
@@ -138,17 +137,20 @@ class IrBlockBuilder(
 
 class IrReturnableBlockBuilder(
     context: IrGeneratorContext,
+    scope: Scope,
     val blockStartOffset: Int,
     val blockEndOffset: Int,
+    resultType: IrType,
     origin: IrStatementOrigin? = null,
-    resultType: IrType? = null,
-) : IrAbstractBlockBuilder<IrReturnableBlock>(context, Scope(IrReturnableBlockSymbolImpl()), blockStartOffset, blockEndOffset, origin, resultType) {
+) : IrAbstractBlockBuilder<IrReturnableBlock>(context, scope, blockStartOffset, blockEndOffset, origin, resultType) {
+    val returnableBlockSymbol: IrReturnableBlockSymbol = IrReturnableBlockSymbolImpl()
+
     override fun createBlock(resultType: IrType, origin: IrStatementOrigin?): IrReturnableBlock {
         return IrReturnableBlockImpl(
             startOffset = blockStartOffset,
             endOffset = blockEndOffset,
             type = resultType,
-            symbol = scope.scopeOwnerSymbol as IrReturnableBlockSymbolImpl,
+            symbol = returnableBlockSymbol,
             origin = null,
         )
     }
@@ -251,16 +253,16 @@ inline fun IrGeneratorWithScope.irBlockBody(
 inline fun IrBuilderWithScope.irReturnableBlock(
     resultType: IrType,
     origin: IrStatementOrigin? = null,
-    body: IrReturnableBlockBuilder.(IrReturnableBlockSymbol) -> Unit
+    body: IrReturnableBlockBuilder.() -> Unit
 ): IrReturnableBlock =
     IrReturnableBlockBuilder(
-        context,
+        context, scope,
         startOffset,
         endOffset,
         resultType = resultType,
         origin = origin
     ).apply {
-        body(scope.scopeOwnerSymbol as IrReturnableBlockSymbol)
+        body()
     }.doBuild()
 
 inline fun IrBuilderWithScope.irInlinedFunctionBlock(
