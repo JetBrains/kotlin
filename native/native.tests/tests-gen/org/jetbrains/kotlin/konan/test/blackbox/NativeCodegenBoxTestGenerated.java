@@ -42317,6 +42317,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("funInterfaceExtendsSuspendFunction.kt")
+      public void testFunInterfaceExtendsSuspendFunction() {
+        runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("funInterfaceExtendsSuspendFunction2.kt")
+      public void testFunInterfaceExtendsSuspendFunction2() {
+        runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction2.kt");
+      }
+
+      @Test
       @TestMetadata("inProjectedSam.kt")
       public void testInProjectedSam() {
         runTest("compiler/testData/codegen/box/sam/inProjectedSam.kt");
