@@ -15,6 +15,7 @@
 #include "objc_support/RunLoopSource.hpp"
 #include "objc_support/RunLoopTimer.hpp"
 #include "objc_support/AutoreleasePool.hpp"
+#include "SafePoint.hpp"
 
 namespace kotlin::alloc {
 
@@ -136,6 +137,7 @@ private:
             }
             {
                 objc_support::AutoreleasePool autoreleasePool;
+                ThreadStateGuard guard(ThreadState::kRunnable); // ensure extra objects destruction doesn't happen during GC
                 for (uint64_t i = 0; i < batchCount; ++i) {
                     // There's no point checking `deadline` here since the majority of the time will probably
                     // be spent in `AutoreleasePool` destructor.
@@ -143,6 +145,7 @@ private:
                         break;
                     }
                     ++processedCount;
+                    mm::safePoint();
                 }
             }
             if (!FinalizerQueueTraits::isEmpty(currentQueue_.queue)) {
