@@ -30,7 +30,7 @@ object FirUnsupportedSyntheticCallableReferenceChecker : FirExpressionChecker<Fi
             it[it.lastIndex - 1]
         }
         // We allow resolution of top-level callable references to synthetic Java extension properties in the delegate position. See KT-47299
-        if (parent is FirProperty && parent.delegate === expression) return
+        // if (parent is FirProperty && parent.delegate === expression) return
 
         val resolvedSymbol = expression.toResolvedCallableReference()?.resolvedSymbol
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ReferencesToSyntheticJavaProperties) &&
