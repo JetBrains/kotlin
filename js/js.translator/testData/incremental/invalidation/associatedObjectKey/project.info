@@ -1,0 +1,12 @@
+MUTED
+MODULES: lib1, lib2, main
+STEP 0:
+    libs: lib1, lib2, main
+    dirty js files: main, lib1/Annotation1, lib1/Annotation2, lib2/Outer, main/m.export, main/m
+    dirty js modules: main, lib1, lib2
+STEP 1:
+    libs: lib1, lib2, main
+    dirty js files: lib1/Annotation3, lib1/Annotation4, lib2/Outer, main/m
+    dirty js modules: main, lib1, lib2
+STEP 2:
+    libs: lib1, lib2, main

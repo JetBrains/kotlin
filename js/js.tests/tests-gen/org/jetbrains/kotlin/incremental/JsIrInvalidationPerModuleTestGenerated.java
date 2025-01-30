@@ -45,6 +45,12 @@ public class JsIrInvalidationPerModuleTestGenerated extends AbstractJsIrInvalida
   }
 
   @Test
+  @TestMetadata("associatedObjectKey")
+  public void testAssociatedObjectKey() {
+    runTest("js/js.translator/testData/incremental/invalidation/associatedObjectKey/");
+  }
+
+  @Test
   @TestMetadata("circleExportsUpdate")
   public void testCircleExportsUpdate() {
     runTest("js/js.translator/testData/incremental/invalidation/circleExportsUpdate/");
