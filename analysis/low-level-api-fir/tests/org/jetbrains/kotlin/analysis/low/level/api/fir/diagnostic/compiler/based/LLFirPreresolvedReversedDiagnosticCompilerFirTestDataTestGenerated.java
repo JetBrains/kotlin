@@ -1868,6 +1868,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
           }
 
           @Test
+          @TestMetadata("contextualAnonymousFunction.kt")
+          public void testContextualAnonymousFunction() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextualAnonymousFunction.kt");
+          }
+
+          @Test
           @TestMetadata("dslMarkerOnContextType.kt")
           public void testDslMarkerOnContextType() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/dslMarkerOnContextType.kt");

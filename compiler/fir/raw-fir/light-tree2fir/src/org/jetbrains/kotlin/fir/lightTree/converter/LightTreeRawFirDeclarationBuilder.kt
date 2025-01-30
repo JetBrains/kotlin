@@ -1919,7 +1919,6 @@ class LightTreeRawFirDeclarationBuilder(
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
                     dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
-                    contextParameters.addContextParameters(modifiers?.contextList, functionSymbol)
                 }
             }
 
@@ -1942,6 +1941,8 @@ class LightTreeRawFirDeclarationBuilder(
                 }
 
                 withCapturedTypeParameters(true, functionSource, actualTypeParameters) {
+                    contextParameters.addContextParameters(modifiers?.contextList, functionSymbol)
+
                     valueParametersList?.let { list ->
                         valueParameters += convertValueParameters(
                             list,

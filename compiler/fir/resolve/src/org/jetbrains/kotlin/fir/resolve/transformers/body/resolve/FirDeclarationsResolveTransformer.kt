@@ -1119,6 +1119,7 @@ open class FirDeclarationsResolveTransformer(
 
         anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
         anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
+        anonymousFunction.contextParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
         anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
 
         if (anonymousFunction.contractDescription != null) {
@@ -1219,6 +1220,7 @@ open class FirDeclarationsResolveTransformer(
         lambda.replaceValueParameters(valueParameters)
 
         lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
+        lambda = lambda.transformContextParameters(ImplicitToErrorTypeTransformer, null)
 
         val initialReturnTypeRef = lambda.returnTypeRef as? FirResolvedTypeRef
         val expectedReturnTypeRef = initialReturnTypeRef

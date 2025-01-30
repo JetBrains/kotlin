@@ -1980,8 +1980,6 @@ open class PsiRawFirBuilder(
                             isExternal = function.hasModifier(EXTERNAL_KEYWORD)
                             isSuspend = function.hasModifier(SUSPEND_KEYWORD)
                         }
-
-                        contextParameters.addContextParameters(function.contextReceiverList, functionSymbol)
                     }
                 }
 
@@ -1998,6 +1996,7 @@ open class PsiRawFirBuilder(
                     if (this is FirSimpleFunctionBuilder) {
                         function.extractTypeParametersTo(this, symbol)
                     }
+                    contextParameters.addContextParameters(function.contextReceiverList, functionSymbol)
                     for (valueParameter in function.valueParameters) {
                         valueParameters += valueParameter.toFirValueParameter(
                             null,

@@ -8101,6 +8101,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/contextParameters/contextTypeOverrideInJava.kt");
     }
 
+    @TestMetadata("contextualAnonymousFunction.kt")
+    public void testContextualAnonymousFunction() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
+    }
+
     @TestMetadata("contextualLocalFunction.kt")
     public void testContextualLocalFunction() {
       runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunction.kt");

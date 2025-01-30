@@ -54,7 +54,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             is FirCallableDeclaration if declaration.isDelegationOperator() -> "Context parameters on delegation operators are unsupported.".takeIf { contextParametersEnabled }
             is FirProperty if declaration.delegate != null -> "Context parameters on delegated properties are unsupported.".takeIf { contextParametersEnabled }
             // Only valid positions
-            is FirSimpleFunction, is FirProperty -> null
+            is FirSimpleFunction, is FirProperty, is FirAnonymousFunction -> null
             // Fallback if we forgot something.
             else -> "Context parameters are unsupported in this position."
         }

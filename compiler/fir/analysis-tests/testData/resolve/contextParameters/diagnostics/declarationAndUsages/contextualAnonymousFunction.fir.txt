@@ -1,0 +1,29 @@
+FILE: contextualAnonymousFunction.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
+    public final val t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
+    public final fun foo(): R|kotlin/Unit| {
+        lval t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+        lval t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+    }

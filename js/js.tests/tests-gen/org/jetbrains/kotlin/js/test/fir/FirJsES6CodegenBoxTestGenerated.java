@@ -7005,6 +7005,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("contextualAnonymousFunction.kt")
+    public void testContextualAnonymousFunction() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
+    }
+
+    @Test
     @TestMetadata("contextualLocalFunction.kt")
     public void testContextualLocalFunction() {
       runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunction.kt");

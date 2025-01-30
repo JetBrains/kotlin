@@ -314,6 +314,16 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             error("Expecting an expression");
             return;
         }
+
+        // Try to parse anonymous function with context parameters
+        if (at(CONTEXT_KEYWORD)) {
+            if (parseLocalDeclaration(true, false)) {
+                return;
+            } else {
+                at(IDENTIFIER);
+            }
+        }
+
         parseBinaryExpression(Precedence.ASSIGNMENT);
     }
 
