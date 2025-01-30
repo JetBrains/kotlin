@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -327,12 +328,16 @@ internal class NodeJsRootPluginApplier(
             }
         ).disallowChanges()
 
-        nodeJsEnvironment.value(
-            nodeJs.env
-                .map {
-                    asNodeJsEnvironment(nodeJsRoot, it)
+        val rootPackageDirectory = nodeJsRoot.rootPackageDirectory
+        val packageManager = nodeJsRoot.packageManagerExtension.map { it.packageManager }
+
+        nodeJsEnvironment
+            .value(
+                nodeJs.env.map {
+                    asNodeJsEnvironment(rootPackageDirectory, packageManager, it)
                 }
-        ).disallowChanges()
+            )
+            .disallowChanges()
 
         packageManagerEnv.value(
             nodeJsRoot.packageManagerExtension.map { it.environment }
