@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
@@ -17,9 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
-import org.jetbrains.kotlin.swiftexport.standalone.createDummyLogger
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
@@ -58,18 +55,6 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
         val testRun = getTestRun(testCase, executable)
         val testRunner = createProperTestRunner(testRun, testRunSettings)
         testRunner.run()
-    }
-
-    override fun constructSwiftExportConfig(module: TestModule.Exclusive): SwiftExportConfig {
-        val exportResultsPath = buildDir(module.name).toPath().resolve("swift_export_results")
-        return SwiftExportConfig(
-            settings = mapOf(
-                SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
-                SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
-            ),
-            logger = createDummyLogger(),
-            outputPath = exportResultsPath
-        )
     }
 
     private fun compileTestExecutable(

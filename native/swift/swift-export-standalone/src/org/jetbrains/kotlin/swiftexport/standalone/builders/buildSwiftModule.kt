@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
@@ -35,6 +37,7 @@ internal class SwiftModuleBuildResults(
 internal fun KaSession.initializeSirModule(
     moduleWithScope: ModuleWithScopeProvider,
     config: SwiftExportConfig,
+    moduleConfig: SwiftModuleConfig,
     moduleProvider: SirModuleProvider,
 ): SwiftModuleBuildResults {
     val moduleForPackageEnums = buildModule { name = config.moduleForPackagesName }
@@ -44,9 +47,9 @@ internal fun KaSession.initializeSirModule(
         errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
         unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
         moduleForPackageEnums = moduleForPackageEnums,
-        unsupportedDeclarationReporter = config.unsupportedDeclarationReporter,
+        unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
         moduleProvider = moduleProvider,
-        targetPackageFqName = config.targetPackageFqName,
+        targetPackageFqName = moduleConfig.targetPackageFqName,
     )
 
     // this lines produce critical side effect
@@ -93,6 +96,7 @@ internal data class ModuleWithScopeProvider(
 
 internal fun createModuleWithScopeProviderFromBinary(
     input: InputModule,
+    stdLibPath: String,
     dependencies: Set<InputModule>,
 ): ModuleWithScopeProvider {
     lateinit var binaryModule: KaLibraryModule
@@ -103,7 +107,7 @@ internal fun createModuleWithScopeProviderFromBinary(
 
             val stdlib = addModule(
                 buildKtLibraryModule {
-                    addBinaryRoot(Path(input.config.distribution.stdlib))
+                    addBinaryRoot(Path(stdLibPath))
                     platform = NativePlatforms.unspecifiedNativePlatform
                     libraryName = "stdlib"
                 }

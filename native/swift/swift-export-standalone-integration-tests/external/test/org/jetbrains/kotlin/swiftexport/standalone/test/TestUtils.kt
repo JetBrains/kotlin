@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import java.nio.file.Path
 
 internal data class KlibExportSettings(
@@ -16,15 +17,12 @@ internal data class KlibExportSettings(
     val rootPackage: String? = null,
 )
 
-internal fun KlibExportSettings.createConfig(exportResults: Path) = SwiftExportConfig(
-    distribution = Distribution(KonanHome.konanHomePath),
-    outputPath = exportResults,
-    settings = buildMap {
-        if (rootPackage != null) {
-            put(SwiftExportConfig.ROOT_PACKAGE, rootPackage)
-        }
-    }
-)
+internal fun KlibExportSettings.createConfig(outputPath: Path): SwiftExportConfig {
+    return SwiftExportConfig(
+        distribution = Distribution(KonanHome.konanHomePath),
+        outputPath = outputPath
+    )
+}
 
-internal fun KlibExportSettings.createInputModule(config: SwiftExportConfig) =
+internal fun KlibExportSettings.createInputModule(config: SwiftModuleConfig) =
     InputModule(swiftModuleName, path, config)
