@@ -56,8 +56,12 @@ public interface KaFunctionalTypeRenderer {
                             if (it is KaFunctionType || it is KaDefinitelyNotNullType) printer.append(")")
                             printer.append('.')
                         }
-                        printCollection(type.parameterTypes, prefix = "(", postfix = ")") {
-                            typeRenderer.renderType(analysisSession, it, this)
+                        printCollection(type.parameters, prefix = "(", postfix = ")") {
+                            it.name?.let { name ->
+                                typeRenderer.typeNameRenderer.renderName(analysisSession, name, it.type, typeRenderer, this)
+                                append(": ")
+                            }
+                            typeRenderer.renderType(analysisSession, it.type, this)
                         }
                         append(" -> ")
                         typeRenderer.renderType(analysisSession, type.returnType, printer)
