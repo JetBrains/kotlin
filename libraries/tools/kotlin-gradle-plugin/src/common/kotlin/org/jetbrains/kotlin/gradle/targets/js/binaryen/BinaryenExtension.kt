@@ -14,13 +14,10 @@ import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.utils.property
 
 @OptIn(ExperimentalWasmDsl::class)
-open class BinaryenRootExtension(
+open class BinaryenExtension(
     @Transient val rootProject: Project,
-    private val binaryenSpec: BinaryenRootEnvSpec,
+    private val binaryenSpec: BinaryenEnvSpec,
 ) : AbstractSettings<BinaryenEnv>() {
-    init {
-        check(rootProject.rootProject == rootProject)
-    }
 
     private val gradleHome = rootProject.gradle.gradleUserHomeDir.also {
         rootProject.logger.kotlinInfo("Storing cached files in $it")

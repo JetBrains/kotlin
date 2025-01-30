@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -435,6 +436,33 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             )
 
             build("help")
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Different binaryen versions per project")
+    @GradleTest
+    fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
+        project("wasm-browser-several-modules", gradleVersion) {
+            subProject("foo").let {
+                it.buildScriptInjection {
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set("119")
+                }
+            }
+
+            subProject("bar").let {
+                it.buildScriptInjection {
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set("118")
+                }
+            }
+
+            build(":foo:compileProductionExecutableKotlinWasmJsOptimize") {
+                assertOutputContains("binaryen-version_119/bin/wasm-opt")
+            }
+
+            build(":bar:compileProductionExecutableKotlinWasmJsOptimize") {
+                assertOutputContains("binaryen-version_118/bin/wasm-opt")
+            }
         }
     }
 }
