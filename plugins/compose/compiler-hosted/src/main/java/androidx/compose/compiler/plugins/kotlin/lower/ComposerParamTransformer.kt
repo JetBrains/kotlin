@@ -23,8 +23,8 @@ import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.collections.set
 import kotlin.math.min
 
 class ComposerParamTransformer(
@@ -55,17 +54,9 @@ class ComposerParamTransformer(
 ) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
-    /**
-     * Used to identify module fragment in case of incremental compilation
-     * see [externallyTransformed]
-     */
-    private var currentModule: IrModuleFragment? = null
-
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
     override fun lower(irModule: IrModuleFragment) {
-        currentModule = irModule
-
         inlineLambdaInfo.scan(irModule)
 
         irModule.transformChildrenVoid(this)
@@ -302,73 +293,6 @@ class ComposerParamTransformer(
         return newInvoke
     }
 
-    private fun IrSimpleFunction.copy(): IrSimpleFunction {
-        // TODO(lmr): use deepCopy instead?
-        return context.irFactory.createSimpleFunction(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = name,
-            visibility = visibility,
-            isInline = isInline,
-            isExpect = isExpect,
-            returnType = returnType,
-            modality = modality,
-            symbol = IrSimpleFunctionSymbolImpl(),
-            isTailrec = isTailrec,
-            isSuspend = isSuspend,
-            isOperator = isOperator,
-            isInfix = isInfix,
-            isExternal = isExternal,
-            containerSource = containerSource
-        ).also { fn ->
-            fn.copyAttributes(this)
-            val propertySymbol = correspondingPropertySymbol
-            if (propertySymbol != null) {
-                fn.correspondingPropertySymbol = propertySymbol
-                if (propertySymbol.owner.getter == this) {
-                    propertySymbol.owner.getter = fn
-                }
-                if (propertySymbol.owner.setter == this) {
-                    propertySymbol.owner.setter = fn
-                }
-            }
-            fn.parent = parent
-            fn.copyTypeParametersFrom(this)
-
-            fun IrType.remapTypeParameters(): IrType =
-                remapTypeParameters(this@copy, fn)
-
-            fn.returnType = returnType.remapTypeParameters()
-
-            fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
-            fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
-            fn.valueParameters = valueParameters.map { param ->
-                // Composable lambdas will always have `IrGet`s of all of their parameters
-                // generated, since they are passed into the restart lambda. This causes an
-                // interesting corner case with "anonymous parameters" of composable functions.
-                // If a parameter is anonymous (using the name `_`) in user code, you can usually
-                // make the assumption that it is never used, but this is technically not the
-                // case in composable lambdas. The synthetic name that kotlin generates for
-                // anonymous parameters has an issue where it is not safe to dex, so we sanitize
-                // the names here to ensure that dex is always safe.
-                val newName = dexSafeName(param.name)
-                param.copyTo(
-                    fn,
-                    name = newName,
-                    isAssignable = param.defaultValue != null,
-                    defaultValue = param.defaultValue?.copyWithNewTypeParams(
-                        source = this, target = fn
-                    )
-                )
-            }
-            fn.contextReceiverParametersCount = contextReceiverParametersCount
-            fn.annotations = annotations.toList()
-            fn.metadata = metadata
-            fn.body = moveBodyTo(fn)?.copyWithNewTypeParams(this, fn)
-        }
-    }
-
     private fun jvmNameAnnotation(name: String): IrConstructorCall {
         val jvmName = getTopLevelClass(JvmStandardClassIds.Annotations.JvmName)
         val ctor = jvmName.constructors.first { it.owner.isPrimary }
@@ -414,11 +338,21 @@ class ComposerParamTransformer(
         }
     }
 
+    internal inline fun <reified T : IrElement> T.deepCopyWithSymbolsAndMetadata(
+        initialParent: IrDeclarationParent? = null,
+        createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper,
+    ): T {
+        val symbolRemapper = DeepCopySymbolRemapper()
+        acceptVoid(symbolRemapper)
+        val typeRemapper = createTypeRemapper(symbolRemapper)
+        return (transform(DeepCopyPreservingMetadata(symbolRemapper, typeRemapper), null) as T).patchDeclarationParents(initialParent)
+    }
+
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
         assert(parameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
             "Attempted to add composer param to $this, but it has already been added."
         }
-        return copy().also { fn ->
+        return deepCopyWithSymbolsAndMetadata(parent).also { fn ->
             val oldFn = this
 
             // NOTE: it's important to add these here before we recurse into the body in
@@ -426,12 +360,24 @@ class ComposerParamTransformer(
             transformedFunctionSet.add(fn)
             transformedFunctions[oldFn] = fn
 
+            fn.metadata = oldFn.metadata
+
             // The overridden symbols might also be composable functions, so we want to make sure
             // and transform them as well
-            fn.overriddenSymbols = overriddenSymbols.map {
+            fn.overriddenSymbols = oldFn.overriddenSymbols.map {
                 it.owner.withComposerParamIfNeeded().symbol
             }
 
+            val propertySymbol = oldFn.correspondingPropertySymbol
+            if (propertySymbol != null) {
+                fn.correspondingPropertySymbol = propertySymbol
+                if (propertySymbol.owner.getter == oldFn) {
+                    propertySymbol.owner.getter = fn
+                }
+                if (propertySymbol.owner.setter == oldFn) {
+                    propertySymbol.owner.setter = fn
+                }
+            }
             // if we are transforming a composable property, the jvm signature of the
             // corresponding getters and setters have a composer parameter. Since Kotlin uses the
             // lack of a parameter to determine if it is a getter, this breaks inlining for
@@ -450,9 +396,21 @@ class ComposerParamTransformer(
                 }
             }
 
-            val valueParametersMapping = parameters
-                .zip(fn.parameters)
-                .toMap()
+            fn.parameters.fastForEach { param ->
+                // Composable lambdas will always have `IrGet`s of all of their parameters
+                // generated, since they are passed into the restart lambda. This causes an
+                // interesting corner case with "anonymous parameters" of composable functions.
+                // If a parameter is anonymous (using the name `_`) in user code, you can usually
+                // make the assumption that it is never used, but this is technically not the
+                // case in composable lambdas. The synthetic name that kotlin generates for
+                // anonymous parameters has an issue where it is not safe to dex, so we sanitize
+                // the names here to ensure that dex is always safe.
+                if (param.kind == IrParameterKind.Regular || param.kind == IrParameterKind.Context) {
+                    val newName = dexSafeName(param.name)
+                    param.name = newName
+                }
+                param.isAssignable = param.defaultValue != null
+            }
 
             val currentParams = fn.valueParameters.size
             val realParams = currentParams - fn.contextReceiverParametersCount
@@ -475,7 +433,7 @@ class ComposerParamTransformer(
             }
 
             // $default[n]
-            if (oldFn.requiresDefaultParameter()) {
+            if (fn.requiresDefaultParameter()) {
                 val defaults = ComposeNames.DEFAULT_PARAMETER.identifier
                 for (i in 0 until defaultParamCount(currentParams)) {
                     fn.addValueParameter(
@@ -507,36 +465,6 @@ class ComposerParamTransformer(
 
             fn.transformChildrenVoid(object : IrElementTransformerVoid() {
                 var isNestedScope = false
-                override fun visitGetValue(expression: IrGetValue): IrGetValue {
-                    val newParam = valueParametersMapping[expression.symbol.owner]
-                    return if (newParam != null) {
-                        IrGetValueImpl(
-                            expression.startOffset,
-                            expression.endOffset,
-                            expression.type,
-                            newParam.symbol,
-                            expression.origin
-                        )
-                    } else expression
-                }
-
-                override fun visitReturn(expression: IrReturn): IrExpression {
-                    if (expression.returnTargetSymbol == oldFn.symbol) {
-                        // update the return statement to point to the new function, or else
-                        // it will be interpreted as a non-local return
-                        return super.visitReturn(
-                            IrReturnImpl(
-                                expression.startOffset,
-                                expression.endOffset,
-                                expression.type,
-                                fn.symbol,
-                                expression.value
-                            )
-                        )
-                    }
-                    return super.visitReturn(expression)
-                }
-
                 override fun visitFunction(declaration: IrFunction): IrStatement {
                     val wasNested = isNestedScope
                     try {
