@@ -37,7 +37,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
             val compiledJs = projectPath.resolve("build/compileSync/js/main/developmentExecutable/kotlin/js-run-continuous.js")
 
             buildScriptInjection {
-                thread(name = "testJsRunContinuousBuild2 kill switch", isDaemon = true) {
+                thread(name = "testJsRunContinuousBuild kill switch", isDaemon = true) {
                     // add a kill-switch to force-kill the Gradle build on test completion,
                     // because `--continuous` mode disables `--no-daemon`
                     val timeoutMark = TimeSource.Monotonic.markNow() + 5.minutes
@@ -51,7 +51,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
             val daemonRelease = PipedOutputStream()
             val daemonStdin = PipedInputStream(daemonRelease)
 
-            val checker = thread(name = "testJsRunContinuousBuild2 checker", isDaemon = true) {
+            val checker = thread(name = "testJsRunContinuousBuild checker", isDaemon = true) {
                 // wait for the first compilation to succeed
                 while (!compiledJs.exists()) {
                     Thread.sleep(1000)
@@ -69,6 +69,8 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                 while ("Hello again!!!" !in compiledJs.readText()) {
                     Thread.sleep(1000)
                 }
+
+                // close the stream, which will allow Gradle to close the stream
                 daemonRelease.close()
             }
 
@@ -105,7 +107,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                     |[ExecHandle Resolving NPM dependencies using yarn] Changing state to: Started
                     |[ExecHandle Resolving NPM dependencies using yarn] finished with exit value 0 (state: Succeeded)
                     """.trimMargin(),
-                    output.getLinesStartingWith("[ExecHandle Resolving NPM dependencies using yarn]"),
+                    output.filterLinesStartingWith("[ExecHandle Resolving NPM dependencies using yarn]"),
                 )
 
                 // verify webpack starts and stops successfully
@@ -122,7 +124,10 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                     |[ExecHandle webpack webpack/bin/webpack.js jsmain] finished with exit value ? (state: Aborted)
                     """.trimMargin(),
                     output
-                        .getLinesStartingWith("[ExecHandle webpack webpack/bin/webpack.js jsmain]")
+                        .filterLinesStartingWith("[ExecHandle webpack webpack/bin/webpack.js jsmain]")
+                        // For some reason webpack doesn't close with a consistent exit code.
+                        // We don't really care about the exit code, only that it _does_ exit.
+                        // So, replace the exit code with a '?' to make the assertion stable.
                         .replace(Regex("finished with exit value -?\\d+ "), "finished with exit value ? "),
                 )
 
@@ -133,17 +138,23 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                     |[:jsBrowserDevelopmentRun] webpack-dev-server started webpack webpack/bin/webpack.js jsmain
                     |[:jsBrowserDevelopmentRun] webpack-dev-server stopped webpack webpack/bin/webpack.js jsmain
                     """.trimMargin(),
-                    output.getLinesStartingWith("[:jsBrowserDevelopmentRun] webpack")
+                    output.filterLinesStartingWith("[:jsBrowserDevelopmentRun] webpack")
                 )
             }
         }
 
-        // avoid org.gradle.internal.build.BuildLayoutValidator$BuildLayoutException: Directory '...' does not contain a Gradle build.
+        // @GradleTest automatically deletes the project directory.
+        // However, sometimes it does this too quickly.
+        // So, give some time to allow the Gradle daemon to close successfully, avoiding the error:
+        // org.gradle.internal.build.BuildLayoutValidator$BuildLayoutException: Directory '...' does not contain a Gradle build.
         Thread.sleep(5000)
     }
 
     companion object {
-        private fun String.getLinesStartingWith(prefix: String): String =
+        /**
+         * Fetch all lines starting with [prefix].
+         */
+        private fun String.filterLinesStartingWith(prefix: String): String =
             lines()
                 .filter { line -> line.startsWith(prefix) }
                 .joinToString("\n")
