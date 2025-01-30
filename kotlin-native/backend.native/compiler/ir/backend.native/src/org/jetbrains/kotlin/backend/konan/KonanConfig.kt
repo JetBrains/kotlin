@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KlibConfigurationKeys.KLIB_ABI_VERSION
+import org.jetbrains.kotlin.config.KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.library.parseCustomKotlinAbiVersion
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -314,13 +315,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val headerKlibPath get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
 
     internal val customAbiVersion: KotlinAbiVersion?
-        get() = configuration.get(KLIB_ABI_VERSION)?.run {
-            val versionParts = split('.')
-            require(versionParts.size == 3) { "Invalid ABI version format. Expected format: <major>.<minor>.<patch>" }
-            val version = versionParts.mapNotNull { it.toIntOrNull() }
-            require(version.size == 3 && version.all { it in 0..255 }) { "Invalid ABI version numbers. Each part must be in the range 0..255." }
-            KotlinAbiVersion(version[0], version[1], version[2])
-        }
+        get() = configuration.get(CUSTOM_KLIB_ABI_VERSION)?.parseCustomKotlinAbiVersion()
 
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 

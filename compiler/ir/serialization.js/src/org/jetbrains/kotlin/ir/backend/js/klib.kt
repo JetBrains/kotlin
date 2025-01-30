@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -647,8 +648,10 @@ fun serializeModuleIntoKlib(
 
     val fullSerializedIr = serializerOutput.serializedIr ?: error("Metadata-only KLIBs are not supported in Kotlin/JS")
 
+    val customAbiVersion: KotlinAbiVersion? = configuration.get(CUSTOM_KLIB_ABI_VERSION)?.parseCustomKotlinAbiVersion()
+
     val versions = KotlinLibraryVersioning(
-        abiVersion = abiVersion,
+        abiVersion = customAbiVersion ?: abiVersion,
         compilerVersion = KotlinCompilerVersion.VERSION,
         metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
     )

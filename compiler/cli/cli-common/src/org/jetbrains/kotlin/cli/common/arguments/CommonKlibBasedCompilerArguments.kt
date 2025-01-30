@@ -80,11 +80,11 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xabi-version",
+        value = "-Xklib-abi-version",
         valueDescription = "<version>",
         description = "Specify the custom ABI version for KLIB. If not set, the current version will be used."
     )
-    var klibAbiVersion: String? = null
+    var customKlibAbiVersion: String? = null
         set(value) {
             checkFrozen()
             field = value
