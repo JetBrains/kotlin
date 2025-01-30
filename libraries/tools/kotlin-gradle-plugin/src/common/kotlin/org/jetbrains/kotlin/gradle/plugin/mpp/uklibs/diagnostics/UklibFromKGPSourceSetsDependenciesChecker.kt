@@ -40,6 +40,9 @@ internal object UklibFromKGPSourceSetsDependenciesChecker {
 
         fun Configuration.declaredDependencies() = incoming.dependencies.filterNot {
             it.group == KOTLIN_MODULE_GROUP && it.name in ignoreDependenciesInsertedByDefault
+        }.filterNot {
+            false
+//            it is NpmDependency ???
         }.toSet()
 
         val compilationDependencies = uklibPublishedPlatformCompilations.associate {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -70,6 +71,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                 fragments.add(kgpUklibFragment(mainCompilation, jarTask, jarArtifact))
             }
             else -> {
+
                 when (val attribute = target.uklibFragmentPlatformAttribute) {
                     is UklibFragmentPlatformAttribute.PublishAndConsumeInMetadataCompilations -> { /* Do nothing for AGP */ }
                     is UklibFragmentPlatformAttribute.PublishAndConsumeInAllCompilations -> { error("Unexpected") }
@@ -87,11 +89,22 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
         return emptyList()
     }
 
+    // On Linux Host (iosMain is not publishable)
+    //
+    // Metadata Compilation:
+    // P = Publishable compilations/default source sets on Platform Targets -> (jvmMain, iosX64Main, ...) NO TEST!
+    // for each intermediate source set all targets should be part of P
+    // commonTest -> jvmTest, iosX64Test, ...
+    //
+    // Metadata compilations are ALL ABOUT PUBLICATION!!!! to teach consumer's IDEs to see intermediate source sets!
+    //
+
     val publishedMetadataCompilations = awaitMetadataTarget().publishedMetadataCompilations()
     publishedMetadataCompilations.forEach { metadataCompilation ->
         val artifact = metadataCompilation.project.provider {
             metadataCompilation.metadataPublishedArtifacts.singleFile
         }
+        // FIXME: Remove this
         unsupportedTargets.addAll(
             metadataCompilation.metadataFragmentAttributes.filterIsInstance<UklibFragmentPlatformAttribute.FailOnPublicationAndUseTargetNameForMetadataCompilations>().map {
                 it.unsupportedTargetName
