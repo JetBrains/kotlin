@@ -45671,12 +45671,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("ExhaustiveComplex2.kt")
-      public void testExhaustiveComplex2() {
-        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveComplex2.kt");
-      }
-
-      @Test
       @TestMetadata("ExhaustiveDynamicType.kt")
       public void testExhaustiveDynamicType() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveDynamicType.kt");
@@ -45698,6 +45692,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("ExhaustiveInitialization.kt")
       public void testExhaustiveInitialization() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt");
+      }
+
+      @Test
+      @TestMetadata("ExhaustiveMultiModule.kt")
+      public void testExhaustiveMultiModule() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveMultiModule.kt");
       }
 
       @Test

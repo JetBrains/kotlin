@@ -1,8 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
+// SPLIT_PER_MODULE
 
-// MODULE: declarations
-// FILE declarations.kt
+// MODULE: lib
+// FILE: declarations.kt
 
 sealed class TypeBridge
 
@@ -65,8 +66,8 @@ interface JavaModuleResolver {
     }
 }
 
-// MODULE usage
-// FILE usage.kt
+// MODULE: main(lib)
+// FILE: usage.kt
 
 fun mapType(typeBridge: TypeBridge): String = when (typeBridge) {
     ReferenceBridge -> "reference"
@@ -82,7 +83,7 @@ private fun mapReturnType(
     MethodBridge.ReturnValue.HashCode -> "integer"
     is MethodBridge.ReturnValue.Mapped -> "mapped"
     MethodBridge.ReturnValue.WithError.Success -> "bool"
-    is MethodBridge.ReturnValue.WithError.ZeroForError -> mapReturnType(returnBridge.successBridge)
+    is MethodBridge.ReturnValue.WithError.ZeroForError -> "zero"
     MethodBridge.ReturnValue.Instance.InitResult,
     MethodBridge.ReturnValue.Instance.FactoryResult, -> "instance"
 }

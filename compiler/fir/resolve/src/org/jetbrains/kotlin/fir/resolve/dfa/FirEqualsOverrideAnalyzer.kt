@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.collectAllSubclasses
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.isEquals
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.*
@@ -40,6 +42,9 @@ class FirEqualsOverrideAnalyzer(private val session: FirSession, private val sco
             if (!safeOnlyForExhaustiveness) return Status.UNSAFE
         }
 
+        // short-circuit this special case
+        if (symbolsForType.all { it.isEnumClass }) return Status.SAFE_FOR_EXHAUSTIVENESS
+
         val superTypes = lookupSuperTypes(
             symbolsForType,
             lookupInterfaces = false,
@@ -47,13 +52,10 @@ class FirEqualsOverrideAnalyzer(private val session: FirSession, private val sco
             session,
             substituteTypes = false
         )
-        val superClassSymbols = superTypes.mapNotNull {
-            it.fullyExpandedType(session).toRegularClassSymbol(session)
-        }
+        val superClassSymbols = superTypes.mapNotNull { it.fullyExpandedType(session).toRegularClassSymbol(session) }
         val overriddenInParent = superClassSymbols.any { it.hasEqualsOverride(session, checkModality = false, allowSynthetic = false) }
-        val superClassesSafeForExhaustiveness = superClassSymbols.all { safeForExhaustiveness(it.classId) }
         return when {
-            overriddenInParent -> if (superClassesSafeForExhaustiveness) Status.SAFE_FOR_EXHAUSTIVENESS else Status.UNSAFE
+            overriddenInParent -> Status.UNSAFE
             safeOnlyForExhaustiveness -> Status.SAFE_FOR_EXHAUSTIVENESS
             else -> Status.SAFE_FOR_SMART_CAST
         }
@@ -89,7 +91,7 @@ class FirEqualsOverrideAnalyzer(private val session: FirSession, private val sco
         return this.unsubstitutedScope(
             session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS
         ).getFunctions(OperatorNameConventions.EQUALS).any {
-            if (allowSynthetic && it.origin is FirDeclarationOrigin.Synthetic) false
+            if (allowSynthetic && trustAsSynthetic(it.origin, rawStatus)) false
             else !it.isSubstitutionOrIntersectionOverride && it.fir.isEquals(session) && ownerTag.isRealOwnerOf(it)
         }
     }
@@ -103,6 +105,8 @@ class FirEqualsOverrideAnalyzer(private val session: FirSession, private val sco
         // Support other primitives as well: KT-62246.
         classId == StandardClassIds.String
 
-    fun safeForExhaustiveness(classId: ClassId): Boolean =
-        classId == StandardClassIds.Enum || classId == StandardClassIds.Any
+    // we trust data and value classes coming from libraries,
+    // since we have no way of telling whether 'equals' is auto-generated or not
+    fun trustAsSynthetic(origin: FirDeclarationOrigin, declarationStatus: FirDeclarationStatus): Boolean =
+        origin.generatedAnyMethod || declarationStatus.isData || declarationStatus.isValue
 }
