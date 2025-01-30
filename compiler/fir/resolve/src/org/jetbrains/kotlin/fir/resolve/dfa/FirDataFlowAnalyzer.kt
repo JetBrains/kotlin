@@ -540,7 +540,7 @@ abstract class FirDataFlowAnalyzer(
         val operandVariable = flow.getVariableIfUsedOrReal(operand) ?: return
         val expressionVariable = SyntheticVariable(expression)
 
-        if (const.kind == ConstantValueKind.Boolean && operand.resolvedType.isBooleanOrNullableBoolean) {
+        if (const.kind == ConstantValueKind.Boolean && operand.resolvedType.isBooleanOrNullableBooleanOrFlexibleBoolean) {
             val expected = (const.value as Boolean)
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq expected))
             if (operand.resolvedType.isBoolean) {
@@ -562,6 +562,10 @@ abstract class FirDataFlowAnalyzer(
             }
         }
     }
+
+    val ConeKotlinType.isBooleanOrNullableBooleanOrFlexibleBoolean: Boolean
+        get() = isBooleanOrNullableBoolean ||
+                this is ConeFlexibleType && lowerBound.isBooleanOrNullableBoolean && upperBound.isBooleanOrNullableBoolean
 
     private fun processEqNull(flow: MutableFlow, expression: FirExpression, operand: FirExpression, isEq: Boolean) {
         val operandVariable = flow.getVariableIfUsedOrReal(operand) ?: return
