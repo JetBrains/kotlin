@@ -1,9 +1,6 @@
 // KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=inline
 // WITH_STDLIB
 
-// IGNORE_BACKEND: WASM
-//  ^   wasm-function[2283]:0x218da: RuntimeError: wasm exception
-
 import kotlin.test.assertEquals
 
 fun <T : Boolean> concatNBoolean(x: T?) = "[[$x]]"
