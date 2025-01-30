@@ -773,6 +773,9 @@ class StringTest {
         assertEquals(9, string.lastIndexOfAny(substrings, ignoreCase = true))
         assertEquals(2, string.lastIndexOfAny(substrings, startIndex = 8, ignoreCase = true))
         assertEquals(-1, string.lastIndexOfAny(substrings, startIndex = 1, ignoreCase = true))
+
+        // TODO: KT-50777
+        assertEquals(string.length - 1, string.lastIndexOfAny(listOf("dab", ""), ignoreCase = true), "empty strings are not ignored")
     }
 
     @Test fun findAnyOfStrings() = withOneCharSequenceArg("abracadabra") { string ->
@@ -840,19 +843,37 @@ class StringTest {
     }
 
     @Test fun indexOfString() = withOneCharSequenceArg("bceded") { string ->
-        for (index in string.indices)
+        for (index in string.indices) {
             assertEquals(index, string.indexOf("", index))
+            assertEquals(index, string.lastIndexOf("", index))
+        }
+        assertEquals(string.length, string.indexOf("", string.length))
+        // TODO: KT-50777
+        assertEquals(if (string !is String) string.length - 1 else string.length, string.lastIndexOf("", string.length))
+
         assertEquals(1, string.indexOf("ced"))
         assertEquals(4, string.indexOf("ed", 3))
         assertEquals(-1, string.indexOf("abcdefgh"))
+        assertEquals(4, string.lastIndexOf("ed"))
+        assertEquals(2, string.lastIndexOf("ed", 3))
+        assertEquals(-1, string.lastIndexOf("abcdefgh"))
     }
 
     @Test fun indexOfStringIgnoreCase() = withOneCharSequenceArg("bceded") { string ->
-        for (index in string.indices)
+        for (index in string.indices) {
             assertEquals(index, string.indexOf("", index, ignoreCase = true))
+            assertEquals(index, string.lastIndexOf("", index, ignoreCase = true))
+        }
+        assertEquals(string.length, string.indexOf("", string.length, ignoreCase = true))
+        // TODO: KT-50777
+        assertEquals(string.length - 1, string.lastIndexOf("", string.length, ignoreCase = true))
+
         assertEquals(1, string.indexOf("cEd", ignoreCase = true))
         assertEquals(4, string.indexOf("Ed", 3, ignoreCase = true))
         assertEquals(-1, string.indexOf("abcdefgh", ignoreCase = true))
+        assertEquals(4, string.lastIndexOf("eD", ignoreCase = true))
+        assertEquals(2, string.lastIndexOf("Ed", 3, ignoreCase = true))
+        assertEquals(-1, string.lastIndexOf("abcdefgh", ignoreCase = true))
     }
 
 
