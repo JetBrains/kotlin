@@ -3,19 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
 package org.jetbrains.kotlin.build.binaryen
 
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenSetupTask
 
 @OptIn(ExperimentalWasmDsl::class)
 abstract class BinaryenExtension(
     private val binaryenRoot: BinaryenRootEnvSpec,
 ) {
     fun Test.setupBinaryen() {
-        dependsOn(project.rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME))
+        // use from BinaryenSetupTask after bootstrap
+        dependsOn(project.rootProject.tasks.named("kotlinBinaryenSetup"))
         val binaryenExecutablePath = binaryenRoot.executable
         doFirst {
             systemProperty("binaryen.path", binaryenExecutablePath.get())
