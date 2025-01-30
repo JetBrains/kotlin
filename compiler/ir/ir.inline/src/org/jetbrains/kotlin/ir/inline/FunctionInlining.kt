@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
-import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
@@ -200,22 +199,11 @@ private class CallInlining(
                 inlinedFunctionBlock.inlineCall = callSite
                 @OptIn(JvmIrInlineExperimental::class)
                 inlinedFunctionBlock.inlinedElement = originalInlinedElement
-                inlinedFunctionBlock.transformChildrenVoid(object : IrElementTransformerVoid() {
-                    override fun visitReturn(expression: IrReturn): IrExpression {
-                        expression.transformChildrenVoid(this)
-
-                        if (expression.returnTargetSymbol == copiedCallee.symbol) {
-                            val expr = if (returnType.isUnit()) {
-                                expression.value.coerceToUnit(context.irBuiltIns)
-                            } else {
-                                expression.value.doImplicitCastIfNeededTo(returnType)
-                            }
-                            return at(expression).irReturn(expr)
-                        }
-                        return expression
-                    }
-                })
-                inlinedFunctionBlock.transformChildrenVoid(ParameterSubstitutor(substituteMap))
+                val transformer = InlinePostprocessor(
+                    substituteMap, returnType, copiedCallee.symbol,
+                    this@irReturnableBlock.scope.scopeOwnerSymbol as IrReturnableBlockSymbol
+                )
+                inlinedFunctionBlock.transformChildrenVoid(transformer)
                 +inlinedFunctionBlock
             }
         } as IrBlock
@@ -225,7 +213,28 @@ private class CallInlining(
 
     //---------------------------------------------------------------------//
 
-    private inner class ParameterSubstitutor(val substituteMap: Map<IrValueParameter, IrExpression>) : IrElementTransformerVoid() {
+    /**
+     * The inlining itself just copies function body into call-site.
+     * To follow language semantics and IR consistency, the following transformations needed:
+     * * Replace references to non-inlineable function parameters with corresponding local variables
+     * * Replace returns from function with returns from corresponding returnable block
+     * * Replace invoke calls on inlineable function parameters with recursive inlining
+     */
+    private inner class InlinePostprocessor(
+        val substituteMap: Map<IrValueParameter, IrExpression>,
+        val returnType: IrType,
+        val inlinedFunctionSymbol: IrFunctionSymbol,
+        val returnableBlockSymbol: IrReturnableBlockSymbol,
+    ) : IrElementTransformerVoid() {
+        override fun visitReturn(expression: IrReturn): IrExpression {
+            expression.transformChildrenVoid(this)
+            if (expression.returnTargetSymbol == inlinedFunctionSymbol) {
+                expression.returnTargetSymbol = returnableBlockSymbol
+                expression.value = expression.value.doImplicitCastIfNeededTo(returnType)
+            }
+            return expression
+        }
+
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val newExpression = super.visitGetValue(expression) as IrGetValue
             val argument = substituteMap[newExpression.symbol.owner] ?: return newExpression
@@ -417,8 +426,11 @@ private class CallInlining(
     }
 
     private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
-        if (!insertAdditionalImplicitCasts) return this
-        return this.implicitCastIfNeededTo(type)
+        return when {
+            !insertAdditionalImplicitCasts -> this
+            type.isUnit() -> this.coerceToUnit(context.irBuiltIns)
+            else -> this.implicitCastIfNeededTo(type)
+        }
     }
 
     // With `insertAdditionalImplicitCasts` flag we sometimes insert
