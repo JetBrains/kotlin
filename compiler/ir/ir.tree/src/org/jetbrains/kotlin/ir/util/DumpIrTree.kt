@@ -68,6 +68,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  *   replaced by the given value.
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  * @property filePathRenderer allows to post-process the rendered IrFile name
+ * @property printSourceOffsets If source offsets of elements should be printed.
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -88,7 +89,8 @@ data class DumpIrTreeOptions(
     val printSealedSubclasses: Boolean = true,
     val replaceImplicitSetterParameterNameWith: Name? = null,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
-    val filePathRenderer: (IrFile, String) -> String = { _, name -> name }
+    val filePathRenderer: (IrFile, String) -> String = { _, name -> name },
+    val printSourceOffsets: Boolean = false,
 ) {
     /**
      * A customizable filter to exclude some (or all) flags for declarations or declaration references.
