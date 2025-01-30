@@ -29,6 +29,15 @@ import java.lang.annotation.*;
 public @interface JavaParamFieldComponent {
 }
 
+// FILE: JavaDefault.java
+
+import java.lang.annotation.*;
+
+// requires explicit @field target to be applied
+@Retention(RetentionPolicy.RUNTIME)
+public @interface JavaDefault {
+}
+
 // FILE: main.kt
 
 @java.lang.annotation.Target(java.lang.annotation.ElementType.RECORD_COMPONENT)
@@ -66,6 +75,8 @@ data class Some(
     @JavaFieldComponent val a: Int,
     @JavaParamComponent val b: Int,
     @JavaParamFieldComponent val c: Int,
+    @JavaDefault val d: Int,
+    @field:JavaDefault val e: Int,
 )
 
 @JvmRecord
@@ -78,6 +89,7 @@ data class Else(
     @all:NoneInJava val n: Int,
     @all:JavaFieldComponent val a: Int,
     @all:JavaParamFieldComponent val c: Int,
+    @all:JavaDefault val d: Int,
 )
 
 fun box(): String {
@@ -111,7 +123,13 @@ fun box(): String {
         return "FAIL: record component annotation for '@JavaParamComponent val b' found, but it should not be so"
     }
     if (someComponents[9].annotations.isEmpty()) {
-        return "FAIL: no record component annotation for '@JavaFieldComponent val c' found"
+        return "FAIL: no record component annotation for '@JavaParamFieldComponent val c' found"
+    }
+    if (someComponents[10].annotations.isNotEmpty()) {
+        return "FAIL: record component annotation for '@JavaDefault val d' found, but it should not be so"
+    }
+    if (someComponents[11].annotations.isEmpty()) {
+        return "FAIL: no record component annotation for '@field:JavaDefault val e' found"
     }
 
     val elseComponents = Else::class.java.recordComponents
@@ -139,6 +157,9 @@ fun box(): String {
     }
     if (elseComponents[7].annotations.isEmpty()) {
         return "FAIL: no record component annotation for '@all:JavaParamFieldComponent val c' found"
+    }
+    if (elseComponents[8].annotations.isEmpty()) {
+        return "FAIL: no record component annotation for '@all:JavaDefault val d' found"
     }
 
     return "OK"
