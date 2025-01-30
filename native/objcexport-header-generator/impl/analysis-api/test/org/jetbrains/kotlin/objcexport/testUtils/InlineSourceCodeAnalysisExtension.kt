@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.objcexport.testUtils
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.export.test.createStandaloneAnalysisApiSession
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.extension.AfterEachCallback

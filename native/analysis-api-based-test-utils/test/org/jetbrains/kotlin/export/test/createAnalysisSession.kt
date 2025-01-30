@@ -1,20 +1,19 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.objcexport.testUtils
+package org.jetbrains.kotlin.export.test
 
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.backend.konan.testUtils.kotlinNativeStdlibPath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.Path
+import java.nio.file.Paths
 import kotlin.io.path.nameWithoutExtension
 
 const val defaultKotlinSourceModuleName = "testModule"
@@ -55,7 +54,7 @@ fun createStandaloneAnalysisApiSession(
             platform = nativePlatform
             val stdlibModule = addModule(
                 buildKtLibraryModule {
-                    addBinaryRoot(Path(kotlinNativeStdlibPath))
+                    addBinaryRoot(Paths.get(kotlinNativeStdlibPath))
                     platform = nativePlatform
                     libraryName = "stdlib"
                 }

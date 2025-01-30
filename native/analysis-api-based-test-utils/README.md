@@ -1,0 +1,1 @@
+A set of test utilities which are shared between Swift export and Analysis API-based Objective-C export.
