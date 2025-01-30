@@ -1535,6 +1535,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exten
   }
 
   @Test
+  @TestMetadata("variableAsFunctionWithKeywordParameterName.kt")
+  public void testVariableAsFunctionWithKeywordParameterName() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunctionWithKeywordParameterName.kt");
+  }
+
+  @Test
   @TestMetadata("variableAsFunctionWithParameterName.kt")
   public void testVariableAsFunctionWithParameterName() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunctionWithParameterName.kt");

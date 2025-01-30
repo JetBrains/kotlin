@@ -454,7 +454,7 @@ enum class PrettyRendererOption(val transformation: (KaDeclarationRenderer) -> K
             renderer.with {
                 typeRenderer = typeRenderer.with {
                     expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE
-                    functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
+                    functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES_WITH_PARAMETER_NAMES
                 }
             }
         }
