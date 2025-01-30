@@ -7,6 +7,7 @@ package org.jetbrains.dokka
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.dokka.generation.GracefulGenerationExit
+import org.jetbrains.dokka.model.DisplaySourceSetCaches
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -20,23 +21,24 @@ public class DokkaGenerator(
     private val configuration: DokkaConfiguration,
     private val logger: DokkaLogger
 ) {
+    init {
+        DisplaySourceSetCaches.clear()
+    }
 
     public fun generate() {
         timed(logger) {
             report("Initializing plugins")
             val context = initializePlugins(configuration, logger)
 
-            runCatching {
+            try {
                 context.single(CoreExtensions.generation).run {
                     logger.progress("Dokka is performing: $generationName")
                     generate()
                 }
-            }.exceptionOrNull()?.let { e ->
+            } finally {
+                DisplaySourceSetCaches.clear()
                 finalizeCoroutines()
-                throw e
             }
-
-            finalizeCoroutines()
         }.dump("\n\n === TIME MEASUREMENT ===\n")
     }
 
