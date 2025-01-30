@@ -147,13 +147,13 @@ class FirRenderer(
         }
     }
 
-    private fun renderContexts(contextParameters: List<FirValueParameter>) {
+    private fun renderContexts(contextParameters: List<FirValueParameter>, lineBreakAfter: Boolean = lineBreakAfterContextParameters) {
         if (contextParameters.isEmpty()) return
         print("context(")
         renderSeparated(contextParameters, visitor)
         print(")")
 
-        if (lineBreakAfterContextParameters) {
+        if (lineBreakAfter) {
             printer.newLine()
         } else {
             print(" ")
@@ -452,6 +452,7 @@ class FirRenderer(
         }
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+            renderContexts(anonymousFunction.contextParameters, lineBreakAfter = false)
             annotationRenderer?.render(anonymousFunction)
             modifierRenderer?.renderModifiers(anonymousFunction)
             declarationRenderer?.render(anonymousFunction)

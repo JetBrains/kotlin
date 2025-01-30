@@ -40,7 +40,7 @@ FILE: multipleContextsWithTheSameType.kt
             R|/foo|()
         }
         )
-        R|/inTypePosition|(<L> = inTypePosition@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/inTypePosition|(<L> = context(<unused var>: R|A|, <unused var>: R|A|) inTypePosition@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|A|>().R|/A.foo|(String())
         }
         )

@@ -25,12 +25,12 @@ FILE: common.kt
     public final expect val expectExtensionActualContext: R|A.() -> kotlin/Unit|
         public get(): R|A.() -> kotlin/Unit|
 FILE: jvm.kt
-    public final actual val expectActualMatch: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val expectActualMatch: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 
         public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
-    public final actual val expectWithoutContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val expectWithoutContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 
@@ -40,7 +40,7 @@ FILE: jvm.kt
     }
 
         public get(): R|() -> kotlin/Unit|
-    public final actual val mismatchedContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val mismatchedContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 
@@ -50,7 +50,7 @@ FILE: jvm.kt
     }
 
         public get(): R|A.() -> kotlin/Unit|
-    public final actual val expectExtensionActualContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val expectExtensionActualContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 
@@ -82,12 +82,12 @@ FILE: common.kt
     public final expect val expectExtensionActualContext: R|A.() -> kotlin/Unit|
         public get(): R|A.() -> kotlin/Unit|
 FILE: jvm.kt
-    public final actual val expectActualMatch: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val expectActualMatch: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 
         public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
-    public final actual val expectWithoutContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val expectWithoutContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 
@@ -97,7 +97,7 @@ FILE: jvm.kt
     }
 
         public get(): R|() -> kotlin/Unit|
-    public final actual val mismatchedContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val mismatchedContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 
@@ -107,7 +107,7 @@ FILE: jvm.kt
     }
 
         public get(): R|A.() -> kotlin/Unit|
-    public final actual val expectExtensionActualContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final actual val expectExtensionActualContext: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ^ Unit
     }
 

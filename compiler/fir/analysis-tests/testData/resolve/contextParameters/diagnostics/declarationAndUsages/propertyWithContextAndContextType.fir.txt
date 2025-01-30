@@ -26,7 +26,7 @@ FILE: propertyWithContextAndContextType.kt
     context(c: R|A|)
     public final val a: R|@ContextFunctionTypeParams (B, kotlin/String) -> kotlin/String|
         public get(): R|@ContextFunctionTypeParams (B, kotlin/String) -> kotlin/String| {
-            ^ fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+            ^ context(<unused var>: R|B|) fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 R|<local>/c|.R|/A.foo|(String())
                 ^ R|/implicit|<R|B|>().R|/B.foo|(String())
             }
@@ -35,7 +35,7 @@ FILE: propertyWithContextAndContextType.kt
     context(c: R|B|)
     public final val b: R|@ContextFunctionTypeParams (B, kotlin/String) -> kotlin/String|
         public get(): R|@ContextFunctionTypeParams (B, kotlin/String) -> kotlin/String| {
-            ^ fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+            ^ context(<unused var>: R|B|) fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 R|<local>/c|.R|/B.foo|(String())
                 ^ R|/implicit|<R|B|>().R|/B.foo|(String())
             }

@@ -28,7 +28,7 @@ FILE: contextInCompanionObject.kt
 
     }
     public final fun usageOutside(): R|kotlin/Unit| {
-        R|/context|<R|Test.Named|, R|kotlin/String|>(Q|Test.Named|, <L> = context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        R|/context|<R|Test.Named|, R|kotlin/String|>(Q|Test.Named|, <L> = context(<unused var>: R|Test.Named|) context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             Q|Test.Named|.R|/Test.Named.foo|()
             Q|Test|.R|/Test.Named.foo|()
             Q|Test.Named|.R|/Test.Named.b|

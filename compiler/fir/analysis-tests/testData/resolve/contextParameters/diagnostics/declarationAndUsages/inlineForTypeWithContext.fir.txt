@@ -18,7 +18,7 @@ FILE: inlineForTypeWithContext.kt
     }
     public final var property1: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|
         public inline get(): R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit| {
-            ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ context(<unused var>: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 
@@ -42,7 +42,7 @@ FILE: inlineForTypeWithContext.kt
     }
     public final var property2: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|
         public inline get(): R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit| {
-            ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ context(<unused var>: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 
@@ -65,7 +65,7 @@ FILE: inlineForTypeWithContext.kt
     }
     public final var property3: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|
         public inline get(): R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit| {
-            ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ context(<unused var>: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 

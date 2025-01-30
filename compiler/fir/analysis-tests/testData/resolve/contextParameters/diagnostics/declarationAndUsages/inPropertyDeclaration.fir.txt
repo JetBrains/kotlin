@@ -31,7 +31,7 @@ FILE: inPropertyDeclaration.kt
             ^ R|<local>/c|.R|/A.foo|(String())
         }
     public final fun usage2(c: R|A|): R|kotlin/Unit| {
-        R|/context|<R|A|, R|kotlin/String|>(R|<local>/c|, <L> = context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        R|/context|<R|A|, R|kotlin/String|>(R|<local>/c|, <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             R|/prop1|
             ^ R|/prop2|
         }

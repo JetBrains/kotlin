@@ -22,13 +22,13 @@ FILE: withContextInType.kt
         }
 
         public open fun bar(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
-            ^bar fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^bar context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 
         }
 
-        public open val x: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        public open val x: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
@@ -99,14 +99,14 @@ FILE: withContextInType.kt
 
         public open override val x: R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
             public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
-                ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     ^ Unit
                 }
 
             }
 
         public open override fun bar(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
-            ^bar fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^bar context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 
@@ -114,7 +114,7 @@ FILE: withContextInType.kt
 
     }
     public final fun usage(): R|kotlin/Unit| {
-        R|/Derived.Derived|().R|/Base.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/Derived.Derived|().R|/Base.foo|(<L> = context(<unused var>: R|A|) foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/implicit|<R|A|>().R|/A.foo|(String())
         }
         )
@@ -132,7 +132,7 @@ FILE: withContextInType.kt
         )
         R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
         R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
-        R|/DerivedOverrideWithContext.DerivedOverrideWithContext|().R|/DerivedOverrideWithContext.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/DerivedOverrideWithContext.DerivedOverrideWithContext|().R|/DerivedOverrideWithContext.foo|(<L> = context(<unused var>: R|A|) foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/implicit|<R|A|>().R|/A.foo|(String())
         }
         )

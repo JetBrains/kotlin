@@ -25,7 +25,7 @@ FILE: parameterTypeWithContext.kt
             }
 
         }
-    public final val x: R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String| = fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+    public final val x: R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String| = context(<unused var>: R|A|) fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
         ^ R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
     }
 

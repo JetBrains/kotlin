@@ -58,7 +58,7 @@ FILE: moreThenOneContext.kt
             )
         }
         )
-        R|/inTypePosition|(<L> = inTypePosition@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/inTypePosition|(<L> = context(<unused var>: R|A|, <unused var>: R|B|) inTypePosition@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/implicit|<R|A|>().R|/A.foo|(String())
             R|/implicit|<R|B|>().R|/B.foo|(String())
         }

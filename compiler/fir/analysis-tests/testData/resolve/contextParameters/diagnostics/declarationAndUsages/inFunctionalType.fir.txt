@@ -15,14 +15,14 @@ FILE: inFunctionalType.kt
     }
     public final val x: R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String|
         public get(): R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String| {
-            ^ fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+            ^ context(<unused var>: R|A|) fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 ^ R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
             }
 
         }
     public final var y: R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String|
         public get(): R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String| {
-            ^ fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+            ^ context(<unused var>: R|A|) fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 ^ R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
             }
 
@@ -33,7 +33,7 @@ FILE: inFunctionalType.kt
     public final fun bar(a: R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String|): R|kotlin/Unit| {
     }
     public final fun qux(): R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String| {
-        ^qux fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+        ^qux context(<unused var>: R|A|) fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
             ^ R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
         }
 
@@ -51,11 +51,11 @@ FILE: inFunctionalType.kt
     public final fun test(): R|kotlin/Unit| {
         R|/x|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/String|>|(R|/A.A|(), String())
         R|/y|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/String|>|(R|/A.A|(), String())
-        R|/y| = fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+        R|/y| = context(<unused var>: R|A|) fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
             ^ R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
         }
 
-        R|/bar|(<L> = bar@fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+        R|/bar|(<L> = context(<unused var>: R|A|) bar@fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
             ^ R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
         }
         )
