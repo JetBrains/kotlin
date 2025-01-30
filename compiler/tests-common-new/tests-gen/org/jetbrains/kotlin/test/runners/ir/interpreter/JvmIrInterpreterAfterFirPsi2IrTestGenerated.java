@@ -278,9 +278,9 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   }
 
   @Test
-  @TestMetadata("regex.kt")
-  public void testRegex() {
-    runTest("compiler/testData/ir/interpreter/regex.kt");
+  @TestMetadata("regexTest.kt")
+  public void testRegexTest() {
+    runTest("compiler/testData/ir/interpreter/regexTest.kt");
   }
 
   @Test
