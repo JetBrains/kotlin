@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Test
@@ -30,9 +31,9 @@ class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
     }
 
     private fun validateFullLibraryDump(klib: KlibExportSettings, goldenData: String) {
-        val config = klib.createConfig(tmpdir.toPath().resolve(klib.swiftModuleName))
-        val inputModule = klib.createInputModule(config)
-        val result = runSwiftExport(setOf(inputModule)).getOrThrow()
+        val config = klib.createConfig(outputPath = tmpdir.toPath().resolve(klib.swiftModuleName))
+        val inputModule = klib.createInputModule(SwiftModuleConfig(rootPackage = klib.rootPackage))
+        val result = runSwiftExport(setOf(inputModule), config).getOrThrow()
         validateSwiftExportOutput(testDataDir.resolve(goldenData), result)
     }
 

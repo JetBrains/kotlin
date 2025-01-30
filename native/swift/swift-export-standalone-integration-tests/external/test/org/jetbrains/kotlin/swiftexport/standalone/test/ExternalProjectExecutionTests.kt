@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKi
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
 import org.jetbrains.kotlin.konan.test.testLibraryBKlibFile
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.Path
 
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/external/testData/execution")
 @TestDataPath("\$PROJECT_ROOT")
@@ -57,12 +58,16 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
     private fun runTestsAgainstKlib(klibSettings: Set<KlibExportSettings>, testPath: File) {
         val testModules = klibSettings.map { TestModule.Given(it.path.toFile()) }.toSet()
         val inputModules = klibSettings.map {
-            val config = it.createConfig(buildDir(testPath.name).toPath().resolve(it.swiftModuleName).resolve("swift_export_results"))
-            it.createInputModule(config)
+            it.createInputModule(SwiftModuleConfig(rootPackage = it.rootPackage))
         }.toSet()
 
-        val swiftExportResult = runSwiftExport(inputModules).getOrThrow()
-        val kotlinBridgeFiles = swiftExportResult.filterIsInstance<SwiftExportModule.BridgesToKotlin>().map { it.files.kotlinBridges.toFile() }
+        val swiftConfig = SwiftExportConfig(
+            outputPath = buildDir(testPath.name).toPath().resolve("swift_export_results")
+        )
+
+        val swiftExportResult = runSwiftExport(inputModules, swiftConfig).getOrThrow()
+        val kotlinBridgeFiles =
+            swiftExportResult.filterIsInstance<SwiftExportModule.BridgesToKotlin>().map { it.files.kotlinBridges.toFile() }
         val testCase = generateSwiftExportTestCase(
             testPathFull = testPath,
             sources = kotlinBridgeFiles,
