@@ -1,0 +1,3 @@
+KtNameReferenceExpression(66,67): 'x'
+  KtSimpleNameReference:
+    x: (`fun`: kotlin.Int, kotlin.String, `class`: kotlin.Boolean) -> kotlin.Unit

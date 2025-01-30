@@ -22,7 +22,7 @@ public object KaTypeRendererForSource {
         definitelyNotNullTypeRenderer = KaDefinitelyNotNullTypeRenderer.AS_TYPE_INTERSECTION
         dynamicTypeRenderer = KaDynamicTypeRenderer.AS_DYNAMIC_WORD
         flexibleTypeRenderer = KaFlexibleTypeRenderer.AS_SHORT
-        functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
+        functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES_WITH_PARAMETER_NAMES
         intersectionTypeRenderer = KaIntersectionTypeRenderer.AS_INTERSECTION
         errorTypeRenderer = KaErrorTypeRenderer.AS_CODE_IF_POSSIBLE
         typeParameterTypeRenderer = KaTypeParameterTypeRenderer.AS_SOURCE
@@ -37,8 +37,16 @@ public object KaTypeRendererForSource {
         keywordsRenderer = KaKeywordsRenderer.AS_WORD
     }
 
+    public val WITH_QUALIFIED_NAMES_WITHOUT_PARAMETER_NAMES: KaTypeRenderer = WITH_QUALIFIED_NAMES.with {
+        functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
+    }
+
     public val WITH_SHORT_NAMES: KaTypeRenderer = WITH_QUALIFIED_NAMES.with {
         classIdRenderer = KaClassTypeQualifierRenderer.WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS
         annotationsRenderer = KaAnnotationRendererForSource.WITH_SHORT_NAMES
+    }
+
+    public val WITH_SHORT_NAMES_WITHOUT_PARAMETER_NAMES: KaTypeRenderer = WITH_SHORT_NAMES.with {
+        functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
     }
 }
