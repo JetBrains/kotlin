@@ -244,7 +244,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.createSharedBox) { call, context: JsGenerationContext ->
                 val arg = translateCallArguments(call, context).single()
-                JsObjectLiteral(listOf(JsPropertyInitializer(JsNameRef(Namer.SHARED_BOX_V), arg)))
+                JsObjectLiteral(listOf(JsPropertyInitializer(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
             }
 
             add(intrinsics.readSharedBox) { call, context: JsGenerationContext ->

@@ -1047,14 +1047,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                     String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
                     labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
                 }
-            }
-            // labels can be either string, integral, or decimal literals
-            if (labelExpr instanceof JsNameRef) {
-                visitNameRef((JsNameRef) labelExpr, false);
-            } else {
                 accept(labelExpr);
+            } else if (labelExpr instanceof JsNumberLiteral) {
+                accept(labelExpr);
+            } else {
+                leftSquare();
+                accept(labelExpr);
+                rightSquare();
             }
-
             _colon();
             space();
             JsExpression valueExpr = item.getValueExpr();
