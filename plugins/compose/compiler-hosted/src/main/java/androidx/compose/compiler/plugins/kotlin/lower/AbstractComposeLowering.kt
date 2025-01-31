@@ -1330,10 +1330,23 @@ abstract class AbstractComposeLowering(
                 } else {
                     irEnumOrdinal
                 }
-                irCall(
-                    function.symbol,
-                    dispatchReceiver = this
-                )
+                if (type.isNullable()) {
+                    val enumValue = irTemporary(this, "tmpEnum")
+                    irBlock(
+                        context.irBuiltIns.intType,
+                        statements = listOf(
+                            enumValue,
+                            irIfThenElse(
+                                type = context.irBuiltIns.intType,
+                                condition = irEqual(irGet(enumValue), irNull()),
+                                thenPart = irConst(-1),
+                                elsePart = irCall(function.symbol, dispatchReceiver = irGet(enumValue))
+                            )
+                        )
+                    )
+                } else {
+                    irCall(function.symbol, dispatchReceiver = this)
+                }
             }
             else -> {
                 this
