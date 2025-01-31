@@ -14,7 +14,14 @@ object FirJvmAtomicReferenceToPrimitiveCallChecker :
         JvmStandardClassIds.atomicByPrimitive,
         MppCheckerKind.Platform,
         JvmStandardClassIds.Callables.atomicReferenceCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetRelease,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetPlain,
+        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetVolatile,
         JvmStandardClassIds.Callables.atomicReferenceCompareAndExchange,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeRelease,
     )
 
 object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
@@ -22,5 +29,12 @@ object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
         JvmStandardClassIds.atomicArrayByPrimitive,
         MppCheckerKind.Platform,
         JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSet,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetRelease,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetPlain,
+        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetVolatile,
         JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchange,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeAcquire,
+        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeRelease,
     )
