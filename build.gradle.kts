@@ -853,6 +853,7 @@ tasks {
         dependsOn(":native:swift:swift-export-standalone:test")
         dependsOn(":native:swift:swift-export-ide:test")
         dependsOn(":native:native.tests:litmus-tests:check")
+        dependsOn(":native:swift:sir-light-classes:check")
     }
 
     // These are unit tests of Native compiler
