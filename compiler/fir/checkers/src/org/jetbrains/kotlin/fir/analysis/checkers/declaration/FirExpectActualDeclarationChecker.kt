@@ -308,18 +308,18 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val filesWithAtLeastWeaklyCompatibleExpects = compatibility[ExpectActualMatchingCompatibility.MatchedSuccessfully]
+        val filesWithMatchedExpects = compatibility[ExpectActualMatchingCompatibility.MatchedSuccessfully]
             .orEmpty()
             .map { it.moduleData }
             .sortedBy { it.name.asString() }
             .toList()
 
-        if (filesWithAtLeastWeaklyCompatibleExpects.size > 1) {
+        if (filesWithMatchedExpects.size > 1) {
             reporter.reportOn(
                 actualDeclaration.source,
                 FirErrors.AMBIGUOUS_EXPECTS,
                 symbol,
-                filesWithAtLeastWeaklyCompatibleExpects,
+                filesWithMatchedExpects,
                 context
             )
         }
