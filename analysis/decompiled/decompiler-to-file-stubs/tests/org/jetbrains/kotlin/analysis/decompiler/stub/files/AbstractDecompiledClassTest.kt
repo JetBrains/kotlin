@@ -137,7 +137,7 @@ internal data class TestData(
         }
         if (useK2) {
             if (IdenticalCheckerHelper.firAndClassicContentsAreEquals(expectedFile.toFile())) {
-                IdenticalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(expectedFile.toFile())
+                IdenticalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(expectedFile.toFile(), suppressAssertion = true)
                 IdenticalCheckerHelper.addDirectiveToClassicFileAndAssert(mainKotlinFile.toFile())
             }
         }

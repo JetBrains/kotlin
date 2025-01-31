@@ -61,7 +61,7 @@ abstract class SimpleFirIrIdenticalChecker(
             return
         }
         if (simpleChecker.firAndClassicContentsAreEquals(testDataFile, trimLines)) {
-            simpleChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
+            simpleChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
             processClassicFileIfContentIsIdentical(testDataFile)
         }
     }

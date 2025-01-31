@@ -63,8 +63,8 @@ class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisCheck
             simpleDumpChecker.firAndClassicContentsAreEquals(testDataFile) &&
             (!isPrettyDumpEnabled || prettyDumpChecker.firAndClassicContentsAreEquals(testDataFile, trimLines = true))
         ) {
-            simpleDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
-            prettyDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
+            simpleDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
+            prettyDumpChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
             simpleDumpChecker.addDirectiveToClassicFileAndAssert(testDataFile)
         }
     }

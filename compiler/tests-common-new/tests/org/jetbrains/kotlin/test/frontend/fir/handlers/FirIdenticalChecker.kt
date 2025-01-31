@@ -26,7 +26,7 @@ class FirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChec
             if (".reversed." in classicFile.path) return
 
             if (helper.contentsAreEquals(classicFile, testDataFile, trimLines = true)) {
-                helper.deleteFirFileToCompareAndAssertIfExists(testDataFile)
+                helper.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
                 helper.addDirectiveToClassicFileAndAssert(classicFile)
             }
         } else {
@@ -54,9 +54,12 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
         }
         val helper = Helper(originalFile)
         if (helper.contentsAreEquals(originalFile, testDataFile)) {
-            helper.deleteFirFileToCompareAndAssertIfExists(testDataFile)
             testServices.assertions.assertAll(
                 buildList {
+                    add {
+                        helper.deleteFirFileToCompareAndAssertIfExists(testDataFile)
+                    }
+
                     listOf(
                         originalFile.originalTestDataFile,
                         originalFile.firTestDataFile,

@@ -94,10 +94,14 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
     }
 
-    fun deleteFirFileToCompareAndAssertIfExists(testDataFile: File) {
+    fun deleteFirFileToCompareAndAssertIfExists(testDataFile: File, suppressAssertion: Boolean = false) {
         val firFileToCompare = getFirFileToCompare(testDataFile)?.takeIf(File::exists) ?: return
         if (!isTeamCityBuild) {
             firFileToCompare.delete()
+        }
+
+        if (suppressAssertion) {
+            return
         }
 
         val message = if (isTeamCityBuild) {
