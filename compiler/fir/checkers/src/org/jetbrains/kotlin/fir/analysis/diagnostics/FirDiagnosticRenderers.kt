@@ -102,7 +102,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    fun <Q> preformat(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q> =
+    fun <Q> formatted(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q> =
         ContextDependentRenderer { value, context ->
             MessageFormat(message).format(arrayOf(renderer.render(value, context)))
         }
@@ -117,7 +117,7 @@ object FirDiagnosticRenderers {
      * Returns an empty string otherwise.
      */
     fun <Q> suggestIfNotNull(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q?> =
-        emptyStringIfNullOr(preformat(message, renderer))
+        emptyStringIfNullOr(formatted(message, renderer))
 
     val SYMBOLS_ON_NEWLINE_WITH_INDENT = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
         private val mode = MultiplatformDiagnosticRenderingMode()
