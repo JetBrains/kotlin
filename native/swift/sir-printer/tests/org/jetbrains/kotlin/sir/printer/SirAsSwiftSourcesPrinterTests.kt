@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.sir.printer
 import com.intellij.util.containers.addAllIfNotNull
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
-import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -1060,7 +1058,7 @@ class SirAsSwiftSourcesPrinterTests {
             name = "Test"
         }
 
-        module.updateImports(
+        module.imports.addAll(
             listOf(
                 SirImport(moduleName = "DEMO_PACKAGE"),
                 SirImport(moduleName = "ExportedModule", mode = SirImport.Mode.Exported),
@@ -1329,13 +1327,13 @@ class SirAsSwiftSourcesPrinterTests {
         val proto1 = buildProtocol {
             name = "Fooable"
         }.apply {
-            parent = KotlinRuntimeModule
+            parent = kotlinRuntimeModule
         }
 
         val proto2 = buildProtocol {
             name = "Barable"
         }.apply {
-            parent = KotlinRuntimeModule
+            parent = kotlinRuntimeModule
         }
 
         val module = buildModule {
@@ -1343,7 +1341,7 @@ class SirAsSwiftSourcesPrinterTests {
             declarations.add(
                 buildProtocol {
                     name = "Foo"
-                    superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
+                    superClass = SirNominalType(kotlinBase)
                     protocols.addAll(listOf(proto1, proto2))
 
                     declarations.add(
@@ -1391,6 +1389,17 @@ class SirAsSwiftSourcesPrinterTests {
             module,
             "testData/protocol_declarations"
         )
+    }
+
+    companion object {
+        val kotlinRuntimeModule = buildModule {
+            name = "KotlinRuntime"
+        }
+        val kotlinBase = kotlinRuntimeModule.addChild {
+            buildClass {
+                name = "KotlinBase"
+            }
+        }
     }
 }
 
