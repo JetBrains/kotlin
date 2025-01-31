@@ -98,7 +98,7 @@ internal class InlineFunctionBodyPreprocessor(
                 leaveNonReifiedAsIs && classifier is IrTypeParameterSymbol && !classifier.owner.isReified -> type
 
                 // Erase non-reified type parameter if asked to.
-                erasedParameters != null && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false -> {
+                erasedParameters != null && substitutedType != null && classifier is IrTypeParameterSymbol && !classifier.owner.isReified -> {
                     if (classifier in erasedParameters) {
                         return null
                     }
