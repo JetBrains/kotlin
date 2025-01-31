@@ -116,7 +116,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                 performanceManager.notifyCompilationFinished()
                 if (arguments.reportPerf) {
                     collector.report(LOGGING, "PERF: " + performanceManager.getTargetInfo())
-                    for (measurement in performanceManager.getMeasurementResults()) {
+                    for (measurement in performanceManager.measurementResults) {
                         collector.report(LOGGING, "PERF: " + measurement.render(), null)
                     }
                 }

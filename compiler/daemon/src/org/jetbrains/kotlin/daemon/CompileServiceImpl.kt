@@ -283,7 +283,7 @@ abstract class CompileServiceImplBase(
     protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
         val performanceMetrics = mutableListOf<BuildMetricsValue>()
 
-        for (it in compiler.defaultPerformanceManager.getMeasurementResults()) {
+        for (it in compiler.defaultPerformanceManager.measurementResults) {
             when (it) {
                 is CompilerInitializationMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))

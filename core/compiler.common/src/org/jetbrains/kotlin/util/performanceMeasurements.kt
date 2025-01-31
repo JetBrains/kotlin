@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.util
 
-interface PerformanceMeasurement {
-    fun render(): String
+enum class PhaseMeasurementType {
+    Initialization,
+    Analysis,
+    IrTranslation,
+    IrLowering,
+    BackendOrMetadataGeneration,
 }
 
-class JitCompilationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(): String = "JIT time is $milliseconds ms"
+interface PerformanceMeasurement {
+    fun render(): String
 }
 
 class CompilerInitializationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
@@ -19,10 +23,6 @@ class CompilerInitializationMeasurement(val milliseconds: Long) : PerformanceMea
 
 class CodeAnalysisMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("ANALYZE", milliseconds, lines)
-}
-
-class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
-    override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
 class IrTranslationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
@@ -35,6 +35,14 @@ class IrLoweringMeasurement(val lines: Int?, val milliseconds: Long) : Performan
 
 class BackendOrMetadataGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("BACKEND or METADATA GENERATION", milliseconds, lines)
+}
+
+class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
+    override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
+}
+
+class JitCompilationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = "JIT time is $milliseconds ms"
 }
 
 sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
