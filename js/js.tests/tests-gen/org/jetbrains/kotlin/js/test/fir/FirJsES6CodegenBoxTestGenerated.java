@@ -38901,6 +38901,30 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
     }
 
+    @Test
+    @TestMetadata("findAssociatedObject.kt")
+    public void testFindAssociatedObject() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObject.kt");
+    }
+
+    @Test
+    @TestMetadata("findAssociatedObjectAndDCE.kt")
+    public void testFindAssociatedObjectAndDCE() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectAndDCE.kt");
+    }
+
+    @Test
+    @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+    public void testFindAssociatedObjectInSeparatedFile() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectInSeparatedFile.kt");
+    }
+
+    @Test
+    @TestMetadata("findAssociatedObjectLazyness.kt")
+    public void testFindAssociatedObjectLazyness() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectLazyness.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
     @TestDataPath("$PROJECT_ROOT")

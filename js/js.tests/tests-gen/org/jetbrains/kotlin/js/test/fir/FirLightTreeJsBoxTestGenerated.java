@@ -10347,36 +10347,6 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
     }
 
     @Test
-    @TestMetadata("findAssociatedObject.kt")
-    public void testFindAssociatedObject() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectAndDCE.kt")
-    public void testFindAssociatedObjectAndDCE() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectAndDCE.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
-    public void testFindAssociatedObjectInSeparatedFile() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectLazyness.kt")
-    public void testFindAssociatedObjectLazyness() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectLazyness.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObject_oldBE.kt")
-    public void testFindAssociatedObject_oldBE() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObject_oldBE.kt");
-    }
-
-    @Test
     @TestMetadata("kClass.kt")
     public void testKClass() {
       runTest("js/js.translator/testData/box/reflection/kClass.kt");

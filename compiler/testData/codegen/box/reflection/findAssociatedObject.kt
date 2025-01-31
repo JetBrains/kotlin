@@ -1,19 +1,8 @@
-// KJS_WITH_FULL_RUNTIME
+// DONT_TARGET_EXACT_BACKEND: JVM
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// ^ @AssociatedObjectKey is not available in Kotlin/JVM
+// WITH_STDLIB
 
-// FILE: annotations.kt
-import kotlin.reflect.*
-
-@OptIn(ExperimentalAssociatedObjects::class)
-@AssociatedObjectKey
-@Retention(AnnotationRetention.BINARY)
-annotation class Associated3(val kClass: KClass<*>)
-
-// FILE: foo.kt
-@Associated1(Bar::class)
-@Associated2(Baz::class)
-class Foo
-
-// FILE: bar.kt
 import kotlin.reflect.*
 
 @OptIn(ExperimentalAssociatedObjects::class)
@@ -21,16 +10,21 @@ import kotlin.reflect.*
 @Retention(AnnotationRetention.BINARY)
 annotation class Associated1(val kClass: KClass<*>)
 
-object Bar
-
-// FILE: baz.kt
-import kotlin.reflect.*
-
 @OptIn(ExperimentalAssociatedObjects::class)
 @AssociatedObjectKey
 @Retention(AnnotationRetention.BINARY)
 annotation class Associated2(val kClass: KClass<*>)
 
+@OptIn(ExperimentalAssociatedObjects::class)
+@AssociatedObjectKey
+@Retention(AnnotationRetention.BINARY)
+annotation class Associated3(val kClass: KClass<*>)
+
+@Associated1(Bar::class)
+@Associated2(Baz::class)
+class Foo
+
+object Bar
 object Baz
 
 private class C(var list: List<String>?)
@@ -49,6 +43,9 @@ private object I1Impl : I1 {
 
 @Associated1(I1Impl::class)
 private class I1ImplHolder
+
+@Associated1(I1Impl::class)
+private interface I1ImplInterfaceHolder
 
 private interface I2 {
     fun foo(): Int
@@ -104,6 +101,9 @@ fun box(): String {
     if (Int::class.findAssociatedObject<Associated1>() != null) return "fail 11"
 
     if (10::class.findAssociatedObject<Associated2>() != null) return "fail 12"
+
+    val i3 = I1ImplInterfaceHolder::class.findAssociatedObject<Associated1>() as I1
+    if (i3.foo() != 42) return "fail 13"
 
     return "OK"
 }

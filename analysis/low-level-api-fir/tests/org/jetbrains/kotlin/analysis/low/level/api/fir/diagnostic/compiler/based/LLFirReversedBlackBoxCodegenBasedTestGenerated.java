@@ -51211,6 +51211,30 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("findAssociatedObject.kt")
+    public void testFindAssociatedObject() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObject.kt");
+    }
+
+    @Test
+    @TestMetadata("findAssociatedObjectAndDCE.kt")
+    public void testFindAssociatedObjectAndDCE() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectAndDCE.kt");
+    }
+
+    @Test
+    @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+    public void testFindAssociatedObjectInSeparatedFile() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectInSeparatedFile.kt");
+    }
+
+    @Test
+    @TestMetadata("findAssociatedObjectLazyness.kt")
+    public void testFindAssociatedObjectLazyness() {
+      runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectLazyness.kt");
+    }
+
+    @Test
     @TestMetadata("jvmKPackageCaching.kt")
     public void testJvmKPackageCaching() {
       runTest("compiler/testData/codegen/box/reflection/jvmKPackageCaching.kt");
