@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.sir.SirVariable
 val SirClass.superClassDeclaration: SirClass?
     get() = (superClass as? SirNominalType)?.typeDeclaration as? SirClass
 
-fun List<SirDeclaration>.classNamed(className: String): SirClass? {
+fun List<SirDeclaration>.classNamed(className: String): SirClass {
     return filterIsInstance<SirClass>()
         .firstOrNull { it.name == className }
+        ?: error("Class $className not found")
 }
 
-fun List<SirDeclaration>.variableNamed(propertyName: String): SirVariable? {
+fun List<SirDeclaration>.variableNamed(variableName: String): SirVariable {
     return filterIsInstance<SirVariable>()
-        .firstOrNull { it.name == propertyName }
+        .firstOrNull { it.name == variableName }
+        ?: error("Variable $variableName not found")
 }

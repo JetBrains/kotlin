@@ -29,7 +29,7 @@ class EnumClassTranslationTests(
             """.trimIndent()
         )
         translate(file) {
-            val enumClass = it.classNamed("Foo")!!
+            val enumClass = it.classNamed("Foo")
             assertContains(enumClass.protocols, SirSwiftModule.caseIterable)
             val cases = enumClass.declarations
                 .filterIsInstance<SirVariable>()

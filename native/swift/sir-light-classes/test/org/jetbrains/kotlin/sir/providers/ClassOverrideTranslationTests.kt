@@ -31,8 +31,8 @@ class ClassOverrideTranslationTests(
             """.trimIndent()
         )
         translate(file) { declarations ->
-            val baseClass = declarations.classNamed("Base")!!
-            val derivedClass = declarations.classNamed("Derived")!!
+            val baseClass = declarations.classNamed("Base")
+            val derivedClass = declarations.classNamed("Derived")
 
             val fooInDerived = derivedClass.declarations
                 .filterIsInstance<SirFunction>()

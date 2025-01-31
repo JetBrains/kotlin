@@ -62,8 +62,8 @@ class ClassInheritanceTranslationTests(
             """.trimIndent()
         )
         translate(file) { declarations ->
-            val abstractClass = declarations.classNamed("Abstract")!!
-            val derivedClass = declarations.classNamed("Derived")!!
+            val abstractClass = declarations.classNamed("Abstract")
+            val derivedClass = declarations.classNamed("Derived")
             assertEquals(abstractClass, derivedClass.superClassDeclaration)
         }
     }

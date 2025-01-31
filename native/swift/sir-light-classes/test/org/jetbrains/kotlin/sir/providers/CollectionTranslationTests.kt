@@ -26,7 +26,7 @@ class CollectionTranslationTests(
             """.trimIndent()
         )
         translate(file) {
-            val list = it.variableNamed("list")!!
+            val list = it.variableNamed("list")
             assertEquals(SirArrayType(SirNominalType(SirSwiftModule.string)), list.type)
         }
     }
@@ -39,7 +39,7 @@ class CollectionTranslationTests(
             """.trimIndent()
         )
         translate(file) {
-            val map = it.variableNamed("map")!!
+            val map = it.variableNamed("map")
             val keyType = SirNominalType(SirSwiftModule.string)
             val valueType = SirArrayType(SirNominalType(SirSwiftModule.string))
             assertEquals(SirDictionaryType(keyType, valueType), map.type)
