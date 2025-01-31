@@ -1065,13 +1065,17 @@ class CallAndReferenceGenerator(
         substitutor: ConeSubstitutor,
     ): IrExpression {
         val unsubstitutedParameterType = parameter?.returnTypeRef?.coneType?.fullyExpandedType(session)
-        // Normally argument type should be correct itself.
-        // However, for deserialized annotations it's possible to have imprecise Array<Any> type
-        // for empty integer literal arguments.
-        // In this case we have to use parameter type itself which is more precise, like Array<String> or IntArray.
-        // See KT-62598 and its fix for details.
-        val expectedType = unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
-        var irArgument = visitor.convertToIrExpression(argument, expectedType = expectedType)
+        var irArgument = visitor.convertToIrExpression(
+            argument,
+            // Normally an argument type should be correct itself.
+            // However, for deserialized annotations it's possible to have an imprecise Array<Any> type
+            // for empty integer literal arguments.
+            // In this case we have to use a parameter type itself which is more precise, like Array<String> or IntArray.
+            // See KT-62598 and its fix for details.
+            expectedTypeForAnnotationArgument =
+                unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
+        )
+
         if (unsubstitutedParameterType != null) {
             with(visitor.implicitCastInserter) {
                 val argumentType = argument.resolvedType.fullyExpandedType(session)
