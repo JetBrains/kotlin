@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
+import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -29,11 +30,21 @@ class FirEqualsOverrideAnalyzer(private val session: FirSession, private val sco
     enum class Status {
         SAFE_FOR_SMART_CAST,
         SAFE_FOR_EXHAUSTIVENESS,
-        UNSAFE
+        UNSAFE;
+
+        operator fun plus(other: Status): Status = when {
+            this == UNSAFE || other == UNSAFE -> UNSAFE
+            this == SAFE_FOR_EXHAUSTIVENESS || other == SAFE_FOR_EXHAUSTIVENESS -> SAFE_FOR_EXHAUSTIVENESS
+            else -> SAFE_FOR_SMART_CAST
+        }
     }
 
     fun computeEqualsOverrideStatus(type: ConeKotlinType): Status {
         val symbolsForType = collectSymbolsForType(type, session)
+
+        // short-circuit special cases
+        if (symbolsForType.all { isSmartcastPrimitive(it.classId) }) return Status.SAFE_FOR_SMART_CAST
+        if (symbolsForType.all { it.isEnumClass || it.isPrimitiveType() }) return Status.SAFE_FOR_EXHAUSTIVENESS
 
         var safeOnlyForExhaustiveness = false
         val withEqualsOverrides = symbolsForType.filter { it.hasEqualsOverride(session, checkModality = true, allowSynthetic = false) }
@@ -41,9 +52,6 @@ class FirEqualsOverrideAnalyzer(private val session: FirSession, private val sco
             safeOnlyForExhaustiveness = withEqualsOverrides.any { it.isSealed && !it.hasEqualsOverrideFromInheritors(session) }
             if (!safeOnlyForExhaustiveness) return Status.UNSAFE
         }
-
-        // short-circuit this special case
-        if (symbolsForType.all { it.isEnumClass }) return Status.SAFE_FOR_EXHAUSTIVENESS
 
         val superTypes = lookupSuperTypes(
             symbolsForType,
