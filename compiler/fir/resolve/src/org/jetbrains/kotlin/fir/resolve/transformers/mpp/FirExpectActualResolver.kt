@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
 import org.jetbrains.kotlin.fir.declarations.expectForActual
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
@@ -84,15 +84,13 @@ object FirExpectActualResolver {
                     }
                 }
                 is FirClassLikeSymbol<*> -> {
-                    val expectClassSymbol = useSiteSession.dependenciesSymbolProvider
-                        .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return emptyMap()
                     val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
-                    if (expectClassSymbol.isExpect && expectClassSymbol.moduleData in transitiveDependsOn) {
-                        val compatibility = AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol, actualSymbol, context)
-                        mapOf(compatibility to listOf(expectClassSymbol))
-                    } else {
-                        emptyMap()
-                    }
+                    transitiveDependsOn
+                        .mapNotNull { it.session.symbolProvider.getClassLikeSymbolByClassId(actualSymbol.classId) }
+                        .filter { it.isExpect && it.moduleData in transitiveDependsOn }
+                        .filterIsInstance<FirRegularClassSymbol>()
+                        .distinct()
+                        .groupBy { AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol = it, actualSymbol, context) }
                 }
                 else -> emptyMap()
             }
