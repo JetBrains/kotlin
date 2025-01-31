@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.sir.SirFunction
+import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.sir.lightclasses.utils.OverrideStatus
@@ -14,11 +15,9 @@ import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
-class ClassOverrideTranslationTests(
-    private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
-) {
+class ClassOverrideTranslationTests : SirTranslationTest() {
     @Test
-    fun `super class members are available in derived`() {
+    fun `super class members are available in derived`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 open class Base {

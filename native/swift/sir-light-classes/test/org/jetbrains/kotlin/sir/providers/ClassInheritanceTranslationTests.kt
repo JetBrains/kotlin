@@ -6,22 +6,23 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysisExtension
 import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirInit
 import org.jetbrains.kotlin.sir.SirVisibility
+import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.superClassDeclaration
 import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class ClassInheritanceTranslationTests(
-    private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
-) {
+class ClassInheritanceTranslationTests : SirTranslationTest() {
     @Test
-    fun `translation of the simplest class`() {
+    fun `translation of the simplest class`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 class Foo
@@ -35,7 +36,7 @@ class ClassInheritanceTranslationTests(
     }
 
     @Test
-    fun `open class inheritance`() {
+    fun `open class inheritance`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 open class Base
@@ -53,7 +54,7 @@ class ClassInheritanceTranslationTests(
     }
 
     @Test
-    fun `abstract class inheritance`() {
+    fun `abstract class inheritance`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 abstract class Abstract
@@ -69,7 +70,7 @@ class ClassInheritanceTranslationTests(
     }
 
     @Test
-    fun `abstract class constructors are not public`() {
+    fun `abstract class constructors are not public`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 abstract class Abstract

@@ -9,17 +9,16 @@ import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.sir.SirArrayType
 import org.jetbrains.kotlin.sir.SirDictionaryType
 import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.kotlin.sir.providers.support.variableNamed
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class CollectionTranslationTests(
-    private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
-) {
+class CollectionTranslationTests : SirTranslationTest() {
     @Test
-    fun `list property is translated to Swift array`() {
+    fun `list property is translated to Swift array`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 val list: List<String> = listOf("a", "b", "c")
@@ -32,7 +31,7 @@ class CollectionTranslationTests(
     }
 
     @Test
-    fun `map property is translated to Swift dictionary`() {
+    fun `map property is translated to Swift dictionary`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 val map: Map<String, List<String>> = listOf("a", "b", "c")

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirVariable
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -18,11 +19,9 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class EnumClassTranslationTests(
-    private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
-) {
+class EnumClassTranslationTests : SirTranslationTest() {
     @Test
-    fun `simple enum class`() {
+    fun `simple enum class`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 enum class Foo { A, B, C }
