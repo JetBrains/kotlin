@@ -157,6 +157,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("DataClassWithCustomImplementedMembers.kt")
   public void testDataClassWithCustomImplementedMembers() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DataClassWithCustomImplementedMembers.kt");
@@ -427,6 +433,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("valueClassAsContextParameter.kt")
+  public void testValueClassAsContextParameter() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassAsContextParameter.kt");
+  }
+
+  @Test
   @TestMetadata("ValueClassInParametersWithJvmName.kt")
   public void testValueClassInParametersWithJvmName() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
@@ -554,6 +566,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     }
 
     @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/contextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
@@ -599,6 +617,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     @TestMetadata("SingleJvmClassName.kt")
     public void testSingleJvmClassName() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleJvmClassName.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassAsContextParameter.kt")
+    public void testValueClassAsContextParameter() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/valueClassAsContextParameter.kt");
     }
 
     @Test
