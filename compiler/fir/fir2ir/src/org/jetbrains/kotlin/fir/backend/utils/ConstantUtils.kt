@@ -94,7 +94,7 @@ private fun ConstantValueKind.toIrConstKind(): IrConstKind = when (this) {
  */
 fun FirExpression.asCompileTimeIrInitializerForAnnotationParameter(
     components: Fir2IrComponents,
-    expectedType: ConeKotlinType? = null,
+    expectedTypeForAnnotationArgument: ConeKotlinType? = null,
 ): IrExpressionBody {
     val componentsWithReplacedCallGenerator = object : Fir2IrComponents by components {
         override val callGenerator: CallAndReferenceGenerator
@@ -109,6 +109,11 @@ fun FirExpression.asCompileTimeIrInitializerForAnnotationParameter(
         visitor,
         conversionScope
     )
-    val expression = visitor.withAnnotationMode { visitor.convertToIrExpression(this, expectedType = expectedType) }
+    val expression = visitor.withAnnotationMode {
+        visitor.convertToIrExpression(
+            this,
+            expectedTypeForAnnotationArgument = expectedTypeForAnnotationArgument,
+        )
+    }
     return IrFactoryImpl.createExpressionBody(expression)
 }

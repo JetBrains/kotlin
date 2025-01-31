@@ -983,7 +983,7 @@ class Fir2IrVisitor(
         // These array literals normally have a type of Array<Any>,
         // so FIR2IR should instead use a type of corresponding property
         // See also KT-62598
-        expectedType: ConeKotlinType? = null,
+        expectedTypeForAnnotationArgument: ConeKotlinType? = null,
     ): IrExpression {
         return when (expression) {
             is FirBlock -> {
@@ -1004,7 +1004,7 @@ class Fir2IrVisitor(
             else -> {
                 when (val unwrappedExpression = expression.unwrapArgument()) {
                     is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
-                    is FirArrayLiteral -> convertToArrayLiteral(unwrappedExpression, expectedType)
+                    is FirArrayLiteral -> convertToArrayLiteral(unwrappedExpression, expectedTypeForAnnotationArgument)
                     else -> expression.accept(this, null) as IrExpression
                 }
             }
