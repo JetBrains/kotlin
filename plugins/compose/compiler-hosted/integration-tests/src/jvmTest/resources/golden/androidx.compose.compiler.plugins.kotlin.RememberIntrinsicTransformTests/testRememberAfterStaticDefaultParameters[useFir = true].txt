@@ -29,7 +29,14 @@ fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default:
   if (%default and 0b0010 != 0) {
     %dirty = %dirty or 0b00110000
   } else if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(b.ordinal)) 0b00100000 else 0b00010000
+    %dirty = %dirty or if (%composer.changed(<block>{
+      val tmpEnum = b
+      if (tmpEnum == null) {
+        0b.inv()
+      } else {
+        tmpEnum.ordinal
+      }
+    })) 0b00100000 else 0b00010000
   }
   if (%default and 0b0100 != 0) {
     %dirty = %dirty or 0b000110000000

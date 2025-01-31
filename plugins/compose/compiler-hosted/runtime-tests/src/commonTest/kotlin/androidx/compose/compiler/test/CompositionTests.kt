@@ -231,9 +231,11 @@ class CompositionTests {
         var state by mutableStateOf(TestComposeEnum.A)
         compose {
             EnumParameter(state)
+            EnumNullableParameter(if (state == TestComposeEnum.A) state else null)
         }
         validate {
             Text(state.name)
+            Text(if (state == TestComposeEnum.A) state.name else "null")
         }
 
         state = TestComposeEnum.B
@@ -335,6 +337,11 @@ enum class TestComposeEnum {
 @Composable
 fun EnumParameter(enum: TestComposeEnum) {
     Text(enum.name)
+}
+
+@Composable
+fun EnumNullableParameter(enum: TestComposeEnum?) {
+    Text(enum?.name ?: "null")
 }
 
 @Composable
