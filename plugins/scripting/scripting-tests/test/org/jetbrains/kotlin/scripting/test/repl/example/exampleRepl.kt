@@ -56,13 +56,15 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
     private val messageCollector = ScriptDiagnosticsMessageCollector(ReplMessageCollector(replConfiguration))
     private var lineCounter = 0
 
-    private val scriptCompilationConfiguration = ScriptCompilationConfiguration {
+    private val initialScriptCompilationConfiguration = ScriptCompilationConfiguration {
         jvm {
             updateClasspath(
                 listOf(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests())
             )
         }
     }
+
+    private var scriptCompilationConfiguration = initialScriptCompilationConfiguration
 
     private val replCompiler =
         K2ReplCompiler(
@@ -167,7 +169,11 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
                     currentLineId(lineId)
                 }
             }
-        )
+        ).also {
+            if (it is ResultWithDiagnostics.Success) {
+                scriptCompilationConfiguration = it.value.get().compilationConfiguration
+            }
+        }
     }
 
     private suspend fun compileAndEval(line: String, lineNo: Int): ReplEvalResult {
