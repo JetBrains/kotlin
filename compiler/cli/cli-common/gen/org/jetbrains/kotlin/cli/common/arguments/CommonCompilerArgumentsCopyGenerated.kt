@@ -35,7 +35,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.experimental = from.experimental?.copyOf()
     to.explicitApi = from.explicitApi
     to.explicitReturnTypes = from.explicitReturnTypes
-    to.extendedCompilerChecks = from.extendedCompilerChecks
     to.fragmentRefines = from.fragmentRefines?.copyOf()
     to.fragmentSources = from.fragmentSources?.copyOf()
     to.fragments = from.fragments?.copyOf()

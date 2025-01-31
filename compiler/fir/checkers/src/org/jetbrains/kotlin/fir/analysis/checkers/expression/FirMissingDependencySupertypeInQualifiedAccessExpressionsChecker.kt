@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
@@ -36,7 +36,7 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         val missingSupertype = checkMissingDependencySuperTypes(symbol.dispatchReceiverType, source, reporter, context)
 
-        val eagerChecksAllowed = context.languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)
+        val eagerChecksAllowed = context.languageVersionSettings.supportsFeature(LanguageFeature.AllowEagerCompilerChecks)
         val unresolvedLazySupertypesByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol
 
         if (eagerChecksAllowed || !unresolvedLazySupertypesByDefault && !missingSupertype) {

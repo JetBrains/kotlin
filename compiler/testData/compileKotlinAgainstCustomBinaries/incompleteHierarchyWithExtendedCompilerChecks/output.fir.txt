@@ -1,16 +1,25 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+AllowEagerCompilerChecks
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:12:32: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
 fun simpleFun(arg: Sub): Sub = Sub()
                                ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:19:18: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:18:18: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
     val x: Sub = Sub()
                  ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:21:18: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:20:18: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
     useCallRef(::Sub)
                  ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:22:15: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:21:15: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
     simpleFun(Sub())
               ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:23:20: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyWithExtendedCompilerChecks/source.kt:22:20: error: cannot access 'Super' which is a supertype of 'Sub'. Check your module classpath for missing or conflicting dependencies.
     inlineFun<Sub>(Sub())
                    ^^^
 COMPILATION_ERROR

@@ -70,9 +70,6 @@ class AnalyzerWithCompilerReport(
                     .append(", unresolved supertypes: ").append(unresolved!!.joinToString())
                     .append("\n")
             }
-            if (!languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)) {
-                message.append("Adding -Xextended-compiler-checks argument might provide additional information.\n")
-            }
             messageCollector.report(ERROR, message.toString())
         }
     }

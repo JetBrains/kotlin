@@ -608,17 +608,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
-        value = "-Xextended-compiler-checks",
-        description = """Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
-Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code."""
-    )
-    var extendedCompilerChecks = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xexpect-actual-classes",
         description = """'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
 Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning."""
@@ -900,7 +889,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -XXexplicit-return-types: '$explicitReturnTypes'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
-            put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.stdlibCompilation, stdlibCompilation)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.config.LanguageFeature.Kind.*
-import org.jetbrains.kotlin.config.LanguageFeature.entries
 import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
@@ -376,6 +375,7 @@ enum class LanguageFeature(
     AnnotationDefaultTargetMigrationWarning(KOTLIN_2_2, kind = BUG_FIX), // KT-73255, KT-73494
     AllowDnnTypeOverridingFlexibleType(KOTLIN_2_2, kind = OTHER), // KT-74049
     PreferDependentTypeVariablesWithProperArgumentConstraint(KOTLIN_2_2, kind = OTHER), // KT-71854
+    AllowEagerCompilerChecks(KOTLIN_2_2, kind = OTHER), // KT-73611
 
     // 2.3
 
