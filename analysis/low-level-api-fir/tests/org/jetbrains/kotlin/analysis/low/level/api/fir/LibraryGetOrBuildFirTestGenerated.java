@@ -49,6 +49,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("dnnType.kt")
+  public void testDnnType() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/dnnType.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/enumEntry.kt");
@@ -64,6 +70,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @TestMetadata("genericsOnNestedClasses.kt")
   public void testGenericsOnNestedClasses() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/genericsOnNestedClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitFlexibleDnnType.kt")
+  public void testImplicitFlexibleDnnType() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/implicitFlexibleDnnType.kt");
   }
 
   @Test

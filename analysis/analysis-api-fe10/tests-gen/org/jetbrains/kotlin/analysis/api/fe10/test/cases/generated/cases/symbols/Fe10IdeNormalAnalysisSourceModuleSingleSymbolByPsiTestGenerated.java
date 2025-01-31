@@ -107,6 +107,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("functionWithDefinitelyNotNullType.kt")
+  public void testFunctionWithDefinitelyNotNullType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithDefinitelyNotNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithNestedDefinitelyNotNullType.kt")
+  public void testFunctionWithNestedDefinitelyNotNullType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithNestedDefinitelyNotNullType.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithReceiverAnnotation.kt")
   public void testFunctionWithReceiverAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithReceiverAnnotation.kt");
@@ -122,6 +134,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   @TestMetadata("getterWithReceiverAndAnnotations.kt")
   public void testGetterWithReceiverAndAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithReceiverAndAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitFlexibleDnnType.kt")
+  public void testImplicitFlexibleDnnType() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/implicitFlexibleDnnType.kt");
   }
 
   @Test

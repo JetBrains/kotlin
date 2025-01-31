@@ -1302,6 +1302,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("definitelyNotNullType.kt")
+    public void testDefinitelyNotNullType() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/definitelyNotNullType.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithDeprecatedJavaClass.kt")
     public void testFunctionWithDeprecatedJavaClass() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/functionWithDeprecatedJavaClass.kt");

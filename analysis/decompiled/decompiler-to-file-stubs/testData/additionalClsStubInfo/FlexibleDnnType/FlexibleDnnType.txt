@@ -1,0 +1,46 @@
+PsiJetFileStubImpl[package=]
+KotlinStub$PACKAGE_DIRECTIVE
+KotlinStub$IMPORT_LIST
+KotlinStub$CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleDnnType, superNames=[]]
+  KotlinStub$MODIFIER_LIST[abstract public]
+  KotlinStub$TYPE_PARAMETER_LIST
+    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=FlexibleDnnType]
+    KotlinStub$MODIFIER_LIST[public]
+    KotlinStub$VALUE_PARAMETER_LIST
+  KotlinStub$CLASS_BODY
+    KotlinStub$PROPERTY[fqName=FlexibleDnnType.block, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=block]
+      KotlinStub$MODIFIER_LIST[abstract public]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$FUNCTION_TYPE
+          KotlinStub$VALUE_PARAMETER_LIST
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
+    KotlinStub$PROPERTY[fqName=FlexibleDnnType.propertyWithFlexibleDnnImplicitType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=propertyWithFlexibleDnnImplicitType]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    upperBound: java.util.function.Function<kotlin.String .. kotlin.String?, T & Any .. T?>?
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=java]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=util]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=function]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=Function]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    upperBound: kotlin.String?
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$INTERSECTION_TYPE
+                  KotlinStub$TYPE_REFERENCE
+                    KotlinStub$USER_TYPE    upperBound: T?
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
+                  KotlinStub$TYPE_REFERENCE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=Any]

@@ -1,0 +1,24 @@
+Restored type is the same as the original one
+
+KaDefinitelyNotNullType:
+  abbreviation: null
+  annotations: []
+  nullability: NON_NULLABLE
+  original: KaTypeParameterType:
+    abbreviation: null
+    annotations: []
+    name: T1
+    nullability: NON_NULLABLE
+    symbol: KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T1
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val targetExpression = testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile)
+        val targetExpression = testServices.expressionMarkerProvider.getTopmostSelectedElementOfTypeByDirective(mainFile, mainModule)
 
         val renderer = DebugSymbolRenderer(renderTypeByProperties = true)
 
