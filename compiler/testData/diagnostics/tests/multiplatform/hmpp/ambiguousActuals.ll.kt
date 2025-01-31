@@ -10,4 +10,4 @@ actual class Foo
 
 // MODULE: main()()(common, intermediate)
 actual fun foo() {}
-actual class <!ACTUAL_WITHOUT_EXPECT!>Foo<!>
+actual class Foo
