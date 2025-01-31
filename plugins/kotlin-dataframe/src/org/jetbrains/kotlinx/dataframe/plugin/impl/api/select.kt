@@ -13,6 +13,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.enum
+import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
 internal class Select0 : AbstractInterpreter<PluginDataFrameSchema>() {
@@ -25,6 +26,7 @@ internal class Select0 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
     val Arguments.name: String by arg(defaultValue = Present("untitled"))
     val Arguments.infer: Infer by enum(defaultValue = Present(Infer.Nulls))
     val Arguments.expression: TypeApproximation by type()
@@ -53,6 +55,7 @@ internal class And0 : AbstractInterpreter<ColumnsResolver>() {
 }
 
 internal class All0 : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
     override fun Arguments.interpret(): ColumnsResolver {
         return object : ColumnsResolver {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
@@ -66,6 +69,7 @@ internal class All0 : AbstractInterpreter<ColumnsResolver>() {
 }
 
 internal class ColsOf0 : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
     val Arguments.typeArg0: TypeApproximation by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
@@ -90,6 +94,7 @@ private fun Arguments.colsOf(cols: List<ColumnWithPathApproximation>, type: Cone
         }
 
 internal class ColsAtAnyDepth0 : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
     override fun Arguments.interpret(): ColumnsResolver {
         return object : ColumnsResolver {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
