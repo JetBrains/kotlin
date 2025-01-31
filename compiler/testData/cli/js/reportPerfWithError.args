@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/../reportPerfWithError.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+reportPerfK2WithError
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
+-Xreport-perf=true

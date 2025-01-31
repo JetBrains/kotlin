@@ -1748,6 +1748,31 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/reportInternalDiagnosticNames.args");
     }
 
+    @TestMetadata("reportPerf.args")
+    public void testReportPerf() {
+      runTest("compiler/testData/cli/jvm/reportPerf.args");
+    }
+
+    @TestMetadata("reportPerfPsi.args")
+    public void testReportPerfPsi() {
+      runTest("compiler/testData/cli/jvm/reportPerfPsi.args");
+    }
+
+    @TestMetadata("reportPerfWithConfigError.args")
+    public void testReportPerfWithConfigError() {
+      runTest("compiler/testData/cli/jvm/reportPerfWithConfigError.args");
+    }
+
+    @TestMetadata("reportPerfWithError.args")
+    public void testReportPerfWithError() {
+      runTest("compiler/testData/cli/jvm/reportPerfWithError.args");
+    }
+
+    @TestMetadata("reportPerfWithInitError.args")
+    public void testReportPerfWithInitError() {
+      runTest("compiler/testData/cli/jvm/reportPerfWithInitError.args");
+    }
+
     @TestMetadata("selfUpperBoundInference.args")
     public void testSelfUpperBoundInference() {
       runTest("compiler/testData/cli/jvm/selfUpperBoundInference.args");
@@ -2006,6 +2031,21 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
     }
 
+    @TestMetadata("reportPerf.args")
+    public void testReportPerf() {
+      runTest("compiler/testData/cli/js/reportPerf.args");
+    }
+
+    @TestMetadata("reportPerfPsi.args")
+    public void testReportPerfPsi() {
+      runTest("compiler/testData/cli/js/reportPerfPsi.args");
+    }
+
+    @TestMetadata("reportPerfWithError.args")
+    public void testReportPerfWithError() {
+      runTest("compiler/testData/cli/js/reportPerfWithError.args");
+    }
+
     @TestMetadata("simple2js.args")
     public void testSimple2js() {
       runTest("compiler/testData/cli/js/simple2js.args");
@@ -2167,6 +2207,21 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("optionalExpectationUsage.args")
     public void testOptionalExpectationUsage() {
       runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
+    }
+
+    @TestMetadata("reportPerf.args")
+    public void testReportPerf() {
+      runTest("compiler/testData/cli/metadata/reportPerf.args");
+    }
+
+    @TestMetadata("reportPerfPsi.args")
+    public void testReportPerfPsi() {
+      runTest("compiler/testData/cli/metadata/reportPerfPsi.args");
+    }
+
+    @TestMetadata("reportPerfWithError.args")
+    public void testReportPerfWithError() {
+      runTest("compiler/testData/cli/metadata/reportPerfWithError.args");
     }
 
     @TestMetadata("unsignedDeclarationsFromStdlib.args")

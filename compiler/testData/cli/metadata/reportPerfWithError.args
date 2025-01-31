@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/../reportPerfWithError.kt
+-d
+$TEMP_DIR$
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
+-Xreport-perf=true

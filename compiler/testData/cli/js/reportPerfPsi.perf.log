@@ -1,0 +1,9 @@
+Kotlin to JS Compiler performance report
+        ANALYZE        $INT>>$ ms
+        ANALYZE        $INT>>$ ms
+       GENERATE        $INT>>$ ms
+  IR GENERATION        $INT>>$ ms
+ IR TRANSLATION        $INT>>$ ms
+GC time for PS MarkSweep is $INT$ ms, $INT$ collections
+GC time for PS Scavenge is $INT$ ms, $INT$ collections
+JIT time is $INT$ ms
