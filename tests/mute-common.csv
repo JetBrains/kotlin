@@ -1,3 +1,4 @@
 Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
 org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
 org.jetbrains.kotlin.gradle.JsSetupConfigurationCacheIT.checkNodeJsSetup,,,FLAKY
+org.jetbrains.kotlin.test.runners.ir.ClassicJvmIrTextTestGenerated$Expressions.testKt47450,,,FLAKY
