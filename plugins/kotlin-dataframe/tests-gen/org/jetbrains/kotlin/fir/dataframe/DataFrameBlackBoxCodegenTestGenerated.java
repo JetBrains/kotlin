@@ -455,9 +455,21 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("schemaFromImplicitReceiver.kt")
+  public void testSchemaFromImplicitReceiver() {
+    runTest("testData/box/schemaFromImplicitReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("select.kt")
   public void testSelect() {
     runTest("testData/box/select.kt");
+  }
+
+  @Test
+  @TestMetadata("selectColsOf.kt")
+  public void testSelectColsOf() {
+    runTest("testData/box/selectColsOf.kt");
   }
 
   @Test
