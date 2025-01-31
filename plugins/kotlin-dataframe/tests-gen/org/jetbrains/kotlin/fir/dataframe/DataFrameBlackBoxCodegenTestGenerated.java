@@ -293,6 +293,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("modifySchemaInAggregate.kt")
+  public void testModifySchemaInAggregate() {
+    runTest("testData/box/modifySchemaInAggregate.kt");
+  }
+
+  @Test
   @TestMetadata("moveAfter.kt")
   public void testMoveAfter() {
     runTest("testData/box/moveAfter.kt");
