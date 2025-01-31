@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -146,21 +147,20 @@ internal class StubBasedFirTypeDeserializer(
                 return deserializeClassType(type)
             }
             is KotlinFlexibleTypeBean -> {
-                val lowerBound = type(type.lowerBound)
-                val upperBound = type(type.upperBound)
-                return ConeFlexibleType(
-                    lowerBound as? ConeSimpleKotlinType
-                        ?: errorWithAttachment("Unexpected lower bound ${lowerBound?.let { it::class }}") {
-                            withConeTypeEntry("lowerBound", lowerBound)
-                        },
-                    upperBound as? ConeSimpleKotlinType
-                        ?: errorWithAttachment("Unexpected lower bound ${upperBound?.let { it::class }}") {
-                            withConeTypeEntry("upperBound", upperBound)
-                        },
-                )
+                val lowerBound = type(type.lowerBound).asRigidType
+                val upperBound = type(type.upperBound).asRigidType
+                return ConeFlexibleType(lowerBound, upperBound)
             }
         }
     }
+
+    private val ConeKotlinType?.asRigidType: ConeRigidType
+        get() = when (this) {
+            is ConeRigidType -> this
+            null, is ConeFlexibleType -> errorWithAttachment("Unexpected cone type ${this?.let { it::class.simpleName }}") {
+                withConeTypeEntry("bound", this@asRigidType)
+            }
+        }
 
     private fun deserializeClassType(typeBean: KotlinClassTypeBean): ConeClassLikeType {
         val projections = typeBean.arguments.map { typeArgumentBean ->

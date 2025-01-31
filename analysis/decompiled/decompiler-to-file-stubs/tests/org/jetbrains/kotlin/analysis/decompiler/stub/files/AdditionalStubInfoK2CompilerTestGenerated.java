@@ -42,6 +42,12 @@ public class AdditionalStubInfoK2CompilerTestGenerated extends AbstractAdditiona
   }
 
   @Test
+  @TestMetadata("FlexibleDnnType")
+  public void testFlexibleDnnType() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/FlexibleDnnType/");
+  }
+
+  @Test
   @TestMetadata("OuterClassesWithFlexibleArgs")
   public void testOuterClassesWithFlexibleArgs() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/OuterClassesWithFlexibleArgs/");

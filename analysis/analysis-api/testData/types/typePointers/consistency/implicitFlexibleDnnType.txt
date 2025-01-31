@@ -1,0 +1,236 @@
+Restored type is the same as the original one
+
+KaFlexibleType:
+  abbreviation: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: java/util/function/Function
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: Function
+        symbol: KaNamedClassSymbol(java/util/function/Function)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaDefinitelyNotNullType:
+              abbreviation: null
+              annotations: []
+              nullability: NON_NULLABLE
+              original: KaTypeParameterType:
+                abbreviation: null
+                annotations: []
+                name: T
+                nullability: NON_NULLABLE
+                symbol: KaTypeParameterSymbol(T)
+            nullability: UNKNOWN
+            upperBound: KaTypeParameterType:
+              abbreviation: null
+              annotations: []
+              name: T
+              nullability: NULLABLE
+              symbol: KaTypeParameterSymbol(T)
+        ]
+    ]
+    symbol: KaNamedClassSymbol(java/util/function/Function)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaDefinitelyNotNullType:
+          abbreviation: null
+          annotations: []
+          nullability: NON_NULLABLE
+          original: KaTypeParameterType:
+            abbreviation: null
+            annotations: []
+            name: T
+            nullability: NON_NULLABLE
+            symbol: KaTypeParameterSymbol(T)
+        nullability: UNKNOWN
+        upperBound: KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: T
+          nullability: NULLABLE
+          symbol: KaTypeParameterSymbol(T)
+    ]
+  nullability: UNKNOWN
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: java/util/function/Function
+    nullability: NULLABLE
+    qualifiers: [
+      qualifier:
+        name: Function
+        symbol: KaNamedClassSymbol(java/util/function/Function)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaDefinitelyNotNullType:
+              abbreviation: null
+              annotations: []
+              nullability: NON_NULLABLE
+              original: KaTypeParameterType:
+                abbreviation: null
+                annotations: []
+                name: T
+                nullability: NON_NULLABLE
+                symbol: KaTypeParameterSymbol(T)
+            nullability: UNKNOWN
+            upperBound: KaTypeParameterType:
+              abbreviation: null
+              annotations: []
+              name: T
+              nullability: NULLABLE
+              symbol: KaTypeParameterSymbol(T)
+        ]
+    ]
+    symbol: KaNamedClassSymbol(java/util/function/Function)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaDefinitelyNotNullType:
+          abbreviation: null
+          annotations: []
+          nullability: NON_NULLABLE
+          original: KaTypeParameterType:
+            abbreviation: null
+            annotations: []
+            name: T
+            nullability: NON_NULLABLE
+            symbol: KaTypeParameterSymbol(T)
+        nullability: UNKNOWN
+        upperBound: KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: T
+          nullability: NULLABLE
+          symbol: KaTypeParameterSymbol(T)
+    ]

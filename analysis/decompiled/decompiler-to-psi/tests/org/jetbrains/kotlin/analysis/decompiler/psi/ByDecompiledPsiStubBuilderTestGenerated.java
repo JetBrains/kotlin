@@ -162,6 +162,12 @@ public class ByDecompiledPsiStubBuilderTestGenerated extends AbstractByDecompile
   }
 
   @Test
+  @TestMetadata("FlexibleDnnType")
+  public void testFlexibleDnnType() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FlexibleDnnType/");
+  }
+
+  @Test
   @TestMetadata("FlexibleTypes")
   public void testFlexibleTypes() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FlexibleTypes/");

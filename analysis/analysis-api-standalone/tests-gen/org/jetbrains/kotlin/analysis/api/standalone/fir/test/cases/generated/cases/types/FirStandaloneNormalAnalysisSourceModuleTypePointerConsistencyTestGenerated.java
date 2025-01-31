@@ -82,6 +82,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   }
 
   @Test
+  @TestMetadata("classTypeWithNestedDefinitelyNotNullType.kt")
+  public void testClassTypeWithNestedDefinitelyNotNullType() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/classTypeWithNestedDefinitelyNotNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("definitelyNotNullType.kt")
+  public void testDefinitelyNotNullType() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/definitelyNotNullType.kt");
+  }
+
+  @Test
   @TestMetadata("dynamicType.kt")
   public void testDynamicType() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/dynamicType.kt");
@@ -106,9 +118,21 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   }
 
   @Test
+  @TestMetadata("implicitFlexibleDnnType.kt")
+  public void testImplicitFlexibleDnnType() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/implicitFlexibleDnnType.kt");
+  }
+
+  @Test
   @TestMetadata("intersectionType.kt")
   public void testIntersectionType() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/intersectionType.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedDefinitelyNotNullType.kt")
+  public void testNestedDefinitelyNotNullType() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/nestedDefinitelyNotNullType.kt");
   }
 
   @Test

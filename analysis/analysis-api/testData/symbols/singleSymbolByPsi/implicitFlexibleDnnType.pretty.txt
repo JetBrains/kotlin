@@ -1,0 +1,1 @@
+val propertyWithFlexibleDnnImplicitType: java.util.function.Function<kotlin.String!, (T & kotlin.Any..T?)>!

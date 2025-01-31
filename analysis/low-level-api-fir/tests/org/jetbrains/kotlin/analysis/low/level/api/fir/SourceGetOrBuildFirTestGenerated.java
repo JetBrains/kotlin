@@ -1182,6 +1182,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("definitelyNotNullType.kt")
+    public void testDefinitelyNotNullType() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/definitelyNotNullType.kt");
+    }
+
+    @Test
     @TestMetadata("functionalType.kt")
     public void testFunctionalType() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/functionalType.kt");
