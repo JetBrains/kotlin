@@ -45,7 +45,7 @@ abstract class PerformanceManager(private val presentableName: String) {
     private var irLoweringStart: Long = 0
     private var irGenerationStart: Long = 0
 
-    private var targetDescription: String? = null
+    var targetDescription: String? = null
     protected var files: Int? = null
     protected var lines: Int? = null
 
@@ -73,13 +73,10 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     private fun deltaTime(start: Long): Long = currentTime() - start
 
-    open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
+    open fun notifyCompilerInitialized() {
         if (!isEnabled) return
-        recordInitializationTime()
-
-        this.files = files
-        this.lines = lines
-        this.targetDescription = targetDescription
+        val time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - initStartNanos)
+        measurements += CompilerInitializationMeasurement(time)
     }
 
     open fun notifyCompilationFinished() {
@@ -183,11 +180,6 @@ abstract class PerformanceManager(private val presentableName: String) {
 
         val bean = ManagementFactory.getCompilationMXBean() ?: return
         measurements += JitCompilationMeasurement(bean.totalCompilationTime)
-    }
-
-    private fun recordInitializationTime() {
-        val time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - initStartNanos)
-        measurements += CompilerInitializationMeasurement(time)
     }
 
     private fun recordPerfCountersMeasurements() {

@@ -90,7 +90,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         val performanceManager = configuration.perfManager
-        performanceManager?.notifyCompilerInitialized(files = 0, lines = 0, targetDescription)
+        performanceManager?.apply {
+            this.targetDescription = targetDescription
+            notifyCompilerInitialized()
+        }
 
         val sources = sourcesProvider()
         val allSources = sources.allFiles
