@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
@@ -248,7 +249,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration[CLIConfigurationKeys.PERF_MANAGER]?.let {
                 it.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
                 it.setTargetDescription(targetDescription)
-                it.notifyCompilerInitialized()
+                it.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             }
 
             return if (messageCollector.hasErrors()) null else environment

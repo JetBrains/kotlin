@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 
 class K2NativeCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Native Compiler") {
 
@@ -51,20 +52,20 @@ var CompilerConfiguration.performanceManager: CommonCompilerPerformanceManager?
     }
 
 internal inline fun <T> CommonCompilerPerformanceManager?.trackAnalysis(fn: () -> T): T {
-    this?.notifyAnalysisStarted()
+    this?.notifyPhaseMeasurementStarted(PhaseMeasurementType.Analysis)
     try {
         return fn()
     } finally {
-        this?.notifyAnalysisFinished()
+        this?.notifyPhaseMeasurementFinished(PhaseMeasurementType.Analysis)
     }
 }
 
 internal inline fun <T> CommonCompilerPerformanceManager?.trackIRTranslation(fn: () -> T): T {
-    this?.notifyIRTranslationStarted()
+    this?.notifyPhaseMeasurementStarted(PhaseMeasurementType.IrTranslation)
     try {
         return fn()
     } finally {
-        this?.notifyIRTranslationFinished()
+        this?.notifyPhaseFinished(PhaseMeasurementType.IrTranslation)
     }
 }
 
@@ -78,10 +79,10 @@ internal inline fun <T> CommonCompilerPerformanceManager?.trackGeneration(fn: ()
 }
 
 internal inline fun <T> CommonCompilerPerformanceManager?.trackIRLowering(fn: () -> T): T {
-    this?.notifyIRLoweringStarted()
+    this?.notifyPhaseMeasurementStarted(PhaseMeasurementType.IrLowering)
     try {
         return fn()
     } finally {
-        this?.notifyIRLoweringFinished()
+        this?.notifyPhaseMeasurementFinished(PhaseMeasurementType.IrLowering)
     }
 }

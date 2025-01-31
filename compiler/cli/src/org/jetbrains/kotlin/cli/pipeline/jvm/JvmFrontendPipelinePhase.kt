@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 
@@ -91,7 +92,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val performanceManager = configuration.perfManager
         performanceManager?.let {
             it.setTargetDescription(targetDescription)
-            it.notifyCompilerInitialized()
+            it.notifyPhaseFinished(PhaseMeasurementType.Initialization)
         }
 
         val sources = sourcesProvider()
@@ -108,7 +109,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        performanceManager?.notifyAnalysisStarted()
+        performanceManager?.notifyPhaseStarted(PhaseMeasurementType.Analysis)
         val sourceScope: AbstractProjectFileSearchScope
         when (configuration.useLightTree) {
             true -> {

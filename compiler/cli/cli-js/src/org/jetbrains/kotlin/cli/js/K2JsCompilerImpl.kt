@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 class Ir2JsTransformer private constructor(
@@ -104,7 +105,7 @@ class Ir2JsTransformer private constructor(
 
         val mode = TranslationMode.fromFlags(dce, granularity, minimizedMemberNames)
         return transformer
-            .also { performanceManager?.notifyBackendOrMetadataGenerationStarted() }
+            .also { performanceManager?.notifyPhaseStarted(PhaseMeasurementType.BackendOrMetadataGeneration) }
             .makeJsCodeGenerator(ir.allModules, mode)
     }
 
@@ -112,7 +113,7 @@ class Ir2JsTransformer private constructor(
         return makeJsCodeGenerator()
             .generateJsCode(relativeRequirePath = true, outJsProgram = false)
             .also {
-                performanceManager?.notifyBackendOrMetadataGenerationFinished()
+                performanceManager?.notifyPhaseFinished(PhaseMeasurementType.BackendOrMetadataGeneration)
             }
     }
 }
@@ -173,7 +174,7 @@ internal class K2JsCompilerImpl(
         performanceManager?.let {
             it.setTargetDescription("$moduleName-${configuration.moduleKind}")
             it.addSourcesStats(sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
-            it.notifyCompilerInitialized()
+            it.notifyPhaseFinished(PhaseMeasurementType.Initialization)
         }
 
         return environmentForJS
@@ -194,13 +195,13 @@ internal class K2JsCompilerImpl(
             arguments.granularity,
             arguments.dtsStrategy
         )
-        performanceManager?.notifyIRTranslationFinished()
+        performanceManager?.notifyPhaseFinished(PhaseMeasurementType.IrTranslation)
         return OK
     }
 
     override fun compileNoIC(mainCallArguments: List<String>?, module: ModulesStructure, moduleKind: ModuleKind?): ExitCode {
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyIRTranslationFinished()
+            performanceManager?.notifyPhaseFinished(PhaseMeasurementType.IrTranslation)
             return OK
         }
 

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 import java.io.IOException
@@ -39,7 +40,7 @@ object WebConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>
     override fun executePhase(input: ArgumentsPipelineArtifact<K2JSCompilerArguments>): ConfigurationPipelineArtifact? {
         return super.executePhase(input)?.also {
             input.performanceManager.setTargetDescription(input.arguments.moduleName ?: "")
-            input.performanceManager.notifyCompilerInitialized()
+            input.performanceManager.notifyPhaseFinished(PhaseMeasurementType.Initialization)
         }
     }
 

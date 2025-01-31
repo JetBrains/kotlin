@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 
 @RequiresOptIn(message = "In compiler:cli, please use FrontendContext extensions instead")
 annotation class IncrementalCompilationApi
@@ -58,7 +59,7 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     friendPaths: List<String>,
 ): FirResult {
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyAnalysisStarted()
+    performanceManager?.notifyPhaseStarted(PhaseMeasurementType.Analysis)
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
 
@@ -99,6 +100,6 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
 
-    performanceManager?.notifyAnalysisFinished()
+    performanceManager?.notifyPhaseFinished(PhaseMeasurementType.Analysis)
     return FirResult(outputs)
 }

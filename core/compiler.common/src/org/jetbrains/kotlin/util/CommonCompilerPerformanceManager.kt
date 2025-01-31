@@ -81,51 +81,15 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         this.lines = this.lines?.plus(lines) ?: lines
     }
 
-    open fun notifyCompilerInitialized() {
-        finishPhaseMeasurement(PhaseMeasurementType.Initialization)
-    }
-
-    open fun notifyAnalysisStarted() {
-        startPhaseMeasurement(PhaseMeasurementType.Analysis)
-    }
-
-    open fun notifyAnalysisFinished() {
-        finishPhaseMeasurement(PhaseMeasurementType.Analysis)
-    }
-
-    open fun notifyIRTranslationStarted() {
-        startPhaseMeasurement(PhaseMeasurementType.IrTranslation)
-    }
-
-    open fun notifyIRTranslationFinished() {
-        finishPhaseMeasurement(PhaseMeasurementType.IrTranslation)
-    }
-
-    open fun notifyIRLoweringStarted() {
-        startPhaseMeasurement(PhaseMeasurementType.IrLowering)
-    }
-
-    open fun notifyIRLoweringFinished() {
-        finishPhaseMeasurement(PhaseMeasurementType.IrLowering)
-    }
-
-    open fun notifyBackendOrMetadataGenerationStarted() {
-        startPhaseMeasurement(PhaseMeasurementType.BackendOrMetadataGeneration)
-    }
-
-    open fun notifyBackendOrMetadataGenerationFinished() {
-        finishPhaseMeasurement(PhaseMeasurementType.BackendOrMetadataGeneration)
-    }
-
-    private fun startPhaseMeasurement(newPhaseType: PhaseMeasurementType) {
-        assert(phaseStartNanos == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
-        assert(newPhaseType > currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
+    fun notifyPhaseStarted(phaseType: PhaseMeasurementType) {
+        assert(phaseStartNanos == null) { "The measurement for phase $currentPhaseType must have been finished before starting $phaseType" }
+        assert(phaseType > currentPhaseType) { "The measurement for phase $phaseType must be performed before $currentPhaseType" }
 
         phaseStartNanos = currentTime()
-        currentPhaseType = newPhaseType
+        currentPhaseType = phaseType
     }
 
-    private fun finishPhaseMeasurement(phaseType: PhaseMeasurementType) {
+    fun notifyPhaseFinished(phaseType: PhaseMeasurementType) {
         assert(phaseType == currentPhaseType) { "The measurement for phase $currentPhaseType must be finished before finishing $phaseType" }
         assert(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
 
