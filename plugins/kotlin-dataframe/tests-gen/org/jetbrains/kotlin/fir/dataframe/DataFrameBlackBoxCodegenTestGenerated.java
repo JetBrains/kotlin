@@ -509,6 +509,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("toDataFrame_local_class.kt")
+  public void testToDataFrame_local_class() {
+    runTest("testData/box/toDataFrame_local_class.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame_nested.kt")
   public void testToDataFrame_nested() {
     runTest("testData/box/toDataFrame_nested.kt");
@@ -530,6 +536,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("toDataFrame_nullableSubtree.kt")
   public void testToDataFrame_nullableSubtree() {
     runTest("testData/box/toDataFrame_nullableSubtree.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrame_private_class.kt")
+  public void testToDataFrame_private_class() {
+    runTest("testData/box/toDataFrame_private_class.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrame_private_properties.kt")
+  public void testToDataFrame_private_properties() {
+    runTest("testData/box/toDataFrame_private_properties.kt");
   }
 
   @Test
