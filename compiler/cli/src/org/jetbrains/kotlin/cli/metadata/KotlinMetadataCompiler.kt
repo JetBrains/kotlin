@@ -113,7 +113,9 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         val mode = if (arguments.metadataKlib) "KLib" else "metadata"
 
         val sourceFiles = environment.getSourceFiles()
-        performanceManager.notifyCompilerInitialized(sourceFiles.size, environment.countLinesOfCode(sourceFiles), "$mode mode for $moduleName module")
+        performanceManager.setTargetDescription("$mode mode for $moduleName module")
+        performanceManager.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+        performanceManager.notifyCompilerInitialized()
 
         if (environment.getSourceFiles().isEmpty()) {
             if (arguments.version) {

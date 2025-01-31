@@ -72,20 +72,17 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         recordJitCompilationTime()
     }
 
+    open fun setTargetDescription(description: String) {
+        targetDescription = description
+    }
+
     open fun addSourcesStats(files: Int, lines: Int) {
-        if (!isEnabled) return
         this.files = this.files?.plus(files) ?: files
         this.lines = this.lines?.plus(lines) ?: lines
     }
 
-    open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
-        if (!isEnabled) return
-
+    open fun notifyCompilerInitialized() {
         finishPhaseMeasurement(PhaseMeasurementType.Initialization)
-
-        this.files = files
-        this.lines = lines
-        this.targetDescription = targetDescription
     }
 
     open fun notifyAnalysisStarted() {

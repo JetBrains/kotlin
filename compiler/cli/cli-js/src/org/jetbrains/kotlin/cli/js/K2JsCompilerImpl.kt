@@ -170,9 +170,11 @@ internal class K2JsCompilerImpl(
             return null
         }
 
-        performanceManager?.notifyCompilerInitialized(
-            sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles), "$moduleName-${configuration.moduleKind}"
-        )
+        performanceManager?.let {
+            it.setTargetDescription("$moduleName-${configuration.moduleKind}")
+            it.addSourcesStats(sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
+            it.notifyCompilerInitialized()
+        }
 
         return environmentForJS
     }

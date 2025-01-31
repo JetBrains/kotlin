@@ -38,7 +38,8 @@ object WebConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>
 ) {
     override fun executePhase(input: ArgumentsPipelineArtifact<K2JSCompilerArguments>): ConfigurationPipelineArtifact? {
         return super.executePhase(input)?.also {
-            input.performanceManager.notifyCompilerInitialized(files = 0, lines = 0, targetDescription = input.arguments.moduleName ?: "")
+            input.performanceManager.setTargetDescription(input.arguments.moduleName ?: "")
+            input.performanceManager.notifyCompilerInitialized()
         }
     }
 

@@ -245,9 +245,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val sourceFiles = environment.getSourceFiles()
-            configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized(
-                sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription
-            )
+            configuration[CLIConfigurationKeys.PERF_MANAGER]?.let {
+                it.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+                it.setTargetDescription(targetDescription)
+                it.notifyCompilerInitialized()
+            }
 
             return if (messageCollector.hasErrors()) null else environment
         }
