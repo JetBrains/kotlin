@@ -357,6 +357,11 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
         args: K2JVMCompilerArguments,
     ) {
+        // Skip check in KMP projects and no Java sources
+        if (multiplatformStructure.fragments.get().isNotEmpty() &&
+            javaSources.isEmpty
+        ) return
+
         val severity = when (jvmTargetValidationMode.get()) {
             JvmTargetValidationMode.ERROR -> ToolingDiagnostic.Severity.FATAL
             JvmTargetValidationMode.WARNING -> ToolingDiagnostic.Severity.WARNING

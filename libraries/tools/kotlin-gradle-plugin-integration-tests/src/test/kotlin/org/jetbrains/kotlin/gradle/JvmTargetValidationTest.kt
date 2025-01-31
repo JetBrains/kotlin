@@ -481,6 +481,28 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @MppGradlePluginTests
+    @DisplayName("Validation should not run in MPP on empty Java sources")
+    @GradleTest
+    internal fun testMppJvmNoValidationOnEmptyJavaSources(gradleVersion: GradleVersion) {
+        project("mpp-single-jvm-target", gradleVersion) {
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            buildScriptInjection {
+                java.targetCompatibility = JavaVersion.VERSION_11
+                java.sourceCompatibility = JavaVersion.VERSION_11
+            }
+
+            build(":compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+            }
+        }
+    }
+
     private fun TestProject.setJavaCompilationCompatibility(
         target: JavaVersion
     ) {
