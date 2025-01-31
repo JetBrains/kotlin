@@ -52,6 +52,7 @@ data class PublishedProject(
         val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
         val jar: File get() = path.resolve("${artifactsPrefix}.jar")
         val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
+        val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
     }
 
     val rootCoordinate: String = "$group:$name:$version"

@@ -498,6 +498,23 @@ class UklibPublicationIT : KGPBaseTest() {
         )
     }
 
+    @GradleTest
+    fun `uklib publication layout - we only output 1 component with Gradle metadata with appropriate number of variants`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = publishUklib(
+            gradleVersion = gradleVersion,
+        ) {
+            jvm()
+            iosX64()
+            iosArm64()
+            sourceSets.commonMain.get().compileSource("class Common")
+        }.publishedProject
+
+        val f = producer.rootComponent.gradleMetadata
+        println(f)
+    }
+
     @kotlinx.serialization.Serializable
     data class Fragment(
         val identifier: String,

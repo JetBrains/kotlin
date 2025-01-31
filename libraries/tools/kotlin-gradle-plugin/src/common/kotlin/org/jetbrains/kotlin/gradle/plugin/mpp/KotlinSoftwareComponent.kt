@@ -66,7 +66,7 @@ abstract class KotlinSoftwareComponent(
             }.toSet()
     }
 
-    override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
+    override fun getVariants(): Set<SoftwareComponent> = if (project.kotlinPropertiesProvider.publishUklib) emptySet() else _variants.getOrThrow()
 
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
