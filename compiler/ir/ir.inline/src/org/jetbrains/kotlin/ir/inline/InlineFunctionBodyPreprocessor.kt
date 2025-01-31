@@ -94,47 +94,41 @@ internal class InlineFunctionBodyPreprocessor(
             val classifier = type.classifier
             val substitutedType = typeArguments?.get(classifier)
 
-            if (leaveNonReifiedAsIs && classifier is IrTypeParameterSymbol && !classifier.owner.isReified) {
-                return type
-            }
+            return when {
+                leaveNonReifiedAsIs && classifier is IrTypeParameterSymbol && !classifier.owner.isReified -> type
 
-            // Erase non-reified type parameter if asked to.
-            if (erasedParameters != null && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false) {
+                // Erase non-reified type parameter if asked to.
+                erasedParameters != null && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false -> {
+                    if (classifier in erasedParameters) {
+                        return null
+                    }
 
-                if (classifier in erasedParameters) {
-                    return null
+                    erasedParameters.add(classifier)
+
+                    // Pick the (necessarily unique) non-interface upper bound if it exists.
+                    val superTypes = classifier.owner.superTypes
+                    val superClass = superTypes.firstOrNull {
+                        it.classOrNull?.owner?.isInterface == false
+                    }
+
+                    val upperBound = superClass ?: superTypes.first()
+
+                    // TODO: Think about how to reduce complexity from k^N to N^k
+                    val erasedUpperBound = remapType(upperBound, erasedParameters, leaveNonReifiedAsIs)
+                        ?: error("Cannot erase upperbound ${upperBound.render()}")
+
+                    erasedParameters.remove(classifier)
+
+                    erasedUpperBound.mergeNullability(type)
                 }
-
-                erasedParameters.add(classifier)
-
-                // Pick the (necessarily unique) non-interface upper bound if it exists.
-                val superTypes = classifier.owner.superTypes
-                val superClass = superTypes.firstOrNull {
-                    it.classOrNull?.owner?.isInterface == false
+                substitutedType is IrDynamicType -> substitutedType
+                substitutedType is IrSimpleType -> substitutedType.mergeNullability(type)
+                else -> type.buildSimpleType {
+                    kotlinType = null
+                    this.classifier = symbolRemapper.getReferencedClassifier(classifier)
+                    arguments = remapTypeArguments(type.arguments, erasedParameters, leaveNonReifiedAsIs)
+                    annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
                 }
-
-                val upperBound = superClass ?: superTypes.first()
-
-                // TODO: Think about how to reduce complexity from k^N to N^k
-                val erasedUpperBound = remapType(upperBound, erasedParameters, leaveNonReifiedAsIs)
-                    ?: error("Cannot erase upperbound ${upperBound.render()}")
-
-                erasedParameters.remove(classifier)
-
-                return erasedUpperBound.mergeNullability(type)
-            }
-
-            if (substitutedType is IrDynamicType) return substitutedType
-
-            if (substitutedType is IrSimpleType) {
-                return substitutedType.mergeNullability(type)
-            }
-
-            return type.buildSimpleType {
-                kotlinType = null
-                this.classifier = symbolRemapper.getReferencedClassifier(classifier)
-                arguments = remapTypeArguments(type.arguments, erasedParameters, leaveNonReifiedAsIs)
-                annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
             }
         }
     }
