@@ -146,9 +146,11 @@ class KonanDriver(
 
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
         val sourcesFiles = environment.getSourceFiles()
-        performanceManager?.notifyCompilerInitialized(
-                sourcesFiles.size, environment.countLinesOfCode(sourcesFiles), "${konanConfig.moduleId}-${konanConfig.produce}"
-        )
+        performanceManager?.apply {
+            targetDescription = "${konanConfig.moduleId}-${konanConfig.produce}"
+            addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
+            notifyCompilerInitialized()
+        }
 
         DynamicCompilerDriver(performanceManager).run(konanConfig, environment)
     }

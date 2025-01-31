@@ -184,7 +184,10 @@ open class IncrementalFirJvmCompilerRunner(
             val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
             val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-            performanceManager?.notifyCompilerInitialized(0, 0, "${targetId.name}-${targetId.type}")
+            performanceManager?.apply {
+                targetDescription = "${targetId.name}-${targetId.type}"
+                notifyCompilerInitialized()
+            }
 
             // !! main class - maybe from cache?
             var mainClassFqName: FqName? = null
