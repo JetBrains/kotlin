@@ -439,7 +439,12 @@ internal class ClassMemberGenerator(
                     )
                 else ->
                     factory.createExpressionBody(
-                        visitor.convertToIrExpression(firDefaultValue)
+                        visitor.convertToIrExpression(firDefaultValue).prepareExpressionForGivenExpectedType(
+                            this@ClassMemberGenerator,
+                            firDefaultValue,
+                            firDefaultValue.resolvedType,
+                            firValueParameter.returnTypeRef.coneType,
+                        )
                     )
             }
         }
