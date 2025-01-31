@@ -23,13 +23,10 @@ import org.jetbrains.kotlin.name.withClassId
 abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
     val appropriateCandidatesForArgument: Map<ClassId, ClassId>,
     mppKind: MppCheckerKind,
-    vararg val problematicCallableIds: CallableId,
+    firstProblematicCallableId: CallableId,
+    vararg remainingProblematicCallableIds: CallableId,
 ) : FirFunctionCallChecker(mppKind) {
-    init {
-        if (problematicCallableIds.isEmpty()) {
-            error("If no `CallableId`s are passed, this checker is useless")
-        }
-    }
+    val problematicCallableIds: Set<CallableId> = setOf(firstProblematicCallableId, *remainingProblematicCallableIds)
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val callable = expression.calleeReference.resolved?.resolvedSymbol as? FirFunctionSymbol<*> ?: return
