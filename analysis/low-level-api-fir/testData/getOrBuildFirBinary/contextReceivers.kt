@@ -6,7 +6,7 @@ context(String)
 class C {
     constructor() {}
 
-    context(String)
+    context(Int)
     constructor(a: Any) {}
 
     context(String) fun foo() {}

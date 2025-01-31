@@ -41,6 +41,11 @@ class Clazz2 {
     <!CONTEXT_CLASS_OR_CONSTRUCTOR!>constructor()<!>
 }
 
+class Clazz3 {
+    <!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
+    constructor()
+}
+
 fun typeRef(body: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit): <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit {
     val x: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit = body
     val y = body

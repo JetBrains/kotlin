@@ -41,6 +41,11 @@ class Clazz2 {
     constructor()
 }
 
+class Clazz3 {
+    context(<!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)
+    constructor()
+}
+
 fun typeRef(body: context(A) () -> Unit): context(A) () -> Unit {
     val x: context(A) () -> Unit = body
     val y = body

@@ -53,8 +53,6 @@ import kotlin.contracts.contract
 abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context: Context<T> = Context()) {
     val baseModuleData: FirModuleData = baseSession.moduleData
 
-    protected val contextParameterEnabled: Boolean = baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
-
     abstract fun T.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
 
     protected val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType

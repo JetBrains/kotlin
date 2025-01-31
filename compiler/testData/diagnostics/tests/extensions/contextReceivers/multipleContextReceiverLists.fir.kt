@@ -11,6 +11,6 @@ val bar: String get() = ""
 class C
 
 class D {
-    <!MULTIPLE_CONTEXT_LISTS!>context(String)<!> context(Int)
+    <!MULTIPLE_CONTEXT_LISTS!><!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(String)<!> context(Int)
     constructor()
 }

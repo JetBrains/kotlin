@@ -1176,9 +1176,7 @@ class LightTreeRawFirDeclarationBuilder(
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
                 this.contextParameters.addContextParameters(classWrapper.modifiers.contextList, constructorSymbol)
-                if (contextParameterEnabled) {
-                    this.contextParameters.addContextParameters(modifiers?.contextList, constructorSymbol)
-                }
+                this.contextParameters.addContextParameters(modifiers?.contextList, constructorSymbol)
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
                 target.bind(it)
