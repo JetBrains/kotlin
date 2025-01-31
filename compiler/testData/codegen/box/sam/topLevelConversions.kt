@@ -8,11 +8,11 @@ fun interface MyFun {
 
 val topLevel: MyFun = { it.length }
 
-//fun baz(x: MyFun = { it.length }): MyFun = x
+fun baz(x: MyFun = { it.length }): MyFun = x
 
-//class A(
-//    val classMember: MyFun = { it.length }
-//)
+class A(
+    val classMember: MyFun = { it.length }
+)
 
 fun returnExpr(): MyFun = { it.length }
 
@@ -25,8 +25,8 @@ val withGetter: MyFun
 
 fun box(): String {
     if (topLevel.foo("OK") != 2) return "fail"
-    //if (baz().foo("OK") != 2) return "fail"
-    //if (A().classMember.foo("OK") != 2) return "fail"
+    if (baz().foo("OK") != 2) return "fail"
+    if (A().classMember.foo("OK") != 2) return "fail"
     if (returnExpr().foo("OK") != 2) return "fail"
     if (returnExplicit().foo("OK") != 2) return "fail"
     if (withGetter.foo("OK") != 2) return "fail"
