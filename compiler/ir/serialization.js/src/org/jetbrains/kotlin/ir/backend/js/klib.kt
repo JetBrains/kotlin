@@ -648,7 +648,7 @@ fun serializeModuleIntoKlib(
 
     val fullSerializedIr = serializerOutput.serializedIr ?: error("Metadata-only KLIBs are not supported in Kotlin/JS")
 
-    val customAbiVersion: KotlinAbiVersion? = configuration.get(CUSTOM_KLIB_ABI_VERSION)?.parseCustomKotlinAbiVersion()
+    val customAbiVersion: KotlinAbiVersion? = configuration.get(CUSTOM_KLIB_ABI_VERSION)
 
     val versions = KotlinLibraryVersioning(
         abiVersion = customAbiVersion ?: abiVersion,

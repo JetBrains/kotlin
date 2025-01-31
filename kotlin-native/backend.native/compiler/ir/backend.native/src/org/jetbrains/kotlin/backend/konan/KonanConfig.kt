@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.library.parseCustomKotlinAbiVersion
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -314,8 +312,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val headerKlibPath get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
 
-    internal val customAbiVersion: KotlinAbiVersion?
-        get() = configuration.get(CUSTOM_KLIB_ABI_VERSION)?.parseCustomKotlinAbiVersion()
+    internal val customAbiVersion get() = configuration.get(CUSTOM_KLIB_ABI_VERSION)
 
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 

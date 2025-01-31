@@ -258,6 +258,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             arguments.duplicatedUniqueNameStrategy,
             default = DuplicatedUniqueNameStrategy.DENY
         )
+        configuration.customKlibAbiVersion = arguments.parseCustomKotlinAbiVersion(configuration.messageCollector)
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
             val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
             configuration.messageCollector.report(ERROR, message, location = null)

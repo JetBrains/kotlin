@@ -120,6 +120,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             )
         )
 
+        configuration.putIfNotNull(
+            KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION,
+            arguments.parseCustomKotlinAbiVersion(configuration.messageCollector)
+        )
+
         return environment
     }
 

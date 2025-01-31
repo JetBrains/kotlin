@@ -26,14 +26,6 @@ fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
     }
 }
 
-fun String.parseCustomKotlinAbiVersion(): KotlinAbiVersion {
-    val versionParts = split('.')
-    require(versionParts.size == 3) { "Invalid ABI version format. Expected format: <major>.<minor>.<patch>" }
-    val version = versionParts.mapNotNull { it.toIntOrNull() }
-    require(version.size == 3 && version.all { it in 0..255 }) { "Invalid ABI version numbers. Each part must be in the range 0..255." }
-    return KotlinAbiVersion(version[0], version[1], version[2])
-}
-
 // TODO: consider inheriting this class from BinaryVersion (but that requires a module structure refactoring.)
 //  Advantages: code reuse.
 //  Disadvantages: BinaryVersion is a problematic class, because it doesn't represent any logical entity in the codebase, it's just a
