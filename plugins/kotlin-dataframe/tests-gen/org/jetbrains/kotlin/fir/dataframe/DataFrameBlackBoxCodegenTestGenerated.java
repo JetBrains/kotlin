@@ -131,6 +131,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("dropNA.kt")
+  public void testDropNA() {
+    runTest("testData/box/dropNA.kt");
+  }
+
+  @Test
   @TestMetadata("dropNulls.kt")
   public void testDropNulls() {
     runTest("testData/box/dropNulls.kt");
