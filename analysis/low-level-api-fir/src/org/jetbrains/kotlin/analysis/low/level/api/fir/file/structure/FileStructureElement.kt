@@ -318,6 +318,11 @@ internal class DeclarationStructureElement(
                     val psiStatements = psiBodyBlock?.statements
 
                     if (isPartiallyResolvable && session != null && psiStatements != null && psiStatements.size > 1) {
+                        // Although we don't require the body to be resolved here, its changes must invalidate the element provider.
+                        // Note that there might be changes in a number of statements, so here we keep the guarantee – a partial provider
+                        // is only created if there are more than one body statement.
+                        LLFirDeclarationModificationService.bodyResolved(declaration, phase = FirResolvePhase.BODY_RESOLVE)
+
                         return PartialBodyDeclarationFirElementProvider(declaration, psiDeclaration, psiBodyBlock, psiStatements, session)
                     }
                 }
