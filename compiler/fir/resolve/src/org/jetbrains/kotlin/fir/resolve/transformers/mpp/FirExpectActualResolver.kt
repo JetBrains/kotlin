@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
 import org.jetbrains.kotlin.fir.declarations.expectForActual
@@ -24,8 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
-import org.jetbrains.kotlin.utils.takeIfAllIsInstanceOrEmpty
-import org.jetbrains.kotlin.utils.takeIfAllOrEmpty
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -85,10 +84,12 @@ object FirExpectActualResolver {
                     }
                 }
                 is FirClassLikeSymbol<*> -> {
-                    actualSymbol.moduleData.allDependsOnDependencies
-                        .map { it.session.symbolProvider.getClassLikeSymbolByClassId(actualSymbol.classId) }
-                        .takeIfAllIsInstanceOrEmpty<FirRegularClassSymbol>()
-                        .takeIfAllOrEmpty { it.isExpect }
+                    val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
+                    transitiveDependsOn
+                        .mapNotNull { it.session.symbolProvider.getClassLikeSymbolByClassId(actualSymbol.classId) }
+                        .filter { it.isExpect && it.moduleData in transitiveDependsOn }
+                        .filterIsInstance<FirRegularClassSymbol>()
+                        .distinct()
                         .groupBy { AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol = it, actualSymbol, context) }
                 }
                 else -> emptyMap()

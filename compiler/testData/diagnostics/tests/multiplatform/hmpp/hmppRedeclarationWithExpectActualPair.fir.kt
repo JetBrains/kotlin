@@ -21,8 +21,8 @@ expect class C
 
 // MODULE: main()()(common, intermediate)
 
-<!DUPLICATE_CLASS_NAMES!>class A<!>
+<!DUPLICATE_CLASS_NAMES!>class <!ACTUAL_MISSING!>A<!><!>
 
-<!DUPLICATE_CLASS_NAMES!>actual class <!ACTUAL_WITHOUT_EXPECT!>B<!><!>
+<!DUPLICATE_CLASS_NAMES!>actual class B<!>
 
 <!DUPLICATE_CLASS_NAMES!>actual class C<!>
