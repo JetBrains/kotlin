@@ -10,4 +10,4 @@ expect class Foo
 
 // MODULE: main()()(common, intermediate)
 <!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
-actual class Foo
+<!AMBIGUOUS_EXPECTS!>actual<!> class Foo

@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.utils.takeIfAllIsInstanceOrEmpty
+import org.jetbrains.kotlin.utils.takeIfAllOrEmpty
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -84,15 +85,11 @@ object FirExpectActualResolver {
                     }
                 }
                 is FirClassLikeSymbol<*> -> {
-                    val expectClassSymbol = useSiteSession.dependenciesSymbolProvider
-                        .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return emptyMap()
-                    val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
-                    if (expectClassSymbol.isExpect && expectClassSymbol.moduleData in transitiveDependsOn) {
-                        val compatibility = AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol, actualSymbol, context)
-                        mapOf(compatibility to listOf(expectClassSymbol))
-                    } else {
-                        emptyMap()
-                    }
+                    actualSymbol.moduleData.allDependsOnDependencies
+                        .map { it.session.symbolProvider.getClassLikeSymbolByClassId(actualSymbol.classId) }
+                        .takeIfAllIsInstanceOrEmpty<FirRegularClassSymbol>()
+                        .takeIfAllOrEmpty { it.isExpect }
+                        .groupBy { AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol = it, actualSymbol, context) }
                 }
                 else -> emptyMap()
             }

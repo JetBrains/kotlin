@@ -25,6 +25,13 @@ fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
 infix fun <A, B> Collection<A>.zipIfSizesAreEqual(other: Collection<B>): List<Pair<A, B>>? =
     if (size == other.size) zip(other) else null
 
+@Suppress("INVISIBLE_REFERENCE", "UNCHECKED_CAST")
+public inline fun <reified R> Iterable<*>.takeIfAllIsInstanceOrEmpty(): Iterable<@kotlin.internal.NoInfer R> =
+    if (all { it is R }) this as Iterable<R> else emptyList()
+
+public inline fun <T> Iterable<T>.takeIfAllOrEmpty(predicate: (T) -> Boolean): Iterable<T> =
+    if (all(predicate)) this else emptyList()
+
 fun <K, V : Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
