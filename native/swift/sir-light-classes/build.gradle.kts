@@ -21,7 +21,7 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(projectTests(":native:analysis-api-based-test-utils"))
+    testImplementation(project(":native:analysis-api-based-test-utils"))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testRuntimeOnly(intellijJDom())
