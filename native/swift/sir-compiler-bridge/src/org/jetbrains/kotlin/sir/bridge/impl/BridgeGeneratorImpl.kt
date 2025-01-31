@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.bridge.impl
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.mangler.mangledNameOrNull
+import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.*
 
@@ -91,7 +92,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                         "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
                     }
                 )
-                if (request.callable.isInner) {
+                if (request.callable.origin is InnerInitSource) {
                     add(
                         request.initializationDescriptor(typeNamer).createFunctionBridge {
                             val args = argNames(this)

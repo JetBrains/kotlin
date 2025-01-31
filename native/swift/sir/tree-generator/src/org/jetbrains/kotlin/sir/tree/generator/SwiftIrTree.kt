@@ -138,7 +138,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("parameters", parameterType)
 
         +field("isConvenience", boolean)
-        +field("isInner", boolean)
         +field("isRequired", boolean)
 
         +field("isOverride", boolean)

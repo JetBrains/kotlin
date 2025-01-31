@@ -14,10 +14,7 @@ public fun Foo_Inner_init_allocate(): kotlin.native.internal.NativePtr {
 }
 
 @ExportedBridge("Foo_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Foo__")
-public fun Foo_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Foo__(
-    __kt: kotlin.native.internal.NativePtr,
-    outer: kotlin.native.internal.NativePtr,
-): Unit {
+public fun Foo_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Foo__(__kt: kotlin.native.internal.NativePtr, outer: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     val __outer = kotlin.native.internal.ref.dereferenceExternalRCRef(outer) as Foo
     kotlin.native.internal.initInstance(____kt, (__outer as Foo).Inner())

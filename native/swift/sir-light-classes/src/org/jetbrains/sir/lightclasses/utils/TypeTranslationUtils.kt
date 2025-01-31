@@ -76,7 +76,7 @@ private fun <P : KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol
 private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {
     return withSessions {
         val sirFromKtSymbol = this@getOuterParameterOfInnerClass
-        if (sirFromKtSymbol is SirInitFromKtSymbol && sirFromKtSymbol.isInner) {
+        if (sirFromKtSymbol is SirInitFromKtSymbol && isInner(sirFromKtSymbol)) {
             val outSymbol = (ktSymbol.containingSymbol?.containingSymbol as? KaNamedClassSymbol)
             val outType = outSymbol?.defaultType?.translateType(
                 this.useSiteSession,

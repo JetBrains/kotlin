@@ -197,7 +197,6 @@ internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() 
     override val documentation: String? = null
     override val isRequired: Boolean = false
     override val isConvenience: Boolean = false
-    override val isInner: Boolean = false
     override val isOverride: Boolean get() = overrideStatus is OverrideStatus.Overrides
     private val overrideStatus: OverrideStatus<SirInit>? by lazy { computeIsOverride() }
     override lateinit var parent: SirDeclarationParent

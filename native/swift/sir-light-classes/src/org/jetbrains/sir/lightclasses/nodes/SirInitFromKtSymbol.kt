@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.jetbrains.sir.lightclasses.utils.translateParameters
@@ -33,18 +35,14 @@ internal class SirInitFromKtSymbol(
 
     override val isFailable: Boolean = false
 
-    override val origin: SirOrigin by lazy {
-        KotlinSource(ktSymbol)
+    override val origin: SirOrigin by lazyWithSessions {
+        if (isInner(ktSymbol)) InnerInitSource(ktSymbol) else KotlinSource(ktSymbol)
     }
     override val parameters: List<SirParameter> by lazy {
         translateParameters()
     }
     override val documentation: String? by lazyWithSessions {
         ktSymbol.documentation()
-    }
-
-    override val isInner: Boolean by lazyWithSessions {
-        (ktSymbol.containingSymbol as? KaNamedClassSymbol)?.isInner ?: false
     }
 
     override val isRequired: Boolean = false
