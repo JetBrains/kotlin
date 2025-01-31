@@ -29946,6 +29946,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("expectsHmppRedeclaration.kt")
+        public void testExpectsHmppRedeclaration() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/expectsHmppRedeclaration.kt");
+        }
+
+        @Test
         @TestMetadata("hmppModalityClash.kt")
         public void testHmppModalityClash() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppModalityClash.kt");
