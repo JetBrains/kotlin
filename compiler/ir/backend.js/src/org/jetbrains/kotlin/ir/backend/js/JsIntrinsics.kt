@@ -125,6 +125,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val initMetadataForCoroutineSymbol = getInternalFunction("initMetadataForCoroutine")
     val initMetadataForFunctionReferenceSymbol = getInternalFunction("initMetadataForFunctionReference")
     val initMetadataForCompanionSymbol = getInternalFunction("initMetadataForCompanion")
+    val makeAssociatedObjectMapES5 = getInternalInRootPackage("makeAssociatedObjectMapES5")!!
+    val getAssociatedObjectId = getInternalInRootPackage("getAssociatedObjectId")!!
+    val nextAssociatedObjectId = getInternalFunction("nextAssociatedObjectId")
 
     val isInterfaceSymbol = getInternalFunction("isInterface")
     val isArraySymbol = getInternalFunction("isArray")
