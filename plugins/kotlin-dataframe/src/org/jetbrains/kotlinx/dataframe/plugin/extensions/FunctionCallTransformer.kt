@@ -328,6 +328,7 @@ class FunctionCallTransformer(
                 return if (element is FirResolvedNamedReference) {
                     @Suppress("UNCHECKED_CAST")
                     buildResolvedNamedReference {
+                        source = call.calleeReference.source
                         this.name = element.name
                         resolvedSymbol = originalSymbol
                     } as E
@@ -555,7 +556,7 @@ class FunctionCallTransformer(
                 }
             }
             schema.callShapeData = CallShapeData.Schema(properties)
-            scope.callShapeData = CallShapeData.Scope(properties)
+            scope.callShapeData = CallShapeData.Scope(properties, call.calleeReference.source)
             val schemaApi = DataSchemaApi(schema, scope)
             dataSchemaApis.add(schemaApi)
             return schemaApi
