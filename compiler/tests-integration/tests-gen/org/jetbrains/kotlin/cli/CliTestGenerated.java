@@ -1748,6 +1748,21 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/reportInternalDiagnosticNames.args");
     }
 
+    @TestMetadata("reportPerfK2.args")
+    public void testReportPerfK2() {
+      runTest("compiler/testData/cli/jvm/reportPerfK2.args");
+    }
+
+    @TestMetadata("reportPerfK2Psi.args")
+    public void testReportPerfK2Psi() {
+      runTest("compiler/testData/cli/jvm/reportPerfK2Psi.args");
+    }
+
+    @TestMetadata("reportPerfK2WithError.args")
+    public void testReportPerfK2WithError() {
+      runTest("compiler/testData/cli/jvm/reportPerfK2WithError.args");
+    }
+
     @TestMetadata("selfUpperBoundInference.args")
     public void testSelfUpperBoundInference() {
       runTest("compiler/testData/cli/jvm/selfUpperBoundInference.args");
@@ -1996,6 +2011,21 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
     }
 
+    @TestMetadata("reportPerfK2.args")
+    public void testReportPerfK2() {
+      runTest("compiler/testData/cli/js/reportPerfK2.args");
+    }
+
+    @TestMetadata("reportPerfK2Psi.args")
+    public void testReportPerfK2Psi() {
+      runTest("compiler/testData/cli/js/reportPerfK2Psi.args");
+    }
+
+    @TestMetadata("reportPerfK2WithError.args")
+    public void testReportPerfK2WithError() {
+      runTest("compiler/testData/cli/js/reportPerfK2WithError.args");
+    }
+
     @TestMetadata("simple2js.args")
     public void testSimple2js() {
       runTest("compiler/testData/cli/js/simple2js.args");
@@ -2157,6 +2187,21 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("optionalExpectationUsage.args")
     public void testOptionalExpectationUsage() {
       runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
+    }
+
+    @TestMetadata("reportPerfK2.args")
+    public void testReportPerfK2() {
+      runTest("compiler/testData/cli/metadata/reportPerfK2.args");
+    }
+
+    @TestMetadata("reportPerfK2Psi.args")
+    public void testReportPerfK2Psi() {
+      runTest("compiler/testData/cli/metadata/reportPerfK2Psi.args");
+    }
+
+    @TestMetadata("reportPerfK2WithError.args")
+    public void testReportPerfK2WithError() {
+      runTest("compiler/testData/cli/metadata/reportPerfK2WithError.args");
     }
 
     @TestMetadata("unsignedDeclarationsFromStdlib.args")

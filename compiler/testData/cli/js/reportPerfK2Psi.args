@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/../reportPerf.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+reportPerfK2Psi
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
+-Xuse-fir-lt=false
+-Xreport-perf=true
