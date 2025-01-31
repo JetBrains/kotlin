@@ -153,6 +153,7 @@ data class BuildOptions(
         val version: String? = System.getProperty("kotlinNativeVersion"),
         val cacheOrchestration: String? = null,
         val incremental: Boolean? = null,
+        val enableKlibsCrossCompilation: Boolean? = null,
     )
 
     fun toArguments(
@@ -357,6 +358,10 @@ data class BuildOptions(
         nativeOptions.incremental?.let {
             arguments.add("-Pkotlin.incremental.native=${it}")
         }
+        nativeOptions.enableKlibsCrossCompilation?.let {
+            arguments.add("-Pkotlin.native.enableKlibsCrossCompilation=${it}")
+        }
+
     }
 
     enum class ConfigurationCacheProblems {

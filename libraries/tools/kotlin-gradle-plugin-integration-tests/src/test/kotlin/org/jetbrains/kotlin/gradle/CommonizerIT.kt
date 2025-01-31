@@ -559,6 +559,38 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-74442: commonization should work for all known targets despite `kotlin.native.enableKlibsCrossCompilation` state")
+    @TestMetadata("commonize-KT-74442-not-supported-platforms")
+    @GradleTest
+    fun testCommonizationWorksForAllTargetsDespiteCrossCompilationFlagState(gradleVersion: GradleVersion) {
+        nativeProject("commonize-KT-74442-not-supported-platforms", gradleVersion) {
+
+            buildAndFail(
+                ":compileNativeMainKotlinMetadata",
+                buildOptions = defaultBuildOptions.copy(
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                        enableKlibsCrossCompilation = false
+                    )
+                )
+            ) {
+                assertTasksFailed(":compileNativeMainKotlinMetadata")
+                assertOutputContains("Unresolved reference 'AF_ATMPVC'")
+            }
+
+            buildAndFail(
+                ":compileNativeMainKotlinMetadata",
+                buildOptions = defaultBuildOptions.copy(
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                        enableKlibsCrossCompilation = true
+                    )
+                )
+            ) {
+                assertTasksFailed(":compileNativeMainKotlinMetadata")
+                assertOutputContains("Unresolved reference 'AF_ATMPVC'")
+            }
+        }
+    }
+
 
     private fun `test multiple cinterops with test source sets and compilations`(
         gradleVersion: GradleVersion,
@@ -602,12 +634,30 @@ open class CommonizerIT : KGPBaseTest() {
 
                 getCommonizerDependencies("unixMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
-                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            IOS_X64,
+                            IOS_ARM64,
+                            IOS_SIMULATOR_ARM64,
+                            LINUX_X64,
+                            LINUX_ARM64,
+                            MACOS_X64
+                        )
+                    )
                 }
 
                 getCommonizerDependencies("unixTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
-                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            IOS_X64,
+                            IOS_ARM64,
+                            IOS_SIMULATOR_ARM64,
+                            LINUX_X64,
+                            LINUX_ARM64,
+                            MACOS_X64
+                        )
+                    )
                 }
 
                 getCommonizerDependencies("linuxMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
