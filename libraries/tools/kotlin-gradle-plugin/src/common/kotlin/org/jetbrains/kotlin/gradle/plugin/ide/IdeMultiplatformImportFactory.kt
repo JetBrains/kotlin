@@ -31,7 +31,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension, strictMod
 
         registerDependencyResolver(
             resolver = IdeVisibleMultiplatformSourceDependencyResolver,
-            constraint = !SourceSetConstraint.isLeaf,
+            constraint = !SourceSetConstraint.isSingleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
@@ -73,7 +73,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension, strictMod
 
         registerDependencyResolver(
             resolver = IdeOriginalMetadataDependencyResolver,
-            constraint = !SourceSetConstraint.isLeaf,
+            constraint = !SourceSetConstraint.isSingleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
