@@ -125,6 +125,22 @@ open class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
+        processScriptOrSnippet(proto, childSerializer)
+    }
+
+    override fun serializeSnippet(
+        snippet: FirReplSnippet,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: FirElementSerializer,
+    ) {
+        processScriptOrSnippet(proto, childSerializer)
+    }
+
+    private fun processScriptOrSnippet(
+        proto: ProtoBuf.Class.Builder,
+        childSerializer: FirElementSerializer,
+    ) {
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }

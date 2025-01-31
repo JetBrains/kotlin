@@ -18,19 +18,26 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal.WhatNextAfterOneLine
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation.IgnoredLocation.file
+import java.io.File
+import java.net.URLClassLoader
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.isIncomplete
+import kotlin.script.experimental.jvm.withUpdatedClasspath
 import kotlin.script.experimental.util.LinkedSnippet
 
 /**
@@ -49,6 +56,20 @@ fun main() {
     }
 }
 
+// Add annotation
+@Target(AnnotationTarget.FILE)
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class DependsOn(val value: String = "")
+
+// Add support for refineConfiguration
+fun onAnnotationsHandler(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    // Hardcode path to dependency jar
+    return context.compilationConfiguration.withUpdatedClasspath(listOf<File>(
+        File("/Users/christian.melchior/JetBrains/kotlin-jupyter-2/src/test/testData/kernelTestPackage-1.0.jar")
+    )).asSuccess()
+}
+
 @OptIn(ExperimentalCompilerApi::class)
 private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposable: Disposable) {
 
@@ -56,13 +77,21 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
     private val messageCollector = ScriptDiagnosticsMessageCollector(ReplMessageCollector(replConfiguration))
     private var lineCounter = 0
 
-    private val scriptCompilationConfiguration = ScriptCompilationConfiguration {
+    private val initialScriptCompilationConfiguration = ScriptCompilationConfiguration {
         jvm {
             updateClasspath(
-                listOf(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests())
+                listOf(
+                    StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests(),
+                    File("/Users/christian.melchior/JetBrains/kotlin/plugins/scripting/scripting-tests/build/classes/kotlin/test"),
+                )
             )
         }
+        refineConfiguration {
+            onAnnotations(DependsOn::class, handler = ::onAnnotationsHandler)
+        }
     }
+
+    private var scriptCompilationConfiguration = initialScriptCompilationConfiguration
 
     private val replCompiler =
         K2ReplCompiler(
@@ -160,14 +189,34 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
         val lineId = LineId(lineNo, 0, line.hashCode())
         val snippet = line.toScriptSource("snippet_$lineNo.repl.kts")
 
-        return replCompiler.compile(
+        val result  =replCompiler.compile(
             snippet,
             scriptCompilationConfiguration.with {
                 repl {
                     currentLineId(lineId)
                 }
             }
-        )
+        ).also {
+            if (it is ResultWithDiagnostics.Success) {
+                scriptCompilationConfiguration = it.value.get().compilationConfiguration
+            }
+        }
+        if (result is ResultWithDiagnostics.Success) {
+            val value = result.value.get() as KJvmCompiledScript
+            (value.getCompiledModule() as KJvmCompiledModuleInMemoryImpl).compilerOutputFiles.entries.first {
+                it.key.startsWith("Snippet")
+            }.let { (filename, data) ->
+                val outputDir = File(".")
+                outputDir.resolve(filename).writeBytes(data)
+
+                val classLoader = URLClassLoader(arrayOf(outputDir.toURI().toURL()), ClassLoader.getSystemClassLoader())
+                val clazz = classLoader.loadClass(filename.substringBeforeLast("."))
+                println(clazz.declaredFields)
+                @Suppress("NO_REFLECTION_IN_CLASS_PATH")
+                println(clazz.kotlin.members)
+            }
+        }
+        return result
     }
 
     private suspend fun compileAndEval(line: String, lineNo: Int): ReplEvalResult {
