@@ -513,6 +513,59 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `KT-74727 intermediate platform-specific source set with project dependency`(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "kmp-lib") {
+                buildScriptInjection {
+                    kotlinMultiplatform.apply {
+                        jvm()
+                        linuxX64()
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    sourceSets.commonMain.dependencies { // since only jvm is declared commonMain here is JVM-specific source set
+                        api(project(":kmp-lib"))
+                    }
+                }
+            }
+
+            resolveIdeDependencies { dependencies ->
+                assertNoCompileTasksGotExecuted()
+                val expectedJvmDependencies = listOf(
+                    jetbrainsAnnotationDependencies,
+                    kotlinStdlibDependencies,
+                    // FIXME: KT-74782 This is technically a bug, as we should expect that "kmp-lib" would be resolved
+                    //  as bunch of regular source dependencies. i.e. :kmp-lib:commonMain and :kmp-lib:jvmMain
+                    //  but IDEA is smart enough to convert this projectArtifactDependency to beforementioned source dependencies
+                    projectArtifactDependency(
+                        Regular,
+                        ":kmp-lib",
+                        FilePathRegex(".*/kmp-lib-jvm.jar")
+                    )
+                )
+                dependencies["commonMain"]
+                    .assertMatches(expectedJvmDependencies)
+                dependencies["jvmMain"]
+                    .assertMatches(expectedJvmDependencies + dependsOnDependency(":/commonMain"))
+
+                val friendDependencies = listOf(
+                    friendSourceDependency(":/commonMain"),
+                    friendSourceDependency(":/jvmMain"),
+                )
+
+                dependencies["commonTest"]
+                    .assertMatches(expectedJvmDependencies + friendDependencies)
+                dependencies["jvmTest"]
+                    .assertMatches(expectedJvmDependencies + friendDependencies + dependsOnDependency(":/commonTest") )
+            }
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution

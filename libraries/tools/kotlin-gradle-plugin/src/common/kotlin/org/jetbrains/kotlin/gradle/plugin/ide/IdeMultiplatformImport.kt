@@ -336,13 +336,16 @@ interface IdeMultiplatformImport {
     }
 }
 
-internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport by projectStoredProperty {
+internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImportImpl by projectStoredProperty {
     IdeMultiplatformImport(project.kotlinExtension)
 }
 
 internal val IdeMultiplatformImportSetupAction = KotlinProjectSetupAction {
-    /* Ensure instance is created */
-    kotlinIdeMultiplatformImport
+    /* Ensure the instance is created */
+    val kotlinIdeMultiplatformImport = kotlinIdeMultiplatformImport
+
+    @OptIn(Idea222Api::class)
+    kotlinIdeMultiplatformImport.registerTaskDependenciesTo(prepareKotlinIdeaImportTask)
 }
 
 /**

@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 
-internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
-    return IdeMultiplatformImportImpl(extension).apply {
-
+internal fun IdeMultiplatformImport(extension: KotlinProjectExtension, strictMode: Boolean = false): IdeMultiplatformImportImpl {
+    return IdeMultiplatformImportImpl(extension, strictMode).apply {
         registerDependencyResolver(
             resolver = IdeDependsOnDependencyResolver,
             constraint = SourceSetConstraint.unconstrained,
