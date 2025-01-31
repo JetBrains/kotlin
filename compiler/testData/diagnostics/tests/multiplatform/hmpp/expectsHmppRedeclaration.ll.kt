@@ -1,13 +1,13 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 expect fun foo()
 expect class Foo
 
 // MODULE: intermediate()()(common)
-actual fun foo() {}
-actual class Foo
+expect fun foo()
+expect class Foo
 
 // MODULE: main()()(common, intermediate)
-actual fun foo() {}
-actual class <!ACTUAL_WITHOUT_EXPECT!>Foo<!>
+<!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
+actual class Foo
