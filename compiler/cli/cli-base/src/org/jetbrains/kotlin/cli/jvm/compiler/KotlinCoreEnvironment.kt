@@ -392,6 +392,9 @@ class KotlinCoreEnvironment private constructor(
         // TODO: add new Java modules to CliJavaModuleResolver
         val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots - initialRoots
 
+        val newIndex = rootsIndex.addNewIndexForRoots(newRoots) ?: return null
+        updateClasspathFromRootsIndex(newIndex)
+
         if (packagePartProviders.isEmpty()) {
             initialRoots.addAll(newRoots)
         } else {
@@ -402,12 +405,9 @@ class KotlinCoreEnvironment private constructor(
 
         configuration.addAll(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots - configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
 
-        return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
-            updateClasspathFromRootsIndex(newIndex)
-            newIndex.indexedRoots.mapNotNull { (file) ->
-                VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
-            }.toList()
-        }.orEmpty()
+        return newIndex.indexedRoots.map { (file) ->
+            VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
+        }.toList()
     }
 
     private fun contentRootToVirtualFile(root: JvmContentRootBase): VirtualFile? =
