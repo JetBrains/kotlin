@@ -92,7 +92,7 @@ abstract class AbstractNativeKlibSerializerFacade(
         inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
     ): SerializerOutput<KotlinLibrary>
 
-    fun updateTestConfiguration(
+    private fun updateTestConfiguration(
         configuration: CompilerConfiguration,
         module: TestModule,
         outputArtifact: BinaryArtifacts.KLib

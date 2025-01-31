@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
 import org.jetbrains.kotlin.backend.konan.KonanStubGeneratorExtensions
 import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -26,12 +27,12 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.sortDependencies
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
-import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -78,7 +79,7 @@ class NativeDeserializerFacade(
 
     private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): Pair<IrModuleInfo, IrPluginContext> {
         val messageCollector = configuration.messageCollector
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
+        val symbolTable = SymbolTable(IdSignatureDescriptor(KonanManglerDesc), IrFactoryImpl)
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
         val mainModuleLib = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
@@ -110,7 +111,7 @@ class NativeDeserializerFacade(
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun getIrModuleInfoForKlib(
+    private inline fun getIrModuleInfoForKlib(
         moduleDescriptor: ModuleDescriptor,
         sortedDependencies: Collection<KotlinLibrary>,
         friendModules: Map<String, List<String>>,
@@ -142,7 +143,7 @@ class NativeDeserializerFacade(
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
             partialLinkageSupport = createPartialLinkageSupportForLinker(
-                partialLinkageConfig = configuration.partialLinkageConfig,
+                partialLinkageConfig = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR),
                 builtIns = irBuiltIns,
                 messageCollector = messageCollector
             ),
@@ -153,11 +154,13 @@ class NativeDeserializerFacade(
 
         val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, mapping)
         val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
+        // TODO: If tests fail due to fictitious synthetic functions, consider passing an instance of
+        //  BuiltInFictitiousFunctionIrClassFactory here.
         irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
             irBuiltIns,
             symbolTable,
             typeTranslator,
-            null,
+            getPackageFragment = null,
             true
         )
 
@@ -177,7 +180,7 @@ class NativeDeserializerFacade(
         )
     }
 
-    fun deserializeDependencies(
+    private inline fun deserializeDependencies(
         sortedDependencies: Collection<KotlinLibrary>,
         irLinker: KonanIrLinker,
         mainModuleLib: KotlinLibrary?,

@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.utils.DFS
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
@@ -265,4 +267,10 @@ open class CurrentModuleDeserializer(
     override fun declareIrSymbol(symbol: IrSymbol) = Unit
 
     override val kind get() = IrModuleDeserializerKind.CURRENT
+}
+
+fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
+    return DFS.topologicalOrder(moduleDependencies.keys) { m ->
+        moduleDependencies.getValue(m)
+    }.reversed()
 }

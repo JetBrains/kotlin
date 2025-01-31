@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.config.CompilerConfiguration
