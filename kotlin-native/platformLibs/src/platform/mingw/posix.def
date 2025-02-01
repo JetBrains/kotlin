@@ -7,6 +7,26 @@ headers = assert.h complex.h ctype.h dirent.h errno.h fcntl.h \
 noStringConversion = send sendto recv
 compilerOpts = -DUNICODE -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DWINAPI_FAMILY=3 -DOEMRESOURCE -D_POSIX_C_SOURCE=1
 linkerOpts = -lws2_32
+excludedFunctions = __updatetlocinfo __updatetmbcinfo _strset_l _strlwr_l _strnset_l _wcsncpy_l _strncat_s_l _strncpy_s_l _strtok_s_l _wcsncat_s_l \
+    _wcsncpy_s_l _wcstok_s_l _wcsset_s_l _wcsnset_s_l _findfirst32 _findnext32 _findfirst32i64 _findnext32i64 _wfindfirst32 _wfindnext32 \
+    strlwr_l _wfindfirst32i64 _wfindnext32i64 __lock_fhandle _unlock_fhandle locking _fstat32 _stat32 _fstat32i64 _stat32i64 \
+    _wstat32 _wstat32i64 __get_current_locale __create_locale __free_locale __security_check_cookie _setjmp3 \
+    _set_printf_count_output _get_printf_count_output _fgetwc_nolock _fputwc_nolock _ungetwc_nolock _fclose_nolock _fflush_nolock \
+    _fread_nolock _fseek_nolock _ftell_nolock _fseeki64_nolock _ftelli64_nolock _fwrite_nolock _ungetc_nolock fcloseall flushall \
+    fread_s gets_s _getws_s __vswprintf_l _fread_nolock_s _wdupenv_s _get_purecall_handler _set_doserrno _get_doserrno \
+    _get_pgmptr _get_wpgmptr _set_fmode _get_fmode _get_osplatform _get_osver _get_winver _get_winmajor _get_winminor \
+    _set_abort_behavior _recalloc _aligned_recalloc _aligned_offset_recalloc _wcstod_l _atoflt ultoa onexit _dupenv_s \
+    _set_malloc_crt_max_wait _set_amblksiz _get_amblksiz _get_daylight _get_dstbias _get_timezone _get_tzname _ctime32 \
+    _strftime_l _time32 _mktime32 _wctime32 _wgetdcwd_nolock _putwch_nolock _getwch_nolock _getwche_nolock _ungetwch_nolock \
+    _sprintf_p _scprintf_p _swprintf_p _scwprintf_p __swprintf_l __initiallocalestructinfo __initiallocinfo __locale_changed \
+    __newclmap __newcumap __ptlocinfo __ptmbcinfo _amblksiz \
+    _getdllprocaddr _loaddll _unloaddll \
+    _beep _seterrormode _sleep _getsystime _setsystime is_wctype \
+    _heapwalk _heapadd _heapchk _heapset _heapused \
+     _cgets _cgetws _get_output_format gets _getws inp _inp inpw _inpw _inpd \
+    _lock outp outpw _outp _outpw _outpd _set_output_format _unlock \
+    _matherr
+excludedMacros = matherr
 
 ---
 // Wrapper to access errno variable.
