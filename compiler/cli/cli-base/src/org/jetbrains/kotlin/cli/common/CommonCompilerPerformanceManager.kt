@@ -14,7 +14,8 @@ import java.util.concurrent.TimeUnit
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
     @Suppress("MemberVisibilityCanBePrivate")
     protected val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
-    protected var isEnabled: Boolean = false
+    var isEnabled: Boolean = false
+        protected set
     private var initStartNanos = PerformanceCounter.currentTime()
     private var analysisStart: Long = 0
     private var generationStart: Long = 0
@@ -122,7 +123,12 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport())
+        destination.writeBytes(createPerformanceReport().toByteArray())
+    }
+
+    fun createPerformanceReport(): String = buildString {
+        append("$presentableName performance report\n")
+        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
     }
 
     private fun recordGcTime() {
@@ -155,11 +161,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private fun recordPerfCountersMeasurements() {
         PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
     }
-
-    private fun createPerformanceReport(): ByteArray = buildString {
-        append("$presentableName performance report\n")
-        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
-    }.toByteArray()
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)

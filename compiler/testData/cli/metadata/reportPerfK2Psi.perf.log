@@ -1,0 +1,8 @@
+Kotlin to Metadata compiler performance report
+        ANALYZE     INT_NUMBER ms       REAL_NUMBER loc/s
+       GENERATE      INT_NUMBER ms      REAL_NUMBER loc/s
+Find Java class performed INT_NUMBER times
+GC time for PS MarkSweep is INT_NUMBER ms, INT_NUMBER collections
+GC time for PS Scavenge is INT_NUMBER ms, INT_NUMBER collections
+INIT: Compiler initialized in INT_NUMBER ms
+JIT time is INT_NUMBER ms

@@ -1,0 +1,7 @@
+Kotlin to JS Compiler performance report
+        ANALYZE     INT_NUMBER ms
+        ANALYZE     INT_NUMBER ms
+Find Java class performed INT_NUMBER times
+GC time for PS MarkSweep is INT_NUMBER ms, INT_NUMBER collections
+GC time for PS Scavenge is INT_NUMBER ms, INT_NUMBER collections
+JIT time is INT_NUMBER ms
