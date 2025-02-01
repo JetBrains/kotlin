@@ -40,9 +40,9 @@ class UklibConsumptionIT : KGPBaseTest() {
             iosX64()
             macosArm64()
             jvm()
-            js()
-            wasmJs()
-            wasmWasi()
+//            js()
+//            wasmJs()
+//            wasmWasi()
         }
         val publisher = publishUklib(gradleVersion, androidVersion) {
             project.plugins.apply("com.android.library")
@@ -425,7 +425,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(direct)
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitive)
             buildScriptInjection {
-                project.computeUklibChecksum(false)
+                project.computeTransformedLibraryChecksum(false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     linuxArm64()

@@ -10,7 +10,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
@@ -188,18 +188,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val publishUklib: Boolean
         get() = booleanProperty(KOTLIN_MPP_PUBLISH_UKLIB) ?: false
 
-    val uklibResolutionStrategy: UklibResolutionStrategy
-        get() = this.get(KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY)?.let {
-            UklibResolutionStrategy.fromProperty(it)
-        } ?: UklibResolutionStrategy.IgnoreUklibs
+    val kmpResolutionStrategy: KmpResolutionStrategy
+        get() = this.get(KOTLIN_KMP_RESOLUTION_STRATEGY)?.let {
+            KmpResolutionStrategy.fromProperty(it)
+        } ?: KmpResolutionStrategy.StandardKMPResolution
 
     // This property makes transforms noop and is used in functionalTest resolution tests
     val fakeUkibTransforms: Boolean
         get() = booleanProperty(KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS) ?: false
 
     // This property disables -${checksum} output path suffix in the GMT transformed output klib to make them testable
-    val computeUklibChecksum: Boolean
-        get() = booleanProperty(KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM) ?: true
+    val computeTransformedLibraryChecksum: Boolean
+        get() = booleanProperty(KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM) ?: true
 
     val hierarchicalStructureSupport: Boolean
         get() = booleanProperty(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT) ?: mppHierarchicalStructureByDefault
@@ -690,7 +690,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_YARN = property("kotlin.js.yarn")
         val KOTLIN_MPP_PUBLISH_UKLIB = property("kotlin.mpp.publishUklib")
         val KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS = property("kotlin.internal.mpp.fakeUklibTransforms")
-        val KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM = property("kotlin.internal.mpp.computeUklibChecksum")
+        val KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM = property("kotlin.internal.mpp.computeTransformedLibraryChecksum")
         val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = property("kotlin.mpp.enableGranularSourceSetsMetadata")
         val KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT = property("kotlin.mpp.enableCompatibilityMetadataVariant")
         val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = property("kotlin.mpp.enableCInteropCommonization")
@@ -742,7 +742,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.experimental.swift-export.enabled")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
-        val KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY = property("kotlin.kmp.uklibResolutionStrategy")
+        val KOTLIN_KMP_RESOLUTION_STRATEGY = property("kotlin.kmp.kmpResolutionStrategy")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
 
         /**

@@ -6,18 +6,14 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Attribute
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.utils.projectPathOrNull
-import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,7 +22,7 @@ class UklibResolutionTests {
 
     @Test
     fun `uklib resolution - from direct pom dependency with uklib packaging`() {
-        val consumer = consumer(UklibResolutionStrategy.ResolveUklibsInMavenComponents) {
+        val consumer = consumer(KmpResolutionStrategy.ResolveUklibsAndResolvePSMLeniently) {
             jvm()
             iosArm64()
             iosX64()
@@ -140,7 +136,7 @@ class UklibResolutionTests {
 
     @Test
     fun `uklib resolution - from direct pom dependency with uklib packaging points to untrasformed uklib - when uklibs are not allowed to resolve`() {
-        val consumer = consumer(UklibResolutionStrategy.IgnoreUklibs) {
+        val consumer = consumer(KmpResolutionStrategy.StandardKMPResolution) {
             jvm()
             iosArm64()
             iosX64()
@@ -212,7 +208,7 @@ class UklibResolutionTests {
     // consumer <- pure jvm <- uklib <- PSM-only
     @Test
     fun `uklib resolution - from transitive uklib dependency`() {
-        val consumer = consumer(UklibResolutionStrategy.ResolveUklibsInMavenComponents) {
+        val consumer = consumer(KmpResolutionStrategy.ResolveUklibsAndResolvePSMLeniently) {
             jvm()
             iosArm64()
             iosX64()
@@ -327,7 +323,7 @@ class UklibResolutionTests {
     }
 
     private fun consumer(
-        strategy: UklibResolutionStrategy,
+        strategy: KmpResolutionStrategy,
         configure: KotlinMultiplatformExtension.() -> Unit,
     ): Project {
         return buildProjectWithMPP(
@@ -346,168 +342,5 @@ class UklibResolutionTests {
 
             repositories.maven(javaClass.getResource("/dependenciesResolution/UklibTests/repo")!!)
         }.evaluate()
-    }
-
-    private val uklibTransformationIosArm64Attributes = mapOf(
-        "artifactType" to "uklib",
-        "org.jetbrains.kotlin.uklibView" to "ios_arm64",
-        "org.jetbrains.kotlin.uklibState" to "decompressed",
-    )
-
-    private val uklibTransformationJvmAttributes = mapOf(
-        "artifactType" to "uklib",
-        "org.jetbrains.kotlin.uklibView" to "jvm",
-        "org.jetbrains.kotlin.uklibState" to "decompressed",
-    )
-
-    private val uklibTransformationMetadataAttributes = mapOf(
-        "artifactType" to "uklib",
-        "org.jetbrains.kotlin.uklibView" to "whole_uklib",
-        "org.jetbrains.kotlin.uklibState" to "decompressed",
-    )
-
-    private val uklibTransformationJsAttributes = mapOf(
-        "artifactType" to "uklib",
-        "org.jetbrains.kotlin.uklibView" to "js_ir",
-        "org.jetbrains.kotlin.uklibState" to "decompressed",
-    )
-
-    private val uklibTransformationWasmJsAttributes = mapOf(
-        "artifactType" to "uklib",
-        "org.jetbrains.kotlin.uklibView" to "wasm_js",
-        "org.jetbrains.kotlin.uklibState" to "decompressed",
-    )
-
-    private val uklibTransformationWasmWasiAttributes = mapOf(
-        "artifactType" to "uklib",
-        "org.jetbrains.kotlin.uklibView" to "wasm_wasi",
-        "org.jetbrains.kotlin.uklibState" to "decompressed",
-    )
-
-    private val uklibVariantAttributes = mapOf(
-        "org.gradle.category" to "library",
-        "org.gradle.jvm.environment" to "???",
-        "org.gradle.usage" to "kotlin-uklib",
-        "org.jetbrains.kotlin.klib.packaging" to "packed",
-        "org.jetbrains.kotlin.native.target" to "???",
-        "org.jetbrains.kotlin.platform.type" to "unknown",
-    )
-
-    private val jvmPomRuntimeAttributes = mapOf(
-        "org.gradle.category" to "library",
-        "org.gradle.libraryelements" to "jar",
-        "org.gradle.status" to "release",
-        "org.gradle.usage" to "java-runtime",
-    )
-
-    private val jvmPomApiAttributes = mapOf(
-        "org.gradle.category" to "library",
-        "org.gradle.libraryelements" to "jar",
-        "org.gradle.status" to "release",
-        "org.gradle.usage" to "java-api",
-    )
-
-    private val platformJvmVariantAttributes = mapOf(
-        "artifactType" to "jar",
-        "org.gradle.category" to "library",
-        "org.gradle.jvm.environment" to "standard-jvm",
-        "org.gradle.libraryelements" to "jar",
-        "org.gradle.usage" to "java-runtime",
-        "org.jetbrains.kotlin.platform.type" to "jvm",
-    )
-
-    private val metadataVariantAttributes = mapOf(
-        "artifactType" to "jar",
-        "org.gradle.category" to "library",
-        "org.gradle.jvm.environment" to "non-jvm",
-        "org.gradle.libraryelements" to "jar",
-        "org.gradle.usage" to "kotlin-metadata",
-        "org.jetbrains.kotlin.platform.type" to "common",
-    )
-
-    private val releaseStatus = mapOf(
-        "org.gradle.status" to "release",
-    )
-
-    // We only emit packing in secondary variants which are not published?
-    private val nonPacked = mapOf(
-        "org.jetbrains.kotlin.klib.packaging" to "non-packed",
-    )
-
-    private val jarArtifact = mapOf(
-        "artifactType" to "jar",
-    )
-
-    private val uklibArtifact = mapOf(
-        "artifactType" to "uklib",
-    )
-
-    private val platformIosArm64Attributes = mapOf(
-        "artifactType" to "org.jetbrains.kotlin.klib",
-        "org.gradle.category" to "library",
-        "org.gradle.jvm.environment" to "non-jvm",
-        "org.gradle.usage" to "kotlin-api",
-        "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
-        "org.jetbrains.kotlin.native.target" to "ios_arm64",
-        "org.jetbrains.kotlin.platform.type" to "native",
-    )
-
-    data class ResolvedComponentWithArtifacts(
-        val configuration: String,
-        val artifacts: MutableList<Map<String, String>> = mutableListOf(),
-    )
-
-    private fun Configuration.resolveProjectDependencyComponentsWithArtifacts(): Map<String, ResolvedComponentWithArtifacts> {
-        val artifacts = resolveProjectDependencyVariantsFromArtifacts()
-        val components = resolveProjectDependencyComponents()
-        val componentToArtifacts = LinkedHashMap<String, ResolvedComponentWithArtifacts>()
-        components.forEach { component ->
-            if (componentToArtifacts[component.path] == null) {
-                componentToArtifacts[component.path] = ResolvedComponentWithArtifacts(component.configuration)
-            } else {
-                error("${component} resolved multiple times?")
-            }
-        }
-        artifacts.forEach { artifact ->
-            componentToArtifacts[artifact.path]?.let {
-                it.artifacts.add(artifact.attributes)
-            } ?: error("Missing resolved component for artifact: ${artifact}")
-        }
-        return componentToArtifacts
-    }
-
-    data class ResolvedVariant(
-        val path: String,
-        val attributes: Map<String, String>,
-    )
-
-    private fun Configuration.resolveProjectDependencyVariantsFromArtifacts(): List<ResolvedVariant> {
-        return incoming.artifacts.artifacts
-            .map { artifact ->
-                val uklibAttributes: List<Attribute<*>> = artifact.variant.attributes.keySet()
-                    .sortedBy { it.name }
-                ResolvedVariant(
-                    artifact.variant.owner.projectPathOrNull ?: artifact.variant.owner.displayName,
-                    uklibAttributes.keysToMap {
-                        artifact.variant.attributes.getAttribute(it).toString()
-                    }.mapKeys { it.key.name }
-                )
-            }
-    }
-
-    data class ResolvedComponent(
-        val path: String,
-        val configuration: String,
-    )
-
-    private fun Configuration.resolveProjectDependencyComponents(): List<ResolvedComponent> {
-        return incoming.resolutionResult.allComponents
-            .map { component ->
-                ResolvedComponent(
-                    component.id.projectPathOrNull ?: component.id.displayName,
-                    // Expect a single variant to always be selected?
-                    component.variants.single().displayName
-                )
-            }
     }
 }

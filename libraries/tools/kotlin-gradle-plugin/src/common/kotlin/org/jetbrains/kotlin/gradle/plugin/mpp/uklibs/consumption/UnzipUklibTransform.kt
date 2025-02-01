@@ -49,3 +49,32 @@ internal abstract class UnzipUklibTransform @Inject constructor(
         }
     }
 }
+
+//@DisableCachingByDefault(because = "Investigate caching uklib transforms")
+//internal abstract class PlatformKlibTransform @Inject constructor(
+//    private val fileOperations: FileSystemOperations,
+//    private val archiveOperations: ArchiveOperations,
+//) : TransformAction<UnzipUklibTransform.Parameters> {
+//    interface Parameters : TransformParameters {
+//        @get:Input
+//        val fakeUklibUnzip: Property<Boolean>
+//    }
+//
+//    @get:PathSensitive(PathSensitivity.RELATIVE)
+//    @get:InputArtifact
+//    abstract val inputArtifact: Provider<FileSystemLocation>
+//
+//    override fun transform(outputs: TransformOutputs) {
+//        val input = inputArtifact.get().asFile
+//        // FIXME: Is this actually true? Maybe it was with a configuration that registered transform using Usages?
+//        // Due to kotlin-api/runtime Usages being compatible with java Usages, we might see a jar in this transform
+//        if (input.extension == Uklib.UKLIB_EXTENSION) {
+//            val outputDir = outputs.dir("unzipped_uklib_${input.name}")
+//            if (parameters.fakeUklibUnzip.get()) return
+//            fileOperations.copy {
+//                it.from(archiveOperations.zipTree(inputArtifact.get().asFile))
+//                it.into(outputDir)
+//            }
+//        }
+//    }
+//}

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.uklibs
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -96,7 +95,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitivePublisher)
             buildScriptInjection {
                 project.setUklibResolutionStrategy()
-                project.computeUklibChecksum(false)
                 project.applyMultiplatform {
                     iosArm64()
                     iosX64()
@@ -201,7 +199,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publishedProject)
             buildScriptInjection {
-                project.computeUklibChecksum(false)
+                project.computeTransformedLibraryChecksum(false)
                 project.enableCrossCompilation()
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
@@ -229,6 +227,80 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     .relativeTransformationPathComponents(),
             )
         }
+    }
+
+    @GradleTest
+    fun `current KMP consumption in GMT with a subset of targets`(
+        version: GradleVersion
+    ) {
+        val transitiveProducer = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosX64()
+                    linuxArm64()
+                    linuxX64()
+
+                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.linuxMain.get().addIdentifierClass()
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "transitive"))
+
+        val directProducer = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(transitiveProducer)
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+
+                    sourceSets.commonMain.get().dependencies {
+                        api(transitiveProducer.rootCoordinate)
+                    }
+                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.linuxMain.get().addIdentifierClass()
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "direct"))
+
+        val consumer = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(directProducer)
+            addPublishedProjectToRepositories(transitiveProducer)
+            buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosX64()
+                    linuxArm64()
+                    linuxX64()
+
+                    sourceSets.commonMain.get().dependencies {
+                        implementation(directProducer.rootCoordinate)
+                    }
+                }
+            }
+        }
+        // Common sees
+        assertEquals(
+            listOf(
+                listOf("commonMain", "transitive-empty-1.0-commonMain-.klib"),
+            ),
+            consumer.metadataTransformationOutputClasspath("commonMain")
+                .relativeTransformationPathComponents(),
+        )
+        // But linuxMain resolves as in uklibs
+        assertEquals(
+            listOf(
+                listOf("linuxMain", "direct-empty-1.0-linuxMain-.klib"),
+                listOf("linuxMain", "direct-empty-1.0-commonMain-.klib"),
+                listOf("linuxMain", "transitive-empty-1.0-linuxMain-.klib"),
+            ),
+            consumer.metadataTransformationOutputClasspath("linuxMain")
+                .relativeTransformationPathComponents(),
+        )
     }
 
     // Take full paths of the classpath formed by the GMT and extract last 2 path components for assertions

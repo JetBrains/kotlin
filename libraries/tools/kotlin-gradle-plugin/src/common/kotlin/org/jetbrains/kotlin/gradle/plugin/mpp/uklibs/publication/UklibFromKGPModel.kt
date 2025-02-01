@@ -37,6 +37,7 @@ internal data class KGPUklibFragment(
     val refineesTransitiveClosure: Set<String>,
     val providingTask: TaskProvider<*>,
     val outputFile: Provider<File>,
+    val compilation: KotlinCompilation<*>,
 )
 
 internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments(): List<KGPUklibFragment> {
@@ -125,6 +126,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                 refineesTransitiveClosure = metadataCompilation.refineesTransitiveClosure(),
                 providingTask = metadataCompilation.compileTaskProvider,
                 outputFile = artifact,
+                compilation = metadataCompilation,
             )
         )
     }
@@ -189,6 +191,7 @@ private fun kgpUklibFragment(
     refineesTransitiveClosure = mainCompilation.refineesTransitiveClosure(),
     providingTask = artifactProvidingTask,
     outputFile = file,
+    compilation = mainCompilation,
 )
 
 private fun KotlinCompilation<*>.refineesTransitiveClosure(): Set<String> = internal.allKotlinSourceSets

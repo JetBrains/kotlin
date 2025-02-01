@@ -191,6 +191,7 @@ class KotlinMetadataTargetConfigurator :
              * source set.
              * See also: [buildKotlinProjectStructureMetadata], where these dependencies must be included into the source set exported deps.
              */
+            // FIXME: Maybe tie this to the uklib apiElements configuration
             if (isSharedNativeCompilation) {
                 sourceSet.internal.withDependsOnClosure.forEach { hierarchySourceSet ->
                     apiElementsConfiguration.extendsFrom(

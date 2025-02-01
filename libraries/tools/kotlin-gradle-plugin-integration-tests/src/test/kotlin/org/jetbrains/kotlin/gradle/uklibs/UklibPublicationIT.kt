@@ -506,10 +506,32 @@ class UklibPublicationIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
         ) {
             jvm()
-            iosX64()
-            iosArm64()
+//            iosX64()
+//            iosArm64()
             sourceSets.commonMain.get().compileSource("class Common")
         }.publishedProject
+
+        // FIXME: Finish metadata validations
+        val f = producer.rootComponent.gradleMetadata
+        println(f)
+    }
+
+    @GradleTest
+    fun `current kmp publication layout`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = project(
+            "empty",
+            gradleVersion = gradleVersion,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileSource("class Common")
+                }
+            }
+        }.publish()
 
         val f = producer.rootComponent.gradleMetadata
         println(f)

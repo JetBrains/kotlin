@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -85,18 +86,31 @@ internal class SourceSetVisibilityProvider(
         resolvedRootMppDependency: ResolvedDependencyResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Boolean,
+        resolveWithLenientPSMResolutionScheme: Boolean,
     ): SourceSetVisibilityResult {
         val resolvedRootMppDependencyId = resolvedRootMppDependency.selected.id
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()
 
-        val visiblePlatformVariantNames: List<Set<String>> = platformCompilations
-            .filter { visibleFromSourceSet in it.allSourceSets }
+        val compilationsContainingSourceSetDoingGMT = platformCompilations.filter { visibleFromSourceSet in it.allSourceSets }
+
+        val visiblePlatformVariantNames: List<Set<String>> = compilationsContainingSourceSetDoingGMT
             .mapNotNull { platformCompilationData ->
                 val resolvedPlatformDependencies = platformCompilationData
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
                     .filter { it.selected.id isEqualsIgnoringVersion resolvedRootMppDependencyId }
+                    .filterNot {
+                        // Pre lenient resolve logic
+                        if (!resolveWithLenientPSMResolutionScheme) return@filterNot false
+                        // Filter metadata jars resolved from pre Uklib KMP publications
+                        // @see [KotlinPlatformConfigurationsCanResolveMetadata]
+                        it.resolvedVariant.attributes.getAttribute(
+                            KotlinPlatformType.attribute
+                        ) == KotlinPlatformType.common || it.resolvedVariant.attributes.getAttribute(
+                            Attribute.of(KotlinPlatformType.attribute.name, String::class.java)
+                        ) == KotlinPlatformType.common.name
+                    }
                     /*
                     Returning null if we can't find the given dependency in a certain platform compilations dependencies.
                     This is not expected, since this means the dependency does not support the given targets which will
@@ -125,6 +139,11 @@ internal class SourceSetVisibilityProvider(
             }
 
         if (visiblePlatformVariantNames.isEmpty()) {
+            return SourceSetVisibilityResult(emptySet(), emptyMap())
+        }
+
+        // Means we are looking at a dependency with a subset of targets relative to this source set. Ignore this dependency in this source set
+        if (resolveWithLenientPSMResolutionScheme && compilationsContainingSourceSetDoingGMT.size > visiblePlatformVariantNames.size) {
             return SourceSetVisibilityResult(emptySet(), emptyMap())
         }
 

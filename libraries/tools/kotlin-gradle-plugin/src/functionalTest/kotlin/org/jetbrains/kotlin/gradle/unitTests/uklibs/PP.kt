@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import kotlin.reflect.full.memberProperties
+import kotlin.test.assertEquals
 
 class PP(
     val value: Any,
@@ -60,3 +61,5 @@ class PP(
 }
 
 fun Any.pp(indentation: Int = 0): PP = PP(this, indentation)
+
+fun <T> assertEqualsPP(l: T, r: T) = assertEquals((l as Any).pp(), (r as Any).pp())
