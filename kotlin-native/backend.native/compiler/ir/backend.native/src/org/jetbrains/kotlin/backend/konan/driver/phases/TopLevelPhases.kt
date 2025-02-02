@@ -381,36 +381,44 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ) {
-    val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
-    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
-    val linkerOutputKind = determineLinkerOutput(context)
-    val (linkerInput, cacheBinaries) = run {
-        val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
-        when {
-            context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
-                compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
-            }
-            shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
-                val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
-                runPhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
-                // Static caches are linked into binary, so we don't need to pass them.
-                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
-            }
-            else -> {
-                compilationResult to resolvedCacheBinaries
+    val isProducingBitcodeForMinGWPlatformLibrary = run {
+        val isProducingStaticCache = context.config.produce == CompilerOutputKind.STATIC_CACHE
+        context.config.libraryToCache?.klib?.shouldStoreStaticCacheAsBitcode(context.config.target) == true && isProducingStaticCache
+    }
+    if (isProducingBitcodeForMinGWPlatformLibrary) {
+        moduleCompilationOutput.bitcodeFile.copyTo(java.io.File(outputFiles.nativeBinaryFile))
+    } else {
+        val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
+        runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
+        val linkerOutputKind = determineLinkerOutput(context)
+        val (linkerInput, cacheBinaries) = run {
+            val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
+            when {
+                context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
+                    compilationResult to ResolvedCacheBinaries(emptyList(), emptyList(), emptyList())
+                }
+                shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
+                    val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
+                    runPhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
+                    // Static caches are linked into binary, so we don't need to pass them.
+                    prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic, emptyList())
+                }
+                else -> {
+                    compilationResult to resolvedCacheBinaries
+                }
             }
         }
+        val linkerPhaseInput = LinkerPhaseInput(
+                linkerOutputFile,
+                linkerOutputKind,
+                listOf(linkerInput.canonicalPath),
+                moduleCompilationOutput.dependenciesTrackingResult,
+                outputFiles,
+                temporaryFiles,
+                cacheBinaries,
+        )
+        runPhase(LinkerPhase, linkerPhaseInput)
     }
-    val linkerPhaseInput = LinkerPhaseInput(
-            linkerOutputFile,
-            linkerOutputKind,
-            listOf(linkerInput.canonicalPath),
-            moduleCompilationOutput.dependenciesTrackingResult,
-            outputFiles,
-            temporaryFiles,
-            cacheBinaries,
-    )
-    runPhase(LinkerPhase, linkerPhaseInput)
     if (context.config.produce.isCache) {
         runPhase(FinalizeCachePhase, outputFiles)
     }

@@ -38,7 +38,7 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPh
             input.dependenciesTrackingResult,
             input.resolvedCacheBinaries
     )
-    runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty())
+    runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.compiledCachesAreEmpty())
 }
 
 internal data class PreLinkCachesInput(

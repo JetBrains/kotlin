@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 
 /**
  * Check if we should link static caches into an object file before running full linkage.
@@ -24,8 +26,8 @@ internal fun shouldPerformPreLink(config: KonanConfig, caches: ResolvedCacheBina
  * [static] is a list of static libraries (e.g. "libcache.a")
  * [dynamic] is a list of dynamic libraries (e.g. "libcache.dylib")
  */
-internal class ResolvedCacheBinaries(val static: List<String>, val dynamic: List<String>) {
-    fun isEmpty(): Boolean = static.isEmpty() && dynamic.isEmpty()
+internal class ResolvedCacheBinaries(val static: List<String>, val dynamic: List<String>, val bitcode: List<String>) {
+    fun compiledCachesAreEmpty(): Boolean = static.isEmpty() && dynamic.isEmpty()
 }
 
 /**
@@ -37,6 +39,7 @@ internal fun resolveCacheBinaries(
 ): ResolvedCacheBinaries {
     val staticCaches = mutableListOf<String>()
     val dynamicCaches = mutableListOf<String>()
+    val bitcodeCaches = mutableListOf<String>()
 
     dependenciesTrackingResult.allCachedBitcodeDependencies.forEach { dependency ->
         val library = dependency.library
@@ -46,7 +49,10 @@ internal fun resolveCacheBinaries(
 
         val list = when (cache.kind) {
             CachedLibraries.Kind.DYNAMIC -> dynamicCaches
-            CachedLibraries.Kind.STATIC -> staticCaches
+            CachedLibraries.Kind.STATIC -> {
+                if (library.shouldStoreStaticCacheAsBitcode(cachedLibraries.target)) bitcodeCaches
+                else staticCaches
+            }
             CachedLibraries.Kind.HEADER -> error("Header cache ${cache.path} cannot be used for linking")
         }
 
@@ -54,5 +60,5 @@ internal fun resolveCacheBinaries(
             dependency.kind.files.map { cache.getFileBinaryPath(it) }
         else cache.binariesPaths
     }
-    return ResolvedCacheBinaries(static = staticCaches, dynamic = dynamicCaches)
+    return ResolvedCacheBinaries(static = staticCaches, dynamic = dynamicCaches, bitcode = bitcodeCaches)
 }

@@ -35,7 +35,7 @@ private fun getArtifactName(target: KonanTarget, baseName: String, kind: Compile
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
 
 class CachedLibraries(
-        private val target: KonanTarget,
+        val target: KonanTarget,
         allLibraries: List<KotlinLibrary>,
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<File>,

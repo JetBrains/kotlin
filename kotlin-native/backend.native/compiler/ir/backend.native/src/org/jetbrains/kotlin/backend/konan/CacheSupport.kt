@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.serialization.FileDeserializationState
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
@@ -17,13 +16,29 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 class FileWithFqName(val filePath: String, val fqName: String)
+
+/**
+ * Check that the given library is a platform library (a predefined interop library which is distributed with K/N dist)
+ */
+fun KotlinLibrary.isPlatformLibrary(): Boolean =
+    uniqueName.startsWith("org.jetbrains.kotlin.native.platform") && isCInteropLibrary()
+
+/**
+ * Platform libraries on windows are messed up, so to avoid linkage problems we store them as a bitcode.
+ * This allows DCE at bitcode level to get rid of the majority of symbols and avoid linking them.
+ */
+fun KotlinLibrary.shouldStoreStaticCacheAsBitcode(target: KonanTarget): Boolean =
+    isPlatformLibrary() && target.family == Family.MINGW
 
 fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
     val fileProtos = Array<ProtoFile>(fileCount()) {

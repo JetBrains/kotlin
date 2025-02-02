@@ -101,8 +101,13 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             .takeIf { config.produce == CompilerOutputKind.DYNAMIC_CACHE }.orEmpty()
     val xcTestRunnerNativeLibrary = listOf(config.xcTestLauncherNativeLibrary)
             .takeIf { config.produce == CompilerOutputKind.TEST_BUNDLE }.orEmpty()
+    // Link bitcode caches only if we are producing a final binary. Otherwise, caches will contain each other symbols.
+    val bitcodeCaches = if (config.produce.isCache) emptyList() else {
+        resolveCacheBinaries(config.cachedLibraries, generationState.dependenciesTracker.collectResult()).bitcode
+    }
     val additionalBitcodeFiles = nativeLibraries +
             generatedBitcodeFiles +
+            bitcodeCaches +
             additionalBitcodeFilesToLink +
             bitcodeLibraries +
             exceptionsSupportNativeLibrary +
