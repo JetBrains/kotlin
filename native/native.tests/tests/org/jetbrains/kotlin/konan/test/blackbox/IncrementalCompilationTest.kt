@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.CachesAutoBuildTest.Companion.TEST_SUITE_PATH
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
@@ -36,6 +37,13 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @BeforeEach
     fun assumeCachesAreEnabled() {
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+    }
+
+    @BeforeEach
+    fun assumeNotMinGW() {
+        // Per-file caches are sensitive to how the path is computed.
+        // Given that Windows paths are trickier than Unix ones, these test do not work on Windows for now.
+        Assumptions.assumeFalse(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.MINGW)
     }
 
     @Test
