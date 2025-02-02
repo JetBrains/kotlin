@@ -67,7 +67,7 @@ class GradleMetadataComponent(
     class StubVariantFile(
         val url: String,
         val name: String = url,
-        val size: Int = 0
+        val size: Int = 0,
     ) {
         constructor(
             artifactId: String,

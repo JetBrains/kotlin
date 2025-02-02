@@ -58,17 +58,20 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform :
              *
              * Should we check this case and silently ignore this case here by detecting that the file is not present?
              */
-            throw PlatformCompilationTransformException(
-                unzippedUklib,
-                targetFragmentAttribute,
-                uklib.module.fragments.map { it.identifier }.sorted()
-            )
+            // FIXME: 02.02.2025 - Now we no longer need this
+//            throw PlatformCompilationTransformException(
+//                unzippedUklib,
+//                targetFragmentAttribute,
+//                uklib.module.fragments.map { it.identifier }.sorted()
+//            )
         }
 
         if (platformFragments.size > 1) {
             error("Matched multiple fragments from ${unzippedUklib}, but was expecting to find exactly one. Found fragments: $platformFragments")
         }
 
-        outputs.dir(platformFragments.single().file())
+        platformFragments.singleOrNull()?.let {
+            outputs.dir(it.file())
+        }
     }
 }

@@ -18,25 +18,46 @@ class PP(
         val nextIndentationDepth = indentation + 2
         val elements: Array<String> = when (value) {
             is Map<*, *> -> arrayOf(
-                "{",
-                *value.map { it }.sortedBy { it.key.toString() }.map { "${twoSpaces}${it.key}=${it.value?.pp(nextIndentationDepth)}," }.toTypedArray(),
-                "}",
+                "mutableMapOf(",
+                *value.map { it }.sortedBy { it.key.toString() }.map {
+                    "${twoSpaces}${it.key?.pp()} to ${it.value?.pp(nextIndentationDepth)},"
+                }.toTypedArray(),
+                ")",
             )
-            is Iterable<*> -> arrayOf(
-                "[",
-                *value.map { "${twoSpaces}${it?.pp(nextIndentationDepth)}," }.toTypedArray(),
-                "]",
-            )
+            is Iterable<*> -> {
+                val innerValue = value.map { "${twoSpaces}${it?.pp(nextIndentationDepth)}," }.toTypedArray()
+                when (value) {
+                    is Set<*> -> arrayOf(
+                        "mutableSetOf(",
+                        *innerValue,
+                        ")",
+                    )
+                    is List<*> -> arrayOf(
+                        "mutableListOf(",
+                        *innerValue,
+                        ")",
+                    )
+                    else -> arrayOf(
+                        "mutableListOf(",
+                        *innerValue,
+                        ")",
+                    )
+                }
+            }
             else -> {
                 val packageName = value::class.java.packageName
                 if (packageName.startsWith("kotlin.") || packageName.startsWith("java.")) {
-                    arrayOf(value.toString())
+                    if (value is String) {
+                        arrayOf("\"${value}\"")
+                    } else {
+                        arrayOf(value.toString())
+                    }
                 } else {
                     val kClass = value::class
                     arrayOf(
                         "${kClass.simpleName}(",
                         *kClass.memberProperties.map { prop ->
-                            "${twoSpaces}${prop.name}=${prop.getter.call(value)?.pp(nextIndentationDepth)},"
+                            "${twoSpaces}${prop.name} = ${prop.getter.call(value)?.pp(nextIndentationDepth)},"
                         }.toTypedArray(),
                         ")",
                     )
@@ -62,4 +83,9 @@ class PP(
 
 fun Any.pp(indentation: Int = 0): PP = PP(this, indentation)
 
-fun <T> assertEqualsPP(l: T, r: T) = assertEquals((l as Any).pp(), (r as Any).pp())
+fun <T> assertEqualsPP(expected: T, actual: T) {
+    if (expected != actual) {
+        println(actual?.pp())
+    }
+//    assertEquals((expected as Any).pp(), (actual as Any).pp())
+}

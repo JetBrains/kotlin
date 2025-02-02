@@ -492,7 +492,17 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
     }
 
+    val ftConsumable = configurations.create("ftConsumable") {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+    }
     val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
+    functionalTestCompilation.output.classesDirs.forEach {
+        ftConsumable.outgoing.artifact(it) {
+            builtBy(functionalTestCompilation.compileTaskProvider)
+        }
+    }
+
     functionalTestCompilation.compileJavaTaskProvider.configure {
         sourceCompatibility = JavaLanguageVersion.of(17).toString()
         targetCompatibility = JavaLanguageVersion.of(17).toString()

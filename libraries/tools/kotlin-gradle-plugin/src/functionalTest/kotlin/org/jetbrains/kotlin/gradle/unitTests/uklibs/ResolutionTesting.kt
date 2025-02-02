@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 data class ResolvedComponentWithArtifacts(
     val configuration: String,
     val artifacts: MutableList<Map<String, String>> = mutableListOf(),
-)
+) : java.io.Serializable
 
 fun Configuration.resolveProjectDependencyComponentsWithArtifacts(): Map<String, ResolvedComponentWithArtifacts> {
     val artifacts = resolveProjectDependencyVariantsFromArtifacts().filterNot { it.path == ":" }
@@ -157,7 +157,7 @@ private fun Configuration.resolveProjectDependencyVariantsFromArtifacts(): List<
                 .sortedBy { it.name }
             ResolvedVariant(
                 artifact.variant.owner.projectPathOrNull ?: artifact.variant.owner.displayName,
-                uklibAttributes.keysToMap {
+                uklibAttributes.associateBy({ it }) {
                     artifact.variant.attributes.getAttribute(it).toString()
                 }.mapKeys { it.key.name }
             )

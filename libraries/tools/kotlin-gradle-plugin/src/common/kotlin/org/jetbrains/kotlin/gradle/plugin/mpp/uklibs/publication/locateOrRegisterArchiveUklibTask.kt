@@ -13,7 +13,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -93,17 +94,18 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
         it.extension = Uklib.UKLIB_EXTENSION
     }
 
+    KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     val metadataTarget = multiplatformExtension.awaitMetadataTarget()
     val variants = mutableListOf(
         DefaultKotlinUsageContext(
             // Whatever, this compilation doesn't matter
-            compilation = metadataTarget.compilations.getByName("commonMain"),
+            compilation = metadataTarget.compilations.getByName("main"),
             dependencyConfigurationName = uklibRuntimeElements,
             includeIntoProjectStructureMetadata = false,
         ),
         DefaultKotlinUsageContext(
             // Whatever, this compilation doesn't matter
-            compilation = metadataTarget.compilations.getByName("commonMain"),
+            compilation = metadataTarget.compilations.getByName("main"),
             dependencyConfigurationName = uklibApiElements,
             includeIntoProjectStructureMetadata = false,
         )
@@ -146,7 +148,7 @@ internal suspend fun Project.setupOutgoingUklibConfigurations(
 
     val jvmComp: KotlinCompilation<*> = publishedCompilations.singleOrNull {
         it.compilation is KotlinJvmCompilation
-    }?.compilation ?: metadataTarget.compilations.getByName("commonMain")
+    }?.compilation ?: metadataTarget.compilations.getByName("main")
     variants.addAll(
         listOf(
             DefaultKotlinUsageContext(

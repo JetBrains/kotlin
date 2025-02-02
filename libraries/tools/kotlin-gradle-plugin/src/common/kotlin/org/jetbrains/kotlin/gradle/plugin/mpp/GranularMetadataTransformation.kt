@@ -307,11 +307,11 @@ internal class GranularMetadataTransformation(
             attributes = uklibFragmentAttributes,
         )
         if (allVisibleFragments.isEmpty()) {
-            throw UklibIsMissingRequiredAttributesException(
-                unzippedUklib = upackedUklibDirectory.file,
-                targetFragmentAttribute = uklibFragmentAttributes.sorted(),
-                availablePlatformFragments = uklibDependency.module.fragments.map { it.identifier }.sorted(),
-            )
+//            throw UklibIsMissingRequiredAttributesException(
+//                unzippedUklib = upackedUklibDirectory.file,
+//                targetFragmentAttribute = uklibFragmentAttributes.sorted(),
+//                availablePlatformFragments = uklibDependency.module.fragments.map { it.identifier }.sorted(),
+//            )
         }
 
         val fragmentsVisibleByThisSourceSet = allVisibleFragments.filterNot {

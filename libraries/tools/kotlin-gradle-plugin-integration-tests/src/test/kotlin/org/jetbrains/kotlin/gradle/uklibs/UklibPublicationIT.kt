@@ -527,7 +527,7 @@ class UklibPublicationIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {
-                    iosArm64()
+                    jvm()
                     sourceSets.commonMain.get().compileSource("class Common")
                 }
             }
