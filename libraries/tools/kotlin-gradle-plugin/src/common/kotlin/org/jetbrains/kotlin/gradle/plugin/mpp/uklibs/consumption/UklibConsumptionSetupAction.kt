@@ -87,6 +87,7 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
 
         // FIXME: Refactor this and encode what configurations should be allowed to transform per KotlinTarget somewhere around [uklibFragmentPlatformAttribute]
         target.compilations.configureEach {
+            // We have to invert all resolvable configurations, so that they don't prefer jvm compatibility variant in uklib publication
             with(it.internal.configurations.compileDependencyConfiguration.attributes) {
                 setAttribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_API))
             }
@@ -142,11 +143,10 @@ private class KotlinApiMetadataAndRuntimeCanConsumeKotlinUklibApi : AttributeCom
         // Allow consuming Uklibs in all existing configurations
         if (
             mapOf(
-//                KOTLIN_API to KOTLIN_UKLIB_API,
-                KOTLIN_METADATA to KOTLIN_UKLIB_API,
-//                KOTLIN_RUNTIME to KOTLIN_UKLIB_API,
-//                KOTLIN_RUNTIME to KOTLIN_UKLIB_RUNTIME,
-            )[consumerUsage] == producerUsage
+                KOTLIN_METADATA to setOf(KOTLIN_UKLIB_API),
+//                KOTLIN_API to setOf(KOTLIN_UKLIB_API),
+//                KOTLIN_RUNTIME to setOf(KOTLIN_UKLIB_API, KOTLIN_UKLIB_RUNTIME),
+            )[consumerUsage]?.contains(producerUsage) == true
         ) compatible()
     }
 }
@@ -208,22 +208,18 @@ private class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResolu
         val producerUsage = producerValue?.name ?: return@with
         if (
             mapOf(
-                KOTLIN_UKLIB_API to KOTLIN_API,
-                KOTLIN_UKLIB_API to JAVA_API,
-                KOTLIN_UKLIB_RUNTIME to KOTLIN_API,
-                KOTLIN_UKLIB_RUNTIME to KOTLIN_RUNTIME,
-                KOTLIN_UKLIB_RUNTIME to JAVA_RUNTIME,
+                KOTLIN_UKLIB_API to setOf(
+                    KOTLIN_API,
+                    JAVA_API,
+                    // stdlib doesn't have native variants, so for native platform configuration must fall back here
+                    // runtime also???
+                    KOTLIN_METADATA
+                ),
+                KOTLIN_UKLIB_RUNTIME to setOf(KOTLIN_API, KOTLIN_RUNTIME, JAVA_RUNTIME),
 
-                // stdlib doesn't have native variants
-                KOTLIN_UKLIB_API to KOTLIN_METADATA,
-                // runtime also???
-
-//                KOTLIN_API to KOTLIN_METADATA,
-//                KOTLIN_RUNTIME to KOTLIN_METADATA,
-//                // Java is probably not a big deal, what about Android???
-//                JAVA_API to KOTLIN_METADATA,
-//                JAVA_RUNTIME to KOTLIN_METADATA,
-            )[consumerUsage] == producerUsage
+                // but dom-api-compat has compatibility variant, but the usage is wrong, what???
+                KOTLIN_METADATA to setOf(KOTLIN_API),
+            )[consumerUsage]?.contains(producerUsage) == true
         ) compatible()
     }
 }
@@ -233,13 +229,14 @@ private class DisambiguatePlatformConfigurationsToFallBackToMetadataForLenientKm
         val consumerUsage = consumerValue?.name ?: return@run
 
         mapOf(
-            KOTLIN_UKLIB_API to listOf(KOTLIN_METADATA, KOTLIN_API, JAVA_API),
-            KOTLIN_UKLIB_RUNTIME to listOf(KOTLIN_METADATA, JAVA_RUNTIME, KOTLIN_RUNTIME, KOTLIN_API, JAVA_API),
+            KOTLIN_UKLIB_API to listOf(KOTLIN_API, JAVA_API, KOTLIN_METADATA),
+            KOTLIN_UKLIB_RUNTIME to listOf(KOTLIN_RUNTIME, KOTLIN_API, JAVA_RUNTIME, JAVA_API, KOTLIN_METADATA),
         )[consumerUsage]?.let {
             closestMatchToFirstAppropriateCandidate(it)
         }
         return@run
     }
+
     private fun MultipleCandidatesDetails<Usage>.closestMatchToFirstAppropriateCandidate(acceptedProducerValues: List<String>) {
         val candidatesMap = candidateValues.associateBy { it.name }
         acceptedProducerValues.firstOrNull { it in candidatesMap }?.let { closestMatch(candidatesMap.getValue(it)) }

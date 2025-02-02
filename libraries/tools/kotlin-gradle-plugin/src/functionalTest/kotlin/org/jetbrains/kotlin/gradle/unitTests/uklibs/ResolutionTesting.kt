@@ -37,7 +37,7 @@ fun Configuration.resolveProjectDependencyComponentsWithArtifacts(): Map<String,
     return componentToArtifacts
 }
 
-fun KotlinTarget.compilationRes() = compilations.getByName("main").internal.configurations.compileDependencyConfiguration
+fun KotlinTarget.compilationRes(compilationName: String = "main") = compilations.getByName(compilationName).internal.configurations.compileDependencyConfiguration
     .resolveProjectDependencyComponentsWithArtifacts()
 
 val uklibTransformationIosArm64Attributes = mapOf(

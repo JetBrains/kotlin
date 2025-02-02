@@ -84,8 +84,8 @@ class PP(
 fun Any.pp(indentation: Int = 0): PP = PP(this, indentation)
 
 fun <T> assertEqualsPP(expected: T, actual: T) {
-    if (expected != actual) {
-        println(actual?.pp())
-    }
-//    assertEquals((expected as Any).pp(), (actual as Any).pp())
+//    if (expected != actual) {
+//        println(actual?.pp())
+//    }
+    assertEquals((expected as Any).pp(), (actual as Any).pp())
 }

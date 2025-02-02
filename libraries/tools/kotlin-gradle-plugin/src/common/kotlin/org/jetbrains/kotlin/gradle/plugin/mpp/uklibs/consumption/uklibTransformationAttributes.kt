@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Usage
 
 // Means this is uklib itself of a platform fragment transformed from the uklib
 internal val ResolvedArtifactResult.isFromUklib: Boolean

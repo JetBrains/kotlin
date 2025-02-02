@@ -109,7 +109,9 @@ abstract class MetadataDependencyTransformationTask
         flatMap { resolution ->
             when (resolution) {
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolution.toTransformedLibrariesRecords()
-                is MetadataDependencyResolution.KeepOriginalDependency -> resolution.toTransformedLibrariesRecords()
+                is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
+                    // wtf why??? Due to compatibility rules in uklibs and dom-api-compat attributes we can get dom-api-compat-in-metadata, but when would we ever want to get this dependency in the classpath???
+//                    resolution.toTransformedLibrariesRecords()
                 is MetadataDependencyResolution.Exclude -> emptyList()
             }
         }
