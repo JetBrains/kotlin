@@ -524,23 +524,11 @@ fun getCollectionLiteralElementType(ofFunction: FirNamedFunctionSymbol): ConeKot
     return collectionElementType
 }
 
-// todo drop after adding of functions in stdib
-fun getHardcodedCollectionLiteralElementType(expectedType: ConeKotlinType): ConeKotlinType? {
-    if (expectedType.isArrayType) {
-        return expectedType.arrayElementType()
-    }
-    if (expectedType.isList || expectedType.isMutableList || expectedType.isSet || expectedType.isMutableSet) {
-        return expectedType.typeArguments.firstOrNull()?.type
-    }
-    return null
-}
-
 fun getCollectionLiteralElementType(
     expectedType: ConeKotlinType,
     session: FirSession,
     scopeSession: ScopeSession,
 ): ConeKotlinType? {
-    getHardcodedCollectionLiteralElementType(expectedType)?.let { return it }
     val ofFunction = resolveVarargOfMemberFunction(expectedType, session, scopeSession) ?: return null
     return getCollectionLiteralElementType(ofFunction)
 }
