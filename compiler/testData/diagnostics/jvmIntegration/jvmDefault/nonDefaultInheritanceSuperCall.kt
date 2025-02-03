@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // MODULE: library
 // KOTLINC_ARGS: -jvm-default=no-compatibility
+// JVM_DEFAULT_MODE: no-compatibility
 // FILE: a.kt
 package base
 
@@ -10,6 +11,8 @@ interface UExpression {
 
 // MODULE: main(library)
 // KOTLINC_ARGS: -jvm-default=disable -XXLanguage:-AllowSuperCallToJavaInterface
+// JVM_DEFAULT_MODE: disable
+// LANGUAGE: -AllowSuperCallToJavaInterface
 // FILE: source.kt
 import base.*
 
