@@ -177,7 +177,7 @@ fun poll83(): Flow<String> {
 
 fun poll84(): Flow<String> {
     return flow {
-        val inv = {<!RETURN_TYPE_MISMATCH!>{1}<!>} in setOf({{1f}})
+        val inv = {{<!RETURN_TYPE_MISMATCH!>1<!>}} in setOf({{1f}})
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
