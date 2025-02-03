@@ -39,6 +39,10 @@ class Kapt4IT : Kapt3IT() {
             }
         }
     }
+
+    @DisplayName("K2 kapt cannot be enabled in K1")
+    @GradleTest
+    override fun testK2KaptCannotBeEnabledInK1(gradleVersion: GradleVersion) {}
 }
 
 @DisplayName("Kapt 4 with classloaders cache")

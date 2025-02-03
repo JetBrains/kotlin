@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
-import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.Companion.VERBOSE
+import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
@@ -39,15 +42,21 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         arguments: K2JVMCompilerArguments,
     ): Boolean {
         val isK2 = super.shouldRunK2(messageCollector, arguments)
-        if (isK2 && kaptIsEnabled(arguments) && !arguments.useK2Kapt) {
-            arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
-            if (arguments.apiVersion?.startsWith("2") == true) {
-                arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
+        if (kaptIsEnabled(arguments)) {
+            if (isK2 && arguments.useK2Kapt == false) {
+                arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
+                if (arguments.apiVersion?.startsWith("2") == true) {
+                    arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
+                }
+                arguments.skipMetadataVersionCheck = true
+                arguments.skipPrereleaseCheck = true
+                arguments.allowUnstableDependencies = true
+                return false
             }
-            arguments.skipMetadataVersionCheck = true
-            arguments.skipPrereleaseCheck = true
-            arguments.allowUnstableDependencies = true
-            return false
+            if (!isK2 && arguments.useK2Kapt == true) {
+                messageCollector.report(STRONG_WARNING, "K2 kapt cannot be enabled in K1. Update language version to 2.0 or newer.")
+                return false
+            }
         }
 
         return isK2

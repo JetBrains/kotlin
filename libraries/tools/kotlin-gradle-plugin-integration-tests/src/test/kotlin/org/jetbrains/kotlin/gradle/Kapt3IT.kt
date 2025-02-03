@@ -22,6 +22,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
@@ -1360,6 +1362,25 @@ open class Kapt3IT : Kapt3BaseIT() {
                     "public static final class Companion",
                     "public static final class \$serializer implements kotlinx.serialization.internal.GeneratedSerializer<foo.Data>"
                 )
+            }
+        }
+    }
+
+    @DisplayName("K2 kapt cannot be enabled in K1")
+    @GradleTest
+    open fun testK2KaptCannotBeEnabledInK1(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildScriptInjection {
+                project.tasks.withType(KotlinCompile::class.java).configureEach {
+                    it.compilerOptions {
+                        languageVersion.set(KotlinVersion.KOTLIN_1_9)
+                    }
+                }
+            }
+            build("-Pkapt.use.k2=true", "build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("K2 kapt cannot be enabled in K1. Update language version to 2.0 or newer.")
             }
         }
     }
