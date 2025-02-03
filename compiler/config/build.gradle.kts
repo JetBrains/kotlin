@@ -8,7 +8,7 @@ dependencies {
     api(project(":core:metadata"))
     api(project(":core:compiler.common"))
     api(project(":compiler:util"))
-    api(project(":kotlin-util-klib"))
+    compileOnly(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
 }
 
