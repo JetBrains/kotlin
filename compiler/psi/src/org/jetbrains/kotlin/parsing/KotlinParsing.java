@@ -2502,6 +2502,30 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker parameters = mark();
 
         myBuilder.disableNewlines();
+
+        valueParameterLoop(
+                isFunctionTypeContents,
+                recoverySet,
+                () -> {
+                    if (isFunctionTypeContents) {
+                        if (!tryParseValueParameter(typeRequired)) {
+                            PsiBuilder.Marker valueParameter = mark();
+                            parseFunctionTypeValueParameterModifierList();
+                            parseTypeRef();
+                            closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
+                        }
+                    }
+                    else {
+                        parseValueParameter(typeRequired);
+                    }
+                });
+
+        myBuilder.restoreNewlinesState();
+
+        parameters.done(VALUE_PARAMETER_LIST);
+    }
+
+    private void valueParameterLoop(boolean inFunctionTypeContext, TokenSet recoverySet, Runnable parseParameter) {
         advance(); // LPAR
 
         if (!at(RPAR) && !atSet(recoverySet)) {
@@ -2513,17 +2537,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     break;
                 }
 
-                if (isFunctionTypeContents) {
-                    if (!tryParseValueParameter(typeRequired)) {
-                        PsiBuilder.Marker valueParameter = mark();
-                        parseFunctionTypeValueParameterModifierList();
-                        parseTypeRef();
-                        closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
-                    }
-                }
-                else {
-                    parseValueParameter(typeRequired);
-                }
+                parseParameter.run();
 
                 if (at(COMMA)) {
                     advance(); // COMMA
@@ -2536,15 +2550,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
                 else {
                     if (!at(RPAR)) error("Expecting comma or ')'");
-                    if (!atSet(isFunctionTypeContents ? LAMBDA_VALUE_PARAMETER_FIRST : VALUE_PARAMETER_FIRST)) break;
+                    if (!atSet(inFunctionTypeContext ? LAMBDA_VALUE_PARAMETER_FIRST : VALUE_PARAMETER_FIRST)) break;
                 }
             }
         }
 
         expect(RPAR, "Expecting ')'", recoverySet);
-        myBuilder.restoreNewlinesState();
-
-        parameters.done(VALUE_PARAMETER_LIST);
     }
 
     /*
