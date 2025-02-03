@@ -328,12 +328,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         if (failed || directiveToIgnore == null) return
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(
-            actual = ktFile.text.lines().filterNot { it == "// ${directiveToIgnore.name}" }.joinToString(separator = "\n"),
-            extension = ktFile.virtualFile.extension!!,
-        )
-
-        fail("Redundant // ${directiveToIgnore.name} directive")
+        fail("'// ${directiveToIgnore.name}' directive has no effect on the test")
     }
 
     private fun compareCachedSymbols(
