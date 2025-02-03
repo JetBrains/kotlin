@@ -1,5 +1,3 @@
-@file:Suppress("INVISIBLE_REFERENCE", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
@@ -19,6 +17,7 @@ data class PluginDataFrameSchema(
     companion object {
         val EMPTY = PluginDataFrameSchema(emptyList())
     }
+
     fun columns(): List<SimpleCol> {
         return columns
     }
@@ -39,9 +38,11 @@ private fun List<SimpleCol>.asString(indent: String = ""): String {
             is SimpleFrameColumn -> {
                 "${it.name}: *\n" + it.columns().asString("$indent ")
             }
+
             is SimpleColumnGroup -> {
                 "${it.name}:\n" + it.columns().asString("$indent ")
             }
+
             is SimpleDataColumn -> {
                 "${it.name}: ${it.type.type.renderReadable()}"
             }
@@ -129,6 +130,7 @@ private fun KotlinTypeFacade.makeNullable(column: SimpleCol): SimpleCol {
         is SimpleColumnGroup -> {
             SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
         }
+
         is SimpleFrameColumn -> column
         is SimpleDataColumn -> SimpleDataColumn(column.name, column.type.changeNullability { true })
     }
