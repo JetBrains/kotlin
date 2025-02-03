@@ -14,12 +14,14 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
+import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.repositories
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.onlyJars
 import org.junit.Assume
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -127,10 +129,10 @@ class JvmBinariesDslTest {
             assertEquals(emptyList(), defaultJvmOpts)
             assertEquals(project.projectDir.resolve("build/jvm/scripts"), outputDir)
             assertNotNull(classpath)
-            assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles)
             assertClasspathContains(
                 project.tasks.getByName(mainJvmCompilation.archiveTaskName!!).outputs.files
             )
+            assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles.onlyJars)
         }
 
         with(installTask) {
@@ -361,6 +363,78 @@ class JvmBinariesDslTest {
         runTask.assertClasspathContains(testCompilation.output.allOutputs)
         runTask.assertClasspathContains(testCompilation.runtimeDependencyFiles)
         assertNotNull(project.tasks.findByName("jvmIntegrationTestJar"))
+    }
+
+    @Test
+    fun createsDistributionForTests() {
+        val project = buildProjectWithMPP {
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+            kotlin {
+                jvm {
+                    binaries {
+                        executable(KotlinCompilation.TEST_COMPILATION_NAME) {
+                            mainClass.set("foo.MainKt")
+                        }
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvmTest")
+        val installTask = project.assertContainsTaskInstance<Sync>("installJvmTestDist")
+        val zipTask = project.assertContainsTaskInstance<Zip>("jvmTestDistZip")
+        val tarTask = project.assertContainsTaskInstance<Tar>("jvmTestDistTar")
+
+        val testJvmCompilation = project.multiplatformExtension
+            .jvm()
+            .compilations
+            .getByName(KotlinCompilation.TEST_COMPILATION_NAME) as KotlinJvmCompilation
+        val mainJvmCompilation = project.multiplatformExtension
+            .jvm()
+            .compilations
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+
+        with(scriptsTask) {
+            assertEquals("foo.MainKt", mainClass.get())
+            assertEquals(project.name, applicationName)
+            assertEquals("bin", executableDir)
+            assertEquals(null, mainModule.orNull)
+            assertEquals(true, modularity.inferModulePath.get()) // convention is true
+            assertEquals(emptyList(), defaultJvmOpts)
+            assertEquals(project.projectDir.resolve("build/jvmTest/scripts"), outputDir)
+            assertNotNull(classpath)
+            assertClasspathContains(
+                project.tasks.getByName(testJvmCompilation.archiveTaskName!!).outputs.files
+            )
+            assertClasspathContains(testJvmCompilation.runtimeDependencyFiles.onlyJars)
+            assertClasspathContains(
+                project.tasks.getByName(mainJvmCompilation.archiveTaskName!!).outputs.files
+            )
+            assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles.onlyJars)
+        }
+
+        with(installTask) {
+            assertEquals(project.projectDir.resolve("build/install/${project.name}-jvmTest"), destinationDir)
+        }
+
+        with(zipTask) {
+            assertEquals(
+                project.projectDir.resolve("build/distributions/${project.name}-jvmTest.zip"),
+                archiveFile.get().asFile
+            )
+        }
+
+        with(tarTask) {
+            assertEquals(
+                project.projectDir.resolve("build/distributions/${project.name}-jvmTest.tar"),
+                archiveFile.get().asFile
+            )
+        }
     }
 
     @Test
