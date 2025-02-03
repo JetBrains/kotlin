@@ -64,6 +64,14 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = c: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Another.foo
       typeArgumentsMapping = {}

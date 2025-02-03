@@ -584,7 +584,15 @@ KtCallExpression(349,360): 'funMember()'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -604,7 +612,15 @@ KtNameReferenceExpression(349,358): 'funMember'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -625,7 +641,15 @@ KtNameReferenceExpression(369,383): 'propertyMember'
           receiverType = null
           returnType = kotlin.String
           symbol = val propertyMember: kotlin.String
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.propertyMember
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1017,7 +1041,15 @@ KtCallExpression(488,499): 'funMember()'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1056,7 +1088,15 @@ KtNameReferenceExpression(488,497): 'funMember'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1096,7 +1136,15 @@ KtNameReferenceExpression(512,526): 'propertyMember'
           receiverType = null
           returnType = kotlin.String
           symbol = val propertyMember: kotlin.String
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.propertyMember
       simpleAccess = Read
       typeArgumentsMapping = {}

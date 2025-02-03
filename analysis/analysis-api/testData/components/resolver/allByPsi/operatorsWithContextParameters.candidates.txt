@@ -944,7 +944,15 @@ KtPrefixExpression(890,899): '+thisProp'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -965,7 +973,15 @@ KtOperationReferenceExpression(890,891): '+'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1003,7 +1019,15 @@ KtPrefixExpression(908,910): '+a'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1024,7 +1048,15 @@ KtOperationReferenceExpression(908,909): '+'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1078,7 +1110,15 @@ KtBinaryExpression(919,931): 'thisProp + 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1132,7 +1172,15 @@ KtOperationReferenceExpression(928,929): '+'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1172,7 +1220,15 @@ KtBinaryExpression(940,945): 'a + 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1226,7 +1282,15 @@ KtOperationReferenceExpression(942,943): '+'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1266,7 +1330,15 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /get
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1326,7 +1398,15 @@ KtArrayAccessExpression(974,978): 'a[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /get
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1400,7 +1480,15 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1451,7 +1539,15 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1525,7 +1621,15 @@ KtOperationReferenceExpression(999,1000): '='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1615,7 +1719,15 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1666,7 +1778,15 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1740,7 +1860,15 @@ KtOperationReferenceExpression(1018,1019): '='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1800,7 +1928,15 @@ KtCallExpression(1032,1042): 'thisProp()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1841,7 +1977,15 @@ KtCallExpression(1051,1054): 'a()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1898,7 +2042,15 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1952,7 +2104,15 @@ KtOperationReferenceExpression(1072,1074): '+='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1992,7 +2152,15 @@ KtBinaryExpression(1085,1091): 'a += 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2046,7 +2214,15 @@ KtOperationReferenceExpression(1087,1089): '+='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2070,7 +2246,15 @@ KtPostfixExpression(1100,1110): 'thisProp++'
             returnType = A
             symbol = /inc(<extension receiver>: A): A
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2118,7 +2302,15 @@ KtOperationReferenceExpression(1108,1110): '++'
             returnType = A
             symbol = /inc(<extension receiver>: A): A
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2203,7 +2395,15 @@ KtPostfixExpression(1123,1126): 'a++'
             returnType = A
             symbol = /inc(<extension receiver>: A): A
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2251,7 +2451,15 @@ KtOperationReferenceExpression(1124,1126): '++'
             returnType = A
             symbol = /inc(<extension receiver>: A): A
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2298,7 +2506,15 @@ KtBinaryExpression(1136,1141): 'b + 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2334,7 +2550,15 @@ KtBinaryExpression(1136,1141): 'b + 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -2390,7 +2614,15 @@ KtOperationReferenceExpression(1138,1139): '+'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2426,7 +2658,15 @@ KtOperationReferenceExpression(1138,1139): '+'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -2452,7 +2692,15 @@ KtPrefixExpression(1150,1152): '+b'
           returnType = kotlin.Unit
           symbol = /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2472,7 +2720,15 @@ KtPrefixExpression(1150,1152): '+b'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -2495,7 +2751,15 @@ KtOperationReferenceExpression(1150,1151): '+'
           returnType = kotlin.Unit
           symbol = /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2515,7 +2779,15 @@ KtOperationReferenceExpression(1150,1151): '+'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -2571,7 +2843,15 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2607,7 +2887,15 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /get
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -2683,7 +2971,15 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2733,7 +3029,15 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -2786,7 +3090,15 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2836,7 +3148,15 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -2912,7 +3232,15 @@ KtOperationReferenceExpression(1179,1180): '='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2962,7 +3290,15 @@ KtOperationReferenceExpression(1179,1180): '='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -3024,7 +3360,15 @@ KtCallExpression(1193,1196): 'b()'
           returnType = kotlin.Unit
           symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -3044,7 +3388,15 @@ KtCallExpression(1193,1196): 'b()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -3103,7 +3455,15 @@ KtBinaryExpression(1205,1211): 'b += 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -3139,7 +3499,15 @@ KtBinaryExpression(1205,1211): 'b += 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -3195,7 +3563,15 @@ KtOperationReferenceExpression(1207,1209): '+='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -3231,7 +3607,15 @@ KtOperationReferenceExpression(1207,1209): '+='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -3257,7 +3641,15 @@ KtPostfixExpression(1220,1223): 'b++'
             returnType = SimpleOperators
             symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /SimpleOperators.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3305,7 +3697,15 @@ KtOperationReferenceExpression(1221,1223): '++'
             returnType = SimpleOperators
             symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /SimpleOperators.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -3429,7 +3829,15 @@ KtPrefixExpression(1307,1309): '+a'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3451,7 +3859,15 @@ KtOperationReferenceExpression(1307,1308): '+'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3506,7 +3922,15 @@ KtBinaryExpression(1314,1319): 'a + 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3561,7 +3985,15 @@ KtOperationReferenceExpression(1316,1317): '+'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3602,7 +4034,15 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /get
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3677,7 +4117,15 @@ KtBinaryExpression(1333,1343): 'a[1] = A()'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3729,7 +4177,15 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3804,7 +4260,15 @@ KtOperationReferenceExpression(1338,1339): '='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3865,7 +4329,15 @@ KtCallExpression(1348,1351): 'a()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3923,7 +4395,15 @@ KtBinaryExpression(1356,1362): 'a += 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -3978,7 +4458,15 @@ KtOperationReferenceExpression(1358,1360): '+='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4003,7 +4491,15 @@ KtPostfixExpression(1367,1370): 'a++'
             returnType = A
             symbol = /inc(<extension receiver>: A): A
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -4051,7 +4547,15 @@ KtOperationReferenceExpression(1368,1370): '++'
             returnType = A
             symbol = /inc(<extension receiver>: A): A
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -4098,7 +4602,15 @@ KtBinaryExpression(1376,1381): 'b + 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4135,7 +4647,15 @@ KtBinaryExpression(1376,1381): 'b + 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4191,7 +4711,15 @@ KtOperationReferenceExpression(1378,1379): '+'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4228,7 +4756,15 @@ KtOperationReferenceExpression(1378,1379): '+'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4254,7 +4790,15 @@ KtPrefixExpression(1386,1388): '+b'
           returnType = kotlin.Unit
           symbol = /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4275,7 +4819,15 @@ KtPrefixExpression(1386,1388): '+b'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4298,7 +4850,15 @@ KtOperationReferenceExpression(1386,1387): '+'
           returnType = kotlin.Unit
           symbol = /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4319,7 +4879,15 @@ KtOperationReferenceExpression(1386,1387): '+'
           returnType = kotlin.Unit
           symbol = /unaryPlus(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /unaryPlus
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4375,7 +4943,15 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.get
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4412,7 +4988,15 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /get
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4488,7 +5072,15 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4539,7 +5131,15 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4592,7 +5192,15 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4643,7 +5251,15 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4719,7 +5335,15 @@ KtOperationReferenceExpression(1407,1408): '='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4770,7 +5394,15 @@ KtOperationReferenceExpression(1407,1408): '='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4832,7 +5464,15 @@ KtCallExpression(1417,1420): 'b()'
           returnType = kotlin.Unit
           symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4853,7 +5493,15 @@ KtCallExpression(1417,1420): 'b()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: A): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -4912,7 +5560,15 @@ KtBinaryExpression(1425,1431): 'b += 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -4949,7 +5605,15 @@ KtBinaryExpression(1425,1431): 'b += 1'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -5005,7 +5669,15 @@ KtOperationReferenceExpression(1427,1429): '+='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
@@ -5042,7 +5714,15 @@ KtOperationReferenceExpression(1427,1429): '+='
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /plusAssign
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
@@ -5068,7 +5748,15 @@ KtPostfixExpression(1436,1439): 'b++'
             returnType = SimpleOperators
             symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /SimpleOperators.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -5116,7 +5804,15 @@ KtOperationReferenceExpression(1437,1439): '++'
             returnType = SimpleOperators
             symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
             valueParameters = []
-            contextParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
             callableId = /SimpleOperators.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:

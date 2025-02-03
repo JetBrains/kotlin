@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,53 +12,18 @@ import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10FunctionSi
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaClassSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseAnnotationCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundArrayAccessCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundAssignOperation
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundUnaryOperation
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseDelegatedConstructorCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseErrorCallInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseInapplicableCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleFunctionCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
-import org.jetbrains.kotlin.analysis.api.resolution.KaCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaExplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaImplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
-import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
-import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.descriptors.*
@@ -562,16 +527,36 @@ internal class KaFe10Resolver(
         } else {
             resultingDescriptor.extensionReceiverParameter?.returnType?.toKtType(analysisContext)
         }
-        return when (symbol) {
-            is KaVariableSymbol -> KaFe10VariableSignature(symbol, ktReturnType, receiverType)
-            is KaFunctionSymbol -> KaFe10FunctionSignature(
-                symbol,
-                ktReturnType,
-                receiverType,
+
+        val contextParameters = (symbol as? KaCallableSymbol)?.contextParameters
+            .orEmpty()
+            .zip(resultingDescriptor.contextReceiverParameters)
+            .map { (symbol, descriptor) ->
                 @Suppress("UNCHECKED_CAST")
-                symbol.valueParameters.zip(resultingDescriptor.valueParameters).map { (symbol, resultingDescriptor) ->
-                    createSignature(symbol, resultingDescriptor) as KaVariableSignature<KaValueParameterSymbol>
-                })
+                createSignature(symbol, descriptor) as KaVariableSignature<KaContextParameterSymbol>
+            }
+
+        return when (symbol) {
+            is KaVariableSymbol -> KaFe10VariableSignature(
+                backingSymbol = symbol,
+                backingReturnType = ktReturnType,
+                backingReceiverType = receiverType,
+                backingContextParameters = contextParameters,
+            )
+
+            is KaFunctionSymbol -> KaFe10FunctionSignature(
+                backingSymbol = symbol,
+                backingReturnType = ktReturnType,
+                backingReceiverType = receiverType,
+                backingValueParameters = symbol.valueParameters
+                    .zip(resultingDescriptor.valueParameters)
+                    .map { (symbol, resultingDescriptor) ->
+                        @Suppress("UNCHECKED_CAST")
+                        createSignature(symbol, resultingDescriptor) as KaVariableSignature<KaValueParameterSymbol>
+                    },
+                backingContextParameters = contextParameters,
+            )
+
             else -> error("unexpected callable symbol $this")
         }
     }

@@ -13,7 +13,15 @@ KtCallExpression(181,192): 'funMember()'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = A
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true

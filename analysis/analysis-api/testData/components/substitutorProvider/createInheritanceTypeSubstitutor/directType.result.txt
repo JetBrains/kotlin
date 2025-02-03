@@ -1,5 +1,5 @@
 Substitutor: <map substitutor: {S = kotlin/Int}>
 Substituted callables:
-  Generic<Int>.foo(): List<Int>
+  context(List<Int>) Generic<Int>.foo(): List<Int>
 
-  Generic<Int>.bar: List<Int>
+  context(List<Int>) Generic<Int>.bar: List<Int>

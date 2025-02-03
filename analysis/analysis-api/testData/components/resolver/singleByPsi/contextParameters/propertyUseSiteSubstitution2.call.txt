@@ -41,7 +41,15 @@ KtNameReferenceExpression(170,173): 'foo'
           receiverType = T
           returnType = kotlin.Boolean
           symbol = val foo: kotlin.Boolean
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = c: kotlin.Boolean
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.foo
       simpleAccess = Read
       typeArgumentsMapping = {}

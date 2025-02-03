@@ -44,6 +44,21 @@ KtCallExpression(168,182): 'foo(1L, "str")'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = <unused var>
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = <unused var>: kotlin.Long
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = cp2
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = cp2: kotlin.Boolean
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Base.foo
       typeArgumentsMapping = {}

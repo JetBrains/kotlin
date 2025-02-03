@@ -19,6 +19,21 @@ KtCallableReferenceExpression(81,86): '::foo'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = param1
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = param1: kotlin.Int
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = param2
+              receiverType = null
+              returnType = kotlin.String
+              symbol = param2: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /foo
       typeArgumentsMapping = {}

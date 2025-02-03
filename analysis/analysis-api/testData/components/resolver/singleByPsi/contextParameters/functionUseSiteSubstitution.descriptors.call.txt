@@ -1,0 +1,49 @@
+KtCallExpression(168,182): 'foo(1L, "str")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1L -> (KaVariableSignature:
+          name = rp1
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = rp1: T
+          contextParameters = []
+          callableId = null),
+        "str" -> (KaVariableSignature:
+          name = rp2
+          receiverType = null
+          returnType = kotlin.String
+          symbol = rp2: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = base
+          isSafeNavigation = false
+          type = Base<kotlin.Long>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Base.foo(<dispatch receiver>: Base<T>, rp1: T, rp2: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = rp1
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = rp1: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = rp2
+              receiverType = null
+              returnType = kotlin.String
+              symbol = rp2: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Base.foo
+      typeArgumentsMapping = {}

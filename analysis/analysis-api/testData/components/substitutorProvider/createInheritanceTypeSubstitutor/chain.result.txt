@@ -1,5 +1,5 @@
 Substitutor: <map substitutor: {X = S, Y = T, Z = kotlin/collections/List<T>}> then <map substitutor: {S = kotlin/Int, T = kotlin/String}>
 Substituted callables:
-  Generic<Int, String, List<String>>.foo(): Triple<Int, String, List<String>>
+  context(Triple<Int, String, List<String>>) Generic<Int, String, List<String>>.foo(): Triple<Int, String, List<String>>
 
-  Generic<Int, String, List<String>>.bar: Triple<Int, String, List<String>>
+  context(Triple<Int, String, List<String>>) Generic<Int, String, List<String>>.bar: Triple<Int, String, List<String>>

@@ -44,6 +44,21 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
               contextParameters = []
               callableId = null
           ]
-          contextParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = cp1
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = cp1: kotlin.Long
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = cp2
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = cp2: kotlin.Boolean
+              contextParameters = []
+              callableId = null
+          ]
           callableId = /Another.foo
       typeArgumentsMapping = {}
