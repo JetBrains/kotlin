@@ -169,7 +169,7 @@ internal class KaFe10SymbolRelationProvider(
             override val transitiveDependsOnDependencies: List<KaModule> = emptyList()
             override val directFriendDependencies: List<KaModule> = emptyList()
             override val baseContentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
-            override val contentScope: GlobalSearchScope by lazy {
+            override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
                 KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
             }
             override val targetPlatform: TargetPlatform

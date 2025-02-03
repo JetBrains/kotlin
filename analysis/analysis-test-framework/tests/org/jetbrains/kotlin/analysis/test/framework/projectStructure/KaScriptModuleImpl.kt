@@ -21,7 +21,7 @@ class KaScriptModuleImpl(
     override val project: Project,
 ) : KtModuleWithModifiableDependencies(), KaScriptModule {
     override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
     override val directRegularDependencies: MutableList<KaModule> = mutableListOf()

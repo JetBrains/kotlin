@@ -128,7 +128,7 @@ class KaSourceModuleByCompilerConfiguration(
     override val baseContentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 
@@ -145,7 +145,7 @@ class KaScriptModuleByCompilerConfiguration(
 ) : KtModuleByCompilerConfiguration(project, testModule, listOf(file), testServices), KaScriptModule {
     override val ktModule: KaModule get() = this
     override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 
@@ -167,7 +167,7 @@ class KaLibraryModuleByCompilerConfiguration(
     override val baseContentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 }
@@ -182,7 +182,7 @@ class KaLibrarySourceModuleByCompilerConfiguration(
     override val ktModule: KaModule get() = this
     override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
 
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 
@@ -200,7 +200,7 @@ private class LibraryByRoots(
         emptyList(),
         testServices.environmentManager.getProjectEnvironment(),
     )
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
     override val libraryName: String get() = "Test Library $roots"

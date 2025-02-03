@@ -100,7 +100,7 @@ internal class KaNotUnderContentRootModuleForTest(
     override val baseContentScope: GlobalSearchScope
         get() = GlobalSearchScope.fileScope(file)
 
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 

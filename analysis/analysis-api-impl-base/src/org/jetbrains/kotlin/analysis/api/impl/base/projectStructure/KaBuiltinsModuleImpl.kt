@@ -23,7 +23,7 @@ class KaBuiltinsModuleImpl(
     override val baseContentScope: GlobalSearchScope
         get() = BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project)
 
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 

@@ -24,7 +24,7 @@ internal class KaLibrarySourceModuleImpl(
     override val libraryName: String,
     override val binaryLibrary: KaLibraryModule,
 ) : KaLibrarySourceModule, KtModuleWithPlatform {
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 

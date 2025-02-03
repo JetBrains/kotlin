@@ -34,7 +34,7 @@ internal class KaSourceModuleImpl(
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
 
-    override val contentScope: GlobalSearchScope by lazy {
+    override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
 }
