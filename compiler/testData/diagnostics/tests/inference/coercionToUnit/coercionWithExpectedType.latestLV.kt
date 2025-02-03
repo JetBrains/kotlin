@@ -14,7 +14,7 @@ val a: () -> Unit = l@{
 
 val b: () -> Unit = l@{
     // Error, coercion can't be applied at this position!
-    if (true) return@l <!TYPE_MISMATCH!>"hello"<!>
+    if (true) return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>"hello"<!>
 
     // However, this is OK, because here coercion is applied
     "hello"

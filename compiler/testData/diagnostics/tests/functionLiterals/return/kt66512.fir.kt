@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // ISSUE: KT-66512
 
 typealias MyUnit = Unit

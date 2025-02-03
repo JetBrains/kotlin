@@ -10,13 +10,13 @@ typealias MyUnit = Unit
 // ================= Lambdas assigned to a variable =================
 
 val expectedMyUnitExplicitReturnString: () -> MyUnit = l@ {
-    return@l <!TYPE_MISMATCH!>""<!>
+    return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
 }
 
 // ============== Lambdas passed as function argument ===============
 
 fun test() {
     run<MyUnit> l@ {
-        return@l <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
     }
 }

@@ -7,7 +7,7 @@ val a: () -> Int = l@ {
 }
 
 val b: () -> Unit = l@ {
-    if (flag) return@l <!RETURN_TYPE_MISMATCH!>4<!>
+    if (flag) return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>4<!>
 }
 
 val c: () -> Any = l@ {
