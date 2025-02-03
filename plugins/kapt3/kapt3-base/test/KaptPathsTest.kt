@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
-import org.jetbrains.kotlin.kapt3.base.KaptOptions
-import org.jetbrains.kotlin.kapt3.base.collectJavaSourceFiles
+import org.jetbrains.kotlin.kapt.base.KaptOptions
+import org.jetbrains.kotlin.kapt.base.collectJavaSourceFiles
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

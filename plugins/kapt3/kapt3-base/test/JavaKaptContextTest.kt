@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
-import org.jetbrains.kotlin.kapt3.base.*
-import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
-import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
-import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
-import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
+import org.jetbrains.kotlin.kapt.base.*
+import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
+import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
+import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
+import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

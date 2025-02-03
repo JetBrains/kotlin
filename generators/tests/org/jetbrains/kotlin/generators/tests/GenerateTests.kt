@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractFirKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
-import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt3.test.runners.AbstractKaptStubConverterTest
-import org.jetbrains.kotlin.kapt4.AbstractFirKaptStubConverterTest
+import org.jetbrains.kotlin.kapt.test.AbstractFirKaptStubConverterTest
+import org.jetbrains.kotlin.kapt.test.runners.AbstractIrKotlinKaptContextTest
+import org.jetbrains.kotlin.kapt.test.runners.AbstractKaptStubConverterTest
 import org.jetbrains.kotlin.lombok.AbstractDiagnosticTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractFirLightTreeBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractFirPsiDiagnosticTestForLombok
