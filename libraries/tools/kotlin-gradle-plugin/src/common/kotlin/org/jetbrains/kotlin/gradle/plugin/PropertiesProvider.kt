@@ -767,7 +767,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
         internal const val KOTLIN_INTERNAL_NAMESPACE = "kotlin.internal"
 
-        internal const val ABI_VALIDATION_BANNED_TARGETS_NAME = "kotlin.internal.abi.validation.klib.targets.disabled.for.testing"
+        internal const val ABI_VALIDATION_BANNED_TARGETS_NAME = "$KOTLIN_INTERNAL_NAMESPACE.abi.validation.klib.targets.disabled.for.testing"
 
         internal const val ABI_VALIDATION_DISABLED_NAME = "kotlin.abi.validation.disabled"
 

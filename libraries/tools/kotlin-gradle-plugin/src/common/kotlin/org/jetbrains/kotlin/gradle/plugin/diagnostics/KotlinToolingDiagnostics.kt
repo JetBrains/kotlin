@@ -1529,21 +1529,6 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object AbiValidationBanTarget : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(): ToolingDiagnostic = build {
-            title("ABI Validation: banned target specified")
-                .description {
-                    """
-                    The following property is not empty: ${PropertiesProvider.PropertyNames.ABI_VALIDATION_BANNED_TARGETS} 
-                    If you don't know what this means, check that its value is empty.
-                    """.trimIndent()
-                }
-                .solution {
-                    "Ignore or remove '${PropertiesProvider.PropertyNames.ABI_VALIDATION_BANNED_TARGETS}' property "
-                }
-        }
-    }
-
     object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(targetName: String): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")

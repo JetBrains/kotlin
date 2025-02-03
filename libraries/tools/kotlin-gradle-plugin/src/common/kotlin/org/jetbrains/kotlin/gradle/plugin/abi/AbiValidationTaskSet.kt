@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.abi.tools.api.v2.KlibTarget
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTaskImpl
+import org.jetbrains.kotlin.gradle.utils.named
 
 /**
  * A class for combining and conveniently configuring a group of tasks created for Application Binary Interface (ABI) validation.
@@ -20,9 +21,9 @@ import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTaskImpl
  */
 internal class AbiValidationTaskSet(project: Project, variantName: String) {
     private val legacyDumpTaskProvider =
-        project.tasks.getTask<KotlinLegacyAbiDumpTaskImpl>(KotlinLegacyAbiDumpTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinLegacyAbiDumpTaskImpl>(KotlinLegacyAbiDumpTaskImpl.nameForVariant(variantName))
     private val legacyCheckDumpTaskProvider =
-        project.tasks.getTask<KotlinLegacyAbiCheckTaskImpl>(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinLegacyAbiCheckTaskImpl>(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName))
 
     /**
      * Add declarations for the JVM target when no other JVM targets are present.

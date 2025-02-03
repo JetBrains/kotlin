@@ -12,9 +12,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.abi.*
-import org.jetbrains.kotlin.gradle.plugin.abi.getTask
 import org.jetbrains.kotlin.gradle.tasks.abi.*
-import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
 @ExperimentalAbiValidation
@@ -48,20 +47,14 @@ internal abstract class AbiValidationLegacyDumpExtensionImpl @Inject constructor
     private val variantName: String,
     private val tasks: TaskContainer
 ) : AbiValidationLegacyDumpExtension {
-    override val legacyCheckTaskProvider: TaskProvider<KotlinLegacyAbiCheckTask> by lazy {
-        // task is created a little later than the current object, so we add lazy access
-        tasks.named(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName), KotlinLegacyAbiCheckTask::class.java)
-    }
+    override val legacyCheckTaskProvider: TaskProvider<KotlinLegacyAbiCheckTask>
+        get() = tasks.named<KotlinLegacyAbiCheckTask>(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName))
 
-    override val legacyDumpTaskProvider: TaskProvider<KotlinLegacyAbiDumpTask> by lazy {
-        // task is created a little later than the current object, so we add lazy access
-        tasks.named(KotlinLegacyAbiDumpTaskImpl.nameForVariant(variantName), KotlinLegacyAbiDumpTask::class.java)
-    }
+    override val legacyDumpTaskProvider: TaskProvider<KotlinLegacyAbiDumpTask>
+        get() = tasks.named<KotlinLegacyAbiDumpTask>(KotlinLegacyAbiDumpTaskImpl.nameForVariant(variantName))
 
-    override val legacyUpdateTaskProvider: TaskProvider<Task> by lazy {
-        // task is created a little later than the current object, so we add lazy access
-        tasks.named(KotlinLegacyAbiUpdateTask.nameForVariant(variantName))
-    }
+    override val legacyUpdateTaskProvider: TaskProvider<Task>
+        get() = tasks.named(KotlinLegacyAbiUpdateTask.nameForVariant(variantName))
 }
 
 @ExperimentalAbiValidation

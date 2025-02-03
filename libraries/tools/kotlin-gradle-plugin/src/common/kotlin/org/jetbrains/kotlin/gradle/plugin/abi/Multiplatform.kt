@@ -104,9 +104,5 @@ private fun Project.bannedCanonicalTargetsInTest(): Set<String> {
     val prop = kotlinPropertiesProvider.abiValidationBannedTargets
     prop ?: return emptySet()
 
-    return prop.split(",").map { it.trim() }.toSet().also {
-        if (it.isNotEmpty()) {
-            reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.AbiValidationBanTarget())
-        }
-    }
+    return prop.split(",").map { it.trim() }.toSet()
 }

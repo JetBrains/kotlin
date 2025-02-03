@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.abi
 
+import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
@@ -27,39 +29,15 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
     when {
         kotlinJvmExtensionOrNull != null -> {
             val extension = kotlinJvmExtension
-            extension.extensions.create(
-                AbiValidationExtension::class.java,
-                EXTENSION_NAME,
-                AbiValidationExtensionImpl::class.java,
-                name,
-                layout,
-                objects,
-                tasks
-            ).configure(this)
+            extension.extensions.createAbiValidationExtension(this).configure(this)
         }
         kotlinExtension is KotlinAndroidProjectExtension -> {
             val extension = kotlinExtension as KotlinAndroidProjectExtension
-            extension.extensions.create(
-                AbiValidationExtension::class.java,
-                EXTENSION_NAME,
-                AbiValidationExtensionImpl::class.java,
-                name,
-                layout,
-                objects,
-                tasks
-            ).configure(this)
+            extension.extensions.createAbiValidationExtension(this).configure(this)
         }
         multiplatformExtensionOrNull != null -> {
             val extension = multiplatformExtension
-            extension.extensions.create(
-                AbiValidationMultiplatformExtension::class.java,
-                EXTENSION_NAME,
-                AbiValidationMultiplatformExtensionImpl::class.java,
-                name,
-                layout,
-                objects,
-                tasks
-            ).configure(this)
+            extension.extensions.createAbiValidationMultiplatformExtension(this).configure(this)
         }
     }
 
@@ -79,8 +57,8 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
             }
         }
 
-        kotlinExtension is KotlinAndroidProjectExtension -> {
-            val extension = kotlinExtension as KotlinAndroidProjectExtension
+        kotlinAndroidExtensionOrNull != null -> {
+            val extension = kotlinAndroidExtension
             val abiValidation = extension.findExtension<AbiValidationExtensionImpl>(EXTENSION_NAME)
                 ?: throw IllegalStateException("Kotlin extension not found: $EXTENSION_NAME")
             val target = extension.target
@@ -101,4 +79,28 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
             }
         }
     }
+}
+
+private fun ExtensionContainer.createAbiValidationExtension(project: Project): AbiValidationExtension {
+    return create(
+        AbiValidationExtension::class.java,
+        EXTENSION_NAME,
+        AbiValidationExtensionImpl::class.java,
+        project.name,
+        project.layout,
+        project.objects,
+        project.tasks
+    )
+}
+
+private fun ExtensionContainer.createAbiValidationMultiplatformExtension(project: Project): AbiValidationMultiplatformExtension {
+    return create(
+        AbiValidationMultiplatformExtension::class.java,
+        EXTENSION_NAME,
+        AbiValidationMultiplatformExtensionImpl::class.java,
+        project.name,
+        project.layout,
+        project.objects,
+        project.tasks
+    )
 }
