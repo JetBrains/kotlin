@@ -4,19 +4,19 @@
 
 package kt352
 
-val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{  -> }<!>  //type mismatch
+val f : (Any) -> Unit = <!ARGUMENT_TYPE_MISMATCH!>{  -> }<!>  //type mismatch
 
 fun foo() {
-    val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{ -> }<!>  //!!! no error
+    val f : (Any) -> Unit = <!ARGUMENT_TYPE_MISMATCH!>{ -> }<!>  //!!! no error
 }
 
 class A() {
-    val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{ -> }<!>  //type mismatch
+    val f : (Any) -> Unit = <!ARGUMENT_TYPE_MISMATCH!>{ -> }<!>  //type mismatch
 }
 
 //more tests
 val g : () -> Unit = { 42 }
-val gFunction : () -> Unit = fun(): Int = <!RETURN_TYPE_MISMATCH!>1<!>
+val gFunction : () -> Unit = <!ARGUMENT_TYPE_MISMATCH!>fun(): Int = 1<!>
 
 val h : () -> Unit = { doSmth() }
 

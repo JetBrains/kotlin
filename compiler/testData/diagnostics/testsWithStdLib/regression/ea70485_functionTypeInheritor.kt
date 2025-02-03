@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 class O : Function2<Int, String, Unit> {
     override fun invoke(p1: Int, p2: String) {
     }
