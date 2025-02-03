@@ -19,6 +19,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.add
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
@@ -154,5 +155,15 @@ class GroupByToDataFrame : AbstractSchemaModificationInterpreter() {
         return PluginDataFrameSchema(
             receiver.keys.columns() + grouped
         )
+    }
+}
+
+class GroupByAdd : AbstractInterpreter<GroupBy>() {
+    val Arguments.receiver: GroupBy by groupBy()
+    val Arguments.name: String by arg()
+    val Arguments.type: TypeApproximation by type(name("expression"))
+
+    override fun Arguments.interpret(): GroupBy {
+        return GroupBy(receiver.keys, receiver.groups.add(name, type.type, context = this))
     }
 }
