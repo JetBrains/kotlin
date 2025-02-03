@@ -15,10 +15,10 @@ FILE: whenSubjectExpression.kt
     }
     public final fun whenWithSubjectVariable(x: R|kotlin/Any|): R|kotlin/Unit| {
         when (lval y: R|kotlin/Any| = R|<local>/x|) {
-            ($subj$ !is R|kotlin/Double|) ->  {
+            (<local>/y !is R|kotlin/Double|) ->  {
                 Int(-1)
             }
-            ==($subj$, Double(0.0)) ->  {
+            ==(<local>/y, Double(0.0)) ->  {
                 Int(0)
             }
             else ->  {

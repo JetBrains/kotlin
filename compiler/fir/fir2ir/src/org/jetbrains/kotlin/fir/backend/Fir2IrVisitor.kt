@@ -1443,14 +1443,7 @@ class Fir2IrVisitor(
     }
 
     private fun generateWhenSubjectVariable(whenExpression: FirWhenExpression): IrVariable? {
-        val subjectVariable = whenExpression.subjectVariable
-        val subjectExpression = whenExpression.subject
-        return when {
-            subjectVariable != null -> subjectVariable.accept(this, null) as IrVariable
-            subjectExpression != null ->
-                conversionScope.scope().createTemporaryVariable(convertToIrExpression(subjectExpression), "subject")
-            else -> null
-        }
+        return whenExpression.subjectVariable?.accept(this, null) as? IrVariable
     }
 
     private fun FirWhenBranch.toIrWhenBranch(whenExpressionType: ConeKotlinType): IrBranch {
@@ -1462,13 +1455,6 @@ class Fir2IrVisitor(
             } else {
                 IrBranchImpl(startOffset, irResult.endOffset, convertToIrExpression(condition), irResult)
             }
-        }
-    }
-
-    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Any?): IrElement {
-        val lastSubjectVariable = conversionScope.lastWhenSubject()
-        return whenSubjectExpression.convertWithOffsets { startOffset, endOffset ->
-            IrGetValueImpl(startOffset, endOffset, lastSubjectVariable.type, lastSubjectVariable.symbol)
         }
     }
 

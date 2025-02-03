@@ -1028,12 +1028,6 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("rValue", expression, withTransform = true)
     }
 
-    val whenSubjectExpression: Element by element(Expression) {
-        parent(expression)
-
-        +field("whenRef", whenRefType)
-    }
-
     val desugaredAssignmentValueReferenceExpression: Element by element(Expression) {
         parent(expression)
 
@@ -1211,8 +1205,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
         parent(resolvable)
 
-        +field("subject", expression, nullable = true, withTransform = true)
-        +field("subjectVariable", variable, nullable = true)
+        +field("subjectVariable", property, nullable = true, withTransform = true)
         +listField("branches", whenBranch, withTransform = true)
         +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
         +field("usedAsExpression", boolean)

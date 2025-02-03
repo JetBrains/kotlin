@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -25,8 +25,7 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val calleeReference: FirReference
-    abstract val subject: FirExpression?
-    abstract val subjectVariable: FirVariable?
+    abstract val subjectVariable: FirProperty?
     abstract val branches: List<FirWhenBranch>
     abstract val exhaustivenessStatus: ExhaustivenessStatus?
     abstract val usedAsExpression: Boolean
@@ -50,7 +49,7 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression
 
-    abstract fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpression
+    abstract fun <D> transformSubjectVariable(transformer: FirTransformer<D>, data: D): FirWhenExpression
 
     abstract fun <D> transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpression
 

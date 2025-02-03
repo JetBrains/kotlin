@@ -939,14 +939,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformVariableAssignment(variableAssignment, data)
     }
 
-    open fun transformWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement {
-        return transformElement(whenSubjectExpression, data)
-    }
-
-    final override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement {
-        return transformWhenSubjectExpression(whenSubjectExpression, data)
-    }
-
     open fun transformDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression, data: D): FirStatement {
         return transformElement(desugaredAssignmentValueReferenceExpression, data)
     }

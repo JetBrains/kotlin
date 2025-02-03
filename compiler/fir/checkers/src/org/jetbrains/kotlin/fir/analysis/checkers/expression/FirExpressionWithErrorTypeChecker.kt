@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -48,7 +46,6 @@ object FirExpressionWithErrorTypeChecker : FirBasicExpressionChecker(MppCheckerK
         if (expression is FirSafeCallExpression) return
         // All these variants inherit an error from a referred expression
         if (expression is FirDesugaredAssignmentValueReferenceExpression ||
-            expression is FirWhenSubjectExpression ||
             expression is FirCheckedSafeCallSubject
         ) return
         // Below we do a return in case expression has its own diagnostic or has a diagnostic inside child nodes

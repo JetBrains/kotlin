@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.toPersistentSet
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
@@ -468,7 +470,8 @@ abstract class FirDataFlowAnalyzer(
          *   right argument
          */
         val leftConst = when (leftOperand) {
-            is FirWhenSubjectExpression -> leftOperand.whenRef.value.subject
+            is FirPropertyAccessExpression if leftOperand.source?.kind == KtFakeSourceElementKind.WhenGeneratedSubject ->
+                leftOperand.calleeReference.toResolvedSymbol<FirPropertySymbol>()?.resolvedInitializer
             else -> leftOperand
         } as? FirLiteralExpression
         val rightConst = rightOperand as? FirLiteralExpression
@@ -702,10 +705,6 @@ abstract class FirDataFlowAnalyzer(
         val (whenExitNode, syntheticElseNode) = graphBuilder.exitWhenExpression(whenExpression, callCompleted)
         syntheticElseNode?.mergeWhenBranchEntryFlow()
         whenExitNode.mergeIncomingFlow()
-    }
-
-    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression) {
-        graphBuilder.exitWhenSubjectExpression(expression).mergeIncomingFlow()
     }
 
     // ----------------------------------- While Loop -----------------------------------

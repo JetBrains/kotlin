@@ -235,10 +235,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitStatement(variableAssignment)
     }
 
-    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {
-        visitExpression(whenSubjectExpression)
-    }
-
     override fun visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression) {
         visitExpression(desugaredAssignmentValueReferenceExpression)
     }

@@ -365,9 +365,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: D): R =
         visitElement(variableAssignment, data)
 
-    open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): R =
-        visitElement(whenSubjectExpression, data)
-
     open fun visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression, data: D): R =
         visitElement(desugaredAssignmentValueReferenceExpression, data)
 

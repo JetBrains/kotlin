@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -52,7 +50,7 @@ object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiEl
             )
         }
 
-        if (element.subject == null) {
+        if (element.subjectVariable == null) {
             reporter.reportOn(source, FirErrors.WHEN_GUARD_WITHOUT_SUBJECT, context)
         } else {
             if (source.getChild(KtTokens.COMMA, depth = 1) != null) {

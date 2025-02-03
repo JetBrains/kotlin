@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -593,10 +594,9 @@ class FirRenderer(
             annotationRenderer?.render(whenExpression)
             print("when (")
             val subjectVariable = whenExpression.subjectVariable
-            if (subjectVariable != null) {
-                subjectVariable.accept(this)
-            } else {
-                whenExpression.subject?.accept(this)
+            when {
+                subjectVariable?.name == SpecialNames.SUBJECT -> subjectVariable.initializer?.accept(this)
+                subjectVariable != null -> subjectVariable.accept(this)
             }
             printer.println(") {")
             printer.pushIndent()
@@ -605,10 +605,6 @@ class FirRenderer(
             }
             printer.popIndent()
             printer.println("}")
-        }
-
-        override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {
-            print("\$subj\$")
         }
 
         override fun visitTryExpression(tryExpression: FirTryExpression) {

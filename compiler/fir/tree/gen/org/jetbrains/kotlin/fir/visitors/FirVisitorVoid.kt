@@ -939,14 +939,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(variableAssignment)
     }
 
-    final override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?) {
-        visitWhenSubjectExpression(whenSubjectExpression)
-    }
-
-    open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {
-        visitElement(whenSubjectExpression)
-    }
-
     final override fun visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression, data: Nothing?) {
         visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression)
     }

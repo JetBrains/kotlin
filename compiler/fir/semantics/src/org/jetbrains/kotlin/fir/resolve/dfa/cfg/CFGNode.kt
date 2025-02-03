@@ -876,12 +876,6 @@ class ElvisExitNode(owner: ControlFlowGraph, override val fir: FirElvisExpressio
     }
 }
 
-class WhenSubjectExpressionExitNode(owner: ControlFlowGraph, override val fir: FirWhenSubjectExpression, level: Int) : CFGNode<FirWhenSubjectExpression>(owner, level) {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitWhenSubjectExpressionExitNode(this, data)
-    }
-}
-
 // ----------------------------------- Stub -----------------------------------
 
 object FirStub : FirExpression() {

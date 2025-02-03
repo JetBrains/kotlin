@@ -53,13 +53,8 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             }
         }
 
-        private fun getSubjectType(session: FirSession, whenExpression: FirWhenExpression): ConeKotlinType? {
-            val subjectType = whenExpression.subjectVariable?.returnTypeRef?.coneType
-                ?: whenExpression.subject?.resolvedType
-                ?: return null
-
-            return subjectType.fullyExpandedType(session)
-        }
+        private fun getSubjectType(session: FirSession, whenExpression: FirWhenExpression): ConeKotlinType? =
+            whenExpression.subjectVariable?.returnTypeRef?.coneType?.fullyExpandedType(session)
 
         /**
          * The "minimum" bound of a flexible type is defined as the bound type which will be checked for exhaustion

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.expectedType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
-import org.jetbrains.kotlin.fir.resolve.transformExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
@@ -66,8 +65,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
-            var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
-            val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(session)
+            var whenExpression = whenExpression.transformSubjectVariable(transformer, ResolutionMode.ContextIndependent)
+            val subjectType = whenExpression.subjectVariable?.returnTypeRef?.coneType?.fullyExpandedType(session)
             var completionNeeded = false
             context.withWhenSubjectType(subjectType, components) {
                 when {
@@ -138,14 +137,6 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             .transformResult(transformer, data)
             .also { dataFlowAnalyzer.exitWhenBranchResult(it) }
 
-    }
-
-    override fun transformWhenSubjectExpression(
-        whenSubjectExpression: FirWhenSubjectExpression,
-        data: ResolutionMode
-    ): FirStatement {
-        dataFlowAnalyzer.exitWhenSubjectExpression(whenSubjectExpression)
-        return components.transformExpressionUsingSmartcastInfo(whenSubjectExpression)
     }
 
     // ------------------------------- Try/catch expressions -------------------------------

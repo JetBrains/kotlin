@@ -191,10 +191,6 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(namedArgumentExpression, data)
     }
 
-    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(whenSubjectExpression, data)
-    }
-
     override fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference, data: CheckerContext) {
         checkers.allBasicExpressionCheckers.check(resolvedReifiedParameterReference, data)
     }

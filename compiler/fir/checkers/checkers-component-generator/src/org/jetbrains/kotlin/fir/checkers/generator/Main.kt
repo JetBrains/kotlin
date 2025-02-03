@@ -131,7 +131,6 @@ fun main(args: Array<String>) {
                 visitAlso<FirWrappedArgumentExpression>(it)
                 visitAlso<FirSpreadArgumentExpression>(it)
                 visitAlso<FirNamedArgumentExpression>(it)
-                visitAlso<FirWhenSubjectExpression>(it)
                 visitAlso<FirResolvedReifiedParameterReference>(it)
                 visitAlso<FirComparisonExpression>(it)
                 visitAlso<FirDesugaredAssignmentValueReferenceExpression>(it)

@@ -109,30 +109,17 @@ internal class ImplementationPrinter(
                                     )
                                 }
 
-                                "dispatchReceiver", "extensionReceiver", "subjectVariable", "companionObject" -> {
+                                "dispatchReceiver", "extensionReceiver", "companionObject" -> {
                                 }
 
                                 else -> {
-                                    if (this.typeName == "FirWhenExpressionImpl" && field.name == "subject") {
-                                        println(
-                                            """
-                                        |val subjectVariable_ = subjectVariable
-                                        |        if (subjectVariable_ != null) {
-                                        |            subjectVariable_.accept(visitor, data)
-                                        |        } else {
-                                        |            subject?.accept(visitor, data)
-                                        |        }
-                                            """.trimMargin(),
-                                        )
-                                    } else {
-                                        when (field) {
-                                            is SimpleField -> {
-                                                println(field.acceptString())
-                                            }
+                                    when (field) {
+                                        is SimpleField -> {
+                                            println(field.acceptString())
+                                        }
 
-                                            is ListField -> {
-                                                println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
-                                            }
+                                        is ListField -> {
+                                            println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
                                         }
                                     }
                                 }
@@ -216,21 +203,7 @@ internal class ImplementationPrinter(
                 }
                 printBlock {
                     if (field.isMutable && field.containsElement) {
-                        // TODO: replace with smth normal
-                        if (typeName == "FirWhenExpressionImpl" && field.name == "subject") {
-                            println(
-                                """
-                                |if (subjectVariable != null) {
-                                |            subjectVariable = subjectVariable?.transform(transformer, data)
-                                |            subject = subjectVariable?.initializer
-                                |        } else {
-                                |            subject = subject?.transform(transformer, data)
-                                |        }
-                                    """.trimMargin(),
-                            )
-                        } else {
-                            field.transform()
-                        }
+                        field.transform()
                     }
                     println("return this")
                 }
@@ -244,7 +217,7 @@ internal class ImplementationPrinter(
                 } else {
                     printBlock {
                         for (field in allFields) {
-                            if (!field.isMutable || !field.containsElement || field.name == "subjectVariable") continue
+                            if (!field.isMutable || !field.containsElement) continue
                             if (!field.withTransform) {
                                 field.transform()
                             }

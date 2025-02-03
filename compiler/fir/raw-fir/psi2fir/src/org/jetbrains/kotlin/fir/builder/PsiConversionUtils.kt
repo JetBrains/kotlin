@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.builder
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -24,15 +24,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
-    whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
+    firSubjectVariable: FirVariable,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val firSubjectSource = this.toKtPsiSourceElement(KtFakeSourceElementKind.WhenGeneratedSubject)
-    val firSubjectExpression = buildWhenSubjectExpression {
-        source = firSubjectSource
-        whenRef = whenRefWithSubject
-    }
+    val firSubjectExpression = generateResolvedAccessExpression(firSubjectSource, firSubjectVariable)
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildEqualityOperatorCall {
@@ -67,12 +64,12 @@ internal fun KtWhenCondition.toFirWhenCondition(
 }
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
-    subject: FirExpressionRef<FirWhenExpression>,
+    firSubjectVariable: FirVariable,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val conditions = this.map { condition ->
-        condition.toFirWhenCondition(subject, convert, toFirOrErrorTypeRef)
+        condition.toFirWhenCondition(firSubjectVariable, convert, toFirOrErrorTypeRef)
     }
 
     require(conditions.isNotEmpty())
@@ -89,7 +86,7 @@ internal fun generateTemporaryVariable(
     typeRef: FirTypeRef? = null,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
     extractAnnotationsTo: (KtAnnotated.(FirAnnotationContainerBuilder) -> Unit),
-): FirVariable =
+): FirProperty =
     buildProperty {
         this.source = source
         this.moduleData = moduleData
@@ -111,7 +108,7 @@ internal fun generateTemporaryVariable(
     initializer: FirExpression,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
     extractAnnotationsTo: (KtAnnotated.(FirAnnotationContainerBuilder) -> Unit),
-): FirVariable =
+): FirProperty =
     generateTemporaryVariable(
         moduleData,
         source,

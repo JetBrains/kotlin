@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -833,7 +834,7 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertWhenExpression(whenExpression: LighterASTNode): FirExpression {
         var subjectExpression: FirExpression? = null
-        var subjectVariable: FirVariable? = null
+        var subjectVariable: FirProperty? = null
         val whenEntryNodes = mutableListOf<LighterASTNode>()
         val whenEntries = mutableListOf<WhenEntry>()
         whenExpression.forEachChildren {
@@ -866,22 +867,25 @@ class LightTreeRawFirExpressionBuilder(
                     getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
             }
         }
-        subjectExpression = subjectVariable?.initializer ?: subjectExpression
-        val hasSubject = subjectExpression != null
+        if (subjectExpression != null && subjectVariable == null) {
+            subjectVariable = generateTemporaryVariable(
+                moduleData = baseModuleData,
+                source = subjectExpression.source,
+                name = SpecialNames.SUBJECT,
+                initializer = subjectExpression,
+                origin = FirDeclarationOrigin.Synthetic.WhenSubject,
+            )
+        }
+        val hasSubject = subjectVariable != null
 
-        @OptIn(FirContractViolation::class)
-        val subject = FirExpressionRef<FirWhenExpression>()
-        var shouldBind = hasSubject
         whenEntryNodes.mapTo(whenEntries) {
-            convertWhenEntry(it, subject, hasSubject)
+            convertWhenEntry(it, subjectVariable)
         }
         return buildWhenExpression {
             source = whenExpression.toFirSourceElement()
-            this.subject = subjectExpression
             this.subjectVariable = subjectVariable
             usedAsExpression = whenExpression.usedAsExpression
             for (entry in whenEntries) {
-                shouldBind = shouldBind || entry.shouldBindSubject
                 val branch = entry.firBlock
                 val entrySource = entry.node.toFirSourceElement()
                 branches += if (!entry.isElse) {
@@ -908,10 +912,6 @@ class LightTreeRawFirExpressionBuilder(
                     }
                 }
             }
-        }.also {
-            if (shouldBind) {
-                subject.bind(it)
-            }
         }
     }
 
@@ -921,26 +921,20 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertWhenEntry(
         whenEntry: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
-        hasSubject: Boolean,
+        firSubjectVariable: FirVariable?,
     ): WhenEntry {
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
         val conditions = mutableListOf<FirExpression>()
         var guard: FirExpression? = null
-        var shouldBindSubject = false
         whenEntry.forEachChildren {
             when (it.tokenType) {
-                WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject.takeIf { hasSubject })
+                WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, firSubjectVariable)
                 WHEN_CONDITION_IN_RANGE -> {
-                    val (condition, shouldBind) = convertWhenConditionInRange(it, whenRefWithSubject, hasSubject)
-                    conditions += condition
-                    shouldBindSubject = shouldBindSubject || shouldBind
+                    conditions += convertWhenConditionInRange(it, firSubjectVariable)
                 }
                 WHEN_CONDITION_IS_PATTERN -> {
-                    val (condition, shouldBind) = convertWhenConditionIsPattern(it, whenRefWithSubject, hasSubject)
-                    conditions += condition
-                    shouldBindSubject = shouldBindSubject || shouldBind
+                    conditions += convertWhenConditionIsPattern(it, firSubjectVariable)
                 }
                 WHEN_ENTRY_GUARD -> guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped(), "No expression in guard")
                 ELSE_KEYWORD -> isElse = true
@@ -949,12 +943,12 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse, shouldBindSubject)
+        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse)
     }
 
     private fun convertWhenConditionExpression(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>?,
+        firSubjectVariable: FirVariable?,
     ): FirExpression {
         var firExpression: FirExpression? = null
         whenCondition.forEachChildren {
@@ -968,7 +962,7 @@ class LightTreeRawFirExpressionBuilder(
             ConeSyntaxDiagnostic("No expression in condition with expression")
         )
 
-        if (whenRefWithSubject == null) {
+        if (firSubjectVariable == null) {
             return calculatedFirExpression
         }
 
@@ -976,22 +970,18 @@ class LightTreeRawFirExpressionBuilder(
             source = whenCondition.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
             operation = FirOperation.EQ
             argumentList = buildBinaryArgumentList(
-                left = buildWhenSubjectExpression {
-                    source = whenCondition.toFirSourceElement()
-                    whenRef = whenRefWithSubject
-                },
+                left = firSubjectVariable.toQualifiedAccess(
+                    fakeSource = whenCondition.toFirSourceElement(kind = KtFakeSourceElementKind.WhenGeneratedSubject)
+                ),
                 right = calculatedFirExpression
             )
         }
     }
 
-    private data class WhenConditionConvertedResults(val expression: FirExpression, val shouldBindSubject: Boolean)
-
     private fun convertWhenConditionInRange(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
-        hasSubject: Boolean,
-    ): WhenConditionConvertedResults {
+        firSubjectVariable: FirVariable?
+    ): FirExpression {
         var isNegate = false
         var firExpression: FirExpression? = null
         var conditionSource: KtLightSourceElement? = null
@@ -1008,30 +998,30 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        val subjectExpression = buildWhenSubjectExpression {
-            whenRef = whenRefWithSubject
-            source = whenCondition.toFirSourceElement()
-        }
+        val subjectExpression = firSubjectVariable?.toQualifiedAccess(
+            fakeSource = whenCondition.toFirSourceElement()
+        ) ?: buildErrorExpression(
+            null,
+            ConeSyntaxDiagnostic("No subject in condition with range")
+        )
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
             null,
             ConeSyntaxDiagnostic("No range in condition with range")
         )
 
-        val result = calculatedFirExpression.generateContainsOperation(
+        return calculatedFirExpression.generateContainsOperation(
             subjectExpression,
             inverted = isNegate,
-            baseSource = whenCondition.toFirSourceElement(),
+            baseSource = whenCondition.toFirSourceElement(kind = KtFakeSourceElementKind.WhenGeneratedSubject),
             operationReferenceSource = conditionSource
         )
-        return createWhenConditionConvertedResults(hasSubject, result, whenCondition)
     }
 
     private fun convertWhenConditionIsPattern(
         whenCondition: LighterASTNode,
-        whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
-        hasSubject: Boolean,
-    ): WhenConditionConvertedResults {
+        firSubjectVariable: FirVariable?,
+    ): FirExpression {
         lateinit var firOperation: FirOperation
         var firType: FirTypeRef? = null
         whenCondition.forEachChildren {
@@ -1042,40 +1032,18 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        val subjectExpression = buildWhenSubjectExpression {
-            source = whenCondition.toFirSourceElement()
-            whenRef = whenRefWithSubject
-        }
+        val subjectExpression = firSubjectVariable?.toQualifiedAccess(
+            fakeSource = whenCondition.toFirSourceElement(kind = KtFakeSourceElementKind.WhenGeneratedSubject)
+        ) ?: buildErrorExpression(
+            null,
+            ConeSyntaxDiagnostic("No subject in condition with is pattern")
+        )
 
-        val result = buildTypeOperatorCall {
+        return buildTypeOperatorCall {
             source = whenCondition.toFirSourceElement()
             operation = firOperation
             conversionTypeRef = firType ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
             argumentList = buildUnaryArgumentList(subjectExpression)
-        }
-
-        return createWhenConditionConvertedResults(hasSubject, result, whenCondition)
-    }
-
-    private fun createWhenConditionConvertedResults(
-        hasSubject: Boolean,
-        result: FirExpression,
-        whenCondition: LighterASTNode,
-    ): WhenConditionConvertedResults {
-        return if (hasSubject) {
-            WhenConditionConvertedResults(result, false)
-        } else {
-            WhenConditionConvertedResults(
-                buildErrorExpression {
-                    source = whenCondition.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic(
-                        "No expression in condition with expression",
-                        DiagnosticKind.ExpressionExpected
-                    )
-                    nonExpressionElement = result
-                },
-                true,
-            )
         }
     }
 

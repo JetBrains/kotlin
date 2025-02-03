@@ -1421,7 +1421,10 @@ open class FirDeclarationsResolveTransformer(
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             val resultType = when {
                 initializer != null -> {
-                    val unwrappedInitializer = initializer.unwrapSmartcastExpression()
+                    val unwrappedInitializer = when (variable.origin) {
+                        FirDeclarationOrigin.Synthetic.WhenSubject -> initializer
+                        else -> initializer.unwrapSmartcastExpression()
+                    }
                     unwrappedInitializer.resolvedType.toFirResolvedTypeRef(
                         unwrappedInitializer.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                     )

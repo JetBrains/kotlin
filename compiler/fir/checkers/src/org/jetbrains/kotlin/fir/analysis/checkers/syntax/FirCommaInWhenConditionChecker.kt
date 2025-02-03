@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
     override fun isApplicable(element: FirWhenExpression, source: KtSourceElement): Boolean {
-        return element.subject == null
+        return element.subjectVariable == null
     }
 
     override fun checkPsiOrLightTree(

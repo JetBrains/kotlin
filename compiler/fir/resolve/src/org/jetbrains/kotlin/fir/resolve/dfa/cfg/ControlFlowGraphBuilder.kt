@@ -951,10 +951,6 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression): WhenSubjectExpressionExitNode {
-        return createWhenSubjectExpressionExitNode(expression).also { addNewSimpleNode(it) }
-    }
-
     fun enterWhenBranchCondition(whenBranch: FirWhenBranch): WhenBranchConditionEnterNode {
         return createWhenBranchConditionEnterNode(whenBranch).also { addNewSimpleNode(it) }
     }

@@ -152,9 +152,6 @@ fun ControlFlowGraphBuilder.createElvisRhsEnterNode(fir: FirElvisExpression): El
 fun ControlFlowGraphBuilder.createElvisLhsExitNode(fir: FirElvisExpression): ElvisLhsExitNode =
     ElvisLhsExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createWhenSubjectExpressionExitNode(fir: FirWhenSubjectExpression): WhenSubjectExpressionExitNode =
-    WhenSubjectExpressionExitNode(currentGraph, fir, levelCounter)
-
 fun ControlFlowGraphBuilder.createElvisExitNode(fir: FirElvisExpression): ElvisExitNode =
     ElvisExitNode(currentGraph, fir, levelCounter)
 

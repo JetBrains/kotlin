@@ -2829,8 +2829,8 @@ open class PsiRawFirBuilder(
                 is KtVariableDeclaration -> ktSubjectExpression.initializer
                 else -> ktSubjectExpression
             }?.toFirExpression("Incorrect when subject expression: ${ktSubjectExpression?.text}")
-            val subjectVariable = when (ktSubjectExpression) {
-                is KtVariableDeclaration -> {
+            val subjectVariable = when {
+                ktSubjectExpression is KtVariableDeclaration -> {
                     val name = ktSubjectExpression.nameAsSafeName
                     buildProperty {
                         source = ktSubjectExpression.toFirSourceElement()
@@ -2850,29 +2850,33 @@ open class PsiRawFirBuilder(
                         ktSubjectExpression.extractAnnotationsTo(this)
                     }
                 }
+                ktSubjectExpression != null && subjectExpression != null -> generateTemporaryVariable(
+                    moduleData = baseModuleData,
+                    source = ktSubjectExpression.toFirSourceElement(),
+                    name = SpecialNames.SUBJECT,
+                    initializer = subjectExpression,
+                    origin = FirDeclarationOrigin.Synthetic.WhenSubject,
+                    extractAnnotationsTo = { },
+                )
                 else -> null
             }
-            val hasSubject = subjectExpression != null
+            val hasSubject = subjectVariable != null
 
-            @OptIn(FirContractViolation::class)
-            val ref = FirExpressionRef<FirWhenExpression>()
-            var shouldBind = hasSubject
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
-                this.subject = subjectExpression
                 this.subjectVariable = subjectVariable
                 usedAsExpression = expression.usedAsExpression
 
                 for (entry in expression.entries) {
                     val entrySource = entry.toFirSourceElement()
-                    val entryGuard = entry.guard?.let { it.getExpression().toFirExpression("No expression in guard") }
+                    val entryGuard = entry.guard?.getExpression()?.toFirExpression("No expression in guard")
                     val branchBody = entry.expression.toFirBlock()
                     branches += if (entry.elseKeyword == null) {
                         if (hasSubject) {
                             buildWhenBranch(hasGuard = entryGuard != null) {
                                 source = entrySource
                                 condition = entry.conditions.toFirWhenCondition(
-                                    ref,
+                                    subjectVariable,
                                     { toFirExpression(it) },
                                     { toFirOrErrorType() },
                                 ).guardedBy(entryGuard)
@@ -2896,14 +2900,8 @@ open class PsiRawFirBuilder(
                                                     DiagnosticKind.ExpressionExpected
                                                 )
                                             } else {
-                                                shouldBind = true
                                                 buildErrorExpression {
                                                     source = condition.toFirSourceElement()
-                                                    nonExpressionElement = condition.toFirWhenCondition(
-                                                        ref,
-                                                        { toFirExpression(it) },
-                                                        { toFirOrErrorType() },
-                                                    )
                                                     diagnostic = ConeSimpleDiagnostic(
                                                         "No expression in condition with expression",
                                                         DiagnosticKind.ExpressionExpected,
@@ -2922,10 +2920,6 @@ open class PsiRawFirBuilder(
                             result = branchBody
                         }
                     }
-                }
-            }.also {
-                if (shouldBind) {
-                    ref.bind(it)
                 }
             }
         }

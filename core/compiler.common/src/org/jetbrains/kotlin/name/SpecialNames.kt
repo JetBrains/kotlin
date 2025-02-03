@@ -59,6 +59,9 @@ object SpecialNames {
     val LOCAL = Name.special("<local>")
 
     @JvmField
+    val SUBJECT = Name.special("<subject>")
+
+    @JvmField
     val UNDERSCORE_FOR_UNUSED_VAR = Name.special("<unused var>")
 
     @JvmField

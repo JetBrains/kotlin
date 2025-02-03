@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
+import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -28,8 +31,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var calleeReference: FirReference = FirStubReference
-    var subject: FirExpression? = null
-    var subjectVariable: FirVariable? = null
+    var subjectVariable: FirProperty? = null
     val branches: MutableList<FirWhenBranch> = mutableListOf()
     var exhaustivenessStatus: ExhaustivenessStatus? = null
     var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -40,7 +42,6 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             calleeReference,
-            subject,
             subjectVariable,
             branches,
             exhaustivenessStatus,

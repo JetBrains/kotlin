@@ -406,7 +406,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
             }
 
             override fun visitWhenExpression(whenExpression: FirWhenExpression, data: MiniCfgData) {
-                (whenExpression.subjectVariable ?: whenExpression.subject)?.accept(this, data)
+                whenExpression.subjectVariable?.accept(this, data)
                 val flow = data.flow
                 // Also collect `flow` here for the case when none of the branches execute.
                 data.flow = whenExpression.branches.mapTo(mutableSetOf(flow)) {

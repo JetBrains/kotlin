@@ -138,7 +138,6 @@ fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
 
 fun FirExpression.unwrapExpression(): FirExpression =
     when (this) {
-        is FirWhenSubjectExpression -> whenRef.value.subject?.unwrapExpression() ?: this
         is FirSmartCastExpression -> originalExpression.unwrapExpression()
         is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapExpression()
         is FirCheckNotNullCall -> argument.unwrapExpression()

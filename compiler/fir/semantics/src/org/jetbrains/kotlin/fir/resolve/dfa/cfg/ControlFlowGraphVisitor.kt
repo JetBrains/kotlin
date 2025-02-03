@@ -373,10 +373,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitWhenSubjectExpressionExitNode(node: WhenSubjectExpressionExitNode, data: D): R {
-        return visitNode(node, data)
-    }
-
     // ----------------------------------- Elvis -----------------------------------
 
     open fun visitElvisLhsExitNode(node: ElvisLhsExitNode, data: D): R {

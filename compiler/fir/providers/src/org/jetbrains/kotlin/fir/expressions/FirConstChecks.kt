@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
@@ -167,7 +168,7 @@ private class FirConstCheckVisitor(
             return ConstantArgumentKind.NOT_CONST
         }
 
-        whenExpression.subject?.accept(this, data)?.ifNotValidConst { return it }
+        whenExpression.subjectVariable?.initializer?.accept(this, data)?.ifNotValidConst { return it }
         for (branch in whenExpression.branches) {
             when (branch.condition) {
                 is FirElseIfTrueCondition -> { /* skip */ }
@@ -179,10 +180,6 @@ private class FirConstCheckVisitor(
             }
         }
         return ConstantArgumentKind.VALID_CONST
-    }
-
-    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?): ConstantArgumentKind {
-        return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
     }
 
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): ConstantArgumentKind {
@@ -286,6 +283,9 @@ private class FirConstCheckVisitor(
     ): ConstantArgumentKind {
         val propertySymbol = propertyAccessExpression.calleeReference.toResolvedCallableSymbol()
         if (propertySymbol in propertyStack.get()) return ConstantArgumentKind.NOT_CONST
+        if (propertySymbol?.origin == FirDeclarationOrigin.Synthetic.WhenSubject && propertySymbol is FirPropertySymbol) {
+            return propertySymbol.visit { propertySymbol.fir.initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+        }
         when (propertySymbol) {
             // Null symbol means some error occurred.
             // We use the same logic as in `visitErrorExpression`.

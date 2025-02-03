@@ -667,15 +667,6 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirControlFlowStatementsResolveTransformer::transformWhenBranch,
     )
 
-    override fun transformWhenSubjectExpression(
-        whenSubjectExpression: FirWhenSubjectExpression,
-        data: ResolutionMode,
-    ): FirStatement = controlFlowStatementsTransformation(
-        whenSubjectExpression,
-        data,
-        FirControlFlowStatementsResolveTransformer::transformWhenSubjectExpression,
-    )
-
     override fun transformTryExpression(
         tryExpression: FirTryExpression,
         data: ResolutionMode,

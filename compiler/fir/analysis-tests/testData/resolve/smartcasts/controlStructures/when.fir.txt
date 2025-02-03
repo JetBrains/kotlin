@@ -65,24 +65,24 @@ FILE: when.kt
     }
     public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
         when (lval y: R|kotlin/Any?| = R|<local>/x|) {
-            ($subj$ is R|A|) ->  {
+            (<local>/y is R|A|) ->  {
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
-            ($subj$ is R|B|) ->  {
+            (<local>/y is R|B|) ->  {
                 R|<local>/x|.R|/B.bar|()
                 R|<local>/y|.R|/B.bar|()
             }
         }
 
         when (lval y: R|kotlin/Any?| = R|<local>/x|) {
-            ($subj$ !is R|A|) ->  {
+            (<local>/y !is R|A|) ->  {
             }
-            ($subj$ !is R|B|) ->  {
+            (<local>/y !is R|B|) ->  {
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
-            ($subj$ is R|kotlin/Int|) ->  {
+            (<local>/y is R|kotlin/Int|) ->  {
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/x|.R|/B.bar|()
                 R|<local>/x|.R|kotlin/Int.inc|()

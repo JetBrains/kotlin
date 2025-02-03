@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -27,7 +28,7 @@ object FirWhenConditionChecker : FirWhenExpressionChecker(MppCheckerKind.Common)
             if (condition is FirElseIfTrueCondition) continue
             checkCondition(condition, context, reporter)
         }
-        if (expression.subject != null) {
+        if (expression.subjectVariable != null) {
             checkDuplicatedLabels(expression, context, reporter)
         }
     }
@@ -40,7 +41,8 @@ object FirWhenConditionChecker : FirWhenExpressionChecker(MppCheckerKind.Common)
             when (val condition = branch.condition) {
                 is FirEqualityOperatorCall -> {
                     val arguments = condition.arguments
-                    if (arguments.size == 2 && arguments[0].unwrapSmartcastExpression() is FirWhenSubjectExpression) {
+                    val firstArgument = arguments.getOrNull(0)?.unwrapSmartcastExpression()
+                    if (arguments.size == 2 && firstArgument?.source == KtFakeSourceElementKind.WhenGeneratedSubject) {
                         val value = when (val targetExpression = arguments[1].unwrapSmartcastExpression()) {
                             is FirLiteralExpression -> targetExpression.value
                             is FirQualifiedAccessExpression -> targetExpression.calleeReference.toResolvedCallableSymbol() as? FirEnumEntrySymbol

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.baseForIntersectionOverride
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
@@ -72,6 +73,11 @@ open class FirResolvedNamedReferenceRenderer {
 
 class FirResolvedNamedReferenceRendererWithLabel : FirResolvedNamedReferenceRenderer() {
     override fun render(resolvedNamedReference: FirResolvedNamedReference) {
+        if (resolvedNamedReference.source?.kind == KtFakeSourceElementKind.WhenGeneratedSubject) {
+            super.render(resolvedNamedReference)
+            return
+        }
+
         printer.print("R|")
         super.render(resolvedNamedReference)
         printer.print("|")
