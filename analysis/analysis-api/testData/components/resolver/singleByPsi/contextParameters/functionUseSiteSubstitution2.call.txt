@@ -1,0 +1,66 @@
+KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        this@usage -> (KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = v: C
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: [
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: kotlin/Int
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: kotlin/String
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: kotlin/Boolean
+              ]
+              type: Another<kotlin/Int, kotlin/String, kotlin/Boolean>
+            visibility: PUBLIC
+          type = Another<kotlin.Int, kotlin.String, kotlin.Boolean>
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = kotlin.String
+        signature = KaFunctionSignature:
+          receiverType = kotlin.String
+          returnType = kotlin.Unit
+          symbol = /Another.foo(<extension receiver>: B, <dispatch receiver>: Another<A, B, C>, v: C): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = v
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = v: C
+              callableId = null
+          ]
+          callableId = /Another.foo
+      typeArgumentsMapping = {}

@@ -1,0 +1,4 @@
+KtNameReferenceExpression(150,153): 'foo'
+  KtSimpleNameReference:
+    (in Base) context(`<unused var>`@T, cp2@kotlin.Boolean)
+    abstract val foo: T

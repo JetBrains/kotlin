@@ -1,0 +1,45 @@
+KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1L -> (KaVariableSignature:
+          name = rp1
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = rp1: kotlin.Long
+          callableId = null),
+        "str" -> (KaVariableSignature:
+          name = rp2
+          receiverType = null
+          returnType = kotlin.String
+          symbol = rp2: kotlin.String
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Another.foo(<dispatch receiver>: Another, rp1: kotlin.Long, rp2: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = rp1
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = rp1: kotlin.Long
+              callableId = null,
+            KaVariableSignature:
+              name = rp2
+              receiverType = null
+              returnType = kotlin.String
+              symbol = rp2: kotlin.String
+              callableId = null
+          ]
+          callableId = /Another.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
