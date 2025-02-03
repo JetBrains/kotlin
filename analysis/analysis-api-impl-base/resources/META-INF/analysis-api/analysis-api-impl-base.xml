@@ -54,6 +54,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaBaseContentScopeProvider"
+    />
+
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
 
     <projectService
