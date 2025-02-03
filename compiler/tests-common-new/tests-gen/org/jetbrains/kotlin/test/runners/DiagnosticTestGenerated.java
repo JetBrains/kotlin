@@ -19468,6 +19468,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         public void testPreferNothingToBound() {
           runTest("compiler/testData/diagnostics/tests/inference/nestedCalls/preferNothingToBound.kt");
         }
+
+        @Test
+        @TestMetadata("secondLambdaWithRevisableExpectedType.kt")
+        public void testSecondLambdaWithRevisableExpectedType() {
+          runTest("compiler/testData/diagnostics/tests/inference/nestedCalls/secondLambdaWithRevisableExpectedType.kt");
+        }
       }
 
       @Nested
