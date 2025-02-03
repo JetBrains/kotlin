@@ -649,7 +649,7 @@ private fun ResolutionCandidate.getReceiverArgumentWithConstraintIfCompatible(
     val expectedType = prepareExpectedType(expectedTypeUnprepared)
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argument.receiver.stableType, expectedType)
     val position = ReceiverConstraintPositionImpl(argument, resolvedCall.atom)
-    return if (csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType, position))
+    return if (csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType))
         ApplicableContextReceiverArgumentWithConstraint(argument, argumentType, expectedType, position)
     else null
 }

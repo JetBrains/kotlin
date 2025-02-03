@@ -86,7 +86,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         }
 
         val successfulReceivers = preparedReceivers.filter {
-            candidate.system.isSubtypeConstraintCompatible(it.type, expectedType, SimpleConstraintSystemConstraintPosition)
+            candidate.system.isSubtypeConstraintCompatible(it.type, expectedType)
         }
 
         when (successfulReceivers.size) {
@@ -302,7 +302,7 @@ object CheckContextArguments : ResolutionStage() {
             val currentResult =
                 receiverGroup
                     .map { prepareImplicitArgument(ConeResolutionAtom.createRawAtom(it), expectedType, callInfo.session) }
-                    .filter { system.isSubtypeConstraintCompatible(it.type, expectedType, SimpleConstraintSystemConstraintPosition) }
+                    .filter { system.isSubtypeConstraintCompatible(it.type, expectedType) }
 
             if (currentResult.isNotEmpty()) return currentResult
         }
