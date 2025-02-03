@@ -158,8 +158,8 @@ fun box(): String {
     if (elseComponents[7].annotations.isEmpty()) {
         return "FAIL: no record component annotation for '@all:JavaParamFieldComponent val c' found"
     }
-    if (someComponents[10].annotations.isNotEmpty()) {
-        return "FAIL: record component annotation for '@all:JavaDefault val d' found, but it should not be so"
+    if (elseComponents[8].annotations.isEmpty()) {
+        return "FAIL: no record component annotation for '@all:JavaDefault val d' found"
     }
 
     return "OK"
