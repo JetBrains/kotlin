@@ -287,8 +287,10 @@ private class KaptExecution @Inject constructor(
 
         private fun ClassLoader.kaptClass(simpleName: String): Class<*> =
             try {
-                Class.forName("org.jetbrains.kotlin.kapt3.base.$simpleName", true, this)
+                Class.forName("org.jetbrains.kotlin.kapt.base.$simpleName", true, this)
             } catch (_: ClassNotFoundException) { // in case we have an old plugin version on the classpath
+                Class.forName("org.jetbrains.kotlin.kapt3.base.$simpleName", true, this)
+            } catch (_: ClassNotFoundException) {
                 Class.forName("org.jetbrains.kotlin.base.kapt3.$simpleName", true, this)
             }
 
