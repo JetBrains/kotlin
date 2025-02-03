@@ -21,10 +21,28 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * This allows extensions providing synthetic non-Kotlin sources to bring those source files
  * into the relevant module, library, or SDK scopes and shadow existing sources in a backend-agnostic manner.
  *
+ * Note that implementations of [KotlinContentScopeRefiner] cannot access [KaModule.contentScope],
+ * as it's not yet built when [getEnlargementScopes]/[getRestrictionScopes] are called.
+ *
  * For extensions producing Kotlin source, please see the [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider].
  */
 public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
+    /**
+     * Given a [KaModule], [getEnlargementScopes] returns [GlobalSearchScope]s,
+     * which should enlarge [KaModule.baseContentScope] to form [KaModule.contentScope].
+     *
+     * If some file from [getEnlargementScopes] is already contained in [KaModule.baseContentScope],
+     * nothing happens.
+     */
     public fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
+
+    /**
+     * Given a [KaModule], [getRestrictionScopes] returns [GlobalSearchScope]s,
+     * which should restrict [KaModule.baseContentScope] to form [KaModule.contentScope].
+     *
+     * If some file from [getRestrictionScopes] is not contained in [KaModule.baseContentScope],
+     * nothing happens.
+     */
     public fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 
     public companion object {
