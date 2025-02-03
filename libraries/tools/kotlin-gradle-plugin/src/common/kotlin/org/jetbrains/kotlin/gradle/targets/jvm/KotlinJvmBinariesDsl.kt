@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.onlyJars
 import javax.inject.Inject
 
 // Should be as much close to Gradle 'JavaApplication' spec as possible
@@ -272,14 +273,19 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
     private fun jarOnlyClasspath(
         jvmCompilation: KotlinJvmCompilation,
         compilationJarTask: TaskProvider<Jar>,
-    ): FileCollection = jvmCompilation.project.layout.files(
-        {
-            arrayOf(
-                compilationJarTask.map { it.archiveFile },
-                jvmCompilation.runtimeDependencyFiles,
-            )
-        }
-    )
+    ): FileCollection {
+        val classpath = jvmCompilation.project.objects.fileCollection()
+        classpath.from(compilationJarTask)
+        classpath.from(jvmCompilation.runtimeDependencyFiles.onlyJars)
+        jvmCompilation
+            .allAssociatedCompilations
+            .forAll { compilation ->
+                compilation as KotlinJvmCompilation
+                classpath.from(compilation.jarTask)
+                classpath.from(compilation.runtimeDependencyFiles.onlyJars)
+            }
+        return classpath
+    }
 
     private fun JavaExec.configureTaskToolchain() {
         val toolchainService = project.extensions.getByType(JavaToolchainService::class.java)
@@ -306,8 +312,7 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
             distribution.distributionClassifier.convention(jvmCompilation.disambiguateName(disambiguationSuffix))
 
             val libChildSpec = project.copySpec().into("lib")
-            libChildSpec.from(jvmCompilation.runtimeDependencyFiles)
-            libChildSpec.from(jvmCompilation.jarTask)
+            libChildSpec.from(jarOnlyClasspath(jvmCompilation, compilationJarTask))
 
             val binChildSpec = project.copySpec()
             binChildSpec.into(jvmBinarySpec.executableDir)

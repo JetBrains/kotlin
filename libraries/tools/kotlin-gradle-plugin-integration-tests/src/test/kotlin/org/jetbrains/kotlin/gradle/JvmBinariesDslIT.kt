@@ -188,6 +188,64 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Test binary distribution is runnable")
+    @GradleTest
+    fun testBinaryDistributionIsRunnable(gradleVersion: GradleVersion) {
+        project("mppRunJvm", gradleVersion) {
+            with(subProject("multiplatform")) {
+                buildScriptInjection {
+                    kotlinMultiplatform.jvmToolchain(17)
+                    kotlinMultiplatform.jvm {
+                        binaries {
+                            executable(KotlinCompilation.TEST_COMPILATION_NAME) {
+                                mainClass.set("JvmMainTestKt")
+                            }
+                        }
+                    }
+                }
+
+                kotlinSourcesDir("jvmMain").resolve("MainPrinter.kt").writeText(
+                    //language=kotlin
+                    """
+                    |class MainPrinter {
+                    |    fun print10() {
+                    |        println("10")
+                    |    }
+                    |}
+                    """.trimMargin()
+                )
+                kotlinSourcesDir("jvmTest")
+                    .also { it.createDirectories() }
+                    .resolve("JvmMainTest.kt")
+                    .writeText(
+                        //language=kotlin
+                        """
+                        |fun main() {
+                        |   val mainPrinter = MainPrinter()
+                        |   mainPrinter.print10()
+                        |}
+                        """.trimMargin()
+                    )
+            }
+
+            build("installJvmTestDist") {
+                assertTasksExecuted(
+                    ":multiplatform:jvmTestJar",
+                    ":multiplatform:startScriptsForJvmTest",
+                    ":multiplatform:installJvmTestDist",
+                )
+
+                assertDirectoryInProjectExists("multiplatform/build/install/multiplatform-jvmTest/bin")
+                assertFileInProjectExists("multiplatform/build/install/multiplatform-jvmTest/bin/multiplatform")
+                assertFileInProjectExists("multiplatform/build/install/multiplatform-jvmTest/bin/multiplatform.bat")
+                assertDirectoryInProjectExists("multiplatform/build/install/multiplatform-jvmTest/lib")
+            }
+
+            val runScript = if (OS.WINDOWS.isCurrentOs) "multiplatform.bat" else "multiplatform"
+            assertScriptExecutionIsSuccessful(projectPath.resolve("multiplatform/build/install/multiplatform-jvmTest/bin/$runScript"))
+        }
+    }
+
     @DisplayName("Distribution is possible to customize")
     @GradleTest
     fun distributionCustomization(gradleVersion: GradleVersion) {
