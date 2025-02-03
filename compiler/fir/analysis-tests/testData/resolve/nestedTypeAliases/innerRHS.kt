@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73422
+// SKIP_FIR_DUMP
 
 open class Outer {
     inner class Inner

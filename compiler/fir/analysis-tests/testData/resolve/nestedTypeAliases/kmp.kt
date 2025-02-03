@@ -1,7 +1,14 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// SKIP_FIR_DUMP
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
+
+// FILE: expect.kt
+
+expect interface I {
+    <!WRONG_MODIFIER_TARGET!>expect<!> typealias A<!SYNTAX!><!>
+<!SYNTAX!><!>}
 
 // FILE: expect1.kt
 
@@ -21,7 +28,24 @@ expect class E3 {
     class I
 }
 
+// FILE: expect4.kt
+
+open class IBase {
+    typealias A = String
+    open fun foo(a: A) {}
+}
+
+expect class Base : IBase {
+    override fun foo(a: IBase.A)
+}
+
 // MODULE: platform()()(common)
+
+// FILE: actual.kt
+
+actual interface <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>I<!> {
+    typealias A = String
+}
 
 // FILE: actual1.kt
 
@@ -45,3 +69,8 @@ class B {
 
 actual typealias E3 = B  // OK
 
+// FILE: actual4.kt
+
+actual class Base: IBase() {
+    actual override fun foo(a: String) { }
+}

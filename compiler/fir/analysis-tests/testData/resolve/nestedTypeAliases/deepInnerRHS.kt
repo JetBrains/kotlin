@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73752
+// SKIP_FIR_DUMP
 
 // FILE: main.kt
 
