@@ -44,7 +44,7 @@ class JsSharedVariablesManager(
                 typeArgumentsCount = 1
             ).apply {
                 typeArguments[0] = valueType
-                putValueArgument(0, initializer)
+                arguments[0] = initializer
             }
 
         return buildVariable(
@@ -72,14 +72,12 @@ class JsSharedVariablesManager(
             originalGet.origin
         ).apply {
             typeArguments[0] = originalGet.type
-            putValueArgument(
-                0, IrGetValueImpl(
-                    originalGet.startOffset,
-                    originalGet.endOffset,
-                    dynamicType,
-                    sharedVariableSymbol,
-                    originalGet.origin
-                )
+            arguments[0] = IrGetValueImpl(
+                originalGet.startOffset,
+                originalGet.endOffset,
+                dynamicType,
+                sharedVariableSymbol,
+                originalGet.origin
             )
         }
     }
@@ -94,16 +92,14 @@ class JsSharedVariablesManager(
             originalSet.origin
         ).apply {
             typeArguments[0] = originalSet.value.type
-            putValueArgument(
-                0, IrGetValueImpl(
-                    originalSet.startOffset,
-                    originalSet.endOffset,
-                    dynamicType,
-                    sharedVariableSymbol,
-                    originalSet.origin
-                )
+            arguments[0] = IrGetValueImpl(
+                originalSet.startOffset,
+                originalSet.endOffset,
+                dynamicType,
+                sharedVariableSymbol,
+                originalSet.origin
             )
-            putValueArgument(1, originalSet.value)
+            arguments[1] = originalSet.value
         }
     }
 }
