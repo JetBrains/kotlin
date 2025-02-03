@@ -20,5 +20,5 @@ fun returnsString(): String {
 fun main() {
     stringF().myLet { it }
     stringF().myLet { 2 }
-    stringF().let { 2 } // stdlib's .let is ignorable
+    stringF().let { 2 }
 }
