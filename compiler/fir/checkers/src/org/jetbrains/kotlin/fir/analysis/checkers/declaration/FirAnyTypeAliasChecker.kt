@@ -30,10 +30,15 @@ import org.jetbrains.kotlin.fir.types.*
 object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.isTopLevel) {
-            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
-                reporter.reportOn(declaration.source, FirErrors.TOPLEVEL_TYPEALIASES_ONLY, context)
-            } else if (declaration.isLocal) {
+            if (declaration.isLocal) {
                 reporter.reportOn(declaration.source, FirErrors.UNSUPPORTED, "Local type aliases", context)
+            } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
+                reporter.reportOn(
+                    declaration.source,
+                    FirErrors.UNSUPPORTED_FEATURE,
+                    LanguageFeature.NestedTypeAliases to context.languageVersionSettings,
+                    context
+                )
             }
         }
 

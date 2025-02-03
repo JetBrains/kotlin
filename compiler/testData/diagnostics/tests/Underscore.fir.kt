@@ -29,7 +29,7 @@ fun <!UNDERSCORE_IS_RESERVED!>__<!>(<!UNDERSCORE_IS_RESERVED!>___<!>: Int, y: <!
 class A1(val <!UNDERSCORE_IS_RESERVED!>_<!>: String)
 class A2(<!UNDERSCORE_IS_RESERVED!>_<!>: String) {
     class B {
-        typealias <!UNDERSCORE_IS_RESERVED!>_<!> = CharSequence
+        <!UNSUPPORTED_FEATURE!>typealias <!UNDERSCORE_IS_RESERVED!>_<!> = CharSequence<!>
     }
     val <!UNDERSCORE_IS_RESERVED!>_<!>: Int = 1
 

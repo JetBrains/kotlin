@@ -6,6 +6,7 @@ fun foo() {
 }
 
 class C {
-    @Suppress("TOPLEVEL_TYPEALIASES_ONLY")
+    @Suppress("TOPLEVEL_TYPEALIASES_ONLY", "UNSUPPORTED_FEATURE")
     typealias TestNested = String
 }
+

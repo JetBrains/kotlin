@@ -18,13 +18,13 @@ class Outer<TO> {
 
 fun <TF> foo() {
     class Local<TL> {
-        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTF = List<TF>
-        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTL = List<TL>
+        <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LTF = List<TF><!>
+        <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LTL = List<TL><!>
     }
 
     fun <TLF> localfun() =
             object {
-                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTF = List<TF>
-                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTLF = List<TLF>
+                <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LTF = List<TF><!>
+                <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LTLF = List<TLF><!>
             }
 }

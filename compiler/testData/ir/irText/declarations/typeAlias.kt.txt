@@ -5,7 +5,7 @@ class C {
 
   }
 
-  @Suppress(names = ["TOPLEVEL_TYPEALIASES_ONLY"])
+  @Suppress(names = ["TOPLEVEL_TYPEALIASES_ONLY", "UNSUPPORTED_FEATURE"])
   typealias TestNested = String
 }
 

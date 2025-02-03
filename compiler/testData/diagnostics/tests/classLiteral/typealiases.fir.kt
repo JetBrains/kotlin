@@ -10,7 +10,7 @@ typealias TTNullableTString = TNullableTString
 fun f3() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>TTNullableTString::class<!>
 
 inline fun <reified T> f4(b: Boolean): Any {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias X = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>T<!><!>
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Y = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>T?<!><!>
+    <!UNSUPPORTED!>typealias X = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>T<!><!>
+    <!UNSUPPORTED!>typealias Y = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>T?<!><!>
     return if (b) <!UNRESOLVED_REFERENCE!>X<!>::class else <!UNRESOLVED_REFERENCE!>Y<!>::class
 }
