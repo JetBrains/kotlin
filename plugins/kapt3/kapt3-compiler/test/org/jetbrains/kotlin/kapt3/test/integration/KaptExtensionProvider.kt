@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.kapt3.test.integration
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
+import org.jetbrains.kotlin.kapt3.AbstractKaptExtension
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
@@ -33,22 +33,22 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
-class Kapt3ExtensionProvider(private val testServices: TestServices) : TestService {
-    private val cache: MutableMap<TestModule, Kapt3ExtensionForTests> = mutableMapOf()
+class KaptExtensionProvider(private val testServices: TestServices) : TestService {
+    private val cache: MutableMap<TestModule, KaptExtensionForTests> = mutableMapOf()
 
     fun createExtension(
         module: TestModule,
         kaptOptions: KaptOptions,
         processorOptions: Map<String, String>,
-        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit,
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, KaptExtensionForTests) -> Unit,
         supportedAnnotations: List<String>,
         compilerConfiguration: CompilerConfiguration,
-    ): Kapt3ExtensionForTests {
+    ): KaptExtensionForTests {
         if (module in cache) {
-            testServices.assertions.fail { "Kapt3ExtensionForTests for module $module already registered" }
+            testServices.assertions.fail { "KaptExtensionForTests for module $module already registered" }
         }
 
-        val extension = Kapt3ExtensionForTests(
+        val extension = KaptExtensionForTests(
             processorOptions,
             kaptOptions,
             process,
@@ -59,21 +59,21 @@ class Kapt3ExtensionProvider(private val testServices: TestServices) : TestServi
         return extension
     }
 
-    operator fun get(module: TestModule): Kapt3ExtensionForTests {
+    operator fun get(module: TestModule): KaptExtensionForTests {
         return cache.getValue(module)
     }
 }
 
-val TestServices.kapt3ExtensionProvider: Kapt3ExtensionProvider by TestServices.testServiceAccessor()
+val TestServices.kaptExtensionProvider: KaptExtensionProvider by TestServices.testServiceAccessor()
 
-class Kapt3ExtensionForTests(
+class KaptExtensionForTests(
     private val processorOptions: Map<String, String>,
     options: KaptOptions,
-    private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit,
+    private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, KaptExtensionForTests) -> Unit,
     val supportedAnnotations: List<String>,
     compilerConfiguration: CompilerConfiguration,
     val messageCollector: MessageCollectorImpl = MessageCollectorImpl()
-) : AbstractKapt3Extension(
+) : AbstractKaptExtension(
     options, MessageCollectorBackedKaptLogger(
         flags = options,
         messageCollector = messageCollector
@@ -95,7 +95,7 @@ class Kapt3ExtensionForTests(
         override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
             if (!roundEnv.processingOver()) {
                 _started = true
-                process(annotations, roundEnv, processingEnv, this@Kapt3ExtensionForTests)
+                process(annotations, roundEnv, processingEnv, this@KaptExtensionForTests)
             }
             return true
         }
@@ -119,7 +119,7 @@ class Kapt3ExtensionForTests(
 
     override fun loadProcessors() = LoadedProcessors(
         listOf(IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger)),
-        Kapt3ExtensionForTests::class.java.classLoader
+        KaptExtensionForTests::class.java.classLoader
     )
 
     override fun saveStubs(

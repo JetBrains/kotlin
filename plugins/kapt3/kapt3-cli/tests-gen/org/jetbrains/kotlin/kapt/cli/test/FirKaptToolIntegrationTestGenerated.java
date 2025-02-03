@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/kapt3/kapt3-cli/testData/integration-kapt4")
 @TestDataPath("$PROJECT_ROOT")
-public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrationTest {
+public class FirKaptToolIntegrationTestGenerated extends AbstractFirKaptToolIntegrationTest {
   @Test
   public void testAllFilesPresentInIntegration_kapt4() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration-kapt4"), Pattern.compile("^([^\\.]+)$"), null, false);

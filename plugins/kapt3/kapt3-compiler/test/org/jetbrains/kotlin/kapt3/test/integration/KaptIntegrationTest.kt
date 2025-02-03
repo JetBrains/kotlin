@@ -28,7 +28,7 @@ import javax.lang.model.element.VariableElement
 import javax.lang.model.util.ElementFilter
 import javax.tools.Diagnostic
 
-class IrKotlinKapt3IntegrationTest(private val testInfo: TestInfo) {
+class KaptIntegrationTest(private val testInfo: TestInfo) {
     private companion object {
         val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
     }
@@ -39,10 +39,10 @@ class IrKotlinKapt3IntegrationTest(private val testInfo: TestInfo) {
         options: Map<String, String> = emptyMap(),
         expectFailure: Boolean = false,
         additionalPluginExtension: IrGenerationExtension? = null,
-        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, KaptExtensionForTests) -> Unit
     ) {
         val file = File(TEST_DATA_DIR, "$name.kt")
-        AbstractKotlinKapt3IntegrationTestRunner(
+        AbstractKaptIntegrationTestRunner(
             options,
             supportedAnnotations.toList(),
             additionalPluginExtension,

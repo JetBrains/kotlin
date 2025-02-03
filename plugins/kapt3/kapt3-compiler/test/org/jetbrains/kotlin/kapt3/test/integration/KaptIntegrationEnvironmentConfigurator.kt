@@ -20,19 +20,13 @@ class KaptIntegrationEnvironmentConfigurator(
     testServices: TestServices,
     private val processorOptions: Map<String, String>,
     private val supportedAnnotations: List<String>,
-    private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit
+    private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, KaptExtensionForTests) -> Unit
 ) : EnvironmentConfigurator(testServices) {
     override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         val kaptOptions = testServices.kaptOptionsProvider[module]
-        val kapt3Extension = testServices.kapt3ExtensionProvider.createExtension(
-            module,
-            kaptOptions,
-            processorOptions,
-            process,
-            supportedAnnotations,
-            configuration
+        val extension = testServices.kaptExtensionProvider.createExtension(
+            module, kaptOptions, processorOptions, process, supportedAnnotations, configuration,
         )
-        AnalysisHandlerExtension.registerExtension(project, kapt3Extension)
+        AnalysisHandlerExtension.registerExtension(project, extension)
     }
 }
-

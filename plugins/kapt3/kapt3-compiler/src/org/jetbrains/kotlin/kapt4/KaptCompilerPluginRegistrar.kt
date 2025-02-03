@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 
-class Kapt4CompilerPluginRegistrar : CompilerPluginRegistrar() {
+class KaptCompilerPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (!configuration.getBoolean(USE_FIR)) return
 

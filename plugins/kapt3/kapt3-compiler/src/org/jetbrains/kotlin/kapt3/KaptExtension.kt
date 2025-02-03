@@ -52,11 +52,11 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtensi
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
-class ClasspathBasedKapt3Extension(
+class ClasspathBasedKaptExtension(
     options: KaptOptions,
     logger: MessageCollectorBackedKaptLogger,
     compilerConfiguration: CompilerConfiguration
-) : AbstractKapt3Extension(options, logger, compilerConfiguration) {
+) : AbstractKaptExtension(options, logger, compilerConfiguration) {
     override val analyzePartially: Boolean
         get() = options[KaptFlag.USE_LIGHT_ANALYSIS] && super.analyzePartially
 
@@ -91,7 +91,7 @@ class ClasspathBasedKapt3Extension(
     }
 }
 
-abstract class AbstractKapt3Extension(
+abstract class AbstractKaptExtension(
     val options: KaptOptions,
     val logger: MessageCollectorBackedKaptLogger,
     val compilerConfiguration: CompilerConfiguration
