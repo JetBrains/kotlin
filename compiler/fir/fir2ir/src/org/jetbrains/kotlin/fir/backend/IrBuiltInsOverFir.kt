@@ -125,6 +125,18 @@ class IrBuiltInsOverFir(
     override val longClass: IrClassSymbol get() = fir2irBuiltins.longClass
     override val longType: IrType get() = fir2irBuiltins.longType
 
+    override val ubyteClass: IrClassSymbol get() = fir2irBuiltins.ubyteClass
+    override val ubyteType: IrType get() = fir2irBuiltins.ubyteType
+
+    override val ushortClass: IrClassSymbol get() = fir2irBuiltins.ushortClass
+    override val ushortType: IrType get() = fir2irBuiltins.ushortType
+
+    override val uintClass: IrClassSymbol get() = fir2irBuiltins.uintClass
+    override val uintType: IrType get() = fir2irBuiltins.uintType
+
+    override val ulongClass: IrClassSymbol get() = fir2irBuiltins.ulongClass
+    override val ulongType: IrType get() = fir2irBuiltins.ulongType
+
     override val floatClass: IrClassSymbol get() = fir2irBuiltins.floatClass
     override val floatType: IrType get() = fir2irBuiltins.floatType
 
@@ -207,6 +219,11 @@ class IrBuiltInsOverFir(
     override val longArray: IrClassSymbol get() = fir2irBuiltins.longArray
     override val floatArray: IrClassSymbol get() = fir2irBuiltins.floatArray
     override val doubleArray: IrClassSymbol get() = fir2irBuiltins.doubleArray
+
+    override val ubyteArray: IrClassSymbol get() = fir2irBuiltins.ubyteArray
+    override val ushortArray: IrClassSymbol get() = fir2irBuiltins.ushortArray
+    override val uintArray: IrClassSymbol get() = fir2irBuiltins.uintArray
+    override val ulongArray: IrClassSymbol get() = fir2irBuiltins.ulongArray
 
     override val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> get() = fir2irBuiltins.primitiveArraysToPrimitiveTypes
     override val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>

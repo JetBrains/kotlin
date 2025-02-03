@@ -61,6 +61,14 @@ abstract class IrBuiltIns {
     abstract val intClass: IrClassSymbol
     abstract val longType: IrType
     abstract val longClass: IrClassSymbol
+    abstract val ubyteClass: IrClassSymbol?
+    abstract val ubyteType: IrType
+    abstract val ushortClass: IrClassSymbol?
+    abstract val ushortType: IrType
+    abstract val uintClass: IrClassSymbol?
+    abstract val uintType: IrType
+    abstract val ulongClass: IrClassSymbol?
+    abstract val ulongType: IrType
     abstract val floatType: IrType
     abstract val floatClass: IrClassSymbol
     abstract val doubleType: IrType
@@ -134,6 +142,11 @@ abstract class IrBuiltIns {
     abstract val floatArray: IrClassSymbol
     abstract val doubleArray: IrClassSymbol
     abstract val booleanArray: IrClassSymbol
+
+    abstract val ubyteArray: IrClassSymbol?
+    abstract val ushortArray: IrClassSymbol?
+    abstract val uintArray: IrClassSymbol?
+    abstract val ulongArray: IrClassSymbol?
 
     abstract val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType>
     abstract val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
