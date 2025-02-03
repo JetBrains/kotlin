@@ -445,6 +445,7 @@ KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -566,6 +567,7 @@ KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

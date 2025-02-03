@@ -428,7 +428,7 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
 }
 
 /**
- * [KaContextParameterSymbol] represents a context parameter of a [KaNamedFunctionSymbol] or [KaKotlinPropertySymbol].
+ * [KaContextParameterSymbol] represents a context parameter of a [KaNamedFunctionSymbol], [KaAnonymousFunctionSymbol], or [KaKotlinPropertySymbol].
  *
  * See [KEEP-367](https://github.com/Kotlin/KEEP/issues/367) for more details.
  *

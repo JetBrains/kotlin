@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -68,6 +69,8 @@ internal class KaFe10PsiLiteralAnonymousFunctionSymbol(
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
 
+    override val contextParameters: List<KaContextParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { psi.isExtensionDeclaration() }

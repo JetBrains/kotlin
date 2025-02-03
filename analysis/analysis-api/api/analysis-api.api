@@ -771,7 +771,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/AdditionalKDocResol
 	public final fun resolveKdocFqName (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/Collection;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaAnonymousFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaAnonymousFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaContextParameterOwnerSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
