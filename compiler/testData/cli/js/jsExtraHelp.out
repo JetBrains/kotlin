@@ -57,7 +57,9 @@ where advanced options include:
                              The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
   -Xcontext-parameters       Enable experimental context parameters.
   -Xcontext-receivers        Enable experimental context receivers.
-  -Xklib-abi-version=<version> Specify the custom ABI version for KLIB. If not set, the current version will be used.
+  -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+                             Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+                             The only observable effect is that a custom ABI version is written to KLIB manifest file.
   -Xwasm-debugger-custom-formatters
                              Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
   -Xdirect-java-actualization Enable experimental direct Java actualization support.

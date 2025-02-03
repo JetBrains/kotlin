@@ -85,7 +85,9 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xklib-abi-version",
         valueDescription = "<version>",
-        description = "Specify the custom ABI version for KLIB. If not set, the current version will be used."
+        description = """Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+The only observable effect is that a custom ABI version is written to KLIB manifest file."""
     )
     var customKlibAbiVersion: String? = null
         set(value) {
