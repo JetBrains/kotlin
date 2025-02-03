@@ -83,6 +83,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataRowReadJsonStr
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
@@ -223,6 +224,7 @@ internal inline fun <reified T> String.load(): T {
         "Into0" -> Into0()
         "Ungroup0" -> Ungroup0()
         "DropNulls0" -> DropNulls0()
+        "DropNa0" -> DropNa0()
         "Properties0" -> Properties0()
         "Preserve0" -> Preserve0()
         "Preserve1" -> Preserve1()
