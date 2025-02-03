@@ -1,11 +1,9 @@
 FILE: emptyListOfContextParameters.kt
-    context(<unused var>@<ERROR TYPE REF: Incomplete code>)
     public final fun test1(): R|kotlin/Unit| {
     }
     context(R|kotlin/String|)
     public final fun test2(): R|kotlin/Unit| {
     }
-    context(<unused var>@<ERROR TYPE REF: Incomplete code>)
     public final val property1: R|kotlin/String|
         public get(): R|kotlin/String| {
             ^ String()
@@ -15,5 +13,5 @@ FILE: emptyListOfContextParameters.kt
         public get(): R|kotlin/String| {
             ^ String()
         }
-    public final fun inTypePosition(a: R|@ContextFunctionTypeParams (ERROR CLASS: Incomplete code) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun inTypePosition(a: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }

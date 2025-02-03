@@ -17,10 +17,6 @@ KtFile: trailingComma.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
         PsiElement(COMMA)(',')
-        CONTEXT_RECEIVER
-          TYPE_REFERENCE
-            PsiErrorElement:Type expected
-              <empty list>
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
@@ -60,10 +56,6 @@ KtFile: trailingComma.kt
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n')
-        CONTEXT_RECEIVER
-          TYPE_REFERENCE
-            PsiErrorElement:Type expected
-              <empty list>
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
@@ -91,10 +83,6 @@ KtFile: trailingComma.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
         PsiElement(COMMA)(',')
-        CONTEXT_RECEIVER
-          TYPE_REFERENCE
-            PsiErrorElement:Type expected
-              <empty list>
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(val)('val')
@@ -145,10 +133,6 @@ KtFile: trailingComma.kt
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n')
-        CONTEXT_RECEIVER
-          TYPE_REFERENCE
-            PsiErrorElement:Type expected
-              <empty list>
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(val)('val')

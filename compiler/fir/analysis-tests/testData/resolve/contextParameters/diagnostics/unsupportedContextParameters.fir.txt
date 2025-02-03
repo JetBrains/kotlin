@@ -90,10 +90,8 @@ FILE: unsupportedContextParameters.kt
     public final var b: R|kotlin/String| = String()
         public get(): R|kotlin/String|
         public set(value: R|kotlin/String|): R|kotlin/Unit|
-    context(<unused var>@<ERROR TYPE REF: Incomplete code>)
     public final fun emptyContext(): R|kotlin/Unit| {
     }
-    context(<unused var>@<ERROR TYPE REF: Incomplete code>)
     public final class EmptyContextClass : R|kotlin/Any| {
         public constructor(): R|EmptyContextClass| {
             super<R|kotlin/Any|>()

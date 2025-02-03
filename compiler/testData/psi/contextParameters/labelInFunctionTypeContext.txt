@@ -24,10 +24,13 @@ KtFile: labelInFunctionTypeContext.kt
                     PsiElement(IDENTIFIER)('label')
             PsiErrorElement:Expecting comma or ')'
               <empty list>
-          PsiErrorElement:Type expected
-            PsiElement(AT)('@')
+            PsiErrorElement:Expecting ')'
+              PsiElement(AT)('@')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
           PsiErrorElement:Function type expected expected
-            PsiElement(IDENTIFIER)('String')
+            <empty list>
       PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
   PsiErrorElement:Expecting a top level declaration

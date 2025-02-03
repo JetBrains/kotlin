@@ -17,7 +17,7 @@ var foo: String get() = ""
 context(
 class C {
     context(
-    constructor() {}
+    constructor() {} // no proper recovery because constructor is a soft keyword :(
 }
 
 context(c: String, : Int)

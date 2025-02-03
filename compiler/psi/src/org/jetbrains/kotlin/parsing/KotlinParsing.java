@@ -95,6 +95,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet FUNCTION_NAME_FOLLOW_SET = TokenSet.create(LT, LPAR, RPAR, COLON, EQ);
     private static final TokenSet FUNCTION_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, RPAR, COLON, EQ), LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
     private static final TokenSet VALUE_PARAMETERS_FOLLOW_SET = TokenSet.create(EQ, LBRACE, RBRACE, SEMICOLON, RPAR);
+    private static final TokenSet CONTEXT_PARAMETERS_FOLLOW_SET = TokenSet.create(CLASS_KEYWORD, OBJECT_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
     private static final TokenSet LPAR_VALUE_PARAMETERS_FOLLOW_SET = TokenSet.orSet(TokenSet.create(LPAR), VALUE_PARAMETERS_FOLLOW_SET);
     private static final TokenSet
             LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET = TokenSet.create(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD);
@@ -686,26 +687,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         advance(); // CONTEXT_KEYWORD
 
         assert _at(LPAR);
-        advance(); // LPAR
 
-        while (true) {
-            if (at(COMMA)) {
-                errorAndAdvance("Expecting a type reference");
-            }
-            parseContextReceiver(inFunctionType);
-            if (at(RPAR)) {
-                advance();
-                break;
-            }
-            if (at(COMMA)) {
-                advance();
-            }
-            else {
-                if (!at(RPAR)) {
-                    error("Expecting comma or ')'");
-                    break;
-                }
-            }
+        if (lookahead(1) == RPAR) {
+            advance(); // LPAR
+            error("Empty context parameter list");
+            advance(); // RPAR
+        }
+        else {
+            valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseContextReceiver(inFunctionType));
         }
 
         contextReceiverList.done(CONTEXT_RECEIVER_LIST);
