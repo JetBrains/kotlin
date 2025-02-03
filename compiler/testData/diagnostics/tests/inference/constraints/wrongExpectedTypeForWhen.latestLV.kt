@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
 fun foo() {
-    var f: Int = <!INITIALIZER_TYPE_MISMATCH!>if (true) <!ARGUMENT_TYPE_MISMATCH!>{ x: Long ->  }<!> else { x: Long ->  }<!>
+    var f: Int = <!INITIALIZER_TYPE_MISMATCH!>if (true) <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ x: Long ->  }<!> else <!ARGUMENT_TYPE_MISMATCH!>{ x: Long ->  }<!><!>
 }
 
 class A {

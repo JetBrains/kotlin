@@ -18,4 +18,4 @@ fun test2(a: () -> List<Int>) {
 
 val a: (Int) -> Unit = fun(x) { checkSubtype<Int>(x) }
 
-val b: (Int) -> Unit = <!TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>) {}<!>
+val b: (Int) -> Unit = <!ARGUMENT_TYPE_MISMATCH!>fun(x: String) {}<!>

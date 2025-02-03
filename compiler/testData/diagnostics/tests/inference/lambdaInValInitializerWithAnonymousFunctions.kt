@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 typealias SuspendFn = suspend () -> Unit
 
 val test1f: suspend () -> Unit = <!TYPE_MISMATCH!>fun () {}<!>
