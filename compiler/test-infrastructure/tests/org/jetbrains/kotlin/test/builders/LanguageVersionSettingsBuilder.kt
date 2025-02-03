@@ -137,6 +137,14 @@ class LanguageVersionSettingsBuilder {
         }
 
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
+        if (LanguageSettingsDirectives.PROGRESSIVE_MODE in directives) {
+            for (feature in LanguageFeature.entries.filter { it.enabledInProgressiveMode }) {
+                if (feature.sinceVersion!! <= languageVersion) continue
+                if (feature !in specificFeatures) {
+                    specificFeatures[feature] = LanguageFeature.State.ENABLED
+                }
+            }
+        }
     }
 
     private fun parseLanguageFeature(featureString: String) {
