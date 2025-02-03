@@ -88,6 +88,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveAfter0
@@ -275,6 +276,7 @@ internal inline fun <reified T> String.load(): T {
         "MoveToLeft1" -> MoveToLeft1()
         "MoveToRight0" -> MoveToRight0()
         "MoveAfter0" -> MoveAfter0()
+        "GroupByAdd" -> GroupByAdd()
         else -> error("$this")
     } as T
 }

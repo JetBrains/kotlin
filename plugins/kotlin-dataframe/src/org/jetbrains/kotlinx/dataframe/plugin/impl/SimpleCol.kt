@@ -27,6 +27,10 @@ data class PluginDataFrameSchema(
     }
 }
 
+fun PluginDataFrameSchema.add(name: String, type: ConeKotlinType, context: KotlinTypeFacade): PluginDataFrameSchema {
+    return PluginDataFrameSchema(columns() + context.simpleColumnOf(name, type))
+}
+
 private fun List<SimpleCol>.asString(indent: String = ""): String {
     return joinToString("\n") {
         val col = when (it) {
