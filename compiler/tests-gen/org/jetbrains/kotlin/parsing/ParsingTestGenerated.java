@@ -1370,6 +1370,21 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contextParameters/properties.kt");
       }
 
+      @TestMetadata("syntaxError.kt")
+      public void testSyntaxError() {
+        runTest("compiler/testData/psi/contextParameters/syntaxError.kt");
+      }
+
+      @TestMetadata("trailingComma.kt")
+      public void testTrailingComma() {
+        runTest("compiler/testData/psi/contextParameters/trailingComma.kt");
+      }
+
+      @TestMetadata("trailingCommaForbidden.kt")
+      public void testTrailingCommaForbidden() {
+        runTest("compiler/testData/psi/contextParameters/trailingCommaForbidden.kt");
+      }
+
       @TestMetadata("unnamed.kt")
       public void testUnnamed() {
         runTest("compiler/testData/psi/contextParameters/unnamed.kt");
