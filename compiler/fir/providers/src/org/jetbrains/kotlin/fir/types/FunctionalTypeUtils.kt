@@ -247,7 +247,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     var overriddenInvoke: FirFunctionSymbol<*>? = null
     if (declaredInvoke != null) {
         // Make sure the user-contributed or type-substituted invoke we just found above is an override of base invoke.
-        scope.processOverriddenFunctions(declaredInvoke!!) { functionSymbol ->
+        scope.processOverriddenFunctions(declaredInvoke) { functionSymbol ->
             if (functionSymbol == baseInvokeSymbol || functionSymbol.originalForSubstitutionOverride == baseInvokeSymbol) {
                 overriddenInvoke = functionSymbol
                 ProcessorAction.STOP
