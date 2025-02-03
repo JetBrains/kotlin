@@ -42,6 +42,15 @@ public enum class KaDiagnosticCheckerFilter {
     ONLY_EXTENDED_CHECKERS,
 
     /**
+     * Includes diagnostics from experimental checkers.
+     *
+     * Their role is to be run in the IDE similar to [ONLY_EXTENDED_CHECKERS] with the following differences:
+     * * They might have false positives
+     * * They might be slow
+     */
+    ONLY_EXPERIMENTAL_CHECKERS,
+
+    /**
      * Includes diagnostics from both common and extended checkers.
      */
     EXTENDED_AND_COMMON_CHECKERS,

@@ -210,6 +210,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaD
 public final class org/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter : java/lang/Enum {
 	public static final field EXTENDED_AND_COMMON_CHECKERS Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;
 	public static final field ONLY_COMMON_CHECKERS Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;
+	public static final field ONLY_EXPERIMENTAL_CHECKERS Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;
 	public static final field ONLY_EXTENDED_CHECKERS Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;
