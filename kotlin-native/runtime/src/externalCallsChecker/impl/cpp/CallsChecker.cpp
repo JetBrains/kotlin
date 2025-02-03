@@ -197,6 +197,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "CFStringCreateCopy",
         "CFStringGetCharacters",
         "CFStringGetLength",
+        "CFStringGetFastestEncoding",
         "_Block_object_assign",
         "class_getName",
         "class_getSuperclass",
