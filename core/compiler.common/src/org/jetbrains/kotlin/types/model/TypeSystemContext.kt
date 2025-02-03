@@ -339,8 +339,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         val superType = intersectTypes(
             typesForRecursiveTypeParameters.map { type ->
                 type.replaceArgumentsDeeply {
-                    val constructor = it.getType()?.typeConstructor()
-                    if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) starProjection else it
+                    if (it.getType()?.typeConstructor() == typeVariable) starProjection else it
                 }
             }
         )
