@@ -942,6 +942,7 @@ tasks {
         dependsOn(":kotlin-util-klib-abi:test")
         dependsOn(":kotlinx-metadata-klib:test")
         dependsOn(":generators:test")
+        dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
     }
 
     register("incrementalCompilationTest") {

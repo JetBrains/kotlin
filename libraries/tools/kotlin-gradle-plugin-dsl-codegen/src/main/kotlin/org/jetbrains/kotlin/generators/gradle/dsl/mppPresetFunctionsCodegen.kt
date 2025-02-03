@@ -8,13 +8,15 @@
 package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 fun main() {
-    generateKotlinTargetContainerWithPresetFunctionsInterface()
+    generateKotlinTargetContainerWithPresetFunctionsInterface(::getPrinterToFile)
 }
 
 private val parentInterface = KotlinTargetsContainerWithPresets::class
@@ -22,7 +24,7 @@ private val parentInterface = KotlinTargetsContainerWithPresets::class
 @Suppress("DEPRECATION_ERROR")
 private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 
-private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
+internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
     val functions = allPresetEntries.map { kotlinPreset ->
         generatePresetFunctions(kotlinPreset, presetsProperty, "configureOrCreate")
@@ -61,7 +63,10 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     ).joinToString("\n\n")
 
     val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
-    targetFile.writeText(code)
+
+    withPrinterToFile(targetFile) {
+        println(code)
+    }
 }
 
 private fun generatePresetFunctions(
