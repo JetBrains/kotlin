@@ -46,6 +46,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Any?
           symbol = message: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -62,8 +63,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Any?
               symbol = message: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -76,6 +79,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = message: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -92,8 +96,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = message: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.>
@@ -107,6 +113,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Byte
           symbol = message: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -123,8 +130,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Byte
               symbol = message: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
@@ -138,6 +147,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Char
           symbol = message: kotlin.Char
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -154,8 +164,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Char
               symbol = message: kotlin.Char
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Char' was expected.>
@@ -169,6 +181,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.CharArray
           symbol = message: kotlin.CharArray
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -185,8 +198,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.CharArray
               symbol = message: kotlin.CharArray
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'CharArray' was expected.>
@@ -200,6 +215,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Double
           symbol = message: kotlin.Double
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -216,8 +232,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Double
               symbol = message: kotlin.Double
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
@@ -231,6 +249,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Float
           symbol = message: kotlin.Float
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -247,8 +266,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Float
               symbol = message: kotlin.Float
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
@@ -262,6 +283,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Int
           symbol = message: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -278,8 +300,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Int
               symbol = message: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -292,6 +316,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Long
           symbol = message: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -308,8 +333,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Long
               symbol = message: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
@@ -323,6 +350,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
           receiverType = null
           returnType = kotlin.Short
           symbol = message: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -339,8 +367,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
               receiverType = null
               returnType = kotlin.Short
               symbol = message: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
@@ -355,6 +385,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Any?
           symbol = message: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -371,8 +402,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Any?
               symbol = message: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -385,6 +418,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = message: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -401,8 +435,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = message: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.>
@@ -416,6 +452,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Byte
           symbol = message: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -432,8 +469,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Byte
               symbol = message: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
@@ -447,6 +486,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Char
           symbol = message: kotlin.Char
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -463,8 +503,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Char
               symbol = message: kotlin.Char
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Char' was expected.>
@@ -478,6 +520,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.CharArray
           symbol = message: kotlin.CharArray
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -494,8 +537,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.CharArray
               symbol = message: kotlin.CharArray
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'CharArray' was expected.>
@@ -509,6 +554,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Double
           symbol = message: kotlin.Double
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -525,8 +571,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Double
               symbol = message: kotlin.Double
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
@@ -540,6 +588,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Float
           symbol = message: kotlin.Float
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -556,8 +605,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Float
               symbol = message: kotlin.Float
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
@@ -571,6 +622,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Int
           symbol = message: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -587,8 +639,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Int
               symbol = message: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -601,6 +655,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Long
           symbol = message: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -617,8 +672,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Long
               symbol = message: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
@@ -632,6 +689,7 @@ KtNameReferenceExpression(78,83): 'print'
           receiverType = null
           returnType = kotlin.Short
           symbol = message: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -648,8 +706,10 @@ KtNameReferenceExpression(78,83): 'print'
               receiverType = null
               returnType = kotlin.Short
               symbol = message: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/io/print
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
@@ -675,6 +735,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -712,6 +773,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
           receiverType = JavaClass
           returnType = java.lang.Class<JavaClass>
           symbol = val javaClass: java.lang.Class<T>
+          contextParameters = []
           callableId = kotlin/jvm/javaClass
       simpleAccess = Read
       typeArgumentsMapping = {
@@ -729,6 +791,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
           receiverType = null
           returnType = JavaClass
           symbol = javaClass: JavaClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -748,6 +811,7 @@ KtNameReferenceExpression(94,103): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -767,6 +831,7 @@ KtBinaryExpression(109,132): 'javaClass.something = 1'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -787,6 +852,7 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -825,6 +891,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
           receiverType = JavaClass
           returnType = java.lang.Class<JavaClass>
           symbol = val javaClass: java.lang.Class<T>
+          contextParameters = []
           callableId = kotlin/jvm/javaClass
       simpleAccess = Read
       typeArgumentsMapping = {
@@ -842,6 +909,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
           receiverType = null
           returnType = JavaClass
           symbol = javaClass: JavaClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -861,6 +929,7 @@ KtNameReferenceExpression(119,128): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -881,6 +950,7 @@ KtOperationReferenceExpression(129,130): '='
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -912,8 +982,10 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = other: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/Int.plus
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -926,6 +998,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -943,6 +1016,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -980,6 +1054,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
           receiverType = JavaClass
           returnType = java.lang.Class<JavaClass>
           symbol = val javaClass: java.lang.Class<T>
+          contextParameters = []
           callableId = kotlin/jvm/javaClass
       simpleAccess = Read
       typeArgumentsMapping = {
@@ -997,6 +1072,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
           receiverType = null
           returnType = JavaClass
           symbol = javaClass: JavaClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1016,6 +1092,7 @@ KtNameReferenceExpression(147,156): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1043,8 +1120,10 @@ KtOperationReferenceExpression(157,159): '+='
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = other: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/Int.plus
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1057,6 +1136,7 @@ KtOperationReferenceExpression(157,159): '+='
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1079,6 +1159,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1092,6 +1173,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1109,6 +1191,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1146,6 +1229,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
           receiverType = JavaClass
           returnType = java.lang.Class<JavaClass>
           symbol = val javaClass: java.lang.Class<T>
+          contextParameters = []
           callableId = kotlin/jvm/javaClass
       simpleAccess = Read
       typeArgumentsMapping = {
@@ -1163,6 +1247,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
           receiverType = null
           returnType = JavaClass
           symbol = javaClass: JavaClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1182,6 +1267,7 @@ KtNameReferenceExpression(176,185): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1203,6 +1289,7 @@ KtOperationReferenceExpression(185,187): '++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1216,6 +1303,7 @@ KtOperationReferenceExpression(185,187): '++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1235,6 +1323,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
             returnType = kotlin.Int
             symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.dec
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1248,6 +1337,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1267,6 +1357,7 @@ KtOperationReferenceExpression(192,194): '--'
             returnType = kotlin.Int
             symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.dec
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1280,6 +1371,7 @@ KtOperationReferenceExpression(192,194): '--'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1297,6 +1389,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1334,6 +1427,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
           receiverType = JavaClass
           returnType = java.lang.Class<JavaClass>
           symbol = val javaClass: java.lang.Class<T>
+          contextParameters = []
           callableId = kotlin/jvm/javaClass
       simpleAccess = Read
       typeArgumentsMapping = {
@@ -1351,6 +1445,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
           receiverType = null
           returnType = JavaClass
           symbol = javaClass: JavaClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1370,6 +1465,7 @@ KtNameReferenceExpression(204,213): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = --
@@ -1392,6 +1488,7 @@ KtPostfixExpression(219,230): 'something++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1423,6 +1520,7 @@ KtPostfixExpression(219,230): 'something++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1458,6 +1556,7 @@ KtNameReferenceExpression(219,228): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1479,6 +1578,7 @@ KtOperationReferenceExpression(228,230): '++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1510,6 +1610,7 @@ KtOperationReferenceExpression(228,230): '++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1529,6 +1630,7 @@ KtPostfixExpression(235,248): '(something)++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1560,6 +1662,7 @@ KtPostfixExpression(235,248): '(something)++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1598,6 +1701,7 @@ KtNameReferenceExpression(236,245): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1619,6 +1723,7 @@ KtOperationReferenceExpression(246,248): '++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1650,6 +1755,7 @@ KtOperationReferenceExpression(246,248): '++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
     isInBestCandidates = true
 
@@ -1685,6 +1791,7 @@ KtBinaryExpression(253,268): '(something) = 1'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -1726,6 +1833,7 @@ KtNameReferenceExpression(254,263): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -1764,6 +1872,7 @@ KtOperationReferenceExpression(265,266): '='
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -1787,6 +1896,7 @@ KtBinaryExpression(273,298): '(javaClass.something) = 1'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -1810,6 +1920,7 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -1848,6 +1959,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
           receiverType = JavaClass
           returnType = java.lang.Class<JavaClass>
           symbol = val javaClass: java.lang.Class<T>
+          contextParameters = []
           callableId = kotlin/jvm/javaClass
       simpleAccess = Read
       typeArgumentsMapping = {
@@ -1865,6 +1977,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
           receiverType = null
           returnType = JavaClass
           symbol = javaClass: JavaClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1884,6 +1997,7 @@ KtNameReferenceExpression(284,293): 'something'
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1
@@ -1904,6 +2018,7 @@ KtOperationReferenceExpression(295,296): '='
           receiverType = null
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
+          contextParameters = []
           callableId = /JavaClass.something
       simpleAccess = Write:
         value = 1

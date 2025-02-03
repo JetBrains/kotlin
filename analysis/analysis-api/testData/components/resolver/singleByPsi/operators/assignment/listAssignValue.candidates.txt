@@ -20,8 +20,10 @@ KtOperationReferenceExpression(57,59): '+='
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = other: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/Int.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -39,8 +41,10 @@ KtOperationReferenceExpression(57,59): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.get
       indexArguments = [
         0
@@ -61,13 +65,16 @@ KtOperationReferenceExpression(57,59): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = element
               receiverType = null
               returnType = kotlin.Int
               symbol = element: E
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.set
     isInBestCandidates = true

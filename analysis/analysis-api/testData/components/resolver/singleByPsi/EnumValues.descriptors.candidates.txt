@@ -11,6 +11,7 @@ KtNameReferenceExpression(55,61): 'values'
           returnType = kotlin.Array<test.E>
           symbol = test/E.values(): kotlin.Array<test.E>
           valueParameters = []
+          contextParameters = []
           callableId = test/E.values
       typeArgumentsMapping = {}
     isInBestCandidates = true

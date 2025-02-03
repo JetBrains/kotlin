@@ -7,18 +7,21 @@ KtCallExpression(49,66): 'function(1, 2, 3)'
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg a: kotlin.Int
+          contextParameters = []
           callableId = null),
         2 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg a: kotlin.Int
+          contextParameters = []
           callableId = null),
         3 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -35,8 +38,10 @@ KtCallExpression(49,66): 'function(1, 2, 3)'
               receiverType = null
               returnType = kotlin.Int
               symbol = vararg a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
     isInBestCandidates = true

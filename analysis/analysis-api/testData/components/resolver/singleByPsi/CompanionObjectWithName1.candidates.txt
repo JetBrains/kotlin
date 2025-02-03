@@ -11,6 +11,7 @@ KtNameReferenceExpression(65,70): 'Inner'
           returnType = my.sample.Inner
           symbol = <constructor>(): my.sample.Inner
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

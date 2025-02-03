@@ -11,5 +11,6 @@ KtNameReferenceExpression(134,139): 'local'
           returnType = kotlin.Unit
           symbol = local(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

@@ -11,6 +11,7 @@ KtCallExpression(45,70): 'generic<String, String>()'
           returnType = kotlin.Unit
           symbol = /generic(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /generic
       typeArgumentsMapping = {
         A -> (ERROR_TYPE),

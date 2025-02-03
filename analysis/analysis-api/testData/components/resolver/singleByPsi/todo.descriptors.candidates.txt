@@ -11,11 +11,12 @@ KtNameReferenceExpression(55,59): 'TODO'
           returnType = kotlin.Nothing
           symbol = kotlin/TODO(): kotlin.Nothing
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with TODO>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -24,6 +25,7 @@ KtNameReferenceExpression(55,59): 'TODO'
           receiverType = null
           returnType = kotlin.String
           symbol = reason: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -40,8 +42,10 @@ KtNameReferenceExpression(55,59): 'TODO'
               receiverType = null
               returnType = kotlin.String
               symbol = reason: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -7,18 +7,21 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null),
         "foo" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
+          contextParameters = []
           callableId = null),
         false -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.Boolean
           symbol = value: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -38,20 +41,24 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.Boolean
               symbol = value: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /C.set
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun set(a: Int, b: String, value: Boolean): Unit'.>

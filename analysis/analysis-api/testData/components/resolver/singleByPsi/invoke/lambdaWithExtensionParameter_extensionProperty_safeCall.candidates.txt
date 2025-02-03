@@ -12,6 +12,7 @@ KtNameReferenceExpression(96,102): 'action'
           receiverType = test.Foo
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = val action: kotlin.Function0<kotlin.Unit>
+          contextParameters = []
           callableId = test/action
       simpleAccess = Read
       typeArgumentsMapping = {}

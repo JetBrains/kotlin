@@ -31,6 +31,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
@@ -68,6 +69,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Write:
           value = 1
@@ -88,6 +90,7 @@
             receiverType = null
             returnType = kotlin.Int
             symbol = var something: kotlin.Int
+            contextParameters = []
             callableId = /A.something
         simpleAccess = Write:
           value = 1

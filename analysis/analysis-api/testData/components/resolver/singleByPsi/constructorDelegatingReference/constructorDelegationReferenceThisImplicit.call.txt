@@ -11,5 +11,6 @@ KtConstructorDelegationReferenceExpression(136,136): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

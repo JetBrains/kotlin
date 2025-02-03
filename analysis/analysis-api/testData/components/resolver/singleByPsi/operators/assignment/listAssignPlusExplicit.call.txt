@@ -7,6 +7,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.Int
           symbol = element: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.Int
               symbol = element: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)

@@ -7,6 +7,7 @@ KtNameReferenceExpression(147,152): 'check'
           receiverType = null
           returnType = {dependency1.MyString=} kotlin.String
           symbol = string: {dependency1.MyString=} kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtNameReferenceExpression(147,152): 'check'
               receiverType = null
               returnType = {dependency1.MyString=} kotlin.String
               symbol = string: {dependency1.MyString=} kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = dependency2/MyInterface.check
       typeArgumentsMapping = {}

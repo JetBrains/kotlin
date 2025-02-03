@@ -11,6 +11,7 @@ KtCallExpression(64,75): 'ALE<String>'
           returnType = ALE<kotlin.String>
           symbol = <constructor>(): ALE<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

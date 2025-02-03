@@ -15,6 +15,7 @@ module1 - main1.kt:
             returnType = kotlin.String
             symbol = library/Common.foo(<dispatch receiver>: library.Common): kotlin.String
             valueParameters = []
+            contextParameters = []
             callableId = library/Common.foo
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -36,6 +37,7 @@ module2 - main2.kt:
             returnType = kotlin.Int
             symbol = library/Common.bar(<dispatch receiver>: library.Common): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = library/Common.bar
         typeArgumentsMapping = {}
       isInBestCandidates = true

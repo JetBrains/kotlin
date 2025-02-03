@@ -14,5 +14,6 @@ KtOperationReferenceExpression(191,192): '-'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}

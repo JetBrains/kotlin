@@ -11,5 +11,6 @@ KtNameReferenceExpression(327,331): 'Test'
           returnType = Test<kotlin.Int>
           symbol = <constructor>(): Test<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

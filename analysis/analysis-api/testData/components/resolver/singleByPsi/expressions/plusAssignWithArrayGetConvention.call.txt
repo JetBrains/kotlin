@@ -7,6 +7,7 @@ KtBinaryExpression(146,157): 'm["a"] += 1'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtBinaryExpression(146,157): 'm["a"] += 1'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.plusAssign
       typeArgumentsMapping = {}

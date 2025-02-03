@@ -7,6 +7,7 @@ KtSuperTypeCallEntry(107,110): '(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -23,7 +24,9 @@ KtSuperTypeCallEntry(107,110): '(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

@@ -12,6 +12,7 @@ KtNameReferenceExpression(51,56): 'value'
           receiverType = CInt32VarX<kotlin.Int>
           returnType = kotlin.Int
           symbol = var value: T
+          contextParameters = []
           callableId = /value
       simpleAccess = Read
       typeArgumentsMapping = {

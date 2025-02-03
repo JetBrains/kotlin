@@ -152,6 +152,7 @@ KtCallExpression(251,263): 'InnerClass()'
           returnType = one.two.TopLevelClass.InnerClass
           symbol = <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -190,6 +191,7 @@ KtNameReferenceExpression(251,261): 'InnerClass'
           returnType = one.two.TopLevelClass.InnerClass
           symbol = <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

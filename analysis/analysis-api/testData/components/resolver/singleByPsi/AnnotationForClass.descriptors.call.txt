@@ -10,5 +10,6 @@ KtNameReferenceExpression(44,54): 'Annotation'
           returnType = test.Annotation
           symbol = <constructor>(): test.Annotation
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

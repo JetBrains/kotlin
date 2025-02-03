@@ -14,12 +14,13 @@ KtCallExpression(135,140): 'i()()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Double): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     fun Double.invoke(): Unit>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -35,12 +36,13 @@ KtCallExpression(135,140): 'i()()'
           returnType = kotlin.Long
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     fun Int.invoke(): Long>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -56,6 +58,7 @@ KtCallExpression(135,140): 'i()()'
           returnType = kotlin.Double
           symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

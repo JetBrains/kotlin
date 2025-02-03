@@ -158,6 +158,7 @@ KtCallExpression(246,258): 'MyDelegate()'
           returnType = myPack.MyDelegate<T>
           symbol = <constructor>(): myPack.MyDelegate<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -175,6 +176,7 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
           returnType = myPack.MyDelegate<T>
           symbol = <constructor>(): myPack.MyDelegate<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -333,6 +335,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
           returnType = myPack.ResourceID<kotlin.Int>
           symbol = <constructor>(): myPack.ResourceID<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -350,6 +353,7 @@ KtNameReferenceExpression(446,456): 'ResourceID'
           returnType = myPack.ResourceID<kotlin.Int>
           symbol = <constructor>(): myPack.ResourceID<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -212,6 +212,7 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
 
@@ -234,6 +235,7 @@ KtCallExpression(430,435): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
 
@@ -253,6 +255,7 @@ KtNameReferenceExpression(430,433): 'foo'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
 
@@ -277,6 +280,7 @@ KtCallExpression(458,463): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
 
@@ -295,6 +299,7 @@ KtNameReferenceExpression(458,461): 'foo'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
 
@@ -318,6 +323,7 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = val bar: kotlin.Int
+          contextParameters = []
           callableId = one/two/TopLevelObject.bar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -339,6 +345,7 @@ KtNameReferenceExpression(502,505): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = val bar: kotlin.Int
+          contextParameters = []
           callableId = one/two/TopLevelObject.bar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -359,6 +366,7 @@ KtNameReferenceExpression(528,531): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = val bar: kotlin.Int
+          contextParameters = []
           callableId = one/two/TopLevelObject.bar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -400,6 +408,7 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -428,6 +437,7 @@ KtCallExpression(687,692): 'baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -447,6 +457,7 @@ KtNameReferenceExpression(687,690): 'baz'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -472,6 +483,7 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -494,6 +506,7 @@ KtCallExpression(734,739): 'baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -513,6 +526,7 @@ KtNameReferenceExpression(734,737): 'baz'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -537,6 +551,7 @@ KtCallExpression(762,767): 'baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -555,6 +570,7 @@ KtNameReferenceExpression(762,765): 'baz'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
 
@@ -578,6 +594,7 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -605,6 +622,7 @@ KtNameReferenceExpression(819,822): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -626,6 +644,7 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -647,6 +666,7 @@ KtNameReferenceExpression(864,867): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -667,6 +687,7 @@ KtNameReferenceExpression(890,893): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -684,6 +705,7 @@ KtBinaryExpression(899,910): 'doo = "str"'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Write:
         value = "str"
@@ -702,6 +724,7 @@ KtNameReferenceExpression(899,902): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Write:
         value = "str"
@@ -720,6 +743,7 @@ KtOperationReferenceExpression(903,904): '='
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Write:
         value = "str"

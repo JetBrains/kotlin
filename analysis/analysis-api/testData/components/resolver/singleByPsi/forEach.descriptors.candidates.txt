@@ -7,6 +7,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,15 +27,17 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -43,6 +46,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -62,13 +66,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -77,6 +83,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Byte, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -96,13 +103,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Byte, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -111,6 +120,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -130,13 +140,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -145,6 +157,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -164,13 +177,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/text/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -179,6 +194,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Double, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -198,13 +214,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Double, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -213,6 +231,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Float, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -232,13 +251,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Float, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -247,6 +268,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -266,13 +288,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -281,6 +305,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Long, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -300,13 +325,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Long, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -315,6 +342,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Short, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -334,13 +362,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Short, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -349,6 +379,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.UByte, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -368,13 +399,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.UByte, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -383,6 +416,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.UInt, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -402,13 +436,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.UInt, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -417,6 +453,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.ULong, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -436,13 +473,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.ULong, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -451,6 +490,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.UShort, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -470,13 +510,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.UShort, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -485,6 +527,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -504,14 +547,16 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -520,6 +565,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
           symbol = operation: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -539,15 +585,17 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
               symbol = operation: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -556,6 +604,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -575,12 +624,14 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /forEach
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -589,6 +640,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -608,8 +660,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -617,7 +671,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -626,6 +680,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -645,8 +700,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -654,7 +711,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -663,6 +720,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -682,8 +740,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/sequences/forEach
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)

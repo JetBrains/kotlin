@@ -14,5 +14,6 @@ KtCallExpression(105,111): 'peek()'
           returnType = F
           symbol = /F.peek(<dispatch receiver>: F): F
           valueParameters = []
+          contextParameters = []
           callableId = /F.peek
       typeArgumentsMapping = {}

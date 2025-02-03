@@ -17,8 +17,10 @@ KtCallExpression(89,100): 'Foo<String>'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = len: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {
           T -> (kotlin.String)
@@ -39,8 +41,10 @@ KtCallExpression(89,100): 'Foo<String>'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = s: kotlin.String
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {
           T -> (kotlin.String)

@@ -16,8 +16,10 @@ KtSuperTypeCallEntry(93,106): 'Foo<String>()'
               receiverType = null
               returnType = kotlin.String
               symbol = x: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)

@@ -7,12 +7,14 @@ KtArrayAccessExpression(59,63): '1[2]'
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null),
         42 -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.Int
           symbol = value: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -32,14 +34,17 @@ KtArrayAccessExpression(59,63): '1[2]'
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.Int
               symbol = value: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /set
       typeArgumentsMapping = {}
     diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /set' in 'set'.>

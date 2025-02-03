@@ -7,6 +7,7 @@ KtOperationReferenceExpression(159,161): '+='
           receiverType = null
           returnType = test.Foo
           symbol = f: test.Foo
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtOperationReferenceExpression(159,161): '+='
               receiverType = null
               returnType = test.Foo
               symbol = f: test.Foo
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/WithOperator.plusAssign
       typeArgumentsMapping = {}
     isInBestCandidates = true

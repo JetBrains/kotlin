@@ -14,5 +14,6 @@ KtCallExpression(135,138): 'i()'
           returnType = kotlin.Long
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}

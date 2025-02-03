@@ -11,5 +11,6 @@ KtSuperTypeCallEntry(26,44): 'java.lang.Object()'
           returnType = java.lang.Object
           symbol = <constructor>(): java.lang.Object
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

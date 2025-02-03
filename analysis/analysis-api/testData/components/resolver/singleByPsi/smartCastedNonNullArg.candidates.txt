@@ -7,6 +7,7 @@ KtCallExpression(60,66): 'foo(s)'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -23,8 +24,10 @@ KtCallExpression(60,66): 'foo(s)'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

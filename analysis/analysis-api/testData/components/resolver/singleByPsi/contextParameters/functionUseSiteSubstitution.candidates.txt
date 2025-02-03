@@ -7,12 +7,14 @@ KtCallExpression(168,182): 'foo(1L, "str")'
           receiverType = null
           returnType = kotlin.Long
           symbol = rp1: T
+          contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = rp2
           receiverType = null
           returnType = kotlin.String
           symbol = rp2: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -32,14 +34,17 @@ KtCallExpression(168,182): 'foo(1L, "str")'
               receiverType = null
               returnType = kotlin.Long
               symbol = rp1: T
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = rp2
               receiverType = null
               returnType = kotlin.String
               symbol = rp2: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Base.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

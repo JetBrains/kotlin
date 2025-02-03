@@ -25,24 +25,28 @@ KtAnnotationEntry(33,176): '@Target('
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null),
         AnnotationTarget.FUNCTION -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null),
         AnnotationTarget.VALUE_PARAMETER -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null),
         AnnotationTarget.TYPE -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -58,8 +62,10 @@ KtAnnotationEntry(33,176): '@Target('
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -72,24 +78,28 @@ KtConstructorCalleeExpression(34,40): 'Target'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null),
         AnnotationTarget.FUNCTION -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null),
         AnnotationTarget.VALUE_PARAMETER -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null),
         AnnotationTarget.TYPE -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -105,8 +115,10 @@ KtConstructorCalleeExpression(34,40): 'Target'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -139,6 +151,7 @@ KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -160,6 +173,7 @@ KtNameReferenceExpression(63,77): 'TYPE_PARAMETER'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -181,6 +195,7 @@ KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.FUNCTION
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.FUNCTION
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -202,6 +217,7 @@ KtNameReferenceExpression(100,108): 'FUNCTION'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.FUNCTION
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.FUNCTION
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -223,6 +239,7 @@ KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -244,6 +261,7 @@ KtNameReferenceExpression(131,146): 'VALUE_PARAMETER'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -265,6 +283,7 @@ KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.TYPE
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.TYPE
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -286,6 +305,7 @@ KtNameReferenceExpression(169,173): 'TYPE'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.TYPE
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.TYPE
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -338,6 +358,7 @@ KtAnnotationEntry(259,282): '@Anno("function $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -353,8 +374,10 @@ KtAnnotationEntry(259,282): '@Anno("function $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -367,6 +390,7 @@ KtConstructorCalleeExpression(260,264): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -382,8 +406,10 @@ KtConstructorCalleeExpression(260,264): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -422,6 +448,7 @@ KtNameReferenceExpression(276,280): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -444,6 +471,7 @@ KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -459,8 +487,10 @@ KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -473,6 +503,7 @@ KtConstructorCalleeExpression(289,293): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -488,8 +519,10 @@ KtConstructorCalleeExpression(289,293): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -528,6 +561,7 @@ KtNameReferenceExpression(311,315): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -547,6 +581,7 @@ KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -562,8 +597,10 @@ KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -576,6 +613,7 @@ KtConstructorCalleeExpression(323,327): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -591,8 +629,10 @@ KtConstructorCalleeExpression(323,327): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -631,6 +671,7 @@ KtNameReferenceExpression(341,345): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -662,6 +703,7 @@ KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -677,8 +719,10 @@ KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -691,6 +735,7 @@ KtConstructorCalleeExpression(354,358): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -706,8 +751,10 @@ KtConstructorCalleeExpression(354,358): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -746,6 +793,7 @@ KtNameReferenceExpression(379,383): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -771,6 +819,7 @@ KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -786,8 +835,10 @@ KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -803,6 +854,7 @@ KtConstructorCalleeExpression(405,409): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -818,8 +870,10 @@ KtConstructorCalleeExpression(405,409): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -858,6 +912,7 @@ KtNameReferenceExpression(421,425): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -871,6 +926,7 @@ KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -886,8 +942,10 @@ KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -900,6 +958,7 @@ KtConstructorCalleeExpression(429,433): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -915,8 +974,10 @@ KtConstructorCalleeExpression(429,433): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -955,6 +1016,7 @@ KtNameReferenceExpression(450,454): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -986,6 +1048,7 @@ KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1001,8 +1064,10 @@ KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1015,6 +1080,7 @@ KtConstructorCalleeExpression(463,467): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1030,8 +1096,10 @@ KtConstructorCalleeExpression(463,467): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1070,6 +1138,7 @@ KtNameReferenceExpression(491,495): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1101,6 +1170,7 @@ KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1116,8 +1186,10 @@ KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1130,6 +1202,7 @@ KtConstructorCalleeExpression(504,508): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1145,8 +1218,10 @@ KtConstructorCalleeExpression(504,508): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1185,6 +1260,7 @@ KtNameReferenceExpression(539,543): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1213,6 +1289,7 @@ KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1228,8 +1305,10 @@ KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1242,6 +1321,7 @@ KtConstructorCalleeExpression(562,566): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1257,8 +1337,10 @@ KtConstructorCalleeExpression(562,566): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1297,6 +1379,7 @@ KtNameReferenceExpression(579,583): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1316,6 +1399,7 @@ KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1331,8 +1415,10 @@ KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1345,6 +1431,7 @@ KtConstructorCalleeExpression(594,598): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1360,8 +1447,10 @@ KtConstructorCalleeExpression(594,598): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1400,6 +1489,7 @@ KtNameReferenceExpression(616,620): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1431,6 +1521,7 @@ KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1446,8 +1537,10 @@ KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1460,6 +1553,7 @@ KtConstructorCalleeExpression(635,639): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1475,8 +1569,10 @@ KtConstructorCalleeExpression(635,639): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1515,6 +1611,7 @@ KtNameReferenceExpression(664,668): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1546,6 +1643,7 @@ KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1561,8 +1659,10 @@ KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1575,6 +1675,7 @@ KtConstructorCalleeExpression(677,681): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1590,8 +1691,10 @@ KtConstructorCalleeExpression(677,681): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1630,6 +1733,7 @@ KtNameReferenceExpression(713,717): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1658,6 +1762,7 @@ KtAnnotationEntry(735,761): '@Anno("return type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1673,8 +1778,10 @@ KtAnnotationEntry(735,761): '@Anno("return type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1687,6 +1794,7 @@ KtConstructorCalleeExpression(736,740): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1702,8 +1810,10 @@ KtConstructorCalleeExpression(736,740): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1742,6 +1852,7 @@ KtNameReferenceExpression(755,759): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1773,6 +1884,7 @@ KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1788,8 +1900,10 @@ KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1802,6 +1916,7 @@ KtConstructorCalleeExpression(768,772): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1817,8 +1932,10 @@ KtConstructorCalleeExpression(768,772): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1857,6 +1974,7 @@ KtNameReferenceExpression(794,798): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1888,6 +2006,7 @@ KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1903,8 +2022,10 @@ KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1917,6 +2038,7 @@ KtConstructorCalleeExpression(807,811): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1932,8 +2054,10 @@ KtConstructorCalleeExpression(807,811): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -1972,6 +2096,7 @@ KtNameReferenceExpression(840,844): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -2006,6 +2131,7 @@ KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2021,8 +2147,10 @@ KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -2035,6 +2163,7 @@ KtConstructorCalleeExpression(872,876): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2050,8 +2179,10 @@ KtConstructorCalleeExpression(872,876): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -2090,6 +2221,7 @@ KtNameReferenceExpression(895,899): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -2124,6 +2256,7 @@ KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2139,8 +2272,10 @@ KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -2153,6 +2288,7 @@ KtConstructorCalleeExpression(914,918): 'Anno'
           receiverType = null
           returnType = kotlin.String
           symbol = position: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -2168,8 +2304,10 @@ KtConstructorCalleeExpression(914,918): 'Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = position: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -2208,6 +2346,7 @@ KtNameReferenceExpression(944,948): 'prop'
           receiverType = null
           returnType = kotlin.String
           symbol = val prop: kotlin.String
+          contextParameters = []
           callableId = lowlevel/prop
       simpleAccess = Read
       typeArgumentsMapping = {}

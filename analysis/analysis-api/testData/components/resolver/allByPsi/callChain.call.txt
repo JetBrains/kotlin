@@ -52,6 +52,7 @@ KtBinaryExpression(27,35): 'this + a'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -71,8 +72,10 @@ KtBinaryExpression(27,35): 'this + a'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
 
@@ -91,6 +94,7 @@ KtOperationReferenceExpression(32,33): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -110,8 +114,10 @@ KtOperationReferenceExpression(32,33): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
 
@@ -126,6 +132,7 @@ KtNameReferenceExpression(34,35): 'a'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -198,6 +205,7 @@ KtNameReferenceExpression(79,80): 'b'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -220,6 +228,7 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -239,8 +248,10 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -253,6 +264,7 @@ KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -272,8 +284,10 @@ KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
 
@@ -292,6 +306,7 @@ KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -311,8 +326,10 @@ KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -325,6 +342,7 @@ KtDotQualifiedExpression(101,109): '1.foo(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -344,8 +362,10 @@ KtDotQualifiedExpression(101,109): '1.foo(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
 
@@ -361,6 +381,7 @@ KtCallExpression(103,109): 'foo(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -380,8 +401,10 @@ KtCallExpression(103,109): 'foo(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
 
@@ -394,6 +417,7 @@ KtNameReferenceExpression(103,106): 'foo'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -413,8 +437,10 @@ KtNameReferenceExpression(103,106): 'foo'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
 
@@ -436,6 +462,7 @@ KtCallExpression(110,116): 'bar(3)'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -455,8 +482,10 @@ KtCallExpression(110,116): 'bar(3)'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -469,6 +498,7 @@ KtNameReferenceExpression(110,113): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -488,8 +518,10 @@ KtNameReferenceExpression(110,113): 'bar'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -523,6 +555,7 @@ KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -542,8 +575,10 @@ KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
 
@@ -556,6 +591,7 @@ KtNameReferenceExpression(127,130): 'foo'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -575,8 +611,10 @@ KtNameReferenceExpression(127,130): 'foo'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
 
@@ -595,6 +633,7 @@ KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -614,8 +653,10 @@ KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -628,6 +669,7 @@ KtDotQualifiedExpression(131,139): '4.bar(5)'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -647,8 +689,10 @@ KtDotQualifiedExpression(131,139): '4.bar(5)'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -664,6 +708,7 @@ KtCallExpression(133,139): 'bar(5)'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -683,8 +728,10 @@ KtCallExpression(133,139): 'bar(5)'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -697,6 +744,7 @@ KtNameReferenceExpression(133,136): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -716,8 +764,10 @@ KtNameReferenceExpression(133,136): 'bar'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -739,6 +789,7 @@ KtCallExpression(140,146): 'bar(6)'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -758,8 +809,10 @@ KtCallExpression(140,146): 'bar(6)'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -772,6 +825,7 @@ KtNameReferenceExpression(140,143): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -791,8 +845,10 @@ KtNameReferenceExpression(140,143): 'bar'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -814,6 +870,7 @@ KtCallExpression(148,154): 'bar(0)'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -833,8 +890,10 @@ KtCallExpression(148,154): 'bar(0)'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 
@@ -847,6 +906,7 @@ KtNameReferenceExpression(148,151): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -866,8 +926,10 @@ KtNameReferenceExpression(148,151): 'bar'
               receiverType = null
               returnType = kotlin.Int
               symbol = b: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
 

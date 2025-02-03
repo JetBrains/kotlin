@@ -7,12 +7,14 @@ KtNameReferenceExpression(54,57): 'set'
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null),
         1 -> (KaVariableSignature:
           name = element
           receiverType = null
           returnType = kotlin.Int
           symbol = element: E
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -32,18 +34,21 @@ KtNameReferenceExpression(54,57): 'set'
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = element
               receiverType = null
               returnType = kotlin.Int
               symbol = element: E
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.set
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -52,12 +57,14 @@ KtNameReferenceExpression(54,57): 'set'
           receiverType = null
           returnType = kotlin.Int
           symbol = key: K
+          contextParameters = []
           callableId = null),
         1 -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.Int
           symbol = value: V
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -77,14 +84,17 @@ KtNameReferenceExpression(54,57): 'set'
               receiverType = null
               returnType = kotlin.Int
               symbol = key: K
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.Int
               symbol = value: V
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/set
       typeArgumentsMapping = {
         K -> (kotlin.Int),
@@ -92,7 +102,7 @@ KtNameReferenceExpression(54,57): 'set'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with set>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -101,12 +111,14 @@ KtNameReferenceExpression(54,57): 'set'
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null),
         1 -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.Char
           symbol = value: kotlin.Char
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -126,14 +138,17 @@ KtNameReferenceExpression(54,57): 'set'
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.Char
               symbol = value: kotlin.Char
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/text/set
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with set>

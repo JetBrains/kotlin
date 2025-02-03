@@ -14,6 +14,7 @@ KtCallExpression(96,101): 'foo()'
           returnType = ERROR_TYPE
           symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
           valueParameters = []
+          contextParameters = []
           callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -50,6 +51,7 @@ KtCallExpression(96,101): 'foo()'
           returnType = ERROR_TYPE
           symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
           valueParameters = []
+          contextParameters = []
           callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -66,6 +68,7 @@ KtCallExpression(96,101): 'foo()'
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = false

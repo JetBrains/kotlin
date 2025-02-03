@@ -11,5 +11,6 @@ KtNameReferenceExpression(92,100): 'Conflict'
           returnType = <local>.Conflict
           symbol = <constructor>(): <local>.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

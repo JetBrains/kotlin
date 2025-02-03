@@ -13,10 +13,11 @@ KtCallExpression(50,57): 'myRun()'
           returnType = kotlin.Unit
           symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = foo/myRun
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -29,6 +30,7 @@ KtCallExpression(50,57): 'myRun()'
           returnType = kotlin.Unit
           symbol = foo/myRun(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = foo/myRun
       typeArgumentsMapping = {}
     isInBestCandidates = false

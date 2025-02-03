@@ -11,6 +11,7 @@ KtNameReferenceExpression(92,100): 'Conflict'
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

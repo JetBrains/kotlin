@@ -7,6 +7,7 @@ KtNameReferenceExpression(127,136): 'dummyTest'
           receiverType = null
           returnType = test.Test
           symbol = value: test.Test
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -23,7 +24,9 @@ KtNameReferenceExpression(127,136): 'dummyTest'
               receiverType = null
               returnType = test.Test
               symbol = value: test.Test
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/dummyTest
       typeArgumentsMapping = {}

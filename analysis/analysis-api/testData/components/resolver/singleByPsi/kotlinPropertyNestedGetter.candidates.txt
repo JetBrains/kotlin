@@ -12,6 +12,7 @@ KtNameReferenceExpression(53,61): 'instance'
           receiverType = null
           returnType = KtSubClass
           symbol = val instance: KtSubClass
+          contextParameters = []
           callableId = /KtClass.instance
       simpleAccess = Read
       typeArgumentsMapping = {}

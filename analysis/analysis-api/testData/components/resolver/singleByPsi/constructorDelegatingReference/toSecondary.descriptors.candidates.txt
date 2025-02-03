@@ -11,11 +11,12 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           returnType = A
           symbol = <constructor>(): A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -24,6 +25,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = THIS_CALL
@@ -40,13 +42,15 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -55,6 +59,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = THIS_CALL
@@ -71,8 +76,10 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

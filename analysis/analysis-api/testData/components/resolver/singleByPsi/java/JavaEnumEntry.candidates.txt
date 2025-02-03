@@ -12,6 +12,7 @@ KtNameReferenceExpression(69,76): 'RUNTIME'
           receiverType = null
           returnType = java.lang.annotation.RetentionPolicy
           symbol = java/lang/annotation/RetentionPolicy.RUNTIME
+          contextParameters = []
           callableId = java/lang/annotation/RetentionPolicy.RUNTIME
       simpleAccess = Read
       typeArgumentsMapping = {}

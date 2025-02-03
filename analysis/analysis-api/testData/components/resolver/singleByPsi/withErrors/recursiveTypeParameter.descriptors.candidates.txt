@@ -7,6 +7,7 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
           receiverType = null
           returnType = AbstractModule.Builder<*>!
           symbol = builder: AbstractModule.Builder<*>!
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -25,8 +26,10 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
               receiverType = null
               returnType = AbstractModule.Builder<*>!
               symbol = builder: AbstractModule.Builder<*>!
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /AbstractModule.install
       typeArgumentsMapping = {}
     isInBestCandidates = true

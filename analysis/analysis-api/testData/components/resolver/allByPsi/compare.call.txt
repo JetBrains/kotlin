@@ -25,6 +25,7 @@ KtBinaryExpression(18,23): '1 > 2'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -44,8 +45,10 @@ KtBinaryExpression(18,23): '1 > 2'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -61,6 +64,7 @@ KtOperationReferenceExpression(20,21): '>'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -80,8 +84,10 @@ KtOperationReferenceExpression(20,21): '>'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -97,6 +103,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -116,8 +123,10 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -130,6 +139,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -149,8 +159,10 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -166,6 +178,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -185,8 +198,10 @@ KtCallExpression(30,42): 'compareTo(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -199,6 +214,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -218,8 +234,10 @@ KtNameReferenceExpression(30,39): 'compareTo'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -241,6 +259,7 @@ KtOperationReferenceExpression(43,44): '>'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -260,8 +279,10 @@ KtOperationReferenceExpression(43,44): '>'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
@@ -277,6 +298,7 @@ KtBinaryExpression(52,61): '"3" < "4"'
           receiverType = null
           returnType = kotlin.String
           symbol = other: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -296,8 +318,10 @@ KtBinaryExpression(52,61): '"3" < "4"'
               receiverType = null
               returnType = kotlin.String
               symbol = other: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/String.compareTo
       typeArgumentsMapping = {}
 
@@ -316,6 +340,7 @@ KtOperationReferenceExpression(56,57): '<'
           receiverType = null
           returnType = kotlin.String
           symbol = other: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -335,8 +360,10 @@ KtOperationReferenceExpression(56,57): '<'
               receiverType = null
               returnType = kotlin.String
               symbol = other: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/String.compareTo
       typeArgumentsMapping = {}
 
@@ -368,6 +395,7 @@ KtCallExpression(99,108): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -384,6 +412,7 @@ KtNameReferenceExpression(99,106): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -399,6 +428,7 @@ KtBinaryExpression(113,130): 'myClass >= number'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -418,8 +448,10 @@ KtBinaryExpression(113,130): 'myClass >= number'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
 
@@ -434,6 +466,7 @@ KtNameReferenceExpression(113,120): 'myClass'
           receiverType = null
           returnType = MyClass
           symbol = val myClass: MyClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -447,6 +480,7 @@ KtOperationReferenceExpression(121,123): '>='
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -466,8 +500,10 @@ KtOperationReferenceExpression(121,123): '>='
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
 
@@ -482,6 +518,7 @@ KtNameReferenceExpression(124,130): 'number'
           receiverType = null
           returnType = kotlin.Int
           symbol = val number: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -495,6 +532,7 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -514,8 +552,10 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
 
@@ -530,6 +570,7 @@ KtNameReferenceExpression(135,142): 'myClass'
           receiverType = null
           returnType = MyClass
           symbol = val myClass: MyClass
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -543,6 +584,7 @@ KtCallExpression(143,160): 'compareTo(number)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -562,8 +604,10 @@ KtCallExpression(143,160): 'compareTo(number)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
 
@@ -576,6 +620,7 @@ KtNameReferenceExpression(143,152): 'compareTo'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -595,8 +640,10 @@ KtNameReferenceExpression(143,152): 'compareTo'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
 
@@ -617,6 +664,7 @@ KtNameReferenceExpression(153,159): 'number'
           receiverType = null
           returnType = kotlin.Int
           symbol = val number: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -668,6 +716,7 @@ KtNameReferenceExpression(222,223): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

@@ -17,8 +17,10 @@ KtCallExpression(74,87): 'Foo<String>()'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = x: T
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {}
     ]

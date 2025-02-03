@@ -7,18 +7,21 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: O1
+          contextParameters = []
           callableId = null),
         { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
           symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+          contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = kotlin.String
           symbol = c: T1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -35,27 +38,31 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: O1
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
               symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = c
               receiverType = null
               returnType = kotlin.String
               symbol = c: T1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {
         T1 -> (kotlin.String),
         O1 -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -64,18 +71,21 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: O3
+          contextParameters = []
           callableId = null),
         { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
+          contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = kotlin.String
           symbol = c: T3
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -92,20 +102,24 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: O3
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = c
               receiverType = null
               returnType = kotlin.String
               symbol = c: T3
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {
         T3 -> (kotlin.String),

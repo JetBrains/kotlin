@@ -7,6 +7,7 @@ KtCallExpression(165,169): 'x(1)'
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
@@ -26,8 +27,10 @@ KtCallExpression(165,169): 'x(1)'
               receiverType = null
               returnType = @R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

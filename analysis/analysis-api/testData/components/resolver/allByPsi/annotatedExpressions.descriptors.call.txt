@@ -31,6 +31,7 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -46,8 +47,10 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -60,6 +63,7 @@ KtConstructorCalleeExpression(39,45): 'Target'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -75,8 +79,10 @@ KtConstructorCalleeExpression(39,45): 'Target'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -95,6 +101,7 @@ KtNameReferenceExpression(39,45): 'Target'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -110,8 +117,10 @@ KtNameReferenceExpression(39,45): 'Target'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -139,6 +148,7 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -154,8 +164,10 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
               receiverType = null
               returnType = kotlin.annotation.AnnotationRetention
               symbol = value: kotlin.annotation.AnnotationRetention
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -168,6 +180,7 @@ KtConstructorCalleeExpression(76,85): 'Retention'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -183,8 +196,10 @@ KtConstructorCalleeExpression(76,85): 'Retention'
               receiverType = null
               returnType = kotlin.annotation.AnnotationRetention
               symbol = value: kotlin.annotation.AnnotationRetention
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -203,6 +218,7 @@ KtNameReferenceExpression(76,85): 'Retention'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -218,8 +234,10 @@ KtNameReferenceExpression(76,85): 'Retention'
               receiverType = null
               returnType = kotlin.annotation.AnnotationRetention
               symbol = value: kotlin.annotation.AnnotationRetention
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -277,6 +295,7 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -292,8 +311,10 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -306,6 +327,7 @@ KtConstructorCalleeExpression(173,177): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -321,8 +343,10 @@ KtConstructorCalleeExpression(173,177): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -341,6 +365,7 @@ KtNameReferenceExpression(173,177): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -356,8 +381,10 @@ KtNameReferenceExpression(173,177): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -376,6 +403,7 @@ KtBinaryExpression(178,189): '0 + integer'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -395,8 +423,10 @@ KtBinaryExpression(178,189): '0 + integer'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
 
@@ -412,6 +442,7 @@ KtOperationReferenceExpression(180,181): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -431,8 +462,10 @@ KtOperationReferenceExpression(180,181): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
 
@@ -447,6 +480,7 @@ KtNameReferenceExpression(182,189): 'integer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val integer: kotlin.Int
+          contextParameters = []
           callableId = /integer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -467,6 +501,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
           returnType = kotlin.String
           symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
 
@@ -485,6 +520,7 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -500,8 +536,10 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -514,6 +552,7 @@ KtConstructorCalleeExpression(193,197): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -529,8 +568,10 @@ KtConstructorCalleeExpression(193,197): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -549,6 +590,7 @@ KtNameReferenceExpression(193,197): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -564,8 +606,10 @@ KtNameReferenceExpression(193,197): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -586,6 +630,7 @@ KtNameReferenceExpression(198,205): 'integer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val integer: kotlin.Int
+          contextParameters = []
           callableId = /integer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -603,6 +648,7 @@ KtCallExpression(207,214): 'usage()'
           returnType = kotlin.Unit
           symbol = /usage(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /usage
       typeArgumentsMapping = {}
 
@@ -619,6 +665,7 @@ KtNameReferenceExpression(207,212): 'usage'
           returnType = kotlin.Unit
           symbol = /usage(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /usage
       typeArgumentsMapping = {}
 
@@ -641,6 +688,7 @@ KtCallExpression(216,226): 'toString()'
           returnType = kotlin.String
           symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
 
@@ -660,6 +708,7 @@ KtNameReferenceExpression(216,224): 'toString'
           returnType = kotlin.String
           symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
 

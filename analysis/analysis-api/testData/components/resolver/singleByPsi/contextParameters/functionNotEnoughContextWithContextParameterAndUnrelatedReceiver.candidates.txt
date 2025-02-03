@@ -11,6 +11,7 @@ KtCallExpression(92,97): 'foo()'
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'String' found.>

@@ -11,6 +11,7 @@ KtCallExpression(71,80): 'Test<Bar>'
           returnType = test.Test<T>
           symbol = <constructor>(): test.Test<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (test.Bar)

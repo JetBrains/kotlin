@@ -49,6 +49,7 @@ KtSuperTypeCallEntry(54,57): '(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -65,8 +66,10 @@ KtSuperTypeCallEntry(54,57): '(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -79,6 +82,7 @@ KtConstructorCalleeExpression(54,54): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -95,8 +99,10 @@ KtConstructorCalleeExpression(54,54): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -115,6 +121,7 @@ KtEnumEntrySuperclassReferenceExpression(54,54): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -131,8 +138,10 @@ KtEnumEntrySuperclassReferenceExpression(54,54): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -160,6 +169,7 @@ KtSuperTypeCallEntry(76,79): '(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -176,8 +186,10 @@ KtSuperTypeCallEntry(76,79): '(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -190,6 +202,7 @@ KtConstructorCalleeExpression(76,76): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -206,8 +219,10 @@ KtConstructorCalleeExpression(76,76): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -226,6 +241,7 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -242,8 +258,10 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -281,6 +299,7 @@ KtNameReferenceExpression(114,115): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
+          contextParameters = []
           callableId = /EnumWithConstructor.i
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -328,6 +347,7 @@ KtDotQualifiedExpression(234,244): 'this.baz()'
           returnType = kotlin.Unit
           symbol = baz(<dispatch receiver>: <anonymous>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -353,6 +373,7 @@ KtCallExpression(239,244): 'baz()'
           returnType = kotlin.Unit
           symbol = baz(<dispatch receiver>: <anonymous>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -372,6 +393,7 @@ KtNameReferenceExpression(239,242): 'baz'
           returnType = kotlin.Unit
           symbol = baz(<dispatch receiver>: <anonymous>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -413,6 +435,7 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
           receiverType = null
           returnType = kotlin.Int
           symbol = val ordinal: kotlin.Int
+          contextParameters = []
           callableId = kotlin/Enum.ordinal
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -428,6 +451,7 @@ KtNameReferenceExpression(307,311): 'with'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = with: EnumWithConstructor
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -446,6 +470,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
           receiverType = null
           returnType = kotlin.Int
           symbol = val ordinal: kotlin.Int
+          contextParameters = []
           callableId = kotlin/Enum.ordinal
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -464,6 +489,7 @@ KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.Entry
+          contextParameters = []
           callableId = /EnumWithConstructor.Entry
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -485,6 +511,7 @@ KtNameReferenceExpression(345,350): 'Entry'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.Entry
+          contextParameters = []
           callableId = /EnumWithConstructor.Entry
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -503,6 +530,7 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/Enum.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -521,6 +549,7 @@ KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.Entry
+          contextParameters = []
           callableId = /EnumWithConstructor.Entry
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -542,6 +571,7 @@ KtNameReferenceExpression(375,380): 'Entry'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.Entry
+          contextParameters = []
           callableId = /EnumWithConstructor.Entry
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -560,6 +590,7 @@ KtNameReferenceExpression(381,385): 'name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/Enum.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -578,6 +609,7 @@ KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.EntryWithBody
+          contextParameters = []
           callableId = /EnumWithConstructor.EntryWithBody
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -599,6 +631,7 @@ KtNameReferenceExpression(410,423): 'EntryWithBody'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.EntryWithBody
+          contextParameters = []
           callableId = /EnumWithConstructor.EntryWithBody
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -617,6 +650,7 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
           receiverType = null
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
+          contextParameters = []
           callableId = /EnumWithConstructor.i
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -635,6 +669,7 @@ KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.EntryWithBody
+          contextParameters = []
           callableId = /EnumWithConstructor.EntryWithBody
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -656,6 +691,7 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = /EnumWithConstructor.EntryWithBody
+          contextParameters = []
           callableId = /EnumWithConstructor.EntryWithBody
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -674,6 +710,7 @@ KtNameReferenceExpression(462,463): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
+          contextParameters = []
           callableId = /EnumWithConstructor.i
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -692,6 +729,7 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
           receiverType = null
           returnType = kotlin.enums.EnumEntries<EnumWithoutConstructor>
           symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          contextParameters = []
           callableId = /EnumWithoutConstructor.entries
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -713,6 +751,7 @@ KtNameReferenceExpression(492,499): 'entries'
           receiverType = null
           returnType = kotlin.enums.EnumEntries<EnumWithoutConstructor>
           symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          contextParameters = []
           callableId = /EnumWithoutConstructor.entries
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -731,6 +770,7 @@ KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
           receiverType = null
           returnType = EnumWithoutConstructor
           symbol = /EnumWithoutConstructor.Entry
+          contextParameters = []
           callableId = /EnumWithoutConstructor.Entry
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -752,6 +792,7 @@ KtNameReferenceExpression(527,532): 'Entry'
           receiverType = null
           returnType = EnumWithoutConstructor
           symbol = /EnumWithoutConstructor.Entry
+          contextParameters = []
           callableId = /EnumWithoutConstructor.Entry
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -770,6 +811,7 @@ KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
           receiverType = null
           returnType = EnumWithoutConstructor
           symbol = /EnumWithoutConstructor.EntryWithBody
+          contextParameters = []
           callableId = /EnumWithoutConstructor.EntryWithBody
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -791,6 +833,7 @@ KtNameReferenceExpression(560,573): 'EntryWithBody'
           receiverType = null
           returnType = EnumWithoutConstructor
           symbol = /EnumWithoutConstructor.EntryWithBody
+          contextParameters = []
           callableId = /EnumWithoutConstructor.EntryWithBody
       simpleAccess = Read
       typeArgumentsMapping = {}

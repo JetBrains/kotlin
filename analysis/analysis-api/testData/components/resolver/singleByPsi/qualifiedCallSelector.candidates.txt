@@ -7,6 +7,7 @@ KtCallExpression(50,54): 'y(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtCallExpression(50,54): 'y(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.y
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -11,11 +11,12 @@ KtNameReferenceExpression(107,115): 'property'
           receiverType = null
           returnType = kotlin.String
           symbol = val property: kotlin.String
+          contextParameters = []
           callableId = pack/Foo.property
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -26,6 +27,7 @@ KtNameReferenceExpression(107,115): 'property'
           receiverType = null
           returnType = kotlin.Int
           symbol = val property: kotlin.Int
+          contextParameters = []
           callableId = pack/property
       simpleAccess = Read
       typeArgumentsMapping = {}

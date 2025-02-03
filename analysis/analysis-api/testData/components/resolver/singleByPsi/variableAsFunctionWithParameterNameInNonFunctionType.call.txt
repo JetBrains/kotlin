@@ -7,12 +7,14 @@ KtCallExpression(157,168): 'call(1, "")'
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
           symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+          contextParameters = []
           callableId = null),
         "" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
           symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -29,13 +31,16 @@ KtCallExpression(157,168): 'call(1, "")'
               receiverType = null
               returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
               symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
               symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /call
       typeArgumentsMapping = {}

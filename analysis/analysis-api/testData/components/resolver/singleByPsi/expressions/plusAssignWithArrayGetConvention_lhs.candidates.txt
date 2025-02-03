@@ -7,6 +7,7 @@ KtArrayAccessExpression(146,152): 'm["a"]'
           receiverType = null
           returnType = kotlin.String
           symbol = k: K
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtArrayAccessExpression(146,152): 'm["a"]'
               receiverType = null
               returnType = kotlin.String
               symbol = k: K
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyMap.get
       typeArgumentsMapping = {}
     isInBestCandidates = true

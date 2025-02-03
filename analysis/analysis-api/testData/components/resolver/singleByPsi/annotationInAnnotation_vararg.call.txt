@@ -7,12 +7,14 @@ KtCallExpression(131,153): 'Annotation("v1", "v2")'
           receiverType = null
           returnType = kotlin.String
           symbol = vararg strings: kotlin.String
+          contextParameters = []
           callableId = null),
         "v2" -> (KaVariableSignature:
           name = strings
           receiverType = null
           returnType = kotlin.String
           symbol = vararg strings: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -29,7 +31,9 @@ KtCallExpression(131,153): 'Annotation("v1", "v2")'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg strings: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

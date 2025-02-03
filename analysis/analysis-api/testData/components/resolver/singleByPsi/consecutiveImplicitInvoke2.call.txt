@@ -14,5 +14,6 @@ KtCallExpression(135,140): 'i()()'
           returnType = kotlin.Double
           symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}

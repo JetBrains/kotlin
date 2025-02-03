@@ -20,8 +20,10 @@ KtBinaryExpression(31,37): 'i += 1'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = other: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/Int.plus
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -31,4 +33,5 @@ KtBinaryExpression(31,37): 'i += 1'
           receiverType = null
           returnType = kotlin.Int
           symbol = var i: kotlin.Int
+          contextParameters = []
           callableId = null

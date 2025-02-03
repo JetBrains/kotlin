@@ -7,6 +7,7 @@ KaFunctionSignature:
   returnType = kotlin.Int!
   symbol = /JavaClass.getValue(<dispatch receiver>: JavaClass): kotlin.Int!
   valueParameters = []
+  contextParameters = []
   callableId = /JavaClass.getValue
 KaFunctionSignature:
   receiverType = null
@@ -18,26 +19,31 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/Any.equals
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.hashCode
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.toString
 KaVariableSignature:
   name = value
   receiverType = null
   returnType = kotlin.Int!
   symbol = val value: kotlin.Int!
+  contextParameters = []
   callableId = /JavaClass.value
 
 

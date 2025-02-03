@@ -38,8 +38,10 @@ KtNameReferenceExpression(183,194): 'suspendHere'
                 receiverType = null
                 returnType = ERROR_TYPE
                 symbol = x: ERROR_TYPE
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /Controller.suspendHere
         typeArgumentsMapping = {}
     ]

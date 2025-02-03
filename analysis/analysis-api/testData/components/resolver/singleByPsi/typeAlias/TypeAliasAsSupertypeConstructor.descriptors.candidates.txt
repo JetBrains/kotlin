@@ -11,6 +11,7 @@ KtNameReferenceExpression(56,58): 'CA'
           returnType = test.CA
           symbol = <constructor>(): test.C
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

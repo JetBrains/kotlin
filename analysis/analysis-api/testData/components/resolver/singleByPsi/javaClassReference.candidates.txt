@@ -16,14 +16,17 @@ KtCallExpression(31,44): 'Array<String>'
               receiverType = null
               returnType = kotlin.Int
               symbol = size: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = init
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, T>
               symbol = init: kotlin.Function1<kotlin.Int, T>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)

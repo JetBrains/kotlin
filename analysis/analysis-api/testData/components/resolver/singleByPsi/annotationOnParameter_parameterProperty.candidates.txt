@@ -10,6 +10,7 @@ KtAnnotationEntry(35,40): '@Anno'
           returnType = Anno
           symbol = <constructor>(): Anno
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

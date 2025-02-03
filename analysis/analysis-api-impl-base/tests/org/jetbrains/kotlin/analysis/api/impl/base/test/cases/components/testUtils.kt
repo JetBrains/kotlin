@@ -137,7 +137,8 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
         KaCallableSignature<*>::returnType,
         KaCallableSignature<*>::symbol,
         KaFunctionSignature<*>::valueParameters.takeIf { signature is KaFunctionSignature<*> },
-        KaCallableSignature<*>::callableId
+        KaCallableSignature<*>::contextParameters,
+        KaCallableSignature<*>::callableId,
     )
 
     memberProperties.joinTo(this, separator = "\n  ", prefix = ":\n  ") { property ->
@@ -151,6 +152,12 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
 private fun String.indented() = replace("\n", "\n  ")
 
 internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): String = prettyPrint {
+    printCollectionIfNotEmpty(signature.contextParameters, prefix = "context(", postfix = ") ") { contextParameter ->
+        append(contextParameter.name.asString())
+        append(": ")
+        append(contextParameter.returnType.render(position = Variance.INVARIANT))
+    }
+
     when (signature) {
         is KaFunctionSignature -> {
             append("fun ")

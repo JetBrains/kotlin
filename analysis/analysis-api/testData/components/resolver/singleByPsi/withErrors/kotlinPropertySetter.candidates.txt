@@ -12,6 +12,7 @@ KtNameReferenceExpression(51,54): 'foo'
           receiverType = null
           returnType = kotlin.Int
           symbol = var foo: kotlin.Int
+          contextParameters = []
           callableId = /KtClass.foo
       simpleAccess = Write:
         value = 42

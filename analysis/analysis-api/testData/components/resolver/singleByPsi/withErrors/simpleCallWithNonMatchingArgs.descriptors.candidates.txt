@@ -11,6 +11,7 @@ KtCallExpression(14,20): 'foo(1)'
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun foo(): Unit defined in root package in file simpleCallWithNonMatchingArgs.kt>

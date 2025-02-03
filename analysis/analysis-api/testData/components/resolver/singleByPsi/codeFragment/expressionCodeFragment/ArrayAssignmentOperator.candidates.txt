@@ -7,12 +7,14 @@ KtOperationReferenceExpression(150,151): '='
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null),
         "value" -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
           symbol = value: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -32,14 +34,17 @@ KtOperationReferenceExpression(150,151): '='
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.String
               symbol = value: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyList.set
       typeArgumentsMapping = {}
     isInBestCandidates = true

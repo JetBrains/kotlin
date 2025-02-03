@@ -7,6 +7,7 @@ KtNameReferenceExpression(82,86): 'copy'
           receiverType = null
           returnType = kotlin.Int
           symbol = aaa: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtNameReferenceExpression(82,86): 'copy'
               receiverType = null
               returnType = kotlin.Int
               symbol = aaa: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Data.copy
       typeArgumentsMapping = {}

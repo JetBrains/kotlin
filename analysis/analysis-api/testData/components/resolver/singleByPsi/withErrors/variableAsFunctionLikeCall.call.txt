@@ -14,5 +14,6 @@ KtCallExpression(68,71): 'x()'
           returnType = kotlin.String
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}

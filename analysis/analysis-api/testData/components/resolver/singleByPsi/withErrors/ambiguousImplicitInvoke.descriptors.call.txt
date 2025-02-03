@@ -20,8 +20,10 @@ KtCallExpression(134,137): 'x()'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = a: kotlin.String
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
@@ -43,8 +45,10 @@ KtCallExpression(134,137): 'x()'
                 receiverType = null
                 returnType = kotlin.Boolean
                 symbol = b: kotlin.Boolean
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {}
     ]

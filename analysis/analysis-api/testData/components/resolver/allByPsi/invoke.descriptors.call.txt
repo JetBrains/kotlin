@@ -86,6 +86,7 @@ KtCallExpression(124,133): 'MyClass()'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -102,6 +103,7 @@ KtNameReferenceExpression(124,131): 'MyClass'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -130,6 +132,7 @@ KtCallExpression(156,165): 'MyClass()'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -146,6 +149,7 @@ KtNameReferenceExpression(156,163): 'MyClass'
           returnType = r.MyClass
           symbol = <constructor>(): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -174,6 +178,7 @@ KtCallExpression(186,191): 'foo()'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
 
@@ -190,6 +195,7 @@ KtNameReferenceExpression(186,189): 'foo'
           returnType = kotlin.Int
           symbol = r/foo(): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = r/foo
       typeArgumentsMapping = {}
 
@@ -207,6 +213,7 @@ KtNameReferenceExpression(196,199): 'foo'
           receiverType = null
           returnType = r.MyClass
           symbol = val foo: r.MyClass
+          contextParameters = []
           callableId = r/foo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -227,6 +234,7 @@ KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -249,6 +257,7 @@ KtCallExpression(205,216): '((foo)())()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -271,6 +280,7 @@ KtCallExpression(206,213): '(foo)()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -288,6 +298,7 @@ KtNameReferenceExpression(207,210): 'foo'
           receiverType = null
           returnType = r.MyClass
           symbol = val foo: r.MyClass
+          contextParameters = []
           callableId = r/foo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -314,6 +325,7 @@ KtCallExpression(218,226): 'invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -333,6 +345,7 @@ KtNameReferenceExpression(218,224): 'invoke'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -355,6 +368,7 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -369,6 +383,7 @@ KtNameReferenceExpression(231,234): 'foo'
           receiverType = null
           returnType = r.MyClass
           symbol = val foo: r.MyClass
+          contextParameters = []
           callableId = r/foo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -389,6 +404,7 @@ KtCallExpression(235,243): 'invoke()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -408,6 +424,7 @@ KtNameReferenceExpression(235,241): 'invoke'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -430,6 +447,7 @@ KtCallExpression(248,258): 'property()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
 
@@ -444,6 +462,7 @@ KtNameReferenceExpression(248,256): 'property'
           receiverType = null
           returnType = r.MyClass
           symbol = val property: r.MyClass
+          contextParameters = []
           callableId = r/property
       simpleAccess = Read
       typeArgumentsMapping = {}

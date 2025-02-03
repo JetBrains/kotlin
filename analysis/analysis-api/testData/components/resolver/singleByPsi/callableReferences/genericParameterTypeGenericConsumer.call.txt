@@ -16,7 +16,9 @@ KtCallableReferenceExpression(69,82): 'Foo<Int>::foo'
               receiverType = null
               returnType = kotlin.Int
               symbol = value: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.foo
       typeArgumentsMapping = {}

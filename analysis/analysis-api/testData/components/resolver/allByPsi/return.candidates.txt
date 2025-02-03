@@ -187,6 +187,7 @@ KtCallExpression(180,749): 'foo1 {'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -203,8 +204,10 @@ KtCallExpression(180,749): 'foo1 {'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo1
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -242,6 +245,7 @@ KtNameReferenceExpression(180,184): 'foo1'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -258,8 +262,10 @@ KtNameReferenceExpression(180,184): 'foo1'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo1
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -307,6 +313,7 @@ KtCallExpression(195,743): 'foo2 {'
           receiverType = null
           returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -323,8 +330,10 @@ KtCallExpression(195,743): 'foo2 {'
               receiverType = null
               returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo2
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -360,6 +369,7 @@ KtNameReferenceExpression(195,199): 'foo2'
           receiverType = null
           returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -376,8 +386,10 @@ KtNameReferenceExpression(195,199): 'foo2'
               receiverType = null
               returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo2
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -423,6 +435,7 @@ KtCallExpression(214,733): 'foo3 {'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -439,8 +452,10 @@ KtCallExpression(214,733): 'foo3 {'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo3
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -474,6 +489,7 @@ KtNameReferenceExpression(214,218): 'foo3'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -490,8 +506,10 @@ KtNameReferenceExpression(214,218): 'foo3'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo3
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -521,6 +539,7 @@ KtCallExpression(237,413): 'foo1('
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -537,8 +556,10 @@ KtCallExpression(237,413): 'foo1('
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo1
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -556,6 +577,7 @@ KtNameReferenceExpression(237,241): 'foo1'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -572,8 +594,10 @@ KtNameReferenceExpression(237,241): 'foo1'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo1
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -635,6 +659,7 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
           receiverType = null
           returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -651,8 +676,10 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
               receiverType = null
               returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo2
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -672,6 +699,7 @@ KtNameReferenceExpression(431,435): 'foo2'
           receiverType = null
           returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
           symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -688,8 +716,10 @@ KtNameReferenceExpression(431,435): 'foo2'
               receiverType = null
               returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
               symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = returnPack/foo2
       typeArgumentsMapping = {}
     isInBestCandidates = true

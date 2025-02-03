@@ -14,5 +14,6 @@ KtNameReferenceExpression(100,109): 'asDynamic'
           returnType = dynamic
           symbol = kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/js/asDynamic
       typeArgumentsMapping = {}

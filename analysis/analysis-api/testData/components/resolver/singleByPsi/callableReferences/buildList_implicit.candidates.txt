@@ -42,8 +42,10 @@ KtCallableReferenceExpression(102,107): '::add'
               receiverType = null
               returnType = kotlin.String
               symbol = element: E
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.add
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -7,6 +7,7 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = THIS_CALL
@@ -23,8 +24,10 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -46,8 +49,10 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>

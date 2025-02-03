@@ -12,13 +12,14 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           receiverType = Foo<kotlin.String>
           returnType = kotlin.Int
           symbol = val foo: kotlin.Int
+          contextParameters = []
           callableId = /foo
       simpleAccess = Read
       typeArgumentsMapping = {
         A -> (kotlin.String)
       }
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -32,6 +33,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           receiverType = Foo<kotlin.String>
           returnType = kotlin.String
           symbol = val foo: kotlin.String
+          contextParameters = []
           callableId = /foo
       simpleAccess = Read
       typeArgumentsMapping = {

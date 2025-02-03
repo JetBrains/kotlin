@@ -7,6 +7,7 @@ KtBinaryExpression(56,71): '4 infixOp "str"'
           receiverType = null
           returnType = kotlin.String
           symbol = rhs: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtBinaryExpression(56,71): '4 infixOp "str"'
               receiverType = null
               returnType = kotlin.String
               symbol = rhs: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /infixOp
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -30,6 +30,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
           receiverType = null
           returnType = kotlin.String
           symbol = val propertyMember: kotlin.String
+          contextParameters = []
           callableId = /Base.propertyMember
       simpleAccess = Read
       typeArgumentsMapping = {}

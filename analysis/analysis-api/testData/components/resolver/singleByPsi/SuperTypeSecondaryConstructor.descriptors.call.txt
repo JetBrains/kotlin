@@ -11,5 +11,6 @@ KtNameReferenceExpression(45,46): 'A'
           returnType = A
           symbol = <constructor>(): A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

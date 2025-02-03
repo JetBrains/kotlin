@@ -7,6 +7,7 @@ KtArrayAccessExpression(238,249): 'variable[0]'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtArrayAccessExpression(238,249): 'variable[0]'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.get
       typeArgumentsMapping = {}
     isInBestCandidates = true

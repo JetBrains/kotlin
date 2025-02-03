@@ -9,6 +9,7 @@ KtNameReferenceExpression(84,89): 'param'
           receiverType = null
           returnType = Context
           symbol = param: Context
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

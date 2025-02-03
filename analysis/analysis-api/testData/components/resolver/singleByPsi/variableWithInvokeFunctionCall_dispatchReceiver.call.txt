@@ -14,5 +14,6 @@ KtCallExpression(83,86): 'f()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}

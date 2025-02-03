@@ -11,6 +11,7 @@ KtConstructorCalleeExpression(126,127): 'A'
           returnType = A
           symbol = <constructor>(): A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>
@@ -33,8 +34,10 @@ KtConstructorCalleeExpression(126,127): 'A'
               receiverType = null
               returnType = kotlin.String
               symbol = p: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
@@ -48,6 +51,7 @@ KtConstructorCalleeExpression(126,127): 'A'
           receiverType = null
           returnType = kotlin.Int
           symbol = x: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -64,8 +68,10 @@ KtConstructorCalleeExpression(126,127): 'A'
               receiverType = null
               returnType = kotlin.Int
               symbol = x: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

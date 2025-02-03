@@ -11,6 +11,7 @@ KtNameReferenceExpression(75,78): 'bar'
           returnType = kotlin.Unit
           symbol = kotlin/pckg/bar(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/pckg/bar
       typeArgumentsMapping = {}
     isInBestCandidates = true

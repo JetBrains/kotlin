@@ -8,6 +8,7 @@ KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
             receiverType = null
             returnType = kotlin.String
             symbol = vararg strings: kotlin.String
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
@@ -24,8 +25,10 @@ KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = vararg strings: kotlin.String
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {}
     ]

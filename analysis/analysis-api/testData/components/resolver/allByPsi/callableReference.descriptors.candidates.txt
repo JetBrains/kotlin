@@ -71,6 +71,7 @@ KtSuperTypeCallEntry(118,127): 'MyClass()'
           returnType = pack.MyClass
           symbol = <constructor>(): pack.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -88,6 +89,7 @@ KtConstructorCalleeExpression(118,125): 'MyClass'
           returnType = pack.MyClass
           symbol = <constructor>(): pack.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -111,6 +113,7 @@ KtNameReferenceExpression(118,125): 'MyClass'
           returnType = pack.MyClass
           symbol = <constructor>(): pack.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -191,6 +194,7 @@ KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
           returnType = pack.ClassWithType<pack.MyClass>
           symbol = <constructor>(): pack.ClassWithType<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -208,6 +212,7 @@ KtConstructorCalleeExpression(258,280): 'ClassWithType<MyClass>'
           returnType = pack.ClassWithType<pack.MyClass>
           symbol = <constructor>(): pack.ClassWithType<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -231,6 +236,7 @@ KtNameReferenceExpression(258,271): 'ClassWithType'
           returnType = pack.ClassWithType<pack.MyClass>
           symbol = <constructor>(): pack.ClassWithType<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -376,6 +382,7 @@ KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
           receiverType = null
           returnType = pack.MyClass
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -395,8 +402,10 @@ KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
               receiverType = null
               returnType = pack.MyClass
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -414,6 +423,7 @@ KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
           returnType = kotlin.Int
           symbol = pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -434,6 +444,7 @@ KtNameReferenceExpression(506,520): 'memberFunction'
           returnType = kotlin.Int
           symbol = pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -447,6 +458,7 @@ KtCallExpression(521,538): 'invoke(MyClass())'
           receiverType = null
           returnType = pack.MyClass
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -466,8 +478,10 @@ KtCallExpression(521,538): 'invoke(MyClass())'
               receiverType = null
               returnType = pack.MyClass
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -481,6 +495,7 @@ KtNameReferenceExpression(521,527): 'invoke'
           receiverType = null
           returnType = pack.MyClass
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -500,8 +515,10 @@ KtNameReferenceExpression(521,527): 'invoke'
               receiverType = null
               returnType = pack.MyClass
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -525,6 +542,7 @@ KtCallExpression(528,537): 'MyClass()'
           returnType = pack.MyClass
           symbol = <constructor>(): pack.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -542,6 +560,7 @@ KtNameReferenceExpression(528,535): 'MyClass'
           returnType = pack.MyClass
           symbol = <constructor>(): pack.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -563,6 +582,7 @@ KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/reflect/KCallable.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -579,6 +599,7 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
           receiverType = null
           returnType = kotlin.Int
           symbol = val memberProperty: kotlin.Int
+          contextParameters = []
           callableId = pack/MyClass.memberProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -598,6 +619,7 @@ KtNameReferenceExpression(552,566): 'memberProperty'
           receiverType = null
           returnType = kotlin.Int
           symbol = val memberProperty: kotlin.Int
+          contextParameters = []
           callableId = pack/MyClass.memberProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -617,6 +639,7 @@ KtNameReferenceExpression(567,571): 'name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/reflect/KCallable.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -631,6 +654,7 @@ KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
           receiverType = null
           returnType = pack.Child
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -650,8 +674,10 @@ KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
               receiverType = null
               returnType = pack.Child
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -669,6 +695,7 @@ KtCallableReferenceExpression(577,598): 'Child::memberFunction'
           returnType = kotlin.Int
           symbol = pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -689,6 +716,7 @@ KtNameReferenceExpression(584,598): 'memberFunction'
           returnType = kotlin.Int
           symbol = pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -702,6 +730,7 @@ KtCallExpression(599,614): 'invoke(Child())'
           receiverType = null
           returnType = pack.Child
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -721,8 +750,10 @@ KtCallExpression(599,614): 'invoke(Child())'
               receiverType = null
               returnType = pack.Child
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -736,6 +767,7 @@ KtNameReferenceExpression(599,605): 'invoke'
           receiverType = null
           returnType = pack.Child
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -755,8 +787,10 @@ KtNameReferenceExpression(599,605): 'invoke'
               receiverType = null
               returnType = pack.Child
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -780,6 +814,7 @@ KtCallExpression(606,613): 'Child()'
           returnType = pack.Child
           symbol = <constructor>(): pack.Child
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -797,6 +832,7 @@ KtNameReferenceExpression(606,611): 'Child'
           returnType = pack.Child
           symbol = <constructor>(): pack.Child
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -818,6 +854,7 @@ KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/reflect/KCallable.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -834,6 +871,7 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
           receiverType = null
           returnType = kotlin.Int
           symbol = val memberProperty: kotlin.Int
+          contextParameters = []
           callableId = pack/MyClass.memberProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -853,6 +891,7 @@ KtNameReferenceExpression(626,640): 'memberProperty'
           receiverType = null
           returnType = kotlin.Int
           symbol = val memberProperty: kotlin.Int
+          contextParameters = []
           callableId = pack/MyClass.memberProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -872,6 +911,7 @@ KtNameReferenceExpression(641,645): 'name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/reflect/KCallable.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -893,6 +933,7 @@ KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
           returnType = kotlin.String
           symbol = pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = pack/extensionFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -919,6 +960,7 @@ KtNameReferenceExpression(673,690): 'extensionFunction'
           returnType = kotlin.String
           symbol = pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = pack/extensionFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -937,6 +979,7 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
           receiverType = pack.MyClass
           returnType = kotlin.String
           symbol = val extensionProperty: kotlin.String
+          contextParameters = []
           callableId = pack/extensionProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -956,6 +999,7 @@ KtNameReferenceExpression(712,729): 'extensionProperty'
           receiverType = pack.MyClass
           returnType = kotlin.String
           symbol = val extensionProperty: kotlin.String
+          contextParameters = []
           callableId = pack/extensionProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -977,6 +1021,7 @@ KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
           returnType = kotlin.String
           symbol = pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = pack/extensionFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -997,6 +1042,7 @@ KtNameReferenceExpression(751,768): 'extensionFunction'
           returnType = kotlin.String
           symbol = pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = pack/extensionFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1015,6 +1061,7 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
           receiverType = pack.MyClass
           returnType = kotlin.String
           symbol = val extensionProperty: kotlin.String
+          contextParameters = []
           callableId = pack/extensionProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1040,6 +1087,7 @@ KtNameReferenceExpression(794,811): 'extensionProperty'
           receiverType = pack.MyClass
           returnType = kotlin.String
           symbol = val extensionProperty: kotlin.String
+          contextParameters = []
           callableId = pack/extensionProperty
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1059,6 +1107,7 @@ KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/reflect/KCallable.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1077,6 +1126,7 @@ KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
           returnType = pack.MyClass?
           symbol = pack/ChildWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<pack.MyClass>): pack.MyClass?
           valueParameters = []
+          contextParameters = []
           callableId = pack/ChildWithType.functionWithType
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1097,6 +1147,7 @@ KtNameReferenceExpression(832,848): 'functionWithType'
           returnType = pack.MyClass?
           symbol = pack/ChildWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<pack.MyClass>): pack.MyClass?
           valueParameters = []
+          contextParameters = []
           callableId = pack/ChildWithType.functionWithType
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1115,6 +1166,7 @@ KtNameReferenceExpression(849,853): 'name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/reflect/KCallable.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1129,6 +1181,7 @@ KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(Child
           receiverType = null
           returnType = pack.ChildWithType
           symbol = p1: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1148,8 +1201,10 @@ KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(Child
               receiverType = null
               returnType = pack.ChildWithType
               symbol = p1: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KMutableProperty1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1165,6 +1220,7 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
           receiverType = null
           returnType = pack.MyClass?
           symbol = var propertyWithType: pack.MyClass?
+          contextParameters = []
           callableId = pack/ChildWithType.propertyWithType
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1184,6 +1240,7 @@ KtNameReferenceExpression(873,889): 'propertyWithType'
           receiverType = null
           returnType = pack.MyClass?
           symbol = var propertyWithType: pack.MyClass?
+          contextParameters = []
           callableId = pack/ChildWithType.propertyWithType
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1198,6 +1255,7 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
           receiverType = null
           returnType = pack.ChildWithType
           symbol = p1: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1217,8 +1275,10 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
               receiverType = null
               returnType = pack.ChildWithType
               symbol = p1: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KMutableProperty1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1232,6 +1292,7 @@ KtNameReferenceExpression(890,896): 'invoke'
           receiverType = null
           returnType = pack.ChildWithType
           symbol = p1: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1251,8 +1312,10 @@ KtNameReferenceExpression(890,896): 'invoke'
               receiverType = null
               returnType = pack.ChildWithType
               symbol = p1: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/reflect/KMutableProperty1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1276,6 +1339,7 @@ KtCallExpression(897,912): 'ChildWithType()'
           returnType = pack.ChildWithType
           symbol = <constructor>(): pack.ChildWithType
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1293,6 +1357,7 @@ KtNameReferenceExpression(897,910): 'ChildWithType'
           returnType = pack.ChildWithType
           symbol = <constructor>(): pack.ChildWithType
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1318,8 +1383,10 @@ KtCallableReferenceExpression(919,937): '::topLevelFunction'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = pack/topLevelFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1342,8 +1409,10 @@ KtNameReferenceExpression(921,937): 'topLevelFunction'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = pack/topLevelFunction
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1359,6 +1428,7 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
           receiverType = null
           returnType = kotlin.Int
           symbol = var topLevelVariable: kotlin.Int
+          contextParameters = []
           callableId = pack/topLevelVariable
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1375,6 +1445,7 @@ KtNameReferenceExpression(944,960): 'topLevelVariable'
           receiverType = null
           returnType = kotlin.Int
           symbol = var topLevelVariable: kotlin.Int
+          contextParameters = []
           callableId = pack/topLevelVariable
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1394,6 +1465,7 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
           receiverType = null
           returnType = pack.MyClass
           symbol = var lateinitVar: pack.MyClass
+          contextParameters = []
           callableId = pack/lateinitVar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1410,6 +1482,7 @@ KtNameReferenceExpression(968,979): 'lateinitVar'
           receiverType = null
           returnType = pack.MyClass
           symbol = var lateinitVar: pack.MyClass
+          contextParameters = []
           callableId = pack/lateinitVar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1485,6 +1558,7 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
           returnType = T?
           symbol = pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
           valueParameters = []
+          contextParameters = []
           callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1500,6 +1574,7 @@ KtNameReferenceExpression(1063,1076): 'classWithType'
           receiverType = null
           returnType = pack.ClassWithType<T>
           symbol = classWithType: pack.ClassWithType<T>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1521,6 +1596,7 @@ KtNameReferenceExpression(1078,1094): 'functionWithType'
           returnType = T?
           symbol = pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
           valueParameters = []
+          contextParameters = []
           callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1539,6 +1615,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
           receiverType = null
           returnType = T?
           symbol = var propertyWithType: T?
+          contextParameters = []
           callableId = pack/ClassWithType.propertyWithType
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1555,6 +1632,7 @@ KtNameReferenceExpression(1099,1112): 'classWithType'
           receiverType = null
           returnType = pack.ClassWithType<T>
           symbol = classWithType: pack.ClassWithType<T>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1574,6 +1652,7 @@ KtNameReferenceExpression(1114,1130): 'propertyWithType'
           receiverType = null
           returnType = T?
           symbol = var propertyWithType: T?
+          contextParameters = []
           callableId = pack/ClassWithType.propertyWithType
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1628,6 +1707,7 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
           returnType = kotlin.Int?
           symbol = pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
           valueParameters = []
+          contextParameters = []
           callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1641,6 +1721,7 @@ KtPostfixExpression(1174,1177): 't!!'
           receiverType = null
           returnType = pack.ClassWithType<kotlin.Int>?
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1657,8 +1738,10 @@ KtPostfixExpression(1174,1177): 't!!'
               receiverType = null
               returnType = pack.ClassWithType<kotlin.Int>?
               symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
@@ -1676,6 +1759,7 @@ KtNameReferenceExpression(1174,1175): 't'
           receiverType = null
           returnType = pack.ClassWithType<kotlin.Int>?
           symbol = val t: pack.ClassWithType<kotlin.Int>?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1690,6 +1774,7 @@ KtOperationReferenceExpression(1175,1177): '!!'
           receiverType = null
           returnType = pack.ClassWithType<kotlin.Int>?
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1706,8 +1791,10 @@ KtOperationReferenceExpression(1175,1177): '!!'
               receiverType = null
               returnType = pack.ClassWithType<kotlin.Int>?
               symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
@@ -1730,6 +1817,7 @@ KtNameReferenceExpression(1179,1195): 'functionWithType'
           returnType = kotlin.Int?
           symbol = pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
           valueParameters = []
+          contextParameters = []
           callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1748,6 +1836,7 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
           receiverType = null
           returnType = kotlin.Int?
           symbol = var propertyWithType: T?
+          contextParameters = []
           callableId = pack/ClassWithType.propertyWithType
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1762,6 +1851,7 @@ KtPostfixExpression(1200,1203): 't!!'
           receiverType = null
           returnType = pack.ClassWithType<kotlin.Int>?
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1778,8 +1868,10 @@ KtPostfixExpression(1200,1203): 't!!'
               receiverType = null
               returnType = pack.ClassWithType<kotlin.Int>?
               symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
@@ -1797,6 +1889,7 @@ KtNameReferenceExpression(1200,1201): 't'
           receiverType = null
           returnType = pack.ClassWithType<kotlin.Int>?
           symbol = val t: pack.ClassWithType<kotlin.Int>?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1811,6 +1904,7 @@ KtOperationReferenceExpression(1201,1203): '!!'
           receiverType = null
           returnType = pack.ClassWithType<kotlin.Int>?
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1827,8 +1921,10 @@ KtOperationReferenceExpression(1201,1203): '!!'
               receiverType = null
               returnType = pack.ClassWithType<kotlin.Int>?
               symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
@@ -1849,6 +1945,7 @@ KtNameReferenceExpression(1205,1221): 'propertyWithType'
           receiverType = null
           returnType = kotlin.Int?
           symbol = var propertyWithType: T?
+          contextParameters = []
           callableId = pack/ClassWithType.propertyWithType
       simpleAccess = Read
       typeArgumentsMapping = {}

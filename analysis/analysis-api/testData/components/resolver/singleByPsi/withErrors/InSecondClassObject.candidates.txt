@@ -11,6 +11,7 @@ KtNameReferenceExpression(125,126): 'A'
           returnType = test.A
           symbol = <constructor>(): test.A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

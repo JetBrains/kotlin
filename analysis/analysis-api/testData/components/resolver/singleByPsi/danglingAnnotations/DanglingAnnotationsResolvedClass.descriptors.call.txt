@@ -10,5 +10,6 @@ KtNameReferenceExpression(73,77): 'Ann0'
           returnType = Ann0
           symbol = <constructor>(): Ann0
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

@@ -47,6 +47,7 @@ KtCallExpression(77,87): 'Delegate()'
           returnType = myPack.Delegate
           symbol = <constructor>(): myPack.Delegate
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -63,6 +64,7 @@ KtNameReferenceExpression(77,85): 'Delegate'
           returnType = myPack.Delegate
           symbol = <constructor>(): myPack.Delegate
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 

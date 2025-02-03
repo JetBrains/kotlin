@@ -10,5 +10,6 @@ KtAnnotationEntry(23,37): '@receiver:Anno'
           returnType = Anno
           symbol = <constructor>(): Anno
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

@@ -57,6 +57,7 @@ KtNameReferenceExpression(58,59): 'a'
           receiverType = null
           returnType = kotlin.String
           symbol = a: kotlin.String
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -111,6 +112,7 @@ KtDotQualifiedExpression(130,140): 'this.bar()'
           returnType = kotlin.Unit
           symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -137,6 +139,7 @@ KtCallExpression(135,140): 'bar()'
           returnType = kotlin.Unit
           symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -157,6 +160,7 @@ KtNameReferenceExpression(135,138): 'bar'
           returnType = kotlin.Unit
           symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -173,6 +177,7 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
           receiverType = null
           returnType = kotlin.String
           symbol = a: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -192,8 +197,10 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
               receiverType = null
               returnType = kotlin.String
               symbol = a: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -209,6 +216,7 @@ KtNameReferenceExpression(149,150): 'a'
           receiverType = null
           returnType = A
           symbol = a: A
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -223,6 +231,7 @@ KtCallExpression(151,158): 'foo("")'
           receiverType = null
           returnType = kotlin.String
           symbol = a: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -242,8 +251,10 @@ KtCallExpression(151,158): 'foo("")'
               receiverType = null
               returnType = kotlin.String
               symbol = a: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -257,6 +268,7 @@ KtNameReferenceExpression(151,154): 'foo'
           receiverType = null
           returnType = kotlin.String
           symbol = a: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -276,8 +288,10 @@ KtNameReferenceExpression(151,154): 'foo'
               receiverType = null
               returnType = kotlin.String
               symbol = a: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -346,6 +360,7 @@ KtDotQualifiedExpression(243,253): 'this.bar()'
           returnType = kotlin.Unit
           symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -372,6 +387,7 @@ KtCallExpression(248,253): 'bar()'
           returnType = kotlin.Unit
           symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -392,6 +408,7 @@ KtNameReferenceExpression(248,251): 'bar'
           returnType = kotlin.Unit
           symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -411,6 +428,7 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
           receiverType = null
           returnType = kotlin.String
           symbol = a: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -430,8 +448,10 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
               receiverType = null
               returnType = kotlin.String
               symbol = a: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -448,6 +468,7 @@ KtCallExpression(275,282): 'foo("")'
           receiverType = null
           returnType = kotlin.String
           symbol = a: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -467,8 +488,10 @@ KtCallExpression(275,282): 'foo("")'
               receiverType = null
               returnType = kotlin.String
               symbol = a: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -482,6 +505,7 @@ KtNameReferenceExpression(275,278): 'foo'
           receiverType = null
           returnType = kotlin.String
           symbol = a: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -501,8 +525,10 @@ KtNameReferenceExpression(275,278): 'foo'
               receiverType = null
               returnType = kotlin.String
               symbol = a: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -558,6 +584,7 @@ KtCallExpression(349,360): 'funMember()'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -577,6 +604,7 @@ KtNameReferenceExpression(349,358): 'funMember'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -597,6 +625,7 @@ KtNameReferenceExpression(369,383): 'propertyMember'
           receiverType = null
           returnType = kotlin.String
           symbol = val propertyMember: kotlin.String
+          contextParameters = []
           callableId = /Base.propertyMember
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -629,6 +658,7 @@ KtCallExpression(441,542): 'with(Base()) {'
           receiverType = null
           returnType = Base
           symbol = receiver: T
+          contextParameters = []
           callableId = null),
         {
                 with(A()) {
@@ -640,6 +670,7 @@ KtCallExpression(441,542): 'with(Base()) {'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
           symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -656,14 +687,17 @@ KtCallExpression(441,542): 'with(Base()) {'
               receiverType = null
               returnType = Base
               symbol = receiver: T
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = block
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
               symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/with
       typeArgumentsMapping = {
         T -> (Base),
@@ -680,6 +714,7 @@ KtNameReferenceExpression(441,445): 'with'
           receiverType = null
           returnType = Base
           symbol = receiver: T
+          contextParameters = []
           callableId = null),
         {
                 with(A()) {
@@ -691,6 +726,7 @@ KtNameReferenceExpression(441,445): 'with'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
           symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -707,14 +743,17 @@ KtNameReferenceExpression(441,445): 'with'
               receiverType = null
               returnType = Base
               symbol = receiver: T
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = block
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
               symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/with
       typeArgumentsMapping = {
         T -> (Base),
@@ -741,6 +780,7 @@ KtCallExpression(446,452): 'Base()'
           returnType = Base
           symbol = <constructor>(): Base
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -758,6 +798,7 @@ KtNameReferenceExpression(446,450): 'Base'
           returnType = Base
           symbol = <constructor>(): Base
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -786,6 +827,7 @@ KtCallExpression(464,536): 'with(A()) {'
           receiverType = null
           returnType = A
           symbol = receiver: T
+          contextParameters = []
           callableId = null),
         {
                     funMember()
@@ -795,6 +837,7 @@ KtCallExpression(464,536): 'with(A()) {'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
           symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -811,14 +854,17 @@ KtCallExpression(464,536): 'with(A()) {'
               receiverType = null
               returnType = A
               symbol = receiver: T
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = block
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
               symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/with
       typeArgumentsMapping = {
         T -> (A),
@@ -835,6 +881,7 @@ KtNameReferenceExpression(464,468): 'with'
           receiverType = null
           returnType = A
           symbol = receiver: T
+          contextParameters = []
           callableId = null),
         {
                     funMember()
@@ -844,6 +891,7 @@ KtNameReferenceExpression(464,468): 'with'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
           symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -860,14 +908,17 @@ KtNameReferenceExpression(464,468): 'with'
               receiverType = null
               returnType = A
               symbol = receiver: T
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = block
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
               symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/with
       typeArgumentsMapping = {
         T -> (A),
@@ -894,6 +945,7 @@ KtCallExpression(469,472): 'A()'
           returnType = A
           symbol = <constructor>(): A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -911,6 +963,7 @@ KtNameReferenceExpression(469,470): 'A'
           returnType = A
           symbol = <constructor>(): A
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -964,6 +1017,7 @@ KtCallExpression(488,499): 'funMember()'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1002,6 +1056,7 @@ KtNameReferenceExpression(488,497): 'funMember'
           returnType = kotlin.Unit
           symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1041,6 +1096,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
           receiverType = null
           returnType = kotlin.String
           symbol = val propertyMember: kotlin.String
+          contextParameters = []
           callableId = /Base.propertyMember
       simpleAccess = Read
       typeArgumentsMapping = {}

@@ -20,8 +20,10 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = other: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = kotlin/Int.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -39,8 +41,10 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
               receiverType = null
               returnType = kotlin.String
               symbol = k: K
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyMap.get
       indexArguments = [
         "a"
@@ -61,13 +65,16 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
               receiverType = null
               returnType = kotlin.String
               symbol = k: K
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = v
               receiverType = null
               returnType = kotlin.Int
               symbol = v: V
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyMap.set
     isInBestCandidates = true

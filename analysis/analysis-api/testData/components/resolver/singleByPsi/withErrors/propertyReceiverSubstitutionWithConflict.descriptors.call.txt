@@ -13,6 +13,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
             receiverType = Foo<TypeVariable(A)>
             returnType = kotlin.Int
             symbol = val foo: kotlin.Int
+            contextParameters = []
             callableId = /foo
         simpleAccess = Read
         typeArgumentsMapping = {},
@@ -28,6 +29,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
             receiverType = Foo<TypeVariable(B)>
             returnType = kotlin.String
             symbol = val foo: kotlin.String
+            contextParameters = []
             callableId = /foo
         simpleAccess = Read
         typeArgumentsMapping = {}

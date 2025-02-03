@@ -7,6 +7,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
           receiverType = null
           returnType = MyClass
           symbol = value: MyClass
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtNameReferenceExpression(114,123): 'compareTo'
               receiverType = null
               returnType = MyClass
               symbol = value: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}

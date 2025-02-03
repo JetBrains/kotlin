@@ -7,6 +7,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {
         T -> (kotlin.Int)

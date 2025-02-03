@@ -7,6 +7,7 @@ KtCallExpression(76,80): 'f(1)'
           receiverType = null
           returnType = kotlin.Any
           symbol = vararg a: kotlin.Any
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
@@ -26,7 +27,9 @@ KtCallExpression(76,80): 'f(1)'
               receiverType = null
               returnType = kotlin.Any
               symbol = vararg a: kotlin.Any
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.invoke
       typeArgumentsMapping = {}

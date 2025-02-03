@@ -9,6 +9,7 @@ KtNameReferenceExpression(173,176): 'obj'
           receiverType = null
           returnType = kotlin.Any
           symbol = obj: kotlin.Any
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

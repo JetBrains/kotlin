@@ -12,26 +12,31 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = x: X
+      contextParameters = []
       callableId = null,
     KaVariableSignature:
       name = y
       receiverType = null
       returnType = Y
       symbol = y: Y
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = /Outer.A.foo
 KaVariableSignature:
   name = map
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.String>
   symbol = val map: kotlin.collections.Map<X, O>
+  contextParameters = []
   callableId = /Outer.A.map
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = /Outer.A.fromSuper(<dispatch receiver>: Outer.A<X, O>): O
   valueParameters = []
+  contextParameters = []
   callableId = /Outer.A.fromSuper
 KaFunctionSignature:
   receiverType = null
@@ -43,20 +48,24 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/Any.equals
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.hashCode
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.toString
 
 

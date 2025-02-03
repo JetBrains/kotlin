@@ -11,6 +11,7 @@ KtNameReferenceExpression(133,137): 'test'
           returnType = kotlin.Unit
           symbol = /test(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /test
       typeArgumentsMapping = {}
     isInBestCandidates = true

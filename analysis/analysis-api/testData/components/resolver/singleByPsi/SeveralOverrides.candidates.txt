@@ -14,6 +14,7 @@ KtNameReferenceExpression(110,113): 'foo'
           returnType = kotlin.Unit
           symbol = /C.foo(<dispatch receiver>: C): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /C.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

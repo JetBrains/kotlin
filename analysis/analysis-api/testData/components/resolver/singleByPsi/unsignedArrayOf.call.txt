@@ -7,6 +7,7 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
           receiverType = null
           returnType = kotlin.UInt
           symbol = vararg elements: kotlin.UInt
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -23,7 +24,9 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
               receiverType = null
               returnType = kotlin.UInt
               symbol = vararg elements: kotlin.UInt
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/uintArrayOf
       typeArgumentsMapping = {}

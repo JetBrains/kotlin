@@ -37,6 +37,7 @@ KtBinaryExpression(39,44): '1..<5'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -56,8 +57,10 @@ KtBinaryExpression(39,44): '1..<5'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
 
@@ -73,6 +76,7 @@ KtOperationReferenceExpression(40,43): '..<'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -92,8 +96,10 @@ KtOperationReferenceExpression(40,43): '..<'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
 

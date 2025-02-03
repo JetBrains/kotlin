@@ -20,8 +20,10 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = i: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /foo
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
@@ -43,8 +45,10 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = s: kotlin.String
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /foo
         typeArgumentsMapping = {}
     ]

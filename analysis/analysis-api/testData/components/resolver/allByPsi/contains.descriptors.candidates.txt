@@ -50,10 +50,11 @@ KtConstructorDelegationCall(43,49): 'this()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -71,8 +72,10 @@ KtConstructorDelegationCall(43,49): 'this()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -91,10 +94,11 @@ KtConstructorDelegationReferenceExpression(43,47): 'this'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -112,8 +116,10 @@ KtConstructorDelegationReferenceExpression(43,47): 'this'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -188,6 +194,7 @@ KtBinaryExpression(126,140): '1 in MyClass()'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -207,8 +214,10 @@ KtBinaryExpression(126,140): '1 in MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -227,6 +236,7 @@ KtOperationReferenceExpression(128,130): 'in'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -246,8 +256,10 @@ KtOperationReferenceExpression(128,130): 'in'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -267,10 +279,11 @@ KtCallExpression(131,140): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -288,8 +301,10 @@ KtCallExpression(131,140): 'MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -308,10 +323,11 @@ KtNameReferenceExpression(131,138): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -329,8 +345,10 @@ KtNameReferenceExpression(131,138): 'MyClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -348,6 +366,7 @@ KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -367,8 +386,10 @@ KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -388,10 +409,11 @@ KtCallExpression(145,154): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -409,8 +431,10 @@ KtCallExpression(145,154): 'MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -429,10 +453,11 @@ KtNameReferenceExpression(145,152): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -450,8 +475,10 @@ KtNameReferenceExpression(145,152): 'MyClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -469,6 +496,7 @@ KtCallExpression(155,166): 'contains(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -488,8 +516,10 @@ KtCallExpression(155,166): 'contains(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -505,6 +535,7 @@ KtNameReferenceExpression(155,163): 'contains'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -524,8 +555,10 @@ KtNameReferenceExpression(155,163): 'contains'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -550,6 +583,7 @@ KtBinaryExpression(171,186): '2 !in MyClass()'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -569,8 +603,10 @@ KtBinaryExpression(171,186): '2 !in MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -589,6 +625,7 @@ KtOperationReferenceExpression(173,176): '!in'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -608,8 +645,10 @@ KtOperationReferenceExpression(173,176): '!in'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -629,10 +668,11 @@ KtCallExpression(177,186): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -650,8 +690,10 @@ KtCallExpression(177,186): 'MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -670,10 +712,11 @@ KtNameReferenceExpression(177,184): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -691,8 +734,10 @@ KtNameReferenceExpression(177,184): 'MyClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -719,6 +764,7 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -738,8 +784,10 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -755,6 +803,7 @@ KtOperationReferenceExpression(211,213): 'in'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -774,8 +823,10 @@ KtOperationReferenceExpression(211,213): 'in'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -795,10 +846,11 @@ KtCallExpression(214,223): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -816,8 +868,10 @@ KtCallExpression(214,223): 'MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -836,10 +890,11 @@ KtNameReferenceExpression(214,221): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -857,8 +912,10 @@ KtNameReferenceExpression(214,221): 'MyClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -891,6 +948,7 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -910,8 +968,10 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -927,6 +987,7 @@ KtOperationReferenceExpression(270,273): '!in'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -946,8 +1007,10 @@ KtOperationReferenceExpression(270,273): '!in'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
@@ -967,10 +1030,11 @@ KtCallExpression(274,283): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -988,8 +1052,10 @@ KtCallExpression(274,283): 'MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
@@ -1008,10 +1074,11 @@ KtNameReferenceExpression(274,281): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1029,8 +1096,10 @@ KtNameReferenceExpression(274,281): 'MyClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>

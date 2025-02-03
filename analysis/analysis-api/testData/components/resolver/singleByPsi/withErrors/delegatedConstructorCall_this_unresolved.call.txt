@@ -17,14 +17,17 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = i: kotlin.Int
+                contextParameters = []
                 callableId = null,
               KaVariableSignature:
                 name = j
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = j: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {},
       KaDelegatedConstructorCall:
@@ -43,8 +46,10 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = p: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {}
     ]

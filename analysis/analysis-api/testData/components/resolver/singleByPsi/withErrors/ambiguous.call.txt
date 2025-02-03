@@ -8,6 +8,7 @@ KtCallExpression(98,109): 'function(1)'
             receiverType = null
             returnType = kotlin.Char
             symbol = a: kotlin.Char
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
@@ -24,8 +25,10 @@ KtCallExpression(98,109): 'function(1)'
                 receiverType = null
                 returnType = kotlin.Char
                 symbol = a: kotlin.Char
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /function
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
@@ -35,6 +38,7 @@ KtCallExpression(98,109): 'function(1)'
             receiverType = null
             returnType = kotlin.Boolean
             symbol = b: kotlin.Boolean
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
@@ -51,8 +55,10 @@ KtCallExpression(98,109): 'function(1)'
                 receiverType = null
                 returnType = kotlin.Boolean
                 symbol = b: kotlin.Boolean
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /function
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
@@ -62,6 +68,7 @@ KtCallExpression(98,109): 'function(1)'
             receiverType = null
             returnType = kotlin.String
             symbol = c: kotlin.String
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
@@ -78,8 +85,10 @@ KtCallExpression(98,109): 'function(1)'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = c: kotlin.String
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /function
         typeArgumentsMapping = {}
     ]

@@ -14,5 +14,6 @@ KtNameReferenceExpression(140,151): 'materialize'
           returnType = test.MyClass
           symbol = test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = test/MyClass.materialize
       typeArgumentsMapping = {}

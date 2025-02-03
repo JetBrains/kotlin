@@ -11,6 +11,7 @@ KtNameReferenceExpression(62,65): 'Foo'
           returnType = Foo
           symbol = <constructor>(): Foo
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

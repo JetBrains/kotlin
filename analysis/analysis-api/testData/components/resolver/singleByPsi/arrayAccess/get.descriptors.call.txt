@@ -7,6 +7,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtArrayAccessExpression(70,77): 'list[0]'
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}

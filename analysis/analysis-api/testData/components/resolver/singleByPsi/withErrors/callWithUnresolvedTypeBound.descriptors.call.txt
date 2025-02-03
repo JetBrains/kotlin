@@ -7,6 +7,7 @@ KtCallExpression(86,92): 'foo(x)'
           receiverType = null
           returnType = kotlin.Int
           symbol = x: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -23,8 +24,10 @@ KtCallExpression(86,92): 'foo(x)'
               receiverType = null
               returnType = kotlin.Int
               symbol = x: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {
         T -> (kotlin.String)

@@ -7,6 +7,7 @@ KtCallExpression(84,99): 'function(*args)'
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg a: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -23,8 +24,10 @@ KtCallExpression(84,99): 'function(*args)'
               receiverType = null
               returnType = kotlin.Int
               symbol = vararg a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -12,6 +12,7 @@ KtSafeQualifiedExpression(45,49): 'a?.y'
           receiverType = null
           returnType = kotlin.Int
           symbol = val y: kotlin.Int
+          contextParameters = []
           callableId = /A.y
       simpleAccess = Read
       typeArgumentsMapping = {}

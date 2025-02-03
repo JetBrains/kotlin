@@ -11,6 +11,7 @@ KtNameReferenceExpression(108,115): 'makeFoo'
           returnType = testing.Foo
           symbol = testing/makeFoo(): testing.Foo
           valueParameters = []
+          contextParameters = []
           callableId = testing/makeFoo
       typeArgumentsMapping = {}
     isInBestCandidates = true

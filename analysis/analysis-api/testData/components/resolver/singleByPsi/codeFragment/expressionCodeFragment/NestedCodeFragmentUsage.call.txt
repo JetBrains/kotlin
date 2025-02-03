@@ -13,5 +13,6 @@ KtNameReferenceExpression(160,163): 'bar'
           returnType = kotlin.Unit
           symbol = bar(<dispatch receiver>: <anonymous>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

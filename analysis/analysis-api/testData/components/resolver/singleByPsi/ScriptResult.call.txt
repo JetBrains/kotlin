@@ -9,6 +9,7 @@ KtNameReferenceExpression(16,26): '`$$result`'
           receiverType = null
           returnType = kotlin.Int
           symbol = val $$result: kotlin.Int
+          contextParameters = []
           callableId = /$$result
       simpleAccess = Read
       typeArgumentsMapping = {}

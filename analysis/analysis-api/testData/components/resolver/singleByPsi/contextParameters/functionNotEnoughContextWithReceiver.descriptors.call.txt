@@ -11,5 +11,6 @@ KtCallExpression(72,77): 'foo()'
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}

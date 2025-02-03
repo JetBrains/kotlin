@@ -11,6 +11,7 @@ KtNameReferenceExpression(96,99): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = val bar: kotlin.Int
+          contextParameters = []
           callableId = one/two/BaseClass.bar
       simpleAccess = Read
       typeArgumentsMapping = {}

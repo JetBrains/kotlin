@@ -7,6 +7,7 @@ KtOperationReferenceExpression(97,98): '>'
           receiverType = null
           returnType = MyClass
           symbol = m: MyClass
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,13 +27,15 @@ KtOperationReferenceExpression(97,98): '>'
               receiverType = null
               returnType = MyClass
               symbol = m: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun compareTo(m: MyClass): Int.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -41,6 +44,7 @@ KtOperationReferenceExpression(97,98): '>'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -60,8 +64,10 @@ KtOperationReferenceExpression(97,98): '>'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /compareTo
       typeArgumentsMapping = {
         T -> (MyClass)

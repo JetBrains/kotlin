@@ -7,6 +7,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
           receiverType = null
           returnType = kotlin.String
           symbol = vararg content: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -23,7 +24,9 @@ KtNameReferenceExpression(202,210): 'IntArray'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg content: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}

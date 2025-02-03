@@ -9,6 +9,7 @@ KtNameReferenceExpression(64,65): 'a'
           receiverType = null
           returnType = test.A
           symbol = vararg a: test.A
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

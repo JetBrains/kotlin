@@ -7,6 +7,7 @@ KtArrayAccessExpression(205,209): 'a[2]'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtArrayAccessExpression(205,209): 'a[2]'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/B.get
       typeArgumentsMapping = {}

@@ -12,6 +12,7 @@ KtNameReferenceExpression(31,37): 'SOURCE'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = kotlin/annotation/AnnotationRetention.SOURCE
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationRetention.SOURCE
       simpleAccess = Read
       typeArgumentsMapping = {}

@@ -11,5 +11,6 @@ KtNameReferenceExpression(152,157): 'Local'
           returnType = <local>.Local
           symbol = <constructor>(): <local>.Local
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

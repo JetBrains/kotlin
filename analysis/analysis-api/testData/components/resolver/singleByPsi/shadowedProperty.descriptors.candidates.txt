@@ -11,6 +11,7 @@ KtNameReferenceExpression(107,115): 'property'
           receiverType = null
           returnType = kotlin.String
           symbol = val property: kotlin.String
+          contextParameters = []
           callableId = pack/Foo.property
       simpleAccess = Read
       typeArgumentsMapping = {}

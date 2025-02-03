@@ -7,6 +7,7 @@ KtBinaryExpression(75,81): '1 to 2'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: B
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtBinaryExpression(75,81): '1 to 2'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: B
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /to
       typeArgumentsMapping = {
         A -> (kotlin.Int),

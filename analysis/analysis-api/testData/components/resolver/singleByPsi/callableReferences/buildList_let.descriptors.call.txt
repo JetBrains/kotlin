@@ -42,7 +42,9 @@ KtCallableReferenceExpression(246,251): '::add'
               receiverType = null
               returnType = PartData
               symbol = element: E
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/MutableList.add
       typeArgumentsMapping = {}

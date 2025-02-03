@@ -17,8 +17,10 @@ KtCallExpression(45,50): 'Foo()'
                 receiverType = null
                 returnType = ERROR_TYPE
                 symbol = x: T
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = null
         typeArgumentsMapping = {}
     ]

@@ -134,6 +134,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
           returnType = one.two.Base<C>
           symbol = <constructor>(): one.two.Base<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         B -> (C)
@@ -153,6 +154,7 @@ KtConstructorCalleeExpression(186,193): 'Base<C>'
           returnType = one.two.Base<C>
           symbol = <constructor>(): one.two.Base<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         B -> (C)
@@ -349,6 +351,7 @@ KtCallExpression(392,405): 'NestedClass()'
           returnType = one.two.Base.NestedClass
           symbol = <constructor>(): one.two.Base.NestedClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -366,6 +369,7 @@ KtNameReferenceExpression(392,403): 'NestedClass'
           returnType = one.two.Base.NestedClass
           symbol = <constructor>(): one.two.Base.NestedClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -392,6 +396,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
           returnType = one.two.Base.Inner<B>
           symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -407,6 +412,7 @@ KtNameReferenceExpression(422,424): 'c1'
           receiverType = null
           returnType = one.two.Child<one.two.Base.NestedClass>
           symbol = c1: one.two.Child<one.two.Base.NestedClass>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -428,6 +434,7 @@ KtCallExpression(425,432): 'Inner()'
           returnType = one.two.Base.Inner<B>
           symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -448,6 +455,7 @@ KtNameReferenceExpression(425,430): 'Inner'
           returnType = one.two.Base.Inner<B>
           symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

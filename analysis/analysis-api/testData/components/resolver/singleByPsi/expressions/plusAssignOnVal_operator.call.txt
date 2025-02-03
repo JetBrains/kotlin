@@ -7,6 +7,7 @@ KtOperationReferenceExpression(75,77): '+='
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtOperationReferenceExpression(75,77): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.plusAssign
       typeArgumentsMapping = {}

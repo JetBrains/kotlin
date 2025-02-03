@@ -11,6 +11,7 @@ KtNameReferenceExpression(60,69): 'JavaClass'
           returnType = JavaClass<kotlin.Int>
           symbol = <constructor>(): JavaClass<TT>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

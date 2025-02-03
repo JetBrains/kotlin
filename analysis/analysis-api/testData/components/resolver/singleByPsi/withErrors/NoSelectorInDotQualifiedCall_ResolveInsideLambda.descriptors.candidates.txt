@@ -11,10 +11,11 @@ KtNameReferenceExpression(159,163): 'test'
           returnType = kotlin.Unit
           symbol = testing/test(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = testing/test
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -27,6 +28,7 @@ KtNameReferenceExpression(159,163): 'test'
           returnType = kotlin.Unit
           symbol = testing/test(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = testing/test
       typeArgumentsMapping = {}
     isInBestCandidates = false

@@ -12,6 +12,7 @@ KtNameReferenceExpression(159,163): 'test'
             returnType = kotlin.Unit
             symbol = testing/test(): kotlin.Unit
             valueParameters = []
+            contextParameters = []
             callableId = testing/test
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
@@ -25,6 +26,7 @@ KtNameReferenceExpression(159,163): 'test'
             returnType = kotlin.Unit
             symbol = testing/test(): kotlin.Unit
             valueParameters = []
+            contextParameters = []
             callableId = testing/test
         typeArgumentsMapping = {}
     ]

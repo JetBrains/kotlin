@@ -37,8 +37,10 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

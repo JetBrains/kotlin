@@ -14,5 +14,6 @@ KtCallExpression(202,209): '(foo)()'
           returnType = r.MyClass
           symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}

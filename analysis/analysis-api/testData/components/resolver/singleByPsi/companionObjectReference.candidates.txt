@@ -11,6 +11,7 @@ KtNameReferenceExpression(122,128): 'Server'
           returnType = Server
           symbol = <constructor>(): Server
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

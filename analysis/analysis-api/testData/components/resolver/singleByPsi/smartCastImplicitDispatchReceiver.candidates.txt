@@ -30,6 +30,7 @@ KtNameReferenceExpression(51,57): 'length'
           receiverType = null
           returnType = kotlin.Int
           symbol = val length: kotlin.Int
+          contextParameters = []
           callableId = kotlin/String.length
       simpleAccess = Read
       typeArgumentsMapping = {}

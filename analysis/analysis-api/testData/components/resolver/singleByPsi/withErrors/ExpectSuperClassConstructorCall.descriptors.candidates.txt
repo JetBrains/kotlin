@@ -11,6 +11,7 @@ KtNameReferenceExpression(149,152): 'Foo'
           returnType = Foo
           symbol = <constructor>(): Foo
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

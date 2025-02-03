@@ -7,6 +7,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -23,12 +24,14 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -37,6 +40,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -53,8 +57,10 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>

@@ -14,5 +14,6 @@ KtNameReferenceExpression(174,180): 'stream'
           returnType = @EnhancedNullability java.util.stream.Stream<@EnhancedNullability kotlin.String>
           symbol = kotlin/collections/Collection.stream(<dispatch receiver>: kotlin.collections.Collection<E>): @EnhancedNullability java.util.stream.Stream<@EnhancedNullability E>
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/collections/Collection.stream
       typeArgumentsMapping = {}

@@ -14,6 +14,7 @@ KtPrefixExpression(47,58): '++foo.value'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -27,4 +28,5 @@ KtPrefixExpression(47,58): '++foo.value'
           receiverType = CInt32VarX<kotlin.Int>
           returnType = kotlin.Int
           symbol = var value: T
+          contextParameters = []
           callableId = /value

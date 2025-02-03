@@ -7,12 +7,14 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
           symbol = keySelector: kotlin.Function1<T, K>
+          contextParameters = []
           callableId = null),
         { (idx, _) -> idx } -> (KaVariableSignature:
           name = valueTransform
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
           symbol = valueTransform: kotlin.Function1<T, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -32,14 +34,17 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
               symbol = keySelector: kotlin.Function1<T, K>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = valueTransform
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
               symbol = valueTransform: kotlin.Function1<T, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/groupBy
       typeArgumentsMapping = {
         T -> (kotlin.collections.IndexedValue<kotlin.Int>),

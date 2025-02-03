@@ -14,6 +14,7 @@ KtCallExpression(93,99): 'peek()'
           returnType = F
           symbol = /F.peek(<dispatch receiver>: F): F
           valueParameters = []
+          contextParameters = []
           callableId = /F.peek
       typeArgumentsMapping = {}
     isInBestCandidates = true

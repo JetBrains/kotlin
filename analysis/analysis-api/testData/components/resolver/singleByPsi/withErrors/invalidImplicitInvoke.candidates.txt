@@ -22,8 +22,10 @@ KtDotQualifiedExpression(53,61): 's.action'
               receiverType = null
               returnType = kotlin.String
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type 'Function1<String, Unit>?'. Use explicit '?.invoke' to make a function-like call instead.>

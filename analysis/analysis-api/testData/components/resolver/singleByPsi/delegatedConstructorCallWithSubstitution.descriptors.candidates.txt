@@ -7,6 +7,7 @@ KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
           receiverType = null
           returnType = kotlin.String
           symbol = x: T
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -23,8 +24,10 @@ KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
               receiverType = null
               returnType = kotlin.String
               symbol = x: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

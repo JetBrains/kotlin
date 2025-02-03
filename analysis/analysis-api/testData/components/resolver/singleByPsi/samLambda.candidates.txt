@@ -7,6 +7,7 @@ KtCallExpression(143,162): 'test { uiMethod() }'
           receiverType = null
           returnType = Test.Foo
           symbol = foo: Test.Foo
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -25,8 +26,10 @@ KtCallExpression(143,162): 'test { uiMethod() }'
               receiverType = null
               returnType = Test.Foo
               symbol = foo: Test.Foo
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Test.test
       typeArgumentsMapping = {}
     isInBestCandidates = true

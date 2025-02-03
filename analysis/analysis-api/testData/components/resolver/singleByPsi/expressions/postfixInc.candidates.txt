@@ -14,6 +14,7 @@ KtPostfixExpression(138,148): 'variable++'
             returnType = MyClass
             symbol = /MyClass.inc(<dispatch receiver>: MyClass): MyClass
             valueParameters = []
+            contextParameters = []
             callableId = /MyClass.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -24,5 +25,6 @@ KtPostfixExpression(138,148): 'variable++'
           receiverType = null
           returnType = MyClass
           symbol = var variable: MyClass
+          contextParameters = []
           callableId = /variable
     isInBestCandidates = true

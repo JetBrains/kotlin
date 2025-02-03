@@ -12,6 +12,7 @@ KtDotQualifiedExpression(42,45): 'A.y'
           receiverType = null
           returnType = kotlin.Int
           symbol = val y: kotlin.Int
+          contextParameters = []
           callableId = /A.y
       simpleAccess = Read
       typeArgumentsMapping = {}

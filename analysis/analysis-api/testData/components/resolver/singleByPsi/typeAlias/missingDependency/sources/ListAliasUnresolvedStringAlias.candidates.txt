@@ -7,6 +7,7 @@ KtNameReferenceExpression(166,171): 'check'
           receiverType = null
           returnType = {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
           symbol = list: {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtNameReferenceExpression(166,171): 'check'
               receiverType = null
               returnType = {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
               symbol = list: {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = dependency3/MyInterface.check
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -9,6 +9,7 @@ KtNameReferenceExpression(31,32): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = var i: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

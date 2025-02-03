@@ -14,10 +14,11 @@ KtNameReferenceExpression(104,112): 'Conflict'
           returnType = kotlin.Unit
           symbol = test/Conflict.invoke(<dispatch receiver>: test.Conflict): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = test/Conflict.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -30,6 +31,7 @@ KtNameReferenceExpression(104,112): 'Conflict'
           returnType = <local>.Conflict
           symbol = <constructor>(): <local>.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

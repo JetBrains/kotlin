@@ -7,6 +7,7 @@ KtOperationReferenceExpression(114,115): '<'
           receiverType = null
           returnType = MyClass
           symbol = value: MyClass
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtOperationReferenceExpression(114,115): '<'
               receiverType = null
               returnType = MyClass
               symbol = value: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}

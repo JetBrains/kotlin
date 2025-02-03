@@ -117,6 +117,7 @@ KtDotQualifiedExpression(147,166): 'this@iterator.start'
           receiverType = null
           returnType = kotlin.Int
           symbol = val start: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.start
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -148,6 +149,7 @@ KtNameReferenceExpression(161,166): 'start'
           receiverType = null
           returnType = kotlin.Int
           symbol = val start: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.start
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -171,6 +173,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -190,8 +193,10 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -209,6 +214,7 @@ KtNameReferenceExpression(196,203): 'current'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -223,6 +229,7 @@ KtOperationReferenceExpression(204,206): '<='
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -242,8 +249,10 @@ KtOperationReferenceExpression(204,206): '<='
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -262,6 +271,7 @@ KtDotQualifiedExpression(207,224): 'this@iterator.end'
           receiverType = null
           returnType = kotlin.Int
           symbol = val end: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.end
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -293,6 +303,7 @@ KtNameReferenceExpression(221,224): 'end'
           receiverType = null
           returnType = kotlin.Int
           symbol = val end: kotlin.Int
+          contextParameters = []
           callableId = f/IntProgression.end
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -332,6 +343,7 @@ KtPostfixExpression(256,265): 'current++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -344,6 +356,7 @@ KtPostfixExpression(256,265): 'current++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
     isInBestCandidates = true
 
@@ -360,6 +373,7 @@ KtNameReferenceExpression(256,263): 'current'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -381,6 +395,7 @@ KtOperationReferenceExpression(263,265): '++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -393,6 +408,7 @@ KtOperationReferenceExpression(263,265): '++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var current: kotlin.Int
+          contextParameters = []
           callableId = null
     isInBestCandidates = true
 
@@ -423,12 +439,14 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           receiverType = null
           returnType = kotlin.Int
           symbol = start: kotlin.Int
+          contextParameters = []
           callableId = null),
         10 -> (KaVariableSignature:
           name = end
           receiverType = null
           returnType = kotlin.Int
           symbol = end: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -445,18 +463,21 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
               receiverType = null
               returnType = kotlin.Int
               symbol = start: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = end
               receiverType = null
               returnType = kotlin.Int
               symbol = end: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -465,12 +486,14 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           receiverType = null
           returnType = kotlin.Int
           symbol = start: kotlin.Int
+          contextParameters = []
           callableId = null),
         10 -> (KaVariableSignature:
           name = endInclusive
           receiverType = null
           returnType = kotlin.Int
           symbol = endInclusive: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -487,20 +510,24 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
               receiverType = null
               returnType = kotlin.Int
               symbol = start: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = endInclusive
               receiverType = null
               returnType = kotlin.Int
               symbol = endInclusive: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = step
               receiverType = null
               returnType = kotlin.Int
               symbol = step: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access '<init>': it is internal in 'IntProgression'>
@@ -515,12 +542,14 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           receiverType = null
           returnType = kotlin.Int
           symbol = start: kotlin.Int
+          contextParameters = []
           callableId = null),
         10 -> (KaVariableSignature:
           name = end
           receiverType = null
           returnType = kotlin.Int
           symbol = end: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -537,18 +566,21 @@ KtNameReferenceExpression(297,311): 'IntProgression'
               receiverType = null
               returnType = kotlin.Int
               symbol = start: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = end
               receiverType = null
               returnType = kotlin.Int
               symbol = end: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -557,12 +589,14 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           receiverType = null
           returnType = kotlin.Int
           symbol = start: kotlin.Int
+          contextParameters = []
           callableId = null),
         10 -> (KaVariableSignature:
           name = endInclusive
           receiverType = null
           returnType = kotlin.Int
           symbol = endInclusive: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -579,20 +613,24 @@ KtNameReferenceExpression(297,311): 'IntProgression'
               receiverType = null
               returnType = kotlin.Int
               symbol = start: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = endInclusive
               receiverType = null
               returnType = kotlin.Int
               symbol = endInclusive: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = step
               receiverType = null
               returnType = kotlin.Int
               symbol = step: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step'>

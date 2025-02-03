@@ -7,6 +7,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = THIS_CALL
@@ -23,7 +24,9 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

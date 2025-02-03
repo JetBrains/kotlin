@@ -11,6 +11,7 @@ KtConstructorDelegationCall(103,111): 'super(1)'
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Any'.>

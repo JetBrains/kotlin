@@ -7,6 +7,7 @@ KtNameReferenceExpression(83,94): 'setListener'
           receiverType = null
           returnType = JavaTest.SAMInterface!
           symbol = p0: JavaTest.SAMInterface!
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtNameReferenceExpression(83,94): 'setListener'
               receiverType = null
               returnType = JavaTest.SAMInterface!
               symbol = p0: JavaTest.SAMInterface!
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /JavaTest.SomeJavaClass.setListener
       typeArgumentsMapping = {}
     isInBestCandidates = true

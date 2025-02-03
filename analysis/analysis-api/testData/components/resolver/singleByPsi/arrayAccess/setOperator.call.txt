@@ -7,12 +7,14 @@ KtArrayAccessExpression(68,72): '1[2]'
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
+          contextParameters = []
           callableId = null),
         42 -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.Int
           symbol = value: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -32,13 +34,16 @@ KtArrayAccessExpression(68,72): '1[2]'
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.Int
               symbol = value: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /set
       typeArgumentsMapping = {}

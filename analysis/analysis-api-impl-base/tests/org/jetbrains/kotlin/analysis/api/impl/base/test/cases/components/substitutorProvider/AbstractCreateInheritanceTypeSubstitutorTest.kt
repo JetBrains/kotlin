@@ -38,6 +38,10 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
                         withIndent {
                             printCollectionIfNotEmpty(collection, separator = "\n\n") { callable ->
                                 val signature = callable.substitute(substitutor)
+                                printCollectionIfNotEmpty(signature.contextParameters, prefix = "context(", postfix = ") ") {
+                                    append(it.returnType.render(typeRenderer, position = Variance.IN_VARIANCE))
+                                }
+
                                 signature.receiverType?.let {
                                     append(it.render(typeRenderer, position = Variance.IN_VARIANCE))
                                     append('.')

@@ -11,6 +11,7 @@ KtNameReferenceExpression(99,104): 'coreR'
           returnType = test.pkg.R
           symbol = <constructor>(): test.pkg.R
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

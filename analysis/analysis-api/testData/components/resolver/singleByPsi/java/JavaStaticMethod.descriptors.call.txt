@@ -11,5 +11,6 @@ KtNameReferenceExpression(589,592): 'bar'
           returnType = kotlin.Unit
           symbol = pkg/Foo.bar(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = pkg/Foo.bar
       typeArgumentsMapping = {}

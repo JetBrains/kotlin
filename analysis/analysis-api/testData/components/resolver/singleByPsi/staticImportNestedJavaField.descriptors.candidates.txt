@@ -9,6 +9,7 @@ KtNameReferenceExpression(89,92): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = var bar: kotlin.Int
+          contextParameters = []
           callableId = /Dependency.Nested.bar
       simpleAccess = Read
       typeArgumentsMapping = {}

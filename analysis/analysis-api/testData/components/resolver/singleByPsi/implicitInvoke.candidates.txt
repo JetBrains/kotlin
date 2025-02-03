@@ -7,6 +7,7 @@ KtCallExpression(110,117): 'x(true)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
@@ -26,8 +27,10 @@ KtCallExpression(110,117): 'x(true)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Int' was expected.>
@@ -41,6 +44,7 @@ KtCallExpression(110,117): 'x(true)'
           receiverType = null
           returnType = kotlin.Char
           symbol = c: kotlin.Char
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -57,8 +61,10 @@ KtCallExpression(110,117): 'x(true)'
               receiverType = null
               returnType = kotlin.Char
               symbol = c: kotlin.Char
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /x
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Char' was expected.>
@@ -72,6 +78,7 @@ KtCallExpression(110,117): 'x(true)'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -88,8 +95,10 @@ KtCallExpression(110,117): 'x(true)'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

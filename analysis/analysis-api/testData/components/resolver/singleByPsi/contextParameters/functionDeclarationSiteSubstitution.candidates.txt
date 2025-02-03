@@ -7,12 +7,14 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
           receiverType = null
           returnType = kotlin.Long
           symbol = rp1: kotlin.Long
+          contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = rp2
           receiverType = null
           returnType = kotlin.String
           symbol = rp2: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -32,14 +34,17 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
               receiverType = null
               returnType = kotlin.Long
               symbol = rp1: kotlin.Long
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = rp2
               receiverType = null
               returnType = kotlin.String
               symbol = rp2: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Another.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

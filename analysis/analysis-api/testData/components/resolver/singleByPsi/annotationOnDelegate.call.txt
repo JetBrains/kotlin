@@ -15,7 +15,9 @@ KtAnnotationEntry(0,18): '@delegate:Suppress'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg names: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

@@ -7,6 +7,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.Int
           symbol = element: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,14 +27,16 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.Int
               symbol = element: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -42,6 +45,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.Array<kotlin.Int>
           symbol = elements: kotlin.Array<T>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -61,15 +65,17 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.Array<kotlin.Int>
               symbol = elements: kotlin.Array<T>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -78,6 +84,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.collections.Iterable<kotlin.Int>
           symbol = elements: kotlin.collections.Iterable<T>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -97,15 +104,17 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.collections.Iterable<kotlin.Int>
               symbol = elements: kotlin.collections.Iterable<T>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -114,6 +123,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.sequences.Sequence<kotlin.Int>
           symbol = elements: kotlin.sequences.Sequence<T>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -133,15 +143,17 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.sequences.Sequence<kotlin.Int>
               symbol = elements: kotlin.sequences.Sequence<T>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -150,6 +162,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.collections.Map<ERROR_TYPE, ERROR_TYPE>
           symbol = map: kotlin.collections.Map<K, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -169,8 +182,10 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.collections.Map<ERROR_TYPE, ERROR_TYPE>
               symbol = map: kotlin.collections.Map<K, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -178,7 +193,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -187,6 +202,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.Pair<ERROR_TYPE, ERROR_TYPE>
           symbol = pair: kotlin.Pair<K, V>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -206,8 +222,10 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.Pair<ERROR_TYPE, ERROR_TYPE>
               symbol = pair: kotlin.Pair<K, V>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -215,7 +233,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -224,6 +242,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.Array<out kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
           symbol = pairs: kotlin.Array<out kotlin.Pair<K, V>>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -243,8 +262,10 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.Array<out kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
               symbol = pairs: kotlin.Array<out kotlin.Pair<K, V>>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -252,7 +273,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -261,6 +282,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.collections.Iterable<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
           symbol = pairs: kotlin.collections.Iterable<kotlin.Pair<K, V>>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -280,8 +302,10 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.collections.Iterable<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
               symbol = pairs: kotlin.collections.Iterable<kotlin.Pair<K, V>>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),
@@ -289,7 +313,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -298,6 +322,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           receiverType = null
           returnType = kotlin.sequences.Sequence<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
           symbol = pairs: kotlin.sequences.Sequence<kotlin.Pair<K, V>>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -317,8 +342,10 @@ KtNameReferenceExpression(54,64): 'plusAssign'
               receiverType = null
               returnType = kotlin.sequences.Sequence<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
               symbol = pairs: kotlin.sequences.Sequence<kotlin.Pair<K, V>>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         K -> (ERROR_TYPE),

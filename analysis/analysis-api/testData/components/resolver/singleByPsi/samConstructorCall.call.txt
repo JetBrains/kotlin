@@ -7,6 +7,7 @@ KtCallExpression(8,40): 'Comparator {x: Int, y: Int -> 1}'
           receiverType = null
           returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
           symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -23,8 +24,10 @@ KtCallExpression(8,40): 'Comparator {x: Int, y: Int -> 1}'
               receiverType = null
               returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
               symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Comparator
       typeArgumentsMapping = {
         T -> (kotlin.Int!)

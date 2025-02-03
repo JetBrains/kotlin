@@ -7,6 +7,7 @@ KtOperationReferenceExpression(184,186): '=='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtOperationReferenceExpression(184,186): '=='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}

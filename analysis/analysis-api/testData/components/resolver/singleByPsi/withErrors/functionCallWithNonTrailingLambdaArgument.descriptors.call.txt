@@ -8,18 +8,21 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             receiverType = null
             returnType = TypeVariable(O1)
             symbol = a: O1
+            contextParameters = []
             callableId = null),
           { s -> true } -> (KaVariableSignature:
             name = b
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
             symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            contextParameters = []
             callableId = null),
           "str" -> (KaVariableSignature:
             name = c
             receiverType = null
             returnType = TypeVariable(T1)
             symbol = c: T1
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
@@ -36,20 +39,24 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
                 receiverType = null
                 returnType = TypeVariable(O1)
                 symbol = a: O1
+                contextParameters = []
                 callableId = null,
               KaVariableSignature:
                 name = b
                 receiverType = null
                 returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
                 symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+                contextParameters = []
                 callableId = null,
               KaVariableSignature:
                 name = c
                 receiverType = null
                 returnType = TypeVariable(T1)
                 symbol = c: T1
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /function
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
@@ -59,18 +66,21 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             receiverType = null
             returnType = TypeVariable(O2)
             symbol = a: O2
+            contextParameters = []
             callableId = null),
           { s -> true } -> (KaVariableSignature:
             name = b
             receiverType = null
             returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
             symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+            contextParameters = []
             callableId = null),
           "str" -> (KaVariableSignature:
             name = c
             receiverType = null
             returnType = TypeVariable(T2)
             symbol = c: T2
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
@@ -87,23 +97,27 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
                 receiverType = null
                 returnType = TypeVariable(O2)
                 symbol = a: O2
+                contextParameters = []
                 callableId = null,
               KaVariableSignature:
                 name = b
                 receiverType = null
                 returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
                 symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+                contextParameters = []
                 callableId = null,
               KaVariableSignature:
                 name = c
                 receiverType = null
                 returnType = TypeVariable(T2)
                 symbol = c: T2
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /function
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun <T1, O1> function(a: TypeVariable(O1), b: (Int) -> Boolean, c: TypeVariable(T1)): Unit defined in root package in file functionCallWithNonTrailingLambdaArgument.kt
     public fun <T2, O2> function(a: TypeVariable(O2), b: (String) -> Boolean, c: TypeVariable(T2)): Unit defined in root package in file functionCallWithNonTrailingLambdaArgument.kt>

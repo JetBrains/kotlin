@@ -239,6 +239,7 @@ KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
           returnType = ItemCallback<T>
           symbol = <constructor>(): ItemCallback<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -258,6 +259,7 @@ KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
           returnType = ItemCallback<T>
           symbol = <constructor>(): ItemCallback<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -345,6 +347,7 @@ KtBinaryExpression(479,497): 'oldItem == newItem'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -364,8 +367,10 @@ KtBinaryExpression(479,497): 'oldItem == newItem'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -381,6 +386,7 @@ KtNameReferenceExpression(479,486): 'oldItem'
           receiverType = null
           returnType = T
           symbol = oldItem: T
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -395,6 +401,7 @@ KtOperationReferenceExpression(487,489): '=='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -414,8 +421,10 @@ KtOperationReferenceExpression(487,489): '=='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -431,6 +440,7 @@ KtNameReferenceExpression(490,497): 'newItem'
           receiverType = null
           returnType = T
           symbol = newItem: T
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -530,6 +540,7 @@ KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
           returnType = ItemCallback<T>
           symbol = <constructor>(): ItemCallback<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -549,6 +560,7 @@ KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
           returnType = ItemCallback<T>
           symbol = <constructor>(): ItemCallback<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -636,6 +648,7 @@ KtBinaryExpression(706,724): 'oldItem == newItem'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -655,8 +668,10 @@ KtBinaryExpression(706,724): 'oldItem == newItem'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -672,6 +687,7 @@ KtNameReferenceExpression(706,713): 'oldItem'
           receiverType = null
           returnType = T
           symbol = oldItem: T
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -686,6 +702,7 @@ KtOperationReferenceExpression(714,716): '=='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -705,8 +722,10 @@ KtOperationReferenceExpression(714,716): '=='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -722,6 +741,7 @@ KtNameReferenceExpression(717,724): 'newItem'
           receiverType = null
           returnType = T
           symbol = newItem: T
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -773,6 +793,7 @@ KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
           returnType = ItemCallback<T>
           symbol = <constructor>(): ItemCallback<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -792,6 +813,7 @@ KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
           returnType = ItemCallback<T>
           symbol = <constructor>(): ItemCallback<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -879,6 +901,7 @@ KtBinaryExpression(875,893): 'oldItem == newItem'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -898,8 +921,10 @@ KtBinaryExpression(875,893): 'oldItem == newItem'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -915,6 +940,7 @@ KtNameReferenceExpression(875,882): 'oldItem'
           receiverType = null
           returnType = T
           symbol = oldItem: T
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -929,6 +955,7 @@ KtOperationReferenceExpression(883,885): '=='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -948,8 +975,10 @@ KtOperationReferenceExpression(883,885): '=='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -965,6 +994,7 @@ KtNameReferenceExpression(886,893): 'newItem'
           receiverType = null
           returnType = T
           symbol = newItem: T
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1012,6 +1042,7 @@ KtBinaryExpression(956,962): 'i == m'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1031,8 +1062,10 @@ KtBinaryExpression(956,962): 'i == m'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1048,6 +1081,7 @@ KtNameReferenceExpression(956,957): 'i'
           receiverType = null
           returnType = InterfaceWithEquals
           symbol = i: InterfaceWithEquals
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1062,6 +1096,7 @@ KtOperationReferenceExpression(958,960): '=='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1081,8 +1116,10 @@ KtOperationReferenceExpression(958,960): '=='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1098,6 +1135,7 @@ KtNameReferenceExpression(961,962): 'm'
           receiverType = null
           returnType = MessagePreview
           symbol = m: MessagePreview
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1112,6 +1150,7 @@ KtBinaryExpression(967,973): 'i != m'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1131,8 +1170,10 @@ KtBinaryExpression(967,973): 'i != m'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1148,6 +1189,7 @@ KtNameReferenceExpression(967,968): 'i'
           receiverType = null
           returnType = InterfaceWithEquals
           symbol = i: InterfaceWithEquals
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1162,6 +1204,7 @@ KtOperationReferenceExpression(969,971): '!='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1181,8 +1224,10 @@ KtOperationReferenceExpression(969,971): '!='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1198,6 +1243,7 @@ KtNameReferenceExpression(972,973): 'm'
           receiverType = null
           returnType = MessagePreview
           symbol = m: MessagePreview
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1212,6 +1258,7 @@ KtBinaryExpression(979,985): 'm == i'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1231,8 +1278,10 @@ KtBinaryExpression(979,985): 'm == i'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1248,6 +1297,7 @@ KtNameReferenceExpression(979,980): 'm'
           receiverType = null
           returnType = MessagePreview
           symbol = m: MessagePreview
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1262,6 +1312,7 @@ KtOperationReferenceExpression(981,983): '=='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1281,8 +1332,10 @@ KtOperationReferenceExpression(981,983): '=='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1298,6 +1351,7 @@ KtNameReferenceExpression(984,985): 'i'
           receiverType = null
           returnType = InterfaceWithEquals
           symbol = i: InterfaceWithEquals
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1312,6 +1366,7 @@ KtBinaryExpression(990,996): 'm != i'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1331,8 +1386,10 @@ KtBinaryExpression(990,996): 'm != i'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1348,6 +1405,7 @@ KtNameReferenceExpression(990,991): 'm'
           receiverType = null
           returnType = MessagePreview
           symbol = m: MessagePreview
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1362,6 +1420,7 @@ KtOperationReferenceExpression(992,994): '!='
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1381,8 +1440,10 @@ KtOperationReferenceExpression(992,994): '!='
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1398,6 +1459,7 @@ KtNameReferenceExpression(995,996): 'i'
           receiverType = null
           returnType = InterfaceWithEquals
           symbol = i: InterfaceWithEquals
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1412,6 +1474,7 @@ KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1431,8 +1494,10 @@ KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1448,6 +1513,7 @@ KtNameReferenceExpression(1002,1003): 'i'
           receiverType = null
           returnType = InterfaceWithEquals
           symbol = i: InterfaceWithEquals
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1462,6 +1528,7 @@ KtCallExpression(1004,1013): 'equals(m)'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1481,8 +1548,10 @@ KtCallExpression(1004,1013): 'equals(m)'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1496,6 +1565,7 @@ KtNameReferenceExpression(1004,1010): 'equals'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1515,8 +1585,10 @@ KtNameReferenceExpression(1004,1010): 'equals'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1538,6 +1610,7 @@ KtNameReferenceExpression(1011,1012): 'm'
           receiverType = null
           returnType = MessagePreview
           symbol = m: MessagePreview
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1552,6 +1625,7 @@ KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1571,8 +1645,10 @@ KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1588,6 +1664,7 @@ KtNameReferenceExpression(1018,1019): 'm'
           receiverType = null
           returnType = MessagePreview
           symbol = m: MessagePreview
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1602,6 +1679,7 @@ KtCallExpression(1020,1029): 'equals(i)'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1621,8 +1699,10 @@ KtCallExpression(1020,1029): 'equals(i)'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1636,6 +1716,7 @@ KtNameReferenceExpression(1020,1026): 'equals'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1655,8 +1736,10 @@ KtNameReferenceExpression(1020,1026): 'equals'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1678,6 +1761,7 @@ KtNameReferenceExpression(1027,1028): 'i'
           receiverType = null
           returnType = InterfaceWithEquals
           symbol = i: InterfaceWithEquals
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

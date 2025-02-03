@@ -31,6 +31,7 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -46,8 +47,10 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -61,6 +64,7 @@ KtConstructorCalleeExpression(39,45): 'Target'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -76,8 +80,10 @@ KtConstructorCalleeExpression(39,45): 'Target'
               receiverType = null
               returnType = kotlin.annotation.AnnotationTarget
               symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -111,6 +117,7 @@ KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.EXPRESSION
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.EXPRESSION
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -129,6 +136,7 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
           returnType = kotlin.annotation.AnnotationTarget
           symbol = <constructor>(): kotlin.annotation.AnnotationTarget
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -148,6 +156,7 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
           receiverType = null
           returnType = kotlin.annotation.AnnotationTarget
           symbol = kotlin/annotation/AnnotationTarget.EXPRESSION
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationTarget.EXPRESSION
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -162,6 +171,7 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -177,8 +187,10 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
               receiverType = null
               returnType = kotlin.annotation.AnnotationRetention
               symbol = value: kotlin.annotation.AnnotationRetention
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -192,6 +204,7 @@ KtConstructorCalleeExpression(76,85): 'Retention'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -207,8 +220,10 @@ KtConstructorCalleeExpression(76,85): 'Retention'
               receiverType = null
               returnType = kotlin.annotation.AnnotationRetention
               symbol = value: kotlin.annotation.AnnotationRetention
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -242,6 +257,7 @@ KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = kotlin/annotation/AnnotationRetention.SOURCE
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationRetention.SOURCE
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -260,6 +276,7 @@ KtNameReferenceExpression(86,105): 'AnnotationRetention'
           returnType = kotlin.annotation.AnnotationRetention
           symbol = <constructor>(): kotlin.annotation.AnnotationRetention
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -279,6 +296,7 @@ KtNameReferenceExpression(106,112): 'SOURCE'
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention
           symbol = kotlin/annotation/AnnotationRetention.SOURCE
+          contextParameters = []
           callableId = kotlin/annotation/AnnotationRetention.SOURCE
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -323,6 +341,7 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -338,8 +357,10 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -353,6 +374,7 @@ KtConstructorCalleeExpression(173,177): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -368,8 +390,10 @@ KtConstructorCalleeExpression(173,177): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -398,6 +422,7 @@ KtBinaryExpression(178,189): '0 + integer'
           receiverType = null
           returnType = kotlin.Double
           symbol = other: kotlin.Double
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -417,8 +442,10 @@ KtBinaryExpression(178,189): '0 + integer'
               receiverType = null
               returnType = kotlin.Double
               symbol = other: kotlin.Double
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
@@ -432,6 +459,7 @@ KtBinaryExpression(178,189): '0 + integer'
           receiverType = null
           returnType = kotlin.Float
           symbol = other: kotlin.Float
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -451,8 +479,10 @@ KtBinaryExpression(178,189): '0 + integer'
               receiverType = null
               returnType = kotlin.Float
               symbol = other: kotlin.Float
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
@@ -466,6 +496,7 @@ KtBinaryExpression(178,189): '0 + integer'
           receiverType = null
           returnType = kotlin.Byte
           symbol = other: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -485,8 +516,10 @@ KtBinaryExpression(178,189): '0 + integer'
               receiverType = null
               returnType = kotlin.Byte
               symbol = other: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
@@ -500,6 +533,7 @@ KtBinaryExpression(178,189): '0 + integer'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -519,8 +553,10 @@ KtBinaryExpression(178,189): '0 + integer'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -533,6 +569,7 @@ KtBinaryExpression(178,189): '0 + integer'
           receiverType = null
           returnType = kotlin.Short
           symbol = other: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -552,8 +589,10 @@ KtBinaryExpression(178,189): '0 + integer'
               receiverType = null
               returnType = kotlin.Short
               symbol = other: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
@@ -567,6 +606,7 @@ KtBinaryExpression(178,189): '0 + integer'
           receiverType = null
           returnType = kotlin.Long
           symbol = other: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -586,8 +626,10 @@ KtBinaryExpression(178,189): '0 + integer'
               receiverType = null
               returnType = kotlin.Long
               symbol = other: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
@@ -605,6 +647,7 @@ KtOperationReferenceExpression(180,181): '+'
           receiverType = null
           returnType = kotlin.Double
           symbol = other: kotlin.Double
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -624,8 +667,10 @@ KtOperationReferenceExpression(180,181): '+'
               receiverType = null
               returnType = kotlin.Double
               symbol = other: kotlin.Double
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
@@ -639,6 +684,7 @@ KtOperationReferenceExpression(180,181): '+'
           receiverType = null
           returnType = kotlin.Float
           symbol = other: kotlin.Float
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -658,8 +704,10 @@ KtOperationReferenceExpression(180,181): '+'
               receiverType = null
               returnType = kotlin.Float
               symbol = other: kotlin.Float
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
@@ -673,6 +721,7 @@ KtOperationReferenceExpression(180,181): '+'
           receiverType = null
           returnType = kotlin.Byte
           symbol = other: kotlin.Byte
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -692,8 +741,10 @@ KtOperationReferenceExpression(180,181): '+'
               receiverType = null
               returnType = kotlin.Byte
               symbol = other: kotlin.Byte
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
@@ -707,6 +758,7 @@ KtOperationReferenceExpression(180,181): '+'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -726,8 +778,10 @@ KtOperationReferenceExpression(180,181): '+'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -740,6 +794,7 @@ KtOperationReferenceExpression(180,181): '+'
           receiverType = null
           returnType = kotlin.Short
           symbol = other: kotlin.Short
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -759,8 +814,10 @@ KtOperationReferenceExpression(180,181): '+'
               receiverType = null
               returnType = kotlin.Short
               symbol = other: kotlin.Short
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
@@ -774,6 +831,7 @@ KtOperationReferenceExpression(180,181): '+'
           receiverType = null
           returnType = kotlin.Long
           symbol = other: kotlin.Long
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -793,8 +851,10 @@ KtOperationReferenceExpression(180,181): '+'
               receiverType = null
               returnType = kotlin.Long
               symbol = other: kotlin.Long
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
@@ -811,6 +871,7 @@ KtNameReferenceExpression(182,189): 'integer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val integer: kotlin.Int
+          contextParameters = []
           callableId = /integer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -832,6 +893,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
           returnType = kotlin.String
           symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -851,6 +913,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
           returnType = kotlin.String
           symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/toString
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -870,6 +933,7 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -885,8 +949,10 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -900,6 +966,7 @@ KtConstructorCalleeExpression(193,197): 'Anno'
           receiverType = null
           returnType = kotlin.Int
           symbol = number: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -915,8 +982,10 @@ KtConstructorCalleeExpression(193,197): 'Anno'
               receiverType = null
               returnType = kotlin.Int
               symbol = number: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -947,6 +1016,7 @@ KtNameReferenceExpression(198,205): 'integer'
           receiverType = null
           returnType = kotlin.Int
           symbol = val integer: kotlin.Int
+          contextParameters = []
           callableId = /integer
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -965,6 +1035,7 @@ KtCallExpression(207,214): 'usage()'
           returnType = kotlin.Unit
           symbol = /usage(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /usage
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -982,6 +1053,7 @@ KtNameReferenceExpression(207,212): 'usage'
           returnType = kotlin.Unit
           symbol = /usage(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /usage
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1005,6 +1077,7 @@ KtCallExpression(216,226): 'toString()'
           returnType = kotlin.String
           symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1024,6 +1097,7 @@ KtCallExpression(216,226): 'toString()'
           returnType = kotlin.String
           symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/toString
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -1044,6 +1118,7 @@ KtNameReferenceExpression(216,224): 'toString'
           returnType = kotlin.String
           symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1063,6 +1138,7 @@ KtNameReferenceExpression(216,224): 'toString'
           returnType = kotlin.String
           symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/toString
       typeArgumentsMapping = {}
     isInBestCandidates = false

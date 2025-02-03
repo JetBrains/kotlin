@@ -19,8 +19,10 @@ KtCallExpression(75,78): 'f()'
               receiverType = null
               returnType = kotlin.Any
               symbol = vararg a: kotlin.Any
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

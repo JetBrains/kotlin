@@ -12,6 +12,7 @@ KtNameReferenceExpression(61,62): 'f'
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = val f: kotlin.Function0<kotlin.Unit>
+          contextParameters = []
           callableId = /A.f
       simpleAccess = Read
       typeArgumentsMapping = {}

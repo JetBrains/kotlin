@@ -14,10 +14,11 @@ KtCallExpression(135,142): 'i()()()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Double): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -33,11 +34,12 @@ KtCallExpression(135,142): 'i()()()'
           returnType = kotlin.Long
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Int was expected>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -53,6 +55,7 @@ KtCallExpression(135,142): 'i()()()'
           returnType = kotlin.Double
           symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Long was expected>

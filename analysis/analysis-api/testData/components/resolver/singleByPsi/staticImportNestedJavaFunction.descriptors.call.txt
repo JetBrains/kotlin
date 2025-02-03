@@ -11,5 +11,6 @@ KtCallExpression(95,100): 'foo()'
           returnType = kotlin.Unit
           symbol = /Dependency.Nested.foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /Dependency.Nested.foo
       typeArgumentsMapping = {}

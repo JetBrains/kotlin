@@ -16,7 +16,9 @@ KtCallExpression(131,143): 'Annotation()'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg strings: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

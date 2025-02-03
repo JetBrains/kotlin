@@ -30,6 +30,7 @@ KtNameReferenceExpression(50,51): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = var i: kotlin.Int
+          contextParameters = []
           callableId = /A.i
       simpleAccess = Write:
         value = 1

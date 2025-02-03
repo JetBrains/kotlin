@@ -8,6 +8,7 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
             receiverType = null
             returnType = kotlin.Int
             symbol = a: A
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
@@ -24,8 +25,10 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = a: A
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /generic
         typeArgumentsMapping = {
           A -> (kotlin.Int)

@@ -50,6 +50,7 @@ KtConstructorDelegationCall(61,61): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -67,6 +68,7 @@ KtConstructorDelegationReferenceExpression(61,61): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -102,6 +104,7 @@ KtConstructorDelegationCall(88,88): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -119,6 +122,7 @@ KtConstructorDelegationReferenceExpression(88,88): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -180,6 +184,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -196,12 +201,14 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -210,6 +217,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -226,8 +234,10 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
@@ -242,6 +252,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -258,12 +269,14 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -272,6 +285,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -288,8 +302,10 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
@@ -312,6 +328,7 @@ KtNameReferenceExpression(176,178): 'ci'
           receiverType = null
           returnType = kotlin.Int
           symbol = ci: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -344,6 +361,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -360,13 +378,15 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -375,6 +395,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -391,8 +412,10 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -406,6 +429,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -422,13 +446,15 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -437,6 +463,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -453,8 +480,10 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -476,6 +505,7 @@ KtNameReferenceExpression(216,218): 'cs'
           receiverType = null
           returnType = kotlin.String
           symbol = cs: kotlin.String
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -506,6 +536,7 @@ KtDotQualifiedExpression(245,257): 'super.call()'
           returnType = kotlin.Unit
           symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = r/BaseClass.call
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -532,6 +563,7 @@ KtCallExpression(251,257): 'call()'
           returnType = kotlin.Unit
           symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = r/BaseClass.call
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -552,6 +584,7 @@ KtNameReferenceExpression(251,255): 'call'
           returnType = kotlin.Unit
           symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = r/BaseClass.call
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -580,6 +613,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -596,12 +630,14 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -610,6 +646,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -626,8 +663,10 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
@@ -642,6 +681,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -658,12 +698,14 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -672,6 +714,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -688,8 +731,10 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
@@ -710,6 +755,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -726,12 +772,14 @@ KtNameReferenceExpression(294,303): 'BaseClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -740,6 +788,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -756,8 +805,10 @@ KtNameReferenceExpression(294,303): 'BaseClass'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
@@ -806,10 +857,11 @@ KtConstructorDelegationCall(339,345): 'this()'
           returnType = r.ChildWithPrimary
           symbol = <constructor>(): r.ChildWithPrimary
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -827,8 +879,10 @@ KtConstructorDelegationCall(339,345): 'this()'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
@@ -847,10 +901,11 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
           returnType = r.ChildWithPrimary
           symbol = <constructor>(): r.ChildWithPrimary
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
@@ -868,8 +923,10 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
@@ -959,6 +1016,7 @@ KtConstructorDelegationCall(446,454): 'super(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -975,8 +1033,10 @@ KtConstructorDelegationCall(446,454): 'super(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -990,6 +1050,7 @@ KtConstructorDelegationReferenceExpression(446,451): 'super'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
@@ -1006,8 +1067,10 @@ KtConstructorDelegationReferenceExpression(446,451): 'super'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

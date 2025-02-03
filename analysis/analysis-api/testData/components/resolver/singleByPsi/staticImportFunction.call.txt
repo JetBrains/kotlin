@@ -13,5 +13,6 @@ KtCallExpression(95,100): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}

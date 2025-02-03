@@ -14,6 +14,7 @@ KtCallExpression(76,88): 'javaMethod()'
           returnType = kotlin.Unit
           symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /JavaClass.javaMethod
       typeArgumentsMapping = {}
     isInBestCandidates = true

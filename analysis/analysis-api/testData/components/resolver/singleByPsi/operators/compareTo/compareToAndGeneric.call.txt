@@ -7,6 +7,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,8 +27,10 @@ KtNameReferenceExpression(114,123): 'compareTo'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /compareTo
       typeArgumentsMapping = {
         T -> (MyClass)

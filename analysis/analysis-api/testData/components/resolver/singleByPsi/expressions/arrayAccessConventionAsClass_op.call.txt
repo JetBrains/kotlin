@@ -20,8 +20,10 @@ KtOperationReferenceExpression(250,252): '+='
                 receiverType = null
                 returnType = MyClass
                 symbol = v: MyClass
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /MyClass.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -39,8 +41,10 @@ KtOperationReferenceExpression(250,252): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.get
       indexArguments = [
         0
@@ -61,12 +65,15 @@ KtOperationReferenceExpression(250,252): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = v
               receiverType = null
               returnType = MyClass
               symbol = v: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.set

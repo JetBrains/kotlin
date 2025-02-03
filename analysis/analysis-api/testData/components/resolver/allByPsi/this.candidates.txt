@@ -46,6 +46,7 @@ KtCallExpression(66,71): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -65,6 +66,7 @@ KtNameReferenceExpression(66,69): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -88,6 +90,7 @@ KtDotQualifiedExpression(80,90): 'this.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -114,6 +117,7 @@ KtCallExpression(85,90): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -134,6 +138,7 @@ KtNameReferenceExpression(85,88): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -157,6 +162,7 @@ KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -189,6 +195,7 @@ KtCallExpression(112,117): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -209,6 +216,7 @@ KtNameReferenceExpression(112,115): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -255,10 +263,11 @@ KtCallExpression(203,208): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -273,6 +282,7 @@ KtCallExpression(203,208): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -292,10 +302,11 @@ KtNameReferenceExpression(203,206): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -310,6 +321,7 @@ KtNameReferenceExpression(203,206): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -333,6 +345,7 @@ KtDotQualifiedExpression(221,231): 'this.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -359,6 +372,7 @@ KtCallExpression(226,231): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -379,6 +393,7 @@ KtNameReferenceExpression(226,229): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -402,6 +417,7 @@ KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -434,6 +450,7 @@ KtCallExpression(260,265): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -454,6 +471,7 @@ KtNameReferenceExpression(260,263): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -477,6 +495,7 @@ KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -509,6 +528,7 @@ KtCallExpression(291,296): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -529,6 +549,7 @@ KtNameReferenceExpression(291,294): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -575,10 +596,11 @@ KtCallExpression(403,408): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -593,10 +615,11 @@ KtCallExpression(403,408): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -611,6 +634,7 @@ KtCallExpression(403,408): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -630,10 +654,11 @@ KtNameReferenceExpression(403,406): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -648,10 +673,11 @@ KtNameReferenceExpression(403,406): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -666,6 +692,7 @@ KtNameReferenceExpression(403,406): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -689,6 +716,7 @@ KtDotQualifiedExpression(425,435): 'this.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -715,6 +743,7 @@ KtCallExpression(430,435): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -735,6 +764,7 @@ KtNameReferenceExpression(430,433): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -758,6 +788,7 @@ KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -790,6 +821,7 @@ KtCallExpression(469,474): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -810,6 +842,7 @@ KtNameReferenceExpression(469,472): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -833,6 +866,7 @@ KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -865,6 +899,7 @@ KtCallExpression(507,512): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -885,6 +920,7 @@ KtNameReferenceExpression(507,510): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -908,6 +944,7 @@ KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -940,6 +977,7 @@ KtCallExpression(542,547): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -960,6 +998,7 @@ KtNameReferenceExpression(542,545): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1043,10 +1082,11 @@ KtCallExpression(625,630): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1061,10 +1101,11 @@ KtCallExpression(625,630): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1079,6 +1120,7 @@ KtCallExpression(625,630): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -1117,10 +1159,11 @@ KtNameReferenceExpression(625,628): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1135,10 +1178,11 @@ KtNameReferenceExpression(625,628): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1153,6 +1197,7 @@ KtNameReferenceExpression(625,628): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -1176,6 +1221,7 @@ KtDotQualifiedExpression(651,661): 'this.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1202,6 +1248,7 @@ KtCallExpression(656,661): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1222,6 +1269,7 @@ KtNameReferenceExpression(656,659): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1245,6 +1293,7 @@ KtDotQualifiedExpression(682,697): 'this@anon.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1277,6 +1326,7 @@ KtCallExpression(692,697): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1297,6 +1347,7 @@ KtNameReferenceExpression(692,695): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1320,6 +1371,7 @@ KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1352,6 +1404,7 @@ KtCallExpression(735,740): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1372,6 +1425,7 @@ KtNameReferenceExpression(735,738): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1395,6 +1449,7 @@ KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1427,6 +1482,7 @@ KtCallExpression(777,782): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1447,6 +1503,7 @@ KtNameReferenceExpression(777,780): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1470,6 +1527,7 @@ KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1502,6 +1560,7 @@ KtCallExpression(816,821): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1522,6 +1581,7 @@ KtNameReferenceExpression(816,819): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1545,6 +1605,7 @@ KtCallExpression(857,1107): 'myWith { t ->'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
           symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1563,8 +1624,10 @@ KtCallExpression(857,1107): 'myWith { t ->'
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
               symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = one/myWith
       typeArgumentsMapping = {
         T -> (one.MyClass.InnerOuter.InnerNested)
@@ -1587,6 +1650,7 @@ KtNameReferenceExpression(857,863): 'myWith'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
           symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -1605,8 +1669,10 @@ KtNameReferenceExpression(857,863): 'myWith'
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
               symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = one/myWith
       typeArgumentsMapping = {
         T -> (one.MyClass.InnerOuter.InnerNested)
@@ -1665,10 +1731,11 @@ KtCallExpression(891,896): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1683,10 +1750,11 @@ KtCallExpression(891,896): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1701,6 +1769,7 @@ KtCallExpression(891,896): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -1739,10 +1808,11 @@ KtNameReferenceExpression(891,894): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1757,10 +1827,11 @@ KtNameReferenceExpression(891,894): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -1775,6 +1846,7 @@ KtNameReferenceExpression(891,894): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = false
@@ -1798,6 +1870,7 @@ KtDotQualifiedExpression(917,927): 'this.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1824,6 +1897,7 @@ KtCallExpression(922,927): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1844,6 +1918,7 @@ KtNameReferenceExpression(922,925): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1867,6 +1942,7 @@ KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1899,6 +1975,7 @@ KtCallExpression(960,965): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1919,6 +1996,7 @@ KtNameReferenceExpression(960,963): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1942,6 +2020,7 @@ KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1974,6 +2053,7 @@ KtCallExpression(1003,1008): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1994,6 +2074,7 @@ KtNameReferenceExpression(1003,1006): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2017,6 +2098,7 @@ KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2049,6 +2131,7 @@ KtCallExpression(1045,1050): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2069,6 +2152,7 @@ KtNameReferenceExpression(1045,1048): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2092,6 +2176,7 @@ KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2124,6 +2209,7 @@ KtCallExpression(1084,1089): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2144,6 +2230,7 @@ KtNameReferenceExpression(1084,1087): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2162,6 +2249,7 @@ KtCallExpression(1125,1194): 'myWith label@{'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
           symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -2180,8 +2268,10 @@ KtCallExpression(1125,1194): 'myWith label@{'
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
               symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = one/myWith
       typeArgumentsMapping = {
         T -> (one.MyClass.InnerOuter.InnerNested)
@@ -2199,6 +2289,7 @@ KtNameReferenceExpression(1125,1131): 'myWith'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
           symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -2217,8 +2308,10 @@ KtNameReferenceExpression(1125,1131): 'myWith'
               receiverType = null
               returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
               symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = one/myWith
       typeArgumentsMapping = {
         T -> (one.MyClass.InnerOuter.InnerNested)
@@ -2262,6 +2355,7 @@ KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2294,6 +2388,7 @@ KtCallExpression(1171,1176): 'foo()'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2314,6 +2409,7 @@ KtNameReferenceExpression(1171,1174): 'foo'
           returnType = kotlin.Unit
           symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2399,6 +2495,7 @@ KtCallExpression(1272,1282): 'body(this)'
           receiverType = null
           returnType = T
           symbol = p2: P2
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
@@ -2438,14 +2535,17 @@ KtCallExpression(1272,1282): 'body(this)'
               receiverType = null
               returnType = T
               symbol = p1: P1
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = p2
               receiverType = null
               returnType = T
               symbol = p2: P2
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function2.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2461,6 +2561,7 @@ KtNameReferenceExpression(1272,1276): 'body'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
           symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

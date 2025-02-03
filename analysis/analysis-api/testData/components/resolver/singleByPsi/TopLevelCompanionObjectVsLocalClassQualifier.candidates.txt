@@ -11,10 +11,11 @@ KtNameReferenceExpression(92,100): 'Conflict'
           returnType = <local>.Conflict
           symbol = <constructor>(): <local>.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -27,6 +28,7 @@ KtNameReferenceExpression(92,100): 'Conflict'
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = false

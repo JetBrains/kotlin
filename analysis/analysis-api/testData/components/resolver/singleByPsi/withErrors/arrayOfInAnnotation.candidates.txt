@@ -7,18 +7,21 @@ KtCallExpression(86,102): 'arrayOf(1, 2, 3)'
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null),
         2 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null),
         3 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -35,8 +38,10 @@ KtCallExpression(86,102): 'arrayOf(1, 2, 3)'
               receiverType = null
               returnType = kotlin.Int
               symbol = vararg elements: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (kotlin.Int)

@@ -11,6 +11,7 @@ KtNameReferenceExpression(51,53): 'DD'
           returnType = foo.DD<ERROR_TYPE, ERROR_TYPE>
           symbol = <constructor>(): foo.DD<T, T2>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>

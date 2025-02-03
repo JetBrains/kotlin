@@ -134,6 +134,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
           returnType = one.two.Base<C>
           symbol = <constructor>(): one.two.Base<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -150,6 +151,7 @@ KtConstructorCalleeExpression(186,193): 'Base<C>'
           returnType = one.two.Base<C>
           symbol = <constructor>(): one.two.Base<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -172,6 +174,7 @@ KtNameReferenceExpression(186,190): 'Base'
           returnType = one.two.Base<C>
           symbol = <constructor>(): one.two.Base<B>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -356,6 +359,7 @@ KtCallExpression(392,405): 'NestedClass()'
           returnType = one.two.Base.NestedClass
           symbol = <constructor>(): one.two.Base.NestedClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -372,6 +376,7 @@ KtNameReferenceExpression(392,403): 'NestedClass'
           returnType = one.two.Base.NestedClass
           symbol = <constructor>(): one.two.Base.NestedClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -397,6 +402,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
           returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner
           symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base<B>.one.two.Base.Inner
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -411,6 +417,7 @@ KtNameReferenceExpression(422,424): 'c1'
           receiverType = null
           returnType = one.two.Child<one.two.Base.NestedClass>
           symbol = c1: one.two.Child<one.two.Base.NestedClass>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -431,6 +438,7 @@ KtCallExpression(425,432): 'Inner()'
           returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner
           symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base<B>.one.two.Base.Inner
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -450,6 +458,7 @@ KtNameReferenceExpression(425,430): 'Inner'
           returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner
           symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base<B>.one.two.Base.Inner
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 

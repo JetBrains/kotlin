@@ -7,6 +7,7 @@ KtOperationReferenceExpression(69,71): 'in'
           receiverType = null
           returnType = kotlin.Int
           symbol = v: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,7 +27,9 @@ KtOperationReferenceExpression(69,71): 'in'
               receiverType = null
               returnType = kotlin.Int
               symbol = v: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.contains
       typeArgumentsMapping = {}

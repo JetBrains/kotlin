@@ -12,6 +12,7 @@ KtNameReferenceExpression(150,153): 'foo'
           receiverType = null
           returnType = kotlin.Long
           symbol = val foo: T
+          contextParameters = []
           callableId = /Base.foo
       simpleAccess = Read
       typeArgumentsMapping = {}

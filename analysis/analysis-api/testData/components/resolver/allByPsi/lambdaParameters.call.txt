@@ -112,8 +112,10 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -128,6 +130,7 @@ KtNameReferenceExpression(80,84): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -156,8 +159,10 @@ KtCallExpression(85,94): 'action1()'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -172,6 +177,7 @@ KtNameReferenceExpression(85,92): 'action1'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -203,8 +209,10 @@ KtCallExpression(99,112): 'action1(prop)'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -219,6 +227,7 @@ KtNameReferenceExpression(99,106): 'action1'
           receiverType = null
           returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -240,6 +249,7 @@ KtNameReferenceExpression(107,111): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -260,6 +270,7 @@ KtNameReferenceExpression(118,122): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -286,6 +297,7 @@ KtCallExpression(151,164): 'action2(prop)'
           receiverType = null
           returnType = kotlin.Int
           symbol = p1: P1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
@@ -305,8 +317,10 @@ KtCallExpression(151,164): 'action2(prop)'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
 
@@ -321,6 +335,7 @@ KtNameReferenceExpression(151,158): 'action2'
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
           symbol = action2: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -342,6 +357,7 @@ KtNameReferenceExpression(159,163): 'prop'
           receiverType = null
           returnType = kotlin.Int
           symbol = val prop: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

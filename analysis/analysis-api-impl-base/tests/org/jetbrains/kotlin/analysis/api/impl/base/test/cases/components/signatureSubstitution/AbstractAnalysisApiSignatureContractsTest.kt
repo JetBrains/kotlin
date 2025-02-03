@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -104,9 +104,18 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         testServices.assertions.assertEquals(symbol.receiverType?.let(substitutor::substitute), signature.receiverType)
         testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substitute), signature.returnType)
 
-        testServices.assertions.assertEquals(symbol.valueParameters.size, signature.valueParameters.size)
+        checkParameterSubstitutionResult(symbol.valueParameters, signature.valueParameters, substitutor, testServices)
+        checkParameterSubstitutionResult(symbol.contextParameters, signature.contextParameters, substitutor, testServices)
+    }
 
-        for ((unsubstituted, substituted) in symbol.valueParameters.zip(signature.valueParameters)) {
+    private fun <T : KaParameterSymbol> KaSession.checkParameterSubstitutionResult(
+        fromSymbol: List<T>,
+        fromSignature: List<KaVariableSignature<T>>,
+        substitutor: KaSubstitutor,
+        testServices: TestServices,
+    ) {
+        testServices.assertions.assertEquals(fromSymbol.size, fromSignature.size)
+        for ((unsubstituted, substituted) in fromSymbol.zip(fromSignature)) {
             testServices.assertions.assertEquals(substituted.returnType, unsubstituted.returnType.let(substitutor::substitute))
         }
     }

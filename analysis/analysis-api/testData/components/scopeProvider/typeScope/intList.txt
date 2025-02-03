@@ -12,8 +12,10 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = element: E
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/collections/List.contains
 KaFunctionSignature:
   receiverType = null
@@ -25,8 +27,10 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.collections.Collection<kotlin.Int>
       symbol = elements: kotlin.collections.Collection<E>
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/collections/List.containsAll
 KaFunctionSignature:
   receiverType = null
@@ -38,8 +42,10 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = index: kotlin.Int
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/collections/List.get
 KaFunctionSignature:
   receiverType = null
@@ -51,20 +57,24 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = element: E
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/collections/List.indexOf
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/collections/List.isEmpty(<dispatch receiver>: kotlin.collections.List<E>): kotlin.Boolean
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/collections/List.isEmpty
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.collections.Iterator<kotlin.Int>
   symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/collections/List.iterator
 KaFunctionSignature:
   receiverType = null
@@ -76,14 +86,17 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = element: E
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/collections/List.lastIndexOf
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.collections.ListIterator<kotlin.Int>
   symbol = kotlin/collections/List.listIterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.ListIterator<E>
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/collections/List.listIterator
 KaFunctionSignature:
   receiverType = null
@@ -95,8 +108,10 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = index: kotlin.Int
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/collections/List.listIterator
 KaFunctionSignature:
   receiverType = null
@@ -108,20 +123,24 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = fromIndex: kotlin.Int
+      contextParameters = []
       callableId = null,
     KaVariableSignature:
       name = toIndex
       receiverType = null
       returnType = kotlin.Int
       symbol = toIndex: kotlin.Int
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/collections/List.subList
 KaVariableSignature:
   name = size
   receiverType = null
   returnType = kotlin.Int
   symbol = val size: kotlin.Int
+  contextParameters = []
   callableId = kotlin/collections/List.size
 KaFunctionSignature:
   receiverType = null
@@ -133,32 +152,38 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/Any.equals
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.hashCode
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.toString
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.getFirst(<dispatch receiver>: kotlin.collections.List<E>): E
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/collections/List.getFirst
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.getLast(<dispatch receiver>: kotlin.collections.List<E>): E
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/collections/List.getLast
 
 

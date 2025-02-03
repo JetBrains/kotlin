@@ -11,6 +11,7 @@ KtCallExpression(96,101): 'foo()'
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<AMBIGUOUS_CONTEXT_ARGUMENT: Multiple potential context arguments for 'String' in scope.>

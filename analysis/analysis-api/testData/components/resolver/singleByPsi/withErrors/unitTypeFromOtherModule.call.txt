@@ -16,5 +16,6 @@ KtNameReferenceExpression(168,171): 'foo'
           returnType = kotlin.Unit
           symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = dependency/A.foo
       typeArgumentsMapping = {}

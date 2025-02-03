@@ -41,6 +41,7 @@ KtPrefixExpression(49,53): '-one'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -61,6 +62,7 @@ KtOperationReferenceExpression(49,50): '-'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -76,6 +78,7 @@ KtNameReferenceExpression(50,53): 'one'
           receiverType = null
           returnType = kotlin.Int
           symbol = val one: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -100,6 +103,7 @@ KtPrefixExpression(73,77): '+one'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -120,6 +124,7 @@ KtOperationReferenceExpression(73,74): '+'
           returnType = kotlin.Int
           symbol = kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -135,6 +140,7 @@ KtNameReferenceExpression(74,77): 'one'
           receiverType = null
           returnType = kotlin.Int
           symbol = val one: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -156,6 +162,7 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -176,6 +183,7 @@ KtOperationReferenceExpression(83,84): '!'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -199,6 +207,7 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
           returnType = MyClass
           symbol = /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -219,6 +228,7 @@ KtOperationReferenceExpression(85,86): '+'
           returnType = MyClass
           symbol = /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -242,6 +252,7 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -262,6 +273,7 @@ KtOperationReferenceExpression(87,88): '-'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -282,6 +294,7 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -302,6 +315,7 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -319,6 +333,7 @@ KtCallExpression(88,97): 'MyClass()'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -336,6 +351,7 @@ KtNameReferenceExpression(88,95): 'MyClass'
           returnType = MyClass
           symbol = <constructor>(): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -359,6 +375,7 @@ KtCallExpression(98,110): 'unaryMinus()'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -379,6 +396,7 @@ KtNameReferenceExpression(98,108): 'unaryMinus'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -402,6 +420,7 @@ KtCallExpression(111,116): 'not()'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -422,6 +441,7 @@ KtNameReferenceExpression(111,114): 'not'
           returnType = MyClass
           symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
     isInBestCandidates = true

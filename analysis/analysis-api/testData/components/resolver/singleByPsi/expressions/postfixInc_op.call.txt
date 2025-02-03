@@ -14,6 +14,7 @@ KtOperationReferenceExpression(146,148): '++'
             returnType = MyClass
             symbol = /MyClass.inc(<dispatch receiver>: MyClass): MyClass
             valueParameters = []
+            contextParameters = []
             callableId = /MyClass.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -24,4 +25,5 @@ KtOperationReferenceExpression(146,148): '++'
           receiverType = null
           returnType = MyClass
           symbol = var variable: MyClass
+          contextParameters = []
           callableId = /variable

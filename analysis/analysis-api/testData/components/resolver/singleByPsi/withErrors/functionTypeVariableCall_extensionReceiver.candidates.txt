@@ -22,8 +22,10 @@ KtCallExpression(38,41): 'f()'
               receiverType = null
               returnType = kotlin.String
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

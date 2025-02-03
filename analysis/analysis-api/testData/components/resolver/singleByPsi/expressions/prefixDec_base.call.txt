@@ -9,6 +9,7 @@ KtNameReferenceExpression(140,148): 'variable'
           receiverType = null
           returnType = MyClass
           symbol = var variable: MyClass
+          contextParameters = []
           callableId = /variable
       simpleAccess = Read
       typeArgumentsMapping = {}

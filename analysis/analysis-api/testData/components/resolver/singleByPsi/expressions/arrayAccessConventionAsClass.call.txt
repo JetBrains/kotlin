@@ -20,8 +20,10 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
                 receiverType = null
                 returnType = MyClass
                 symbol = v: MyClass
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /MyClass.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -39,8 +41,10 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.get
       indexArguments = [
         0
@@ -61,12 +65,15 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = v
               receiverType = null
               returnType = MyClass
               symbol = v: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.set

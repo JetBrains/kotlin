@@ -7,6 +7,7 @@ KtOperationReferenceExpression(177,180): '!in'
           receiverType = null
           returnType = kotlin.String
           symbol = str: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -26,13 +27,15 @@ KtOperationReferenceExpression(177,180): '!in'
               receiverType = null
               returnType = kotlin.String
               symbol = str: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.contains
       typeArgumentsMapping = {}
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun contains(str: String): Boolean.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -41,6 +44,7 @@ KtOperationReferenceExpression(177,180): '!in'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -60,8 +64,10 @@ KtOperationReferenceExpression(177,180): '!in'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)

@@ -185,6 +185,7 @@ KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -203,6 +204,7 @@ KtDotQualifiedExpression(326,333): 'one.two'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -221,6 +223,7 @@ KtNameReferenceExpression(326,329): 'one'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -239,6 +242,7 @@ KtNameReferenceExpression(330,333): 'two'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -257,6 +261,7 @@ KtNameReferenceExpression(334,348): 'TopLevelObject'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -278,6 +283,7 @@ KtNameReferenceExpression(377,391): 'TopLevelObject'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -302,6 +308,7 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -319,6 +326,7 @@ KtNameReferenceExpression(415,429): 'TopLevelObject'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -340,6 +348,7 @@ KtCallExpression(430,435): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -360,6 +369,7 @@ KtNameReferenceExpression(430,433): 'foo'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -385,6 +395,7 @@ KtCallExpression(458,463): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -404,6 +415,7 @@ KtNameReferenceExpression(458,461): 'foo'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -428,6 +440,7 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = val bar: kotlin.Int
+          contextParameters = []
           callableId = one/two/TopLevelObject.bar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -446,6 +459,7 @@ KtNameReferenceExpression(487,501): 'TopLevelObject'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -465,6 +479,7 @@ KtNameReferenceExpression(502,505): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = val bar: kotlin.Int
+          contextParameters = []
           callableId = one/two/TopLevelObject.bar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -486,6 +501,7 @@ KtNameReferenceExpression(528,531): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = val bar: kotlin.Int
+          contextParameters = []
           callableId = one/two/TopLevelObject.bar
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -507,6 +523,7 @@ KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -525,6 +542,7 @@ KtNameReferenceExpression(564,578): 'TopLevelObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -543,6 +561,7 @@ KtNameReferenceExpression(579,591): 'NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -564,6 +583,7 @@ KtNameReferenceExpression(623,635): 'NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -588,6 +608,7 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -605,6 +626,7 @@ KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -623,6 +645,7 @@ KtNameReferenceExpression(659,673): 'TopLevelObject'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -641,6 +664,7 @@ KtNameReferenceExpression(674,686): 'NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -662,6 +686,7 @@ KtCallExpression(687,692): 'baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -682,6 +707,7 @@ KtNameReferenceExpression(687,690): 'baz'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -708,6 +734,7 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -725,6 +752,7 @@ KtNameReferenceExpression(721,733): 'NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -746,6 +774,7 @@ KtCallExpression(734,739): 'baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -766,6 +795,7 @@ KtNameReferenceExpression(734,737): 'baz'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -791,6 +821,7 @@ KtCallExpression(762,767): 'baz()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -810,6 +841,7 @@ KtNameReferenceExpression(762,765): 'baz'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -834,6 +866,7 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -852,6 +885,7 @@ KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -870,6 +904,7 @@ KtNameReferenceExpression(791,805): 'TopLevelObject'
           returnType = one.two.TopLevelObject
           symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -888,6 +923,7 @@ KtNameReferenceExpression(806,818): 'NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -907,6 +943,7 @@ KtNameReferenceExpression(819,822): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -929,6 +966,7 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -947,6 +985,7 @@ KtNameReferenceExpression(851,863): 'NestedObject'
           returnType = one.two.TopLevelObject.NestedObject
           symbol = <constructor>(): one.two.TopLevelObject.NestedObject
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
@@ -966,6 +1005,7 @@ KtNameReferenceExpression(864,867): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -987,6 +1027,7 @@ KtNameReferenceExpression(890,893): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -1005,6 +1046,7 @@ KtBinaryExpression(899,910): 'doo = "str"'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Write:
         value = "str"
@@ -1024,6 +1066,7 @@ KtNameReferenceExpression(899,902): 'doo'
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Write:
         value = "str"
@@ -1043,6 +1086,7 @@ KtOperationReferenceExpression(903,904): '='
           receiverType = null
           returnType = kotlin.String
           symbol = var doo: kotlin.String
+          contextParameters = []
           callableId = one/two/TopLevelObject.NestedObject.doo
       simpleAccess = Write:
         value = "str"

@@ -11,5 +11,6 @@ KtNameReferenceExpression(88,95): 'MyAlias'
           returnType = test.MyAlias
           symbol = <constructor>(): test.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

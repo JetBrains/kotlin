@@ -14,6 +14,7 @@ KtPrefixExpression(128,136): '++m["a"]'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = PREFIX
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -32,8 +33,10 @@ KtPrefixExpression(128,136): '++m["a"]'
               receiverType = null
               returnType = kotlin.String
               symbol = k: K
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyMap.get
       indexArguments = [
         "a"
@@ -54,12 +57,15 @@ KtPrefixExpression(128,136): '++m["a"]'
               receiverType = null
               returnType = kotlin.String
               symbol = k: K
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = v
               receiverType = null
               returnType = kotlin.Int
               symbol = v: V
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyMap.set

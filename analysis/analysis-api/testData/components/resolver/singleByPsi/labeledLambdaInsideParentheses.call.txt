@@ -7,12 +7,14 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
+          contextParameters = []
           callableId = null),
         l@{ it } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
           symbol = b: kotlin.Function1<kotlin.Int, kotlin.Int>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
@@ -29,13 +31,16 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
               symbol = b: kotlin.Function1<kotlin.Int, kotlin.Int>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /bar
       typeArgumentsMapping = {}
