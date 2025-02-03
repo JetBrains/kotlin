@@ -793,6 +793,7 @@ Worker::~Worker() {
               break;
           case JOB_EXECUTE_AFTER: {
               // TODO: what do we do here? Shall we execute them?
+              mm::releaseExternalRCRef(job.executeAfter.operation);
               mm::disposeExternalRCRef(job.executeAfter.operation);
               break;
           }
@@ -810,6 +811,7 @@ Worker::~Worker() {
 
   for (auto job : delayed_) {
       RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
+      mm::releaseExternalRCRef(job.executeAfter.operation);
       mm::disposeExternalRCRef(job.executeAfter.operation);
   }
 
