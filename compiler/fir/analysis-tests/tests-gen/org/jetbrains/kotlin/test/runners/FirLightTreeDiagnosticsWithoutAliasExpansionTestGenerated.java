@@ -126,6 +126,17 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     @TestDataPath("$PROJECT_ROOT")
     public class ContextParameters {
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages")
+      @TestDataPath("$PROJECT_ROOT")
+      public class DeclarationAndUsages {
+        @Test
+        @TestMetadata("onClassifierDeclaration.kt")
+        public void testOnClassifierDeclaration() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/onClassifierDeclaration.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics")
       @TestDataPath("$PROJECT_ROOT")
       public class Diagnostics {
@@ -133,17 +144,6 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         @TestMetadata("unsupportedContextParameters.kt")
         public void testUnsupportedContextParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages")
-        @TestDataPath("$PROJECT_ROOT")
-        public class DeclarationAndUsages {
-          @Test
-          @TestMetadata("onClassifierDeclaration.kt")
-          public void testOnClassifierDeclaration() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onClassifierDeclaration.kt");
-          }
         }
       }
     }
