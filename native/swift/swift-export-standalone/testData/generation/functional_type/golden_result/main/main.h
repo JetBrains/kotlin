@@ -1,13 +1,9 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
-NSNumber * (^__root___closure_property_get())(void);
+uintptr_t __root___Foo_init_allocate();
 
-void __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__(NSNumber * (^newValue)(void));
+void __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
-NSNumber * (^__root___foo_1())(void);
-
-NSNumber * (^__root___foo_2())(void);
-
-void __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__(NSNumber * (^block)(void));
+void __root___block_consuming_reftype_in__TypesOfArguments__U28main_FooU29202D_U20main_Foo__(NSNumber * (^b)(NSNumber *));
 

@@ -1,53 +1,28 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
-@ExportedBridge("__root___closure_property_get")
-public fun __root___closure_property_get(): kotlin.native.internal.NativePtr {
-    val _result = closure_property
-    return {
-        val newClosure: () -> Long = {
-            val res = _result()
-            kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
-        }
-        newClosure.objcPtr()
-    }()
+@ExportedBridge("__root___Foo_init_allocate")
+public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__")
-public fun __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__(newValue: kotlin.native.internal.NativePtr): Unit {
-    val __newValue = interpretObjCPointer<Function0<kotlin.Unit>>(newValue)
-    closure_property = __newValue
+@ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    kotlin.native.internal.initInstance(____kt, Foo())
 }
 
-@ExportedBridge("__root___foo_1")
-public fun __root___foo_1(): kotlin.native.internal.NativePtr {
-    val _result = foo_1()
-    return {
-        val newClosure: () -> Long = {
-            val res = _result()
-            kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
-        }
-        newClosure.objcPtr()
-    }()
-}
-
-@ExportedBridge("__root___foo_2")
-public fun __root___foo_2(): kotlin.native.internal.NativePtr {
-    val _result = foo_2()
-    return {
-        val newClosure: () -> Long = {
-            val res = _result()
-            kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
-        }
-        newClosure.objcPtr()
-    }()
-}
-
-@ExportedBridge("__root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__")
-public fun __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
-    val __block = interpretObjCPointer<Function0<kotlin.Unit>>(block)
-    foo_consume_simple(__block)
+@ExportedBridge("__root___block_consuming_reftype_in__TypesOfArguments__U28main_FooU29202D_U20main_Foo__")
+public fun __root___block_consuming_reftype_in__TypesOfArguments__U28main_FooU29202D_U20main_Foo__(b: kotlin.native.internal.NativePtr): Unit {
+    val __b = { arg0: Foo ->
+        val receivedBlock = interpretObjCPointer<Function1<Long, Long>>(b)
+        val refToResult = receivedBlock(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0).toLong())
+        refToResult.toCPointer<CPointed>()!!.asStableRef<Foo>().get()
+    }
+    block_consuming_reftype_in(__b)
 }
 
