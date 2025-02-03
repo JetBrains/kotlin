@@ -97,6 +97,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Enables special features which are relevant only for stdlib compilation."
     )
 
+    val PROGRESSIVE_MODE by directive(
+        description = "Enables progressive mode"
+    )
+
     // --------------------- Jvm Analysis Flags ---------------------
 
     val JVM_DEFAULT_MODE by enumDirective(
