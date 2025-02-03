@@ -151,3 +151,5 @@ internal fun Project.fileCollectionFromConfigurableFileTree(fileTree: Configurab
     // * https://github.com/gradle/gradle/issues/27882 SourceDirectorySet doesn't accept ConfigurableFileTree
     return project.filesProvider(fileTree) { fileTree.dir }
 }
+
+internal val FileCollection.onlyJars: FileCollection get() = filter { it.extension == "jar" }

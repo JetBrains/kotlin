@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.plugins.JavaPluginExtension
 import org.apache.commons.lang3.SystemUtils
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.tasks.JavaExec
@@ -14,12 +15,14 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
-import org.gradle.kotlin.dsl.repositories
+import org.gradle.jvm.tasks.Jar
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.onlyJars
 import org.junit.Assume
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -30,11 +33,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun createsDefaultRunTask() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -60,11 +59,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun createsDefaultRunTaskForTargetWithCustomName() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
+        val project = testMppProject {
             kotlin {
                 jvm("desktop") {
                     binaries {
@@ -90,11 +85,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun createsDefaultDistribution() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -127,10 +118,10 @@ class JvmBinariesDslTest {
             assertEquals(emptyList(), defaultJvmOpts)
             assertEquals(project.projectDir.resolve("build/jvm/scripts"), outputDir)
             assertNotNull(classpath)
-            assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles)
             assertClasspathContains(
                 project.tasks.getByName(mainJvmCompilation.archiveTaskName!!).outputs.files
             )
+            assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles.onlyJars)
         }
 
         with(installTask) {
@@ -154,11 +145,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun customApplicationNameIsPropagatedToDistribution() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -194,11 +181,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun customExecutableDirIsUsedInScripts() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -219,11 +202,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun customJvmArgsAreUsedInScripts() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -245,11 +224,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun creatingMultipleDistributions() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -293,12 +268,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun createRunTaskForTestCompilation() {
-        val project = buildProjectWithMPP {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
-
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -324,12 +294,8 @@ class JvmBinariesDslTest {
 
     @Test
     fun createRunTaskForTestSuite() {
-        val project = buildProjectWithMPP {
+        val project = testMppProject {
             plugins.apply("jvm-test-suite")
-            repositories {
-                mavenLocal()
-                mavenCentral()
-            }
 
             kotlin {
                 jvm {
@@ -364,10 +330,76 @@ class JvmBinariesDslTest {
     }
 
     @Test
-    fun createRunTaskForCustomCompilation() {
-        val project = buildProjectWithMPP {
-            repositories.mavenLocal()
+    fun createsDistributionForTests() {
+        val project = testMppProject {
+            kotlin {
+                jvm {
+                    binaries {
+                        executable(KotlinCompilation.TEST_COMPILATION_NAME) {
+                            mainClass.set("foo.MainKt")
+                        }
+                    }
+                }
+            }
+        }
 
+        project.evaluate()
+
+        val scriptsTask = project.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvmTest")
+        val installTask = project.assertContainsTaskInstance<Sync>("installJvmTestDist")
+        val zipTask = project.assertContainsTaskInstance<Zip>("jvmTestDistZip")
+        val tarTask = project.assertContainsTaskInstance<Tar>("jvmTestDistTar")
+
+        val testJvmCompilation = project.multiplatformExtension
+            .jvm()
+            .compilations
+            .getByName(KotlinCompilation.TEST_COMPILATION_NAME) as KotlinJvmCompilation
+        val mainJvmCompilation = project.multiplatformExtension
+            .jvm()
+            .compilations
+            .getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+
+        with(scriptsTask) {
+            assertEquals("foo.MainKt", mainClass.get())
+            assertEquals(project.name, applicationName)
+            assertEquals("bin", executableDir)
+            assertEquals(null, mainModule.orNull)
+            assertEquals(true, modularity.inferModulePath.get()) // convention is true
+            assertEquals(emptyList(), defaultJvmOpts)
+            assertEquals(project.projectDir.resolve("build/jvmTest/scripts"), outputDir)
+            assertNotNull(classpath)
+            assertClasspathContains(
+                project.tasks.getByName(testJvmCompilation.archiveTaskName!!).outputs.files
+            )
+            assertClasspathContains(testJvmCompilation.runtimeDependencyFiles.onlyJars)
+            assertClasspathContains(
+                project.tasks.getByName(mainJvmCompilation.archiveTaskName!!).outputs.files
+            )
+            assertClasspathContains(mainJvmCompilation.runtimeDependencyFiles.onlyJars)
+        }
+
+        with(installTask) {
+            assertEquals(project.projectDir.resolve("build/install/${project.name}-jvmTest"), destinationDir)
+        }
+
+        with(zipTask) {
+            assertEquals(
+                project.projectDir.resolve("build/distributions/${project.name}-jvmTest.zip"),
+                archiveFile.get().asFile
+            )
+        }
+
+        with(tarTask) {
+            assertEquals(
+                project.projectDir.resolve("build/distributions/${project.name}-jvmTest.tar"),
+                archiveFile.get().asFile
+            )
+        }
+    }
+
+    @Test
+    fun createRunTaskForCustomCompilation() {
+        val project = testMppProject {
             kotlin {
                 jvm {
                     val customCompilation = compilations.register("custom")
@@ -393,7 +425,7 @@ class JvmBinariesDslTest {
         // On Windows toolchain detection is not working correctly in the functional tests
         Assume.assumeTrue(!SystemUtils.IS_OS_WINDOWS)
 
-        val project = buildProjectWithMPP {
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -414,7 +446,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun configureJPMSCorrectly() {
-        val project = buildProjectWithMPP {
+        val project = testMppProject {
             kotlin {
                 jvm {
                     @Suppress("DEPRECATION")
@@ -444,7 +476,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun possibleToConfigureSeveralBinariesForTheSameCompilation() {
-        val project = buildProjectWithMPP {
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -471,7 +503,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun gradleDistributionPluginShouldNotBeAppliedByDefault() {
-        val project = buildProjectWithMPP {
+        val project = testMppProject {
             kotlin { jvm() }
         }
 
@@ -482,7 +514,7 @@ class JvmBinariesDslTest {
 
     @Test
     fun possibleToConfigureSeveralBinariesForTheDifferentCompilations() {
-        val project = buildProjectWithMPP {
+        val project = testMppProject {
             kotlin {
                 jvm {
                     binaries {
@@ -521,6 +553,56 @@ class JvmBinariesDslTest {
         assertEquals("foo.MainAnotherTestKt", runTaskTestAnother.mainClass.get())
     }
 
+    @Test
+    fun testMultiproject() {
+        val rootProject = buildProject(
+            projectBuilder = {
+                withName("root")
+            }
+        )
+
+        val libProject = buildProjectWithJvm(
+            projectBuilder = {
+                withName("lib")
+                withParent(rootProject)
+            },
+            preApplyCode = {
+                enableDefaultStdlibDependency(false)
+            },
+        )
+
+        val consumerProject = testMppProject(
+            projectBuilder = {
+                withName("consumer")
+                withParent(rootProject)
+            }
+        ) {
+            kotlin {
+                jvm {
+                    compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).dependencies {
+                        implementation(project(":lib"))
+                    }
+                    binaries {
+                        executable(KotlinCompilation.TEST_COMPILATION_NAME) {
+                            mainClass.set("foo.MainKt")
+                        }
+                    }
+                }
+            }
+        }
+
+        rootProject.evaluate()
+
+        val libJarTask = libProject.assertContainsTaskInstance<Jar>("jar")
+        val scriptsTask = consumerProject.assertContainsTaskInstance<CreateStartScripts>("startScriptsForJvmTest")
+        val installTask = consumerProject.assertContainsTaskInstance<Sync>("installJvmTestDist")
+
+        scriptsTask.assertDependsOn(libJarTask)
+        scriptsTask.classpath!!.files.map { it.name }.contains(libJarTask.archiveFileName.get())
+
+        installTask.assertDependsOn(libJarTask)
+    }
+
     private fun JavaExec.assertClasspathContains(
         expectedFiles: FileCollection,
     ) {
@@ -544,4 +626,15 @@ class JvmBinariesDslTest {
                     " but missing: ${missingDependencies.joinToString()}",
         )
     }
+
+    private fun testMppProject(
+        projectBuilder: ProjectBuilder.() -> Unit = {},
+        code: Project.() -> Unit
+    ) = buildProjectWithMPP(
+        projectBuilder = projectBuilder,
+        preApplyCode = {
+            enableDefaultStdlibDependency(false)
+        },
+        code = code,
+    )
 }
