@@ -39,8 +39,8 @@ class CliOutputHandler(testServices: TestServices) : BinaryArtifactHandler<CliAr
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val defaultOutFile = sourceFile.withExtension(".out")
-        val firOutFile = sourceFile.withExtension(".fir.out")
+        val defaultOutFile = sourceFile.withExtension(".cli.out")
+        val firOutFile = sourceFile.withExtension(".cli.fir.out")
 
         val isFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
 
