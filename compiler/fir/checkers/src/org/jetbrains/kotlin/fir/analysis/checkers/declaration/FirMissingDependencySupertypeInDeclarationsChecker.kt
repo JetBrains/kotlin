@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 object FirMissingDependencySupertypeInDeclarationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirClass) {
-            checkMissingDependencySuperTypes(declaration.symbol, declaration.source, reporter, context)
+            checkMissingDependencySuperTypes(declaration.symbol, declaration.source, reporter, context, isEagerCheck = false)
         }
 
         if (declaration is FirTypeParameterRefsOwner) {

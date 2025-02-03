@@ -50,7 +50,7 @@ object MissingDependencySupertypeChecker {
                 context.trace, context.missingSupertypesResolver
             )
 
-            val eagerChecksAllowed = context.languageVersionSettings.supportsFeature(LanguageFeature.AllowEagerCompilerChecks)
+            val eagerChecksAllowed = context.languageVersionSettings.supportsFeature(LanguageFeature.AllowEagerSupertypeAccessibilityChecks)
             val unresolvedLazySupertypesByDefault = descriptor is ConstructorDescriptor || descriptor is FakeCallableDescriptorForObject
 
             if (eagerChecksAllowed || !unresolvedLazySupertypesByDefault && !errorReported) {

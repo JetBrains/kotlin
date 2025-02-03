@@ -165,7 +165,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary(
             "library",
             "test/Super.class",
-            additionalOptions = listOf("-XXLanguage:-${LanguageFeature.AllowEagerCompilerChecks.name}"),
+            additionalOptions = listOf("-XXLanguage:-${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
         )
     }
 
@@ -173,7 +173,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary(
             "library",
             "test/Super.class",
-            additionalOptions = listOf("-XXLanguage:+${LanguageFeature.AllowEagerCompilerChecks.name}"),
+            additionalOptions = listOf("-XXLanguage:+${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
         )
     }
 

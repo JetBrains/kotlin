@@ -26442,6 +26442,24 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("InaccessibleTypeEagerCheck.kt")
+      public void testInaccessibleTypeEagerCheck() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/InaccessibleTypeEagerCheck.kt");
+      }
+
+      @Test
+      @TestMetadata("InaccessibleTypeEagerCheckForbidden.kt")
+      public void testInaccessibleTypeEagerCheckForbidden() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/InaccessibleTypeEagerCheckForbidden.kt");
+      }
+
+      @Test
+      @TestMetadata("InaccessibleTypeEagerCheckJava.kt")
+      public void testInaccessibleTypeEagerCheckJava() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/InaccessibleTypeEagerCheckJava.kt");
+      }
+
+      @Test
       @TestMetadata("internal.kt")
       public void testInternal() {
         runTest("compiler/testData/diagnostics/tests/multimodule/internal.kt");

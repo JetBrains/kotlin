@@ -395,6 +395,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val declarationType: KaType
     }
 
+    interface MissingDependencySuperclassWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingDependencySuperclassWarning::class
+        val missingType: KaType
+        val declarationType: KaType
+    }
+
     interface MissingDependencySuperclassInTypeArgument : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = MissingDependencySuperclassInTypeArgument::class
         val missingType: KaType

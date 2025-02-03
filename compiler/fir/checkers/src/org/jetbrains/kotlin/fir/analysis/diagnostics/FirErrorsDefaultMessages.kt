@@ -720,6 +720,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_CONTEXT_LISTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS
@@ -873,6 +874,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             MISSING_DEPENDENCY_SUPERCLASS,
             "Cannot access ''{0}'' which is a supertype of ''{1}''. Check your module classpath for missing or conflicting dependencies.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+        )
+        map.put(
+            MISSING_DEPENDENCY_SUPERCLASS_WARNING,
+            "Cannot access ''{0}'' which is a supertype of ''{1}''. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
             RENDER_TYPE,
         )

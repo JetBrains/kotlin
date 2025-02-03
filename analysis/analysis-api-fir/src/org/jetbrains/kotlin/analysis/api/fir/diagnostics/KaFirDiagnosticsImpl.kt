@@ -457,6 +457,13 @@ internal class MissingDependencySuperclassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MissingDependencySuperclass
 
+internal class MissingDependencySuperclassWarningImpl(
+    override val missingType: KaType,
+    override val declarationType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MissingDependencySuperclassWarning
+
 internal class MissingDependencySuperclassInTypeArgumentImpl(
     override val missingType: KaType,
     override val declarationType: KaType,
