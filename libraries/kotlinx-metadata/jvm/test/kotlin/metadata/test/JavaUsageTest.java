@@ -10,12 +10,11 @@ import kotlin.metadata.KmClass;
 import kotlin.metadata.jvm.JvmMetadataVersion;
 import kotlin.metadata.jvm.KotlinClassHeader;
 import kotlin.metadata.jvm.KotlinClassMetadata;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Objects;
-
-import static org.junit.Assert.*;
 
 public class JavaUsageTest {
 
@@ -29,7 +28,7 @@ public class JavaUsageTest {
     }
 
     @Test
-    @Ignore("Enable when KT-74254 is fixed")
+    @Disabled("Enable when KT-74254 is fixed")
     public void testWritingBackWithDefaults() {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
         KotlinClassMetadata clazz1 = ((KotlinClassMetadata) Objects.requireNonNull(KotlinClassMetadata.readStrict(m)));

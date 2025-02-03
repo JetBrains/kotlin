@@ -5,11 +5,11 @@
 
 package kotlin.metadata.test
 
-import org.junit.Ignore
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import kotlin.metadata.jvm.JvmMetadataVersion
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.Metadata
-import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -62,7 +62,7 @@ class WritersContractTest {
     }
 
     @Test
-    @Ignore("Enable when KT-74254 is fixed")
+    @Disabled("Enable when KT-74254 is fixed")
     fun nextVersionWrite() = everyType.forEach { before ->
         val md = KotlinClassMetadata.readStrict(before)
         val ver = md.version

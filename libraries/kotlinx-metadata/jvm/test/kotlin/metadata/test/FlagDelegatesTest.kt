@@ -6,7 +6,7 @@
 package kotlin.metadata.test
 
 import kotlin.metadata.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.metadata.internal.FlagImpl
 import kotlin.metadata.internal._flagAccess
 import kotlin.reflect.KMutableProperty0

@@ -12,7 +12,7 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.Metadata
 import kotlin.metadata.jvm.internal.writeProtoBufData
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 

@@ -28,8 +28,7 @@ dependencies {
     embedded(project(":core:metadata"))
     embedded(project(":core:metadata.jvm"))
     embedded(protobufLite())
-    testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit5"))
     testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
@@ -39,6 +38,10 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xallow-kotlin-package")
     }
+}
+
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
 }
 
 publish()

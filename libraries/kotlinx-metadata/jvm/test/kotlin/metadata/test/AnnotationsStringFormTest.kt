@@ -8,7 +8,7 @@ package kotlin.metadata.test
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmAnnotationArgument
 import kotlin.metadata.jvm.annotations
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
