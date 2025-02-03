@@ -81,7 +81,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.createPluginDataFrameSchema
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
@@ -321,6 +320,7 @@ class FunctionCallTransformer(
         val receiverType = explicitReceiver?.resolvedType
         val returnType = call.resolvedType
         val scopeFunction = if (explicitReceiver != null) findLet() else findRun()
+        val originalSource = call.calleeReference.source
 
         // original call is inserted later
         call.transformCalleeReference(object : FirTransformer<Nothing?>() {
@@ -328,7 +328,6 @@ class FunctionCallTransformer(
                 return if (element is FirResolvedNamedReference) {
                     @Suppress("UNCHECKED_CAST")
                     buildResolvedNamedReference {
-                        source = call.calleeReference.source
                         this.name = element.name
                         resolvedSymbol = originalSymbol
                     } as E
@@ -430,7 +429,8 @@ class FunctionCallTransformer(
         }
 
         val newCall1 = buildFunctionCall {
-            source = call.source
+            // source = call.source makes IDE navigate to `let` declaration
+            source = null
             this.coneTypeOrNull = returnType
             if (receiverType != null) {
                 typeArguments += buildTypeProjectionWithVariance {
@@ -455,7 +455,7 @@ class FunctionCallTransformer(
                 linkedMapOf(argument to scopeFunction.valueParameterSymbols[0].fir)
             )
             calleeReference = buildResolvedNamedReference {
-                source = call.calleeReference.source
+                source = originalSource
                 this.name = scopeFunction.name
                 resolvedSymbol = scopeFunction
             }
