@@ -1087,7 +1087,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @Deprecated(
         message = "This property will be remove in future releases, please use `destinationDirectory` instead",
-        replaceWith = ReplaceWith("destinationDirectory")
+        replaceWith = ReplaceWith("destinationDirectory"),
+        DeprecationLevel.ERROR,
     )
     @Internal // Taken into account in the outputFileProvider property
     var destinationDir: Provider<File> = destinationDirectory.map { it.asFile }
