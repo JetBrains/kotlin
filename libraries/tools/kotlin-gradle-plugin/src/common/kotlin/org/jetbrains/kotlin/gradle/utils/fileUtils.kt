@@ -224,3 +224,5 @@ internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
 
     return rootFiles.map { it.toFile() }
 }
+
+internal val FileCollection.onlyJars: FileCollection get() = filter { it.extension == "jar" }
