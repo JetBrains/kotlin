@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 /**
@@ -59,7 +58,7 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
 
         return if (type.isNullable()) {
             JsIrBuilder.buildCall(context.ir.symbols.extensionToString).apply {
-                extensionReceiver = this@explicitlyConvertedToString
+                arguments[0] = this@explicitlyConvertedToString
             }
         } else {
             val anyToStringMethodSymbol = context.ir.symbols.memberToString
@@ -81,22 +80,20 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
 
     override fun visitCall(expression: IrCall): IrExpression {
         fun explicitlyConvertToStringIfNeeded(): IrExpression {
-            val lastArgIndex = expression.valueArgumentsCount - 1
-            val plusArg = expression.getValueArgument(lastArgIndex) ?: return super.visitCall(expression)
+            val lastArgIndex = expression.arguments.lastIndex
+            if (lastArgIndex < 0) return super.visitCall(expression)
+            val plusArg = expression.arguments[lastArgIndex] ?: return super.visitCall(expression)
             if (!plusArg.type.shouldExplicitlyConvertToString)
                 return super.visitCall(expression)
 
-            expression.putValueArgument(lastArgIndex, plusArg.explicitlyConvertedToString())
+            expression.arguments[lastArgIndex] = plusArg.explicitlyConvertedToString()
             return expression
         }
-
-        if (expression.valueArgumentsCount == 0)
-            return super.visitCall(expression)
 
         if (expression.symbol.isStringPlus)
             return explicitlyConvertToStringIfNeeded()
 
-        if (expression.dispatchReceiver.safeAs<IrFunctionReference>()?.symbol?.isStringPlus == true)
+        if ((expression.dispatchReceiver as? IrFunctionReference)?.symbol?.isStringPlus == true)
             return explicitlyConvertToStringIfNeeded()
 
         return super.visitCall(expression)
