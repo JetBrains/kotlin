@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
+import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 fun main() {
-    generateKotlinMultiplatformSourceSetConventionsKt()
-    generateKotlinMultiplatformSourceSetConventionsImplKt()
+    generateKotlinMultiplatformSourceSetConventionsKt(::getPrinterToFile)
+    generateKotlinMultiplatformSourceSetConventionsImplKt(::getPrinterToFile)
 }
 
-private fun generateKotlinMultiplatformSourceSetConventionsKt() {
+internal fun generateKotlinMultiplatformSourceSetConventionsKt(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     val sourceFile = File(kotlinGradlePluginApiSourceRoot)
         .resolve("org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions.kt")
 
@@ -35,10 +37,12 @@ private fun generateKotlinMultiplatformSourceSetConventionsKt() {
         .replaceRegion("Non-Native Source Set Accessors", nonNativeDeclarations)
         .replaceRegion("Common Source Set Accessors", commonDeclarations)
 
-    sourceFile.writeText(newSource)
+    withPrinterToFile(sourceFile) {
+        println(newSource)
+    }
 }
 
-private fun generateKotlinMultiplatformSourceSetConventionsImplKt() {
+internal fun generateKotlinMultiplatformSourceSetConventionsImplKt(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     val sourceFile = File(kotlinGradlePluginSourceRoot)
         .resolve("org/jetbrains/kotlin/gradle/internal/dsl/KotlinMultiplatformSourceSetConventionsImpl.kt")
 
@@ -61,7 +65,9 @@ private fun generateKotlinMultiplatformSourceSetConventionsImplKt() {
         .replaceRegion("Non-Native Source Set Accessors", nonNativeDeclarations)
         .replaceRegion("Common Source Set Accessors", commonDeclarations)
 
-    sourceFile.writeText(newSource)
+    withPrinterToFile(sourceFile) {
+        println(newSource)
+    }
 }
 
 internal data class PlatformSourceSetConvention(

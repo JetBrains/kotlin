@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
+import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
 
 fun main() {
-    generateAbstractKotlinArtifactsExtensionImplementation()
+    generateAbstractKotlinArtifactsExtensionImplementation(::getPrinterToFile)
 }
 
-private fun generateAbstractKotlinArtifactsExtensionImplementation() {
+internal fun generateAbstractKotlinArtifactsExtensionImplementation(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     val className = typeName("org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl")
 
     val imports = """
@@ -88,6 +90,9 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
 
     val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
+    withPrinterToFile(targetFile) {
+        println(code)
+    }
 }
 
 private fun KonanTarget.generateKonanTargetVal(): String {

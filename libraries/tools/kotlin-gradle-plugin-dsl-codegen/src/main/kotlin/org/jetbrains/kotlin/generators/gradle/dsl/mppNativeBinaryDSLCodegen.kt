@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
+import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 fun main() {
-    generateAbstractKotlinNativeBinaryContainer()
+    generateAbstractKotlinNativeBinaryContainer(::getPrinterToFile)
 }
 
 internal data class BinaryType(
@@ -118,7 +120,7 @@ private fun generateTypedGetters(binaryType: BinaryType): String = with(binaryTy
     """.trimIndent()
 }
 
-fun generateAbstractKotlinNativeBinaryContainer() {
+fun generateAbstractKotlinNativeBinaryContainer(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
 
     val binaryTypes = listOf(
         binaryType("an executable","Executable", "EXECUTABLE", "executable"),
@@ -201,5 +203,7 @@ fun generateAbstractKotlinNativeBinaryContainer() {
     ).joinToString(separator = "\n\n")
 
     val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
-    targetFile.writeText(code)
+    withPrinterToFile(targetFile) {
+        println(code)
+    }
 }
