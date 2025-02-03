@@ -253,12 +253,6 @@ public class FirLightTreeJvmIntegrationDiagnosticTestGenerated extends AbstractF
       public void testJdk17() {
         runTest("compiler/testData/diagnostics/jvmIntegration/modules/jdkReleaseFlag/jdk17.kt");
       }
-
-      @Test
-      @TestMetadata("unknownReleaseVersion.kt")
-      public void testUnknownReleaseVersion() {
-        runTest("compiler/testData/diagnostics/jvmIntegration/modules/jdkReleaseFlag/unknownReleaseVersion.kt");
-      }
     }
   }
 
