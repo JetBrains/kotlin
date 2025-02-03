@@ -1,0 +1,24 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.platform.sessions
+
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+
+/**
+ * A scope used for resolving files inside [useSiteModule].
+ * This resulting scope is a union of [useSiteModule]'s content scope and content scopes of modules [useSiteModule] depends on.
+ */
+@KaImplementationDetail
+public abstract class KaResolutionScope : GlobalSearchScope() {
+    public companion object {
+        public fun getInstance(useSiteModule: KaModule): KaResolutionScope {
+            return KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
+        }
+    }
+}

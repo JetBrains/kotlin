@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
@@ -23,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -134,18 +133,7 @@ private constructor(
                 }
             }
 
-            val shadowedScope = GlobalSearchScope.union(
-                buildSet {
-                    // Add an empty scope to the shadowed set to give GlobalSearchScope.union something
-                    // to work with if there are no extension tools.
-                    // If there are extension tools, any empty scopes, whether from shadowedSearchScope
-                    // on the extension tools or from this add() call, will be ignored.
-                    add(GlobalSearchScope.EMPTY_SCOPE)
-                    extensionTools.mapTo(this) { it.shadowedSearchScope }
-                }
-            )
-
-            val resolutionScope = KaResolutionScope(useSiteModule, shadowedScope)
+            val resolutionScope = KaResolutionScope.getInstance(useSiteModule)
 
             return createSession {
                 KaFirSession(

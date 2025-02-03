@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -34,7 +34,7 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
 
     private fun createSession(context: Fe10AnalysisContext, useSiteModule: KaModule, token: KaLifetimeToken): KaFe10Session {
         return createSession {
-            val resolutionScope = KaResolutionScope(useSiteModule)
+            val resolutionScope = KaResolutionScope.getInstance(useSiteModule)
             KaFe10Session(context, useSiteModule, token, analysisSessionProvider, resolutionScope)
         }
     }

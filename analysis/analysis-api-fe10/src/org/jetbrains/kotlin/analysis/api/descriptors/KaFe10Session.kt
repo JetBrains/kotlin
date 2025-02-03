@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.platform.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 internal class KaFe10Session(
