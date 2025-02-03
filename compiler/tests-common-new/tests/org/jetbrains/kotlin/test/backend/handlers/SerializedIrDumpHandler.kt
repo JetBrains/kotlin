@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_IR_DESERIALIZATION_CHECKS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
@@ -60,6 +62,8 @@ class SerializedIrDumpHandler(
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (module.isSkipped) return
+
+        val isFirFrontend = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
 
         val dumpOptions = DumpIrTreeOptions(
             /** Rename temporary local variables using a stable naming scheme. */
@@ -167,6 +171,13 @@ class SerializedIrDumpHandler(
                     false
                 }
             },
+
+            /**
+             * Render offsets, but only in case the FIR frontend is used.
+             * There are some known mismatches in offsets of fake overrides between K1 LazyIr and deserialized IR,
+             * which we don't care much.
+             */
+            printSourceOffsets = isFirFrontend,
         )
 
         val builder = dumper.builderForModule(module.name)
