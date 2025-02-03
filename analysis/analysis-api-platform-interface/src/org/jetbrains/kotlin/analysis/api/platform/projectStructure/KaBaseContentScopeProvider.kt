@@ -10,28 +10,30 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 public class KaBaseContentScopeProvider : KaContentScopeProvider {
     override fun getRefinedContentScope(module: KaModule): GlobalSearchScope {
-        var resultingScope = module.baseContentScope
+        val baseContentScope = module.baseContentScope
 
-        val refiners = KotlinContentScopeRefiner.getRefiners(module.project)
-
-        if (refiners.isEmpty()) return resultingScope
-
-        refiners.flatMap {
-            it.getEnlargementScopes(module).filter { scope ->
-                !GlobalSearchScope.isEmptyScope(scope)
-            }
-        }.forEach {
-            resultingScope = resultingScope.union(it)
+        val refiners = KotlinContentScopeRefiner.getRefiners(module.project).ifEmpty {
+            return baseContentScope
         }
 
-        refiners.flatMap {
-            it.getRestrictionScopes(module).filter { scope ->
-                !GlobalSearchScope.isEmptyScope(scope)
-            }
-        }.forEach {
-            resultingScope = resultingScope.intersectWith(GlobalSearchScope.notScope(it))
+        val enlargementScopes = mutableListOf<GlobalSearchScope>(baseContentScope)
+        val shadowedScopes = mutableListOf<GlobalSearchScope>()
+
+        refiners.forEach { refiner ->
+            enlargementScopes.addAll(
+                refiner.getEnlargementScopes(module).filter { !GlobalSearchScope.isEmptyScope(it) }
+            )
+
+            shadowedScopes.addAll(
+                refiner.getRestrictionScopes(module).filter { !GlobalSearchScope.isEmptyScope(it) }
+            )
         }
 
-        return resultingScope
+        val scopeMerger = KotlinGlobalSearchScopeMerger.getInstance(module.project)
+
+        val mergedEnlargementScope = scopeMerger.union(enlargementScopes)
+        val mergedShadowedScope = scopeMerger.union(shadowedScopes)
+
+        return mergedEnlargementScope.intersectWith(GlobalSearchScope.notScope(mergedShadowedScope))
     }
 }
