@@ -225,6 +225,10 @@ public class DefaultErrorMessages {
         MAP.put(NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES, "Non-parenthesized annotations on function types without receiver aren't yet supported (see KT-31734 for details)");
 
         MAP.put(ANNOTATION_IN_WHERE_CLAUSE_WARNING, "Type parameter annotations will not be allowed inside where clauses in future releases. You should probably move annotations to the type parameter declaration");
+        MAP.put(
+                IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
+                "Ignorability-related annotations are experimental and cannot be used with -Xreturn-value-checker in disabled state."
+        );
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");
