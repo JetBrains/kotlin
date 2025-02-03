@@ -787,6 +787,7 @@ Worker::~Worker() {
   for (auto job : queue_) {
       switch (job.kind) {
           case JOB_REGULAR:
+              mm::releaseExternalRCRef(job.regularJob.argument);
               mm::disposeExternalRCRef(job.regularJob.argument);
               job.regularJob.future->cancelUnlocked(memoryState_);
               break;
