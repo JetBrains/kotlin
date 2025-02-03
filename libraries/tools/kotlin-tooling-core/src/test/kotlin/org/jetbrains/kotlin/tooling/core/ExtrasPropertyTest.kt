@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.tooling.core
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 class ExtrasPropertyTest {
 
     class Subject : HasMutableExtras {
