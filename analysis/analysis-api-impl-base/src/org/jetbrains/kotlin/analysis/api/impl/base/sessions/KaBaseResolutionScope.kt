@@ -8,30 +8,27 @@ package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
+import org.jetbrains.kotlin.analysis.api.platform.sessions.KaResolutionScope
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * A scope used for resolving files inside [useSiteModule].
- * This scope is a union of [useSiteModule]'s content scope and content scopes of modules [useSiteModule] depends on.
- *
- * Additionally, [KaResolutionScope] encapsulates special handling required for
+ * [KaBaseResolutionScope] encapsulates special handling required for
  * generated and shadowed scopes provided by [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider].
  * After KT-74541 is fixed, these scopes will be contained directly in [KaModule.contentScope].
+ *
+ * [KaBaseResolutionScope] is not intended to be created manually,
+ * it's a responsibility of [org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider]
+ * Please, use [KaResolutionScope.getInstance]
  */
 @KaImplementationDetail
-class KaResolutionScope(
+class KaBaseResolutionScope internal constructor(
     private val useSiteModule: KaModule,
-    private val shadowedScopeByGeneratedFiles: GlobalSearchScope = EMPTY_SCOPE,
-) : GlobalSearchScope() {
-    val resolutionScope: GlobalSearchScope
-        get() = KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
-            .intersectWith(notScope(shadowedScopeByGeneratedFiles))
-
+    private val resolutionScope: GlobalSearchScope,
+) : KaResolutionScope() {
     override fun getProject(): Project? {
         return resolutionScope.project
     }
@@ -49,16 +46,25 @@ class KaResolutionScope(
     }
 
     override fun toString(): String {
-        return "Analysis scope for $useSiteModule (Resolution scope: $resolutionScope, Scope shadowed by generated files: $shadowedScopeByGeneratedFiles)"
+        return "Analysis scope for $useSiteModule. Resolution scope: $resolutionScope"
     }
 
     /**
      * To support files from [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider]
      * which are not dangling files
      */
-    fun isFromGeneratedModule(file: VirtualFile): Boolean {
-        val analysisContextModule = file.analysisContextModule ?: return false
-        return isFromGeneratedModule(analysisContextModule)
+    fun isFromGeneratedModule(virtualFile: VirtualFile): Boolean {
+        virtualFile.analysisContextModule?.let {
+            return isFromGeneratedModule(it)
+        }
+
+        val ktFile = virtualFile.findPsiFile(useSiteModule.project) as? KtFile ?: return false
+        if (ktFile.isDangling) {
+            val module = KaModuleProvider.getModule(useSiteModule.project, ktFile, useSiteModule)
+            return isFromGeneratedModule(module)
+        }
+
+        return false
     }
 
     fun isFromGeneratedModule(analysisContextModule: KaModule): Boolean {
