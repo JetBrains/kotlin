@@ -47,7 +47,7 @@ internal class KaFe10DescAnonymousFunctionSymbol(
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { descriptor.createContextParameters(analysisContext) }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromSource<KaAnonymousFunctionSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()

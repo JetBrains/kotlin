@@ -260,9 +260,9 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaValueParameter
         }
     }
 
-internal fun KaFirKtBasedSymbol<KtTypeParameterListOwnerStub<*>, *>.createKaContextParameters(): List<KaContextParameterSymbol>? =
+internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParameters(): List<KaContextParameterSymbol>? =
     ifNotLibrarySource {
-        val psi = backingPsi ?: return null // no psi
+        val psi = backingPsi as? KtTypeParameterListOwnerStub<*> ?: return null // no psi
         val list = psi.contextReceiverList ?: return emptyList() // no context receivers/parameters
         with(analysisSession) {
             list.contextParameters().map { it.symbol as KaContextParameterSymbol }.ifEmpty {
