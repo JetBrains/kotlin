@@ -31,8 +31,8 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
             val extension = kotlinJvmExtension
             extension.extensions.createAbiValidationExtension(this).configure(this)
         }
-        kotlinExtension is KotlinAndroidProjectExtension -> {
-            val extension = kotlinExtension as KotlinAndroidProjectExtension
+        kotlinAndroidExtensionOrNull != null -> {
+            val extension = kotlinAndroidExtension
             extension.extensions.createAbiValidationExtension(this).configure(this)
         }
         multiplatformExtensionOrNull != null -> {
