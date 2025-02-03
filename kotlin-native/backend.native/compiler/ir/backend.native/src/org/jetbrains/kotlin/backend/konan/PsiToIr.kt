@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.SymbolOverDescriptorsLookupUtils
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
@@ -101,7 +100,6 @@ internal fun PsiToIrContext.psiToIr(
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val symbols = KonanSymbols(
             this,
-            SymbolOverDescriptorsLookupUtils(generatorContext.symbolTable),
             generatorContext.irBuiltIns,
             this.config.configuration
     )

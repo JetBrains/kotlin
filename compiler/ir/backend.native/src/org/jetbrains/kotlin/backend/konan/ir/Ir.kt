@@ -16,11 +16,9 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,17 +28,12 @@ object KonanNameConventions {
     val getWithoutBoundCheck = Name.special("<getWithoutBoundCheck>")
 }
 
-interface SymbolLookupUtils {
-    fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType?
-}
-
 // This is what Context collects about IR.
 class KonanIr(override val symbols: KonanSymbols): Ir()
 
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
 class KonanSymbols(
         context: ErrorReportingContext,
-        val lookup: SymbolLookupUtils,
         irBuiltIns: IrBuiltIns,
         config: CompilerConfiguration,
 ) : Symbols(irBuiltIns) {
@@ -235,9 +228,13 @@ class KonanSymbols(
     val executeImpl = symbolFinder.topLevelFunction(KonanFqNames.packageName.child(Name.identifier("concurrent")), "executeImpl")
     val createCleaner = symbolFinder.topLevelFunction(KonanFqNames.packageName.child(Name.identifier("ref")), "createCleaner")
 
+    val areEqualByValueFunctions = internalFunctions("areEqualByValue")
+
     // TODO: this is strange. It should be a map from IrClassSymbol
-    val areEqualByValue = internalFunctions("areEqualByValue").associateBy {
-        lookup.getValueParameterPrimitiveBinaryType(it, 0)!!
+    val areEqualByValue: Map<PrimitiveBinaryType, IrSimpleFunctionSymbol> by lazy {
+        areEqualByValueFunctions.associateBy {
+            it.owner.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()!!
+        }
     }
 
     val reinterpret = internalFunction("reinterpret")
@@ -474,17 +471,4 @@ class KonanSymbols(
     }
 
     fun getTestFunctionKind(kind: TestProcessorFunctionKind) = testFunctionKindCache[kind]!!
-}
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : SymbolLookupUtils {
-    override fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType? {
-        return function.descriptor.valueParameters[index].type.computePrimitiveBinaryTypeOrNull()
-    }
-}
-
-class SymbolOverIrLookupUtils() : SymbolLookupUtils {
-    override fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType? {
-        return function.owner.valueParameters[index].type.computePrimitiveBinaryTypeOrNull()
-    }
 }
