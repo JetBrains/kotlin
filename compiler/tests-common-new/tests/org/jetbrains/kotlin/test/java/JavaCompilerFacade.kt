@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.java
 
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -28,8 +29,9 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         if (module.javaFiles.isEmpty()) return
 
         val outputDir = testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, classFileFactory)
-        val javaClasspath =
-            listOf(outputDir.path) + configuration.jvmClasspathRoots.map { it.absolutePath }
+        val javaClasspath = listOf(outputDir.path) +
+                configuration.jvmClasspathRoots.map { it.absolutePath } +
+                configuration.jvmModularRoots.map { it.absolutePath }
 
         val javacOptions = extractJavacOptions(
             module,

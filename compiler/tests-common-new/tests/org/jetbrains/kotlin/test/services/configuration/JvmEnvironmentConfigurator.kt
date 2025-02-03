@@ -400,8 +400,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
             if (isJava9Module) {
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(dependency))
+            } else {
+                addJvmClasspathRoot(dependency)
             }
-            addJvmClasspathRoot(dependency)
         }
 
         val binaryFriends = module.friendDependencies.filter { it.kind == DependencyKind.Binary }
