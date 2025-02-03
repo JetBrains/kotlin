@@ -64,5 +64,5 @@ var CompilerConfiguration.duplicatedUniqueNameStrategy: DuplicatedUniqueNameStra
 
 var CompilerConfiguration.customKlibAbiVersion: KotlinAbiVersion?
     get() = get(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION)
-    set(value) { put(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION, requireNotNull(value) { "nullable values are not allowed" }) }
+    set(value) { putIfNotNull(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION, value) }
 
