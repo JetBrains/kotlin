@@ -6,6 +6,11 @@ dependencies {
     api(gradleApi())
     api(project(":kotlin-gradle-plugin-api"))
     api(project(":native:kotlin-native-utils"))
+    implementation(projectTests(":generators")) {
+        exclude("org.jetbrains.kotlin", "kotlin-test") // because of hacky projectTests this transitive dependency does not work well
+    }
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(kotlin("test"))
 }
 
 val generateGroupName = "Generate"
@@ -43,7 +48,7 @@ val generateMppSourceSetConventions by generator(
 }
 
 
-fun JavaExec.setKGPSourceRootPaths() {
+fun JavaForkOptions.setKGPSourceRootPaths() {
     systemProperty(
         "org.jetbrains.kotlin.generators.gradle.dsl.kotlinGradlePluginSourceRoot",
         project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
@@ -53,4 +58,9 @@ fun JavaExec.setKGPSourceRootPaths() {
         "org.jetbrains.kotlin.generators.gradle.dsl.kotlinGradlePluginApiSourceRoot",
         project(":kotlin-gradle-plugin-api").projectDir.resolve("src/common/kotlin").absolutePath
     )
+}
+
+projectTest(jUnitMode = JUnitMode.JUnit4, parallel = true) {
+    useJUnit() // use JUnit4 as the `:generators` tests use JUnit 4, and we reuse the logic.
+    setKGPSourceRootPaths()
 }
