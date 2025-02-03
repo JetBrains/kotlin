@@ -201,10 +201,10 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     val typeParameters = declarationOwnTypeParams
 
     val freshTypeVariables = typeParameters.map(::ConeTypeParameterBasedTypeVariable)
-    val freshIncorporatedTypeVariables = incorporatedCollectionOperatorOfTypeParams.map(::ConeTypeParameterBasedTypeVariable)
+    val freshIncorporatedOperatorFunOfTypeVariables = incorporatedCollectionOperatorOfTypeParams.map(::ConeTypeParameterBasedTypeVariable)
 
     val toFreshVariables = substitutorByMap(
-        (freshTypeVariables + freshIncorporatedTypeVariables).associate { it.typeParameterSymbol to it.defaultType },
+        (freshTypeVariables + freshIncorporatedOperatorFunOfTypeVariables).associate { it.typeParameterSymbol to it.defaultType },
         session
     ).let {
         val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorSubstitutor
@@ -215,7 +215,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         }
     }
 
-    for (freshVariable in freshTypeVariables + freshIncorporatedTypeVariables) {
+    for (freshVariable in freshTypeVariables + freshIncorporatedOperatorFunOfTypeVariables) {
         csBuilder.registerVariable(freshVariable)
     }
 
