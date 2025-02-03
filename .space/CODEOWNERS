@@ -416,7 +416,7 @@
 /plugins/plugin-sandbox/ "Kotlin Frontend"
 /plugins/imports-dumper/ "Kotlin Frontend"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
-/plugins/kapt3/ "Kotlin JVM"
+/plugins/kapt/ "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
 /plugins/kotlinx-serialization/kotlinx-serialization.k2/src/org/jetbrains/kotlinx/serialization/compiler/fir/checkers/KtDefaultErrorMessagesSerialization.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
 /plugins/js-plain-objects/ "Kotlin JS"
