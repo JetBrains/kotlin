@@ -21,9 +21,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
-class GroupBy(val df: PluginDataFrameSchema, val keys: List<ColumnWithPathApproximation>, val moveToTop: Boolean)
+class GroupBy(val keys: PluginDataFrameSchema, val groups: PluginDataFrameSchema)
 
 class DataFrameGroupBy : AbstractInterpreter<GroupBy>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
@@ -31,7 +33,7 @@ class DataFrameGroupBy : AbstractInterpreter<GroupBy>() {
     val Arguments.cols: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): GroupBy {
-        return GroupBy(receiver, cols.resolve(receiver), moveToTop)
+        return GroupBy(keys = createPluginDataFrameSchema(cols.resolve(receiver), moveToTop), groups = receiver)
     }
 }
 
@@ -52,7 +54,7 @@ class GroupByInto : AbstractInterpreter<Unit>() {
 }
 
 class Aggregate : AbstractSchemaModificationInterpreter() {
-    val Arguments.receiver: GroupBy by arg()
+    val Arguments.receiver: GroupBy by groupBy()
     val Arguments.body: FirAnonymousFunctionExpression by arg(lens = Interpreter.Id)
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return aggregate(
@@ -87,7 +89,7 @@ fun KotlinTypeFacade.aggregate(
             )
         }
 
-        val cols = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop).columns() + dsl.columns.map {
+        val cols = groupBy.keys.columns() + dsl.columns.map {
             simpleColumnOf(it.name, it.type)
         }
         PluginDataFrameSchema(cols)
@@ -144,13 +146,13 @@ fun KotlinTypeFacade.createPluginDataFrameSchema(keys: List<ColumnWithPathApprox
 }
 
 class GroupByToDataFrame : AbstractSchemaModificationInterpreter() {
-    val Arguments.receiver: GroupBy by arg()
+    val Arguments.receiver: GroupBy by groupBy()
     val Arguments.groupedColumnName: String? by arg(defaultValue = Present(null))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val grouped = listOf(SimpleFrameColumn(groupedColumnName ?: "group", receiver.df.columns()))
+        val grouped = listOf(SimpleFrameColumn(groupedColumnName ?: "group", receiver.groups.columns()))
         return PluginDataFrameSchema(
-            createPluginDataFrameSchema(receiver.keys, receiver.moveToTop).columns() + grouped
+            receiver.keys.columns() + grouped
         )
     }
 }
