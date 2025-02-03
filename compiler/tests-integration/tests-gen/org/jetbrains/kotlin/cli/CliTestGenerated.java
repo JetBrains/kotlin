@@ -1778,6 +1778,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.args");
     }
 
+    @TestMetadata("unknownReleaseVersion.args")
+    public void testUnknownReleaseVersion() {
+      runTest("compiler/testData/cli/jvm/unknownReleaseVersion.args");
+    }
+
     @TestMetadata("unrestrictedBuilderInference.args")
     public void testUnrestrictedBuilderInference() {
       runTest("compiler/testData/cli/jvm/unrestrictedBuilderInference.args");

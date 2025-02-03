@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-// KOTLINC_ARGS: -Xjdk-release=5
 package foo;
 
 public class Foo {
