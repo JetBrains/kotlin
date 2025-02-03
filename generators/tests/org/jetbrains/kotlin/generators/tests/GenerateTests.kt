@@ -346,7 +346,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/kapt3/kapt3-cli/tests-gen", "plugins/kapt3/kapt3-cli/testData") {
+        testGroup("plugins/kapt/kapt-cli/tests-gen", "plugins/kapt/kapt-cli/testData") {
             testClass<AbstractArgumentParsingTest> {
                 model("argumentParsing", extension = "txt")
             }
@@ -358,7 +358,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/kapt3/kapt3-compiler/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
+        testGroup("plugins/kapt/kapt-compiler/tests-gen", "plugins/kapt/kapt-compiler/testData") {
             testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")
             }
