@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseResolutionScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
+import org.jetbrains.kotlin.analysis.api.platform.sessions.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -17,13 +19,13 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 
 class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
-    override fun getResolutionScope(module: KaModule): GlobalSearchScope {
-        val moduleWithDependentScopes = getResolutionScopes(module)
-        return KotlinGlobalSearchScopeMerger.getInstance(module.project).union(moduleWithDependentScopes)
+    override fun getResolutionScope(module: KaModule): KaResolutionScope {
+        val moduleWithDependentScopes = getModuleAndDependenciesContentScopes(module)
+        return KaBaseResolutionScope(module, KotlinGlobalSearchScopeMerger.getInstance(module.project).union(moduleWithDependentScopes))
     }
 
     @OptIn(KaPlatformInterface::class)
-    private fun getResolutionScopes(module: KaModule): List<GlobalSearchScope> {
+    private fun getModuleAndDependenciesContentScopes(module: KaModule): List<GlobalSearchScope> {
         val modules = buildSet {
             add(module)
             addAll(module.allDirectDependencies())
@@ -35,8 +37,10 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
         return buildList {
             modules.mapTo(this) { it.contentScope }
             if (modules.none { it is KaBuiltinsModule }) {
-                // Workaround for KT-72988
-                // after fixed, it should probably only be added if `module.targetPlatform.hasCommonKotlinStdlib()`
+                // `KaBuiltinsModule` is a module containing builtins declarations for the target platform.
+                // It is never a dependency of any `KaModule`,
+                // builtins are registered on a symbol provider level during session creation.
+                // That's why its scope has to be added manually here.
                 add(createBuiltinsScope(module.project))
             }
         }
