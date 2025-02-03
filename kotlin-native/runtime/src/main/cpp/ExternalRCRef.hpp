@@ -252,7 +252,9 @@ public:
     RawExternalRCRef* get() const noexcept { return static_cast<RawExternalRCRef*>(raw_); }
 
     // Detach from current reference without disposing or altering reference count.
-    RawExternalRCRef* release() noexcept {
+    // NOTE: in C++ this is usually called release(), but here this name conflicts with `retain/release` operations
+    //       on `RawExternalRCRef`.
+    RawExternalRCRef* detach() noexcept {
         auto result = std::move(raw_);
         return static_cast<RawExternalRCRef*>(result);
     }

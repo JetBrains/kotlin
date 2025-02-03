@@ -387,7 +387,7 @@ class State {
     } else {
       job.kind = JOB_REGULAR;
       job.regularJob.function = jobFunction;
-      job.regularJob.argument = jobArgument.release();
+      job.regularJob.argument = jobArgument.detach();
       job.regularJob.future = future;
     }
 
@@ -409,7 +409,7 @@ class State {
     worker = it->second;
     Job job;
     job.kind = JOB_EXECUTE_AFTER;
-    job.executeAfter.operation = operation.release();
+    job.executeAfter.operation = operation.detach();
     if (afterMicroseconds == 0) {
       worker->putJob(job, false);
     } else {
@@ -431,7 +431,7 @@ class State {
 
       Job job;
       job.kind = JOB_EXECUTE_AFTER;
-      job.executeAfter.operation = operation.release();
+      job.executeAfter.operation = operation.detach();
       worker->putJob(job, false);
       return true;
   }
@@ -1059,7 +1059,7 @@ KInt Kotlin_Worker_stateOfFuture(KInt id) {
 }
 
 mm::RawExternalRCRef* Kotlin_Worker_consumeFuture(KInt id) {
-    return consumeFuture(id).release();
+    return consumeFuture(id).detach();
 }
 
 KBoolean Kotlin_Worker_waitForAnyFuture(KInt versionToken, KInt millis) {
