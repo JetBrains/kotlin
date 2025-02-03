@@ -2810,7 +2810,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS,
-            "Type alias expansion captures outer type parameters: ''{0}''.",
+            "Type alias expansion captures outer type parameters: {0}.",
             commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION),
         )
 
