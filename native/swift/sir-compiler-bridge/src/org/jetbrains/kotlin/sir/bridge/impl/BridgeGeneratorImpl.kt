@@ -555,9 +555,9 @@ private fun String.mapSwift(temporalName: String = "it", transform: (String) -> 
 }
 
 private sealed class Bridge(
-    val swiftType: SirType,
+    open val swiftType: SirType,
     val kotlinType: KotlinType,
-    val cType: CType,
+    open val cType: CType,
 ) {
     class AsIs(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
         override val inKotlinSources = IdentityValueConversion
@@ -797,15 +797,19 @@ private sealed class Bridge(
     }
 
     class AsBlock(
-        swiftType: SirFunctionalType,
+        override val swiftType: SirFunctionalType,
     ) : Bridge(
         swiftType = swiftType,
         kotlinType = KotlinType.KotlinObject,
         cType = CType.BlockPointer(
-            parameters = swiftType.parameterTypes.map { bridgeType(it).cType },
+            parameters = swiftType.parameterTypes.map { CType.NSNumber },
             returnType = CType.NSNumber,
         )
     ) {
+
+        override val cType: CType.BlockPointer
+            get() = super.cType as? CType.BlockPointer
+                ?: error("attempt to generate kotlin sources for handling closure fot a type that is not closure")
 
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
@@ -814,9 +818,13 @@ private sealed class Bridge(
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    val readArgs: List<String> = swiftType.parameterTypes
+                        .mapIndexed { idx, el ->
+                            "arg${idx}.toCPointer<CPointed>()!!.asStableRef<${typeNamer.kotlinFqName(el)}>().get()"
+                        }
                     return """{
-                    |    val newClosure: () -> Long = {
-                    |        val res = _result()
+                    |    val newClosure: (${cType.parameters.joinToString { "Long" }}) -> Long = { ${cType.parameters.mapIndexed { idx, el -> "arg${idx}" }.joinToString()} ->
+                    |        val res = _result(${readArgs.joinToString()})
                     |        kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
                     |    }
                     |    newClosure.objcPtr()
@@ -836,9 +844,18 @@ private sealed class Bridge(
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val argsInClosure = List(cType.parameters.size) { idx -> "arg${idx}" }.takeIf { it.isNotEmpty() }
+                val callArgs = argsInClosure?.let { it.joinToString { "NSNumber(value: ${it}.__externalRCRef())" } } ?: ""
+                val defineArgs = argsInClosure?.let { "${it.joinToString()} in " } ?: ""
                 return """{
                 |    let nativeBlock = $valueExpression
-                |    return { nativeBlock!() }
+                |    return { $defineArgs
+                |        let result = nativeBlock!($callArgs)
+                |        return ${
+                    if (swiftType.returnType.isVoid) "()"
+                    else bridgeType(swiftType.returnType).inSwiftSources.kotlinToSwift(typeNamer, "result!.uintValue")
+                }
+                |    }
                 |}()""".trimMargin()
             }
 

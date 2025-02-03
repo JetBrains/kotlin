@@ -29,7 +29,7 @@ public fun root_foo_returning_closure_returning_closure__TypesOfArguments__Int32
     val __arg1 = arg1
     val _result = foo_returning_closure_returning_closure(__arg1)
     return {
-        val newClosure: () -> Long = {
+        val newClosure: () -> Long = {  ->
             val res = _result()
             kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
         }
@@ -42,7 +42,7 @@ public fun root_foo_returning_simple_closure__TypesOfArguments__Int32__(arg1: In
     val __arg1 = arg1
     val _result = foo_returning_simple_closure(__arg1)
     return {
-        val newClosure: () -> Long = {
+        val newClosure: () -> Long = {  ->
             val res = _result()
             kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
         }

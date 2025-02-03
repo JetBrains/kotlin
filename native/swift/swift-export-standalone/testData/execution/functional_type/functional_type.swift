@@ -33,6 +33,29 @@ func testSavedSwiftBlockOnKotlinSide() throws {
     try assertEquals(actual: i, expected: 4)
 }
 
+func testProducingBlockWithRefType() throws {
+    let block = produce_func_with_ref_id()
+    let f = Foo(i: 0)
+
+    try assertEquals(actual: f.i, expected: 0)
+    var received = block(f)
+
+    try assertEquals(actual: f, expected: received)
+    try assertEquals(actual: f.i, expected: 2)
+    try assertEquals(actual: received.i, expected: 2)
+
+    received = produce_func_with_ref_id()(f)
+
+    try assertEquals(actual: f, expected: received)
+    try assertEquals(actual: f.i, expected: 4)
+    try assertEquals(actual: received.i, expected: 4)
+
+    let zip = produce_func_with_ref_zip()
+    let b = zip(f, Foo(i: 1))
+    try assertEquals(actual: b.left.i, expected: 4)
+    try assertEquals(actual: b.right.i, expected: 1)
+}
+
 class Functional_typeTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -42,6 +65,7 @@ class Functional_typeTests : TestProvider {
             TestCase(name: "testCallingClosureReceivedFromKotlin", method: withAutorelease(testCallingClosureReceivedFromKotlin)),
             TestCase(name: "testCallingClosureSentToKotlin", method: withAutorelease(testCallingClosureSentToKotlin)),
             TestCase(name: "testSavedSwiftBlockOnKotlinSide", method: withAutorelease(testSavedSwiftBlockOnKotlinSide)),
+            TestCase(name: "testProducingBlockWithRefType", method: withAutorelease(testProducingBlockWithRefType)),
         ]
     }
 }
