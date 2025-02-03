@@ -1,0 +1,77 @@
+KaAnonymousFunctionSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: [
+    KaContextReceiver:
+      label: parameter1
+      type: KaUsualClassType:
+        annotations: [
+          Anno(position = "12")
+            psi: KtAnnotationEntry
+        ]
+        typeArguments: []
+        type: @R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
+    KaContextReceiver:
+      label: parameter2
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: [
+              Anno(position = "str")
+                psi: KtAnnotationEntry
+            ]
+            typeArguments: []
+            type: @R|Anno|(position = String(str))  kotlin/Int
+        ]
+        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+  ]
+  hasStableParameterNames: true
+  isActual: false
+  isExpect: false
+  isExtension: false
+  location: LOCAL
+  modality: FINAL
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: i
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

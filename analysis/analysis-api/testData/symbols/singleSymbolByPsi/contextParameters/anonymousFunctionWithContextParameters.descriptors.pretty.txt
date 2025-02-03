@@ -1,0 +1,1 @@
+fun(i: kotlin.Int): kotlin.Unit

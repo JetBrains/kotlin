@@ -356,6 +356,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotatedContextParameterOnAnonymousFunction.kt")
+    public void testAnnotatedContextParameterOnAnonymousFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedContextParameterOnAnonymousFunction2.kt")
+    public void testAnnotatedContextParameterOnAnonymousFunction2() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnAnonymousFunction2.kt");
+    }
+
+    @Test
     @TestMetadata("annotatedContextParameterOnClass.kt")
     public void testAnnotatedContextParameterOnClass() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedContextParameterOnClass.kt");
@@ -392,6 +404,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("anonymousFunctionWithContextParameters.kt")
+    public void testAnonymousFunctionWithContextParameters() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/anonymousFunctionWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionWithContextReceivers.kt")
+    public void testAnonymousFunctionWithContextReceivers() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/anonymousFunctionWithContextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("classWithContextParameters.kt")
     public void testClassWithContextParameters() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/classWithContextParameters.kt");
@@ -401,6 +425,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     @TestMetadata("classWithContextReceivers.kt")
     public void testClassWithContextReceivers() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/classWithContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnAnonymousFunction.kt")
+    public void testContextParameterOnAnonymousFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/contextParameterOnAnonymousFunction.kt");
     }
 
     @Test
