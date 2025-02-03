@@ -131,6 +131,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("dropNA.kt")
+  public void testDropNA() {
+    runTest("testData/box/dropNA.kt");
+  }
+
+  @Test
   @TestMetadata("dropNulls.kt")
   public void testDropNulls() {
     runTest("testData/box/dropNulls.kt");
@@ -284,6 +290,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("mapToFrame.kt")
   public void testMapToFrame() {
     runTest("testData/box/mapToFrame.kt");
+  }
+
+  @Test
+  @TestMetadata("modifySchemaInAggregate.kt")
+  public void testModifySchemaInAggregate() {
+    runTest("testData/box/modifySchemaInAggregate.kt");
   }
 
   @Test
@@ -449,9 +461,21 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("schemaFromImplicitReceiver.kt")
+  public void testSchemaFromImplicitReceiver() {
+    runTest("testData/box/schemaFromImplicitReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("select.kt")
   public void testSelect() {
     runTest("testData/box/select.kt");
+  }
+
+  @Test
+  @TestMetadata("selectColsOf.kt")
+  public void testSelectColsOf() {
+    runTest("testData/box/selectColsOf.kt");
   }
 
   @Test

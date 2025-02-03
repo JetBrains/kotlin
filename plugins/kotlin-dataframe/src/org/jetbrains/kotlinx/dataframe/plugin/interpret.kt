@@ -505,7 +505,7 @@ internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
     val refinedArgument = mutableListOf<RefinedArgument>()
 
     val parameterName = Name.identifier("receiver")
-    explicitReceiver?.let {
+    (explicitReceiver ?: extensionReceiver)?.let {
         if (it is FirResolvedQualifier && it.resolvedToCompanionObject) {
             return@let
         }
