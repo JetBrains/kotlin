@@ -71,6 +71,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
   }
 
   @Test
+  @TestMetadata("classWithContextReceiverFromLibrary.kt")
+  public void testClassWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/classWithContextReceiverFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/enumEntry.kt");
@@ -80,6 +86,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
   @TestMetadata("fileWalkDirectionEnum.kt")
   public void testFileWalkDirectionEnum() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithContextParameterFromLibrary.kt")
+  public void testFunctionWithContextParameterFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/functionWithContextParameterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithContextReceiverFromLibrary.kt")
+  public void testFunctionWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/functionWithContextReceiverFromLibrary.kt");
   }
 
   @Test
@@ -134,6 +152,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
   @TestMetadata("nothing.kt")
   public void testNothing() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nothing.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithContextParameterFromLibrary.kt")
+  public void testPropertyWithContextParameterFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyWithContextParameterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithContextReceiverFromLibrary.kt")
+  public void testPropertyWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyWithContextReceiverFromLibrary.kt");
   }
 
   @Test

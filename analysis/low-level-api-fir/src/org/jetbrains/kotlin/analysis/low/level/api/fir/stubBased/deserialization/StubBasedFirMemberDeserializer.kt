@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -427,6 +427,7 @@ internal class StubBasedFirMemberDeserializer(
 
     private fun loadContextReceiver(contextReceiver: KtContextReceiver, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
         return buildValueParameter {
+            this.source = KtRealPsiSourceElement(contextReceiver)
             this.moduleData = c.moduleData
             this.origin = initialOrigin
             this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
@@ -443,6 +444,7 @@ internal class StubBasedFirMemberDeserializer(
 
     private fun loadContextReceiver(parameter: KtParameter, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
         return buildValueParameter {
+            this.source = KtRealPsiSourceElement(parameter)
             this.moduleData = c.moduleData
             this.origin = initialOrigin
             this.name = if (parameter.name == "_") SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else parameter.nameAsSafeName
@@ -463,6 +465,7 @@ internal class StubBasedFirMemberDeserializer(
     ): List<FirValueParameter> {
         return classOrObject.contextReceivers.mapNotNull { it.typeReference() }.map {
             buildValueParameter {
+                this.source = KtRealPsiSourceElement(it)
                 this.moduleData = c.moduleData
                 this.origin = initialOrigin
                 this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR

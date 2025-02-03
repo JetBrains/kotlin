@@ -76,11 +76,12 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
 
     override val name: Name
         get() = withValidityAssertion {
-            if (backingPsi != null) {
-                backingPsi.name()?.let(Name::identifier) ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-            } else {
-                firSymbol.name
-            }
+            // Currently, library elements are representing both context receiver and context parameters,
+            // so there is no way to distinguish between them.
+            // And by default they should be unnamed
+            ifSource {
+                backingPsi?.name()?.let(Name::identifier) ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            } ?: firSymbol.name
         }
 
     override val compilerVisibility: Visibility
