@@ -1,0 +1,1 @@
+/typeAliasExpansionCapturesOuterTypeParametersErrorMessage.kt:(118,123): error: Type alias expansion captures outer type parameters: ''T' defined in '/C''.
