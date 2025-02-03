@@ -20,7 +20,7 @@ class KaptIntegrationStubsDumpHandler(testServices: TestServices) : AbstractKapt
     }
 
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
-        val actualRaw = testServices.kapt3ExtensionProvider[module].savedStubs ?: assertions.fail { "Stubs were not saved" }
+        val actualRaw = testServices.kaptExtensionProvider[module].savedStubs ?: assertions.fail { "Stubs were not saved" }
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }

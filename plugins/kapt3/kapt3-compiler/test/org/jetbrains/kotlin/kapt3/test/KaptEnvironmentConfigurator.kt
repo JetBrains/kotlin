@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
-import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar
+import org.jetbrains.kotlin.kapt3.KaptComponentRegistrar
 import org.jetbrains.kotlin.kapt3.base.AptMode
 import org.jetbrains.kotlin.kapt3.base.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.kapt3.base.KaptFlag
@@ -76,7 +76,7 @@ class KaptEnvironmentConfigurator(
                     // Workaround for a difference in K1/K2 kapt setup code. In K2 kapt, `checkOptions` skips stub generation if processing
                     // classpath is empty, which makes integration tests fail.
                     // Note that K1 kapt also has `checkOptions` but it's not called from integration tests because those tests create kapt
-                    // extension manually (see `KaptIntegrationEnvironmentConfigurator`) instead of going through `Kapt3ComponentRegistrar`.
+                    // extension manually (see `KaptIntegrationEnvironmentConfigurator`) instead of going through `KaptComponentRegistrar`.
                     processingClasspath.add(File("."))
                 }
             }
@@ -103,6 +103,6 @@ class KaptRegularExtensionForTestConfigurator(testServices: TestServices) : Envi
                 get() = testServices.kaptOptionsProvider[module][KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
         }
         AnalysisHandlerExtension.registerExtension(project, analysisExtension)
-        StorageComponentContainerContributor.registerExtension(project, Kapt3ComponentRegistrar.KaptComponentContributor(analysisExtension))
+        StorageComponentContainerContributor.registerExtension(project, KaptComponentRegistrar.KaptComponentContributor(analysisExtension))
     }
 }

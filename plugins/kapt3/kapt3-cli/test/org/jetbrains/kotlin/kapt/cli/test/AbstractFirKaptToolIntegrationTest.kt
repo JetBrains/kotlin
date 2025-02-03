@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.kapt.cli.test
 
-abstract class AbstractKapt4ToolIntegrationTest : AbstractKaptToolIntegrationTest()
+abstract class AbstractFirKaptToolIntegrationTest : AbstractKaptToolIntegrationTest()

@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.kapt4.Kapt4CompilerPluginRegistrar
+org.jetbrains.kotlin.kapt4.KaptCompilerPluginRegistrar

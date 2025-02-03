@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar
+org.jetbrains.kotlin.kapt3.KaptComponentRegistrar

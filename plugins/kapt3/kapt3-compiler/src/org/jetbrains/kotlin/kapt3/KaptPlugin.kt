@@ -60,7 +60,7 @@ import java.util.*
 
 val KAPT_OPTIONS = CompilerConfigurationKey.create<KaptOptions.Builder>("Kapt options")
 
-class Kapt3CommandLineProcessor : CommandLineProcessor {
+class KaptCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<AbstractCliOption> = values().asList()
@@ -165,7 +165,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 }
 
 @Suppress("DEPRECATION")
-class Kapt3ComponentRegistrar : ComponentRegistrar {
+class KaptComponentRegistrar : ComponentRegistrar {
     override val supportsK2: Boolean
         get() = true
 
@@ -204,10 +204,9 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info(options.logString())
         }
 
-        val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(options, logger, configuration)
-
-        AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
-        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor(kapt3AnalysisCompletedHandlerExtension))
+        val extension = ClasspathBasedKaptExtension(options, logger, configuration)
+        AnalysisHandlerExtension.registerExtension(project, extension)
+        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor(extension))
     }
 
     private fun KaptOptions.Builder.checkOptions(project: MockProject, logger: KaptLogger, configuration: CompilerConfiguration): Boolean {

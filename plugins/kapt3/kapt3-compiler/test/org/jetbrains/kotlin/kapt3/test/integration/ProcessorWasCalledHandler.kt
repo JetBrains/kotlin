@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.kapt3.test.integration
 
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.handlers.AbstractKaptHandler
-import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -17,7 +16,7 @@ class ProcessorWasCalledHandler(testServices: TestServices) : AbstractKaptHandle
         get() = KaptContextBinaryArtifact.Kind
 
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
-        assertions.assertTrue(testServices.kapt3ExtensionProvider[module].started) { "Annotation processor was not started" }
+        assertions.assertTrue(testServices.kaptExtensionProvider[module].started) { "Annotation processor was not started" }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

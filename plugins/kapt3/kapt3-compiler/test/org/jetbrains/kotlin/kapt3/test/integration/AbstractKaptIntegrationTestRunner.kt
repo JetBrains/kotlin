@@ -24,11 +24,11 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
-class AbstractKotlinKapt3IntegrationTestRunner(
+class AbstractKaptIntegrationTestRunner(
     private val processorOptions: Map<String, String>,
     private val supportedAnnotations: List<String>,
     private val additionalPluginExtension: IrGenerationExtension?,
-    private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit
+    private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, KaptExtensionForTests) -> Unit
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
     init {
@@ -58,6 +58,6 @@ class AbstractKotlinKapt3IntegrationTestRunner(
             useHandlers(::KaptIntegrationStubsDumpHandler, ::ProcessorWasCalledHandler)
         }
 
-        useAdditionalService(::Kapt3ExtensionProvider)
+        useAdditionalService(::KaptExtensionProvider)
     }
 }

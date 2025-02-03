@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-internal class Kapt3DocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
+internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
     private val docCommentTable = KaptDocCommentTable()
 
     fun saveKDocComment(tree: JCTree, node: Any) {
