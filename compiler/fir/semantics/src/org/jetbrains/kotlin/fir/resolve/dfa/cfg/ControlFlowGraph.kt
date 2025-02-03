@@ -27,13 +27,6 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
     /**
-     * `true` if the graph is in its final state.
-     * Completed graphs are not supposed to be changed afterward.
-     */
-    val isComplete: Boolean
-        get() = ::nodes.isInitialized
-
-    /**
      * Copies relation data from the [from] graph.
      * The [mapper] must provide nodes of the same type that belong to this graph.
      */

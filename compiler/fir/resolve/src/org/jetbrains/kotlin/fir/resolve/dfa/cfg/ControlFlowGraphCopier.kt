@@ -32,11 +32,6 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
      * Both [graph] and the resulting graph cannot be used until [finish] is called.
      */
     operator fun get(graph: ControlFlowGraph): ControlFlowGraph {
-        if (graph.isComplete) {
-            // Do not copy the already complete graph – it's effectively immutable anyway
-            return graph
-        }
-
         return cachedGraphs.computeIfAbsent(graph) { graph ->
             ControlFlowGraph(graph.declaration, graph.name, graph.kind)
         }
@@ -47,10 +42,6 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
      * Both [node] and the resulting node cannot be used until [finish] is called.
      */
     operator fun <E : FirElement, N : CFGNode<E>> get(node: N): N {
-        if (node.owner.isComplete) {
-            return node
-        }
-
         // Avoiding 'ConcurrentModificationException' with manual get/set
         val cachedNode = cachedNodes[node]
         if (cachedNode != null) {
@@ -59,6 +50,8 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
         }
 
         val newNode = node.accept(this, Unit)
+        require(newNode != node)
+
         cachedNodes[node] = newNode
         unprocessedNodes.addLast(node)
 
