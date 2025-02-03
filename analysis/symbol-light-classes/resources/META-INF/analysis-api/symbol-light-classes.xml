@@ -4,35 +4,5 @@
         serviceInterface="org.jetbrains.kotlin.asJava.KotlinAsJavaSupport"
         serviceImplementation="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport"
     />
-    <projectService
-        serviceImplementation="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinProviderCache"
-    />
   </extensions>
-
-  <projectListeners>
-    <listener
-        class="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinProviderCache$ModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinProviderCache$ModuleOutOfBlockModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinProviderCache$GlobalModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinProviderCache$GlobalSourceModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinProviderCache$GlobalScriptModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalScriptModuleStateModificationListener"
-    />
-    <listener
-        class="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinProviderCache$GlobalSourceOutOfBlockModificationListener"
-        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener"
-    />
-  </projectListeners>
 </idea-plugin>
