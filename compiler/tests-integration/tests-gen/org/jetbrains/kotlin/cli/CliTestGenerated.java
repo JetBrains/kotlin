@@ -850,16 +850,6 @@ public class CliTestGenerated extends AbstractCliTest {
     public void testUseDeclarationThatWasExperimentalWithoutExplicitImport() {
       runTest("compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.args");
     }
-
-    @TestMetadata("useDeclarationThatWasExperimentalWithoutExplicitImportCommandLine.args")
-    public void testUseDeclarationThatWasExperimentalWithoutExplicitImportCommandLine() {
-      runTest("compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImportCommandLine.args");
-    }
-
-    @TestMetadata("useDeclarationThatWasExperimentalWithoutMarker.args")
-    public void testUseDeclarationThatWasExperimentalWithoutMarker() {
-      runTest("compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutMarker.args");
-    }
   }
 
   @TestMetadata("compiler/testData/cli/jvm/sourcesCommonChecks")
@@ -1056,11 +1046,6 @@ public class CliTestGenerated extends AbstractCliTest {
 
     public void testAllFilesPresentInXjspecifyAnnotation() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/XjspecifyAnnotation"), Pattern.compile("^(.+)\\.args$"), null, false);
-    }
-
-    @TestMetadata("jspecifyByLv16.args")
-    public void testJspecifyByLv16() {
-      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyByLv16.args");
     }
 
     @TestMetadata("jspecifyDefault.args")
