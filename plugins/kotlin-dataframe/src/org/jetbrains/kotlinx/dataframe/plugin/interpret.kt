@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -78,6 +79,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
@@ -275,6 +277,17 @@ fun <T> KotlinTypeFacade.interpret(
                     val schema = pluginDataFrameSchema(schemaTypeArg)
                     Interpreter.Success(schema)
                 }
+            }
+
+            is Interpreter.GroupBy -> {
+                assert(expectedReturnType.toString() == GroupBy::class.qualifiedName!!) {
+                    "'$name' should be ${GroupBy::class.qualifiedName!!}, but plugin expect $expectedReturnType"
+                }
+
+                val resolvedType = it.expression.resolvedType.fullyExpandedType(session)
+                val keys = pluginDataFrameSchema(resolvedType.typeArguments[0])
+                val groups = pluginDataFrameSchema(resolvedType.typeArguments[1])
+                Interpreter.Success(GroupBy(keys, groups))
             }
 
             is Interpreter.Id -> {

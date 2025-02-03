@@ -1,6 +1,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter.*
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
 import kotlin.properties.PropertyDelegateProvider
@@ -34,4 +35,8 @@ internal fun <T> AbstractInterpreter<T>.ignore(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<Nothing?> =
     arg(name, lens = Interpreter.Id, defaultValue = Present(null))
+
+internal fun <T> AbstractInterpreter<T>.groupBy(
+    name: ArgumentName? = null
+): ExpectedArgumentProvider<GroupBy> = arg(name, lens = Interpreter.GroupBy)
 

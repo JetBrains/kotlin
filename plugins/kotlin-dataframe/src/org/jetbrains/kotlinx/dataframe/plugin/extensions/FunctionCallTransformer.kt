@@ -239,8 +239,8 @@ class FunctionCallTransformer(
             val groupMarker = rootMarkers[1]
 
             val (keySchema, groupSchema) = if (groupBy != null) {
-                val keySchema = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop)
-                val groupSchema = PluginDataFrameSchema(groupBy.df.columns())
+                val keySchema = groupBy.keys
+                val groupSchema = groupBy.groups
                 keySchema to groupSchema
             } else {
                 PluginDataFrameSchema.EMPTY to PluginDataFrameSchema.EMPTY

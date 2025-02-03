@@ -26,6 +26,8 @@ interface Interpreter<T> {
 
     data object Schema : Lens
 
+    data object GroupBy : Lens
+
     data object  Id : Lens
 
     // required to compute whether resulting schema should be inheritor of previous class or a new class
