@@ -208,13 +208,18 @@ private class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResolu
         val producerUsage = producerValue?.name ?: return@with
         if (
             mapOf(
+                // Platform compile dependency configuration
                 KOTLIN_UKLIB_API to setOf(
+                    // Allow uklib consumer to resolve regular KMP platform apiElements. The exact selection is still controlled with other attributes
                     KOTLIN_API,
+                    // FIXME: Allow selecting java-only? Test this
                     JAVA_API,
+                    // Fallback to metadata variant to inherit dependencies like in uklib publication
                     // stdlib doesn't have native variants, so for native platform configuration must fall back here
                     // runtime also???
                     KOTLIN_METADATA
                 ),
+                // FIXME: Test these
                 KOTLIN_UKLIB_RUNTIME to setOf(KOTLIN_API, KOTLIN_RUNTIME, JAVA_RUNTIME),
 
                 // but dom-api-compat has compatibility variant, but the usage is wrong, what???
@@ -229,7 +234,14 @@ private class DisambiguatePlatformConfigurationsToFallBackToMetadataForLenientKm
         val consumerUsage = consumerValue?.name ?: return@run
 
         mapOf(
-            KOTLIN_UKLIB_API to listOf(KOTLIN_API, JAVA_API, KOTLIN_METADATA),
+            KOTLIN_UKLIB_API to listOf(
+                // We are selecting for platform compilation. Prefer platform apiElements if it is available
+                KOTLIN_API,
+                // FIXME: Check if this is correct
+                JAVA_API,
+                // Fallback to metadata if platform apiElements is not available. In GMT this selection is filtered to determine visibility
+                KOTLIN_METADATA
+            ),
             KOTLIN_UKLIB_RUNTIME to listOf(KOTLIN_RUNTIME, KOTLIN_API, JAVA_RUNTIME, JAVA_API, KOTLIN_METADATA),
         )[consumerUsage]?.let {
             closestMatchToFirstAppropriateCandidate(it)
