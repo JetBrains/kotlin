@@ -760,7 +760,7 @@ class CallAndReferenceGenerator(
             irRhs.type = variableAssignment.lValue.resolvedType.toIrType()
         }
 
-        val irRhsWithCast = with(visitor.implicitCastInserter) {
+        val irRhsWithCast =
             wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
                 .prepareExpressionForGivenExpectedType(
                     this,
@@ -768,7 +768,6 @@ class CallAndReferenceGenerator(
                     variableAssignment.rValue.resolvedType,
                     variableAssignment.lValue.resolvedType
                 )
-        }
 
         injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
 
@@ -1083,9 +1082,9 @@ class CallAndReferenceGenerator(
                     else -> unsubstitutedParameterType
                 }
             )
-            with(visitor.implicitCastInserter) {
-                val argumentType = argument.resolvedType.fullyExpandedType(session)
+            val argumentType = argument.resolvedType.fullyExpandedType(session)
 
+            with(visitor.implicitCastInserter) {
                 fun insertCastToArgument(argument: FirExpression): IrExpression = when (argument) {
                     is FirSmartCastExpression -> {
                         // here we should use a substituted parameter type to properly choose the component of an intersection type
@@ -1098,12 +1097,13 @@ class CallAndReferenceGenerator(
                     else -> irArgument
                 }
                 irArgument = insertCastToArgument(argument)
-                // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
-                // to properly insert nullability check
-                irArgument = irArgument.prepareExpressionForGivenExpectedType(
-                    this, argument, argumentType, unsubstitutedParameterType, substitutedParameterType
-                )
             }
+
+            // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
+            // to properly insert nullability check
+            irArgument = irArgument.prepareExpressionForGivenExpectedType(
+                this, argument, argumentType, unsubstitutedParameterType, substitutedParameterType
+            )
         }
 
         return irArgument
@@ -1438,16 +1438,14 @@ class CallAndReferenceGenerator(
                             val symbol = statement.calleeReference.toResolvedCallableSymbol()
                                 ?: error("Symbol for call ${statement.render()} not found")
                             symbol.fir.receiverParameter?.typeRef?.let { receiverType ->
-                                with(visitor.implicitCastInserter) {
-                                    val extensionReceiver = statement.extensionReceiver!!
-                                    val substitutor = statement.buildSubstitutorByCalledCallable(c)
-                                    it.prepareExpressionForGivenExpectedType(
-                                        this,
-                                        extensionReceiver,
-                                        extensionReceiver.resolvedType,
-                                        substitutor.substituteOrSelf(receiverType.coneType),
-                                    )
-                                }
+                                val extensionReceiver = statement.extensionReceiver!!
+                                val substitutor = statement.buildSubstitutorByCalledCallable(c)
+                                it.prepareExpressionForGivenExpectedType(
+                                    this@CallAndReferenceGenerator,
+                                    extensionReceiver,
+                                    extensionReceiver.resolvedType,
+                                    substitutor.substituteOrSelf(receiverType.coneType),
+                                )
                             } ?: it
                         }
                     hasExtensionReceiver = true
