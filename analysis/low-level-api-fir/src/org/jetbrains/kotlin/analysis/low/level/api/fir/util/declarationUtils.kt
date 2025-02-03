@@ -259,7 +259,7 @@ internal val FirElementWithResolveState.isPartialBodyResolvable: Boolean
     get() {
         return when (this) {
             is FirConstructor -> !isPrimary
-            is FirSimpleFunction, is FirAnonymousInitializer, is FirPropertyAccessor -> !isLocalMember
+            is FirSimpleFunction, is FirAnonymousInitializer -> !isLocalMember
             else -> false
         }
     }
