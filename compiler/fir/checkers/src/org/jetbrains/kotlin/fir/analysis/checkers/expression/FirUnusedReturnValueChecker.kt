@@ -14,39 +14,12 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirBooleanOperatorExpression
-import org.jetbrains.kotlin.fir.expressions.FirCatch
-import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
-import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
-import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
-import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
-import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -57,9 +30,35 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
 import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.types.isUnitOrNullableUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
+
+private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
+    toAnnotationClassId(session)?.let { it.relativeClassName.toString() == "MustUseReturnValue" && it.packageFqName.asString() == "kotlin" } == true
+
+private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
+    toAnnotationClassId(session)?.let { it.relativeClassName.toString() == "IgnorableReturnValue" && it.packageFqName.asString() == "kotlin" } == true
+
+object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override fun check(
+        declaration: FirDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) return
+
+        val session = context.session
+        val annotations = declaration.annotations
+        // @MustUseValue and @Ignorable have targets sets without intersection, so it is safe to query them both at once.
+        val annotation = annotations.find { it.isMustUseReturnValue(session) } ?: annotations.find { it.isIgnorableValue(session) } ?: return
+
+        reporter.reportOn(
+            annotation.source,
+            FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
+            context
+        )
+    }
+}
 
 object FirUnusedReturnValueChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -259,10 +258,4 @@ object FirUnusedReturnValueChecker : FirBasicExpressionChecker(MppCheckerKind.Co
             )
         )
     }
-
-    private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
-        toAnnotationClassId(session)?.let { it.relativeClassName.toString() == "MustUseReturnValue" && it.packageFqName.asString() == "kotlin" } == true
-
-    private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
-        toAnnotationClassId(session)?.let { it.relativeClassName.toString() == "IgnorableReturnValue" && it.packageFqName.asString() == "kotlin" } == true
 }
