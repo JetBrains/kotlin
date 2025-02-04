@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class ConstraintSystemCompleter(components: BodyResolveComponents) {
@@ -94,19 +93,17 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             if (postponedArguments.isEmpty() && !isThereAnyReadyForFixationVariable)
                 break
 
-            val postponedArgumentsWithRevisableType = postponedArguments
-                .filterIsInstanceWithChecker<PostponedAtomWithRevisableExpectedType> {
-                    when (it as ConePostponedResolvedAtom) {
-                        is ConeLambdaWithTypeVariableAsExpectedTypeAtom -> true
-                        // Here we have a difference with K1 behavior as in K1 this check always returns true
-                        // (in fact, simple filterIsInstance<PostponedAtomWithRevisableExpectedType>() is in use)
-                        // However, in K2 returning true here leads to some (~5) diagnostic tests hanging --
-                        // the simplest example is 'callableReferenceAndCoercionToUnit.kt'
-                        // Maybe related to KT-74021
-                        is ConeResolvedCallableReferenceAtom -> it.revisedExpectedType == null
-                        is ConeResolvedLambdaAtom -> error("Should not be here: not a PostponedAtomWithRevisableExpectedType")
-                    }
-                }
+            /**
+             * Two inheritors of sealed [ConePostponedResolvedAtom] are "postponed atoms with revisable expected type"
+             * They are initially created in a situation when we have a type variable expected type for
+             * a lambda [ConeLambdaWithTypeVariableAsExpectedTypeAtom] or a callable reference [ConeResolvedCallableReferenceAtom]
+             * The idea of introducing them: later we could revise this expected type to a more specific (stage 2)
+             * and replace an atom with revisable expected type with an atom without it (stage 4).
+             * In fact, [ConeLambdaWithTypeVariableAsExpectedTypeAtom] is replaced with [ConeResolvedLambdaAtom],
+             * but [ConeResolvedCallableReferenceAtom] isn't replaced and the logic of its type revision looks currently unclear.
+             * Later (see KT-74021) we could make callable references behave as lambdas from this point of view
+             */
+            val postponedArgumentsWithRevisableType = postponedArguments.filterIsInstance<PostponedAtomWithRevisableExpectedType>()
             val dependencyProvider =
                 TypeVariableDependencyInformationProvider(
                     notFixedTypeVariables, postponedArguments, topLevelType, this,
@@ -248,8 +245,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             ?: return false
 
         when (argument) {
-            is ConeResolvedCallableReferenceAtom ->
+            is ConeResolvedCallableReferenceAtom -> {
+                // When resolution isn't needed, reviseExpectedType changes nothing in fact
+                if (!argument.needsResolution) return false
+                // It looks like this line actually does not influence any tests.
+                // There is a suggestion it replaces the revised type just by itself. See KT-74021
                 argument.reviseExpectedType(revisedExpectedType)
+            }
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom ->
                 argument.transformToResolvedLambda(c.getBuilder(), resolutionContext, revisedExpectedType)
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
