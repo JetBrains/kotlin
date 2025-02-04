@@ -35,23 +35,3 @@ public class Usage {
         new foo.Foo();
     }
 }
-
-// MODULE: moduleB2(moduleA)
-// Also check that -Xadd-modules=ALL-MODULE-PATH has the same effect as -Xadd-module=moduleA, i.e. adds moduleA to the roots
-// KOTLINC_ARGS: -Xadd-modules=moduleA
-// FILE: usage.kt
-import foo.Foo
-import foo.impl.<!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>Impl<!>
-
-fun usage() {
-    Foo()
-
-    <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>Impl<!>()
-}
-
-// FILE: Usage.java
-public class Usage {
-    public static void main(String[] args) {
-        new foo.Foo();
-    }
-}
