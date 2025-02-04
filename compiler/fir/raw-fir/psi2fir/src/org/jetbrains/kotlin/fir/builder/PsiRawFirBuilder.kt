@@ -1993,9 +1993,8 @@ open class PsiRawFirBuilder(
 
                     context.firFunctionTargets += target
                     function.extractAnnotationsTo(this)
-                    if (this is FirSimpleFunctionBuilder) {
-                        function.extractTypeParametersTo(this, symbol)
-                    }
+
+                    function.extractTypeParametersTo(this, functionSymbol)
                     contextParameters.addContextParameters(function.contextReceiverList, functionSymbol)
                     for (valueParameter in function.valueParameters) {
                         valueParameters += valueParameter.toFirValueParameter(
@@ -2004,6 +2003,8 @@ open class PsiRawFirBuilder(
                             if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION,
                         )
                     }
+
+                    // TODO ???
                     val actualTypeParameters = if (this is FirSimpleFunctionBuilder)
                         this.typeParameters
                     else

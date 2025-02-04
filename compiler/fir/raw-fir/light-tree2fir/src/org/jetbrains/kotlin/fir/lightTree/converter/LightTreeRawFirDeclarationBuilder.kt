@@ -1933,10 +1933,12 @@ class LightTreeRawFirDeclarationBuilder(
                 context.firFunctionTargets += target
                 modifiers?.convertAnnotationsTo(annotations)
 
+                // TODO
                 val actualTypeParameters = if (this is FirSimpleFunctionBuilder) {
                     typeParameters += firTypeParameters
                     typeParameters
                 } else {
+                    typeParameters += firTypeParameters
                     listOf()
                 }
 
