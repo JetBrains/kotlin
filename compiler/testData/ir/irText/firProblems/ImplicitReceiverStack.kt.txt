@@ -38,7 +38,7 @@ class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<Implicit
   }
 
   override operator fun get(name: String?): ImplicitReceiverValue<*>? {
-    return <this>.<get-stack>().lastOrNull<ImplicitReceiverValue<*>>()
+    return lastOrNull<ImplicitReceiverValue<*>>(/* <this> = <this>.<get-stack>() */)
   }
 
   override operator fun iterator(): Iterator<ImplicitReceiverValue<*>> {
@@ -65,7 +65,7 @@ fun bar(s: String) {
 fun box(): String {
   val stack: PersistentImplicitReceiverStack = PersistentImplicitReceiverStack(stack = listOf<ImplicitReceiverValue<Nothing>>(elements = [ImplicitReceiverValue<Nothing>(boundSymbol = null, type = "O"), ImplicitReceiverValue<Nothing>(boundSymbol = null, type = "K")]))
   foo(stack = stack)
-  return stack.first<ImplicitReceiverValue<*>>().<get-type>().plus(other = { // BLOCK
+  return first<ImplicitReceiverValue<*>>(/* <this> = stack */).<get-type>().plus(other = { // BLOCK
     val tmp_0: ImplicitReceiverValue<*>? = stack.get(name = null)
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
@@ -75,7 +75,7 @@ fun box(): String {
 }
 
 fun foo(stack: PersistentImplicitReceiverStack) {
-  stack.forEach<ImplicitReceiverValue<*>>(action = local fun <anonymous>(it: ImplicitReceiverValue<*>) {
+  forEach<ImplicitReceiverValue<*>>(/* <this> = stack, */ action = local fun <anonymous>(it: ImplicitReceiverValue<*>) {
     it.<get-boundSymbol>() /*~> Unit */
     bar(s = it.<get-type>())
   }

@@ -1,5 +1,5 @@
 fun box() {
-  "".foo<String?>()
+  foo<String?>(/* <this> = "" */)
   foo<String?>(l = local fun <anonymous>(it: String) {
     it /*~> Unit */
   }

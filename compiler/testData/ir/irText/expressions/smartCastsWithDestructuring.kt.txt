@@ -18,7 +18,8 @@ fun test(x: I1) {
   }
   // COMPOSITE {
   val tmp_0: I2 = x /*as I2 */
-  val c1: Int = tmp_0 /*as I1 */.component1()
-  val c2: String = tmp_0.component2()
+  val c1: Int = component1(/* <this> = tmp_0 /*as I1 */ */)
+  val c2: String = component2(/* <this> = tmp_0 */)
   // }
 }
+

@@ -10,13 +10,13 @@ internal fun topLevelFun(): String
 internal inline fun topLevelInlineFun(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
 private inline fun A.privateInlineExtension4(): String
-    /* TARGET use-site */ this.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
 private inline fun A.privateInlineExtension3(): String
-    /* TARGET use-site */ this.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
 private inline fun A.privateInlineExtension2(): String
-    /* TARGET use-site */ this.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
 private inline fun A.privateInlineExtension1(): String
-    /* TARGET use-site */ <this>.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = <this> */)
 /* TARGET declaration */ private fun A.privateExtension(): String
 /* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: A): String
-    /* TARGET use-site */ $receiver.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = $receiver */)

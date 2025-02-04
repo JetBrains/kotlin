@@ -1,35 +1,35 @@
 FILE fqName:<root> fileName:/kt45934.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
     FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'client: <root>.J declared in <root>.C.<init>' type=<root>.J origin=null
-    CONSTRUCTOR visibility:public <> (client:<root>.J) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:client index:0 type:<root>.J
+    CONSTRUCTOR visibility:public returnType:<root>.C [primary]
+      VALUE_PARAMETER kind:Regular name:client index:0 type:<root>.J
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I]' type=kotlin.Unit
-    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <C> ($this:<root>.C) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>?
+    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>?
+      TYPE_PARAMETER name:C index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
       overridden:
         public abstract fun foo <C> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.I.foo?>? declared in <root>.I
-      TYPE_PARAMETER name:C index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
-      $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo <C> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>? declared in <root>.C'
           CALL 'public abstract fun foo <C> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.I.foo?>? declared in <root>.I' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>? origin=null
-            <C>: C of <root>.C.foo
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final] declared in <root>.C' type=<root>.J origin=null
+            TYPE_ARG C: C of <root>.C.foo
+            ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final] declared in <root>.C' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.I
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.I
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

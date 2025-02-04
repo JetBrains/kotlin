@@ -1,385 +1,385 @@
 CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.Int
+  thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:kotlin.Int
   CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.Int.Companion
-    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion [primary]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:kotlin.Int.Companion
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private returnType:kotlin.Int.Companion [primary]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
     PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE visibility:public modality:FINAL [const,val]
       FIELD PROPERTY_BACKING_FIELD name:MAX_VALUE type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=2147483647
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int.Companion
         correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE visibility:public modality:FINAL [const,val]
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
     PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE visibility:public modality:FINAL [const,val]
       FIELD PROPERTY_BACKING_FIELD name:MIN_VALUE type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=-2147483648
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int.Companion
         correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE visibility:public modality:FINAL [const,val]
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
     PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS visibility:public modality:FINAL [const,val]
       annotations:
         SinceKotlin(version = "1.3")
       FIELD PROPERTY_BACKING_FIELD name:SIZE_BITS type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=32
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BITS> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BITS> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int.Companion
         correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS visibility:public modality:FINAL [const,val]
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
     PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES visibility:public modality:FINAL [const,val]
       annotations:
         SinceKotlin(version = "1.3")
       FIELD PROPERTY_BACKING_FIELD name:SIZE_BYTES type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=4
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BYTES> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BYTES> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int.Companion
         correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES visibility:public modality:FINAL [const,val]
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
-  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+    VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
     overridden:
       public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Number
       public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Comparable
       public open fun hashCode (): kotlin.Int [fake_override] declared in java.io.Serializable
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-  FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [infix]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL returnType:kotlin.Int [infix]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Double
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Double
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Float
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Float
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int [operator] declared in kotlin.Comparable
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:dec visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int [operator]
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:dec visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:kotlin.Double [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL returnType:kotlin.Double [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Double
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Double
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:kotlin.Float [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL returnType:kotlin.Float [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Float
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Float
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.Long [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL returnType:kotlin.Long [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Number
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Comparable
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in java.io.Serializable
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-  FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int [operator]
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL returnType:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:kotlin.Double [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL returnType:kotlin.Double [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Double
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Double
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:kotlin.Float [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL returnType:kotlin.Float [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Float
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Float
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.Long [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL returnType:kotlin.Long [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [infix]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL returnType:kotlin.Int [infix]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:kotlin.Double [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL returnType:kotlin.Double [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Double
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Double
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:kotlin.Float [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL returnType:kotlin.Float [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Float
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Float
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.Long [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL returnType:kotlin.Long [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.ranges.IntRange [operator]
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.ranges.IntRange [operator]
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.ranges.LongRange [operator]
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.ranges.IntRange [operator]
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.ranges.IntRange [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL returnType:kotlin.ranges.LongRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.ranges.IntRange [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.ranges.LongRange [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL returnType:kotlin.ranges.LongRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.ranges.IntRange [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:kotlin.Double [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL returnType:kotlin.Double [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Double
     annotations:
       SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Double
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:kotlin.Float [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL returnType:kotlin.Float [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Float
     annotations:
       SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Float
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.Long [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL returnType:kotlin.Long [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int [infix]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL returnType:kotlin.Int [infix]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:bitCount index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:bitCount index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int [infix]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL returnType:kotlin.Int [infix]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:bitCount index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:bitCount index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Byte
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:kotlin.Double [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL returnType:kotlin.Double [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Double
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Double
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:kotlin.Float [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL returnType:kotlin.Float [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Float
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Float
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.Long [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL returnType:kotlin.Long [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Long
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Short
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Byte
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN returnType:kotlin.Byte
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public abstract fun toByte (): kotlin.Byte declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Char
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN returnType:kotlin.Char
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public open fun toChar (): kotlin.Char declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Double
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:OPEN returnType:kotlin.Double
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public abstract fun toDouble (): kotlin.Double declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Float
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:OPEN returnType:kotlin.Float
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public abstract fun toFloat (): kotlin.Float declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN returnType:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public abstract fun toInt (): kotlin.Int declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Long
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:OPEN returnType:kotlin.Long
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public abstract fun toLong (): kotlin.Long declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Short
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:OPEN returnType:kotlin.Short
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public abstract fun toShort (): kotlin.Short declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.String
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN returnType:kotlin.String
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
     overridden:
       public open fun toString (): kotlin.String [fake_override] declared in kotlin.Number
       public open fun toString (): kotlin.String [fake_override] declared in kotlin.Comparable
       public open fun toString (): kotlin.String [fake_override] declared in java.io.Serializable
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL returnType:kotlin.Int [operator]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int [infix]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL returnType:kotlin.Int [infix]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:bitCount index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:bitCount index:0 type:kotlin.Int
-  FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [infix]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL returnType:kotlin.Int [infix]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       IntrinsicConstEvaluation
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER name:other index:0 type:kotlin.Int

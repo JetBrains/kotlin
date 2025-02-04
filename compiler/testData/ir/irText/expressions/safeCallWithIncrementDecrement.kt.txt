@@ -32,12 +32,12 @@ fun testArrayAccess(nc: C?) {
       val tmp_2: C? = nc
       when {
         EQEQ(arg0 = tmp_2, arg1 = null) -> null
-        else -> tmp_2.<get-p>()
+        else -> <get-p>(/* <this> = tmp_2 */)
       }
     }
     val tmp_3: Int = 0
-    val tmp_4: Int = tmp_1.get(index = tmp_3)
-    tmp_1.set(index = tmp_3, value = tmp_4.inc())
+    val tmp_4: Int = get(/* <this> = tmp_1, */ index = tmp_3)
+    set(/* <this> = tmp_1, */ index = tmp_3, value = tmp_4.inc())
     tmp_4
   } /*~> Unit */
 }
@@ -50,8 +50,8 @@ fun testProperty(nc: C?) {
       else -> { // BLOCK
         val tmp_6: C? = tmp_5
         { // BLOCK
-          val tmp_7: Int = tmp_6.<get-p>()
-          tmp_6.<set-p>(value = tmp_7.inc())
+          val tmp_7: Int = <get-p>(/* <this> = tmp_6 */)
+          <set-p>(/* <this> = tmp_6, */ value = inc(/* <this> = tmp_7 */))
           tmp_7
         }
       }

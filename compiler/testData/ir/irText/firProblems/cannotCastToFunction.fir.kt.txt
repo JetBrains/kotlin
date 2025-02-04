@@ -15,14 +15,14 @@ fun dump(data: IrElement, dumpStrategy: String): String {
   val dump: @ExtensionFunctionType Function1<IrElement, String> = when {
     EQEQ(arg0 = dumpStrategy, arg1 = "KotlinLike") -> { // BLOCK
       local fun dumpKotlinLike(p0: IrElement): String {
-        return p0.dumpKotlinLike()
+        return dumpKotlinLike(/* <this> = p0 */)
       }
 
       ::dumpKotlinLike
     }
     else -> { // BLOCK
       local fun dump(p0: IrElement): String {
-        return p0.dump()
+        return dump(/* <this> = p0 */)
       }
 
       ::dump

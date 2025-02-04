@@ -13,12 +13,12 @@ class C<T : Any?> {
 }
 
 fun test1() {
-  use(p = C<String>(x = "abc")::y/*<String>()*/)
+  use(p = ::y/*<String>($EXCESSIVE$ = C<String>(x = "abc")) */)
 }
 
 fun test2(a: Any) {
   a as C<String> /*~> Unit */
-  use(p = a /*as C<String> */::y/*<String>()*/)
+  use(p = ::y/*<String>($EXCESSIVE$ = a /*as C<String> */) */)
 }
 
 fun use(p: KMutableProperty<String>) {
@@ -31,3 +31,4 @@ var <T : Any?> C<T>.y: T
   set(v: T) {
     <this>.<set-x>(<set-?> = v)
   }
+

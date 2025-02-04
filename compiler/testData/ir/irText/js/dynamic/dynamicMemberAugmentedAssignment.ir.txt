@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
-  FUN name:testAugmentedMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
-    VALUE_PARAMETER name:d index:0 type:dynamic
+  FUN name:testAugmentedMemberAssignment visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:d index:0 type:dynamic
     BLOCK_BODY
       DYN_OP operator=PLUSEQ type=kotlin.Unit
         receiver: DYN_MEMBER memberName='m' type=dynamic
@@ -22,8 +22,8 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
         receiver: DYN_MEMBER memberName='m' type=dynamic
           GET_VAR 'd: dynamic declared in <root>.testAugmentedMemberAssignment' type=dynamic origin=null
         0: CONST String type=kotlin.String value="%="
-  FUN name:testSafeAugmentedMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
-    VALUE_PARAMETER name:d index:0 type:dynamic
+  FUN name:testSafeAugmentedMemberAssignment visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:d index:0 type:dynamic
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=SAFE_CALL
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:dynamic [val]
@@ -31,8 +31,8 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
-              arg1: CONST Null type=kotlin.Nothing? value=null
+              ARG arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
+              ARG arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Null type=kotlin.Nothing? value=null
           BRANCH
@@ -47,8 +47,8 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_1: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
-              arg1: CONST Null type=kotlin.Nothing? value=null
+              ARG arg0: GET_VAR 'val tmp_1: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
+              ARG arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Null type=kotlin.Nothing? value=null
           BRANCH
@@ -63,8 +63,8 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_2: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
-              arg1: CONST Null type=kotlin.Nothing? value=null
+              ARG arg0: GET_VAR 'val tmp_2: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
+              ARG arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Null type=kotlin.Nothing? value=null
           BRANCH
@@ -79,8 +79,8 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_3: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
-              arg1: CONST Null type=kotlin.Nothing? value=null
+              ARG arg0: GET_VAR 'val tmp_3: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
+              ARG arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Null type=kotlin.Nothing? value=null
           BRANCH
@@ -95,8 +95,8 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_4: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
-              arg1: CONST Null type=kotlin.Nothing? value=null
+              ARG arg0: GET_VAR 'val tmp_4: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
+              ARG arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Null type=kotlin.Nothing? value=null
           BRANCH

@@ -11,6 +11,6 @@ private var A.privateVar: Int
     /* TARGET declaration */ private fun A.<get-privateVar>(): Int
     /* TARGET declaration */ private fun A.<set-privateVar>(value: Int)
 /* ACCESSOR declaration */ internal fun access$<get-privateVar>$tAKt($receiver: A): Int
-    /* TARGET use-site */ $receiver.<get-privateVar>()
+    /* TARGET use-site */ <get-privateVar>(/* <this> = $receiver */)
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt($receiver: A, value: Int)
-    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)
+    /* TARGET use-site */ <set-privateVar>(/* <this> = $receiver, */ value = value)

@@ -13,15 +13,15 @@ class MyClass {
 
 fun box(): String {
   val testO: String
-    val testO$delegate: String = MyClass(value = "O").provideDelegate(host = null, p = ::testO)
+    val testO$delegate: String = provideDelegate(/* <this> = MyClass(value = "O"), */ host = null, p = ::testO)
     local get(): String {
-      return testO$delegate.getValue(receiver = null, p = ::testO)
+      return getValue(/* <this> = testO$delegate, */ receiver = null, p = ::testO)
     }
 
   val testK: String
     val testK$delegate: String = "K"
     local get(): String {
-      return testK$delegate.getValue(receiver = null, p = ::testK)
+      return getValue(/* <this> = testK$delegate, */ receiver = null, p = ::testK)
     }
 
   val testOK: String = <get-testO>().plus(other = <get-testK>())

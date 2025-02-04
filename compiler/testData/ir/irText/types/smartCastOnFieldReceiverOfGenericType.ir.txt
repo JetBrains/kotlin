@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/smartCastOnFieldReceiverOfGenericType.kt
-  FUN name:testGetField visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.String
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:testGetField visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=<root>.JCell<kotlin.String> origin=CAST typeOperand=<root>.JCell<kotlin.String>
@@ -10,9 +10,9 @@ FILE fqName:<root> fileName:/smartCastOnFieldReceiverOfGenericType.kt
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] T of <root>.JCell? visibility:public declared in <root>.JCell' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.JCell origin=null
             receiver: TYPE_OP type=<root>.JCell<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.JCell<kotlin.String>
               GET_VAR 'a: kotlin.Any declared in <root>.testGetField' type=kotlin.Any origin=null
-  FUN name:testSetField visibility:public modality:FINAL <> (a:kotlin.Any, b:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
-    VALUE_PARAMETER name:b index:1 type:kotlin.Any
+  FUN name:testSetField visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
+    VALUE_PARAMETER kind:Regular name:b index:1 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=<root>.JCell<kotlin.String> origin=CAST typeOperand=<root>.JCell<kotlin.String>

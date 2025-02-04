@@ -84,7 +84,7 @@ fun test3() {
 
 fun test4() {
   // COMPOSITE {
-  val tmp_3: IndexedValue<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */.withIndex<@NotNull @EnhancedNullability P>().first<IndexedValue<@NotNull @EnhancedNullability P>>()
+  val tmp_3: IndexedValue<@NotNull @EnhancedNullability P> = first<IndexedValue<@NotNull @EnhancedNullability P>>(/* <this> = withIndex<@NotNull @EnhancedNullability P>(/* <this> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */ */) */)
   val x: Int = tmp_3.component1()
   val y: @NotNull @EnhancedNullability P = tmp_3.component2()
   // }

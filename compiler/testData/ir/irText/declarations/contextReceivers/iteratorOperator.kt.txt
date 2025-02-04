@@ -91,7 +91,8 @@ class CounterIterator : Iterator<Int> {
     field = counter
     private get
 
-  constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */ {
+  context($context_receiver_0: CounterConfig)
+  constructor(counter: Counter) /* primary */ {
     super/*Any*/()
     <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */
@@ -119,7 +120,7 @@ fun box(): String {
   var result: Int = 0
   with<CounterConfig, Unit>(receiver = CounterConfig(), block = local fun CounterConfig.<anonymous>() {
     { // BLOCK
-      val tmp_4: CounterIterator = Counter().iterator($context_receiver_0 = $this$with)
+      val tmp_4: CounterIterator = iterator(/* $context_receiver_0 = $this$with, <this> = Counter() */)
       while (tmp_4.hasNext()) { // BLOCK
         val i: Int = tmp_4.next()
         { // BLOCK
@@ -135,9 +136,10 @@ fun box(): String {
   }
 }
 
-operator fun Counter.iterator($context_receiver_0: CounterConfig): CounterIterator {
+context($context_receiver_0: CounterConfig)
+operator fun Counter.iterator(): CounterIterator {
   return with<CounterConfig, CounterIterator>(receiver = $context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
-    return CounterIterator($context_receiver_0 = $this$with, counter = <this>)
+    return CounterIterator(/* $context_receiver_0 = $this$with, */ counter = <this>)
   }
 )
 }

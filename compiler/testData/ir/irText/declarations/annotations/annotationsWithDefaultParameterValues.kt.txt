@@ -27,7 +27,7 @@ fun test2() {
 fun test3() {
 }
 
-@A(, y = 456)
+@A(y = 456)
 fun test4() {
 }
 

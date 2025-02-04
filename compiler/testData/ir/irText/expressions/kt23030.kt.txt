@@ -10,7 +10,7 @@ class C {
   }
 
   fun testMemberExtensionCompareToCall(x: Int, y: Char): Boolean {
-    return less(arg0 = (<this>, x).compareTo(c = y), arg1 = 0)
+    return less(arg0 = <this>.compareTo(/* <this> = x, */ c = y), arg1 = 0)
   }
 
   fun testMemberExtensionCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
@@ -18,7 +18,7 @@ class C {
       when {
         x is Int -> y is Char
         else -> false
-      } -> less(arg0 = (<this>, x /*as Int */).compareTo(c = y /*as Char */), arg1 = 0)
+      } -> less(arg0 = <this>.compareTo(/* <this> = x /*as Int */, */ c = y /*as Char */), arg1 = 0)
       else -> false
     }
   }
@@ -40,7 +40,7 @@ fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
 }
 
 fun testOverloadedCompareToCall(x: Int, y: Char): Boolean {
-  return less(arg0 = x.compareTo(c = y), arg1 = 0)
+  return less(arg0 = compareTo(/* <this> = x, */ c = y), arg1 = 0)
 }
 
 fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
@@ -48,7 +48,7 @@ fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
     when {
       x is Int -> y is Char
       else -> false
-    } -> less(arg0 = x /*as Int */.compareTo(c = y /*as Char */), arg1 = 0)
+    } -> less(arg0 = compareTo(/* <this> = x /*as Int */, */ c = y /*as Char */), arg1 = 0)
     else -> false
   }
 }

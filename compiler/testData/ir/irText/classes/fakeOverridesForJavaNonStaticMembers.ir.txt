@@ -1,60 +1,60 @@
 FILE fqName:a fileName:/fakeOverridesForJavaNonStaticMembers.kt
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[a.Base]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.Test
-    CONSTRUCTOR visibility:public <> () returnType:a.Test [primary]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:a.Test
+    CONSTRUCTOR visibility:public returnType:a.Test [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in a.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[a.Base]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:packagePrivateMethod visibility:public/*package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:packagePrivateMethod visibility:public/*package*/ modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:a.Base
       overridden:
         public/*package*/ open fun packagePrivateMethod (): kotlin.Unit declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:protectedMethod visibility:protected/*protected and package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:protectedMethod visibility:protected/*protected and package*/ modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:a.Base
       overridden:
         protected/*protected and package*/ open fun protectedMethod (): kotlin.Unit declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:a.Base
       overridden:
         public open fun publicMethod (): kotlin.Unit declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
 FILE fqName:<root> fileName:/fakeOverridesForJavaNonStaticMembers2.kt
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[a.Base]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Test2 [primary]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test2
+    CONSTRUCTOR visibility:public returnType:<root>.Test2 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in a.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[a.Base]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:protectedMethod visibility:protected/*protected and package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:protectedMethod visibility:protected/*protected and package*/ modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:a.Base
       overridden:
         protected/*protected and package*/ open fun protectedMethod (): kotlin.Unit declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:publicMethod visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:a.Base
       overridden:
         public open fun publicMethod (): kotlin.Unit declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

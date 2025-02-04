@@ -22,10 +22,10 @@ inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>) {
 }
 
 fun test1() {
-  error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+  invoke<ErrorType, ErrorType>(/* <this> = error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
     error("") /* ErrorExpression */
   }
-; .invoke<ErrorType, ErrorType>() /*~> Unit */
+;  */) /*~> Unit */
   local fun <no name provided>() {
     error("") /* ErrorExpression */
   }
@@ -54,10 +54,10 @@ fun test1() {
 
 fun test2() {
   L1@ while (true) { // BLOCK
-    error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+    invoke<ErrorType, ErrorType>(/* <this> = error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
       error("") /* ErrorExpression */
     }
-; .invoke<ErrorType, ErrorType>() /*~> Unit */
+;  */) /*~> Unit */
     local fun <no name provided>() {
       error("") /* ErrorExpression */
     }
@@ -88,10 +88,10 @@ fun test2() {
 fun test3() {
   L1@ while (true) { // BLOCK
     val lambda: Function0<Unit> = local fun <anonymous>() {
-      error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+      invoke<ErrorType, ErrorType>(/* <this> = error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
         continue@L1
       }
-; .invoke<ErrorType, ErrorType>() /*~> Unit */
+;  */) /*~> Unit */
       local fun <no name provided>() {
         break@L1
       }
@@ -165,25 +165,25 @@ fun test4() {
 }
 
 fun test5() {
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <anonymous>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
   }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <anonymous>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
   }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <no name provided>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
   }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
+  forEach<Int>(/* <this> = listOf<Int>(elements = [1, 2, 3]), */ action = local fun <no name provided>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
     }
@@ -223,7 +223,7 @@ fun test6() {
 }
 
 fun test7() {
-  1.rangeTo(other = 3).myForEach<Int>(action = local fun <anonymous>(i: Int) {
+  myForEach<Int>(/* <this> = 1.rangeTo(other = 3), */ action = local fun <anonymous>(i: Int) {
     when {
       EQEQ(arg0 = i, arg1 = 2) -> { // BLOCK
         error("") /* ErrorExpression */

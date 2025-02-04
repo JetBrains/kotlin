@@ -29,8 +29,8 @@ fun test_1(x: Any) {
   x /*as Bar<Any> */ as Foo<Any> /*~> Unit */
   x /*as Foo<Any> */.foo()
   x /*as Bar<Any> */.bar()
-  x /*as Foo<Any> */.extFoo<Any>()
-  x /*as Bar<Any> */.extBar<Any>()
+  extFoo<Any>(/* <this> = x /*as Foo<Any> */ */)
+  extBar<Any>(/* <this> = x /*as Bar<Any> */ */)
 }
 
 fun test_2(x: Any) {
@@ -38,8 +38,8 @@ fun test_2(x: Any) {
   x /*as Bar<Any> */ as Foo<Any>? /*~> Unit */
   CHECK_NOT_NULL<Any>(arg0 = x) /*as Foo<Any> */.foo()
   CHECK_NOT_NULL<Any>(arg0 = x) /*as Bar<Any> */.bar()
-  CHECK_NOT_NULL<Any>(arg0 = x) /*as Foo<Any> */.extFoo<Any>()
-  CHECK_NOT_NULL<Any>(arg0 = x) /*as Bar<Any> */.extBar<Any>()
+  extFoo<Any>(/* <this> = CHECK_NOT_NULL<Any>(arg0 = x) /*as Foo<Any> */ */)
+  extBar<Any>(/* <this> = CHECK_NOT_NULL<Any>(arg0 = x) /*as Bar<Any> */ */)
 }
 
 fun test_3(x: Any) {
@@ -59,19 +59,19 @@ fun test_3(x: Any) {
       else -> tmp_1
     }
   } /*as Bar<Any> */.bar()
-  { // BLOCK
+  extFoo<Any>(/* <this> = { // BLOCK
     val tmp_2: Any = x
     when {
       EQEQ(arg0 = tmp_2, arg1 = null) -> materialize<Any>()
       else -> tmp_2
     }
-  } /*as Foo<Any> */.extFoo<Any>()
-  { // BLOCK
+  } /*as Foo<Any> */ */)
+  extBar<Any>(/* <this> = { // BLOCK
     val tmp_3: Any = x
     when {
       EQEQ(arg0 = tmp_3, arg1 = null) -> materialize<Any>()
       else -> tmp_3
     }
-  } /*as Bar<Any> */.extBar<Any>()
+  } /*as Bar<Any> */ */)
 }
 

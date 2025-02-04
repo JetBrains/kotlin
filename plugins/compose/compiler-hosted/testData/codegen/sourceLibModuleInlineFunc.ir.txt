@@ -1,50 +1,50 @@
 MODULE_FRAGMENT
   FILE fqName:home fileName:main.kt
-    FUN name:Greeting visibility:public modality:FINAL <> (name:kotlin.String, modifier:androidx.compose.ui.Modifier?, $composer:androidx.compose.runtime.Composer?, $changed:kotlin.Int, $default:kotlin.Int) returnType:kotlin.Unit
+    FUN name:Greeting visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:name index:0 type:kotlin.String
+      VALUE_PARAMETER kind:Regular name:modifier index:1 type:androidx.compose.ui.Modifier? [assignable]
+      VALUE_PARAMETER kind:Regular name:$composer index:2 type:androidx.compose.runtime.Composer? [assignable]
+      VALUE_PARAMETER kind:Regular name:$changed index:3 type:kotlin.Int
+      VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:4 type:kotlin.Int
       annotations:
         Composable
-      VALUE_PARAMETER name:name index:0 type:kotlin.String
-      VALUE_PARAMETER name:modifier index:1 type:androidx.compose.ui.Modifier? [assignable]
-      VALUE_PARAMETER name:$composer index:2 type:androidx.compose.runtime.Composer? [assignable]
-      VALUE_PARAMETER name:$changed index:3 type:kotlin.Int
-      VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION name:$default index:4 type:kotlin.Int
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=kotlin.Unit origin=null
             CALL 'public abstract fun startRestartGroup (key: kotlin.Int): androidx.compose.runtime.Composer declared in androidx.compose.runtime.Composer' type=androidx.compose.runtime.Composer origin=null
-              $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
-              key: CONST Int type=kotlin.Int value=-1978554839
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+              ARG key: CONST Int type=kotlin.Int value=-1978554839
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-            composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
-            sourceInformation: CONST String type=kotlin.String value="C(Greeting)P(1)39@312L95:main.kt#1wrmn"
+            ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+            ARG sourceInformation: CONST String type=kotlin.String value="C(Greeting)P(1)39@312L95:main.kt#1wrmn"
         VAR name:$dirty type:kotlin.Int [val]
           GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
-                  other: CONST Int type=kotlin.Int value=1
-                arg1: CONST Int type=kotlin.Int value=0
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
+                  ARG other: CONST Int type=kotlin.Int value=1
+                ARG arg1: CONST Int type=kotlin.Int value=0
             then: SET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Unit origin=null
               CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value=6
+                ARG <this>: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
+                ARG other: CONST Int type=kotlin.Int value=6
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-              arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value=6
-              arg1: CONST Int type=kotlin.Int value=0
+              ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
+                ARG other: CONST Int type=kotlin.Int value=6
+              ARG arg1: CONST Int type=kotlin.Int value=0
             then: SET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Unit origin=null
               CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
-                other: WHEN type=kotlin.Int origin=IF
+                ARG <this>: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
+                ARG other: WHEN type=kotlin.Int origin=IF
                   BRANCH
                     if: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                      $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
-                      value: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+                      ARG value: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
                     then: CONST Int type=kotlin.Int value=4
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
@@ -52,29 +52,29 @@ MODULE_FRAGMENT
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
-                  other: CONST Int type=kotlin.Int value=2
-                arg1: CONST Int type=kotlin.Int value=0
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
+                  ARG other: CONST Int type=kotlin.Int value=2
+                ARG arg1: CONST Int type=kotlin.Int value=0
             then: SET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Unit origin=null
               CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value=48
+                ARG <this>: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
+                ARG other: CONST Int type=kotlin.Int value=48
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-              arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
-                other: CONST Int type=kotlin.Int value=48
-              arg1: CONST Int type=kotlin.Int value=0
+              ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
+                ARG other: CONST Int type=kotlin.Int value=48
+              ARG arg1: CONST Int type=kotlin.Int value=0
             then: SET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Unit origin=null
               CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
-                other: WHEN type=kotlin.Int origin=IF
+                ARG <this>: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
+                ARG other: WHEN type=kotlin.Int origin=IF
                   BRANCH
                     if: CALL 'public abstract fun changed (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                      $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
-                      value: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
+                      ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+                      ARG value: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
                     then: CONST Int type=kotlin.Int value=32
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
@@ -84,49 +84,49 @@ MODULE_FRAGMENT
             if: WHEN type=kotlin.Boolean origin=OROR
               BRANCH
                 if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                  $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                    arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                      $this: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
-                      other: CONST Int type=kotlin.Int value=19
-                    arg1: CONST Int type=kotlin.Int value=18
+                  ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                    ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                      ARG <this>: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
+                      ARG other: CONST Int type=kotlin.Int value=19
+                    ARG arg1: CONST Int type=kotlin.Int value=18
                 then: CONST Boolean type=kotlin.Boolean value=true
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                  $this: CALL 'public abstract fun <get-skipping> (): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                    $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+                  ARG <this>: CALL 'public abstract fun <get-skipping> (): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                    ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
             then: BLOCK type=kotlin.Unit origin=null
               WHEN type=kotlin.Unit origin=IF
                 BRANCH
                   if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                    $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                      arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                        $this: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
-                        other: CONST Int type=kotlin.Int value=2
-                      arg1: CONST Int type=kotlin.Int value=0
+                    ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                      ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                        ARG <this>: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
+                        ARG other: CONST Int type=kotlin.Int value=2
+                      ARG arg1: CONST Int type=kotlin.Int value=0
                   then: SET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=kotlin.Unit origin=null
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[androidx.compose.ui.Modifier]' type=androidx.compose.ui.Modifier.Companion
               WHEN type=kotlin.Unit origin=IF
                 BRANCH
                   if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
                   then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                    key: CONST Int type=kotlin.Int value=-1978554839
-                    dirty1: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
-                    dirty2: CONST Int type=kotlin.Int value=-1
-                    info: CONST String type=kotlin.String value="home.Greeting (main.kt:38)"
+                    ARG key: CONST Int type=kotlin.Int value=-1978554839
+                    ARG dirty1: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
+                    ARG dirty2: CONST Int type=kotlin.Int value=-1
+                    ARG info: CONST String type=kotlin.String value="home.Greeting (main.kt:38)"
               CALL 'public final fun Text (text: kotlin.String, modifier: androidx.compose.ui.Modifier, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in com.example.ui' type=kotlin.Unit origin=null
-                text: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
-                  $this: STRING_CONCATENATION type=kotlin.String
+                ARG text: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+                  ARG <this>: STRING_CONCATENATION type=kotlin.String
                     GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
                     CONST String type=kotlin.String value="!"
-                  other: CALL 'public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule' type=kotlin.String origin=null
-                    $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.myModule.OtherModule' type=com.example.myModule.OtherModule origin=null
-                modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
+                  ARG other: CALL 'public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule' type=kotlin.String origin=null
+                    ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.myModule.OtherModule' type=com.example.myModule.OtherModule origin=null
+                ARG modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
                   GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
-                $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
-                $changed: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: CONST Int type=kotlin.Int value=112
-                  other: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
+                ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+                ARG $changed: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: CONST Int type=kotlin.Int value=112
+                  ARG other: GET_VAR 'val $dirty: kotlin.Int [val] declared in home.Greeting' type=kotlin.Int origin=null
               WHEN type=kotlin.Unit origin=IF
                 BRANCH
                   if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
@@ -134,34 +134,34 @@ MODULE_FRAGMENT
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public abstract fun skipToGroupEnd (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-              $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
         BLOCK type=kotlin.Unit origin=null
           BLOCK type=kotlin.Unit origin=SAFE_CALL
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:androidx.compose.runtime.ScopeUpdateScope? [val]
               CALL 'public abstract fun endRestartGroup (): androidx.compose.runtime.ScopeUpdateScope? declared in androidx.compose.runtime.Composer' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
-                $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
+                ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
             WHEN type=kotlin.Unit origin=IF
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                  arg0: GET_VAR 'val tmp_0: androidx.compose.runtime.ScopeUpdateScope? [val] declared in home.Greeting' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
-                  arg1: CONST Null type=kotlin.Any? value=null
+                  ARG arg0: GET_VAR 'val tmp_0: androidx.compose.runtime.ScopeUpdateScope? [val] declared in home.Greeting' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                  ARG arg1: CONST Null type=kotlin.Any? value=null
                 then: CONST Null type=kotlin.Any? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public abstract fun updateScope (block: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in androidx.compose.runtime.ScopeUpdateScope' type=kotlin.Unit origin=null
-                  $this: GET_VAR 'val tmp_0: androidx.compose.runtime.ScopeUpdateScope? [val] declared in home.Greeting' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
-                  block: FUN_EXPR type=kotlin.Function2<androidx.compose.runtime.Composer?, kotlin.Int, kotlin.Unit> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($composer:androidx.compose.runtime.Composer?, $force:kotlin.Int) returnType:kotlin.Unit
-                      VALUE_PARAMETER name:$composer index:0 type:androidx.compose.runtime.Composer?
-                      VALUE_PARAMETER name:$force index:1 type:kotlin.Int
+                  ARG <this>: GET_VAR 'val tmp_0: androidx.compose.runtime.ScopeUpdateScope? [val] declared in home.Greeting' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                  ARG block: FUN_EXPR type=kotlin.Function2<androidx.compose.runtime.Composer?, kotlin.Int, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                      VALUE_PARAMETER kind:Regular name:$composer index:0 type:androidx.compose.runtime.Composer?
+                      VALUE_PARAMETER kind:Regular name:$force index:1 type:kotlin.Int
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='local final fun <anonymous> ($composer: androidx.compose.runtime.Composer?, $force: kotlin.Int): kotlin.Unit declared in home.Greeting'
                           CALL 'public final fun Greeting (name: kotlin.String, modifier: androidx.compose.ui.Modifier?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit declared in home' type=kotlin.Unit origin=null
-                            name: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
-                            modifier: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
-                            $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in home.Greeting.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                            $changed: CALL 'internal final fun updateChangedFlags (flags: kotlin.Int): kotlin.Int declared in androidx.compose.runtime' type=kotlin.Int origin=null
-                              flags: CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                                $this: GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
-                                other: CONST Int type=kotlin.Int value=1
-                            $default: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
+                            ARG name: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
+                            ARG modifier: GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null
+                            ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in home.Greeting.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                            ARG $changed: CALL 'internal final fun updateChangedFlags (flags: kotlin.Int): kotlin.Int declared in androidx.compose.runtime' type=kotlin.Int origin=null
+                              ARG flags: CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                                ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
+                                ARG other: CONST Int type=kotlin.Int value=1
+                            ARG $default: GET_VAR '$default: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null

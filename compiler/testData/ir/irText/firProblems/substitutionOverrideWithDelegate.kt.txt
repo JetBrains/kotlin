@@ -30,7 +30,7 @@ interface A {
   }
 
   operator fun invoke(value: String) {
-    return <this>.bar(value = value)
+    return bar(/* <this> = <this>, */ value = value)
   }
 
 }

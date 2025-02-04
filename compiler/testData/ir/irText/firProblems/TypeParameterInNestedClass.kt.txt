@@ -24,7 +24,7 @@ object Retry {
         return $callee.invoke()
       }
 
-      action::suspendConversion0
+      ::suspendConversion0/*($callee = action) */
     })
   }
 

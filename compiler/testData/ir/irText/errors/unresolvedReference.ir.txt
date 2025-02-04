@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/unresolvedReference.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType([Error type: Not found recorded type for unresolved]) visibility:private [final,static]
       EXPRESSION_BODY
         ERROR_CALL 'unresolved' type=IrErrorType([Error type: Error expression type])
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType([Error type: Not found recorded type for unresolved])
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:IrErrorType([Error type: Not found recorded type for unresolved])
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType([Error type: Not found recorded type for unresolved]) declared in <root>'
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/unresolvedReference.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType([Error type: Unresolved type for Unresolved]) visibility:private [final,static]
       EXPRESSION_BODY
         ERROR_CALL 'unresolved()' type=IrErrorType([Error type: Error expression type])
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IrErrorType([Error type: Unresolved type for Unresolved])
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL returnType:IrErrorType([Error type: Unresolved type for Unresolved])
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): IrErrorType([Error type: Unresolved type for Unresolved]) declared in <root>'
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/unresolvedReference.kt
         ERROR_CALL 'unresolved(56)' type=IrErrorType([Error type: Error expression type])
           receiver: CONST Int type=kotlin.Int value=42
           CONST Int type=kotlin.Int value=56
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:IrErrorType([Error type: Not found recorded type for 42.unresolved(56)])
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL returnType:IrErrorType([Error type: Not found recorded type for 42.unresolved(56)])
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType([Error type: Not found recorded type for 42.unresolved(56)]) declared in <root>'

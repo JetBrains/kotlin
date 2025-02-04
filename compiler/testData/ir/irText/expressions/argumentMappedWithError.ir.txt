@@ -1,19 +1,19 @@
 FILE fqName:<root> fileName:/argumentMappedWithError.kt
-  FUN name:convert visibility:public modality:FINAL <R> ($receiver:kotlin.Number) returnType:R of <root>.convert
+  FUN name:convert visibility:public modality:FINAL returnType:R of <root>.convert
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Number] reified:false
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Number
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.Number
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun convert <R> (): R of <root>.convert declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun convert <R> (<this>: kotlin.Number): R of <root>.convert declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-  FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Number) returnType:kotlin.Unit
-    VALUE_PARAMETER name:arg index:0 type:kotlin.Number
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:arg index:0 type:kotlin.Number
     BLOCK_BODY
-  FUN name:runMe visibility:public modality:FINAL <> (args:kotlin.Array<kotlin.String>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:args index:0 type:kotlin.Array<kotlin.String>
+  FUN name:runMe visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
     BLOCK_BODY
       VAR name:x type:kotlin.Int [val]
         CONST Int type=kotlin.Int value=0
       CALL 'public final fun foo (arg: kotlin.Number): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        arg: CALL 'public final fun convert <R> (): R of <root>.convert declared in <root>' type=kotlin.Number origin=null
-          <R>: kotlin.Number
-          $receiver: GET_VAR 'val x: kotlin.Int declared in <root>.runMe' type=kotlin.Int origin=null
+        ARG arg: CALL 'public final fun convert <R> (<this>: kotlin.Number): R of <root>.convert declared in <root>' type=kotlin.Number origin=null
+          TYPE_ARG R: kotlin.Number
+          ARG <this>: GET_VAR 'val x: kotlin.Int declared in <root>.runMe' type=kotlin.Int origin=null

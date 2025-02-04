@@ -3,7 +3,7 @@ class A {
     get
 
   init {
-    a().apply<String>(block = local fun String.<anonymous>() {
+    apply<String>(/* <this> = a(), */ block = local fun String.<anonymous>() {
       <this>.#b = $this$apply
     }
 ) /*~> Unit */
@@ -20,3 +20,4 @@ class A {
 fun a(): String {
   return "string"
 }
+

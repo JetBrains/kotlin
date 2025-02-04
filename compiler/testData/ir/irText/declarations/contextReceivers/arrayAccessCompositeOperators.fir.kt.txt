@@ -50,11 +50,11 @@ data class MyContainer {
 fun box(): String {
   var myContainer: MyContainer = MyContainer(i = 0)
   with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
-    myContainer.plusAssign($context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
+    plusAssign(/* $context_receiver_0 = $this$with, <this> = myContainer, */ other = MyContainer(i = get(/* $context_receiver_0 = $this$with, <this> = { // BLOCK
       val tmp_1: MyContainer = myContainer
-      myContainer = tmp_1.inc($context_receiver_0 = $this$with)
+      myContainer = inc(/* $context_receiver_0 = $this$with, <this> = tmp_1 */)
       tmp_1
-    }.get($context_receiver_0 = $this$with, index = 0)))
+    }, */ index = 0)))
   }
 )
   return when {
@@ -66,7 +66,8 @@ fun box(): String {
   }
 }
 
-operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
+context($context_receiver_0: Int)
+operator fun MyContainer.get(index: Int): Int {
   <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return when {
     EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
@@ -74,12 +75,14 @@ operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
   }
 }
 
-operator fun MyContainer.inc($context_receiver_0: Int): MyContainer {
+context($context_receiver_0: Int)
+operator fun MyContainer.inc(): MyContainer {
   <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return MyContainer(i = <this>.<get-i>().plus(other = 1))
 }
 
-operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer) {
+context($context_receiver_0: Int)
+operator fun MyContainer.plusAssign(other: MyContainer) {
   <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   <this>.<set-i>(<set-?> = <this>.<get-i>().plus(other = other.<get-i>()))
 }

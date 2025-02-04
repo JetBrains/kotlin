@@ -25,29 +25,29 @@ operator fun A.remAssign(s: String) {
 
 fun testProperty() {
   { // BLOCK
-    <get-p>().plusAssign(s = "+=")
+    plusAssign(/* <this> = <get-p>(), */ s = "+=")
   }
   { // BLOCK
-    <get-p>().minusAssign(s = "-=")
+    minusAssign(/* <this> = <get-p>(), */ s = "-=")
   }
   { // BLOCK
-    <get-p>().timesAssign(s = "*=")
+    timesAssign(/* <this> = <get-p>(), */ s = "*=")
   }
   { // BLOCK
-    <get-p>().divAssign(s = "/=")
+    divAssign(/* <this> = <get-p>(), */ s = "/=")
   }
   { // BLOCK
-    <get-p>().remAssign(s = "%=")
+    remAssign(/* <this> = <get-p>(), */ s = "%=")
   }
 }
 
 fun testVariable() {
   val a: A = A()
-  a.plusAssign(s = "+=")
-  a.minusAssign(s = "-=")
-  a.timesAssign(s = "*=")
-  a.divAssign(s = "/=")
-  a.remAssign(s = "*=")
+  plusAssign(/* <this> = a, */ s = "+=")
+  minusAssign(/* <this> = a, */ s = "-=")
+  timesAssign(/* <this> = a, */ s = "*=")
+  divAssign(/* <this> = a, */ s = "/=")
+  remAssign(/* <this> = a, */ s = "*=")
 }
 
 operator fun A.timesAssign(s: String) {

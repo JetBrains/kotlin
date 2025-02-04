@@ -1,65 +1,65 @@
 FILE fqName:<root> fileName:/genericOuterClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A<T of <root>.A>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:T of <root>.A visibility:private [final]
-    CONSTRUCTOR visibility:public <> ($context_receiver_0:T of <root>.A) returnType:<root>.A<T of <root>.A> [primary]
-      VALUE_PARAMETER name:$context_receiver_0 index:0 type:T of <root>.A
+    CONSTRUCTOR visibility:public returnType:<root>.A<T of <root>.A> [primary]
+      VALUE_PARAMETER kind:Context name:$context_receiver_0 index:0 type:T of <root>.A
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:T of <root>.A visibility:private [final] declared in <root>.A' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A' type=<root>.A<T of <root>.A> origin=null
           value: GET_VAR '$context_receiver_0: T of <root>.A declared in <root>.A.<init>' type=T of <root>.A origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B<P of <root>.B>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B<P of <root>.B>
     TYPE_PARAMETER name:P index:0 variance: superTypes:[kotlin.Any?] reified:false
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.collections.Collection<P of <root>.B> visibility:private [final]
-    CONSTRUCTOR visibility:public <> ($context_receiver_0:kotlin.collections.Collection<P of <root>.B>) returnType:<root>.B<P of <root>.B> [primary]
-      VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.collections.Collection<P of <root>.B>
+    CONSTRUCTOR visibility:public returnType:<root>.B<P of <root>.B> [primary]
+      VALUE_PARAMETER kind:Context name:$context_receiver_0 index:0 type:kotlin.collections.Collection<P of <root>.B>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.collections.Collection<P of <root>.B> visibility:private [final] declared in <root>.B' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.B<P of <root>.B> declared in <root>.B' type=<root>.B<P of <root>.B> origin=null
           value: GET_VAR '$context_receiver_0: kotlin.collections.Collection<P of <root>.B> declared in <root>.B.<init>' type=kotlin.collections.Collection<P of <root>.B> origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:bar visibility:public modality:FINAL <> ($receiver:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Unit
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<kotlin.Int>
+  FUN name:bar visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: kotlin.collections.Collection<P of <root>.B>) declared in <root>.B' type=<root>.B<kotlin.Int> origin=null
-          <class: P>: kotlin.Int
-          $context_receiver_0: GET_VAR '<this>: kotlin.collections.Collection<kotlin.Int> declared in <root>.bar' type=kotlin.collections.Collection<kotlin.Int> origin=IMPLICIT_ARGUMENT
-  FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Unit
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+          TYPE_ARG (of class) P: kotlin.Int
+          ARG $context_receiver_0: GET_VAR '<this>: kotlin.collections.Collection<kotlin.Int> declared in <root>.bar' type=kotlin.collections.Collection<kotlin.Int> origin=IMPLICIT_ARGUMENT
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.Int
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: T of <root>.A) declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
-          <class: T>: kotlin.Int
-          $context_receiver_0: GET_VAR '<this>: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+          TYPE_ARG (of class) T: kotlin.Int
+          ARG $context_receiver_0: GET_VAR '<this>: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=IMPLICIT_ARGUMENT

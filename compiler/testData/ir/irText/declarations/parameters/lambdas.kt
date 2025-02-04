@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val test1 : (String) -> String = { it }
 val test2 : Any.(Any) -> Any = { it.hashCode() }
 val test3 = { i: Int, j: Int -> }

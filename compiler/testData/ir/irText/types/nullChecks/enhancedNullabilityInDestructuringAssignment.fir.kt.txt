@@ -77,7 +77,7 @@ fun test3() {
 }
 
 fun test4() {
-  val tmp_3: IndexedValue<@EnhancedNullability @NotNull P> = listOfNotNull() /*!! @FlexibleMutability MutableList<@EnhancedNullability @NotNull P> */.withIndex<@EnhancedNullability @NotNull P>().first<IndexedValue<@EnhancedNullability @NotNull P>>()
+  val tmp_3: IndexedValue<@EnhancedNullability @NotNull P> = first<IndexedValue<@EnhancedNullability @NotNull P>>(/* <this> = withIndex<@EnhancedNullability @NotNull P>(/* <this> = listOfNotNull() /*!! @FlexibleMutability MutableList<@EnhancedNullability @NotNull P> */ */) */)
   val x: Int = tmp_3.component1()
   val y: @EnhancedNullability @NotNull P = tmp_3.component2() /*!! @NotNull P */
   use(x = x, y = y)

@@ -9,7 +9,7 @@ operator fun Any.set(index: Function0<Unit>, value: Int) {
 }
 
 fun test1(a: Any) {
-  a.plusAssign(lambda = local fun <anonymous>() {
+  plusAssign(/* <this> = a, */ lambda = local fun <anonymous>() {
     return Unit
   }
 )
@@ -22,7 +22,7 @@ fun test2(a: Any) {
       return Unit
     }
 
-    tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 42))
+    set(/* <this> = tmp_0, */ index = tmp_1, value = get(/* <this> = tmp_0, */ index = tmp_1).plus(other = 42))
   }
 }
 
@@ -33,8 +33,8 @@ fun test3(a: Any) {
       return Unit
     }
 
-    val tmp_4: Int = tmp_2.get(index = tmp_3)
-    tmp_2.set(index = tmp_3, value = tmp_4.inc())
+    val tmp_4: Int = get(/* <this> = tmp_2, */ index = tmp_3)
+    set(/* <this> = tmp_2, */ index = tmp_3, value = tmp_4.inc())
     tmp_4
   } /*~> Unit */
 }

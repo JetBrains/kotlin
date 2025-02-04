@@ -30,6 +30,7 @@ object B {
 
 fun B.test() {
   val tmp_0: A = A
-  val x: Int = (<this>, tmp_0).component1()
-  val z: Int = (<this>, tmp_0).component3()
+  val x: Int = <this>.component1(/* <this> = tmp_0 */)
+  val z: Int = <this>.component3(/* <this> = tmp_0 */)
 }
+

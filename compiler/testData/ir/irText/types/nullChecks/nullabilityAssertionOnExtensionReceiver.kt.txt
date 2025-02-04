@@ -14,10 +14,10 @@ fun String.extension() {
 }
 
 fun testExt() {
-  s() /*!! String */.extension()
+  extension(/* <this> = s() /*!! String */ */)
 }
 
 fun C.testMemberExt() {
-  (<this>, s() /*!! String */).memberExtension()
+  <this>.memberExtension(/* <this> = s() /*!! String */ */)
 }
 

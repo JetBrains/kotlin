@@ -1,199 +1,198 @@
 FILE fqName:<root> fileName:/monoidSum.kt
   CLASS INTERFACE name:Monoid modality:ABSTRACT visibility:public superTypes:[<root>.Semigroup<T of <root>.Monoid>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Monoid<T of <root>.Monoid>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Monoid<T of <root>.Monoid>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:combine visibility:public modality:ABSTRACT <> ($this:<root>.Semigroup<T of <root>.Monoid>, $receiver:T of <root>.Monoid, other:T of <root>.Monoid) returnType:T of <root>.Monoid [fake_override,infix]
+    FUN FAKE_OVERRIDE name:combine visibility:public modality:ABSTRACT returnType:T of <root>.Monoid [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Semigroup<T of <root>.Monoid>
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:T of <root>.Monoid
+      VALUE_PARAMETER kind:Regular name:other index:2 type:T of <root>.Monoid
       overridden:
-        public abstract fun combine (other: T of <root>.Semigroup): T of <root>.Semigroup declared in <root>.Semigroup
-      $this: VALUE_PARAMETER name:<this> type:<root>.Semigroup<T of <root>.Monoid>
-      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Monoid
-      VALUE_PARAMETER name:other index:0 type:T of <root>.Monoid
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        public abstract fun combine (<this>: T of <root>.Semigroup, other: T of <root>.Semigroup): T of <root>.Semigroup declared in <root>.Semigroup
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Semigroup
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Semigroup
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Semigroup
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY name:unit visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:ABSTRACT <> ($this:<root>.Monoid<T of <root>.Monoid>) returnType:T of <root>.Monoid
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:ABSTRACT returnType:T of <root>.Monoid
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Monoid<T of <root>.Monoid>
         correspondingProperty: PROPERTY name:unit visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Monoid<T of <root>.Monoid>
   CLASS INTERFACE name:Semigroup modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Semigroup<T of <root>.Semigroup>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Semigroup<T of <root>.Semigroup>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:combine visibility:public modality:ABSTRACT <> ($this:<root>.Semigroup<T of <root>.Semigroup>, $receiver:T of <root>.Semigroup, other:T of <root>.Semigroup) returnType:T of <root>.Semigroup [infix]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Semigroup<T of <root>.Semigroup>
-      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.Semigroup
-      VALUE_PARAMETER name:other index:0 type:T of <root>.Semigroup
+    FUN name:combine visibility:public modality:ABSTRACT returnType:T of <root>.Semigroup [infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Semigroup<T of <root>.Semigroup>
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:T of <root>.Semigroup
+      VALUE_PARAMETER kind:Regular name:other index:2 type:T of <root>.Semigroup
   CLASS OBJECT name:IntMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.Int>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntMonoid
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.IntMonoid
     PROPERTY name:unit visibility:public modality:OPEN [val]
       overridden:
         public abstract unit: T of <root>.Monoid declared in <root>.Monoid
       FIELD PROPERTY_BACKING_FIELD name:unit type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:OPEN <> ($this:<root>.IntMonoid) returnType:kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:OPEN returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IntMonoid
         correspondingProperty: PROPERTY name:unit visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-unit> (): T of <root>.Monoid declared in <root>.Monoid
-        $this: VALUE_PARAMETER name:<this> type:<root>.IntMonoid
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-unit> (): kotlin.Int declared in <root>.IntMonoid'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:unit type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IntMonoid declared in <root>.IntMonoid.<get-unit>' type=<root>.IntMonoid origin=null
-    CONSTRUCTOR visibility:private <> () returnType:<root>.IntMonoid [primary]
+    CONSTRUCTOR visibility:private returnType:<root>.IntMonoid [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:IntMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.Int>]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:combine visibility:public modality:OPEN <> ($this:<root>.IntMonoid, $receiver:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [infix]
+    FUN name:combine visibility:public modality:OPEN returnType:kotlin.Int [infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IntMonoid
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:other index:2 type:kotlin.Int
       overridden:
-        public abstract fun combine (other: T of <root>.Monoid): T of <root>.Monoid declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:<root>.IntMonoid
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
-      VALUE_PARAMETER name:other index:0 type:kotlin.Int
+        public abstract fun combine (<this>: T of <root>.Monoid, other: T of <root>.Monoid): T of <root>.Monoid declared in <root>.Monoid
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun combine (other: kotlin.Int): kotlin.Int declared in <root>.IntMonoid'
+        RETURN type=kotlin.Nothing from='public open fun combine (<this>: kotlin.Int, other: kotlin.Int): kotlin.Int declared in <root>.IntMonoid'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            $this: GET_VAR '<this>: kotlin.Int declared in <root>.IntMonoid.combine' type=kotlin.Int origin=null
-            other: GET_VAR 'other: kotlin.Int declared in <root>.IntMonoid.combine' type=kotlin.Int origin=null
+            ARG <this>: GET_VAR '<this>(index:1): kotlin.Int declared in <root>.IntMonoid.combine' type=kotlin.Int origin=null
+            ARG other: GET_VAR 'other: kotlin.Int declared in <root>.IntMonoid.combine' type=kotlin.Int origin=null
   CLASS OBJECT name:StringMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.String>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringMonoid
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.StringMonoid
     PROPERTY name:unit visibility:public modality:OPEN [val]
       overridden:
         public abstract unit: T of <root>.Monoid declared in <root>.Monoid
       FIELD PROPERTY_BACKING_FIELD name:unit type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:OPEN <> ($this:<root>.StringMonoid) returnType:kotlin.String
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unit> visibility:public modality:OPEN returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.StringMonoid
         correspondingProperty: PROPERTY name:unit visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-unit> (): T of <root>.Monoid declared in <root>.Monoid
-        $this: VALUE_PARAMETER name:<this> type:<root>.StringMonoid
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-unit> (): kotlin.String declared in <root>.StringMonoid'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:unit type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.StringMonoid declared in <root>.StringMonoid.<get-unit>' type=<root>.StringMonoid origin=null
-    CONSTRUCTOR visibility:private <> () returnType:<root>.StringMonoid [primary]
+    CONSTRUCTOR visibility:private returnType:<root>.StringMonoid [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:StringMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.String>]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:combine visibility:public modality:OPEN <> ($this:<root>.StringMonoid, $receiver:kotlin.String, other:kotlin.String) returnType:kotlin.String [infix]
+    FUN name:combine visibility:public modality:OPEN returnType:kotlin.String [infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.StringMonoid
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.String
+      VALUE_PARAMETER kind:Regular name:other index:2 type:kotlin.String
       overridden:
-        public abstract fun combine (other: T of <root>.Monoid): T of <root>.Monoid declared in <root>.Monoid
-      $this: VALUE_PARAMETER name:<this> type:<root>.StringMonoid
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
-      VALUE_PARAMETER name:other index:0 type:kotlin.String
+        public abstract fun combine (<this>: T of <root>.Monoid, other: T of <root>.Monoid): T of <root>.Monoid declared in <root>.Monoid
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun combine (other: kotlin.String): kotlin.String declared in <root>.StringMonoid'
+        RETURN type=kotlin.Nothing from='public open fun combine (<this>: kotlin.String, other: kotlin.String): kotlin.String declared in <root>.StringMonoid'
           CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-            $this: GET_VAR '<this>: kotlin.String declared in <root>.StringMonoid.combine' type=kotlin.String origin=null
-            other: GET_VAR 'other: kotlin.String declared in <root>.StringMonoid.combine' type=kotlin.String origin=null
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+            ARG <this>: GET_VAR '<this>(index:1): kotlin.String declared in <root>.StringMonoid.combine' type=kotlin.String origin=null
+            ARG other: GET_VAR 'other: kotlin.String declared in <root>.StringMonoid.combine' type=kotlin.String origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Int origin=null
-          <T>: <root>.IntMonoid
-          <R>: kotlin.Int
-          receiver: GET_OBJECT 'CLASS OBJECT name:IntMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.Int>]' type=<root>.IntMonoid
-          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.IntMonoid, kotlin.Int> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.IntMonoid) returnType:kotlin.Int
-              $receiver: VALUE_PARAMETER name:$this$with type:<root>.IntMonoid
+          TYPE_ARG T: <root>.IntMonoid
+          TYPE_ARG R: kotlin.Int
+          ARG receiver: GET_OBJECT 'CLASS OBJECT name:IntMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.Int>]' type=<root>.IntMonoid
+          ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.IntMonoid, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+              VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.IntMonoid
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.box'
-                  CALL 'public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>): T of <root>.sum declared in <root>' type=kotlin.Int origin=null
-                    <T>: kotlin.Int
-                    $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
-                      <T>: kotlin.Int
-                      elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$with: <root>.IntMonoid): kotlin.Int declared in <root>.box'
+                  CALL 'public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>, <this>: kotlin.collections.List<T of <root>.sum>): T of <root>.sum declared in <root>' type=kotlin.Int origin=null
+                    TYPE_ARG T: kotlin.Int
+                    ARG $context_receiver_0: GET_VAR '$this$with: <root>.IntMonoid declared in <root>.box.<anonymous>' type=<root>.IntMonoid origin=IMPLICIT_ARGUMENT
+                    ARG <this>: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
+                      TYPE_ARG T: kotlin.Int
+                      ARG elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
                         CONST Int type=kotlin.Int value=1
                         CONST Int type=kotlin.Int value=2
                         CONST Int type=kotlin.Int value=3
-                    $context_receiver_0: GET_VAR '$this$with: <root>.IntMonoid declared in <root>.box.<anonymous>' type=<root>.IntMonoid origin=IMPLICIT_ARGUMENT
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.String origin=null
-          <T>: <root>.StringMonoid
-          <R>: kotlin.String
-          receiver: GET_OBJECT 'CLASS OBJECT name:StringMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.String>]' type=<root>.StringMonoid
-          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.StringMonoid, kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.StringMonoid) returnType:kotlin.String
-              $receiver: VALUE_PARAMETER name:$this$with type:<root>.StringMonoid
+          TYPE_ARG T: <root>.StringMonoid
+          TYPE_ARG R: kotlin.String
+          ARG receiver: GET_OBJECT 'CLASS OBJECT name:StringMonoid modality:FINAL visibility:public superTypes:[<root>.Monoid<kotlin.String>]' type=<root>.StringMonoid
+          ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.StringMonoid, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
+              VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.StringMonoid
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
-                  CALL 'public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>): T of <root>.sum declared in <root>' type=kotlin.String origin=null
-                    <T>: kotlin.String
-                    $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
-                      <T>: kotlin.String
-                      elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$with: <root>.StringMonoid): kotlin.String declared in <root>.box'
+                  CALL 'public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>, <this>: kotlin.collections.List<T of <root>.sum>): T of <root>.sum declared in <root>' type=kotlin.String origin=null
+                    TYPE_ARG T: kotlin.String
+                    ARG $context_receiver_0: GET_VAR '$this$with: <root>.StringMonoid declared in <root>.box.<anonymous>' type=<root>.StringMonoid origin=IMPLICIT_ARGUMENT
+                    ARG <this>: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
+                      TYPE_ARG T: kotlin.String
+                      ARG elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                         CONST String type=kotlin.String value="O"
                         CONST String type=kotlin.String value="K"
-                    $context_receiver_0: GET_VAR '$this$with: <root>.StringMonoid declared in <root>.box.<anonymous>' type=<root>.StringMonoid origin=IMPLICIT_ARGUMENT
-  FUN name:sum visibility:public modality:FINAL <T> ($receiver:kotlin.collections.List<T of <root>.sum>, $context_receiver_0:<root>.Monoid<T of <root>.sum>) returnType:T of <root>.sum
+  FUN name:sum visibility:public modality:FINAL returnType:T of <root>.sum
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    contextReceiverParametersCount: 1
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<T of <root>.sum>
-    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Monoid<T of <root>.sum>
+    VALUE_PARAMETER kind:Context name:$context_receiver_0 index:0 type:<root>.Monoid<T of <root>.sum>
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.collections.List<T of <root>.sum>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>): T of <root>.sum declared in <root>'
-        CALL 'public final fun fold <T, R> (initial: R of kotlin.collections.fold, operation: kotlin.Function2<@[ParameterName(name = "acc")] R of kotlin.collections.fold, T of kotlin.collections.fold, R of kotlin.collections.fold>): R of kotlin.collections.fold declared in kotlin.collections' type=T of <root>.sum origin=null
-          <T>: T of <root>.sum
-          <R>: T of <root>.sum
-          $receiver: GET_VAR '<this>: kotlin.collections.List<T of <root>.sum> declared in <root>.sum' type=kotlin.collections.List<T of <root>.sum> origin=IMPLICIT_ARGUMENT
-          initial: CALL 'public abstract fun <get-unit> (): T of <root>.Monoid declared in <root>.Monoid' type=T of <root>.sum origin=GET_PROPERTY
-            $this: GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=IMPLICIT_ARGUMENT
-          operation: FUN_EXPR type=kotlin.Function2<T of <root>.sum, T of <root>.sum, T of <root>.sum> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (acc:T of <root>.sum, e:T of <root>.sum) returnType:T of <root>.sum
-              VALUE_PARAMETER name:acc index:0 type:T of <root>.sum
-              VALUE_PARAMETER name:e index:1 type:T of <root>.sum
+      RETURN type=kotlin.Nothing from='public final fun sum <T> ($context_receiver_0: <root>.Monoid<T of <root>.sum>, <this>: kotlin.collections.List<T of <root>.sum>): T of <root>.sum declared in <root>'
+        CALL 'public final fun fold <T, R> (<this>: kotlin.collections.Iterable<T of kotlin.collections.fold>, initial: R of kotlin.collections.fold, operation: kotlin.Function2<@[ParameterName(name = "acc")] R of kotlin.collections.fold, T of kotlin.collections.fold, R of kotlin.collections.fold>): R of kotlin.collections.fold declared in kotlin.collections' type=T of <root>.sum origin=null
+          TYPE_ARG T: T of <root>.sum
+          TYPE_ARG R: T of <root>.sum
+          ARG <this>: GET_VAR '<this>: kotlin.collections.List<T of <root>.sum> declared in <root>.sum' type=kotlin.collections.List<T of <root>.sum> origin=IMPLICIT_ARGUMENT
+          ARG initial: CALL 'public abstract fun <get-unit> (): T of <root>.Monoid declared in <root>.Monoid' type=T of <root>.sum origin=GET_PROPERTY
+            ARG <this>: GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=IMPLICIT_ARGUMENT
+          ARG operation: FUN_EXPR type=kotlin.Function2<T of <root>.sum, T of <root>.sum, T of <root>.sum> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:T of <root>.sum
+              VALUE_PARAMETER kind:Regular name:acc index:0 type:T of <root>.sum
+              VALUE_PARAMETER kind:Regular name:e index:1 type:T of <root>.sum
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (acc: T of <root>.sum, e: T of <root>.sum): T of <root>.sum declared in <root>.sum'
-                  CALL 'public abstract fun combine (other: T of <root>.Monoid): T of <root>.Monoid declared in <root>.Monoid' type=T of <root>.sum origin=null
-                    $this: GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=IMPLICIT_ARGUMENT
-                    $receiver: GET_VAR 'acc: T of <root>.sum declared in <root>.sum.<anonymous>' type=T of <root>.sum origin=null
-                    other: GET_VAR 'e: T of <root>.sum declared in <root>.sum.<anonymous>' type=T of <root>.sum origin=null
+                  CALL 'public abstract fun combine (<this>: T of <root>.Monoid, other: T of <root>.Monoid): T of <root>.Monoid declared in <root>.Monoid' type=T of <root>.sum origin=null
+                    ARG <this>(index:0): GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=IMPLICIT_ARGUMENT
+                    ARG <this>(index:1): GET_VAR 'acc: T of <root>.sum declared in <root>.sum.<anonymous>' type=T of <root>.sum origin=null
+                    ARG other: GET_VAR 'e: T of <root>.sum declared in <root>.sum.<anonymous>' type=T of <root>.sum origin=null

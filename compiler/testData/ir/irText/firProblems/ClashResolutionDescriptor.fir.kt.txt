@@ -54,7 +54,7 @@ fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<Plat
             else -> tmp_1
           }
         }
-        val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<*>> = ClashResolutionDescriptor<PlatformSpecificExtension<*>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())
+        val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<*>> = ClashResolutionDescriptor<PlatformSpecificExtension<*>>(container = container, resolver = resolver, clashedComponents = toList<ComponentDescriptor>(/* <this> = clashedComponents */))
       }
     }
   }

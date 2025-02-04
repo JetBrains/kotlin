@@ -1,106 +1,106 @@
 FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
-    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.J
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.I
         public open fun hashCode (): kotlin.Int declared in <root>.J
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.I
         public open fun toString (): kotlin.String declared in <root>.J
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:ff visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Unit
+    FUN name:ff visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
       overridden:
         public abstract fun ff (): kotlin.Unit declared in <root>.I
-      $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
-    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.J
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.I
         public open fun hashCode (): kotlin.Int declared in <root>.J
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.I
         public open fun toString (): kotlin.String declared in <root>.J
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:ff visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Unit
+    FUN name:ff visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       overridden:
         public abstract fun ff (): kotlin.Unit declared in <root>.I
-      $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
   CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[<root>.K]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.I
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.K
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.K
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.K
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:ff visibility:public modality:ABSTRACT <> ($this:<root>.I) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.I
+    FUN name:ff visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
   CLASS INTERFACE name:J modality:ABSTRACT visibility:public superTypes:[<root>.K]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.J
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.K
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.K
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.K
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:K modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.K
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:testFlexible1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:testFlexible1 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:v type:@[FlexibleNullability] <root>.K? [val]
         WHEN type=@[FlexibleNullability] <root>.K? origin=IF
@@ -111,32 +111,32 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun b (): @[FlexibleNullability] <root>.B? declared in <root>.Java' type=@[FlexibleNullability] <root>.B? origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
+        ARG <this>: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
           TYPE_OP type=<root>.K origin=IMPLICIT_NOTNULL typeOperand=<root>.K
             GET_VAR 'val v: @[FlexibleNullability] <root>.K? declared in <root>.testFlexible1' type=@[FlexibleNullability] <root>.K? origin=null
-  FUN name:testFlexible2 visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:<root>.A
-    VALUE_PARAMETER name:b index:1 type:<root>.B
+  FUN name:testFlexible2 visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:a index:0 type:<root>.A
+    VALUE_PARAMETER kind:Regular name:b index:1 type:<root>.B
     BLOCK_BODY
       VAR name:v type:@[FlexibleNullability] <root>.K? [val]
         WHEN type=@[FlexibleNullability] <root>.K? origin=IF
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.Java.id?): @[FlexibleNullability] T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.A? origin=null
-              <T>: @[FlexibleNullability] <root>.A?
-              x: GET_VAR 'a: <root>.A declared in <root>.testFlexible2' type=<root>.A origin=null
+              TYPE_ARG T: @[FlexibleNullability] <root>.A?
+              ARG x: GET_VAR 'a: <root>.A declared in <root>.testFlexible2' type=<root>.A origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.Java.id?): @[FlexibleNullability] T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.B? origin=null
-              <T>: @[FlexibleNullability] <root>.B?
-              x: GET_VAR 'b: <root>.B declared in <root>.testFlexible2' type=<root>.B origin=null
+              TYPE_ARG T: @[FlexibleNullability] <root>.B?
+              ARG x: GET_VAR 'b: <root>.B declared in <root>.testFlexible2' type=<root>.B origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
+        ARG <this>: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
           TYPE_OP type=<root>.K origin=IMPLICIT_NOTNULL typeOperand=<root>.K
             GET_VAR 'val v: @[FlexibleNullability] <root>.K? declared in <root>.testFlexible2' type=@[FlexibleNullability] <root>.K? origin=null
-  FUN name:testIntersection visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:<root>.A
-    VALUE_PARAMETER name:b index:1 type:<root>.B
+  FUN name:testIntersection visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:a index:0 type:<root>.A
+    VALUE_PARAMETER kind:Regular name:b index:1 type:<root>.B
     BLOCK_BODY
       VAR name:v type:<root>.K [val]
         WHEN type=<root>.K origin=IF
@@ -147,5 +147,5 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'b: <root>.B declared in <root>.testIntersection' type=<root>.B origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
+        ARG <this>: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
           GET_VAR 'val v: <root>.K declared in <root>.testIntersection' type=<root>.K origin=null

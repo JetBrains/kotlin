@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/kt36963.kt
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.reflect.KFunction0<kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): kotlin.reflect.KFunction0<kotlin.Unit> declared in <root>'
         CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=EXCLEXCL
-          <T0>: kotlin.reflect.KFunction0<kotlin.Unit>
-          arg0: FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+          TYPE_ARG T0: kotlin.reflect.KFunction0<kotlin.Unit>
+          ARG arg0: FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>

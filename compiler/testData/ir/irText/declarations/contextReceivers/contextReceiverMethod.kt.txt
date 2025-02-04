@@ -13,7 +13,8 @@ class Context {
 
 class Test {
   private /* final field */ val contextReceiverField0: Context
-  constructor($context_receiver_0: Context) /* primary */ {
+  context($context_receiver_0: Context)
+  constructor() /* primary */ {
     super/*Any*/()
     <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */

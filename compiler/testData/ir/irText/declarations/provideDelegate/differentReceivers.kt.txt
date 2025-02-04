@@ -1,13 +1,13 @@
 val testO: String /* by */
-  field = MyClass(value = "O").provideDelegate(host = null, p = ::testO)
+  field = provideDelegate(/* <this> = MyClass(value = "O"), */ host = null, p = ::testO)
   get(): String {
-    return #testO$delegate.getValue(receiver = null, p = ::testO)
+    return getValue(/* <this> = #testO$delegate, */ receiver = null, p = ::testO)
   }
 
 val testK: String /* by */
   field = "K"
   get(): String {
-    return #testK$delegate.getValue(receiver = null, p = ::testK)
+    return getValue(/* <this> = #testK$delegate, */ receiver = null, p = ::testK)
   }
 
 val testOK: String

@@ -2,87 +2,87 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
   CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
       ExternalClassWithNested
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bar.Foo
-    CONSTRUCTOR visibility:public <> () returnType:bar.Foo [primary]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:bar.Foo
+    CONSTRUCTOR visibility:public returnType:bar.Foo [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:box visibility:public modality:FINAL <> ($this:bar.Foo) returnType:kotlin.String
-      $this: VALUE_PARAMETER name:<this> type:bar.Foo
+    FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:bar.Foo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in bar.Foo'
           CONST String type=kotlin.String value="OK"
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       CALL 'public final fun testConstructor (): kotlin.Unit declared in bar' type=kotlin.Unit origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in bar'
         CALL 'public final fun testNestedClasses (): kotlin.String declared in bar' type=kotlin.String origin=null
-  FUN name:testConstructor visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:testConstructor visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:generatedClass type:foo.AllOpenGenerated [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.AllOpenGenerated' type=foo.AllOpenGenerated origin=null
-  FUN name:testNestedClasses visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:testNestedClasses visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:nestedFoo type:foo.AllOpenGenerated.NestedFoo [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.AllOpenGenerated.NestedFoo' type=foo.AllOpenGenerated.NestedFoo origin=null
       RETURN type=kotlin.Nothing from='public final fun testNestedClasses (): kotlin.String declared in bar'
         CALL 'public final fun box (): kotlin.String declared in bar.Foo' type=kotlin.String origin=null
-          $this: CALL 'public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo' type=bar.Foo origin=null
-            $this: GET_VAR 'val nestedFoo: foo.AllOpenGenerated.NestedFoo declared in bar.testNestedClasses' type=foo.AllOpenGenerated.NestedFoo origin=null
+          ARG <this>: CALL 'public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo' type=bar.Foo origin=null
+            ARG <this>: GET_VAR 'val nestedFoo: foo.AllOpenGenerated.NestedFoo declared in bar.testNestedClasses' type=foo.AllOpenGenerated.NestedFoo origin=null
 FILE fqName:foo fileName:__GENERATED DECLARATIONS__.kt
   CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.AllOpenGenerated
     CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.AllOpenGenerated.NestedFoo
-      CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] visibility:public <> () returnType:foo.AllOpenGenerated.NestedFoo
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.AllOpenGenerated.NestedFoo
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] visibility:public returnType:foo.AllOpenGenerated.NestedFoo
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] name:materialize visibility:public modality:FINAL <> ($this:foo.AllOpenGenerated.NestedFoo) returnType:bar.Foo
-        $this: VALUE_PARAMETER name:<this> type:foo.AllOpenGenerated.NestedFoo
+      FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] name:materialize visibility:public modality:FINAL returnType:bar.Foo
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.AllOpenGenerated.NestedFoo
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo'
             CONSTRUCTOR_CALL 'public constructor <init> () declared in bar.Foo' type=bar.Foo origin=null
-    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] visibility:public <> () returnType:foo.AllOpenGenerated
+    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] visibility:public returnType:foo.AllOpenGenerated
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

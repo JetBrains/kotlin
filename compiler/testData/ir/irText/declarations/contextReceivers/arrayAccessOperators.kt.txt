@@ -45,9 +45,9 @@ data class MyContainer {
 fun box(): String {
   return with<Int, String>(receiver = 42, block = local fun Int.<anonymous>(): String {
     val myContainer: MyContainer = MyContainer(s = "fail")
-    myContainer.set($context_receiver_0 = $this$with, index = 0, value = "OK")
+    set(/* $context_receiver_0 = $this$with, <this> = myContainer, */ index = 0, value = "OK")
     return { // BLOCK
-      val tmp_1: String? = myContainer.get($context_receiver_0 = $this$with, index = 0)
+      val tmp_1: String? = get(/* $context_receiver_0 = $this$with, <this> = myContainer, */ index = 0)
       when {
         EQEQ(arg0 = tmp_1, arg1 = null) -> "fail"
         else -> tmp_1
@@ -57,7 +57,8 @@ fun box(): String {
 )
 }
 
-operator fun MyContainer.get($context_receiver_0: Int, index: Int): String? {
+context($context_receiver_0: Int)
+operator fun MyContainer.get(index: Int): String? {
   return when {
     when {
       EQEQ(arg0 = index, arg1 = 0) -> EQEQ(arg0 = $context_receiver_0, arg1 = 42)
@@ -67,7 +68,8 @@ operator fun MyContainer.get($context_receiver_0: Int, index: Int): String? {
   }
 }
 
-operator fun MyContainer.set($context_receiver_0: Int, index: Int, value: String) {
+context($context_receiver_0: Int)
+operator fun MyContainer.set(index: Int, value: String) {
   when {
     when {
       EQEQ(arg0 = index, arg1 = 0).not() -> true

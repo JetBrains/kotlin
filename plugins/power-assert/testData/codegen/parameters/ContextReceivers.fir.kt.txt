@@ -27,24 +27,26 @@ data object Asserter {
 }
 
 fun box(): String {
-  return runAll(tests = ["test1".to<String, Function0<Unit>>(that = local fun <anonymous>() {
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1", */ that = local fun <anonymous>() {
     test1()
   }
-), "test2".to<String, Function0<Unit>>(that = local fun <anonymous>() {
+), to<String, Function0<Unit>>(/* <this> = "test2", */ that = local fun <anonymous>() {
     test2()
   }
 )])
 }
 
-fun context1Assert(<unused var>: Asserter, condition: Boolean, msg: Any? = null) {
+context(<unused var>: Asserter)
+fun context1Assert(condition: Boolean, msg: Any? = null) {
   when {
-    condition.not() -> throw AssertionError(p0 = msg.toString())
+    condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
   }
 }
 
-fun context2Assert(<unused var>: Asserter, <unused var>: Asserter, condition: Boolean, msg: Any? = null) {
+context(<unused var>: Asserter, <unused var>: Asserter)
+fun context2Assert(condition: Boolean, msg: Any? = null) {
   when {
-    condition.not() -> throw AssertionError(p0 = msg.toString())
+    condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
   }
 }
 
@@ -53,7 +55,7 @@ fun test1() {
     { // BLOCK
       val tmp_1: Int = "test".<get-length>()
       val tmp_2: Boolean = EQEQ(arg0 = tmp_1, arg1 = 5)
-      context1Assert(<unused var> = $this$with, condition = tmp_2, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_2 + "\n                      " + tmp_1 + "\n")
+      context1Assert(/* <unused var> = $this$with, */ condition = tmp_2, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_2 + "\n                      " + tmp_1 + "\n")
     }
   }
 )
@@ -64,7 +66,7 @@ fun test2() {
     { // BLOCK
       val tmp_3: Int = "test".<get-length>()
       val tmp_4: Boolean = EQEQ(arg0 = tmp_3, arg1 = 5)
-      context2Assert(<unused var> = $this$with, <unused var> = $this$with, condition = tmp_4, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_4 + "\n                      " + tmp_3 + "\n")
+      context2Assert(/* <unused var> = $this$with, <unused var> = $this$with, */ condition = tmp_4, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_4 + "\n                      " + tmp_3 + "\n")
     }
   }
 )

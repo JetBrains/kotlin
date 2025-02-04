@@ -1,50 +1,50 @@
 FILE fqName:<root> fileName:/newInferenceFixationOrder1.kt
   CLASS INTERFACE name:Inv2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Inv2<A of <root>.Inv2, B of <root>.Inv2>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Inv2<A of <root>.Inv2, B of <root>.Inv2>
     TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:x type:<root>.Inv2<kotlin.String, kotlin.Int> [val]
         CALL 'public final fun test (): <root>.Inv2<kotlin.String, kotlin.Int> declared in <root>' type=<root>.Inv2<kotlin.String, kotlin.Int> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:check visibility:public modality:FINAL <T, R> (x:T of <root>.check, y:R of <root>.check, f:kotlin.Function1<T of <root>.check, R of <root>.check>) returnType:<root>.Inv2<T of <root>.check, R of <root>.check>
+  FUN name:check visibility:public modality:FINAL returnType:<root>.Inv2<T of <root>.check, R of <root>.check>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:x index:0 type:T of <root>.check
-    VALUE_PARAMETER name:y index:1 type:R of <root>.check
-    VALUE_PARAMETER name:f index:2 type:kotlin.Function1<T of <root>.check, R of <root>.check>
+    VALUE_PARAMETER kind:Regular name:x index:0 type:T of <root>.check
+    VALUE_PARAMETER kind:Regular name:y index:1 type:R of <root>.check
+    VALUE_PARAMETER kind:Regular name:f index:2 type:kotlin.Function1<T of <root>.check, R of <root>.check>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun check <T, R> (x: T of <root>.check, y: R of <root>.check, f: kotlin.Function1<T of <root>.check, R of <root>.check>): <root>.Inv2<T of <root>.check, R of <root>.check> declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-  FUN name:foo visibility:public modality:FINAL <X, Y> () returnType:kotlin.Function1<X of <root>.foo, Y of <root>.foo>
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Function1<X of <root>.foo, Y of <root>.foo>
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-  FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Inv2<kotlin.String, kotlin.Int>
+  FUN name:test visibility:public modality:FINAL returnType:<root>.Inv2<kotlin.String, kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.Inv2<kotlin.String, kotlin.Int> declared in <root>'
         CALL 'public final fun check <T, R> (x: T of <root>.check, y: R of <root>.check, f: kotlin.Function1<T of <root>.check, R of <root>.check>): <root>.Inv2<T of <root>.check, R of <root>.check> declared in <root>' type=<root>.Inv2<kotlin.String, kotlin.Int> origin=null
-          <T>: kotlin.String
-          <R>: kotlin.Int
-          x: CONST String type=kotlin.String value=""
-          y: CONST Int type=kotlin.Int value=1
-          f: CALL 'public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
-            <X>: kotlin.String
-            <Y>: kotlin.Int
+          TYPE_ARG T: kotlin.String
+          TYPE_ARG R: kotlin.Int
+          ARG x: CONST String type=kotlin.String value=""
+          ARG y: CONST Int type=kotlin.Int value=1
+          ARG f: CALL 'public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
+            TYPE_ARG X: kotlin.String
+            TYPE_ARG Y: kotlin.Int

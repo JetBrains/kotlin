@@ -187,10 +187,10 @@ class IrValidatorTest {
             listOf(
                 Message(
                     WARNING,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
@@ -199,10 +199,10 @@ class IrValidatorTest {
                 ),
                 Message(
                     WARNING,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
@@ -221,24 +221,24 @@ class IrValidatorTest {
             listOf(
                 Message(
                     WARNING,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
                 ),
                 Message(
                     WARNING,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -255,10 +255,10 @@ class IrValidatorTest {
             listOf(
                 Message(
                     ERROR,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
@@ -267,10 +267,10 @@ class IrValidatorTest {
                 ),
                 Message(
                     ERROR,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
@@ -289,24 +289,24 @@ class IrValidatorTest {
             listOf(
                 Message(
                     ERROR,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
                 ),
                 Message(
                     ERROR,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> (${'$'}receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -962,7 +962,7 @@ class IrValidatorTest {
                     ERROR,
                     """
                     [IR VALIDATION] IrValidatorTest: Vararg type=kotlin.BooleanArray is expected to be an array of its underlying varargElementType=kotlin.Any
-                    VALUE_PARAMETER name:v index:0 type:kotlin.BooleanArray varargElementType:kotlin.Any [vararg]
+                    VALUE_PARAMETER kind:Regular name:v index:0 type:kotlin.BooleanArray varargElementType:kotlin.Any [vararg]
                       inside FUN name:foo visibility:public modality:FINAL <> (v:kotlin.BooleanArray) returnType:kotlin.Any
                         inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
@@ -991,7 +991,7 @@ class IrValidatorTest {
                     ERROR,
                     """
                     [IR VALIDATION] IrValidatorTest: Vararg type=kotlin.Array<kotlin.String> is expected to be an array of its underlying varargElementType=kotlin.Any
-                    VALUE_PARAMETER name:v index:0 type:kotlin.Array<kotlin.String> varargElementType:kotlin.Any [vararg]
+                    VALUE_PARAMETER kind:Regular name:v index:0 type:kotlin.Array<kotlin.String> varargElementType:kotlin.Any [vararg]
                       inside FUN name:foo visibility:public modality:FINAL <> (v:kotlin.Array<kotlin.String>) returnType:kotlin.Any
                         inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
@@ -1209,7 +1209,7 @@ class IrValidatorTest {
             returnType = TestIrBuiltins.unitType
         }
         function.addValueParameter {
-            name = Name.identifier("v")
+            name = SpecialNames.THIS
             type = dynamicType
         }.also {
             it.kind = IrParameterKind.DispatchReceiver
@@ -1244,7 +1244,7 @@ class IrValidatorTest {
                     [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
                     FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null reflectionTarget=<same>
                       inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> (${'$'}this:dynamic) returnType:kotlin.Unit
+                        inside FUN name:foo visibility:public modality:FINAL <> (<this>:dynamic) returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -1255,7 +1255,7 @@ class IrValidatorTest {
                     [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
                     CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Unit origin=null
                       inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> (${'$'}this:dynamic) returnType:kotlin.Unit
+                        inside FUN name:foo visibility:public modality:FINAL <> (<this>:dynamic) returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -1264,7 +1264,7 @@ class IrValidatorTest {
                     WARNING,
                     """
                     [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
-                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:dynamic) returnType:kotlin.Unit
+                    FUN name:foo visibility:public modality:FINAL <> (<this>:dynamic) returnType:kotlin.Unit
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -1354,7 +1354,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Invalid order of function parameters: ExtensionReceiver is placed after Regular.
                     Parameters must follow a strict order: [dispatch receiver, context parameters, extension receiver, regular parameters].
-                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any, x0:kotlin.Any, x2:kotlin.Any) returnType:kotlin.Any
+                    FUN name:foo visibility:public modality:FINAL <> (x0:kotlin.Any, x1:kotlin.Any, x2:kotlin.Any, x3:kotlin.Any) returnType:kotlin.Any
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
@@ -1364,7 +1364,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Invalid order of function parameters: Context is placed after ExtensionReceiver.
                     Parameters must follow a strict order: [dispatch receiver, context parameters, extension receiver, regular parameters].
-                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any, x0:kotlin.Any, x2:kotlin.Any) returnType:kotlin.Any
+                    FUN name:foo visibility:public modality:FINAL <> (x0:kotlin.Any, x1:kotlin.Any, x2:kotlin.Any, x3:kotlin.Any) returnType:kotlin.Any
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
@@ -1374,7 +1374,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Invalid order of function parameters: DispatchReceiver is placed after Context.
                     Parameters must follow a strict order: [dispatch receiver, context parameters, extension receiver, regular parameters].
-                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any, x0:kotlin.Any, x2:kotlin.Any) returnType:kotlin.Any
+                    FUN name:foo visibility:public modality:FINAL <> (x0:kotlin.Any, x1:kotlin.Any, x2:kotlin.Any, x3:kotlin.Any) returnType:kotlin.Any
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
@@ -1407,18 +1407,18 @@ class IrValidatorTest {
             listOf(
                 Message(
                     WARNING,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: Function may have only one DispatchReceiver parameter
-                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any) returnType:kotlin.Any
+                    FUN name:foo visibility:public modality:FINAL <> (x0:kotlin.Any, x1:kotlin.Any, x2:kotlin.Any, x3:kotlin.Any) returnType:kotlin.Any
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 ),
                 Message(
                     WARNING,
-                    """
+                    $$"""
                     [IR VALIDATION] IrValidatorTest: Function may have only one ExtensionReceiver parameter
-                    FUN name:foo visibility:public modality:FINAL <> (${'$'}this:kotlin.Any, ${'$'}receiver:kotlin.Any) returnType:kotlin.Any
+                    FUN name:foo visibility:public modality:FINAL <> (x0:kotlin.Any, x1:kotlin.Any, x2:kotlin.Any, x3:kotlin.Any) returnType:kotlin.Any
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)

@@ -14,8 +14,8 @@ class View {
 fun box(): String {
   with<View, Nothing>(receiver = View(), block = local fun View.<anonymous>(): Nothing {
     when {
-      EQEQ(arg0 = listOf<Int>(elements = [1, 2, 10]).map<Int, Int>(transform = local fun <anonymous>(it: Int): Int {
-        return it.<get-dp>($context_receiver_0 = $this$with)
+      EQEQ(arg0 = map<Int, Int>(/* <this> = listOf<Int>(elements = [1, 2, 10]), */ transform = local fun <anonymous>(it: Int): Int {
+        return <get-dp>(/* $context_receiver_0 = $this$with, <this> = it */)
       }
 ), arg1 = listOf<Int>(elements = [42, 84, 420])) -> { // BLOCK
         return "OK"
@@ -27,7 +27,8 @@ fun box(): String {
 }
 
 val Int.dp: Int
-  get($context_receiver_0: View): Int {
+  context($context_receiver_0: View)
+  get(): Int {
     return $context_receiver_0.<get-coefficient>().times(other = <this>)
   }
 

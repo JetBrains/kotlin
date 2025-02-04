@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/whenSmartCastToEnum.kt
   CLASS ENUM_CLASS name:En modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.En>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.En
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.En
     ENUM_ENTRY name:A
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.En'
@@ -10,36 +10,36 @@ FILE fqName:<root> fileName:/whenSmartCastToEnum.kt
     ENUM_ENTRY name:C
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.En'
-    CONSTRUCTOR visibility:private <> () returnType:<root>.En [primary]
+    CONSTRUCTOR visibility:private returnType:<root>.En [primary]
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
-          <E>: <root>.En
+          TYPE_ARG E: <root>.En
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:En modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.En>]' type=kotlin.Unit
-    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.En
-      VALUE_PARAMETER name:value index:0 type:kotlin.String
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:<root>.En
+      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.En>
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.En>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>, other:<root>.En) returnType:kotlin.Int [fake_override,operator]
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.En
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
-      VALUE_PARAMETER name:other index:0 type:<root>.En
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
       overridden:
         public final fun hashCode (): kotlin.Int declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<<root>.En>) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.En>
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.En>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
@@ -47,20 +47,20 @@ FILE fqName:<root> fileName:/whenSmartCastToEnum.kt
         IntrinsicConstEvaluation
       overridden:
         public final name: kotlin.String declared in kotlin.Enum
-      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-name> (): kotlin.String declared in kotlin.Enum
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
     PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final ordinal: kotlin.Int declared in kotlin.Enum
-      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.En>) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.En>
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:r type:kotlin.String [var]
         CONST String type=kotlin.String value=""
@@ -78,20 +78,20 @@ FILE fqName:<root> fileName:/whenSmartCastToEnum.kt
               WHEN type=kotlin.Unit origin=WHEN
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_0: <root>.En declared in <root>.test' type=<root>.En origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En
+                    ARG arg0: GET_VAR 'val tmp_0: <root>.En declared in <root>.test' type=<root>.En origin=null
+                    ARG arg1: GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En
                   then: BLOCK type=kotlin.Unit origin=null
                     SET_VAR 'var r: kotlin.String declared in <root>.test' type=kotlin.Unit origin=EQ
                       CONST String type=kotlin.String value="when1"
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_0: <root>.En declared in <root>.test' type=<root>.En origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:B' type=<root>.En
+                    ARG arg0: GET_VAR 'val tmp_0: <root>.En declared in <root>.test' type=<root>.En origin=null
+                    ARG arg1: GET_ENUM 'ENUM_ENTRY name:B' type=<root>.En
                   then: BLOCK type=kotlin.Unit origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_0: <root>.En declared in <root>.test' type=<root>.En origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:C' type=<root>.En
+                    ARG arg0: GET_VAR 'val tmp_0: <root>.En declared in <root>.test' type=<root>.En origin=null
+                    ARG arg1: GET_ENUM 'ENUM_ENTRY name:C' type=<root>.En
                   then: BLOCK type=kotlin.Unit origin=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
@@ -110,20 +110,20 @@ FILE fqName:<root> fileName:/whenSmartCastToEnum.kt
               WHEN type=kotlin.Unit origin=WHEN
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_1: <root>.En declared in <root>.test' type=<root>.En origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En
+                    ARG arg0: GET_VAR 'val tmp_1: <root>.En declared in <root>.test' type=<root>.En origin=null
+                    ARG arg1: GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En
                   then: BLOCK type=kotlin.Unit origin=null
                     SET_VAR 'var r: kotlin.String declared in <root>.test' type=kotlin.Unit origin=EQ
                       CONST String type=kotlin.String value="when2"
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_1: <root>.En declared in <root>.test' type=<root>.En origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:B' type=<root>.En
+                    ARG arg0: GET_VAR 'val tmp_1: <root>.En declared in <root>.test' type=<root>.En origin=null
+                    ARG arg1: GET_ENUM 'ENUM_ENTRY name:B' type=<root>.En
                   then: BLOCK type=kotlin.Unit origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_1: <root>.En declared in <root>.test' type=<root>.En origin=null
-                    arg1: GET_ENUM 'ENUM_ENTRY name:C' type=<root>.En
+                    ARG arg0: GET_VAR 'val tmp_1: <root>.En declared in <root>.test' type=<root>.En origin=null
+                    ARG arg1: GET_ENUM 'ENUM_ENTRY name:C' type=<root>.En
                   then: BLOCK type=kotlin.Unit origin=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
