@@ -1,9 +1,9 @@
 KT element: KtTypeParameter
-FIR element: null
-FIR source kind: null
+FIR element: FirTypeParameterImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+[ResolvedTo(BODY_RESOLVE)] T
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOnAnonymousFunction.kt
