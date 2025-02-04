@@ -210,9 +210,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsBind) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.arguments[0]!!
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val jsBindTarget = when (val target = call.getValueArgument(1)!!) {
+                val jsBindTarget = when (val target = call.arguments[1]!!) {
                     is IrFunctionReference -> {
                         val superClass = call.superQualifierSymbol!!
                         val functionName = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
@@ -230,9 +230,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsContexfulRef) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.arguments[0]!!
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val target = call.getValueArgument(1) as IrRawFunctionReference
+                val target = call.arguments[1] as IrRawFunctionReference
                 val jsTarget = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
 
                 JsNameRef(jsTarget, jsReceiver)
@@ -266,7 +266,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
                 val jsInvokeFunName = context.getNameForMemberFunction(invokeFun)
 
-                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
+                val jsExtensionReceiver = call.arguments[0]?.accept(IrElementToJsExpressionTransformer(), context)!!
                 val args = translateCallArguments(call, context)
 
                 JsInvocation(JsNameRef(jsInvokeFunName, jsExtensionReceiver), args)
