@@ -172,9 +172,6 @@ private class KotlinHierarchyBuilderImpl(
                 (it is KotlinWithJavaTarget<*, *> && it.platformType == KotlinPlatformType.jvm)
     }
 
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun withAndroid() = withAndroidTarget()
-
     override fun withAndroidTarget() = withTargets { it is KotlinAndroidTarget }
 
     override fun withAndroidNativeX64() = withTargets {

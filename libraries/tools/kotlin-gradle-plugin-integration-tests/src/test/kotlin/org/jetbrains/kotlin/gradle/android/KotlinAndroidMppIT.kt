@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -927,48 +928,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleAndroidTest
-    fun mppAndroidRenameDiagnosticReportedOnKts(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk,
-    ) = testAndroidRenameReported(gradleVersion, agpVersion, jdkVersion, "mppAndroidRenameKts")
-
-    @GradleAndroidTest
-    fun mppAndroidRenameDiagnosticReportedOnGroovy(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk,
-    ) = testAndroidRenameReported(gradleVersion, agpVersion, jdkVersion, "mppAndroidRenameGroovy")
-
-    private fun testAndroidRenameReported(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk,
-        projectName: String,
-    ) {
-        project(
-            projectName,
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            buildJdk = jdkVersion.location
-        ) {
-            val assertions: BuildResult.() -> Unit = {
-                val errors = output.lines().filter { it.startsWith("e:") }.toSet()
-                assert(
-                    errors.any { error -> error.contains("androidTarget") }
-                )
-            }
-
-            if (buildGradleKts.exists()) {
-                buildAndFail("tasks", assertions = assertions)
-            } else {
-                build("tasks", assertions = assertions)
-            }
-        }
-    }
-
-
     // https://youtrack.jetbrains.com/issue/KT-48436
     @GradleAndroidTest
     @BrokenOnMacosTest
@@ -985,32 +944,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             build("assembleDebug") {
                 output.assertNoDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
             }
-        }
-    }
-
-    @GradleAndroidTest
-    fun smokeTestWithIcerockMobileMultiplatformGradlePlugin(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk,
-    ) {
-        project(
-            "kgp-with-icerock-mobile-multiplatform", gradleVersion,
-            defaultBuildOptions.copy(androidVersion = agpVersion),
-            buildJdk = jdkVersion.location
-        ) {
-            settingsGradleKts.replaceText(
-                "resolutionStrategy {",
-                """
-                    resolutionStrategy {
-                        eachPlugin {
-                            if (requested.id.id.startsWith("dev.icerock.mobile.multiplatform")) {
-                                useModule("dev.icerock:mobile-multiplatform:0.14.2")
-                            }
-                        }
-                """.trimIndent()
-            )
-            build("assemble", "-Pmobile.multiplatform.useIosShortcut=false")
         }
     }
 

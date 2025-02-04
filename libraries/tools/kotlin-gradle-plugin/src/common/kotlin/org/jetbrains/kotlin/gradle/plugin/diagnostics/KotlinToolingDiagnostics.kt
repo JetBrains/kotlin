@@ -420,7 +420,7 @@ internal object KotlinToolingDiagnostics {
                 .description {
                     """
                     Missing `androidTarget()` Kotlin target in multiplatform project '$projectName ($projectPath)'.
-                    The Android Gradle plugin was applied without creating a corresponding `android()` Kotlin Target
+                    The Android Gradle plugin was applied without creating a corresponding `androidTarget()` Kotlin Target
                     ```
                     plugins {
                         id("$androidPluginId")
