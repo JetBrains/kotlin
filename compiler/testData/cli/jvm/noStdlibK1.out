@@ -1,3 +1,4 @@
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/noStdlibK1.kt:4:5: error: cannot access built-in declaration 'kotlin.String'. Ensure that you have a dependency on the Kotlin standard library
     String::class.primaryConstructor
     ^^^^^^
