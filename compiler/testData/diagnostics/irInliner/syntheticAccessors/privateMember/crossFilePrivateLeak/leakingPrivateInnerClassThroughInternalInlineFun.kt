@@ -8,8 +8,8 @@ class A {
         fun foo() = "OK"
     }
 
-    private inline fun privateFun() = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>Inner()<!>.foo()
-    internal inline fun internalInlineFun() = privateFun()
+    private inline fun privateFun() = Inner().foo()
+    internal inline fun internalInlineFun() = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_WARNING!>privateFun()<!>
 }
 
 // FILE: main.kt
