@@ -202,11 +202,14 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     /**
      * @suppress
      */
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = "Accessing task instance directly is deprecated",
-        replaceWith = ReplaceWith("compileTaskProvider")
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
     )
-    val compileKotlinTask: KotlinCompileDeprecated<T>
+    val compileKotlinTask: KotlinCompileDeprecated<KotlinCommonOptionsDeprecated>
+        get() = compileKotlinTaskProvider.get()
 
     /**
      * @suppress

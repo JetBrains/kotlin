@@ -29,11 +29,6 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
     val konanTarget: KonanTarget,
 ) : DeprecatedAbstractKotlinCompilation<KotlinCommonOptions>(compilation) {
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTask: KotlinNativeCompile
-        get() = compilation.compileKotlinTask as KotlinNativeCompile
-
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = "Replaced with compileTaskProvider",

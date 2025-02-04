@@ -36,11 +36,6 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
     internal val testedVariantArtifacts: Property<FileCollection> =
         compilation.project.objects.property(FileCollection::class.java)
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-        get() = compilation.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = "Replaced with compileTaskProvider",

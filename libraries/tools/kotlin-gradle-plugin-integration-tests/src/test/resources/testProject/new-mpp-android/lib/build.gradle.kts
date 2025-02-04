@@ -50,10 +50,8 @@ kotlin.targets.all {
         kotlinOptions { 
             verbose = true
         }
-        compileKotlinTask.doFirst {
-            if (!compileKotlinTask.kotlinOptions.verbose) {
-                throw AssertionError("kotlinOptions were not configured properly")
-            }
+        compileTaskProvider.configure {
+            compilerOptions.verbose.set(true)
             println("KT-29964 OK")
         }
     }

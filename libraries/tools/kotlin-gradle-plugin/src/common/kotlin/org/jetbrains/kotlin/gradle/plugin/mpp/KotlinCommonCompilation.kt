@@ -20,10 +20,6 @@ interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation
 open class KotlinCommonCompilation @Inject internal constructor(compilation: KotlinCompilationImpl) :
     @Suppress("DEPRECATION") AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
     KotlinMetadataCompilation<KotlinCommonOptions> {
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTask: KotlinCompileCommon
-        get() = compilation.compileKotlinTask as KotlinCompileCommon
 
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>

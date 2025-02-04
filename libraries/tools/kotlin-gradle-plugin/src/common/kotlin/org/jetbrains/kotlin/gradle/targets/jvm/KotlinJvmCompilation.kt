@@ -49,11 +49,6 @@ open class KotlinJvmCompilation @Inject internal constructor(
     override val compileKotlinTaskProvider: TaskProvider<KotlinCompile<KotlinCommonOptions>>
         get() = compilation.compileKotlinTaskProvider
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-        get() = compilation.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<KotlinJvmCompilerOptions>>
         get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinJvmCompilerOptions>>

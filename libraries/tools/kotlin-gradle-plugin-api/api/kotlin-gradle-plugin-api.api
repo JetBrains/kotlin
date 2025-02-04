@@ -957,6 +957,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilation$DefaultI
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/gradle/api/Action;)V
 	public static fun defaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/gradle/api/Action;)V
 	public static fun getAssociateWith (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/util/List;
+	public static fun getCompileKotlinTask (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
 	public static fun getDefaultSourceSetName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/lang/String;
 	public static fun getDisambiguatedName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/lang/String;
@@ -988,6 +989,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnabl
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lorg/gradle/api/Action;)V
 	public static fun defaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lorg/gradle/api/Action;)V
 	public static fun getAssociateWith (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/util/List;
+	public static fun getCompileKotlinTask (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
 	public static fun getDefaultSourceSetName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/lang/String;
 	public static fun getDisambiguatedName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/lang/String;
@@ -1005,6 +1007,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResou
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lorg/gradle/api/Action;)V
 	public static fun defaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lorg/gradle/api/Action;)V
 	public static fun getAssociateWith (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/util/List;
+	public static fun getCompileKotlinTask (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
 	public static fun getDefaultSourceSetName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/lang/String;
 	public static fun getDisambiguatedName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/lang/String;
