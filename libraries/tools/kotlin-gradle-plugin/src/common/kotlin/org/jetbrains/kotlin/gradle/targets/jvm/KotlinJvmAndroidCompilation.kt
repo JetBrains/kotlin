@@ -41,10 +41,14 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = compilation.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
-        get() = compilation.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = "Replaced with compileTaskProvider",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
+    override val compileKotlinTaskProvider: TaskProvider<KotlinCompile<KotlinCommonOptions>>
+        get() = compilation.compileKotlinTaskProvider
 
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<KotlinJvmCompilerOptions>>

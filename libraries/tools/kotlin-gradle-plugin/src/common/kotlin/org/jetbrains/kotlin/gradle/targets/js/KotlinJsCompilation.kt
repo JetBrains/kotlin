@@ -15,12 +15,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
@@ -78,10 +79,14 @@ open class KotlinJsCompilation @Inject internal constructor(
     override val compileKotlinTask: Kotlin2JsCompile
         get() = compilation.compileKotlinTask as Kotlin2JsCompile
 
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTaskProvider: TaskProvider<out Kotlin2JsCompile>
-        get() = compilation.compileKotlinTaskProvider as TaskProvider<out Kotlin2JsCompile>
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = "Replaced with compileTaskProvider",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
+    override val compileKotlinTaskProvider: TaskProvider<KotlinCompile<KotlinCommonOptions>>
+        get() = compilation.compileKotlinTaskProvider
 
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<Kotlin2JsCompile>
