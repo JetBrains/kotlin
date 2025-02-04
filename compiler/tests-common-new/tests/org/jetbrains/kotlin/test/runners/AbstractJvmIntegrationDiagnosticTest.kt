@@ -66,14 +66,3 @@ abstract class AbstractJvmIntegrationDiagnosticTest(
 open class AbstractClassicJvmIntegrationDiagnosticTest : AbstractJvmIntegrationDiagnosticTest(FrontendKinds.ClassicFrontend) {
     override val jvmCliFacade: Constructor<JvmCliFacade> get() = ::ClassicJvmCliFacade
 }
-
-abstract class AbstractFirJvmIntegrationDiagnosticTest : AbstractJvmIntegrationDiagnosticTest(FrontendKinds.FIR)
-
-open class AbstractFirLightTreeJvmIntegrationDiagnosticTest : AbstractFirJvmIntegrationDiagnosticTest() {
-    override val jvmCliFacade: Constructor<JvmCliFacade> get() = ::FirLightTreeJvmCliFacade
-}
-
-@FirPsiCodegenTest
-open class AbstractFirPsiJvmIntegrationDiagnosticTest : AbstractFirJvmIntegrationDiagnosticTest() {
-    override val jvmCliFacade: Constructor<JvmCliFacade> get() = ::FirPsiJvmCliFacade
-}

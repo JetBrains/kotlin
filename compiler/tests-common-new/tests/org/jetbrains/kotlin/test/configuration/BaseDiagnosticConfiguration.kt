@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_VFIR
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
@@ -196,6 +197,14 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         defaultDirectives {
             +WITH_STDLIB
         }
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/jvmIntegration/*") {
+        defaultDirectives {
+            +WITH_STDLIB
+            +CHECK_COMPILER_OUTPUT
+        }
+        configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)
     }
 
     forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitApi/*") {
