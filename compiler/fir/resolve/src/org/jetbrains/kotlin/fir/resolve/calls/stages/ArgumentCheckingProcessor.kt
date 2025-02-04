@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionT
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -123,23 +124,25 @@ internal object ArgumentCheckingProcessor {
                     return
                 }
                 val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
-                val collectionLiteralElementType = getCollectionLiteralElementType(
-                    collectionLiteralArgumentContext.expectedType,
-                    session,
-                    scopeSession
-                )
-                if (collectionLiteralElementType == null) {
+                val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
+                if (ofFunction == null) {
                     if (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
                         return // Just don't infer anything. The candidate is successful
                     }
                     reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
                     return
                 }
-                val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)!!
-                val s = candidate.substitutor.substituteOrSelf(ofFunction.resolvedReturnType)
-                resolvePlainExpressionArgument(atom.expression, argumentType = s)
+                val freshVars = ofFunction.typeParameterSymbols.map { ConeTypeParameterBasedTypeVariable(it) }
+                val substr = substitutorByMap(freshVars.associate { it.typeParameterSymbol to it.defaultType }, session)
+                for (freshVar in freshVars) csBuilder.registerVariable(freshVar)
+
+                val collectionLiteralElementType = getCollectionLiteralElementType(ofFunction)
+                resolvePlainExpressionArgument(
+                    atom.expression,
+                    argumentType = substr.substituteOrSelf(ofFunction.resolvedReturnType)
+                )
                 val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(
-                    expectedType = candidate.substitutor.substituteOrSelf(collectionLiteralElementType),
+                    expectedType = substr.substituteOrSelf(collectionLiteralElementType),
                 )
                 for (atom in atom.subAtoms) {
                     collectionLiteralElementContext.resolveArgumentExpression(atom)
