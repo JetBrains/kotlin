@@ -9,29 +9,22 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureResourcesPublicationAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_PATH
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.utils.*
 
 internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
-    class WithRuntime(
-        private val withResourcesConfigurationExtending: (runtimeDependencyConfiguration: Configuration?, compileDependencyConfiguration: Configuration) -> (Configuration?) = { _, _ -> null },
-    ) : DefaultKotlinCompilationDependencyConfigurationsFactory() {
+    class WithRuntime : DefaultKotlinCompilationDependencyConfigurationsFactory() {
         override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
             return KotlinCompilationDependencyConfigurationsContainer(
                 target,
                 compilationName,
                 withRuntime = true,
-                withResourcesConfigurationExtending = withResourcesConfigurationExtending,
             )
         }
     }
@@ -54,7 +47,6 @@ internal object NativeKotlinCompilationDependencyConfigurationsFactory :
             naming = naming,
             withRuntime = false,
             withHostSpecificMetadata = true,
-            withResourcesConfigurationExtending = { _, compileDependencyConfiguration -> compileDependencyConfiguration },
             compileClasspathConfigurationName = naming.name("compileKlibraries")
         )
     }
@@ -95,7 +87,6 @@ private const val runtimeClasspath = "runtimeClasspath"
 
 private fun KotlinCompilationDependencyConfigurationsContainer(
     target: KotlinTarget, compilationName: String, withRuntime: Boolean, withHostSpecificMetadata: Boolean = false,
-    withResourcesConfigurationExtending: (runtimeDependencyConfiguration: Configuration?, compileDependencyConfiguration: Configuration) -> (Configuration?) = { _, _ -> null },
     naming: ConfigurationNaming = ConfigurationNaming.Default(target, compilationName),
     apiConfigurationName: String = naming.name(compilation, API),
     implementationConfigurationName: String = naming.name(compilation, IMPLEMENTATION),
@@ -109,7 +100,6 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         target.disambiguationClassifier,
         compilationName
     ),
-    resourcesPathConfigurationName: String = naming.name(RESOURCES_PATH),
 ): KotlinCompilationConfigurationsContainer {
     val compilationCoordinates =
         target.disambiguationClassifier?.let { "${it}/$compilationName" } ?: compilationName
@@ -213,23 +203,6 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         description = "Kotlin compiler plugins for $compilation"
     }
 
-    val resourcesConfiguration = when (target.project.kotlinPropertiesProvider.mppResourcesResolutionStrategy) {
-        KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration -> withResourcesConfigurationExtending(
-            runtimeDependencyConfiguration,
-            compileDependencyConfiguration,
-        )?.let { configurationToExtend ->
-            target.project.configurations.maybeCreateResolvable(resourcesPathConfigurationName).apply {
-                extendsFrom(configurationToExtend)
-                isVisible = false
-
-                configureResourcesPublicationAttributes(target)
-
-                description = "Kotlin resources for $compilation"
-            }
-        }
-        KotlinTargetResourcesResolutionStrategy.VariantReselection -> null
-    }
-
     return DefaultKotlinCompilationConfigurationsContainer(
         deprecatedCompileConfiguration = deprecatedCompileConfiguration,
         deprecatedRuntimeConfiguration = deprecatedRuntimeConfiguration,
@@ -241,6 +214,5 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         runtimeDependencyConfiguration = runtimeDependencyConfiguration,
         hostSpecificMetadataConfiguration = hostSpecificMetadataConfiguration,
         pluginConfiguration = pluginConfiguration,
-        resourcesConfiguration = resourcesConfiguration,
     )
 }
