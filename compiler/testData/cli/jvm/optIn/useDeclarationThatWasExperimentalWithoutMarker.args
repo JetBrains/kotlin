@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/useDeclarationThatWasExperimentalWithoutMarker.kt
--d
-$TEMP_DIR$
--api-version
-1.6

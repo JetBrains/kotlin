@@ -24833,12 +24833,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
-      @TestMetadata("changingResolveIfDontUseBuilderInferenceDisabledFeature.kt")
-      public void testChangingResolveIfDontUseBuilderInferenceDisabledFeature() {
-        runTest("compiler/testData/codegen/box/inference/pcla/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
-      }
-
-      @Test
       @TestMetadata("commonSuperType.kt")
       public void testCommonSuperType() {
         runTest("compiler/testData/codegen/box/inference/pcla/commonSuperType.kt");
@@ -40702,12 +40696,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("objectLiteralInClosure.kt")
-    public void testObjectLiteralInClosure() {
-      runTest("compiler/testData/codegen/box/objects/objectLiteralInClosure.kt");
-    }
-
-    @Test
     @TestMetadata("objectVsClassInitialization_kt5291.kt")
     public void testObjectVsClassInitialization_kt5291() {
       runTest("compiler/testData/codegen/box/objects/objectVsClassInitialization_kt5291.kt");
@@ -54329,12 +54317,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("kt35914.kt")
     public void testKt35914() {
       runTest("compiler/testData/codegen/box/regressions/kt35914.kt");
-    }
-
-    @Test
-    @TestMetadata("kt3850.kt")
-    public void testKt3850() {
-      runTest("compiler/testData/codegen/box/regressions/kt3850.kt");
     }
 
     @Test
