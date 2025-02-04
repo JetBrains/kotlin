@@ -2,6 +2,7 @@
 // See KT-73392
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
+// IGNORE_PARTIAL_BODY_ANALYSIS
 @file:OptIn(ExperimentalContracts::class)
 
 import kotlin.contracts.*
