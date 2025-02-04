@@ -1,0 +1,14 @@
+FILE: anonymousFunction.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval anon: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+        lval anon2: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+        lval anon3: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+    }
+    public abstract interface I : R|kotlin/Any| {
+    }

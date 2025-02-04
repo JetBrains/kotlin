@@ -1349,6 +1349,7 @@ open class FirDeclarationsResolveTransformer(
         // `transformFunction` will replace both `typeRef` and `returnTypeRef`, so make sure to keep the former.
         val lambdaType = anonymousFunction.typeRef
         return context.withAnonymousFunction(anonymousFunction, components) {
+            doTransformTypeParameters(anonymousFunction)
             withFullBodyResolve {
                 transformFunction(
                     anonymousFunction,

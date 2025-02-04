@@ -1943,15 +1943,9 @@ class LightTreeRawFirDeclarationBuilder(
 
                 context.firFunctionTargets += target
                 modifiers?.convertAnnotationsTo(annotations)
+                typeParameters += firTypeParameters
 
-                val actualTypeParameters = if (this is FirSimpleFunctionBuilder) {
-                    typeParameters += firTypeParameters
-                    typeParameters
-                } else {
-                    listOf()
-                }
-
-                withCapturedTypeParameters(true, functionSource, actualTypeParameters) {
+                withCapturedTypeParameters(true, functionSource, typeParameters) {
                     contextParameters.addContextParameters(modifiers?.contextList, functionSymbol)
 
                     valueParametersList?.let { list ->
