@@ -1559,6 +1559,32 @@ class FunctionBodySkippingTransformTestsNoSource(
                     super.Test()
                 }
             }
+
+            open class OpenImpl : Open() {
+                @Composable override fun Test() {
+                    super.Test()
+                }
+            }
+        """
+    )
+
+    @Test
+    fun interfaceRestartableFunction() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            interface Presenter {
+                @Composable fun Content()
+            }
+
+            class PresenterImpl(
+                private val onCompose: () -> Unit
+            ) : Presenter {
+                @Composable
+                override fun Content() {
+                    onCompose()
+                }
+            }
         """
     )
 }

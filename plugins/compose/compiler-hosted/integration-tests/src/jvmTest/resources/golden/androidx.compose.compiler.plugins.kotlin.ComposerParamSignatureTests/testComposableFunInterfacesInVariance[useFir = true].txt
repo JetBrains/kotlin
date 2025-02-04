@@ -38,6 +38,7 @@ public final class TestKt {
 final class TestKt%test%1 implements Consumer {
   <init>()V
   public final consume(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+  private final static consume%lambda%0(LTestKt%test%1;Ljava/lang/String;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   public synthetic bridge consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
   static <clinit>()V
   public final static LTestKt%test%1; INSTANCE

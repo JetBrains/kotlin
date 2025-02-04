@@ -20,6 +20,7 @@ public abstract interface Foo {
 public final class FooImpl implements Foo {
   public <init>()V
   public bar(Landroidx/compose/runtime/Composer;I)V
+  private final static bar%lambda%0(LFooImpl;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   static <clinit>()V
   public final static I %stable
 }

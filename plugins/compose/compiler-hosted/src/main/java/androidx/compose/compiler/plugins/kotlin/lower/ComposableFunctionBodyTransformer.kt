@@ -745,8 +745,8 @@ class ComposableFunctionBodyTransformer(
             return false
         }
 
-        // Virtual functions cannot be restartable since restart logic makes a virtual call (todo: b/329477544)
-        if (modality == Modality.OPEN || overriddenSymbols.isNotEmpty()) {
+        // Open functions cannot be restartable since restart logic makes a virtual call (todo: b/329477544)
+        if (modality == Modality.OPEN && parentClassOrNull?.isFinalClass != true) {
             return false
         }
 
