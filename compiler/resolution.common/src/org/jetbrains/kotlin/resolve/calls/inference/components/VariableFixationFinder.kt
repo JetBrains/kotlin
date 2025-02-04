@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
@@ -184,8 +185,12 @@ class VariableFixationFinder(
         if (allTypeVariables.isEmpty()) return null
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
-            notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this,
+            notFixedTypeVariables,
+            postponedArguments,
+            topLevelType.takeIf { completionMode == PARTIAL },
+            this,
             languageVersionSettings,
+            outerTypeVariables.takeIf { completionMode != UNTIL_FIRST_LAMBDA }
         )
 
         val candidate =

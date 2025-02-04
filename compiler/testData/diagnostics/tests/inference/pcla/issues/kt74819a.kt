@@ -5,7 +5,11 @@
 
 fun foo(x: List<String>) {
     buildList {
-        add("")
-        flatMap { x }
+        add(null)
+        addAll(
+            buildList {
+                flatMap { x }
+            }
+        )
     }
 }

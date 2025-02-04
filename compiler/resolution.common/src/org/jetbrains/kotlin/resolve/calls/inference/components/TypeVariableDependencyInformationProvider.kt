@@ -21,10 +21,8 @@ class TypeVariableDependencyInformationProvider(
     private val topLevelType: KotlinTypeMarker?,
     private val typeSystemContext: VariableFixationFinder.Context,
     private val languageVersionSettings: LanguageVersionSettings,
+    private val outerTypeVariables: Set<TypeConstructorMarker>? = typeSystemContext.outerTypeVariables,
 ) {
-
-    private val outerTypeVariables: Set<TypeConstructorMarker>? =
-        typeSystemContext.outerTypeVariables
 
     /*
      * Not oriented edges
