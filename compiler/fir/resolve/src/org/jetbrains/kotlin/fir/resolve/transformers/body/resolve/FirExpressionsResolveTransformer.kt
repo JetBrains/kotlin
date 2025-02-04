@@ -1831,7 +1831,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayLiteral) {
             when (data) {
-                is ResolutionMode.ContextIndependent -> {
+                is ResolutionMode.ContextIndependent -> { // todo fix
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextIndependent)
                     val call = components.syntheticCallGenerator.generateCollectionOfCall(
                         Name.identifier("listOf"),
