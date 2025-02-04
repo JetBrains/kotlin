@@ -67,7 +67,7 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withBodiesHash = cityHash128WithSeed(withStringsHash, lib.bodies(fileIndex))
             val withDeclarationsHash = cityHash128WithSeed(withBodiesHash, lib.declarations(fileIndex))
             val withFileEntriesHash = withDeclarationsHash.applyIf(
-                lib.manifestProperties.readKonanLibraryVersioning().abiVersion?.isAtLeast(CompatibilityMode.FIRST_HAVING_FILE_ENTRIES_TABLE) == true
+                lib.versions.abiVersion?.isAtLeast(CompatibilityMode.FIRST_HAVING_FILE_ENTRIES_TABLE) == true
             ) {
                 cityHash128WithSeed(this, lib.fileEntries(fileIndex))
             }

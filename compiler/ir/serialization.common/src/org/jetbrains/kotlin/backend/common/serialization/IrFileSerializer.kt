@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedDeclaration
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
@@ -431,13 +432,13 @@ open class IrFileSerializer(
         val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentDeduplicationKey>?,
         val annotations: List<IrConstructorCall>,
-        val abbreviation: IrTypeAbbreviation?
+        val abbreviation: IrTypeAbbreviation?,
     )
 
     private data class IrTypeArgumentDeduplicationKey(
         val kind: IrTypeArgumentKind,
         val variance: Variance?,
-        val type: IrTypeDeduplicationKey?
+        val type: IrTypeDeduplicationKey?,
     )
 
     private val IrType.toIrTypeDeduplicationKey: IrTypeDeduplicationKey
@@ -659,7 +660,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrLocalDelegatedPropertyReference(
-        callable: IrLocalDelegatedPropertyReference
+        callable: IrLocalDelegatedPropertyReference,
     ): ProtoLocalDelegatedPropertyReference {
         val proto = ProtoLocalDelegatedPropertyReference.newBuilder()
             .setDelegate(serializeIrSymbol(callable.delegate))
@@ -1519,12 +1520,21 @@ open class IrFileSerializer(
             proto.addDeclarationId(sigIndex)
         }
 
-        proto.setFileEntryId(
-            serializeFileEntryId(
-                file.fileEntry,
-                includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
+        if (settings.compatibilityMode.abiVersion.isAtLeast(KotlinAbiVersion(2,2,0))) {
+            proto.setFileEntryId(
+                serializeFileEntryId(
+                    file.fileEntry,
+                    includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
+                )
             )
-        )
+        } else {
+            proto.setFileEntry(
+                serializeFileEntry(
+                    file.fileEntry,
+                    includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
+                )
+            )
+        }
 
         // TODO: is it Konan specific?
 
