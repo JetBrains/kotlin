@@ -18,9 +18,9 @@ import kotlin.reflect.KClass
 
 internal class NodeJsPluginApplier(
     private val platformDisambiguate: HasPlatformDisambiguate,
-    private val nodeJsEnvSpecKlass: KClass<out AbstractNodeJsEnvSpec>,
+    private val nodeJsEnvSpecKlass: KClass<out BaseNodeJsEnvSpec>,
     private val nodeJsEnvSpecName: String,
-    private val nodeJsRootApply: (project: Project) -> AbstractNodeJsRootExtension,
+    private val nodeJsRootApply: (project: Project) -> BaseNodeJsRootExtension,
 ) {
 
     fun apply(project: Project) {
@@ -42,10 +42,10 @@ internal class NodeJsPluginApplier(
 
     @Suppress("DEPRECATION")
     private fun Project.createNodeJsEnvSpec(
-        nodeJsEnvSpecKlass: KClass<out AbstractNodeJsEnvSpec>,
+        nodeJsEnvSpecKlass: KClass<out BaseNodeJsEnvSpec>,
         nodeJsEnvSpecName: String,
-        nodeJsConstructor: () -> AbstractNodeJsRootExtension,
-    ): AbstractNodeJsEnvSpec {
+        nodeJsConstructor: () -> BaseNodeJsRootExtension,
+    ): BaseNodeJsEnvSpec {
         val extensions = extensions
         val objects = objects
 
@@ -71,7 +71,7 @@ internal class NodeJsPluginApplier(
         }
     }
 
-    private fun addPlatform(project: Project, extension: AbstractNodeJsEnvSpec) {
+    private fun addPlatform(project: Project, extension: BaseNodeJsEnvSpec) {
         val uname = project.providers
             .unameExecResult
 

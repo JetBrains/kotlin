@@ -20,7 +20,7 @@ import java.io.File
 /**
  * Spec for Node.js - common JS and Wasm runtime.
  */
-abstract class AbstractNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
+abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
 
     /**
      * Specify a platform information with name and architecture

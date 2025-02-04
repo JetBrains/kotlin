@@ -35,13 +35,13 @@ import kotlin.reflect.KClass
 
 internal class NodeJsRootPluginApplier(
     private val platformDisambiguate: HasPlatformDisambiguate,
-    private val nodeJsRootKlass: KClass<out AbstractNodeJsRootExtension>,
+    private val nodeJsRootKlass: KClass<out BaseNodeJsRootExtension>,
     private val nodeJsRootName: String,
-    private val npmKlass: KClass<out AbstractNpmExtension>,
+    private val npmKlass: KClass<out BaseNpmExtension>,
     private val npmName: String,
     private val rootDirectoryName: String,
     private val lockFileDirectory: (projectDirectory: Directory) -> Directory,
-    private val singleNodeJsPluginApply: (project: Project) -> AbstractNodeJsEnvSpec,
+    private val singleNodeJsPluginApply: (project: Project) -> BaseNodeJsEnvSpec,
     private val yarnPlugin: KClass<out Plugin<Project>>,
     private val platformType: KotlinPlatformType,
 ) {
@@ -305,8 +305,8 @@ internal class NodeJsRootPluginApplier(
 
     private fun NodeJsEnvironmentTask.configureNodeJsEnvironmentTasks(
         setupFileHasherTask: TaskProvider<*>,
-        nodeJsRoot: AbstractNodeJsRootExtension,
-        nodeJs: AbstractNodeJsEnvSpec,
+        nodeJsRoot: BaseNodeJsRootExtension,
+        nodeJs: BaseNodeJsEnvSpec,
         npmResolutionManager: Provider<KotlinNpmResolutionManager>,
     ) {
         dependsOn(setupFileHasherTask)

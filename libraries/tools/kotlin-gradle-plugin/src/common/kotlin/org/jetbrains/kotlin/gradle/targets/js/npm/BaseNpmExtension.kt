@@ -15,11 +15,11 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 
 open class BaseNpmExtension(
     val project: Project,
-    val nodeJsRoot: AbstractNodeJsRootExtension,
+    val nodeJsRoot: BaseNodeJsRootExtension,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {
     init {
         check(project == project.rootProject)

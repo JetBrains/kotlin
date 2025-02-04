@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 
 open class NodeJsRootExtension(
     project: Project,
     nodeJs: () -> NodeJsEnvSpec,
     rootDir: String,
-) : AbstractNodeJsRootExtension(
+) : BaseNodeJsRootExtension(
     project,
     nodeJs,
     rootDir

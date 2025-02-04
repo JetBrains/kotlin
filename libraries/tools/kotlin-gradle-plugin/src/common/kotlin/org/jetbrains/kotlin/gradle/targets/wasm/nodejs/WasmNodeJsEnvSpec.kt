@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 
 /**
  * Spec for Node.js - common JS and Wasm runtime.
  */
-abstract class WasmNodeJsEnvSpec : AbstractNodeJsEnvSpec() {
+abstract class WasmNodeJsEnvSpec : BaseNodeJsEnvSpec() {
 
     override val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
         get() = project.tasks.withType(NodeJsSetupTask::class.java)

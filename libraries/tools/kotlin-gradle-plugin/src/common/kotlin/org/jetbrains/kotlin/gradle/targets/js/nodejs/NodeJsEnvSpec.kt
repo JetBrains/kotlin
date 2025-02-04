@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 
 /**
  * Spec for Node.js - common JS and Wasm runtime.
  */
-abstract class NodeJsEnvSpec : AbstractNodeJsEnvSpec() {
+abstract class NodeJsEnvSpec : BaseNodeJsEnvSpec() {
 
     override val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
         get() = project.tasks.withType(NodeJsSetupTask::class.java)
