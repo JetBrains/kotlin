@@ -1,2 +1,3 @@
 warning: argument -language-version is passed multiple times. Only the last value will be used: 1.9
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 OK

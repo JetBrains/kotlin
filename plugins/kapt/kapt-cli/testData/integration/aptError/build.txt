@@ -34,4 +34,5 @@ Test.kt
 # after
 Return code: 1
 
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 error: error: NonExistentClass type occurred
