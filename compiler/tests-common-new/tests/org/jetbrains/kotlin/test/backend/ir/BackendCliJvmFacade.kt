@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedJvmOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.reportErrorFromCliPhase
+import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.services.TestServices
 
 class BackendCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFacade(testServices) {
@@ -19,12 +19,14 @@ class BackendCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFaca
         require(inputArtifact is Fir2IrCliBasedJvmOutputArtifact) {
             "BackendCliJvmFacade expects Fir2IrCliBasedJvmOutputArtifact as input, but ${inputArtifact::class} was found"
         }
+        val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
         val input = inputArtifact.cliArtifact.copy(
             diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(
-                inputArtifact.cliArtifact.configuration.messageCollector
+                messageCollector
             )
         )
-        val output = JvmBackendPipelinePhase.executePhase(input, ignoreErrors = true) ?: reportErrorFromCliPhase()
+        val output = JvmBackendPipelinePhase.executePhase(input, ignoreErrors = true)
+            ?: return processErrorFromCliPhase(messageCollector, testServices)
         return output.outputs.single()
     }
 

@@ -34,12 +34,12 @@ class Fir2IrCliJvmFacade(
         require(inputArtifact is FirCliBasedJvmOutputArtifact) {
             "Fir2IrCliJvmFacade expects FirCliBasedJvmOutputArtifact as input, but ${inputArtifact::class} was found"
         }
+        val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
         val input = inputArtifact.cliArtifact.copy(
-            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(
-                inputArtifact.cliArtifact.configuration.messageCollector
-            )
+            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(messageCollector)
         )
-        val output = JvmFir2IrPipelinePhase.executePhase(input) ?: reportErrorFromCliPhase()
+        val output = JvmFir2IrPipelinePhase.executePhase(input)
+            ?: return processErrorFromCliPhase(messageCollector, testServices)
         return Fir2IrCliBasedJvmOutputArtifact(output)
     }
 }
