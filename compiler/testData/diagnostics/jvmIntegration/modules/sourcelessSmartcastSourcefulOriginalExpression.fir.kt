@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // JDK_KIND: FULL_JDK_11
 
 // Inspired by:
