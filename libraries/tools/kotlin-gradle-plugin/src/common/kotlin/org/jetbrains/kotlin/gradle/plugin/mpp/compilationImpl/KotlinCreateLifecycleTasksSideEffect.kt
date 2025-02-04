@@ -47,6 +47,6 @@ private fun DefaultTask.configureCompileAllTask(
         inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     inputs.files(compilation.output.resourcesDirProvider)
 }
