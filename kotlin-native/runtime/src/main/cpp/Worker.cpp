@@ -45,6 +45,9 @@ using ExecuteJob = KRef (*)(KRef, ObjHeader**);
 
 extern "C" {
 
+// Defined in RuntimeUtils.kt.
+void ReportUnhandledException(KRef e);
+
 RUNTIME_NORETURN void ThrowWorkerAlreadyTerminated();
 RUNTIME_NORETURN void ThrowWrongWorkerOrAlreadyTerminated();
 RUNTIME_NORETURN void ThrowFutureInvalidState();
@@ -99,6 +102,8 @@ public:
 
     ~FutureOwner();
 
+    void complete(mm::OwningExternalRCRef result, bool ok) && noexcept;
+
 private:
     raw_ptr<Future> future_;
 };
@@ -115,6 +120,26 @@ struct JobTerminate : private MoveOnly {
 struct JobRegular : private MoveOnly {
     JobRegular(ExecuteJob function, mm::OwningExternalRCRef argument, Future* future) noexcept : function(function), argument(std::move(argument)), future(future) {}
 
+    void operator()(WorkerExceptionHandling exceptionHandling) && noexcept {
+      mm::OwningExternalRCRef result;
+      bool ok = true;
+      try {
+          objc_support::AutoreleasePool autoreleasePool;
+          result.reset(WorkerExecuteLaunchpad(function, argument.detach()));
+      } catch (ExceptionObjHolder& e) {
+        ok = false;
+        switch (exceptionHandling) {
+            case WorkerExceptionHandling::kIgnore:
+                break;
+            case WorkerExceptionHandling::kDefault: // TODO: Pass exception object into the future and do nothing in the default case.
+                ReportUnhandledException(e.GetExceptionObject());
+                break;
+        }
+      }
+      // Notify the future.
+      std::move(future).complete(std::move(result), ok);
+    }
+
     ExecuteJob function;
     mm::OwningExternalRCRef argument;
     FutureOwner future;
@@ -124,6 +149,20 @@ struct JobExecuteAfter : private MoveOnly {
     JobExecuteAfter(mm::OwningExternalRCRef operation, uint64_t whenExecute = 0) noexcept : operation(std::move(operation)), whenExecute(whenExecute) {}
 
     bool operator<(const JobExecuteAfter& rhs) const noexcept { return whenExecute < rhs.whenExecute; }
+
+    void operator()(WorkerExceptionHandling exceptionHandling) && noexcept {
+        try {
+            objc_support::AutoreleasePool autoreleasePool;
+            WorkerExecuteAfterLaunchpad(operation.detach());
+        } catch(ExceptionObjHolder& e) {
+          switch (exceptionHandling) {
+            case WorkerExceptionHandling::kIgnore: break;
+            case WorkerExceptionHandling::kDefault:
+                kotlin::ProcessUnhandledException(e.GetExceptionObject());
+                break;
+          }
+        }
+    }
 
     mm::OwningExternalRCRef operation;
     uint64_t whenExecute;
@@ -170,6 +209,7 @@ class Worker {
   bool waitForQueueLocked(KLong timeoutMicroseconds, KLong* remaining);
 
   RUNTIME_NODEBUG JobKind processQueueElement(bool blocking);
+  JobKind processTerminationRequest(JobTerminate job, bool blocking) noexcept;
 
   bool park(KLong timeoutMicroseconds, bool process);
 
@@ -687,8 +727,10 @@ FutureOwner::~FutureOwner() {
     future_->cancelUnlockedInNativeState();
 }
 
-// Defined in RuntimeUtils.kt.
-extern "C" void ReportUnhandledException(KRef e);
+
+void FutureOwner::complete(mm::OwningExternalRCRef result, bool ok) && noexcept {
+    future_->storeResultUnlocked(std::move(result), ok);
+}
 
 KInt startWorker(WorkerExceptionHandling exceptionHandling, mm::OwningExternalRCRef name) {
   Worker* worker = theState()->addWorkerUnlocked(exceptionHandling, std::move(name), WorkerKind::kNative);
@@ -953,68 +995,34 @@ bool Worker::park(KLong timeoutMicroseconds, bool process) {
 
 JobKind Worker::processQueueElement(bool blocking) {
   if (terminated_) return JOB_TERMINATE;
-  Job job = getJob(blocking);
-  JobKind kind = static_cast<JobKind>(job.index());
-  switch (kind) {
-    case JOB_NONE: {
-      break;
-    }
-    case JOB_TERMINATE: {
-      auto& terminationRequest = std::get<JobTerminate>(job);
-      if (terminationRequest.waitDelayed) {
-        if (waitDelayed(blocking)) {
-          putJob(std::move(job), false);
+  return std::visit([this, blocking](auto arg) noexcept -> JobKind {
+      using T = decltype(arg);
+      if constexpr (std::is_same_v<T, JobNone>) {
           return JOB_NONE;
-        }
+      } else if constexpr (std::is_same_v<T, JobTerminate>) {
+          return processTerminationRequest(std::move(arg), blocking);
+      } else if constexpr (std::is_same_v<T, JobExecuteAfter>) {
+          std::move(arg)(exceptionHandling());
+          return JOB_EXECUTE_AFTER;
+      } else if constexpr (std::is_same_v<T, JobRegular>) {
+          std::move(arg)(exceptionHandling());
+          return JOB_REGULAR;
       }
-      terminated_ = true;
-      // Termination request, remove the worker and notify the future.
-      theState()->removeWorkerUnlocked(id());
-      terminationRequest.future->storeResultUnlocked(nullptr, true);
-      break;
-    }
-    case JOB_EXECUTE_AFTER: {
-      auto& executeAfter = std::get<JobExecuteAfter>(job);
-      try {
-          objc_support::AutoreleasePool autoreleasePool;
-          WorkerExecuteAfterLaunchpad(executeAfter.operation.detach());
-      } catch(ExceptionObjHolder& e) {
-        switch (exceptionHandling()) {
-          case WorkerExceptionHandling::kIgnore: break;
-          case WorkerExceptionHandling::kDefault:
-              kotlin::ProcessUnhandledException(e.GetExceptionObject());
-              break;
-        }
-      }
+  }, getJob(blocking));
+}
 
-      break;
-    }
-    case JOB_REGULAR: {
-      auto& regularJob = std::get<JobRegular>(job);
-      mm::OwningExternalRCRef result;
-      bool ok = true;
-      try {
-          objc_support::AutoreleasePool autoreleasePool;
-          result.reset(WorkerExecuteLaunchpad(regularJob.function, regularJob.argument.detach()));
-      } catch (ExceptionObjHolder& e) {
-        ok = false;
-        switch (exceptionHandling()) {
-            case WorkerExceptionHandling::kIgnore:
-                break;
-            case WorkerExceptionHandling::kDefault: // TODO: Pass exception object into the future and do nothing in the default case.
-                ReportUnhandledException(e.GetExceptionObject());
-                break;
-        }
+JobKind Worker::processTerminationRequest(JobTerminate job, bool blocking) noexcept {
+    if (job.waitDelayed) {
+      if (waitDelayed(blocking)) {
+        putJob(std::move(job), false);
+        return JOB_NONE;
       }
-      // Notify the future.
-      regularJob.future->storeResultUnlocked(std::move(result), ok);
-      break;
     }
-    default: {
-      RuntimeCheck(false, "Must be exhaustive");
-    }
-  }
-  return kind;
+    terminated_ = true;
+    // Termination request, remove the worker and notify the future.
+    theState()->removeWorkerUnlocked(id());
+    job.future->storeResultUnlocked(nullptr, true);
+    return JOB_TERMINATE;
 }
 
 extern "C" {
