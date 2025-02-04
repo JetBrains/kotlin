@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Test that although we have moduleA in the module path, it's not in the module graph
 // because we did not provide -Xadd-modules=moduleA.
 

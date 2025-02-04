@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: lib
 // FILE: Lib.kt
 @ExposedCopyVisibility
