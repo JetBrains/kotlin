@@ -21,6 +21,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 #include <pthread.h>
@@ -85,24 +86,39 @@ enum class WorkerKind {
   kOther,   // Any other kind of workers.
 };
 
+using JobNone = std::monostate;
+
+struct JobTerminate {
+    JobTerminate(Future* future, bool waitDelayed) noexcept : future(future), waitDelayed(waitDelayed) {}
+
+    Future* future;
+    bool waitDelayed;
+};
+
+struct JobRegular {
+    JobRegular(ExecuteJob function, mm::OwningExternalRCRef argument, Future* future) noexcept : function(function), argument(argument.detach()), future(future) {}
+
+    ExecuteJob function;
+    mm::RawExternalRCRef* argument;
+    Future* future;
+};
+
+struct JobExecuteAfter {
+    JobExecuteAfter(mm::OwningExternalRCRef operation, uint64_t whenExecute = 0) noexcept : operation(operation.detach()), whenExecute(whenExecute) {}
+
+    mm::RawExternalRCRef* operation;
+    uint64_t whenExecute;
+};
+
 struct Job {
+  Job() noexcept : kind(JOB_NONE), none() {}
+
   enum JobKind kind;
   union {
-    struct {
-      ExecuteJob function;
-      mm::RawExternalRCRef* argument;
-      Future* future;
-    } regularJob;
-
-    struct {
-      Future* future;
-      bool waitDelayed;
-    } terminationRequest;
-
-    struct {
-      mm::RawExternalRCRef* operation;
-      uint64_t whenExecute;
-    } executeAfter;
+    JobNone none;
+    JobRegular regularJob;
+    JobTerminate terminationRequest;
+    JobExecuteAfter executeAfter;
   };
 };
 
@@ -878,7 +894,7 @@ bool Worker::waitDelayed(bool blocking) {
 Job Worker::getJob(bool blocking) {
   Locker locker(&lock_);
   RuntimeAssert(!terminated_, "Must not be terminated");
-  if (queue_.size() == 0 && !blocking) return Job { .kind = JOB_NONE };
+  if (queue_.size() == 0 && !blocking) return Job();
   waitForQueueLocked(-1, nullptr);
   auto result = queue_.front();
   queue_.pop_front();
