@@ -74,11 +74,6 @@ open class KotlinJsCompilation @Inject internal constructor(
         return compilation.attributes
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTask: Kotlin2JsCompile
-        get() = compilation.compileKotlinTask as Kotlin2JsCompile
-
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = "Replaced with compileTaskProvider",
