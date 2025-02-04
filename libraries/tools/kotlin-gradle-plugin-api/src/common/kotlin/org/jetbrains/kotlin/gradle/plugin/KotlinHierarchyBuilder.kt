@@ -246,12 +246,6 @@ interface KotlinHierarchyBuilder {
     fun withJvm()
 
     /**
-     * @suppress
-     */
-    @Deprecated("Renamed to 'withAndroidTarget''", replaceWith = ReplaceWith("withAndroidTarget()"))
-    fun withAndroid()
-
-    /**
      * Only includes Kotlin's Android targets in this [group].
      */
     fun withAndroidTarget()
