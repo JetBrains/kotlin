@@ -36,16 +36,30 @@ fun test() {
     class <no name provided> : Consumer<Any?> {
       @Composable
       override fun consume(string: String, %composer: Composer?, %changed: Int) {
-        %composer.startReplaceGroup(<>)
+        %composer = %composer.startRestartGroup(<>)
         sourceInformation(%composer, "C(consume):Test.kt")
-        if (isTraceInProgress()) {
-          traceEventStart(<>, %changed, -1, <>)
+        val %dirty = %changed
+        if (%changed and 0b0110 == 0) {
+          %dirty = %dirty or if (%composer.changed(string)) 0b0100 else 0b0010
         }
-        println(string)
-        if (isTraceInProgress()) {
-          traceEventEnd()
+        if (%changed and 0b00110000 == 0) {
+          %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
         }
-        %composer.endReplaceGroup()
+        if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %dirty, -1, <>)
+          }
+          println(string)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        } else {
+          %composer.skipToGroupEnd()
+        }
+        val tmp0_rcvr = <this>
+        %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+          tmp0_rcvr.consume(string, %composer, updateChangedFlags(%changed or 0b0001))
+        }
       }
     }
     <no name provided>()

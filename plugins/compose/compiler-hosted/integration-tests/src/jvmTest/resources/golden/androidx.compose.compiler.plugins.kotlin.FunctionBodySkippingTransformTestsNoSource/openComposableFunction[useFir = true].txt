@@ -14,6 +14,12 @@ class Impl : Open() {
     }
 }
 
+open class OpenImpl : Open() {
+    @Composable override fun Test() {
+        super.Test()
+    }
+}
+
 //
 // Transformed IR
 // ------------------------------------------
@@ -29,6 +35,27 @@ open class Open {
 }
 @StabilityInferred(parameters = 1)
 class Impl : Open {
+  @Composable
+  override fun Test(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    val %dirty = %changed
+    if (%changed and 0b0110 == 0) {
+      %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
+    }
+    if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+      super<Open>.Test(%composer, 0b1110 and %dirty)
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.Test(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+open class OpenImpl : Open {
   @Composable
   override fun Test(%composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)

@@ -285,6 +285,39 @@ class CompositionTests {
 
         assertEquals(2, counter)
     }
+
+    // this test emulates behavior of Circuit / Molecule which rely on functions being
+    // restartable in interfaces
+    @Test
+    fun interfaceComposableSkips() = compositionTest {
+        var innerCounter = 0
+        val innerState = mutableIntStateOf(0)
+        val presenter = PresenterImpl {
+            innerCounter++
+            innerState.value
+        }
+
+        var counter = 0
+        val state = mutableIntStateOf(0)
+
+        compose {
+            state.value // read to restart this scope
+            counter++
+            presenter.Content()
+        }
+        assertEquals(1, innerCounter)
+        assertEquals(1, counter)
+
+        state.value++
+        advance()
+        assertEquals(1, innerCounter)
+        assertEquals(2, counter)
+
+        innerState.value++
+        advance()
+        assertEquals(2, innerCounter)
+        assertEquals(2, counter)
+    }
 }
 
 @Composable
@@ -359,5 +392,19 @@ fun RestartableVararg(vararg states: State<Unit> = emptyArray(), invoke: () -> U
     invoke()
     for (state in states) {
         state.value
+    }
+}
+
+interface Presenter {
+    @Composable fun Content()
+}
+
+class PresenterImpl(
+    private val onCompose: () -> Unit
+) : Presenter {
+    @Composable
+    override fun Content() {
+        onCompose()
+        Text("Hello")
     }
 }
