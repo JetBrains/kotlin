@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.cli.*
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 
 /**
  * In contrast to the normal diagnostic tests, compiles the modules in the test to JVM artifacts, and checks diagnostics along the way
@@ -27,20 +23,17 @@ import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
  * The main use case of this test is to check compilation errors/warnings in a leaf module in a complex module structure.
  * Note that if an error is reported in an intermediate module, no artifact is produced and the subsequent modules are not analyzed.
  */
-abstract class AbstractJvmIntegrationDiagnosticTest(
-    val targetFrontend: FrontendKind<*>,
-) : AbstractKotlinCompilerTest() {
-    abstract val jvmCliFacade: Constructor<JvmCliFacade>
-
+@OptIn(DeprecatedCliFacades::class)
+open class AbstractClassicJvmIntegrationDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
-            frontend = targetFrontend
+            frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
         useDirectives(JvmEnvironmentConfigurationDirectives)
 
-        facadeStep(jvmCliFacade)
+        facadeStep(::ClassicJvmCliFacade)
 
         handlersStep(CliArtifact.Kind) {
             useHandlers(
@@ -53,16 +46,7 @@ abstract class AbstractJvmIntegrationDiagnosticTest(
             +CHECK_COMPILER_OUTPUT
         }
 
-        if (targetFrontend == FrontendKinds.ClassicFrontend) {
-            useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
-        } else {
-            configurationForClassicAndFirTestsAlongside()
-        }
-
+        useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
         enableMetaInfoHandler()
     }
-}
-
-open class AbstractClassicJvmIntegrationDiagnosticTest : AbstractJvmIntegrationDiagnosticTest(FrontendKinds.ClassicFrontend) {
-    override val jvmCliFacade: Constructor<JvmCliFacade> get() = ::ClassicJvmCliFacade
 }

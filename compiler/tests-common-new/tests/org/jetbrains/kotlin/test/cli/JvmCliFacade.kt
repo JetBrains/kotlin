@@ -32,6 +32,12 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 
+@RequiresOptIn(
+    message = "This facade is deprecated and used only for K1 tests. For K2 tests use FirCliJvmFacade and related instead.",
+    level = RequiresOptIn.Level.ERROR,
+)
+annotation class DeprecatedCliFacades
+
 /**
  * Compiles Kotlin and Java sources in the module to .class files. Kotlin is compiled via CLI with `-Xrender-internal-diagnostic-names`,
  * which allows [CliMetaInfoHandler] to parse diagnostics and their locations from the compiler output, and place meta info markers.
@@ -40,7 +46,8 @@ import java.io.File
  * and dumped into `.out`/`.fir.out` files. This happens only if the compiler output is non-empty,
  * and [CliDirectives.CHECK_COMPILER_OUTPUT] is enabled.
  */
-abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTestFacade<ResultingArtifact.Source, CliArtifact>() {
+@DeprecatedCliFacades
+class ClassicJvmCliFacade(private val testServices: TestServices) : AbstractTestFacade<ResultingArtifact.Source, CliArtifact>() {
     override val inputKind: TestArtifactKind<ResultingArtifact.Source>
         get() = SourcesKind
 
@@ -51,8 +58,6 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CliDirectives)
-
-    open fun MutableList<String>.addKotlinCompilerArguments() {}
 
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): CliArtifact {
         val outputDir = testServices.getOrCreateTempDirectory("module_${module.name}_classes")
@@ -130,7 +135,8 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
 
             addAll(module.directives[KOTLINC_ARGS])
 
-            addKotlinCompilerArguments()
+            add(CommonCompilerArguments::languageVersion.cliArgument)
+            add(LanguageVersion.KOTLIN_1_9.versionString)
         }
         val diagnosticCollector = DiagnosticCollectingMessageRenderer()
         CompilerTestUtil.executeCompiler(K2JVMCompiler(), args, diagnosticCollector)
@@ -159,23 +165,7 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
         testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(this)
 }
 
-class ClassicJvmCliFacade(testServices: TestServices) : JvmCliFacade(testServices) {
-    override fun MutableList<String>.addKotlinCompilerArguments() {
-        add(CommonCompilerArguments::languageVersion.cliArgument)
-        add(LanguageVersion.KOTLIN_1_9.versionString)
-    }
-}
-
-abstract class FirJvmCliFacade(testServices: TestServices) : JvmCliFacade(testServices)
-
-class FirLightTreeJvmCliFacade(testServices: TestServices) : FirJvmCliFacade(testServices)
-
-class FirPsiJvmCliFacade(testServices: TestServices) : FirJvmCliFacade(testServices) {
-    override fun MutableList<String>.addKotlinCompilerArguments() {
-        add("-Xuse-fir-lt=false")
-    }
-}
-
+@DeprecatedCliFacades
 data class CliArtifact(
     val outputDir: File,
     val kotlinDiagnostics: List<CliDiagnostic>,
@@ -186,6 +176,7 @@ data class CliArtifact(
     override val kind: ArtifactKind<CliArtifact> get() = Kind
 }
 
+@DeprecatedCliFacades
 abstract class CliArtifactHandler(
     testServices: TestServices,
     failureDisablesNextSteps: Boolean = false,
@@ -196,6 +187,7 @@ abstract class CliArtifactHandler(
     doNotRunIfThereWerePreviousFailures = true,
 )
 
+@DeprecatedCliFacades
 data class CliDiagnostic(
     val name: String,
     val lineBegin: Int,
@@ -204,6 +196,7 @@ data class CliDiagnostic(
     val columnEnd: Int,
 )
 
+@DeprecatedCliFacades
 private class DiagnosticCollectingMessageRenderer : MessageRenderer {
     private val delegate = MessageRenderer.PLAIN_RELATIVE_PATHS
 

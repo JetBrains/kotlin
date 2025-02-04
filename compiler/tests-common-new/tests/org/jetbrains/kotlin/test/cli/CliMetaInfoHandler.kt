@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 
+@DeprecatedCliFacades
 class CliMetaInfoHandler(testServices: TestServices) : CliArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: CliArtifact) {
         addMetaInfos(module, info.kotlinDiagnostics)

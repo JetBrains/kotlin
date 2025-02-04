@@ -5,22 +5,16 @@
 
 package org.jetbrains.kotlin.test.cli
 
-import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.handlers.NonSourceErrorMessagesHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 
+@DeprecatedCliFacades
 class CliOutputHandler(testServices: TestServices) : BinaryArtifactHandler<CliArtifact>(
     testServices,
     CliArtifact.Kind,
