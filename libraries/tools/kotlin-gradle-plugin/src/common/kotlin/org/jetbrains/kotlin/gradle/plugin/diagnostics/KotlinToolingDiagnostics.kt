@@ -1191,8 +1191,19 @@ object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "Make sure 'kotlin.mpp.resourcesResolutionStrategy' is set to one of the supported values: " +
-                            "'${KotlinTargetResourcesResolutionStrategy.VariantReselection.propertyName}' or " +
-                            "'${KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration.propertyName}'"
+                            "'${KotlinTargetResourcesResolutionStrategy.VariantReselection.propertyName}'"
+                }
+        }
+    }
+
+    object DeprecatedResourcesResolutionStrategy : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke() = build {
+            title("Deprecated 'kotlin.mpp.resourcesResolutionStrategy'")
+                .description {
+                    "kotlin.mpp.resourcesResolutionStrategy=${KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration.propertyName} is no longer supported"
+                }
+                .solution {
+                    "Remove 'kotlin.mpp.resourcesResolutionStrategy' specification from gradle.properties"
                 }
         }
     }
