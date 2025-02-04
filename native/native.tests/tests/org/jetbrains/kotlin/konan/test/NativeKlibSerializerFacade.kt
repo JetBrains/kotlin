@@ -80,7 +80,7 @@ abstract class AbstractNativeKlibSerializerFacade(
             manifestProperties = null,
         )
 
-        updateTestConfiguration(configuration, module, outputArtifact)
+        updateTestConfiguration(configuration, module, inputArtifact, outputArtifact)
 
         return outputArtifact
     }
@@ -95,6 +95,7 @@ abstract class AbstractNativeKlibSerializerFacade(
     private fun updateTestConfiguration(
         configuration: CompilerConfiguration,
         module: TestModule,
+        inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
         outputArtifact: BinaryArtifacts.KLib
     ) {
         val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
@@ -109,7 +110,7 @@ abstract class AbstractNativeKlibSerializerFacade(
             library,
             configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),
-            null,
+            inputArtifact.irModuleFragment.descriptor.builtIns,
             packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         )
