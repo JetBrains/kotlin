@@ -212,6 +212,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
             if (strategy == null) {
                 project.reportDiagnostic(KotlinToolingDiagnostics.UnknownValueProvidedForResourcesStrategy(it))
             }
+            if (strategy == KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration) {
+                project.reportDiagnostic(KotlinToolingDiagnostics.DeprecatedResourcesResolutionStrategy())
+            }
             return@let strategy
         } ?: KotlinTargetResourcesResolutionStrategy.VariantReselection
 
