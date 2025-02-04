@@ -304,7 +304,6 @@ class ConeResolvedCallableReferenceAtom(
         private set
 
     override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
-        if (!needsResolution) return
         require(expectedType is ConeKotlinType)
         revisedExpectedType = expectedType
     }
