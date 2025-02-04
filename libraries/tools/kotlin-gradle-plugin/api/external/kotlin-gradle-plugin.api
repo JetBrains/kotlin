@@ -122,11 +122,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getWatchosX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getWatchosX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun invoke (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
-	public fun iosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun iosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun iosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun iosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun iosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun iosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun iosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun iosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -169,16 +164,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun linuxArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun linuxArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun linuxArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMips32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMips32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMips32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMips32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMips32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMipsel32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMipsel32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMipsel32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMipsel32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun linuxMipsel32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun linuxX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public fun linuxX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public fun linuxX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
@@ -202,11 +187,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun mingwX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public fun mingwX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public fun mingwX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
-	public fun mingwX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun mingwX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun mingwX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun mingwX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun mingwX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun publishing (Lkotlin/jvm/functions/Function1;)V
 	public fun publishing (Lorg/gradle/api/Action;)V
 	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
@@ -237,11 +217,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun wasm (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public fun wasm (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public fun wasm (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public fun wasm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun wasm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun wasm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun wasm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public fun wasm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun wasmJs ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public fun wasmJs (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public fun wasmJs (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
@@ -277,11 +252,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun watchosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public fun watchosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public fun watchosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public fun watchosX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public fun watchosX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public fun watchosX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public fun watchosX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public fun watchosX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public final fun withSourcesJar (Z)V
 	public static synthetic fun withSourcesJar$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;ZILjava/lang/Object;)V
 }
@@ -356,11 +326,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun getDefaultJsCompilerType (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun getIR (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static synthetic fun getLEGACY (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -406,16 +371,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
@@ -436,11 +391,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -456,11 +406,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -486,11 +431,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions : org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainerWithPresets {
@@ -524,11 +464,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetCont
 	public abstract fun androidTarget (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public abstract fun androidTarget (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public abstract fun androidTarget (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
-	public abstract fun iosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun iosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun iosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun iosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun iosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun iosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun iosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun iosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -559,16 +494,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetCont
 	public abstract fun linuxArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun linuxArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun linuxArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMips32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMips32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMips32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMips32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMips32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMipsel32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMipsel32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMipsel32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMipsel32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun linuxMipsel32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun linuxX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public abstract fun linuxX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public abstract fun linuxX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
@@ -589,11 +514,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetCont
 	public abstract fun mingwX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public abstract fun mingwX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public abstract fun mingwX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
-	public abstract fun mingwX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun mingwX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun mingwX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun mingwX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun mingwX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun tvosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun tvosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun tvosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -609,11 +529,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetCont
 	public abstract fun tvosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public abstract fun tvosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public abstract fun tvosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public abstract fun wasm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun wasm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun wasm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun wasm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public abstract fun wasm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun watchosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun watchosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun watchosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -639,11 +554,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetCont
 	public abstract fun watchosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public abstract fun watchosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public abstract fun watchosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public abstract fun watchosX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public abstract fun watchosX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public abstract fun watchosX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public abstract fun watchosX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public abstract fun watchosX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions$DefaultImpls {
@@ -683,12 +593,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPres
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static synthetic fun androidTarget$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static synthetic fun iosArm32$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -725,18 +629,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPres
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static synthetic fun linuxArm64$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static synthetic fun linuxMips32$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static synthetic fun linuxMipsel32$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
@@ -761,12 +653,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPres
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static synthetic fun mingwX64$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static synthetic fun mingwX86$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -785,12 +671,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPres
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static synthetic fun tvosX64$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static synthetic fun wasm32$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -821,12 +701,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPres
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static synthetic fun watchosX64$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static synthetic fun watchosX86$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions : org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions {
@@ -878,11 +752,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun iosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -913,16 +782,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMips32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun linuxMipsel32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun linuxX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
@@ -943,11 +802,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
 	public static fun mingwX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun mingwX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun tvosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -969,11 +823,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 	public static fun wasm (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public static fun wasm (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public static synthetic fun wasm$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
-	public static fun wasm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun wasmJs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public static fun wasmJs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public static fun wasmJs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
@@ -1011,11 +860,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun watchosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun watchosX86 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/TargetsFromPresetExtension : org/gradle/api/NamedDomainObjectCollection {

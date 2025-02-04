@@ -193,9 +193,6 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_ARM64
     }
 
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withIosArm32() = Unit
-
     override fun withIosArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM64
     }
@@ -259,24 +256,6 @@ private class KotlinHierarchyBuilderImpl(
     override fun withLinuxArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM64
     }
-
-    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withWatchosX86() = Unit
-
-    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withMingwX86() = Unit
-
-    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxArm32Hfp() = Unit
-
-    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxMips32() = Unit
-
-    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withLinuxMipsel32() = Unit
-
-    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun withWasm32() = Unit
 
     override fun toString(): String {
         return "KotlinHierarchyBuilder($node)"

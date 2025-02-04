@@ -32,6 +32,7 @@ class KotlinHierarchyBuilderTest {
 
             // jvmWithJava is covered by the withJvm() call
             .filter { it !is KotlinJvmWithJavaTargetPreset }
+            .filter { it.name != "linuxArm32Hfp" } // KT-61122. Deprecated target. We do not support it in the hierarchy builder
             .forEach { preset ->
                 val expectedFunctionName = "with${preset.name.capitalizeAsciiOnly()}"
                 if (kotlinTargetHierarchyBuilderInterface.declaredMethods.none { it.name == expectedFunctionName })
