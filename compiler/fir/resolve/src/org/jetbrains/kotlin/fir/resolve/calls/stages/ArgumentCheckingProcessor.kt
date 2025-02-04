@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -26,15 +27,20 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionT
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -125,10 +131,14 @@ internal object ArgumentCheckingProcessor {
                 }
                 val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
                 val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
-                if (ofFunction == null) {
-                    if (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
-                        return // Just don't infer anything. The candidate is successful
+                    ?: when (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
+                        true -> (session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.List) as? FirRegularClassSymbol)?.companionObjectSymbol
+                            ?.declaredMemberScope(session, memberRequiredPhase = null)
+                            ?.getFunctions(Name.identifier("of"))
+                            ?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+                        else -> null
                     }
+                if (ofFunction == null) {
                     reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
                     return
                 }
