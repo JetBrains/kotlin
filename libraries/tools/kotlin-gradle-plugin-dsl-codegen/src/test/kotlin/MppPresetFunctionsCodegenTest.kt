@@ -5,12 +5,10 @@
 package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.jetbrains.kotlin.generators.arguments.getPrinterForTests
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class MppPresetFunctionsCodegenTest {
     @Test
-    @Ignore // TODO: fix in follow-up commits
     fun testTargetContainerCodegenIsUpToDate() {
         generateKotlinTargetContainerWithPresetFunctionsInterface(::getPrinterForTests)
     }

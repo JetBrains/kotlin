@@ -66,7 +66,7 @@ internal val androidPresetEntry = KotlinPresetEntry(
     typeName("$MPP_PACKAGE.KotlinAndroidTarget"),
     deprecation = KotlinPresetEntry.Deprecation(
         message = "ANDROID_TARGET_MIGRATION_MESSAGE",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         replaceWithOtherPreset = "androidTarget"
     ),
     extraTopLevelDeclarations = listOf(
@@ -74,9 +74,9 @@ internal val androidPresetEntry = KotlinPresetEntry(
                 " = \"Please use androidTarget() instead. Learn more here: https://kotl.in/android-target-dsl\""
     ),
     alsoBlockAfterConfiguration = """
-            it.project.logger.warn(
+            it.project.logger.error(
                 ""${'"'}
-                    w: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
+                    e: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
                     See the details here: https://kotl.in/android-target-dsl
                 ""${'"'}.trimIndent()
             )

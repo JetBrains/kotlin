@@ -57,7 +57,7 @@ internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrint
         imports,
         generatedCodeWarning,
         extraTopLevelDeclarations,
-        "@KotlinGradlePluginDsl\ninterface ${className.renderShort()} : ${parentInterfaceName.renderShort()} {",
+        "@KotlinGradlePluginPublicDsl\ninterface ${className.renderShort()} : ${parentInterfaceName.renderShort()} {",
         functions.joinToString("\n\n") { it.indented(4) },
         "}"
     ).joinToString("\n\n")
@@ -100,7 +100,7 @@ private fun generatePresetFunctions(
     }
 
     // Suppress presets deprecation to prevent warnings inside kotlin-gradle-plugin
-    val suppressPresetsDeprecation = "@Suppress(\"DEPRECATION\")"
+    val suppressPresetsDeprecation = "@Suppress(\"DEPRECATION_ERROR\")"
 
     val alsoBlockAfterConfiguration = if (presetEntry.alsoBlockAfterConfiguration != null) {
         """
