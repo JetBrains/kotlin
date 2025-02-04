@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.symbols.markers
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -71,5 +72,6 @@ public interface KaContextParameterOwnerSymbol : KaSymbol {
     /**
      * A list of [KaContextParameterSymbol]s directly declared in the symbol.
      */
+    @KaExperimentalApi
     public val contextParameters: List<KaContextParameterSymbol>
 }
