@@ -96,8 +96,16 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             val postponedArgumentsWithRevisableType = postponedArguments
                 .filterIsInstanceWithChecker<PostponedAtomWithRevisableExpectedType> {
-                    // NB: FE 1.0 does not perform this check
-                    it.revisedExpectedType == null
+                    when (it as ConePostponedResolvedAtom) {
+                        is ConeLambdaWithTypeVariableAsExpectedTypeAtom -> true
+                        // Here we have a difference with K1 behavior as in K1 this check always returns true
+                        // (in fact, simple filterIsInstance<PostponedAtomWithRevisableExpectedType>() is in use)
+                        // However, in K2 returning true here leads to some (~5) diagnostic tests hanging --
+                        // the simplest example is 'callableReferenceAndCoercionToUnit.kt'
+                        // Maybe related to KT-74021
+                        is ConeResolvedCallableReferenceAtom -> it.revisedExpectedType == null
+                        is ConeResolvedLambdaAtom -> error("Should not be here: not a PostponedAtomWithRevisableExpectedType")
+                    }
                 }
             val dependencyProvider =
                 TypeVariableDependencyInformationProvider(
