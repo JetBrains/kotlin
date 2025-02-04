@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
+import org.jetbrains.kotlin.gradle.utils.setAndDisallowChanges
 import org.jetbrains.kotlin.tooling.core.Extras
 import java.io.File
 import java.lang.reflect.Type
@@ -27,7 +30,11 @@ internal val IdeResolveDependenciesTaskSetupAction = KotlinProjectSetupAction {
 
 internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<IdeResolveDependenciesTask> {
     return locateOrRegisterTask("resolveIdeDependencies") { task ->
-        task.ideMultiplatformImport.convention(IdeMultiplatformImport(kotlinExtension, strictMode = true))
+        // it's important to register
+        val ideMultiplatformImport = IdeMultiplatformImport(kotlinExtension, strictMode = true)
+        task.ideMultiplatformImport.setAndDisallowChanges(ideMultiplatformImport)
+        ideMultiplatformImport.registerTaskDependenciesTo(task)
+
         task.description = "Debugging/Diagnosing task that will resolve dependencies for the IDE"
         task.group = "ide"
         task.notCompatibleWithConfigurationCacheCompat("Just a debugging util")

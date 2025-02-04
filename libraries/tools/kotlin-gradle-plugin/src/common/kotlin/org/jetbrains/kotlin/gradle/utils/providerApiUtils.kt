@@ -108,6 +108,11 @@ internal fun <PropType : Any?, T : SetProperty<PropType>> T.chainedDisallowChang
         disallowChanges()
     }
 
+internal fun <PropType : Any?, T : Property<PropType>> T.setAndDisallowChanges(value: PropType): T =
+    apply {
+        set(value)
+        disallowChanges()
+    }
 
 // Before 5.0 fileProperty is created via ProjectLayout
 // https://docs.gradle.org/current/javadoc/org/gradle/api/model/ObjectFactory.html#fileProperty--

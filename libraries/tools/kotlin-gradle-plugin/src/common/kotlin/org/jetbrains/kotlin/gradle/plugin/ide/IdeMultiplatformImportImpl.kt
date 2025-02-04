@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.toByteArray
@@ -128,17 +129,17 @@ internal class IdeMultiplatformImportImpl(
         IdeMultiplatformImportAction.extensionPoint.register(extension.project, action)
     }
 
-    private val taskDependencies: Iterable<Any>
-        get() = registeredDependencyResolvers
-            .mapNotNull { it.resolver as? IdeDependencyResolver.WithBuildDependencies }
-            .flatMap { it.dependencies(extension.project) }
-
     /**
      * Registers all [IdeDependencyResolver.WithBuildDependencies.dependencies] to the given [task].
      * So [task] can safely call [resolveDependencies] during execution.
      */
-    fun registerTaskDependenciesTo(task: TaskProvider<*>) {
-        task.configure { it.dependsOn(taskDependencies) }
+    fun registerTaskDependenciesTo(task: Task) {
+        val taskDependencies = extension.project.provider {
+            registeredDependencyResolvers
+                .mapNotNull { it.resolver as? IdeDependencyResolver.WithBuildDependencies }
+                .flatMap { it.dependencies(extension.project) }
+        }
+        task.dependsOn(taskDependencies)
     }
 
     private fun createDependencyResolver(): IdeDependencyResolver {

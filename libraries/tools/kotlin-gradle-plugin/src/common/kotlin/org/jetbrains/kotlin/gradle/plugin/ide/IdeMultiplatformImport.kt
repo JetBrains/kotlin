@@ -345,7 +345,7 @@ internal val IdeMultiplatformImportSetupAction = KotlinProjectSetupAction {
     val kotlinIdeMultiplatformImport = kotlinIdeMultiplatformImport
 
     @OptIn(Idea222Api::class)
-    kotlinIdeMultiplatformImport.registerTaskDependenciesTo(prepareKotlinIdeaImportTask)
+    prepareKotlinIdeaImportTask.configure { kotlinIdeMultiplatformImport.registerTaskDependenciesTo(it) }
 }
 
 /**
