@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.extension.ExtendWith
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -68,6 +70,7 @@ import kotlin.io.path.nameWithoutExtension
  * @see doTestByMainModuleAndOptionalMainFile
  * @see doTest
  */
+@ExtendWith(UpdateTestDataSupport::class)
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: AnalysisApiTestConfigurator
 

@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProv
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SimpleTestRunSettings
+import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(NativeSimpleTestSupport::class)
+@ExtendWith(NativeSimpleTestSupport::class, UpdateTestDataSupport::class)
 abstract class AbstractNativeSimpleTest {
     lateinit var testRunSettings: SimpleTestRunSettings
     internal lateinit var testRunProvider: SimpleTestRunProvider
