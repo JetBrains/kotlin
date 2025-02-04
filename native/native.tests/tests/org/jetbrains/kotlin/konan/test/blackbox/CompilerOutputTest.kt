@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
@@ -123,7 +124,14 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             if (testRunSettings.get<CacheMode>().useStaticCacheForDistributionLibraries) "logging_cache_warning.txt" else "empty.txt"
         )
 
-        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
+        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+    }
+
+    fun String.sanitizeCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->
+        when {
+            DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX.matches(line) -> ""
+            else -> line
+        }
     }
 
     @Test

@@ -1,2 +1,3 @@
 error: -api-version (1.9) cannot be greater than -language-version (1.8)
+warning: language version 1.8 is deprecated and its support will be removed in a future version of Kotlin
 COMPILATION_ERROR
