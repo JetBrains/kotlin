@@ -96,31 +96,30 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         }
 
 
-
     override fun configureExtraLanguageFeatures(map: HashMap<LanguageFeature, LanguageFeature.State>) {
         super.configureExtraLanguageFeatures(map)
         if (irInlinerBeforeKlibSerialization) {
             map[LanguageFeature.IrInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
         }
     }
+}
 
-    fun parseCustomKotlinAbiVersion(collector: MessageCollector): KotlinAbiVersion? {
-        val versionParts = customKlibAbiVersion?.split('.') ?: return null
-        if (versionParts.size != 3) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "Invalid ABI version format. Expected format: <major>.<minor>.<patch>"
-            )
-            return null
-        }
-        val version = versionParts.mapNotNull { it.toIntOrNull() }
-        if (version.size != 3 || version.any { it !in 0..255 }) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "Invalid ABI version numbers. Each part must be in the range 0..255."
-            )
-            return null
-        }
-        return KotlinAbiVersion(version[0], version[1], version[2])
+fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector: MessageCollector): KotlinAbiVersion? {
+    val versionParts = customKlibAbiVersion?.split('.') ?: return null
+    if (versionParts.size != 3) {
+        collector.report(
+            CompilerMessageSeverity.ERROR,
+            "Invalid ABI version format. Expected format: <major>.<minor>.<patch>"
+        )
+        return null
     }
+    val version = versionParts.mapNotNull { it.toIntOrNull() }
+    if (version.size != 3 || version.any { it !in 0..255 }) {
+        collector.report(
+            CompilerMessageSeverity.ERROR,
+            "Invalid ABI version numbers. Each part must be in the range 0..255."
+        )
+        return null
+    }
+    return KotlinAbiVersion(version[0], version[1], version[2])
 }
