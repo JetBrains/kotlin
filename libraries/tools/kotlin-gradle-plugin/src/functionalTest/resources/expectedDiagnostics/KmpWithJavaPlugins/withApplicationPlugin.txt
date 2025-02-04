@@ -2,4 +2,4 @@
 Consider adding a new subproject with 'java' plugin where the KMP project is added as a dependency.
 ----
 [KMPJavaPluginsIncompatibilityDiagnostic | ERROR] 'application' (also applies 'java' plugin) Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin.
-Consider adding a new subproject with 'application' plugin where the KMP project is added as a dependency.
+Consider the new KMP/JVM binaries DSL as a replacement: https://kotl.in/jvm-binaries-dsl
