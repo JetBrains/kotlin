@@ -33,7 +33,8 @@ class KotlinHierarchyBuilderTest {
             // jvmWithJava is covered by the withJvm() call
             .filter { it !is KotlinJvmWithJavaTargetPreset }
             .forEach { preset ->
-                val expectedFunctionName = "with${preset.name.capitalizeAsciiOnly()}"
+                val presetName = if (preset.name == "android") "androidTarget" else preset.name
+                val expectedFunctionName = "with${presetName.capitalizeAsciiOnly()}"
                 if (kotlinTargetHierarchyBuilderInterface.declaredMethods.none { it.name == expectedFunctionName })
                     fail("${kotlinTargetHierarchyBuilderInterface.name}: Missing ${expectedFunctionName}() function")
             }
