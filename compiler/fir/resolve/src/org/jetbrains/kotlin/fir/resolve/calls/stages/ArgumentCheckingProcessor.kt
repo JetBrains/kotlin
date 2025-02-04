@@ -187,7 +187,6 @@ internal object ArgumentCheckingProcessor {
                 argumentType = argumentTypeForApplicabilityCheck,
             )?.let {
                 argumentTypeForApplicabilityCheck = it
-                candidate.substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
                 candidate.usesFunctionConversion = true
             }
         }
