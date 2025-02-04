@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
@@ -284,7 +285,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertEquals(1, myProject.modules.size)
         val module = myProject.modules.first()
         val args = module.kotlinCompilerArguments
-        args.apiVersion = "1.6"
+        args.apiVersion = LanguageVersion.FIRST_API_SUPPORTED.versionString
         myProject.kotlinCommonCompilerArguments = args
 
         buildAllModules().assertSuccessful()
