@@ -237,7 +237,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT).single()
 
     val longCompareToLong: IrSimpleFunction = longClassSymbol.owner.findDeclaration<IrSimpleFunction> {
-        it.name == Name.identifier("compareTo") && it.valueParameters[0].type.isLong()
+        it.name == Name.identifier("compareTo") && it.parameters[1].type.isLong()
     }!!
 
     val charClassSymbol = irBuiltIns.charClass
