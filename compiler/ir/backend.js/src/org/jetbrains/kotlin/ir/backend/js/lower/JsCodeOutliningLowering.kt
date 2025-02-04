@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
@@ -164,7 +165,7 @@ private class JsCodeOutlineTransformer(
 
     init {
         if (container is IrFunction) {
-            container.valueParameters.forEach {
+            container.parameters.forEach {
                 registerValueDeclaration(it)
             }
         }
@@ -222,7 +223,7 @@ private class JsCodeOutlineTransformer(
         if (expression.symbol != intrinsics.jsCode)
             return null
 
-        val jsCodeArg = expression.getValueArgument(0) ?: compilationException("Expected js code string", expression)
+        val jsCodeArg = expression.arguments[0] ?: compilationException("Expected js code string", expression)
         val jsStatements = translateJsCodeIntoStatementList(jsCodeArg, container) ?: return null
 
         // Collect used Kotlin local variables and parameters.
@@ -241,14 +242,12 @@ private class JsCodeOutlineTransformer(
         // Building JS Ast function
         val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
         val (jsFunCode, sourceMap) = printJsCodeWithDebugInfo(newFun)
-        annotation.putValueArgument(0, jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType))
-        annotation.putValueArgument(1, sourceMap.toIrConst(loweringContext.irBuiltIns.stringType))
+        annotation.arguments[0] = jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType)
+        annotation.arguments[1] = sourceMap.toIrConst(loweringContext.irBuiltIns.stringType)
 
         return with(loweringContext.createIrBuilder(container.symbol)) {
             irCall(outlinedFunction).apply {
-                kotlinLocalsUsedInJs.values.forEachIndexed { index, local ->
-                    putValueArgument(index, irGet(local))
-                }
+                arguments.assignFrom(kotlinLocalsUsedInJs.values, ::irGet)
             }
         }
     }
