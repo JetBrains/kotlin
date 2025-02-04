@@ -15,17 +15,20 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
 
 object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val boundsByName = declaration.typeParameters.associate { it.name to it.symbol.resolvedBounds }
-        val usedTypes = HashSet<ConeKotlinType>()
+        val usedTypes = mutableSetOf<ConeKotlinType>()
+
         fun collectAllTypes(type: ConeKotlinType) {
-            if (usedTypes.add(type)) {
-                type.typeArguments.forEach { it.type?.let(::collectAllTypes) }
-                if (type is ConeTypeParameterType) {
-                    boundsByName[type.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
+            val unwrappedType = type.unwrapToSimpleTypeUsingLowerBound()
+            if (usedTypes.add(unwrappedType)) {
+                unwrappedType.typeArguments.forEach { it.type?.let(::collectAllTypes) }
+                if (unwrappedType is ConeTypeParameterType) {
+                    boundsByName[unwrappedType.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
                 }
             }
         }
