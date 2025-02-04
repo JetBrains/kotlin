@@ -424,14 +424,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirScriptCodegenTest> {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
-
-            testClass<AbstractFirPsiJvmIntegrationDiagnosticTest> {
-                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            }
-
-            testClass<AbstractFirLightTreeJvmIntegrationDiagnosticTest> {
-                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            }
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
@@ -512,6 +504,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 val relativeRootPaths = listOf(
                     "testData/diagnostics/tests",
                     "testData/diagnostics/testsWithStdLib",
+                    "testData/diagnostics/jvmIntegration",
                     "fir/analysis-tests/testData/resolve",
                     "fir/analysis-tests/testData/resolveWithStdlib",
                     // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
