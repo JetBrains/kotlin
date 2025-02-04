@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <pthread.h>
+#include "CompilerConstants.hpp"
 #include "PthreadUtils.h"
 
 #include "Exceptions.h"
@@ -32,6 +33,7 @@
 #include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
+#include "RawPtr.hpp"
 #include "Runtime.h"
 #include "Types.h"
 #include "Worker.h"
@@ -86,29 +88,44 @@ enum class WorkerKind {
   kOther,   // Any other kind of workers.
 };
 
+class FutureOwner : private MoveOnly {
+public:
+    FutureOwner(Future* future) noexcept : future_(future) {}
+    FutureOwner(FutureOwner&&) noexcept = default;
+    FutureOwner& operator=(FutureOwner&&) noexcept = default;
+
+    Future& operator*() noexcept { return *future_; }
+    Future* operator->() noexcept { return static_cast<Future*>(future_); }
+
+    ~FutureOwner();
+
+private:
+    raw_ptr<Future> future_;
+};
+
 using JobNone = std::monostate;
 
-struct JobTerminate {
+struct JobTerminate : private MoveOnly {
     JobTerminate(Future* future, bool waitDelayed) noexcept : future(future), waitDelayed(waitDelayed) {}
 
-    Future* future;
+    FutureOwner future;
     bool waitDelayed;
 };
 
-struct JobRegular {
-    JobRegular(ExecuteJob function, mm::OwningExternalRCRef argument, Future* future) noexcept : function(function), argument(argument.detach()), future(future) {}
+struct JobRegular : private MoveOnly {
+    JobRegular(ExecuteJob function, mm::OwningExternalRCRef argument, Future* future) noexcept : function(function), argument(std::move(argument)), future(future) {}
 
     ExecuteJob function;
-    mm::RawExternalRCRef* argument;
-    Future* future;
+    mm::OwningExternalRCRef argument;
+    FutureOwner future;
 };
 
-struct JobExecuteAfter {
-    JobExecuteAfter(mm::OwningExternalRCRef operation, uint64_t whenExecute = 0) noexcept : operation(operation.detach()), whenExecute(whenExecute) {}
+struct JobExecuteAfter : private MoveOnly {
+    JobExecuteAfter(mm::OwningExternalRCRef operation, uint64_t whenExecute = 0) noexcept : operation(std::move(operation)), whenExecute(whenExecute) {}
 
     bool operator<(const JobExecuteAfter& rhs) const noexcept { return whenExecute < rhs.whenExecute; }
 
-    mm::RawExternalRCRef* operation;
+    mm::OwningExternalRCRef operation;
     uint64_t whenExecute;
 };
 
@@ -294,7 +311,9 @@ class Future {
 
   void storeResultUnlocked(mm::OwningExternalRCRef result, bool ok);
 
-  void cancelUnlocked(MemoryState* memoryState);
+  // Must be called in native state.
+  // Does not check the thread state, because TLS may already be uninitialized.
+  void cancelUnlockedInNativeState();
 
   KInt stateUnlocked() const {
       Locker locker(&lock_);
@@ -391,7 +410,7 @@ class State {
       job = Job(std::in_place_type<JobRegular>, jobFunction, std::move(jobArgument), future);
     }
 
-    worker->putJob(job, toFront);
+    worker->putJob(std::move(job), toFront);
 
     return future;
   }
@@ -510,10 +529,11 @@ class State {
     pthread_cond_broadcast(&cond_);
   }
 
-  void signalAnyFuture(MemoryState* memoryState) {
-    kotlin::AssertThreadState(memoryState, ThreadState::kNative);
+  // Must be called in native state.
+  // Does not check the thread state, because TLS may already be uninitialized.
+  void signalAnyFutureInNativeState() {
     {
-      Locker locker(&lock_, memoryState);
+      Locker locker(&lock_, /*switchThreadState =*/ false);
       currentVersion_++;
     }
     pthread_cond_broadcast(&cond_);
@@ -653,15 +673,18 @@ void Future::storeResultUnlocked(mm::OwningExternalRCRef result, bool ok) {
   theState()->signalAnyFuture();
 }
 
-void Future::cancelUnlocked(MemoryState* memoryState) {
-  kotlin::AssertThreadState(memoryState, ThreadState::kNative);
+void Future::cancelUnlockedInNativeState() {
   {
-    Locker locker(&lock_, memoryState);
+    Locker locker(&lock_, /*switchThreadState =*/ false);
     state_ = CANCELLED;
     result_ = nullptr;
     pthread_cond_broadcast(&cond_);
   }
-  theState()->signalAnyFuture(memoryState);
+  theState()->signalAnyFutureInNativeState();
+}
+
+FutureOwner::~FutureOwner() {
+    future_->cancelUnlockedInNativeState();
 }
 
 // Defined in RuntimeUtils.kt.
@@ -776,37 +799,19 @@ bool WorkerSchedule(KInt id, mm::OwningExternalRCRef job) {
 Worker::~Worker() {
   RuntimeAssert(pthread_equal(thread(), pthread_self()),
                 "Worker destruction must be executed by the worker thread.");
-  // Cleanup jobs in the queue.
-  for (auto job : queue_) {
-      std::visit([this](auto&& arg) noexcept -> void {
-          using T = std::decay_t<decltype(arg)>;
-          if constexpr (std::is_same_v<T, JobRegular>) {
-              mm::releaseExternalRCRef(arg.argument);
-              mm::disposeExternalRCRef(arg.argument);
-              arg.future->cancelUnlocked(memoryState_);
-          } else if constexpr (std::is_same_v<T, JobExecuteAfter>) {
-              // TODO: what do we do here? Shall we execute them?
-              mm::releaseExternalRCRef(arg.operation);
-              mm::disposeExternalRCRef(arg.operation);
-          } else if constexpr (std::is_same_v<T, JobTerminate>) {
-              // TODO: any more processing here?
-              arg.future->cancelUnlocked(memoryState_);
-          } else if constexpr (std::is_same_v<T, JobNone>) {
-              RuntimeFail("Cannot be in queue");
-          } else {
-              static_assert(false, "Not all alternatives are processed");
-          }
-      }, job);
-  }
+  // Destructors for queued jobs must be run in the native state.
+  kotlin::AssertThreadState(memoryState_, ThreadState::kNative);
 
-  for (auto job : delayed_) {
-      mm::releaseExternalRCRef(job.operation);
-      mm::disposeExternalRCRef(job.operation);
+  if (compiler::runtimeAssertsEnabled()) {
+      auto it = std::find_if(queue_.begin(), queue_.end(), [](const auto& arg) noexcept { arg.index() == JOB_NONE; });
+      RuntimeAssert(it == queue_.end(), "JOB_NONE cannot be in the queue");
   }
+  // Cleanup jobs in the queue.
+  queue_.clear();
+  delayed_.clear();
 
   name_.reset();
 
-  kotlin::AssertThreadState(memoryState_, ThreadState::kNative);
   pthread_mutex_destroy(&lock_);
   pthread_cond_destroy(&cond_);
 }
@@ -869,7 +874,7 @@ Job Worker::getJob(bool blocking) {
   RuntimeAssert(!terminated_, "Must not be terminated");
   if (queue_.size() == 0 && !blocking) return Job();
   waitForQueueLocked(-1, nullptr);
-  auto result = queue_.front();
+  auto result = std::move(queue_.front());
   queue_.pop_front();
   return result;
 }
@@ -879,14 +884,14 @@ KLong Worker::checkDelayedLocked() {
     return -1;
   }
   auto it = delayed_.begin();
-  auto job = *it;
+  auto& job = *it;
   auto now = konan::getTimeMicros();
   if (job.whenExecute <= now) {
     // Note: `delayed_` is multiset sorted only by `whenExecute`.
-    // So using erase(it) instead of erase(job) is crucial,
+    // So using extract(it) instead of extract(job) is crucial,
     // because the latter would remove all the jobs with the same `whenExecute`.
-    delayed_.erase(it);
-    queue_.push_back(Job(std::in_place_type<JobExecuteAfter>, std::move(job)));
+    auto node = delayed_.extract(it);
+    queue_.push_back(Job(std::in_place_type<JobExecuteAfter>, std::move(node.value())));
     return 0;
   } else {
     return job.whenExecute - now;
@@ -958,7 +963,7 @@ JobKind Worker::processQueueElement(bool blocking) {
       auto& terminationRequest = std::get<JobTerminate>(job);
       if (terminationRequest.waitDelayed) {
         if (waitDelayed(blocking)) {
-          putJob(job, false);
+          putJob(std::move(job), false);
           return JOB_NONE;
         }
       }
@@ -972,7 +977,7 @@ JobKind Worker::processQueueElement(bool blocking) {
       auto& executeAfter = std::get<JobExecuteAfter>(job);
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          WorkerExecuteAfterLaunchpad(executeAfter.operation);
+          WorkerExecuteAfterLaunchpad(executeAfter.operation.detach());
       } catch(ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
           case WorkerExceptionHandling::kIgnore: break;
@@ -990,7 +995,7 @@ JobKind Worker::processQueueElement(bool blocking) {
       bool ok = true;
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          result.reset(WorkerExecuteLaunchpad(regularJob.function, regularJob.argument));
+          result.reset(WorkerExecuteLaunchpad(regularJob.function, regularJob.argument.detach()));
       } catch (ExceptionObjHolder& e) {
         ok = false;
         switch (exceptionHandling()) {
