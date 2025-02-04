@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade.Companion.shouldRunFirFrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -34,7 +36,8 @@ class FirCliJvmFacade(testServices: TestServices) : FrontendFacade<FirOutputArti
             rootDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
         )
 
-        val output = JvmFrontendPipelinePhase.executePhase(input) ?: reportErrorFromCliPhase()
+        val output = JvmFrontendPipelinePhase.executePhase(input)
+            ?: return processErrorFromCliPhase(configuration.messageCollector, testServices)
 
         val firOutputs = output.result.outputs
         val modulesFromTheSameStructure = module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
@@ -67,6 +70,12 @@ class FirCliBasedJvmOutputArtifact(
     partsForDependsOnModules: List<FirOutputPartForDependsOnModule>
 ) : FirOutputArtifact(partsForDependsOnModules)
 
-fun reportErrorFromCliPhase(): Nothing {
-    error("CLI phased returned null")
+fun processErrorFromCliPhase(messageCollector: MessageCollector, testServices: TestServices): Nothing? {
+    if (messageCollector.hasErrors()) {
+        if (CHECK_COMPILER_OUTPUT in testServices.moduleStructure.allDirectives) {
+            // errors from message collector would be checked separately
+            return null
+        }
+    }
+    error("CLI phase returned null and there are no errors in the message collector ")
 }
