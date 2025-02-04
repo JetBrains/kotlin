@@ -3,11 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.mpp.resources
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
