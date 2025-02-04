@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.gradle.targets.wasm.npm
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.HasPlatformDisambiguate
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.AbstractNpmExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguate
 
 open class WasmNpmExtension(
     project: Project,
     nodeJsRoot: WasmNodeJsRootExtension,
-) : AbstractNpmExtension(
+) : BaseNpmExtension(
     project,
     nodeJsRoot
 ) {

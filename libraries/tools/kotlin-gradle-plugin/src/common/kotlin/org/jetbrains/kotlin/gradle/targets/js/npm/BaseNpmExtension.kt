@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
 
-open class AbstractNpmExtension(
+open class BaseNpmExtension(
     val project: Project,
     val nodeJsRoot: AbstractNodeJsRootExtension,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {

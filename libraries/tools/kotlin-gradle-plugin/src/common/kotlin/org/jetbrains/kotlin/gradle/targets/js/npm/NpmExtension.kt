@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 open class NpmExtension(
     project: Project,
     nodeJsRoot: NodeJsRootExtension,
-) : AbstractNpmExtension(
+) : BaseNpmExtension(
     project,
     nodeJsRoot
 ) {
