@@ -112,17 +112,11 @@ struct JobExecuteAfter {
     uint64_t whenExecute;
 };
 
-struct Job {
-  Job() noexcept : kind(JOB_NONE), none() {}
-
-  enum JobKind kind;
-  union {
-    JobNone none;
-    JobRegular regularJob;
-    JobTerminate terminationRequest;
-    JobExecuteAfter executeAfter;
-  };
-};
+using Job = std::variant<JobNone, JobTerminate, JobRegular, JobExecuteAfter>;
+static_assert(std::is_same_v<JobNone, std::variant_alternative_t<JOB_NONE, Job>>);
+static_assert(std::is_same_v<JobTerminate, std::variant_alternative_t<JOB_TERMINATE, Job>>);
+static_assert(std::is_same_v<JobRegular, std::variant_alternative_t<JOB_REGULAR, Job>>);
+static_assert(std::is_same_v<JobExecuteAfter, std::variant_alternative_t<JOB_EXECUTE_AFTER, Job>>);
 
 // Using multiset instead of regular set, because we compare the jobs only by `whenExecute`.
 // So if `whenExecute` of two different jobs is the same, the jobs are considered equivalent,
@@ -392,14 +386,9 @@ class State {
 
     Job job;
     if (jobFunction == nullptr) {
-      job.kind = JOB_TERMINATE;
-      job.terminationRequest.future = future;
-      job.terminationRequest.waitDelayed = !toFront;
+      job = Job(std::in_place_type<JobTerminate>, future, !toFront);
     } else {
-      job.kind = JOB_REGULAR;
-      job.regularJob.function = jobFunction;
-      job.regularJob.argument = jobArgument.detach();
-      job.regularJob.future = future;
+      job = Job(std::in_place_type<JobRegular>, jobFunction, std::move(jobArgument), future);
     }
 
     worker->putJob(job, toFront);
@@ -419,10 +408,7 @@ class State {
     }
     worker = it->second;
     if (afterMicroseconds == 0) {
-      Job job;
-      job.kind = JOB_EXECUTE_AFTER;
-      job.executeAfter.operation = operation.detach();
-      worker->putJob(job, false);
+      worker->putJob(Job(std::in_place_type<JobExecuteAfter>, std::move(operation)), false);
     } else {
       worker->putDelayedJob(JobExecuteAfter(std::move(operation), konan::getTimeMicros() + afterMicroseconds));
     }
@@ -439,10 +425,7 @@ class State {
       }
       worker = it->second;
 
-      Job job;
-      job.kind = JOB_EXECUTE_AFTER;
-      job.executeAfter.operation = operation.detach();
-      worker->putJob(job, false);
+      worker->putJob(Job(std::in_place_type<JobExecuteAfter>, std::move(operation)), false);
       return true;
   }
 
@@ -795,28 +778,25 @@ Worker::~Worker() {
                 "Worker destruction must be executed by the worker thread.");
   // Cleanup jobs in the queue.
   for (auto job : queue_) {
-      switch (job.kind) {
-          case JOB_REGULAR:
-              mm::releaseExternalRCRef(job.regularJob.argument);
-              mm::disposeExternalRCRef(job.regularJob.argument);
-              job.regularJob.future->cancelUnlocked(memoryState_);
-              break;
-          case JOB_EXECUTE_AFTER: {
+      std::visit([this](auto&& arg) noexcept -> void {
+          using T = std::decay_t<decltype(arg)>;
+          if constexpr (std::is_same_v<T, JobRegular>) {
+              mm::releaseExternalRCRef(arg.argument);
+              mm::disposeExternalRCRef(arg.argument);
+              arg.future->cancelUnlocked(memoryState_);
+          } else if constexpr (std::is_same_v<T, JobExecuteAfter>) {
               // TODO: what do we do here? Shall we execute them?
-              mm::releaseExternalRCRef(job.executeAfter.operation);
-              mm::disposeExternalRCRef(job.executeAfter.operation);
-              break;
-          }
-          case JOB_TERMINATE: {
+              mm::releaseExternalRCRef(arg.operation);
+              mm::disposeExternalRCRef(arg.operation);
+          } else if constexpr (std::is_same_v<T, JobTerminate>) {
               // TODO: any more processing here?
-              job.terminationRequest.future->cancelUnlocked(memoryState_);
-              break;
+              arg.future->cancelUnlocked(memoryState_);
+          } else if constexpr (std::is_same_v<T, JobNone>) {
+              RuntimeFail("Cannot be in queue");
+          } else {
+              static_assert(false, "Not all alternatives are processed");
           }
-          case JOB_NONE: {
-              RuntimeCheck(false, "Cannot be in queue");
-              break;
-          }
-      }
+      }, job);
   }
 
   for (auto job : delayed_) {
@@ -906,10 +886,7 @@ KLong Worker::checkDelayedLocked() {
     // So using erase(it) instead of erase(job) is crucial,
     // because the latter would remove all the jobs with the same `whenExecute`.
     delayed_.erase(it);
-    Job newJob;
-    newJob.kind = JOB_EXECUTE_AFTER;
-    newJob.executeAfter = job;
-    queue_.push_back(newJob);
+    queue_.push_back(Job(std::in_place_type<JobExecuteAfter>, std::move(job)));
     return 0;
   } else {
     return job.whenExecute - now;
@@ -972,12 +949,14 @@ bool Worker::park(KLong timeoutMicroseconds, bool process) {
 JobKind Worker::processQueueElement(bool blocking) {
   if (terminated_) return JOB_TERMINATE;
   Job job = getJob(blocking);
-  switch (job.kind) {
+  JobKind kind = static_cast<JobKind>(job.index());
+  switch (kind) {
     case JOB_NONE: {
       break;
     }
     case JOB_TERMINATE: {
-      if (job.terminationRequest.waitDelayed) {
+      auto& terminationRequest = std::get<JobTerminate>(job);
+      if (terminationRequest.waitDelayed) {
         if (waitDelayed(blocking)) {
           putJob(job, false);
           return JOB_NONE;
@@ -986,13 +965,14 @@ JobKind Worker::processQueueElement(bool blocking) {
       terminated_ = true;
       // Termination request, remove the worker and notify the future.
       theState()->removeWorkerUnlocked(id());
-      job.terminationRequest.future->storeResultUnlocked(nullptr, true);
+      terminationRequest.future->storeResultUnlocked(nullptr, true);
       break;
     }
     case JOB_EXECUTE_AFTER: {
+      auto& executeAfter = std::get<JobExecuteAfter>(job);
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          WorkerExecuteAfterLaunchpad(job.executeAfter.operation);
+          WorkerExecuteAfterLaunchpad(executeAfter.operation);
       } catch(ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
           case WorkerExceptionHandling::kIgnore: break;
@@ -1005,11 +985,12 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_REGULAR: {
+      auto& regularJob = std::get<JobRegular>(job);
       mm::OwningExternalRCRef result;
       bool ok = true;
       try {
           objc_support::AutoreleasePool autoreleasePool;
-          result.reset(WorkerExecuteLaunchpad(job.regularJob.function, job.regularJob.argument));
+          result.reset(WorkerExecuteLaunchpad(regularJob.function, regularJob.argument));
       } catch (ExceptionObjHolder& e) {
         ok = false;
         switch (exceptionHandling()) {
@@ -1021,14 +1002,14 @@ JobKind Worker::processQueueElement(bool blocking) {
         }
       }
       // Notify the future.
-      job.regularJob.future->storeResultUnlocked(std::move(result), ok);
+      regularJob.future->storeResultUnlocked(std::move(result), ok);
       break;
     }
     default: {
       RuntimeCheck(false, "Must be exhaustive");
     }
   }
-  return job.kind;
+  return kind;
 }
 
 extern "C" {
