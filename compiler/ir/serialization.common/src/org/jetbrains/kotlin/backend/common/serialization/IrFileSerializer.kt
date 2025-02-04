@@ -1529,20 +1529,11 @@ open class IrFileSerializer(
             proto.addDeclarationId(sigIndex)
         }
 
-        if (settings.compatibilityMode.abiVersion.isAtLeast(KotlinAbiVersion(2,2,0))) {
-            proto.setFileEntryId(
-                serializeFileEntryId(
-                    file.fileEntry,
-                    includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
-                )
-            )
+        val includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
+        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
+            proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
         } else {
-            proto.setFileEntry(
-                serializeFileEntry(
-                    file.fileEntry,
-                    includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
-                )
-            )
+            proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
         }
 
         // TODO: is it Konan specific?
