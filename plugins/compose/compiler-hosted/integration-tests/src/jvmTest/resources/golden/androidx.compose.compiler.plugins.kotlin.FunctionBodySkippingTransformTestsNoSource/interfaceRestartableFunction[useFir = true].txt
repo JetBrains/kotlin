@@ -1,0 +1,48 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+interface Presenter {
+    @Composable fun Content()
+}
+
+class PresenterImpl(
+    private val onCompose: () -> Unit
+) : Presenter {
+    @Composable
+    override fun Content() {
+        onCompose()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface Presenter {
+  @Composable
+  abstract fun Content(%composer: Composer?, %changed: Int)
+}
+@StabilityInferred(parameters = 1)
+class PresenterImpl(val onCompose: Function0<Unit>) : Presenter {
+  @Composable
+  override fun Content(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    val %dirty = %changed
+    if (%changed and 0b0110 == 0) {
+      %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
+    }
+    if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+      onCompose()
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.Content(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  static val %stable: Int = 0
+}

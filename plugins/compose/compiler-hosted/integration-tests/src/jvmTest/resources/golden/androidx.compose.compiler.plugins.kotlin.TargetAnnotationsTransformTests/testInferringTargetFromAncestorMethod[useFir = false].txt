@@ -52,16 +52,23 @@ abstract class Base {
 class Valid : Base {
   @Composable
   override fun Compose(%composer: Composer?, %changed: Int) {
-    %composer.startReplaceGroup(<>)
+    %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(Compose)<OpenTa...>:Test.kt")
-    if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      OpenTarget(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
     }
-    OpenTarget(%composer, 0)
-    if (isTraceInProgress()) {
-      traceEventEnd()
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.Compose(%composer, updateChangedFlags(%changed or 0b0001))
     }
-    %composer.endReplaceGroup()
   }
   static val %stable: Int = 0
 }
