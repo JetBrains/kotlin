@@ -18,14 +18,12 @@ package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiJavaModule;
-import kotlin.collections.MapsKt;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -41,9 +39,7 @@ import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
@@ -103,11 +99,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     private boolean isIncrementalSystemProperty() {
         String value = System.getProperty("kotlin.incremental");
         return value != null && value.equals("true");
-    }
-
-    @Override
-    protected List<String> getRelatedSourceRoots(MavenProject project) {
-        return project.getCompileSourceRoots();
     }
 
     @NotNull
