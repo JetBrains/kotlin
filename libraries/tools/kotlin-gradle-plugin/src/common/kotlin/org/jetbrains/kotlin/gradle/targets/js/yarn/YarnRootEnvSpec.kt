@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.jetbrains.kotlin.gradle.targets.web.yarn.AbstractYarnRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 
 /**
  * Spec for Yarn - package manager to install NPM dependencies
  */
-abstract class YarnRootEnvSpec : AbstractYarnRootEnvSpec() {
+abstract class YarnRootEnvSpec : BaseYarnRootEnvSpec() {
     companion object {
         const val YARN: String = "kotlinYarnSpec"
     }

@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.RESTORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.STORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.UPGRADE_YARN_LOCK
-import org.jetbrains.kotlin.gradle.targets.web.yarn.AbstractYarnRootEnvSpec
-import org.jetbrains.kotlin.gradle.targets.web.yarn.AbstractYarnRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
@@ -30,9 +30,9 @@ import kotlin.reflect.KClass
 
 internal class YarnPluginApplier(
     private val platformDisambiguate: HasPlatformDisambiguate,
-    private val yarnRootKlass: KClass<out AbstractYarnRootExtension>,
+    private val yarnRootKlass: KClass<out BaseYarnRootExtension>,
     private val yarnRootName: String,
-    private val yarnEnvSpecKlass: KClass<out AbstractYarnRootEnvSpec>,
+    private val yarnEnvSpecKlass: KClass<out BaseYarnRootEnvSpec>,
     private val yarnEnvSpecName: String,
     private val nodeJsRootApply: (project: Project) -> Unit,
     private val nodeJsRootExtension: (project: Project) -> AbstractNodeJsRootExtension,
@@ -149,18 +149,18 @@ internal class YarnPluginApplier(
     }
 
     private fun ExtensionContainer.createYarnEnvSpec(
-        yarnEnvSpecKlass: KClass<out AbstractYarnRootEnvSpec>,
+        yarnEnvSpecKlass: KClass<out BaseYarnRootEnvSpec>,
         yarnEnvSpecName: String,
-    ): AbstractYarnRootEnvSpec {
+    ): BaseYarnRootEnvSpec {
         return create(
             yarnEnvSpecName,
             yarnEnvSpecKlass.java
         )
     }
 
-    private fun AbstractYarnRootEnvSpec.initializeYarnEnvSpec(
+    private fun BaseYarnRootEnvSpec.initializeYarnEnvSpec(
         objectFactory: ObjectFactory,
-        yarnRootExtension: AbstractYarnRootExtension,
+        yarnRootExtension: BaseYarnRootExtension,
     ) {
         download.convention(yarnRootExtension.downloadProperty)
         downloadBaseUrl.convention(yarnRootExtension.downloadBaseUrlProperty)

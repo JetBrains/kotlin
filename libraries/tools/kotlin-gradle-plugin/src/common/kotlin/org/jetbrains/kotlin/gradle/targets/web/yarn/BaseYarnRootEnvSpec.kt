@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 /**
  * Spec for Yarn - package manager to install NPM dependencies
  */
-abstract class AbstractYarnRootEnvSpec : EnvSpec<YarnEnv>() {
+abstract class BaseYarnRootEnvSpec : EnvSpec<YarnEnv>() {
 
     /**
      * Specify a platform information with name and architecture

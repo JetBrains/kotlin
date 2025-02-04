@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtensio
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
-open class AbstractYarnRootExtension(
+open class BaseYarnRootExtension(
     val project: Project,
     val nodeJsRoot: AbstractNodeJsRootExtension,
-    private val yarnSpec: AbstractYarnRootEnvSpec,
+    private val yarnSpec: BaseYarnRootEnvSpec,
 ) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
     init {
         check(project == project.rootProject)

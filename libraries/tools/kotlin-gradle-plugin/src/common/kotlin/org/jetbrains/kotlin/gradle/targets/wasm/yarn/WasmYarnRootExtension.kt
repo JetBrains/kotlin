@@ -9,14 +9,14 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.HasPlatformDisambiguate
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguate
-import org.jetbrains.kotlin.gradle.targets.web.yarn.AbstractYarnRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 
 open class WasmYarnRootExtension(
     project: Project,
     nodeJsRoot: WasmNodeJsRootExtension,
     yarnSpec: WasmYarnRootEnvSpec,
-) : AbstractYarnRootExtension(
+) : BaseYarnRootExtension(
     project,
     nodeJsRoot,
     yarnSpec,
