@@ -106,6 +106,8 @@ struct JobRegular {
 struct JobExecuteAfter {
     JobExecuteAfter(mm::OwningExternalRCRef operation, uint64_t whenExecute = 0) noexcept : operation(operation.detach()), whenExecute(whenExecute) {}
 
+    bool operator<(const JobExecuteAfter& rhs) const noexcept { return whenExecute < rhs.whenExecute; }
+
     mm::RawExternalRCRef* operation;
     uint64_t whenExecute;
 };
@@ -122,17 +124,10 @@ struct Job {
   };
 };
 
-struct JobCompare {
-  bool operator() (const Job& lhs, const Job& rhs) const {
-    RuntimeAssert(lhs.kind == JOB_EXECUTE_AFTER && rhs.kind == JOB_EXECUTE_AFTER, "Must be delayed jobs");
-    return lhs.executeAfter.whenExecute < rhs.executeAfter.whenExecute;
-  }
-};
-
 // Using multiset instead of regular set, because we compare the jobs only by `whenExecute`.
 // So if `whenExecute` of two different jobs is the same, the jobs are considered equivalent,
 // and set would simply drop one of them.
-typedef std::multiset<Job, JobCompare> DelayedJobSet;
+using DelayedJobSet = std::multiset<JobExecuteAfter>;
 
 }  // namespace
 
@@ -153,7 +148,7 @@ class Worker {
   void startEventLoop();
 
   void putJob(Job job, bool toFront);
-  void putDelayedJob(Job job);
+  void putDelayedJob(JobExecuteAfter job);
 
   bool waitDelayed(bool blocking);
 
@@ -423,14 +418,13 @@ class State {
       return false;
     }
     worker = it->second;
-    Job job;
-    job.kind = JOB_EXECUTE_AFTER;
-    job.executeAfter.operation = operation.detach();
     if (afterMicroseconds == 0) {
+      Job job;
+      job.kind = JOB_EXECUTE_AFTER;
+      job.executeAfter.operation = operation.detach();
       worker->putJob(job, false);
     } else {
-      job.executeAfter.whenExecute = konan::getTimeMicros() + afterMicroseconds;
-      worker->putDelayedJob(job);
+      worker->putDelayedJob(JobExecuteAfter(std::move(operation), konan::getTimeMicros() + afterMicroseconds));
     }
     return true;
   }
@@ -826,9 +820,8 @@ Worker::~Worker() {
   }
 
   for (auto job : delayed_) {
-      RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
-      mm::releaseExternalRCRef(job.executeAfter.operation);
-      mm::disposeExternalRCRef(job.executeAfter.operation);
+      mm::releaseExternalRCRef(job.operation);
+      mm::disposeExternalRCRef(job.operation);
   }
 
   name_.reset();
@@ -877,7 +870,7 @@ void Worker::putJob(Job job, bool toFront) {
   pthread_cond_signal(&cond_);
 }
 
-void Worker::putDelayedJob(Job job) {
+void Worker::putDelayedJob(JobExecuteAfter job) {
   kotlin::ThreadStateGuard guard(ThreadState::kNative);
   Locker locker(&lock_);
   delayed_.insert(job);
@@ -907,17 +900,19 @@ KLong Worker::checkDelayedLocked() {
   }
   auto it = delayed_.begin();
   auto job = *it;
-  RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed job");
   auto now = konan::getTimeMicros();
-  if (job.executeAfter.whenExecute <= now) {
+  if (job.whenExecute <= now) {
     // Note: `delayed_` is multiset sorted only by `whenExecute`.
     // So using erase(it) instead of erase(job) is crucial,
     // because the latter would remove all the jobs with the same `whenExecute`.
     delayed_.erase(it);
-    queue_.push_back(job);
+    Job newJob;
+    newJob.kind = JOB_EXECUTE_AFTER;
+    newJob.executeAfter = job;
+    queue_.push_back(newJob);
     return 0;
   } else {
-    return job.executeAfter.whenExecute - now;
+    return job.whenExecute - now;
   }
 }
 
