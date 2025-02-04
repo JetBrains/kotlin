@@ -33,59 +33,87 @@ import java.util.*
  * The test file for the test should contain normal module declarations.
  * Each module can have a dedicated refiner registered.
  * Refiner for a module should have the same name with `_REFINER` suffix added.
- * Each file inside refiner module must have at least one of the following directives:
- *  SHADOWED - this file will be shadowed for this module
- *  ADDED - this file will be added for this module
+ * Each file inside refiner modules must have at least one of the following directives:
+ *  'SHADOWED' - this file will be shadowed for this module
+ *  'ADDED' - this file will be added for this module
+ * It is also possible to put the 'SHADOWED' directive directly on file in the working module.
+ *
+ * Please note that for clarity of the output, all file names should be unique.
+ * This doesn't apply to the same file being used in a working module and in the corresponding refiner module.
+ *
+ * Test output consists of two files:
+ *  - One file with '.content.scope' extension lists all content scopes of all presented working modules
+ *  - One file with '.resolution.scope' extension lists all resolution scopes of all presented working modules
  */
 open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApiBasedTest() {
     private var refinerToRegister: DummyContentScopeRefiner = DummyContentScopeRefiner()
-    override var configurator: ContentScopeProviderConfigurator = ContentScopeProviderConfigurator(listOf(refinerToRegister))
+    override var configurator: ContentScopeProviderConfigurator = ContentScopeProviderConfigurator(refinerToRegister)
 
     override fun doTest(testServices: TestServices) {
-        val namesToModules: MutableMap<String, KtTestModule> = mutableMapOf()
-        val namesToFiles: MutableMap<String, List<Pair<VirtualFile, TestFile>>> = mutableMapOf()
-
-        testServices.ktTestModuleStructure.mainModules.associateTo(namesToModules) {
+        val namesToModules = testServices.ktTestModuleStructure.mainModules.associateBy {
             val ktModule = it.ktModule
-            (ktModule as KaSourceModule).name to it
+            (ktModule as KaSourceModule).name
         }
 
-        namesToFiles.putAll(
+        val namesToModulesWithFiles =
             namesToModules.map { (name, module) ->
                 // Empty modules still contain dummy files that have "module_" prefix
-                val psiFiles = module.files.filter { !it.name.startsWith("module_") }.sortedBy { it.name }.map { it.virtualFile }
+                val virtualFiles = module.files.filter { !it.name.startsWith("module_") }.sortedBy { it.name }.map { it.virtualFile }
                 val testFiles = module.testModule.files.filter { !it.name.startsWith("module_") }.sortedBy { it.name }
-                name to psiFiles.zip(testFiles)
-            }
-        )
+                name to TestModuleWithFiles(module, testFiles.zip(virtualFiles).map { KtTestFile(it.first, it.second) })
+            }.toMap()
 
-        val workingModules = namesToModules.filter { !it.key.endsWith(REFINER_MODULE_SUFFIX) }
+        val workingModules = namesToModulesWithFiles.filter { isWorkingModule(it.key) }.toSortedMap()
 
-        val baseContentScopes = namesToFiles.filter { !it.key.endsWith(REFINER_MODULE_SUFFIX) }.map { (moduleName, files) ->
-            moduleName to files.map { it.first }
-        }.toMap()
-
-        val refiners = namesToFiles.filter { it.key.endsWith(REFINER_MODULE_SUFFIX) }.map {
+        val refinerModules = namesToModulesWithFiles.filter { !isWorkingModule(it.key) }.map {
             it.key.removeSuffix(REFINER_MODULE_SUFFIX) to it.value
+        }.toMap().toSortedMap()
+
+        buildMap<String, MutableList<String>> {
+            workingModules.forEach { (moduleName, module) ->
+                this.put(moduleName, module.files.map { it.virtualFile.name }.toMutableList())
+            }
+
+            refinerModules.forEach { (moduleName, module) ->
+                this[moduleName]?.addAll(module.files.map { it.virtualFile.name })
+            }
+        }.flatMap {
+            it.value.distinct()
+        }.let { fileNames ->
+            testServices.assertions.assertTrue(fileNames.distinct().size == fileNames.size) {
+                "All files across working modules are expected to be unique"
+            }
         }
 
-        val enlargementScopes =
-            refiners.associate { (moduleName, files) ->
-                moduleName to files.filter { (_, testFile) -> testFile.directives.contains(Directives.ADDED) }
-                    .map { (virtualFile, _) ->
-                        val baseScope = baseContentScopes[moduleName] ?: error("scope for $moduleName not found")
-                        baseScope.firstOrNull { it.name == virtualFile.name } ?: virtualFile
-                    }
-            }
+        testServices.assertions.assertTrue(workingModules.flatMap { it.value.files }
+                                               .none { it.testFile.directives.contains(Directives.ADDED) }) {
+            "Files from working modules cannot have 'ADDED' directive, add it to the corresponding refiner"
+        }
 
-        val restrictionScopes =
-            refiners.associate { (moduleName, files) ->
-                moduleName to files.filter { (_, testFile) -> testFile.directives.contains(Directives.SHADOWED) }
-                    .map { (virtualFile, _) ->
-                        val baseScope = baseContentScopes[moduleName] ?: error("scope for $moduleName not found")
-                        baseScope.firstOrNull { it.name == virtualFile.name } ?: virtualFile
+        val baseContentScopes =
+            workingModules.map { (moduleName, module) ->
+                moduleName to module.files.map { it.virtualFile }
+            }.toMap()
+
+        val enlargementScopes =
+            refinerModules.map { (moduleName, module) ->
+                moduleName to module.files.filter { file -> file.testFile.directives.contains(Directives.ADDED) }
+                    .map { file ->
+                        val baseScope = baseContentScopes[moduleName] ?: error("module '$moduleName' not found")
+                        baseScope.firstOrNull { it.name == file.virtualFile.name } ?: file.virtualFile
                     }
-            }
+            }.toMap()
+
+        val restrictionScopes = workingModules.entries.zip(refinerModules.entries) { workingModule, refiner ->
+            workingModule.key to workingModule.value.files + refiner.value.files
+        }.associate { (moduleName, files) ->
+            moduleName to files.filter { file -> file.testFile.directives.contains(Directives.SHADOWED) }
+                .map { file ->
+                    val baseScope = baseContentScopes[moduleName] ?: error("module '$moduleName' not found")
+                    baseScope.firstOrNull { it.name == file.virtualFile.name } ?: file.virtualFile
+                }
+        }
+
 
         val inputData = InputData(baseContentScopes, enlargementScopes, restrictionScopes)
 
@@ -99,14 +127,14 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
             moduleName to scope
         }.toMap()
 
-        val moduleData = workingModules.map { (moduleName, testModule) ->
+        val moduleData = workingModules.map { (moduleName, testModuleWithFiles) ->
             val inputBaseContentScope = inputData.moduleToInputBaseContentScope[moduleName] ?: listOf()
             val inputShadowedScope = inputData.moduleToInputShadowedScope[moduleName] ?: listOf()
             val inputEnlargementScope = inputData.moduleToInputEnlargementScope[moduleName] ?: listOf()
             val expectedContentScope = computedContentScopes[moduleName] ?: TreeSet()
             moduleName to ModuleData(
                 moduleName,
-                testModule,
+                testModuleWithFiles.testModule,
                 inputBaseContentScope,
                 expectedContentScope,
                 inputEnlargementScope,
@@ -140,7 +168,6 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
 
         moduleData.forEach { (currentModuleName, currentModuleData) ->
             val contentScope = currentModuleData.testModule.ktModule.contentScope
-            println("Module ${currentModuleName}: $contentScope")
             currentModuleData.expectedContentScope.forEach {
                 testServices.assertions.assertTrue(contentScope.contains(it)) { "File ${it.name} should be in scope" }
             }
@@ -214,6 +241,18 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         val dependencies: MutableList<ModuleData> = mutableListOf()
     )
 
+    private data class KtTestFile(
+        val testFile: TestFile,
+        val virtualFile: VirtualFile
+    )
+
+    private data class TestModuleWithFiles(
+        val testModule: KtTestModule,
+        val files: List<KtTestFile>
+    )
+
+    private fun isWorkingModule(moduleName: String): Boolean = !moduleName.endsWith(REFINER_MODULE_SUFFIX)
+
     companion object {
         private val virtualFilesComparator = Comparator<VirtualFile> { a, b ->
             a.name.compareTo(b.name)
@@ -229,22 +268,20 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
 }
 
 
-class ContentScopeProviderConfigurator(private val scopeRefinersToRegister: List<DummyContentScopeRefiner> = listOf()) :
+class ContentScopeProviderConfigurator(private val scopeRefinerToRegister: DummyContentScopeRefiner) :
     AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = buildList {
             addAll(super.serviceRegistrars)
-            add(ContentScopeProviderRegistrar(scopeRefinersToRegister))
+            add(ContentScopeProviderRegistrar(scopeRefinerToRegister))
         }
 }
 
-private class ContentScopeProviderRegistrar(private val scopeRefinersToRegister: List<DummyContentScopeRefiner>) :
+private class ContentScopeProviderRegistrar(private val scopeRefinerToRegister: DummyContentScopeRefiner) :
     AnalysisApiTestServiceRegistrar() {
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         val extensionPoint = project.extensionArea.getExtensionPoint(KotlinContentScopeRefiner.EP_NAME)
-        scopeRefinersToRegister.forEach { refiner ->
-            extensionPoint.registerExtension(refiner, disposable)
-        }
+        extensionPoint.registerExtension(scopeRefinerToRegister, disposable)
     }
 }
 
