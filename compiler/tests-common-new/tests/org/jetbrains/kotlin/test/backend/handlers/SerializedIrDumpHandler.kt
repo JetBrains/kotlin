@@ -88,7 +88,7 @@ class SerializedIrDumpHandler(
             declarationFlagsFilter = FlagsFilterImpl(isAfterDeserialization),
 
             /** Don't dump annotations having source retention such as [UnsafeVariance], [Suppress], [OptIn]. */
-            printSourceRetentionAnnotations = false,
+            printAnnotationsWithSourceRetention = false,
 
             /**
              * Fake overrides generation works slightly different for Fir2LazyIr and normal IR (either built

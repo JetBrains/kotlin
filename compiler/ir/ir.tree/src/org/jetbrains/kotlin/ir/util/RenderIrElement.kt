@@ -986,7 +986,7 @@ private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?,
     }
 
 internal fun List<IrConstructorCall>.filterOutSourceRetentions(options: DumpIrTreeOptions): List<IrConstructorCall> =
-    applyIf(!options.printSourceRetentionAnnotations) {
+    applyIf(!options.printAnnotationsWithSourceRetention) {
         filterNot { it: IrConstructorCall ->
             (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrConstructorCall ->
                 it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&

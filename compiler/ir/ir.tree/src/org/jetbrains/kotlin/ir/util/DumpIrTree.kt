@@ -60,6 +60,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
  * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
+ * @property printAnnotationsWithSourceRetention If annotations with SOURCE retention should be printed.
  * @property printAnnotationsInFakeOverrides If annotations in fake override functions/properties should be printed.
  *   Note: The main goal of introducing this flag is an attempt to work around the problem with incorrect offsets
  *   in annotations, which should be finally fixed in KT-74938.
@@ -87,7 +88,7 @@ data class DumpIrTreeOptions(
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,
-    val printSourceRetentionAnnotations: Boolean = true,
+    val printAnnotationsWithSourceRetention: Boolean = true,
     val printAnnotationsInFakeOverrides: Boolean = true,
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val printParameterNamesInOverriddenSymbols: Boolean = true,
