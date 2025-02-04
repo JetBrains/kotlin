@@ -5204,24 +5204,6 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/propertyModifiers.kt");
     }
 
-    @Test
-    @TestMetadata("superCall.kt")
-    public void testSuperCall() {
-      runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.kt");
-    }
-
-    @Test
-    @TestMetadata("superCallFromMultipleSubclasses.kt")
-    public void testSuperCallFromMultipleSubclasses() {
-      runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCallFromMultipleSubclasses.kt");
-    }
-
-    @Test
-    @TestMetadata("superProperty.kt")
-    public void testSuperProperty() {
-      runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superProperty.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda")
     @TestDataPath("$PROJECT_ROOT")

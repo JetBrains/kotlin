@@ -20757,11 +20757,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/inference/pcla/capturedTypes.kt");
       }
 
-      @TestMetadata("changingResolveIfDontUseBuilderInferenceDisabledFeature.kt")
-      public void testChangingResolveIfDontUseBuilderInferenceDisabledFeature() {
-        runTest("compiler/testData/codegen/box/inference/pcla/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
-      }
-
       @TestMetadata("commonSuperType.kt")
       public void testCommonSuperType() {
         runTest("compiler/testData/codegen/box/inference/pcla/commonSuperType.kt");
@@ -34992,11 +34987,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/objects/objectLiteralInClass.kt");
     }
 
-    @TestMetadata("objectLiteralInClosure.kt")
-    public void testObjectLiteralInClosure() {
-      runTest("compiler/testData/codegen/box/objects/objectLiteralInClosure.kt");
-    }
-
     @TestMetadata("objectVsClassInitialization_kt5291.kt")
     public void testObjectVsClassInitialization_kt5291() {
       runTest("compiler/testData/codegen/box/objects/objectVsClassInitialization_kt5291.kt");
@@ -44129,11 +44119,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("kt35914.kt")
     public void testKt35914() {
       runTest("compiler/testData/codegen/box/regressions/kt35914.kt");
-    }
-
-    @TestMetadata("kt3850.kt")
-    public void testKt3850() {
-      runTest("compiler/testData/codegen/box/regressions/kt3850.kt");
     }
 
     @TestMetadata("kt3903.kt")

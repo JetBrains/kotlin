@@ -20,6 +20,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -298,16 +299,22 @@ class KotlinGradleIT : KGPBaseTest() {
             }
 
             // check the arguments are always passed if specified explicitly
-            updateBuildGradle("1.6", "1.6")
+            val firstSupported = LanguageVersion.FIRST_SUPPORTED.versionString
+            val firstApiVersion = LanguageVersion.FIRST_API_SUPPORTED.versionString
+
+            updateBuildGradle(firstSupported, firstApiVersion)
             build("clean", "compileKotlin") {
-                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.6")
-                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.6")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} $firstSupported")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} $firstApiVersion")
             }
 
-            updateBuildGradle("1.7", "1.7")
+            val latestStable = LanguageVersion.LATEST_STABLE.versionString
+            val latestApiStable = LanguageVersion.LATEST_STABLE.versionString
+
+            updateBuildGradle(latestStable, latestApiStable)
             build("clean", "compileKotlin") {
-                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.7")
-                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.7")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} $latestStable")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} $latestApiStable")
             }
         }
     }
