@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
@@ -245,6 +247,20 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
         else -> errorWithFirSpecificEntries("Unsupported declarations container", fir = this)
     }
 }
+
+/**
+ * Whether a non-local declaration of the given type supports partial body analysis.
+ *
+ * The function only checks the declaration type.
+ * It does not perform other important checks such as a number of body statements, or even whether the body is present at all.
+ */
+internal val FirElementWithResolveState.isPartialBodyResolvable: Boolean
+    get() = when (this) {
+        is FirConstructor -> !isPrimary
+        is FirSimpleFunction, is FirAnonymousInitializer -> true
+        else -> false
+    }
+
 
 /**
  * Some "local" declarations are not local from the lazy resolution perspective.

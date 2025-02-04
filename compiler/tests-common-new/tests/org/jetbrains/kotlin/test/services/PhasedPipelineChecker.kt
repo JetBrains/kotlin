@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
 import org.jetbrains.kotlin.test.utils.llFirTestDataFile
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
+import org.jetbrains.kotlin.test.utils.partialBodyTestDataFile
 import org.jetbrains.kotlin.test.utils.reversedTestDataFile
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -124,6 +125,7 @@ class PhasedPipelineChecker(
                 originalFile.llFirTestDataFile,
                 originalFile.latestLVTestDataFile,
                 originalFile.reversedTestDataFile,
+                originalFile.partialBodyTestDataFile,
             )
         }
         return filesList.filter { it.exists() }.mapNotNull { file ->

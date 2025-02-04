@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.isCustomTestData
+import org.jetbrains.kotlin.test.utils.isLLFirSpecializedTestData
 import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
 import java.io.File
 
@@ -20,7 +21,7 @@ abstract class TestDataFileReplacer(testServices: TestServices) : MetaTestConfig
         // If the original file is already not just `.kt`, then it was processed by another replacer
         if (originalFile.isCustomTestData) return testDataFileName
         // configured with `forTestsMatching`, it'll be executed after `LLFirMetaTestConfigurator`, which is configured generally.
-        if (".reversed." in originalFile.path) return testDataFileName
+        if (originalFile.isLLFirSpecializedTestData) return testDataFileName
 
         if (!shouldReplaceFile(originalFile)) return testDataFileName
 

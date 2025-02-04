@@ -23,7 +23,7 @@ class FirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChec
         if (testDataFile.isFirTestData) {
             val helper = Helper()
             val classicFile = helper.getClassicFileToCompare(testDataFile)
-            if (".reversed." in classicFile.path) return
+            if (classicFile.isLLFirSpecializedTestData) return
 
             if (helper.contentsAreEquals(classicFile, testDataFile, trimLines = true)) {
                 helper.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
@@ -64,7 +64,8 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
                         originalFile.originalTestDataFile,
                         originalFile.firTestDataFile,
                         originalFile.llFirTestDataFile,
-                        originalFile.reversedTestDataFile
+                        originalFile.reversedTestDataFile,
+                        originalFile.partialBodyTestDataFile
                     ).filter { it.exists() }
                         .mapTo(this) { file ->
                             { helper.removeDirectiveFromClassicFileAndAssert(file, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message) }
