@@ -1,0 +1,1 @@
+val t3 = fun <<expr>T</expr>> () { }
