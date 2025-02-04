@@ -60,7 +60,7 @@ internal class ExecHandle(
     internal var state: ExecHandleState = ExecHandleState.Initial
         private set(value) {
             lock.withLock {
-                logger.info("[ExecHandle $displayName] Changing state to: $state")
+                logger.info("[ExecHandle $displayName] Changing state from $field to $value")
                 field = value
                 stateChanged.signalAll()
             }
