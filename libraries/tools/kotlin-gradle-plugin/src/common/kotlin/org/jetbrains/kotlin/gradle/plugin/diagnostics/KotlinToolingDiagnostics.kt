@@ -1366,24 +1366,49 @@ object KotlinToolingDiagnostics {
         operator fun invoke(
             pluginId: String,
         ): ToolingDiagnostic {
-            val pluginString = when (pluginId) {
-                "application" -> "'$pluginId' (also applies 'java' plugin)"
-                "java-library" -> "'$pluginId' (also applies 'java' plugin)"
-                else -> "'$pluginId'"
-            }
-
-            return build(
-                severity = if (GradleVersion.current() >= GradleVersion.version("8.7")) ERROR else WARNING,
-            ) {
-                title("'$pluginId' Plugin Incompatible with 'org.jetbrains.kotlin.multiplatform' Plugin")
-                    .description {
-                        "$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin."
-                    }
-                    .solution {
-                        "Consider adding a new subproject with '$pluginId' plugin where the KMP project is added as a dependency."
-                    }
+            val severity = if (GradleVersion.current() >= GradleVersion.version("8.7")) ERROR else WARNING
+            return when (pluginId) {
+                "application" -> buildDiagnosticForApplicationPlugin(severity)
+                "java-library" -> buildDiagnosticForJavaPlugin(
+                    severity = severity,
+                    pluginId = pluginId,
+                    pluginString = "'$pluginId' (also applies 'java' plugin)",
+                )
+                else -> buildDiagnosticForJavaPlugin(
+                    severity = severity,
+                    pluginId = pluginId,
+                    pluginString = "'$pluginId'",
+                )
             }
         }
+
+        private fun buildDiagnosticForJavaPlugin(
+            severity: ToolingDiagnostic.Severity,
+            pluginId: String,
+            pluginString: String,
+        ) = build(
+            severity = severity
+        ) {
+            title(diagnosticTitle(pluginId))
+                .description(diagnosticDescription(pluginString))
+                .solution {
+                    "Consider adding a new subproject with '$pluginId' plugin where the KMP project is added as a dependency."
+                }
+        }
+
+        private fun buildDiagnosticForApplicationPlugin(
+            severity: ToolingDiagnostic.Severity,
+        ) = build(severity = severity) {
+            title(diagnosticTitle("application"))
+                .description(diagnosticDescription("'application' (also applies 'java' plugin)"))
+                .solution {
+                    "Consider the new KMP/JVM binaries DSL as a replacement: https://kotl.in/jvm-binaries-dsl"
+                }
+        }
+
+        private fun diagnosticTitle(pluginId: String) = "'$pluginId' Plugin Incompatible with 'org.jetbrains.kotlin.multiplatform' Plugin"
+        private fun diagnosticDescription(pluginString: String) =
+            "$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin."
     }
 
     internal object KMPWithJavaDiagnostic : ToolingDiagnosticFactory(predefinedSeverity = WARNING) {
