@@ -1117,7 +1117,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinHierarc
 	public abstract fun excludeCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun withAndroid ()V
 	public abstract fun withAndroidNative ()V
 	public abstract fun withAndroidNativeArm32 ()V
 	public abstract fun withAndroidNativeArm64 ()V
