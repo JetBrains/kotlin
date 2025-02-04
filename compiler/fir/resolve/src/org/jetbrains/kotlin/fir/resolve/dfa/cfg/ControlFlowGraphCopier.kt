@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.FirElement
  *
  * Between the first [get] call and [finish], neither source nor resulting graphs/nodes can be used.
  */
-internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit>() {
+@CfgInternals
+internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit>(), ControlFlowNodeMapper {
     private val cachedGraphs = HashMap<ControlFlowGraph, ControlFlowGraph>()
     private val cachedNodes = HashMap<CFGNode<*>, CFGNode<*>>()
 
@@ -32,7 +33,7 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
      * Copies the [graph].
      * Both [graph] and the resulting graph cannot be used until [finish] is called.
      */
-    operator fun get(graph: ControlFlowGraph): ControlFlowGraph {
+    override operator fun get(graph: ControlFlowGraph): ControlFlowGraph {
         return getCached(graph, cachedGraphs, unprocessedGraphs) {
             ControlFlowGraph(it.declaration, it.name, it.kind)
         }
@@ -42,7 +43,7 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
      * Copies the [node].
      * Both [node] and the resulting node cannot be used until [finish] is called.
      */
-    operator fun <E : FirElement, N : CFGNode<E>> get(node: N): N {
+    override operator fun <E : FirElement, N : CFGNode<E>> get(node: N): N {
         return getCached(node, cachedNodes, unprocessedNodes) {
             it.accept(this, Unit)
         }
@@ -77,7 +78,6 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
      * Call [finish] just after all required graphs/nodes are created.
      * [finish] can only be called once.
      */
-    @OptIn(CfgInternals::class)
     fun finish() {
         if (isFinished) {
             error("The copier has already finished node processing")
@@ -95,12 +95,12 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     private fun <I> postProcess(
         entityCache: HashMap<I, I>,
         entityQueue: ArrayDeque<I>,
-        processor: (newEntity: I, oldEntity: I, mapper: (CFGNode<*>) -> CFGNode<*>) -> Unit,
+        processor: (newEntity: I, oldEntity: I, mapper: ControlFlowNodeMapper) -> Unit,
     ) {
         while (entityQueue.isNotEmpty()) {
             val oldEntity = entityQueue.removeFirst()
             val newEntity = entityCache[oldEntity] ?: error("Unprocessed entity must be cached")
-            processor(newEntity, oldEntity, ::get)
+            processor(newEntity, oldEntity, this)
         }
     }
 
