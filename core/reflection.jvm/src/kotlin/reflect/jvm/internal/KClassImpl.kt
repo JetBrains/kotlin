@@ -33,8 +33,15 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.deserialization.hasReceiver
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
@@ -60,6 +67,7 @@ import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.metadata.jvm.moduleName
 import kotlin.reflect.*
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.jvm.ReflectImplementation
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.DescriptorKType
@@ -89,6 +97,12 @@ internal class KClassImpl<T : Any>(
                 (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
                     descriptor.classProto.toKmClass(descriptor.c.nameResolver)
                 }
+            }
+        }
+
+        val rawProtoBuf: Pair<JvmNameResolver, ProtoBuf.Class>? by lazy(PUBLICATION) {
+            jClass.getAnnotation(Metadata::class.java)?.let { metadata ->
+                JvmProtoBufUtil.readClassDataFrom(metadata.data1, metadata.data2)
             }
         }
 
@@ -506,7 +520,80 @@ internal class KClassImpl<T : Any>(
 
     internal val staticScope: MemberScope get() = descriptor.staticScope
 
-    override val members: Collection<KCallable<*>> get() = data.value.allMembers
+    override val members: Collection<KCallable<*>>
+        get() = when (ReflectImplementation.CURRENT) {
+            ReflectImplementation.RAW_PROTOBUF ->
+                data.value.rawProtoBuf?.let { loadMembersFromRawProtoBuf(it) }.orEmpty()
+            else ->
+                data.value.allMembers
+        }
+
+    private fun loadMembersFromRawProtoBuf(nameResolverAndProto: Pair<JvmNameResolver, ProtoBuf.Class>): Collection<KCallable<*>> {
+        val (nameResolver, classProto) = nameResolverAndProto
+        val result = mutableListOf<KCallable<*>>()
+        val typeTable = TypeTable(classProto.typeTable)
+        classProto.constructorList.mapTo(result) { constructor ->
+            val signature = JvmProtoBufUtil.getJvmConstructorSignature(constructor, nameResolver, typeTable)!!.toString()
+            DescriptorKFunction(this, "<init>", signature, NO_RECEIVER)
+        }
+        classProto.functionList.mapTo(result) { function ->
+            val signature = JvmProtoBufUtil.getJvmMethodSignature(function, nameResolver, typeTable)!!.toString()
+            DescriptorKFunction(this, nameResolver.getString(function.name), signature, NO_RECEIVER)
+        }
+        classProto.propertyList.mapNotNullTo(result) { property ->
+            property.getExtensionOrNull(JvmProtoBuf.propertySignature)?.let { signature ->
+                val receiverCount = 1 + (if (property.hasReceiver()) 1 else 0)
+                val getterSignature = if (signature.hasGetter())
+                    JvmMemberSignature.Method(
+                        nameResolver.getString(signature.getter.name), nameResolver.getString(signature.getter.desc),
+                    )
+                else null
+                val setterSignature = if (signature.hasSetter())
+                    JvmMemberSignature.Method(
+                        nameResolver.getString(signature.setter.name), nameResolver.getString(signature.setter.desc),
+                    )
+                else null
+                val fieldSignature = if (signature.hasField())
+                    JvmProtoBufUtil.getJvmFieldSignature(property, nameResolver, typeTable)!!.toString()
+                else null
+                createProperty(
+                    nameResolver.getString(property.name), Flags.IS_VAR.get(property.flags), receiverCount,
+                    getterSignature, setterSignature, fieldSignature,
+                )
+            }
+        }
+        return result
+    }
+
+    private fun createProperty(
+        name: String,
+        isVar: Boolean,
+        receiverCount: Int,
+        getterSignature: JvmMemberSignature.Method?,
+        setterSignature: JvmMemberSignature.Method?,
+        fieldSignature: String?,
+    ): DescriptorKProperty<*> {
+        val signature = getterSignature?.toString() ?: fieldSignature!!
+        val property = when {
+            isVar -> when (receiverCount) {
+                1 -> DescriptorKMutableProperty1<Any?, Any?>(this, name, signature, NO_RECEIVER)
+                2 -> DescriptorKMutableProperty2<Any?, Any?, Any?>(this, name, signature)
+                else -> error(receiverCount)
+            }
+            else -> when (receiverCount) {
+                1 -> DescriptorKProperty1<Any?, Any?>(this, name, signature, NO_RECEIVER)
+                2 -> DescriptorKProperty2<Any?, Any?, Any?>(this, name, signature)
+                else -> error(receiverCount)
+            }
+        }
+        if (getterSignature != null) {
+            property.loadedJvmSignature = JvmPropertySignature.MappedKotlinProperty(
+                JvmFunctionSignature.KotlinFunction(getterSignature),
+                setterSignature?.let(JvmFunctionSignature::KotlinFunction),
+            )
+        }
+        return property
+    }
 
     private fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<DescriptorKCallable<*>> {
         val visitor = object : CreateKCallableVisitor(this) {
@@ -617,7 +704,11 @@ internal class KClassImpl<T : Any>(
         get() = modality == Modality.SEALED
 
     override val isData: Boolean
-        get() = kmClass?.isData == true
+        get() = when (ReflectImplementation.CURRENT) {
+            ReflectImplementation.DESCRIPTORS -> descriptor.isData
+            ReflectImplementation.RAW_PROTOBUF -> data.value.rawProtoBuf?.second?.flags?.let(Flags.IS_DATA::get) == true
+            else -> kmClass?.isData == true
+        }
 
     override val isInner: Boolean
         get() = when (val kmClass = kmClass) {

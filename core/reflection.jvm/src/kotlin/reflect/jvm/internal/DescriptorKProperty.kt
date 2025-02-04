@@ -55,6 +55,8 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         overriddenStorage,
     )
 
+    internal var loadedJvmSignature: JvmPropertySignature? = null
+
     override val javaField: Field? by lazy(PUBLICATION) {
         when (val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)) {
             is KotlinProperty -> {
@@ -247,7 +249,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
             else CallerImpl.FieldSetter.Static(field, isNotNullProperty())
     }
 
-    val jvmSignature = RuntimeTypeMapper.mapPropertySignature(property.descriptor)
+    val jvmSignature = property.loadedJvmSignature ?: RuntimeTypeMapper.mapPropertySignature(property.descriptor)
     return when (jvmSignature) {
         is KotlinProperty -> {
             val accessorSignature = jvmSignature.signature.run {
