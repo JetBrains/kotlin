@@ -44,6 +44,8 @@ internal abstract class KPropertyImpl<out V> private constructor(
         CallableReference.NO_RECEIVER
     )
 
+    internal var loadedJvmSignature: JvmPropertySignature? = null
+
     val boundReceiver
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
@@ -249,7 +251,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
             else CallerImpl.FieldSetter.Static(field, isNotNullProperty())
     }
 
-    val jvmSignature = RuntimeTypeMapper.mapPropertySignature(property.descriptor)
+    val jvmSignature = property.loadedJvmSignature ?: RuntimeTypeMapper.mapPropertySignature(property.descriptor)
     return when (jvmSignature) {
         is KotlinProperty -> {
             val accessorSignature = jvmSignature.signature.run {

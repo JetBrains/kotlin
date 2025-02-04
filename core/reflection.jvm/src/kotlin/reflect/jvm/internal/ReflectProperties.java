@@ -17,22 +17,25 @@
 package kotlin.reflect.jvm.internal;
 
 import kotlin.jvm.functions.Function0;
+import kotlin.properties.ReadOnlyProperty;
+import kotlin.reflect.KProperty;
+import kotlin.reflect.jvm.ReflectImplementation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.SoftReference;
 
 public class ReflectProperties {
-    public static abstract class Val<T> {
+    public static interface InvokableReadOnlyProperty<T> extends ReadOnlyProperty<Object, T>, Function0<T> {}
+
+    public static abstract class Val<T> implements InvokableReadOnlyProperty<T> {
         private static final Object NULL_VALUE = new Object() {
         };
 
-        @SuppressWarnings({"UnusedParameters", "unused"})
-        public final T getValue(Object instance, Object metadata) {
+        @Override
+        public T getValue(Object thisRef, @NotNull KProperty<?> property) {
             return invoke();
         }
-
-        public abstract T invoke();
 
         protected Object escape(T value) {
             return value == null ? NULL_VALUE : value;
@@ -80,7 +83,20 @@ public class ReflectProperties {
     }
 
     @NotNull
-    public static <T> LazySoftVal<T> lazySoft(@NotNull Function0<T> initializer) {
-        return lazySoft(null, initializer);
+    public static <T> InvokableReadOnlyProperty<T> lazySoft(@NotNull Function0<T> initializer) {
+        if (ReflectImplementation.CACHING_ENABLED) {
+            return new LazySoftVal<T>(null, initializer);
+        }
+        return new InvokableReadOnlyProperty<T>() {
+            @Override
+            public T getValue(Object thisRef, @NotNull KProperty<?> property) {
+                return invoke();
+            }
+
+            @Override
+            public T invoke() {
+                return initializer.invoke();
+            }
+        };
     }
 }
