@@ -11,19 +11,19 @@ FILE: contextualAnonymousFunction.kt
         }
 
     }
-    public final val t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+    public final val t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
     }
 
         public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
-    public final val t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+    public final val t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
     }
 
         public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
     public final fun foo(): R|kotlin/Unit| {
-        lval t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        lval t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         }
 
-        lval t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(<unused var>: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        lval t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         }
 
     }
