@@ -144,6 +144,11 @@ class JvmIrCodegenFactory(
         )
     }
 
+    private val Project.filteredExtensions: List<IrGenerationExtension>
+        get() = IrGenerationExtension.getInstances(this)
+            .filter { !ideCodegenSettings.doNotLoadDependencyModuleHeaders || it is IrGeneratorExtensionMarkerForExpressionEvaluation }
+
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun convertToIr(
         project: Project,
@@ -194,8 +199,6 @@ class JvmIrCodegenFactory(
             (psi2irContext.irBuiltIns as? IrBuiltInsOverDescriptors)?.let { symbolTable.bindSymbolFinder(it.symbolFinder) }
         }
 
-        val pluginExtensions = IrGenerationExtension.getInstances(project)
-
         val stubGenerator =
             DeclarationStubGeneratorImpl(
                 psi2irContext.moduleDescriptor, symbolTable, psi2irContext.irBuiltIns,
@@ -227,10 +230,7 @@ class JvmIrCodegenFactory(
             messageCollector,
             diagnosticReporter
         )
-        val skipRegularPlugins = ideCodegenSettings.doNotLoadDependencyModuleHeaders
-        for (extension in pluginExtensions) {
-            if (skipRegularPlugins && extension !is IrGeneratorExtensionMarkerForExpressionEvaluation) continue
-
+        for (extension in project.filteredExtensions) {
             if (!psi2irContext.configuration.generateBodies &&
                 !@OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
             ) continue
@@ -340,7 +340,7 @@ class JvmIrCodegenFactory(
         if (evaluatorFragmentInfoForPsi2Ir != null) {
             context.evaluatorData = JvmEvaluatorData(mutableMapOf(), evaluatorFragmentInfoForPsi2Ir.methodIR)
         }
-        val generationExtensions = IrGenerationExtension.getInstances(state.project)
+        val generationExtensions = state.project.filteredExtensions
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
         val intrinsics by lazy { IrIntrinsicMethods(irBuiltIns, context.ir.symbols) }
         context.getIntrinsic = { symbol: IrFunctionSymbol ->
