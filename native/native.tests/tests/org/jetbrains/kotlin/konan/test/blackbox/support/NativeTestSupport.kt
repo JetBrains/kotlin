@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
@@ -321,6 +322,11 @@ object NativeTestSupport {
             default = if (optimizationMode != OptimizationMode.OPT) defaultCache
             else CacheMode.Alias.NO,
         )
+        if (kotlinNativeTargets.testTarget == KonanTarget.MINGW_X64) {
+            if (!(cacheMode == CacheMode.Alias.NO || cacheMode == CacheMode.Alias.STATIC_ONLY_DIST)) {
+                fail { "Cache mode $cacheMode is not supported for MinGW x64 target." }
+            }
+        }
         val useStaticCacheForUserLibraries = when (cacheMode) {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache
             CacheMode.Alias.STATIC_ONLY_DIST -> false
