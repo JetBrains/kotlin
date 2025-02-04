@@ -4,7 +4,7 @@ val test1: Int /* by */
   }
 )
   get(): Int {
-    return #test1$delegate.getValue<Int>(thisRef = null, property = ::test1)
+    return getValue<Int>(/* <this> = #test1$delegate, */ thisRef = null, property = ::test1)
   }
 
 open annotation class Ann : Annotation {

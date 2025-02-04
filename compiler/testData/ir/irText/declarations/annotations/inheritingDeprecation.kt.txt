@@ -17,7 +17,7 @@ class Delegated : IFoo {
 
   override val String.extProp: String
     override get(): String {
-      return (<this>.#$$delegate_0, <this>).<get-extProp>()
+      return <this>.#$$delegate_0.<get-extProp>(/* <this> = <this> */)
     }
 
   override val prop: String

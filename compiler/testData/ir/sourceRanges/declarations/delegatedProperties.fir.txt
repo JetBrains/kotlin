@@ -13,11 +13,11 @@
                 @7:8..9 BLOCK_BODY
                   @7:9..9 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.MyClass.lazyProp$delegate'
                     @7:8..9 CONST Int type=kotlin.Int value=5
-      @6:4..8:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<get-lazyProp> visibility:public modality:FINAL <> ($this:<root>.MyClass) returnType:kotlin.Int
-        @6:4..8:5 VALUE_PARAMETER name:<this> type:<root>.MyClass
+      @6:4..8:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<get-lazyProp> visibility:public modality:FINAL <> (<this>:<root>.MyClass) returnType:kotlin.Int
+        @6:4..8:5 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyClass
         @6:20..8:5 BLOCK_BODY
           @6:20..8:5 RETURN type=kotlin.Nothing from='public final fun <get-lazyProp> (): kotlin.Int declared in <root>.MyClass'
-            @6:20..8:5 CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
+            @6:20..8:5 CALL 'public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
               @6:20..8:5 GET_FIELD 'FIELD PROPERTY_DELEGATE name:lazyProp$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final] declared in <root>.MyClass' type=kotlin.Lazy<kotlin.Int> origin=null
                 @6:20..8:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-lazyProp>' type=<root>.MyClass origin=IMPLICIT_ARGUMENT
               @6:20..8:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-lazyProp>' type=<root>.MyClass origin=null
@@ -30,9 +30,9 @@
             @10:55..63 CONST String type=kotlin.String value="<none>"
             @10:65..12:5 FUN_EXPR type=kotlin.Function3<kotlin.reflect.KProperty<*>, kotlin.String, kotlin.String, kotlin.Unit> origin=LAMBDA
               @10:65..12:5 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (prop:kotlin.reflect.KProperty<*>, old:kotlin.String, new:kotlin.String) returnType:kotlin.Unit
-                @10:67..71 VALUE_PARAMETER name:prop index:0 type:kotlin.reflect.KProperty<*>
-                @10:73..76 VALUE_PARAMETER name:old index:1 type:kotlin.String
-                @10:78..81 VALUE_PARAMETER name:new index:2 type:kotlin.String
+                @10:67..71 VALUE_PARAMETER kind:Regular name:prop index:0 type:kotlin.reflect.KProperty<*>
+                @10:73..76 VALUE_PARAMETER kind:Regular name:old index:1 type:kotlin.String
+                @10:78..81 VALUE_PARAMETER kind:Regular name:new index:2 type:kotlin.String
                 @11:8..37 BLOCK_BODY
                   @11:8..37 CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
                     @11:16..36 STRING_CONCATENATION type=kotlin.String
@@ -40,8 +40,8 @@
                       @11:22..25 GET_VAR 'old: kotlin.String declared in <root>.MyClass.observableProp$delegate.<anonymous>' type=kotlin.String origin=null
                       @11:25..31 CONST String type=kotlin.String value=", now "
                       @11:32..35 GET_VAR 'new: kotlin.String declared in <root>.MyClass.observableProp$delegate.<anonymous>' type=kotlin.String origin=null
-      @10:4..12:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<get-observableProp> visibility:public modality:FINAL <> ($this:<root>.MyClass) returnType:kotlin.String
-        @10:4..12:5 VALUE_PARAMETER name:<this> type:<root>.MyClass
+      @10:4..12:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<get-observableProp> visibility:public modality:FINAL <> (<this>:<root>.MyClass) returnType:kotlin.String
+        @10:4..12:5 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyClass
         @10:34..12:5 BLOCK_BODY
           @10:34..12:5 RETURN type=kotlin.Nothing from='public final fun <get-observableProp> (): kotlin.String declared in <root>.MyClass'
             @10:34..12:5 CALL 'public abstract fun getValue (thisRef: T of kotlin.properties.ReadWriteProperty, property: kotlin.reflect.KProperty<*>): V of kotlin.properties.ReadWriteProperty [operator] declared in kotlin.properties.ReadWriteProperty' type=kotlin.String origin=null
@@ -49,9 +49,9 @@
                 @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-observableProp>' type=<root>.MyClass origin=IMPLICIT_ARGUMENT
               @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-observableProp>' type=<root>.MyClass origin=null
               @10:34..12:5 PROPERTY_REFERENCE 'public final observableProp: kotlin.String [delegated,var] declared in <root>.MyClass' field=null getter='public final fun <get-observableProp> (): kotlin.String declared in <root>.MyClass' setter='public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty1<<root>.MyClass, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-      @10:4..12:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<set-observableProp> visibility:public modality:FINAL <> ($this:<root>.MyClass, <set-?>:kotlin.String) returnType:kotlin.Unit
-        @10:4..12:5 VALUE_PARAMETER name:<this> type:<root>.MyClass
-        @10:4..12:5 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+      @10:4..12:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<set-observableProp> visibility:public modality:FINAL <> (<this>:<root>.MyClass, <set-?>:kotlin.String) returnType:kotlin.Unit
+        @10:4..12:5 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyClass
+        @10:4..12:5 VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
         @10:34..12:5 BLOCK_BODY
           @10:34..12:5 RETURN type=kotlin.Nothing from='public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass'
             @10:34..12:5 CALL 'public abstract fun setValue (thisRef: T of kotlin.properties.ReadWriteProperty, property: kotlin.reflect.KProperty<*>, value: V of kotlin.properties.ReadWriteProperty): kotlin.Unit [operator] declared in kotlin.properties.ReadWriteProperty' type=kotlin.Unit origin=null
@@ -60,11 +60,11 @@
               @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<set-observableProp>' type=<root>.MyClass origin=null
               @10:34..12:5 PROPERTY_REFERENCE 'public final observableProp: kotlin.String [delegated,var] declared in <root>.MyClass' field=null getter='public final fun <get-observableProp> (): kotlin.String declared in <root>.MyClass' setter='public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty1<<root>.MyClass, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               @10:34..12:5 GET_VAR '<set-?>: kotlin.String declared in <root>.MyClass.<set-observableProp>' type=kotlin.String origin=null
-    @5:0..13:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      @5:0..13:1 VALUE_PARAMETER name:<this> type:kotlin.Any
-      @5:0..13:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    @5:0..13:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      @5:0..13:1 VALUE_PARAMETER name:<this> type:kotlin.Any
-    @5:0..13:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      @5:0..13:1 VALUE_PARAMETER name:<this> type:kotlin.Any
-    @5:0..13:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyClass
+    @5:0..13:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @5:0..13:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @5:0..13:1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @5:0..13:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @5:0..13:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @5:0..13:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @5:0..13:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @5:0..13:1 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MyClass

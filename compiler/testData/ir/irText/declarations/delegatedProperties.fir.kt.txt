@@ -4,16 +4,16 @@ val test1: Int /* by */
   }
 )
   get(): Int {
-    return #test1$delegate.getValue<Int>(thisRef = null, property = ::test1)
+    return getValue<Int>(/* <this> = #test1$delegate, */ thisRef = null, property = ::test1)
   }
 
 var test4: Any /* by */
   field = hashMapOf<String, Any>()
   get(): Any {
-    return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
+    return getValue<Any, Any>(/* <this> = #test4$delegate, */ thisRef = null, property = ::test4)
   }
   set(<set-?>: Any) {
-    return #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
+    return setValue<Any>(/* <this> = #test4$delegate, */ thisRef = null, property = ::test4, value = <set-?>)
   }
 
 class C {
@@ -27,16 +27,16 @@ class C {
     }
 )
     get(): Int {
-      return <this>.#test2$delegate.getValue<Int>(thisRef = <this>, property = C::test2)
+      return getValue<Int>(/* <this> = <this>.#test2$delegate, */ thisRef = <this>, property = C::test2)
     }
 
   var test3: Any /* by */
     field = <this>.<get-map>()
     get(): Any {
-      return <this>.#test3$delegate.getValue<Any, Any>(thisRef = <this>, property = C::test3)
+      return getValue<Any, Any>(/* <this> = <this>.#test3$delegate, */ thisRef = <this>, property = C::test3)
     }
     set(<set-?>: Any) {
-      return <this>.#test3$delegate.setValue<Any>(thisRef = <this>, property = C::test3, value = <set-?>)
+      return setValue<Any>(/* <this> = <this>.#test3$delegate, */ thisRef = <this>, property = C::test3, value = <set-?>)
     }
 
   constructor(map: MutableMap<String, Any>) /* primary */ {
@@ -46,3 +46,4 @@ class C {
   }
 
 }
+

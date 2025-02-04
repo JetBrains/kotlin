@@ -48,7 +48,7 @@ fun test1() {
 
       ::withVararg
     }
-    tmp_0.set(i = tmp_1 /*-> IFoo */, newValue = tmp_0.get(i = tmp_1 /*-> IFoo */).plus(other = 1))
+    set(/* <this> = tmp_0, */ i = tmp_1 /*-> IFoo */, newValue = get(/* <this> = tmp_0, */ i = tmp_1 /*-> IFoo */).plus(other = 1))
   }
 }
 
@@ -62,7 +62,7 @@ fun test2() {
 
       ::withVararg
     }
-    tmp_2.set(i = tmp_3 /*-> IFoo2 */, newValue = tmp_2.get(i = tmp_3 /*-> IFoo */).plus(other = 1))
+    set(/* <this> = tmp_2, */ i = tmp_3 /*-> IFoo2 */, newValue = get(/* <this> = tmp_2, */ i = tmp_3 /*-> IFoo */).plus(other = 1))
   }
 }
 
@@ -70,7 +70,7 @@ fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
     val tmp_4: A = A
     val tmp_5: Function1<Int, Unit> = fn
-    tmp_4.set(i = tmp_5 /*-> IFoo */, newValue = tmp_4.get(i = tmp_5 /*-> IFoo */).plus(other = 1))
+    set(/* <this> = tmp_4, */ i = tmp_5 /*-> IFoo */, newValue = get(/* <this> = tmp_4, */ i = tmp_5 /*-> IFoo */).plus(other = 1))
   }
 }
 
@@ -80,7 +80,7 @@ fun test4(fn: Function1<Int, Unit>) {
       { // BLOCK
         val tmp_6: A = A
         val tmp_7: Any = fn
-        tmp_6.set(i = tmp_7, newValue = tmp_6.get(i = tmp_7).plus(other = 1))
+        set(/* <this> = tmp_6, */ i = tmp_7, newValue = get(/* <this> = tmp_6, */ i = tmp_7).plus(other = 1))
       }
     }
   }
@@ -91,7 +91,7 @@ fun test5(a: Any) {
   { // BLOCK
     val tmp_8: A = A
     val tmp_9: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    tmp_8.set(i = tmp_9 /*-> IFoo */, newValue = tmp_8.get(i = tmp_9 /*-> IFoo */).plus(other = 1))
+    set(/* <this> = tmp_8, */ i = tmp_9 /*-> IFoo */, newValue = get(/* <this> = tmp_8, */ i = tmp_9 /*-> IFoo */).plus(other = 1))
   }
 }
 
@@ -101,7 +101,7 @@ fun test6(a: Any) {
   { // BLOCK
     val tmp_10: A = A
     val tmp_11: Any = a
-    tmp_10.set(i = tmp_11, newValue = tmp_10.get(i = tmp_11).plus(other = 1))
+    set(/* <this> = tmp_10, */ i = tmp_11, newValue = get(/* <this> = tmp_10, */ i = tmp_11).plus(other = 1))
   }
 }
 

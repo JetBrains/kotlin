@@ -35,7 +35,7 @@ fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
   with<A, Int>(receiver = A, block = local fun A.<anonymous>(): Int {
     return with<IFoo, Int>(receiver = fooImpl, block = local fun IFoo.<anonymous>(): Int {
       return with<IInvoke, Int>(receiver = invokeImpl, block = local fun IInvoke.<anonymous>(): Int {
-        return ($this$with, ($this$with, $this$with).<get-foo>()).invoke()
+        return $this$with.invoke(/* <this> = $this$with.<get-foo>(/* <this> = $this$with */) */)
       }
 )
     }

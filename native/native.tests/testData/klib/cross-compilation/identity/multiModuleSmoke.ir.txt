@@ -2,15 +2,15 @@
 MODULE_FRAGMENT name:<lib1>
   FILE fqName:lib1 fileName:/lib1.kt
     CLASS INTERFACE name:I signature:lib1/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassSymbolImpl>]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib1.I
-      FUN name:interfaceFun signature:lib1/I.interfaceFun|interfaceFun(kotlin.Int){}[0] visibility:public modality:ABSTRACT <> ($this:lib1.I, default:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
-        $this: VALUE_PARAMETER name:<this> type:lib1.I
-        VALUE_PARAMETER name:default index:0 type:<unbound IrClassSymbolImpl>
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib1.I
+      FUN name:interfaceFun signature:lib1/I.interfaceFun|interfaceFun(kotlin.Int){}[0] visibility:public modality:ABSTRACT returnType:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib1.I
+        VALUE_PARAMETER kind:Regular name:default index:1 type:<unbound IrClassSymbolImpl>
           EXPRESSION_BODY
             CONST Int type=<unbound IrClassSymbolImpl> value=42
       CLASS OBJECT name:Companion signature:lib1/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib1.I.Companion
-        CONSTRUCTOR signature:lib1/I.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:lib1.I.Companion [primary]
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib1.I.Companion
+        CONSTRUCTOR signature:lib1/I.Companion.<init>|<init>(){}[0] visibility:private returnType:lib1.I.Companion [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:lib1/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
@@ -18,71 +18,71 @@ MODULE_FRAGMENT name:<lib1>
           FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
             EXPRESSION_BODY
               CONST String type=<unbound IrClassSymbolImpl> value="foo"
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionObjectVal> signature:lib1/I.Companion.companionObjectVal.<get-companionObjectVal>|<get-companionObjectVal>(){}[0] visibility:public modality:FINAL <> ($this:lib1.I.Companion) returnType:<unbound IrClassSymbolImpl>
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionObjectVal> signature:lib1/I.Companion.companionObjectVal.<get-companionObjectVal>|<get-companionObjectVal>(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib1.I.Companion
             correspondingProperty: PROPERTY name:companionObjectVal signature:lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
-            $this: VALUE_PARAMETER name:<this> type:lib1.I.Companion
             BLOCK_BODY
               RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-companionObjectVal> (): <unbound IrClassSymbolImpl> declared in lib1.I.Companion'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]' type=<unbound IrClassSymbolImpl> origin=null
                   receiver: GET_VAR '<this>: lib1.I.Companion declared in lib1.I.Companion.<get-companionObjectVal>' type=lib1.I.Companion origin=null
-    FUN name:take signature:lib1/take|take(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of lib1.take) returnType:<unbound IrClassSymbolImpl>
+    FUN name:take signature:lib1/take|take(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
       TYPE_PARAMETER name:T index:0 variance: signature:[ lib1/take|take(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassSymbolImpl>?] reified:false
-      VALUE_PARAMETER name:x index:0 type:T of lib1.take
+      VALUE_PARAMETER kind:Regular name:x index:0 type:T of lib1.take
       BLOCK_BODY
-    FUN name:getBoolean signature:lib1/getBoolean|getBoolean(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+    FUN name:getBoolean signature:lib1/getBoolean|getBoolean(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
       BLOCK_BODY
         RETURN type=<unbound IrClassSymbolImpl> from='public final fun getBoolean (): <unbound IrClassSymbolImpl> declared in lib1'
           CONST Boolean type=<unbound IrClassSymbolImpl> value=true
-    FUN name:functionCalls signature:lib1/functionCalls|functionCalls(lib1.I){}[0] visibility:public modality:FINAL <> (i:lib1.I) returnType:<unbound IrClassSymbolImpl>
-      VALUE_PARAMETER name:i index:0 type:lib1.I
+    FUN name:functionCalls signature:lib1/functionCalls|functionCalls(lib1.I){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
+      VALUE_PARAMETER kind:Regular name:i index:0 type:lib1.I
       BLOCK_BODY
         WHEN type=<unbound IrClassSymbolImpl> origin=IF
           BRANCH
             if: CALL 'public final fun getBoolean (): <unbound IrClassSymbolImpl> declared in lib1' type=<unbound IrClassSymbolImpl> origin=null
             then: BLOCK type=<unbound IrClassSymbolImpl> origin=null
               CALL 'public final fun take <T> (x: T of lib1.take): <unbound IrClassSymbolImpl> declared in lib1' type=<unbound IrClassSymbolImpl> origin=null
-                <T>: <unbound IrClassSymbolImpl>
-                x: CALL 'public final fun <get-companionObjectVal> (): <unbound IrClassSymbolImpl> declared in lib1.I.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
-                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:lib1/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=lib1.I.Companion
+                TYPE_ARG T: <unbound IrClassSymbolImpl>
+                ARG x: CALL 'public final fun <get-companionObjectVal> (): <unbound IrClassSymbolImpl> declared in lib1.I.Companion' type=<unbound IrClassSymbolImpl> origin=GET_PROPERTY
+                  ARG <this>: GET_OBJECT 'CLASS OBJECT name:Companion signature:lib1/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=lib1.I.Companion
         WHILE label=null origin=WHILE_LOOP
           condition: CALL 'public final fun getBoolean (): <unbound IrClassSymbolImpl> declared in lib1' type=<unbound IrClassSymbolImpl> origin=null
           body: BLOCK type=<unbound IrClassSymbolImpl> origin=null
             CALL 'public abstract fun interfaceFun (default: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in lib1.I' type=<unbound IrClassSymbolImpl> origin=null
-              $this: GET_VAR 'i: lib1.I declared in lib1.functionCalls' type=lib1.I origin=null
+              ARG <this>: GET_VAR 'i: lib1.I declared in lib1.functionCalls' type=lib1.I origin=null
 
 // MODULE: lib2
 MODULE_FRAGMENT name:<lib2>
   FILE fqName:lib2 fileName:/lib2.kt
     CLASS OBJECT name:Object signature:lib2/Object|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib2.Object
-      CONSTRUCTOR signature:lib2/Object.<init>|<init>(){}[0] visibility:private <> () returnType:lib2.Object [primary]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib2.Object
+      CONSTRUCTOR signature:lib2/Object.<init>|<init>(){}[0] visibility:private returnType:lib2.Object [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Object signature:lib2/Object|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
       CLASS OBJECT name:PrivateObject signature:lib2/Object.PrivateObject|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib2.Object.PrivateObject
-        CONSTRUCTOR signature:lib2/Object.PrivateObject.<init>|<init>(){}[0] visibility:private <> () returnType:lib2.Object.PrivateObject [primary]
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib2.Object.PrivateObject
+        CONSTRUCTOR signature:lib2/Object.PrivateObject.<init>|<init>(){}[0] visibility:private returnType:lib2.Object.PrivateObject [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:PrivateObject signature:lib2/Object.PrivateObject|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
-        FUN name:foo signature:lib2/Object.PrivateObject.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:lib2.Object.PrivateObject) returnType:<unbound IrClassSymbolImpl>
-          $this: VALUE_PARAMETER name:<this> type:lib2.Object.PrivateObject
+        FUN name:foo signature:lib2/Object.PrivateObject.foo|foo(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.Object.PrivateObject
           BLOCK_BODY
             RETURN type=<unbound IrClassSymbolImpl> from='public final fun foo (): <unbound IrClassSymbolImpl> declared in lib2.Object.PrivateObject'
               CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-                1: CONST String type=<unbound IrClassSymbolImpl> value="Dead end"
+                ARG 1: CONST String type=<unbound IrClassSymbolImpl> value="Dead end"
     CLASS INTERFACE name:SealedInterface signature:lib2/SealedInterface|null[0] modality:SEALED visibility:public superTypes:[<unbound IrClassSymbolImpl>]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib2.SealedInterface
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib2.SealedInterface
       PROPERTY name:v signature:lib2/SealedInterface.v|{}v[0] visibility:public modality:ABSTRACT [val]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:lib2/SealedInterface.v.<get-v>|<get-v>(){}[0] visibility:public modality:ABSTRACT <> ($this:lib2.SealedInterface) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> signature:lib2/SealedInterface.v.<get-v>|<get-v>(){}[0] visibility:public modality:ABSTRACT returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface
           correspondingProperty: PROPERTY name:v signature:lib2/SealedInterface.v|{}v[0] visibility:public modality:ABSTRACT [val]
-          $this: VALUE_PARAMETER name:<this> type:lib2.SealedInterface
       CLASS ENUM_CLASS name:Enum signature:lib2/SealedInterface.Enum|null[0] modality:FINAL visibility:public superTypes:[lib2.SealedInterface; <unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib2.SealedInterface.Enum
-        CONSTRUCTOR signature:lib2/SealedInterface.Enum.<init>|<init>(){}[0] visibility:private <> () returnType:lib2.SealedInterface.Enum [primary]
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib2.SealedInterface.Enum
+        CONSTRUCTOR signature:lib2/SealedInterface.Enum.<init>|<init>(){}[0] visibility:private returnType:lib2.SealedInterface.Enum [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-              <1>: lib2.SealedInterface.Enum
+              TYPE_ARG 1: lib2.SealedInterface.Enum
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Enum signature:lib2/SealedInterface.Enum|null[0] modality:FINAL visibility:public superTypes:[lib2.SealedInterface; <unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>]' type=<unbound IrClassSymbolImpl>
         ENUM_ENTRY name:FOO signature:lib2/SealedInterface.Enum.FOO|null[0]
           init: EXPRESSION_BODY
@@ -91,31 +91,31 @@ MODULE_FRAGMENT name:<lib2>
           init: EXPRESSION_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in lib2.SealedInterface.Enum'
         PROPERTY name:v signature:lib2/SealedInterface.Enum.v|{}v[0] visibility:public modality:OPEN [val]
-          FUN name:<get-v> signature:lib2/SealedInterface.Enum.v.<get-v>|<get-v>(){}[0] visibility:public modality:OPEN <> ($this:lib2.SealedInterface.Enum) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+          FUN name:<get-v> signature:lib2/SealedInterface.Enum.v.<get-v>|<get-v>(){}[0] visibility:public modality:OPEN returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Enum
             correspondingProperty: PROPERTY name:v signature:lib2/SealedInterface.Enum.v|{}v[0] visibility:public modality:OPEN [val]
             overridden:
               public abstract fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface
-            $this: VALUE_PARAMETER name:<this> type:lib2.SealedInterface.Enum
             BLOCK_BODY
               RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface.Enum'
                 CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
-                  <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
-                  $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
-                    <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
-                    $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
-                      <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
-        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:lib2/SealedInterface.Enum.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>
+                  TYPE_ARG 1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                  ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+                    TYPE_ARG 1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+                    ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
+                      TYPE_ARG 1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:lib2/SealedInterface.Enum.values|values#static(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>
           SYNTHETIC_BODY kind=ENUM_VALUES
-        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:lib2/SealedInterface.Enum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassSymbolImpl>) returnType:lib2.SealedInterface.Enum
-          VALUE_PARAMETER name:value index:0 type:<unbound IrClassSymbolImpl>
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:lib2/SealedInterface.Enum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL returnType:lib2.SealedInterface.Enum
+          VALUE_PARAMETER kind:Regular name:value index:0 type:<unbound IrClassSymbolImpl>
           SYNTHETIC_BODY kind=ENUM_VALUEOF
         PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:lib2/SealedInterface.Enum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
-          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>
             correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:lib2/SealedInterface.Enum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
             SYNTHETIC_BODY kind=ENUM_ENTRIES
       CLASS OBJECT name:Object signature:lib2/SealedInterface.Object|null[0] modality:FINAL visibility:public [data] superTypes:[lib2.SealedInterface]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib2.SealedInterface.Object
-        CONSTRUCTOR signature:lib2/SealedInterface.Object.<init>|<init>(){}[0] visibility:private <> () returnType:lib2.SealedInterface.Object [primary]
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib2.SealedInterface.Object
+        CONSTRUCTOR signature:lib2/SealedInterface.Object.<init>|<init>(){}[0] visibility:private returnType:lib2.SealedInterface.Object [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Object signature:lib2/SealedInterface.Object|null[0] modality:FINAL visibility:public [data] superTypes:[lib2.SealedInterface]' type=<unbound IrClassSymbolImpl>
@@ -123,50 +123,50 @@ MODULE_FRAGMENT name:<lib2>
           FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:v$delegate type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final]
             EXPRESSION_BODY
               CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=null
-                <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
-                1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+                TYPE_ARG 1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+                ARG 1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
                     BLOCK_BODY
                       CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-                        1: CONST String type=<unbound IrClassSymbolImpl> value="Never would be implemented"
-          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-v> signature:lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0] visibility:public modality:OPEN <> ($this:lib2.SealedInterface.Object) returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+                        ARG 1: CONST String type=<unbound IrClassSymbolImpl> value="Never would be implemented"
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-v> signature:lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0] visibility:public modality:OPEN returnType:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
             correspondingProperty: PROPERTY name:v signature:lib2/SealedInterface.Object.v|{}v[0] visibility:public modality:OPEN [delegated,val]
             overridden:
               public abstract fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface
-            $this: VALUE_PARAMETER name:<this> type:lib2.SealedInterface.Object
             BLOCK_BODY
               RETURN type=<unbound IrClassSymbolImpl> from='public open fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface.Object'
                 CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=null
-                  <1>: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
-                  $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:v$delegate type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final] declared in lib2.SealedInterface.Object' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=null
+                  TYPE_ARG 1: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>
+                  ARG 1: GET_FIELD 'FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:v$delegate type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final] declared in lib2.SealedInterface.Object' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=null
                     receiver: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=IMPLICIT_ARGUMENT
-                  1: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=null
-                  2: PROPERTY_REFERENCE 'public open v: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [delegated,val] declared in lib2.SealedInterface.Object' field=null getter='public open fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface.Object' setter=null type=<unbound IrClassSymbolImpl><lib2.SealedInterface.Object, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-        FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:lib2/SealedInterface.Object.toString|toString(){}[0] visibility:public modality:OPEN <> ($this:lib2.SealedInterface.Object) returnType:<unbound IrClassSymbolImpl>
+                  ARG 2: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=null
+                  ARG 3: PROPERTY_REFERENCE 'public open v: <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> [delegated,val] declared in lib2.SealedInterface.Object' field=null getter='public open fun <get-v> (): <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> declared in lib2.SealedInterface.Object' setter=null type=<unbound IrClassSymbolImpl><lib2.SealedInterface.Object, <unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:lib2/SealedInterface.Object.toString|toString(){}[0] visibility:public modality:OPEN returnType:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
           overridden:
             UNBOUND IrSimpleFunctionSymbolImpl
-          $this: VALUE_PARAMETER name:<this> type:lib2.SealedInterface.Object
           BLOCK_BODY
             RETURN type=<unbound IrClassSymbolImpl> from='public open fun toString (): <unbound IrClassSymbolImpl> declared in lib2.SealedInterface.Object'
               CONST String type=<unbound IrClassSymbolImpl> value="Object"
-        FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:lib2/SealedInterface.Object.hashCode|hashCode(){}[0] visibility:public modality:OPEN <> ($this:lib2.SealedInterface.Object) returnType:<unbound IrClassSymbolImpl>
+        FUN GENERATED_DATA_CLASS_MEMBER name:hashCode signature:lib2/SealedInterface.Object.hashCode|hashCode(){}[0] visibility:public modality:OPEN returnType:<unbound IrClassSymbolImpl>
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
           overridden:
             UNBOUND IrSimpleFunctionSymbolImpl
-          $this: VALUE_PARAMETER name:<this> type:lib2.SealedInterface.Object
           BLOCK_BODY
             RETURN type=<unbound IrClassSymbolImpl> from='public open fun hashCode (): <unbound IrClassSymbolImpl> declared in lib2.SealedInterface.Object'
               CONST Int type=<unbound IrClassSymbolImpl> value=1460486673
-        FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:lib2/SealedInterface.Object.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN <> ($this:lib2.SealedInterface.Object, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [operator]
+        FUN GENERATED_DATA_CLASS_MEMBER name:equals signature:lib2/SealedInterface.Object.equals|equals(kotlin.Any?){}[0] visibility:public modality:OPEN returnType:<unbound IrClassSymbolImpl> [operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
+          VALUE_PARAMETER kind:Regular name:other index:1 type:<unbound IrClassSymbolImpl>?
           overridden:
             UNBOUND IrSimpleFunctionSymbolImpl
-          $this: VALUE_PARAMETER name:<this> type:lib2.SealedInterface.Object
-          VALUE_PARAMETER name:other index:0 type:<unbound IrClassSymbolImpl>?
           BLOCK_BODY
             WHEN type=<unbound IrClassSymbolImpl> origin=null
               BRANCH
                 if: CALL 'public final fun EQEQEQ (arg0: <unbound IrClassSymbolImpl>?, arg1: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.internal.ir' type=<unbound IrClassSymbolImpl> origin=EQEQEQ
-                  arg0: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.equals' type=lib2.SealedInterface.Object origin=null
-                  arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in lib2.SealedInterface.Object.equals' type=<unbound IrClassSymbolImpl>? origin=null
+                  ARG arg0: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.equals' type=lib2.SealedInterface.Object origin=null
+                  ARG arg1: GET_VAR 'other: <unbound IrClassSymbolImpl>? declared in lib2.SealedInterface.Object.equals' type=<unbound IrClassSymbolImpl>? origin=null
                 then: RETURN type=<unbound IrClassSymbolImpl> from='public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [operator] declared in lib2.SealedInterface.Object'
                   CONST Boolean type=<unbound IrClassSymbolImpl> value=true
             WHEN type=<unbound IrClassSymbolImpl> origin=null
@@ -188,7 +188,7 @@ MODULE_FRAGMENT name:<lib3>
       FIELD PROPERTY_BACKING_FIELD name:FOO signature:[ lib3/FOO|{}FOO[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:FOO type:kotlin.String visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
         EXPRESSION_BODY
           CONST String type=<unbound IrClassSymbolImpl> value="BAR"
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-FOO> signature:lib3/FOO.<get-FOO>|<get-FOO>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-FOO> signature:lib3/FOO.<get-FOO>|<get-FOO>(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
         correspondingProperty: PROPERTY name:FOO signature:lib3/FOO|{}FOO[0] visibility:public modality:FINAL [const,val]
         BLOCK_BODY
           RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-FOO> (): <unbound IrClassSymbolImpl> declared in lib3'
@@ -197,59 +197,60 @@ MODULE_FRAGMENT name:<lib3>
       FIELD PROPERTY_BACKING_FIELD name:BAR signature:[ lib3/BAR|{}BAR[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:FOO type:kotlin.String visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]
         EXPRESSION_BODY
           CONST Int type=<unbound IrClassSymbolImpl> value=3
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BAR> signature:lib3/BAR.<get-BAR>|<get-BAR>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BAR> signature:lib3/BAR.<get-BAR>|<get-BAR>(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
         correspondingProperty: PROPERTY name:BAR signature:lib3/BAR|{}BAR[0] visibility:public modality:FINAL [const,val]
         BLOCK_BODY
           RETURN type=<unbound IrClassSymbolImpl> from='public final fun <get-BAR> (): <unbound IrClassSymbolImpl> declared in lib3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:BAR signature:[ lib3/BAR|{}BAR[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:FOO type:kotlin.String visibility:public [final,static]] ] type:<unbound IrClassSymbolImpl> visibility:public [final,static]' type=<unbound IrClassSymbolImpl> origin=null
     CLASS CLASS name:IImpl signature:lib3/IImpl|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib3.IImpl
-      CONSTRUCTOR signature:lib3/IImpl.<init>|<init>(){}[0] visibility:public <> () returnType:lib3.IImpl [primary]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib3.IImpl
+      CONSTRUCTOR signature:lib3/IImpl.<init>|<init>(){}[0] visibility:public returnType:lib3.IImpl [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IImpl signature:lib3/IImpl|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
-      FUN name:interfaceFun signature:lib3/IImpl.interfaceFun|interfaceFun(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:lib3.IImpl, default:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      FUN name:interfaceFun signature:lib3/IImpl.interfaceFun|interfaceFun(kotlin.Int){}[0] visibility:public modality:OPEN returnType:<unbound IrClassSymbolImpl>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib3.IImpl
+        VALUE_PARAMETER kind:Regular name:default index:1 type:<unbound IrClassSymbolImpl>
         overridden:
           UNBOUND IrSimpleFunctionSymbolImpl
-        $this: VALUE_PARAMETER name:<this> type:lib3.IImpl
-        VALUE_PARAMETER name:default index:0 type:<unbound IrClassSymbolImpl>
         BLOCK_BODY
           TYPE_OP type=<unbound IrClassSymbolImpl> origin=IMPLICIT_COERCION_TO_UNIT typeOperand=<unbound IrClassSymbolImpl>
             CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-              1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
-                $this: CONST Double type=<unbound IrClassSymbolImpl> value=3.141592653589793
-                1: GET_VAR 'default: <unbound IrClassSymbolImpl> declared in lib3.IImpl.interfaceFun' type=<unbound IrClassSymbolImpl> origin=null
-    FUN name:doStuff signature:lib3/doStuff|doStuff(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl> [inline]
+              ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=MUL
+                ARG 1: CONST Double type=<unbound IrClassSymbolImpl> value=3.141592653589793
+                ARG 2: GET_VAR 'default: <unbound IrClassSymbolImpl> declared in lib3.IImpl.interfaceFun' type=<unbound IrClassSymbolImpl> origin=null
+    FUN name:doStuff signature:lib3/doStuff|doStuff(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl> [inline]
       annotations:
         <unbound>(1 = ["NOTHING_TO_INLINE"] type=<unbound IrClassSymbolImpl><out <unbound IrClassSymbolImpl>> varargElementType=<unbound IrClassSymbolImpl>)
       BLOCK_BODY
         CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-          <1>: <unbound IrClassSymbolImpl>
-          1: CONST Int type=<unbound IrClassSymbolImpl> value=42
+          TYPE_ARG 1: <unbound IrClassSymbolImpl>
+          ARG 1: CONST Int type=<unbound IrClassSymbolImpl> value=42
         CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+          ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
         CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-          1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in lib3.IImpl' type=lib3.IImpl origin=null
+          ARG 1: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in lib3.IImpl' type=lib3.IImpl origin=null
         CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-            $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            ARG 1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
         CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-          <1>: <unbound IrClassSymbolImpl>
-          $receiver: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
-          1: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
-              VALUE_PARAMETER name:it index:0 type:<unbound IrClassSymbolImpl>
+          TYPE_ARG 1: <unbound IrClassSymbolImpl>
+          ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>> origin=GET_PROPERTY
+          ARG 2: FUN_EXPR type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<unbound IrClassSymbolImpl>
+              VALUE_PARAMETER kind:Regular name:it index:0 type:<unbound IrClassSymbolImpl>
               BLOCK_BODY
                 CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-                  1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in lib3.doStuff.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
+                  ARG 1: GET_VAR 'it: <unbound IrClassSymbolImpl> declared in lib3.doStuff.<anonymous>' type=<unbound IrClassSymbolImpl> origin=null
         CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-          1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
-            $this: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
-              $this: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
+          ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+            ARG 1: CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>> origin=GET_PROPERTY
+              ARG 1: GET_OBJECT 'UNBOUND IrClassSymbolImpl' type=<unbound IrClassSymbolImpl>
 
 // MODULE: app
 MODULE_FRAGMENT name:<app>
   FILE fqName:app fileName:/app.kt
-    FUN name:main signature:app/main|main(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
+    FUN name:main signature:app/main|main(){}[0] visibility:public modality:FINAL returnType:<unbound IrClassSymbolImpl>
       BLOCK_BODY
         CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+

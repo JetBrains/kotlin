@@ -4,509 +4,509 @@ FILE fqName:<root> fileName:/lib.kt
     FIELD PROPERTY_BACKING_FIELD name:topLevelVar1 type:kotlin.String visibility:private [external,static]
       EXPRESSION_BODY
         CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-topLevelVar1> visibility:public modality:FINAL <> () returnType:kotlin.String [external]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-topLevelVar1> visibility:public modality:FINAL returnType:kotlin.String [external]
       correspondingProperty: PROPERTY name:topLevelVar1 visibility:public modality:FINAL [external,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-topLevelVar1> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:topLevelVar1 type:kotlin.String visibility:private [external,static]' type=kotlin.String origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-topLevelVar1> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit [external]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-topLevelVar1> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+      VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.String
       correspondingProperty: PROPERTY name:topLevelVar1 visibility:public modality:FINAL [external,var]
-      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:topLevelVar1 type:kotlin.String visibility:private [external,static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.String declared in <root>.<set-topLevelVar1>' type=kotlin.String origin=null
   CLASS CLASS name:ExternalClass modality:FINAL visibility:public [external] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExternalClass
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ExternalClass
     PROPERTY name:externalClassVar1 visibility:public modality:FINAL [external,var]
       FIELD PROPERTY_BACKING_FIELD name:externalClassVar1 type:kotlin.String visibility:private [external]
         EXPRESSION_BODY
           CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-externalClassVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalClass) returnType:kotlin.String [external]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-externalClassVar1> visibility:public modality:FINAL returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass
         correspondingProperty: PROPERTY name:externalClassVar1 visibility:public modality:FINAL [external,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-externalClassVar1> (): kotlin.String declared in <root>.ExternalClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:externalClassVar1 type:kotlin.String visibility:private [external]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.ExternalClass declared in <root>.ExternalClass.<get-externalClassVar1>' type=<root>.ExternalClass origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-externalClassVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalClass, <set-?>:kotlin.String) returnType:kotlin.Unit [external]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-externalClassVar1> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
         correspondingProperty: PROPERTY name:externalClassVar1 visibility:public modality:FINAL [external,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:externalClassVar1 type:kotlin.String visibility:private [external]' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.ExternalClass declared in <root>.ExternalClass.<set-externalClassVar1>' type=<root>.ExternalClass origin=null
             value: GET_VAR '<set-?>: kotlin.String declared in <root>.ExternalClass.<set-externalClassVar1>' type=kotlin.String origin=null
     CLASS CLASS name:NestedClass modality:FINAL visibility:public [external] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExternalClass.NestedClass
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ExternalClass.NestedClass
       PROPERTY name:nestedClassVar1 visibility:public modality:FINAL [external,var]
         FIELD PROPERTY_BACKING_FIELD name:nestedClassVar1 type:kotlin.String visibility:private [external]
           EXPRESSION_BODY
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedClassVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedClass) returnType:kotlin.String [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedClassVar1> visibility:public modality:FINAL returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedClass
           correspondingProperty: PROPERTY name:nestedClassVar1 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedClass
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-nestedClassVar1> (): kotlin.String declared in <root>.ExternalClass.NestedClass'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nestedClassVar1 type:kotlin.String visibility:private [external]' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.ExternalClass.NestedClass declared in <root>.ExternalClass.NestedClass.<get-nestedClassVar1>' type=<root>.ExternalClass.NestedClass origin=null
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedClassVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedClass, <set-?>:kotlin.String) returnType:kotlin.Unit [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedClassVar1> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedClass
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:nestedClassVar1 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedClass
-          VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
           BLOCK_BODY
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nestedClassVar1 type:kotlin.String visibility:private [external]' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.ExternalClass.NestedClass declared in <root>.ExternalClass.NestedClass.<set-nestedClassVar1>' type=<root>.ExternalClass.NestedClass origin=null
               value: GET_VAR '<set-?>: kotlin.String declared in <root>.ExternalClass.NestedClass.<set-nestedClassVar1>' type=kotlin.String origin=null
-      CONSTRUCTOR visibility:public <> () returnType:<root>.ExternalClass.NestedClass [external,primary]
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+      CONSTRUCTOR visibility:public returnType:<root>.ExternalClass.NestedClass [external,primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN name:nestedClassFun visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedClass, a:kotlin.Int) returnType:kotlin.String [external]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedClass
-        VALUE_PARAMETER name:a index:0 type:kotlin.Int
+      FUN name:nestedClassFun visibility:public modality:FINAL returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedClass
+        VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun nestedClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedClass'
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
       PROPERTY name:nestedClassVar2 visibility:public modality:FINAL [external,var]
-        FUN name:<get-nestedClassVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedClass) returnType:kotlin.String [external]
+        FUN name:<get-nestedClassVar2> visibility:public modality:FINAL returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedClass
           correspondingProperty: PROPERTY name:nestedClassVar2 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedClass
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-nestedClassVar2> (): kotlin.String declared in <root>.ExternalClass.NestedClass'
               CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-        FUN name:<set-nestedClassVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedClass, value:kotlin.String) returnType:kotlin.Unit [external]
+        FUN name:<set-nestedClassVar2> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedClass
+          VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:nestedClassVar2 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedClass
-          VALUE_PARAMETER name:value index:0 type:kotlin.String
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <set-nestedClassVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedClass'
               CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
     CLASS INTERFACE name:NestedInterface modality:ABSTRACT visibility:public [external] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExternalClass.NestedInterface
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ExternalClass.NestedInterface
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN name:nestedInterfaceFun visibility:public modality:ABSTRACT <> ($this:<root>.ExternalClass.NestedInterface, a:kotlin.Int) returnType:kotlin.String [external]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedInterface
-        VALUE_PARAMETER name:a index:0 type:kotlin.Int
+      FUN name:nestedInterfaceFun visibility:public modality:ABSTRACT returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedInterface
+        VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
       PROPERTY name:nestedInterfaceVar visibility:public modality:ABSTRACT [external,var]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedInterfaceVar> visibility:public modality:ABSTRACT <> ($this:<root>.ExternalClass.NestedInterface) returnType:kotlin.String [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedInterfaceVar> visibility:public modality:ABSTRACT returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedInterface
           correspondingProperty: PROPERTY name:nestedInterfaceVar visibility:public modality:ABSTRACT [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedInterface
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedInterfaceVar> visibility:public modality:ABSTRACT <> ($this:<root>.ExternalClass.NestedInterface, <set-?>:kotlin.String) returnType:kotlin.Unit [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedInterfaceVar> visibility:public modality:ABSTRACT returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedInterface
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:nestedInterfaceVar visibility:public modality:ABSTRACT [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedInterface
-          VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
     CLASS OBJECT name:NestedObject modality:FINAL visibility:public [external] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExternalClass.NestedObject
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ExternalClass.NestedObject
       PROPERTY name:nestedObjectVar1 visibility:public modality:FINAL [external,var]
         FIELD PROPERTY_BACKING_FIELD name:nestedObjectVar1 type:kotlin.String visibility:private [external]
           EXPRESSION_BODY
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedObjectVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedObject) returnType:kotlin.String [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedObjectVar1> visibility:public modality:FINAL returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedObject
           correspondingProperty: PROPERTY name:nestedObjectVar1 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedObject
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-nestedObjectVar1> (): kotlin.String declared in <root>.ExternalClass.NestedObject'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nestedObjectVar1 type:kotlin.String visibility:private [external]' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.ExternalClass.NestedObject declared in <root>.ExternalClass.NestedObject.<get-nestedObjectVar1>' type=<root>.ExternalClass.NestedObject origin=null
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedObjectVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedObject, <set-?>:kotlin.String) returnType:kotlin.Unit [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedObjectVar1> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedObject
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:nestedObjectVar1 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedObject
-          VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
           BLOCK_BODY
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nestedObjectVar1 type:kotlin.String visibility:private [external]' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.ExternalClass.NestedObject declared in <root>.ExternalClass.NestedObject.<set-nestedObjectVar1>' type=<root>.ExternalClass.NestedObject origin=null
               value: GET_VAR '<set-?>: kotlin.String declared in <root>.ExternalClass.NestedObject.<set-nestedObjectVar1>' type=kotlin.String origin=null
-      CONSTRUCTOR visibility:private <> () returnType:<root>.ExternalClass.NestedObject [external,primary]
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+      CONSTRUCTOR visibility:private returnType:<root>.ExternalClass.NestedObject [external,primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN name:nestedObjectFun visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedObject, a:kotlin.Int) returnType:kotlin.String [external]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedObject
-        VALUE_PARAMETER name:a index:0 type:kotlin.Int
+      FUN name:nestedObjectFun visibility:public modality:FINAL returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedObject
+        VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun nestedObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedObject'
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
       PROPERTY name:nestedObjectVar2 visibility:public modality:FINAL [external,var]
-        FUN name:<get-nestedObjectVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedObject) returnType:kotlin.String [external]
+        FUN name:<get-nestedObjectVar2> visibility:public modality:FINAL returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedObject
           correspondingProperty: PROPERTY name:nestedObjectVar2 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedObject
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-nestedObjectVar2> (): kotlin.String declared in <root>.ExternalClass.NestedObject'
               CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-        FUN name:<set-nestedObjectVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalClass.NestedObject, value:kotlin.String) returnType:kotlin.Unit [external]
+        FUN name:<set-nestedObjectVar2> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass.NestedObject
+          VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:nestedObjectVar2 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass.NestedObject
-          VALUE_PARAMETER name:value index:0 type:kotlin.String
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <set-nestedObjectVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedObject'
               CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-    CONSTRUCTOR visibility:public <> () returnType:<root>.ExternalClass [external,primary]
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+    CONSTRUCTOR visibility:public returnType:<root>.ExternalClass [external,primary]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:externalClassFun visibility:public modality:FINAL <> ($this:<root>.ExternalClass, a:kotlin.Int) returnType:kotlin.String [external]
-      $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass
-      VALUE_PARAMETER name:a index:0 type:kotlin.Int
+    FUN name:externalClassFun visibility:public modality:FINAL returnType:kotlin.String [external]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun externalClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass'
           CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-    FUN name:getNestedInterface visibility:public modality:FINAL <> ($this:<root>.ExternalClass) returnType:<root>.ExternalClass.NestedInterface [external]
-      $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass
+    FUN name:getNestedInterface visibility:public modality:FINAL returnType:<root>.ExternalClass.NestedInterface [external]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getNestedInterface (): <root>.ExternalClass.NestedInterface declared in <root>.ExternalClass'
           CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
     PROPERTY name:externalClassVar2 visibility:public modality:FINAL [external,var]
-      FUN name:<get-externalClassVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalClass) returnType:kotlin.String [external]
+      FUN name:<get-externalClassVar2> visibility:public modality:FINAL returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass
         correspondingProperty: PROPERTY name:externalClassVar2 visibility:public modality:FINAL [external,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-externalClassVar2> (): kotlin.String declared in <root>.ExternalClass'
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-      FUN name:<set-externalClassVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalClass, value:kotlin.String) returnType:kotlin.Unit [external]
+      FUN name:<set-externalClassVar2> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalClass
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.String
         correspondingProperty: PROPERTY name:externalClassVar2 visibility:public modality:FINAL [external,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalClass
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <set-externalClassVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass'
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
   CLASS INTERFACE name:ExternalInterface modality:ABSTRACT visibility:public [external] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExternalInterface
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ExternalInterface
     CLASS INTERFACE name:NestedInterface modality:ABSTRACT visibility:public [external] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExternalInterface.NestedInterface
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ExternalInterface.NestedInterface
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN name:nestedInterfaceFun visibility:public modality:ABSTRACT <> ($this:<root>.ExternalInterface.NestedInterface, a:kotlin.Int) returnType:kotlin.String [external]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.NestedInterface
-        VALUE_PARAMETER name:a index:0 type:kotlin.Int
+      FUN name:nestedInterfaceFun visibility:public modality:ABSTRACT returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.NestedInterface
+        VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
       PROPERTY name:nestedInterfaceVar visibility:public modality:ABSTRACT [external,var]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedInterfaceVar> visibility:public modality:ABSTRACT <> ($this:<root>.ExternalInterface.NestedInterface) returnType:kotlin.String [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nestedInterfaceVar> visibility:public modality:ABSTRACT returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.NestedInterface
           correspondingProperty: PROPERTY name:nestedInterfaceVar visibility:public modality:ABSTRACT [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.NestedInterface
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedInterfaceVar> visibility:public modality:ABSTRACT <> ($this:<root>.ExternalInterface.NestedInterface, <set-?>:kotlin.String) returnType:kotlin.Unit [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-nestedInterfaceVar> visibility:public modality:ABSTRACT returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.NestedInterface
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:nestedInterfaceVar visibility:public modality:ABSTRACT [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.NestedInterface
-          VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion,external] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExternalInterface.Companion
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ExternalInterface.Companion
       PROPERTY name:companionObjectVar1 visibility:public modality:FINAL [external,var]
         FIELD PROPERTY_BACKING_FIELD name:companionObjectVar1 type:kotlin.String visibility:private [external]
           EXPRESSION_BODY
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionObjectVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalInterface.Companion) returnType:kotlin.String [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionObjectVar1> visibility:public modality:FINAL returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.Companion
           correspondingProperty: PROPERTY name:companionObjectVar1 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.Companion
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-companionObjectVar1> (): kotlin.String declared in <root>.ExternalInterface.Companion'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVar1 type:kotlin.String visibility:private [external]' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.ExternalInterface.Companion declared in <root>.ExternalInterface.Companion.<get-companionObjectVar1>' type=<root>.ExternalInterface.Companion origin=null
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-companionObjectVar1> visibility:public modality:FINAL <> ($this:<root>.ExternalInterface.Companion, <set-?>:kotlin.String) returnType:kotlin.Unit [external]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-companionObjectVar1> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.Companion
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:companionObjectVar1 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.Companion
-          VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
           BLOCK_BODY
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVar1 type:kotlin.String visibility:private [external]' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.ExternalInterface.Companion declared in <root>.ExternalInterface.Companion.<set-companionObjectVar1>' type=<root>.ExternalInterface.Companion origin=null
               value: GET_VAR '<set-?>: kotlin.String declared in <root>.ExternalInterface.Companion.<set-companionObjectVar1>' type=kotlin.String origin=null
-      CONSTRUCTOR visibility:private <> () returnType:<root>.ExternalInterface.Companion [external,primary]
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+      CONSTRUCTOR visibility:private returnType:<root>.ExternalInterface.Companion [external,primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN name:companionObjectFun visibility:public modality:FINAL <> ($this:<root>.ExternalInterface.Companion, a:kotlin.Int) returnType:kotlin.String [external]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.Companion
-        VALUE_PARAMETER name:a index:0 type:kotlin.Int
+      FUN name:companionObjectFun visibility:public modality:FINAL returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.Companion
+        VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun companionObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface.Companion'
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-      FUN name:getExternalInterface visibility:public modality:FINAL <> ($this:<root>.ExternalInterface.Companion) returnType:<root>.ExternalInterface [external]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.Companion
+      FUN name:getExternalInterface visibility:public modality:FINAL returnType:<root>.ExternalInterface [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.Companion
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun getExternalInterface (): <root>.ExternalInterface declared in <root>.ExternalInterface.Companion'
             CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
       PROPERTY name:companionObjectVar2 visibility:public modality:FINAL [external,var]
-        FUN name:<get-companionObjectVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalInterface.Companion) returnType:kotlin.String [external]
+        FUN name:<get-companionObjectVar2> visibility:public modality:FINAL returnType:kotlin.String [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.Companion
           correspondingProperty: PROPERTY name:companionObjectVar2 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.Companion
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-companionObjectVar2> (): kotlin.String declared in <root>.ExternalInterface.Companion'
               CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-        FUN name:<set-companionObjectVar2> visibility:public modality:FINAL <> ($this:<root>.ExternalInterface.Companion, value:kotlin.String) returnType:kotlin.Unit [external]
+        FUN name:<set-companionObjectVar2> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface.Companion
+          VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.String
           correspondingProperty: PROPERTY name:companionObjectVar2 visibility:public modality:FINAL [external,var]
-          $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface.Companion
-          VALUE_PARAMETER name:value index:0 type:kotlin.String
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <set-companionObjectVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface.Companion'
               CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:externalInterfaceFun visibility:public modality:ABSTRACT <> ($this:<root>.ExternalInterface, a:kotlin.Int) returnType:kotlin.String [external]
-      $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface
-      VALUE_PARAMETER name:a index:0 type:kotlin.Int
-    FUN name:getNestedInterface visibility:public modality:ABSTRACT <> ($this:<root>.ExternalInterface) returnType:<root>.ExternalInterface.NestedInterface [external]
-      $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface
+    FUN name:externalInterfaceFun visibility:public modality:ABSTRACT returnType:kotlin.String [external]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
+    FUN name:getNestedInterface visibility:public modality:ABSTRACT returnType:<root>.ExternalInterface.NestedInterface [external]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface
     PROPERTY name:externalInterfaceVar visibility:public modality:ABSTRACT [external,var]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-externalInterfaceVar> visibility:public modality:ABSTRACT <> ($this:<root>.ExternalInterface) returnType:kotlin.String [external]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-externalInterfaceVar> visibility:public modality:ABSTRACT returnType:kotlin.String [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface
         correspondingProperty: PROPERTY name:externalInterfaceVar visibility:public modality:ABSTRACT [external,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-externalInterfaceVar> visibility:public modality:ABSTRACT <> ($this:<root>.ExternalInterface, <set-?>:kotlin.String) returnType:kotlin.Unit [external]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-externalInterfaceVar> visibility:public modality:ABSTRACT returnType:kotlin.Unit [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ExternalInterface
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
         correspondingProperty: PROPERTY name:externalInterfaceVar visibility:public modality:ABSTRACT [external,var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ExternalInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
-  FUN name:topLevelFun visibility:public modality:FINAL <> (a:kotlin.Int) returnType:kotlin.String [external]
-    VALUE_PARAMETER name:a index:0 type:kotlin.Int
+  FUN name:topLevelFun visibility:public modality:FINAL returnType:kotlin.String [external]
+    VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun topLevelFun (a: kotlin.Int): kotlin.String declared in <root>'
         CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
   PROPERTY name:topLevelVar2 visibility:public modality:FINAL [external,var]
-    FUN name:<get-topLevelVar2> visibility:public modality:FINAL <> () returnType:kotlin.String [external]
+    FUN name:<get-topLevelVar2> visibility:public modality:FINAL returnType:kotlin.String [external]
       correspondingProperty: PROPERTY name:topLevelVar2 visibility:public modality:FINAL [external,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-topLevelVar2> (): kotlin.String declared in <root>'
           CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
-    FUN name:<set-topLevelVar2> visibility:public modality:FINAL <> (value:kotlin.String) returnType:kotlin.Unit [external]
+    FUN name:<set-topLevelVar2> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
       correspondingProperty: PROPERTY name:topLevelVar2 visibility:public modality:FINAL [external,var]
-      VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <set-topLevelVar2> (value: kotlin.String): kotlin.Unit declared in <root>'
           CALL 'public final fun <get-definedExternally> (): kotlin.Nothing declared in kotlin.js' type=kotlin.Nothing origin=GET_PROPERTY
 Module: app
 FILE fqName:<root> fileName:/main.kt
-  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-        message: CALL 'public final fun topLevelFun (a: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
-          a: CONST Int type=kotlin.Int value=42
+        ARG message: CALL 'public final fun topLevelFun (a: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
+          ARG a: CONST Int type=kotlin.Int value=42
       CALL 'public final fun <set-topLevelVar1> (value: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        value: CONST String type=kotlin.String value="a"
+        ARG value: CONST String type=kotlin.String value="a"
       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-        message: CALL 'public final fun <get-topLevelVar1> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+        ARG message: CALL 'public final fun <get-topLevelVar1> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
       CALL 'public final fun <set-topLevelVar2> (value: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        value: CONST String type=kotlin.String value="a"
+        ARG value: CONST String type=kotlin.String value="a"
       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-        message: CALL 'public final fun <get-topLevelVar2> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+        ARG message: CALL 'public final fun <get-topLevelVar2> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
-        <T>: <root>.ExternalInterface
-        <R>: kotlin.Unit
-        receiver: CALL 'public final fun getExternalInterface (): <root>.ExternalInterface declared in <root>.ExternalInterface.Companion' type=<root>.ExternalInterface origin=null
-          $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
-        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalInterface) returnType:kotlin.Unit
-            $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalInterface
+        TYPE_ARG T: <root>.ExternalInterface
+        TYPE_ARG R: kotlin.Unit
+        ARG receiver: CALL 'public final fun getExternalInterface (): <root>.ExternalInterface declared in <root>.ExternalInterface.Companion' type=<root>.ExternalInterface origin=null
+          ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
+        ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.ExternalInterface
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public abstract fun externalInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
-                  a: CONST Int type=kotlin.Int value=42
+                ARG message: CALL 'public abstract fun externalInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                  ARG a: CONST Int type=kotlin.Int value=42
               CALL 'public abstract fun <set-externalInterfaceVar> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
-                <set-?>: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                ARG <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public abstract fun <get-externalInterfaceVar> (): kotlin.String declared in <root>.ExternalInterface' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public abstract fun <get-externalInterfaceVar> (): kotlin.String declared in <root>.ExternalInterface' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
               CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
-                <T>: <root>.ExternalInterface.NestedInterface
-                <R>: kotlin.Unit
-                receiver: CALL 'public abstract fun getNestedInterface (): <root>.ExternalInterface.NestedInterface declared in <root>.ExternalInterface' type=<root>.ExternalInterface.NestedInterface origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
-                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface.NestedInterface, kotlin.Unit> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalInterface.NestedInterface) returnType:kotlin.Unit
-                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalInterface.NestedInterface
+                TYPE_ARG T: <root>.ExternalInterface.NestedInterface
+                TYPE_ARG R: kotlin.Unit
+                ARG receiver: CALL 'public abstract fun getNestedInterface (): <root>.ExternalInterface.NestedInterface declared in <root>.ExternalInterface' type=<root>.ExternalInterface.NestedInterface origin=null
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface.NestedInterface, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                    VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.ExternalInterface.NestedInterface
                     BLOCK_BODY
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                        message: CALL 'public abstract fun nestedInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface.NestedInterface' type=kotlin.String origin=null
-                          $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
-                          a: CONST Int type=kotlin.Int value=42
+                        ARG message: CALL 'public abstract fun nestedInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface.NestedInterface' type=kotlin.String origin=null
+                          ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
+                          ARG a: CONST Int type=kotlin.Int value=42
                       CALL 'public abstract fun <set-nestedInterfaceVar> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface.NestedInterface' type=kotlin.Unit origin=EQ
-                        $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
-                        <set-?>: CONST String type=kotlin.String value="a"
+                        ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
+                        ARG <set-?>: CONST String type=kotlin.String value="a"
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                        message: CALL 'public abstract fun <get-nestedInterfaceVar> (): kotlin.String declared in <root>.ExternalInterface.NestedInterface' type=kotlin.String origin=GET_PROPERTY
-                          $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
+                        ARG message: CALL 'public abstract fun <get-nestedInterfaceVar> (): kotlin.String declared in <root>.ExternalInterface.NestedInterface' type=kotlin.String origin=GET_PROPERTY
+                          ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
-        <T>: <root>.ExternalInterface.Companion
-        <R>: kotlin.Unit
-        receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
-        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface.Companion, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalInterface.Companion) returnType:kotlin.Unit
-            $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalInterface.Companion
+        TYPE_ARG T: <root>.ExternalInterface.Companion
+        TYPE_ARG R: kotlin.Unit
+        ARG receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
+        ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface.Companion, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.ExternalInterface.Companion
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun companionObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
-                  a: CONST Int type=kotlin.Int value=42
+                ARG message: CALL 'public final fun companionObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                  ARG a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-companionObjectVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface.Companion' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
-                <set-?>: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                ARG <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-companionObjectVar1> (): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-companionObjectVar1> (): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
               CALL 'public final fun <set-companionObjectVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface.Companion' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
-                value: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                ARG value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-companionObjectVar2> (): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-companionObjectVar2> (): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
-        <T>: <root>.ExternalClass
-        <R>: kotlin.Unit
-        receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ExternalClass' type=<root>.ExternalClass origin=null
-        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalClass) returnType:kotlin.Unit
-            $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalClass
+        TYPE_ARG T: <root>.ExternalClass
+        TYPE_ARG R: kotlin.Unit
+        ARG receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ExternalClass' type=<root>.ExternalClass origin=null
+        ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.ExternalClass
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun externalClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
-                  a: CONST Int type=kotlin.Int value=42
+                ARG message: CALL 'public final fun externalClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                  ARG a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-externalClassVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
-                <set-?>: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                ARG <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-externalClassVar1> (): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-externalClassVar1> (): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
               CALL 'public final fun <set-externalClassVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
-                value: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                ARG value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-externalClassVar2> (): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-externalClassVar2> (): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
               CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
-                <T>: <root>.ExternalClass.NestedInterface
-                <R>: kotlin.Unit
-                receiver: CALL 'public final fun getNestedInterface (): <root>.ExternalClass.NestedInterface declared in <root>.ExternalClass' type=<root>.ExternalClass.NestedInterface origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
-                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedInterface, kotlin.Unit> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalClass.NestedInterface) returnType:kotlin.Unit
-                    $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalClass.NestedInterface
+                TYPE_ARG T: <root>.ExternalClass.NestedInterface
+                TYPE_ARG R: kotlin.Unit
+                ARG receiver: CALL 'public final fun getNestedInterface (): <root>.ExternalClass.NestedInterface declared in <root>.ExternalClass' type=<root>.ExternalClass.NestedInterface origin=null
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedInterface, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                    VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.ExternalClass.NestedInterface
                     BLOCK_BODY
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                        message: CALL 'public abstract fun nestedInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedInterface' type=kotlin.String origin=null
-                          $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
-                          a: CONST Int type=kotlin.Int value=42
+                        ARG message: CALL 'public abstract fun nestedInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedInterface' type=kotlin.String origin=null
+                          ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
+                          ARG a: CONST Int type=kotlin.Int value=42
                       CALL 'public abstract fun <set-nestedInterfaceVar> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedInterface' type=kotlin.Unit origin=EQ
-                        $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
-                        <set-?>: CONST String type=kotlin.String value="a"
+                        ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
+                        ARG <set-?>: CONST String type=kotlin.String value="a"
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                        message: CALL 'public abstract fun <get-nestedInterfaceVar> (): kotlin.String declared in <root>.ExternalClass.NestedInterface' type=kotlin.String origin=GET_PROPERTY
-                          $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
+                        ARG message: CALL 'public abstract fun <get-nestedInterfaceVar> (): kotlin.String declared in <root>.ExternalClass.NestedInterface' type=kotlin.String origin=GET_PROPERTY
+                          ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
-        <T>: <root>.ExternalClass.NestedClass
-        <R>: kotlin.Unit
-        receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ExternalClass.NestedClass' type=<root>.ExternalClass.NestedClass origin=null
-        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedClass, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalClass.NestedClass) returnType:kotlin.Unit
-            $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalClass.NestedClass
+        TYPE_ARG T: <root>.ExternalClass.NestedClass
+        TYPE_ARG R: kotlin.Unit
+        ARG receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.ExternalClass.NestedClass' type=<root>.ExternalClass.NestedClass origin=null
+        ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedClass, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.ExternalClass.NestedClass
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun nestedClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
-                  a: CONST Int type=kotlin.Int value=42
+                ARG message: CALL 'public final fun nestedClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                  ARG a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-nestedClassVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
-                <set-?>: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                ARG <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-nestedClassVar1> (): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-nestedClassVar1> (): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
               CALL 'public final fun <set-nestedClassVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
-                value: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                ARG value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-nestedClassVar2> (): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-nestedClassVar2> (): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
-        <T>: <root>.ExternalClass.NestedObject
-        <R>: kotlin.Unit
-        receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:NestedObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.ExternalClass.NestedObject
-        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedObject, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalClass.NestedObject) returnType:kotlin.Unit
-            $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalClass.NestedObject
+        TYPE_ARG T: <root>.ExternalClass.NestedObject
+        TYPE_ARG R: kotlin.Unit
+        ARG receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:NestedObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.ExternalClass.NestedObject
+        ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedObject, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.ExternalClass.NestedObject
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun nestedObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
-                  a: CONST Int type=kotlin.Int value=42
+                ARG message: CALL 'public final fun nestedObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                  ARG a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-nestedObjectVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedObject' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
-                <set-?>: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                ARG <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-nestedObjectVar1> (): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-nestedObjectVar1> (): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
               CALL 'public final fun <set-nestedObjectVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedObject' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
-                value: CONST String type=kotlin.String value="a"
+                ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                ARG value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-                message: CALL 'public final fun <get-nestedObjectVar2> (): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                ARG message: CALL 'public final fun <get-nestedObjectVar2> (): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT

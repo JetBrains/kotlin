@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
-  FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+  FUN name:testImplicitCast visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH

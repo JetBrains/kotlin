@@ -11,5 +11,6 @@ operator fun A.set(vararg i: Int, v: Int) {
 }
 
 fun testSimpleAssignment(a: A) {
-  a.set(i = [1, 2, 3], v = 0)
+  set(/* <this> = a, */ i = [1, 2, 3], v = 0)
 }
+

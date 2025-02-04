@@ -1,7 +1,8 @@
 fun runMe() {
   // COMPOSITE {
-  val tmp_0: Pair<Int, Int> = 1.to<Int, Int>(that = 2)
+  val tmp_0: Pair<Int, Int> = to<Int, Int>(/* <this> = 1, */ that = 2)
   val a: Int = tmp_0.component1()
   // }
   println(message = a)
 }
+

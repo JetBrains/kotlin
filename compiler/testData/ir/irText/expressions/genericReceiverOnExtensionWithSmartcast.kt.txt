@@ -4,7 +4,7 @@ fun <F : CharSequence> F.bar() {
 inline fun <reified T : CharSequence> test_1(x: Any) {
   when {
     x is T -> { // BLOCK
-      x /*as T */.bar<T>()
+      bar<T>(/* <this> = x /*as T */ */)
     }
   }
 }
@@ -12,7 +12,8 @@ inline fun <reified T : CharSequence> test_1(x: Any) {
 fun test_2(x: Any?) {
   when {
     x is CharSequence -> { // BLOCK
-      x /*as CharSequence */.bar<CharSequence>()
+      bar<CharSequence>(/* <this> = x /*as CharSequence */ */)
     }
   }
 }
+

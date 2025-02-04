@@ -58,7 +58,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
       }
 
       override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): P<Any?, Any?> {
-        return P<Any?, Any?>(p1 = (<this>, t).<get-deepO>() /*as Any? */, p2 = (<this>, t).<get-deepK>() /*as Any? */)
+        return P<Any?, Any?>(p1 = <this>.<get-deepO>(/* <this> = t */) /*as Any? */, p2 = <this>.<get-deepK>(/* <this> = t */) /*as Any? */)
       }
 
       fun <F11T : Any?> qux11(t: F11T): F11T {
@@ -74,7 +74,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
     <no name provided>()
   }
   get(): P<T, T> {
-    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
+    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>() */)
   }
 
 class CR<R : Any?> : IR<R> {

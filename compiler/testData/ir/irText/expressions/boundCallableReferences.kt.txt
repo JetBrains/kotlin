@@ -3,11 +3,11 @@ val test1: KFunction0<Unit>
   get
 
 val test2: KProperty0<Int>
-  field = A()::bar
+  field = AA()::bar
   get
 
 val test3: KFunction0<Unit>
-  field = A()::qux
+  field = ::qux/*(<this> = A()) */
   get
 
 class A {

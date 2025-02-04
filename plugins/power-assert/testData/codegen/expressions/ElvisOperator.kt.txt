@@ -10,7 +10,7 @@ fun test1(str: String?, default: Int): String {
         val tmp_2: String? = tmp_0
         when {
           EQEQ(arg0 = tmp_2, arg1 = null) -> null
-          else -> tmp_2.lowercase()
+          else -> lowercase(/* <this> = tmp_2 */)
         }
       }
       val tmp_3: Int? = { // BLOCK
@@ -50,7 +50,7 @@ fun test2(str: String?, fallback: String?, default: Int): String {
         val tmp_10: String? = tmp_8
         when {
           EQEQ(arg0 = tmp_10, arg1 = null) -> null
-          else -> tmp_10.lowercase()
+          else -> lowercase(/* <this> = tmp_10 */)
         }
       }
       when {
@@ -121,7 +121,7 @@ fun test3(str: String?): String {
         val tmp_24: String? = tmp_22
         when {
           EQEQ(arg0 = tmp_24, arg1 = null) -> null
-          else -> tmp_24.lowercase()
+          else -> lowercase(/* <this> = tmp_24 */)
         }
       }
       val tmp_25: Int? = { // BLOCK

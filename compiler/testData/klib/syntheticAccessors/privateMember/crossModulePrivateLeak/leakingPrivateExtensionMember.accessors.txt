@@ -11,6 +11,6 @@ public class A
     private val Int.privateExtensionVar: Int
         /* TARGET declaration */ private fun Int.<get-privateExtensionVar>(): Int
     /* ACCESSOR declaration */ public /* static */ fun access$privateExtensionMethod($this: A, $receiver: Int): Int
-        /* TARGET use-site */ ($this, $receiver).privateExtensionMethod()
+        /* TARGET use-site */ $this.privateExtensionMethod(/* <this> = $receiver */)
     /* ACCESSOR declaration */ public /* static */ fun access$<get-privateExtensionVar>($this: A, $receiver: Int): Int
-        /* TARGET use-site */ ($this, $receiver).<get-privateExtensionVar>()
+        /* TARGET use-site */ $this.<get-privateExtensionVar>(/* <this> = $receiver */)

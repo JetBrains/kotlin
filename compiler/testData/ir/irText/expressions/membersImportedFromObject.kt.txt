@@ -7,11 +7,11 @@ val test2: Int
   get
 
 val test3: Int
-  field = (A, 1).fooExt()
+  field = A.fooExt(/* <this> = 1 */)
   get
 
 val test4: Int
-  field = (A, 1).<get-barExt>()
+  field = A.<get-barExt>(/* <this> = 1 */)
   get
 
 object A {

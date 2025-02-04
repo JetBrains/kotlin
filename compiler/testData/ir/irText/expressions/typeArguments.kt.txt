@@ -1,6 +1,7 @@
 fun test1(x: Any): Boolean {
   return when {
-    x is Array<*> -> x /*as Array<*> */.isArrayOf<String>()
+    x is Array<*> -> isArrayOf<String>(/* <this> = x /*as Array<*> */ */)
     else -> false
   }
 }
+

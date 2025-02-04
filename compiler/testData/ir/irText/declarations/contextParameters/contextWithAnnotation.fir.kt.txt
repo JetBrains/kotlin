@@ -22,10 +22,12 @@ open annotation class AnnotationWithConstructor : Annotation {
 
 }
 
-fun annotationOnContext(@Ann a: @Ann String) {
+context(@Ann a: @Ann String)
+fun annotationOnContext() {
 }
 
-fun annotationWithConstructor(@AnnotationWithConstructor(k = "") a: @AnnotationWithConstructor(k = "") String) {
+context(@AnnotationWithConstructor(k = "") a: @AnnotationWithConstructor(k = "") String)
+fun annotationWithConstructor() {
 }
 
 fun functionType(f: Function1<@Ann String, Unit>) {
@@ -35,11 +37,14 @@ fun functionTypeWithConstructor(f: Function1<@AnnotationWithConstructor(k = "") 
 }
 
 val annotationOnContextProperty: String
-  get(@Ann a: @Ann String): String {
+  context(@Ann a: @Ann String)
+  get(): String {
     return ""
   }
 
 val annotationWithConstructorProperty: String
-  get(@AnnotationWithConstructor(k = "") a: @AnnotationWithConstructor(k = "") String): String {
+  context(@AnnotationWithConstructor(k = "") a: @AnnotationWithConstructor(k = "") String)
+  get(): String {
     return ""
   }
+

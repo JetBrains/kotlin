@@ -8,4 +8,4 @@ internal inline fun internalInlineFun(): String
 public fun box(): String
     /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelExtensionFunFromInternalInlineKt($receiver = "O")
 /* ACCESSOR declaration */ internal fun access$privateFun$tUsePrivateTopLevelExtensionFunFromInternalInlineKt($receiver: String): String
-    /* TARGET use-site */ $receiver.privateFun()
+    /* TARGET use-site */ privateFun(/* <this> = $receiver */)

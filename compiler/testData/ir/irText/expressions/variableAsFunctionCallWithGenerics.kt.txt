@@ -1,9 +1,9 @@
 fun kt26531(): Int {
-  return 7.<get-kt26531Val><Int>().invoke()
+  return <get-kt26531Val><Int>(/* <this> = 7 */).invoke()
 }
 
 fun testGeneric1(x: String): String {
-  return x.<get-gk><String>().invoke()
+  return <get-gk><String>(/* <this> = x */).invoke()
 }
 
 val <T : CharSequence> T.gk: Function0<T>

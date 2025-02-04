@@ -72,19 +72,21 @@ fun box(): String {
   }
  /*-> Comparator<String> */
   return with<Comparator<String>, String>(receiver = comparator, block = local fun Comparator<String>.<anonymous>(): String {
-    return Pair<String, String>(first = "OK", second = "fail").<get-min><String>($context_receiver_0 = $this$with)
+    return <get-min><String>(/* $context_receiver_0 = $this$with, <this> = Pair<String, String>(first = "OK", second = "fail") */)
   }
 )
 }
 
-infix operator fun <T : Any?> T.compareTo($context_receiver_0: Comparator<T>, other: T): Int {
+context($context_receiver_0: Comparator<T>)
+infix operator fun <T : Any?> T.compareTo(other: T): Int {
   return $context_receiver_0.compare(p0 = <this>, p1 = other)
 }
 
 val <T : Any?> Pair<T, T>.min: T
-  get($context_receiver_0: Comparator<T>): T {
+  context($context_receiver_0: Comparator<T>)
+  get(): T {
     return when {
-      less(arg0 = <this>.<get-first>().compareTo<T>($context_receiver_0 = $context_receiver_0, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
+      less(arg0 = compareTo<T>(/* $context_receiver_0 = $context_receiver_0, <this> = <this>.<get-first>(), */ other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
       else -> <this>.<get-second>()
     }
   }

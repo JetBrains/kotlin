@@ -1,11 +1,11 @@
 package test
 
 val test1: KProperty0<String>
-  field = Foo::a
+  field = FooFoo::a
   get
 
 val test1a: KProperty0<String>
-  field = Foo::a
+  field = FooFoo::a
   get
 
 val test2: KFunction0<String>

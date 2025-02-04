@@ -11,7 +11,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      Host()::withVararg
+      ::withVararg/*(receiver = Host()) */
     })
   }
 
@@ -22,7 +22,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      h::withVararg
+      ::withVararg/*(receiver = h) */
     })
   }
 
@@ -33,7 +33,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      h::withVararg
+      ::withVararg/*(receiver = h) */
     })
   }
 
@@ -43,7 +43,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      h::withVararg
+      ::withVararg/*(receiver = h) */
     })
   }
 
@@ -53,7 +53,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      <this>::withVararg
+      ::withVararg/*(receiver = <this>) */
     })
   }
 
@@ -66,3 +66,4 @@ class Host {
 fun use(fn: Function1<Int, Unit>) {
   fn.invoke(p1 = 1)
 }
+

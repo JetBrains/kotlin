@@ -103,3 +103,4 @@ fun Z.test() {
 
 fun withLambda(f: Function0<Unit>) {
 }
+

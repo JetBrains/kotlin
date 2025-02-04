@@ -30,7 +30,7 @@ fun testBound(a: A) {
       receiver.foo(xs = [p0]) /*~> Unit */
     }
 
-    a::foo
+    ::foo/*(receiver = a) */
   })
 }
 
@@ -40,7 +40,7 @@ fun testObject() {
       receiver.foo(xs = [p0]) /*~> Unit */
     }
 
-    Obj::foo
+    ::foo/*(receiver = Obj) */
   })
 }
 

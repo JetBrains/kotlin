@@ -24,7 +24,7 @@ interface CPointed {
 }
 
 fun foo(value: IdType, cv: CInt32VarX<Int>) {
-  cv.<set-value><Int>(value = value.<get-value>())
+  <set-value><Int>(/* <this> = cv, */ value = value.<get-value>())
 }
 
 inline fun <reified T : CPointed> CPointed.reinterpret(): T {

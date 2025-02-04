@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Long visibility:private [final,static]
       EXPRESSION_BODY
         CONST Long type=kotlin.Long value=42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Long
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.Long
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Long declared in <root>'
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Short visibility:private [final,static]
       EXPRESSION_BODY
         CONST Short type=kotlin.Short value=42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Short
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL returnType:kotlin.Short
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Short declared in <root>'
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Byte visibility:private [final,static]
       EXPRESSION_BODY
         CONST Byte type=kotlin.Byte value=42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Byte
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL returnType:kotlin.Byte
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Byte declared in <root>'
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Long visibility:private [final,static]
       EXPRESSION_BODY
         CONST Long type=kotlin.Long value=-42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Long
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL returnType:kotlin.Long
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Long declared in <root>'
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Short visibility:private [final,static]
       EXPRESSION_BODY
         CONST Short type=kotlin.Short value=-42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.Short
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL returnType:kotlin.Short
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Short declared in <root>'
@@ -48,46 +48,46 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:private [final,static]
       EXPRESSION_BODY
         CONST Byte type=kotlin.Byte value=-42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Byte
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL returnType:kotlin.Byte
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Byte declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:private [final,static]' type=kotlin.Byte origin=null
   CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestImplicitArguments
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestImplicitArguments
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Long visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Long declared in <root>.TestImplicitArguments.<init>' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestImplicitArguments) returnType:kotlin.Long
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Long
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestImplicitArguments
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.TestImplicitArguments
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Long declared in <root>.TestImplicitArguments'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Long visibility:private [final]' type=kotlin.Long origin=null
               receiver: GET_VAR '<this>: <root>.TestImplicitArguments declared in <root>.TestImplicitArguments.<get-x>' type=<root>.TestImplicitArguments origin=null
-    CONSTRUCTOR visibility:public <> (x:kotlin.Long) returnType:<root>.TestImplicitArguments [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.Long
+    CONSTRUCTOR visibility:public returnType:<root>.TestImplicitArguments [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Long
         EXPRESSION_BODY
           CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value=1
+            ARG <this>: CONST Int type=kotlin.Int value=1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:test1 type:kotlin.Int? [val]
         CONST Int type=kotlin.Int value=42
@@ -99,16 +99,16 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         CONST Long type=kotlin.Long value=-1
       VAR name:test5 type:kotlin.Long? [val]
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+          ARG <this>: CONST Int type=kotlin.Int value=1
       VAR name:test6 type:kotlin.Short? [val]
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+          ARG <this>: CONST Int type=kotlin.Int value=1
       VAR name:test7 type:kotlin.Byte? [val]
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
-  FUN name:testImplicitArguments visibility:public modality:FINAL <> (x:kotlin.Long) returnType:kotlin.Unit
-    VALUE_PARAMETER name:x index:0 type:kotlin.Long
+          ARG <this>: CONST Int type=kotlin.Int value=1
+  FUN name:testImplicitArguments visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Long
       EXPRESSION_BODY
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+          ARG <this>: CONST Int type=kotlin.Int value=1
     BLOCK_BODY

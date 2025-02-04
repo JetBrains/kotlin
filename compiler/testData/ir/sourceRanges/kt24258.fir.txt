@@ -12,7 +12,7 @@
       @3:30..53 BLOCK_BODY
         @3:30..53 RETURN type=kotlin.Nothing from='public final fun <get-lazyNullString> (): kotlin.String declared in <root>'
           @3:30..53 TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            @3:30..53 CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=@[FlexibleNullability] kotlin.String? origin=null
+            @3:30..53 CALL 'public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=@[FlexibleNullability] kotlin.String? origin=null
               @3:30..53 GET_FIELD 'FIELD PROPERTY_DELEGATE name:lazyNullString$delegate type:kotlin.Lazy<@[FlexibleNullability] kotlin.String?> visibility:private [final,static] declared in <root>' type=kotlin.Lazy<@[FlexibleNullability] kotlin.String?> origin=null
               @-1:-1..-1 CONST Null type=kotlin.Nothing? value=null
               @3:30..53 PROPERTY_REFERENCE 'public final lazyNullString: kotlin.String [delegated,val] declared in <root>' field=null getter='public final fun <get-lazyNullString> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

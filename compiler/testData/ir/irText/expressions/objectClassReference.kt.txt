@@ -9,5 +9,6 @@ object A {
 
 fun test() {
   A::class /*~> Unit */
-  A::class.<get-java><A>() /*~> Unit */
+  <get-java><A>(/* <this> = A::class */) /*~> Unit */
 }
+
