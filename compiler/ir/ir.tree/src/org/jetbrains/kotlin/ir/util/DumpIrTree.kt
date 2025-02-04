@@ -60,6 +60,10 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
  * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
+ * @property printAnnotationsInFakeOverrides If annotations in fake override functions/properties should be printed.
+ *   Note: The main goal of introducing this flag is an attempt to work around the problem with incorrect offsets
+ *   in annotations, which should be finally fixed in KT-74938.
+ *   TODO: Drop this flag in KT-74938.
  * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
  *   Otherwise, it will be substituted with some fixed placeholder value.
  * @property printParameterNamesInOverriddenSymbols If names of value parameters should be printed in overridden function symbols.
@@ -84,6 +88,7 @@ data class DumpIrTreeOptions(
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,
     val printSourceRetentionAnnotations: Boolean = true,
+    val printAnnotationsInFakeOverrides: Boolean = true,
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val printParameterNamesInOverriddenSymbols: Boolean = true,
     val printSealedSubclasses: Boolean = true,
@@ -227,7 +232,9 @@ class DumpIrTreeVisitor(
         if (declaration.isHidden()) return
         if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
-            dumpAnnotations(declaration)
+            if (options.printAnnotationsInFakeOverrides || !declaration.isFakeOverride) {
+                dumpAnnotations(declaration)
+            }
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
             declaration.overriddenSymbols.dumpFakeOverrideSymbols()
             declaration.typeParameters.dumpElements()
@@ -271,7 +278,9 @@ class DumpIrTreeVisitor(
     override fun visitProperty(declaration: IrProperty, data: String) {
         if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
-            dumpAnnotations(declaration)
+            if (options.printAnnotationsInFakeOverrides || !declaration.isFakeOverride) {
+                dumpAnnotations(declaration)
+            }
             declaration.overriddenSymbols.dumpFakeOverrideSymbols()
             declaration.backingField?.accept(this, "")
             declaration.getter?.accept(this, "")

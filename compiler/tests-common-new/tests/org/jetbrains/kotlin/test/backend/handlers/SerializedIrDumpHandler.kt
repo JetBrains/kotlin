@@ -178,6 +178,25 @@ class SerializedIrDumpHandler(
              * which we don't care much.
              */
             printSourceOffsets = isFirFrontend,
+
+            /**
+             * A workaround for mismatched offsets in default value expressions in annotations of fake overrides,
+             * which is finally going to be fixed in KT-74938.
+             *
+             * Example:
+             * ```
+             * // Fir2LazyIr:
+             * FUN[138, 282] FAKE_OVERRIDE name:...
+             *   annotations:
+             *     Deprecated(message = "...", replaceWith = <null>, level = GET_ENUM[-1, -1] 'ENUM_ENTRY name:HIDDEN' type=kotlin.DeprecationLevel)
+             *
+             * // Deserialized IR:
+             * FUN[138, 282] FAKE_OVERRIDE name:...
+             *   annotations:
+             *     Deprecated(message = "...", replaceWith = <null>, level = GET_ENUM[1899, 1905] 'ENUM_ENTRY name:HIDDEN' type=kotlin.DeprecationLevel)
+             * ```
+             */
+            printAnnotationsInFakeOverrides = false,
         )
 
         val builder = dumper.builderForModule(module.name)
