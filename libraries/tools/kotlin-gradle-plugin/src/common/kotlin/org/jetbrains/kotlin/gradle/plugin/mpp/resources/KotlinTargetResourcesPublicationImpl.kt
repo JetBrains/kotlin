@@ -174,7 +174,7 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
                     .mppFilterResourcesByExtension
                     .map { explicitlyEnabled ->
                         // Always filter resources configuration because it resolves klibs for dependency graph inheritance
-                        explicitlyEnabled || project.kotlinPropertiesProvider.mppResourcesResolutionStrategy == KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
+                        explicitlyEnabled
                     }
             )
             it.archivesFromDependencies.from(
