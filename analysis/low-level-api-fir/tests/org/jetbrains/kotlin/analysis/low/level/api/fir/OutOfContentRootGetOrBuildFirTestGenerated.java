@@ -1262,6 +1262,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     public void testSetterWithoutBodyValueParameterType() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/setterWithoutBodyValueParameterType.kt");
     }
+
+    @Test
+    @TestMetadata("typeParameterOnAnonymousFunction.kt")
+    public void testTypeParameterOnAnonymousFunction() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/typeParameterOnAnonymousFunction.kt");
+    }
   }
 
   @Nested
