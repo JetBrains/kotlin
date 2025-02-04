@@ -13,7 +13,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 @JsGradlePluginTests
-abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+abstract class IncrementalCompilationJsMultiResourcesProjectIT : BaseIncrementalCompilationMultiResourcesProjectIT() {
     override val defaultProjectName: String = "incrementalMultiproject"
 
     override fun defaultProject(
@@ -146,11 +146,11 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
 }
 
 @DisplayName("K/JS multi-project IC with disabled precise outputs backups")
-abstract class IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
+abstract class IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiResourcesProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
-class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
+class IncrementalCompilationK1JsMultiResourcesProject : IncrementalCompilationJsMultiResourcesProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 
     @DisplayName("KT-56197: Change interface in lib which has subclass in app")
@@ -161,11 +161,11 @@ class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProj
     }
 }
 
-class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
+class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiResourcesProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
-class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
+class IncrementalCompilationK1JsMultiResourcesProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 
     @DisplayName("KT-56197: Change interface in lib which has subclass in app")
@@ -176,12 +176,12 @@ class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : Incremental
     }
 }
 
-class IncrementalCompilationK2JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
+class IncrementalCompilationK2JsMultiResourcesProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @JvmGradlePluginTests
-abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiResourcesProjectIT() {
     override val additionalLibDependencies: String =
         "implementation \"org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version\""
 
@@ -339,11 +339,11 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
 }
 
 @DisplayName("K/JVM multi-project IC with disabled precise outputs backups")
-abstract class IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectIT() {
+abstract class IncrementalCompilationJvmMultiResourcesProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
-class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : IncrementalCompilationJvmMultiResourcesProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
@@ -352,7 +352,7 @@ class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : Incremental
     }
 }
 
-class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+class IncrementalCompilationK2JvmMultiResourcesProjectBuildToolsApiInProcessIT : IncrementalCompilationJvmMultiResourcesProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
@@ -361,15 +361,15 @@ class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : Incremen
     }
 }
 
-class IncrementalCompilationK1JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+class IncrementalCompilationK1JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiResourcesProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
-class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiResourcesProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
-class IncrementalCompilationK1JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+class IncrementalCompilationK1JvmMultiResourcesProjectIT : IncrementalCompilationJvmMultiProjectIT() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
@@ -521,7 +521,7 @@ class IncrementalCompilationOldICJvmMultiProjectWithoutPreciseBackupIT : Increme
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
-abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilationBaseIT() {
+abstract class BaseIncrementalCompilationMultiResourcesProjectIT : IncrementalCompilationBaseIT() {
 
     protected abstract val compileKotlinTaskName: String
 
