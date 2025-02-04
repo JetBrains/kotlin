@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-57166
+// IGNORE_PARTIAL_BODY_ANALYSIS
 
 // FILE: Modality.kt
 enum class Modality {
