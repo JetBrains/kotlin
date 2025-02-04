@@ -23755,6 +23755,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("javaOverrideOfExtensionProperty.kt")
+      public void testJavaOverrideOfExtensionProperty() {
+        runTest("compiler/testData/diagnostics/tests/j+k/javaOverrideOfExtensionProperty.kt");
+      }
+
+      @Test
       @TestMetadata("javaStaticImport.kt")
       public void testJavaStaticImport() {
         runTest("compiler/testData/diagnostics/tests/j+k/javaStaticImport.kt");
