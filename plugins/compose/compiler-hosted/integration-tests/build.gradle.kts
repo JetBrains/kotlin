@@ -27,11 +27,6 @@ kotlin {
 
     jvm()
 
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions {
-        languageVersion.set(KotlinVersion.KOTLIN_1_9)
-    }
-
     sourceSets {
         commonTest.dependencies {
             implementation(project(":kotlin-stdlib-common"))
