@@ -80,6 +80,12 @@ public class ClassicJvmIrSourceRangesTestGenerated extends AbstractClassicJvmIrS
   }
 
   @Test
+  @TestMetadata("kt63779_3.kt")
+  public void testKt63779_3() {
+    runTest("compiler/testData/ir/sourceRanges/kt63779_3.kt");
+  }
+
+  @Test
   @TestMetadata("multiLineCall.kt")
   public void testMultiLineCall() {
     runTest("compiler/testData/ir/sourceRanges/multiLineCall.kt");

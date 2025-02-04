@@ -1,0 +1,25 @@
+@0:0..7:0 FILE fqName:<root> fileName:/kt63779_3.kt
+  @0:0..6:1 FUN name:topLevelMethod visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Unit
+    @0:19..25 VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    @0:27..33 VALUE_PARAMETER name:y index:1 type:kotlin.Int
+    @0:35..6:1 BLOCK_BODY
+      @1:4..2:13 WHEN type=kotlin.Unit origin=IF
+        @1:4..2:13 BRANCH
+          @1:7..12 CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
+            @1:7..8 GET_VAR 'x: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+            @1:11..12 GET_VAR 'y: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+          @1:4..2:13 BLOCK type=kotlin.Unit origin=IF
+        @1:4..2:13 BRANCH
+          @1:4..2:13 CONST Boolean type=kotlin.Boolean value=true
+          @2:9..13 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            @2:9..13 CONST Boolean type=kotlin.Boolean value=true
+      @4:4..5:13 WHEN type=kotlin.Unit origin=IF
+        @4:4..5:13 BRANCH
+          @4:7..12 CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
+            @4:7..8 GET_VAR 'x: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+            @4:11..12 GET_VAR 'y: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+          @4:4..5:13 BLOCK type=kotlin.Unit origin=IF
+        @4:4..5:13 BRANCH
+          @4:4..5:13 CONST Boolean type=kotlin.Boolean value=true
+          @5:9..13 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            @5:9..13 CONST Boolean type=kotlin.Boolean value=true
