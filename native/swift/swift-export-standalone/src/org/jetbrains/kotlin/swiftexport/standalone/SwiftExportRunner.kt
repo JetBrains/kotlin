@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
+import org.jetbrains.kotlin.sir.util.isVoid
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.createModuleWithScopeProviderFromBinary
@@ -328,42 +329,47 @@ private fun TranslationResult.writeModule(): SwiftExportModule {
 
 private object StandaloneSirTypeNamer : SirTypeNamer {
     override fun swiftFqName(type: SirType): String = type.swiftName
-    override fun kotlinFqName(type: SirType): String {
-        require(type is SirNominalType)
+    override fun kotlinFqName(type: SirType): String = when (type) {
+        is SirNominalType -> type.kotlinFqName()
+        is SirFunctionalType ->
+            "Function${type.parameterTypes.size}<${(type.parameterTypes + listOf(type.returnType)).joinToString { if (it.isVoid) "Unit" else "Long" } }>"
+        is SirErrorType -> error("Unexpected error type")
+        is SirExistentialType -> error("Unexpected existential type")
+        SirUnsupportedType -> error("Unexpected unsupported type")
+    }
 
-        return when(val declaration = type.typeDeclaration) {
-            KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
-            SirSwiftModule.string -> "kotlin.String"
+    private fun SirNominalType.kotlinFqName(): String = when(val declaration = typeDeclaration) {
+        KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
+        SirSwiftModule.string -> "kotlin.String"
 
-            SirSwiftModule.bool -> "Boolean"
+        SirSwiftModule.bool -> "Boolean"
 
-            SirSwiftModule.int8 -> "Byte"
-            SirSwiftModule.int16 -> "Short"
-            SirSwiftModule.int32 -> "Int"
-            SirSwiftModule.int64 -> "Long"
+        SirSwiftModule.int8 -> "Byte"
+        SirSwiftModule.int16 -> "Short"
+        SirSwiftModule.int32 -> "Int"
+        SirSwiftModule.int64 -> "Long"
 
-            SirSwiftModule.uint8 -> "UByte"
-            SirSwiftModule.uint16 -> "UShort"
-            SirSwiftModule.uint32 -> "UInt"
-            SirSwiftModule.uint64 -> "ULong"
+        SirSwiftModule.uint8 -> "UByte"
+        SirSwiftModule.uint16 -> "UShort"
+        SirSwiftModule.uint32 -> "UInt"
+        SirSwiftModule.uint64 -> "ULong"
 
-            SirSwiftModule.double -> "Double"
-            SirSwiftModule.float -> "Float"
+        SirSwiftModule.double -> "Double"
+        SirSwiftModule.float -> "Float"
 
-            SirSwiftModule.utf16CodeUnit -> "Char"
+        SirSwiftModule.utf16CodeUnit -> "Char"
 
-            SirSwiftModule.uint -> "UInt"
+        SirSwiftModule.uint -> "UInt"
 
-            SirSwiftModule.void -> "Void"
-            SirSwiftModule.never -> "Nothing"
+        SirSwiftModule.void -> "kotlin.Unit"
+        SirSwiftModule.never -> "Nothing"
 
-            SirSwiftModule.array -> "kotlin.collections.List<${kotlinFqName(type.typeArguments.first())}>"
-            SirSwiftModule.set -> "kotlin.collections.Set<${kotlinFqName(type.typeArguments.first())}>"
-            SirSwiftModule.dictionary -> "kotlin.collections.Map<${kotlinFqName(type.typeArguments[0])}, ${kotlinFqName(type.typeArguments[1])}>"
+        SirSwiftModule.array -> "kotlin.collections.List<${kotlinFqName(typeArguments.first())}>"
+        SirSwiftModule.set -> "kotlin.collections.Set<${kotlinFqName(typeArguments.first())}>"
+        SirSwiftModule.dictionary -> "kotlin.collections.Map<${kotlinFqName(typeArguments[0])}, ${kotlinFqName(typeArguments[1])}>"
 
-            SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
+        SirSwiftModule.optional -> kotlinFqName(typeArguments.first()) + "?"
 
-            else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
-        }
+        else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
     }
 }

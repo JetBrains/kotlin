@@ -10,3 +10,4 @@ NSNumber * (^__root___foo_1())(void);
 NSNumber * (^__root___foo_2())(void);
 
 void __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__(NSNumber * (^block)(void));
+

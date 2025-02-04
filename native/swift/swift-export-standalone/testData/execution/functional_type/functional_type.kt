@@ -29,11 +29,30 @@ fun call_saved_closure() = closure_property()
 
 // FILE: produce_func_with_ref.kt
 
-class Foo(var i: Int)
-class Bar(val left: Foo, val right: Foo)
-
 fun produce_func_with_ref_id(): (Foo) -> Foo = {
     it.i += 2
     it
 }
 fun produce_func_with_ref_zip(): (Foo, Foo) -> Bar = { l, r -> Bar(l, r) }
+
+// FILE: consume_func_with_ref.kt
+
+private lateinit var f: Foo
+
+fun save(foo: Foo) { f = foo }
+fun read_foo(): Foo { return f }
+
+fun consume_closure_with_ref_id(block: (Foo) -> Foo): Foo {
+    return block(f)
+}
+fun consume_closure_with_ref_zip(block: (Foo) -> Foo): Bar {
+    return Bar(f, block(f))
+}
+
+lateinit var refId_closure_property: (Foo) -> Foo
+fun call_saved_refId_closure(f: Foo) = refId_closure_property(f)
+
+// FILE: data.kt
+
+class Foo(var i: Int)
+class Bar(val left: Foo, val right: Foo)

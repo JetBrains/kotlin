@@ -782,7 +782,16 @@ private sealed class Bridge(
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return "interpretObjCPointer<Function0<kotlin.Unit>>($valueExpression)"
+                    val argsInClosure = cType.parameters.mapIndexed { idx, el -> "arg${idx}" }.takeIf { it.isNotEmpty() }
+                    val defineArgs = argsInClosure?.let { "${it.joinToString { "${it}: Foo" } } ->" } // wrong const
+                    val callArgs = argsInClosure?.let { it.joinToString { "kotlin.native.internal.ref.createRetainedExternalRCRef(${it}).toLong()" } } ?: ""
+                    return """{ 
+                    |    val receivedBlock = interpretObjCPointer<${typeNamer.kotlinFqName(swiftType)}>($valueExpression);
+                    |    { ${defineArgs ?: ""} ${
+                        if (swiftType.returnType.isVoid) "receivedBlock(${callArgs})"
+                        else "receivedBlock(${callArgs}).toCPointer<CPointed>()!!.asStableRef<${typeNamer.kotlinFqName(swiftType.returnType)}>().get()"
+                    } }
+                    |}()""".replaceIndentByMargin("    ")
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
@@ -802,11 +811,16 @@ private sealed class Bridge(
 
         override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val argsInClosure = List(cType.parameters.size) { idx -> "arg${idx}" }.takeIf { it.isNotEmpty() }
+                val callArgs = swiftType.parameterTypes.mapIndexed { idx, el -> "${typeNamer.swiftFqName(el)}(__externalRCRef: arg${idx}!.uintValue)" }.joinToString()
+                val defineArgs = argsInClosure?.let { "${it.joinToString()} in " } ?: ""
                 return """{
                 |    let originalBlock = $valueExpression
-                |    return {
-                |        originalBlock()
-                |        return 0
+                |    return { $defineArgs 
+                |        ${
+                    if (swiftType.returnType.isVoid) "originalBlock($callArgs); return 0"
+                    else "return NSNumber(value: originalBlock($callArgs).__externalRCRef())"
+                }
                 |    }
                 |}()""".trimMargin()
             }
@@ -818,10 +832,9 @@ private sealed class Bridge(
                 return """{
                 |    let nativeBlock = $valueExpression
                 |    return { $defineArgs
-                |        let result = nativeBlock!($callArgs)
-                |        return ${
-                    if (swiftType.returnType.isVoid) "()"
-                    else bridgeType(swiftType.returnType).inSwiftSources.kotlinToSwift(typeNamer, "result!.uintValue")
+                |        ${
+                    if (swiftType.returnType.isVoid) "nativeBlock!($callArgs)"
+                    else "return " + bridgeType(swiftType.returnType).inSwiftSources.kotlinToSwift(typeNamer, "nativeBlock!($callArgs)!.uintValue")
                 }
                 |    }
                 |}()""".trimMargin()
@@ -923,3 +936,11 @@ private val kotlinKeywords = setOf(
     "annotation", "data", "inner", "tailrec", "operator", "inline", "infix", "external", "suspend", "override", "abstract", "final", "open",
     "const", "lateinit", "vararg", "noinline", "crossinline", "reified", "expect", "actual"
 )
+
+private fun foo() {
+    val f = {
+        println("some logging");
+        { println("closure called") }
+    }()
+    f()
+}

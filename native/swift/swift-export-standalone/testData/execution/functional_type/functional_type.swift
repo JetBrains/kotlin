@@ -56,6 +56,38 @@ func testProducingBlockWithRefType() throws {
     try assertEquals(actual: b.right.i, expected: 1)
 }
 
+func testConsumingBlockWithRefType() throws {
+    let foo = Foo(i: 0)
+
+    save(foo: foo)
+
+    var foo_to_receive: Foo? = nil
+    let f = consume_closure_with_ref_id { f in
+        foo_to_receive = f
+        save(foo: Foo(i: 5))
+        return read_foo()
+    }
+
+    try assertEquals(actual: foo, expected: foo_to_receive)
+    try assertEquals(actual: f.i, expected: 5)
+}
+
+func testSavedSwiftBlockWithRefOnKotlinSide() throws {
+    var f: Foo = Foo(i: 0)
+    refId_closure_property = { f in
+        return Foo(i: f.i + 2)
+    }
+    try assertEquals(actual: f.i, expected: 0)
+
+    var nf = call_saved_refId_closure(f: f)
+    try assertEquals(actual: f.i, expected: 0)
+    try assertFalse(f === nf)
+    try assertEquals(actual: nf.i, expected: 2)
+
+    nf = refId_closure_property(nf)
+    try assertEquals(actual: nf.i, expected: 4)
+}
+
 class Functional_typeTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -66,6 +98,8 @@ class Functional_typeTests : TestProvider {
             TestCase(name: "testCallingClosureSentToKotlin", method: withAutorelease(testCallingClosureSentToKotlin)),
             TestCase(name: "testSavedSwiftBlockOnKotlinSide", method: withAutorelease(testSavedSwiftBlockOnKotlinSide)),
             TestCase(name: "testProducingBlockWithRefType", method: withAutorelease(testProducingBlockWithRefType)),
+            TestCase(name: "testConsumingBlockWithRefType", method: withAutorelease(testConsumingBlockWithRefType)),
+            TestCase(name: "testSavedSwiftBlockWithRefOnKotlinSide", method: withAutorelease(testSavedSwiftBlockWithRefOnKotlinSide)),
         ]
     }
 }
