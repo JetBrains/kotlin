@@ -31,17 +31,17 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
      * The [mapper] must provide nodes of the same type that belong to this graph.
      */
     @CfgInternals
-    fun copyData(from: ControlFlowGraph, mapper: (CFGNode<*>) -> CFGNode<*>) {
+    fun copyData(from: ControlFlowGraph, mapper: ControlFlowNodeMapper) {
         /** Sic! [nodeCount] is intentionally ignored as it's incremented on node creation. See [CFGNode.id]. */
 
         if (from::nodes.isInitialized) {
-            nodes = from.nodes.map(mapper)
+            nodes = from.nodes.map(mapper::get)
         }
         if (from::enterNode.isInitialized) {
-            enterNode = mapper(from.enterNode)
+            enterNode = mapper[from.enterNode]
         }
         if (from::exitNode.isInitialized) {
-            exitNode = mapper(from.exitNode)
+            exitNode = mapper[from.exitNode]
         }
     }
 
