@@ -5,7 +5,7 @@
     @0:35..6:1 BLOCK_BODY
       @1:4..2:13 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         @1:4..2:13 WHEN type=kotlin.Any origin=IF
-          @1:7..-1:-1 BRANCH
+          @1:7..12 BRANCH
             @1:7..12 CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
               @1:7..8 GET_VAR 'x: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
               @1:11..12 GET_VAR 'y: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
@@ -15,7 +15,7 @@
             @2:9..13 CONST Boolean type=kotlin.Boolean value=true
       @4:4..5:13 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         @4:4..5:13 WHEN type=kotlin.Any origin=IF
-          @4:7..-1:-1 BRANCH
+          @4:7..12 BRANCH
             @4:7..12 CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
               @4:7..8 GET_VAR 'x: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
               @4:11..12 GET_VAR 'y: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
