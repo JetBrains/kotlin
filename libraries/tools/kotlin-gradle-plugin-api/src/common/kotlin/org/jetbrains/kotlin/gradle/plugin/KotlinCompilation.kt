@@ -213,9 +213,10 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
      */
     @Deprecated(
         message = "Replaced with compileTaskProvider",
-        replaceWith = ReplaceWith("compileTaskProvider")
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
     )
-    val compileKotlinTaskProvider: TaskProvider<out KotlinCompileDeprecated<T>>
+    val compileKotlinTaskProvider: TaskProvider<out KotlinCompileDeprecated<KotlinCommonOptionsDeprecated>>
 
     /**
      * @suppress

@@ -25,8 +25,8 @@ kotlin {
         publishAllLibraryVariants()
         compilations.all {
             // for compatibility between 1.7.21 and 2.0+
-            compileKotlinTaskProvider.configure {
-                kotlinOptions.jvmTarget = "1.8"
+            compileTaskProvider.configure {
+                compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
             }
         }
     }

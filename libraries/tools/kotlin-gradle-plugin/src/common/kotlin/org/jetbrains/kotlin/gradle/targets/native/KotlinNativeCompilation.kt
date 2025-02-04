@@ -34,10 +34,14 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
     override val compileKotlinTask: KotlinNativeCompile
         get() = compilation.compileKotlinTask as KotlinNativeCompile
 
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTaskProvider: TaskProvider<out KotlinNativeCompile>
-        get() = compilation.compileKotlinTaskProvider as TaskProvider<out KotlinNativeCompile>
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = "Replaced with compileTaskProvider",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
+    override val compileKotlinTaskProvider: TaskProvider<KotlinCompile<KotlinCommonOptions>>
+        get() = compilation.compileKotlinTaskProvider
 
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<KotlinNativeCompile>
