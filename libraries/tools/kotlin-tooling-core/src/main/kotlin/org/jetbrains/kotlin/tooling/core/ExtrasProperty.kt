@@ -93,21 +93,21 @@ DEPRECATED APIs
  */
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR")
 val <T : Any> Extras.Key<T>.readProperty get() = extrasReadProperty(this)
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR")
 fun <T : Any> Extras.Key<T>.factoryProperty(factory: () -> T) = extrasFactoryProperty(this, factory)
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR")
@@ -115,7 +115,7 @@ fun <Receiver : HasMutableExtras, T : Any> Extras.Key<Optional<T>>.nullableLazyP
     extrasNullableLazyProperty(this, factory)
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR")
@@ -124,7 +124,7 @@ fun <T : Any> extrasReadProperty(key: Extras.Key<T>): ExtrasReadOnlyProperty<T> 
 }
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR")
@@ -134,7 +134,7 @@ fun <T : Any> extrasFactoryProperty(key: Extras.Key<T>, factory: () -> T) = obje
 }
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR")
@@ -147,7 +147,7 @@ fun <Receiver : HasMutableExtras, T : Any> extrasNullableLazyProperty(
     }
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR", "UNUSED")
@@ -156,7 +156,7 @@ inline fun <reified T : Any> extrasReadProperty(name: String? = null) =
 
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR", "UNUSED")
@@ -164,7 +164,7 @@ inline fun <reified T : Any> extrasFactoryProperty(name: String? = null, noinlin
     extrasFactoryProperty(extrasKeyOf(name), factory)
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
@@ -173,7 +173,7 @@ inline fun <Receiver : HasMutableExtras, reified T : Any> extrasNullableLazyProp
 ) = extrasNullableLazyProperty(extrasKeyOf(name), factory)
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 interface ExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyProperty<HasExtras, T?> {
@@ -188,7 +188,7 @@ interface ExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyProperty<
 }
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 interface ExtrasFactoryProperty<T : Any> : ExtrasProperty<T>, ReadWriteProperty<HasMutableExtras, T> {
@@ -204,7 +204,7 @@ interface ExtrasFactoryProperty<T : Any> : ExtrasProperty<T>, ReadWriteProperty<
 }
 
 @Deprecated(
-    "Scheduled for removal in Kotlin 2.2",
+    "Scheduled for removal in Kotlin 2.3",
     level = DeprecationLevel.ERROR,
 )
 interface NullableExtrasLazyProperty<Receiver : HasMutableExtras, T : Any> : ExtrasProperty<Optional<T>>, ReadOnlyProperty<Receiver, T?> {
