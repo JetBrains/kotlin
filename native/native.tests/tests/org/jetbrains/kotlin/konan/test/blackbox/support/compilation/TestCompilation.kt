@@ -271,6 +271,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
+        allocator.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         applyK2MPPArgs(this)
     }
 
