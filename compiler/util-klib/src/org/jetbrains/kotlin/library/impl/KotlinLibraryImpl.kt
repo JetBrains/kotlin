@@ -92,6 +92,11 @@ abstract class IrLibraryImpl(
             it.irDir.exists
         }
     }
+    override val hasFileEntries: Boolean by lazy {
+        access.inPlace { it: IrKotlinLibraryLayout ->
+            it.irFileEntries.exists
+        }
+    }
 }
 
 class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibraryImpl(_access) {
