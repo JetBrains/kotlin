@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
-class ResourcesProjectIsolationIT : KGPBaseTest() {
+class ProjectIsolationIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.enableIsolatedProjects()
