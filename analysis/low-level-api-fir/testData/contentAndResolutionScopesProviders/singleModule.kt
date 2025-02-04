@@ -3,6 +3,9 @@
 
 
 // MODULE: MAIN_REFINER
+// FILE: a.kt
+// SHADOWED
+
 // FILE: b.kt
 // SHADOWED
 

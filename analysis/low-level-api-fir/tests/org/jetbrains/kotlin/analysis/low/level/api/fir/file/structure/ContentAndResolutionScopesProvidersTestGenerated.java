@@ -42,6 +42,12 @@ public class ContentAndResolutionScopesProvidersTestGenerated extends AbstractCo
   }
 
   @Test
+  @TestMetadata("shadowingInsideSingleModule.kt")
+  public void testShadowingInsideSingleModule() {
+    runTest("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders/shadowingInsideSingleModule.kt");
+  }
+
+  @Test
   @TestMetadata("singleFile.kt")
   public void testSingleFile() {
     runTest("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders/singleFile.kt");
