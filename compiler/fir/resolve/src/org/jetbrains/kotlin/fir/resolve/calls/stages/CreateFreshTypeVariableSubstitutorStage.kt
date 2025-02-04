@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.renderWithType
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -36,14 +35,13 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val declaration = candidate.symbol.fir
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-        val csBuilder = candidate.system.getBuilder()
-        val scopeSession = context.bodyResolveComponents.scopeSession
-        val (substitutor, freshVariables) =
-            createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder, context.session, scopeSession)
-        if (freshVariables.isEmpty()) {
+        if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {
             candidate.initializeSubstitutorAndVariables(ConeSubstitutor.Empty, emptyList())
             return
         }
+        val csBuilder = candidate.system.getBuilder()
+        val (substitutor, freshVariables) =
+            createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder, context.session)
         candidate.initializeSubstitutorAndVariables(substitutor, freshVariables)
 
         // bad function -- error on declaration side
@@ -180,41 +178,27 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     }
 }
 
-private val FirDeclaration.typeParameters: List<FirTypeParameterRef>
-    get() = (this as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
-
 private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
-    declaration: FirDeclaration,
+    declaration: FirTypeParameterRefsOwner,
     csBuilder: ConstraintSystemOperation,
     session: FirSession,
-    scopeSession: ScopeSession,
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
-    // todo it probably shouldn't be here. Dirty prototype hack?
-    //   Alternatives:
-    //   - Create innerCS in ArgumentCheckingProcessor
-    //   - Probably, moving contents of ArgumentCheckingProcessor.resolveArgumentExpression to "completion" might help?
-    val incorporatedCollectionOperatorOfTypeParams = (declaration as? FirFunction)?.valueParameters.orEmpty()
-        .mapNotNull { resolveVarargOfMemberFunction(it.returnTypeRef.coneType, session, scopeSession) }
-        .flatMap { it.typeParameterSymbols }
-    val declarationOwnTypeParams = declaration.typeParameters.map { it.symbol }
-    val typeParameters = declarationOwnTypeParams
 
-    val freshTypeVariables = typeParameters.map(::ConeTypeParameterBasedTypeVariable)
-    val freshIncorporatedOperatorFunOfTypeVariables = incorporatedCollectionOperatorOfTypeParams.map(::ConeTypeParameterBasedTypeVariable)
+    val typeParameters = declaration.typeParameters
 
-    val toFreshVariables = substitutorByMap(
-        (freshTypeVariables + freshIncorporatedOperatorFunOfTypeVariables).associate { it.typeParameterSymbol to it.defaultType },
-        session
-    ).let {
-        val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorSubstitutor
-        if (typeAliasConstructorSubstitutor != null) {
-            ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
-        } else {
-            it
+    val freshTypeVariables = typeParameters.map { ConeTypeParameterBasedTypeVariable(it.symbol) }
+
+    val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, session)
+        .let {
+            val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorSubstitutor
+            if (typeAliasConstructorSubstitutor != null) {
+                ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
+            } else {
+                it
+            }
         }
-    }
 
-    for (freshVariable in freshTypeVariables + freshIncorporatedOperatorFunOfTypeVariables) {
+    for (freshVariable in freshTypeVariables) {
         csBuilder.registerVariable(freshVariable)
     }
 
@@ -239,7 +223,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         val typeParameter = typeParameters[index]
         val freshVariable = freshTypeVariables[index]
 
-        val parameterSymbolFromExpandedClass = typeParameter.fir.getTypeParameterFromExpandedClass(index, session)
+        val parameterSymbolFromExpandedClass = typeParameter.symbol.fir.getTypeParameterFromExpandedClass(index, session)
 
         for (upperBound in parameterSymbolFromExpandedClass.symbol.resolvedBounds) {
             freshVariable.addSubtypeConstraint(upperBound.coneType/*, position*/)
