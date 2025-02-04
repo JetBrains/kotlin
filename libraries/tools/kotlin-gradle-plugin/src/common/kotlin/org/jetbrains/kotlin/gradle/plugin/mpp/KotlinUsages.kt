@@ -146,27 +146,6 @@ object KotlinUsages {
         }
     }
 
-    private class KotlinResourcesCompatibility : AttributeCompatibilityRule<Usage> {
-        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
-            /**
-             * When resolving resources using KotlinTarget.resourcesConfiguration, if a dependency doesn't have resources variant, we must
-             * take dependencies from the klib variant because they might contain transitive resources variants.
-             * */
-            val consumerValueName = consumerValue?.name
-            val producerValueName = producerValue?.name
-            if (consumerValueName == null || producerValueName == null) return
-
-            if (
-                mapOf(
-                    KOTLIN_RESOURCES to KOTLIN_API,
-                    KOTLIN_RESOURCES_JS to KOTLIN_RUNTIME,
-                )[consumerValueName] == producerValueName
-            ) {
-                compatible()
-            }
-        }
-    }
-
     private class KotlinCinteropDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
             if (consumerValue?.name == KOTLIN_CINTEROP) {
@@ -226,7 +205,6 @@ object KotlinUsages {
     internal fun setupAttributesMatchingStrategy(
         attributesSchema: AttributesSchema,
         isKotlinGranularMetadata: Boolean,
-        isKotlinResourcesCompatibilityRuleEnabled: Boolean,
     ) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
             strategy.compatibilityRules.add(KotlinUsagesCompatibility::class.java)
@@ -238,11 +216,6 @@ object KotlinUsages {
             if (isKotlinGranularMetadata) {
                 strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
                 strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
-            }
-
-            // Only enable resources compatibility rule when resources configuration is used, so that for variant reselection klibs aren't selected
-            if (isKotlinResourcesCompatibilityRuleEnabled) {
-                strategy.compatibilityRules.add(KotlinResourcesCompatibility::class.java)
             }
         }
     }

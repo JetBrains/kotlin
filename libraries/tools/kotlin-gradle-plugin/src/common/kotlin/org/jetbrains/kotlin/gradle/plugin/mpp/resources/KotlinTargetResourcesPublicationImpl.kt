@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.ResolveResourcesFromDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -129,7 +129,6 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     override fun resolveResources(target: KotlinTarget): Provider<File> {
         validateTargetResourcesAreResolvable(target)
-        validateGradleVersionIsCompatibleWithResolutionStrategy(target.name)
 
         val aggregateResourcesTaskName = target.disambiguateName("AggregateResources")
         project.locateTask<AggregateResourcesTask>(aggregateResourcesTaskName)?.let {
@@ -170,15 +169,10 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     ) {
         resolveResourcesFromDependenciesTask.configure {
             it.filterResourcesByExtension.set(
-                project.kotlinPropertiesProvider
-                    .mppFilterResourcesByExtension
-                    .map { explicitlyEnabled ->
-                        // Always filter resources configuration because it resolves klibs for dependency graph inheritance
-                        explicitlyEnabled || project.kotlinPropertiesProvider.mppResourcesResolutionStrategy == KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
-                    }
+                project.kotlinPropertiesProvider.mppFilterResourcesByExtension
             )
             it.archivesFromDependencies.from(
-                project.kotlinPropertiesProvider.mppResourcesResolutionStrategy.resourceArchives(compilation)
+                KotlinTargetResourcesResolution.resourceArchives(compilation)
             )
             it.outputDirectory.set(
                 project.layout.buildDirectory.dir("$MULTIPLATFORM_RESOURCES_DIRECTORY/resources-from-dependencies/${targetName}")
@@ -205,20 +199,6 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     private fun validateTargetResourcesAreResolvable(target: KotlinTarget) {
         if (!canResolveResources(target)) {
             target.project.reportDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBeResolvedForTarget(target.name))
-        }
-    }
-
-    private fun validateGradleVersionIsCompatibleWithResolutionStrategy(targetName: String) {
-        if (project.kotlinPropertiesProvider.mppResourcesResolutionStrategy == KotlinTargetResourcesResolutionStrategy.VariantReselection) {
-            if (project.gradleVersion < minimumGradleVersionForVariantReselection) {
-                project.reportDiagnosticOncePerBuild(
-                    KotlinToolingDiagnostics.ResourceMayNotBeResolvedWithGradleVersion(
-                        targetName,
-                        GradleVersion.current().toString(),
-                        minimumGradleVersionForVariantReselection.toString(),
-                    )
-                )
-            }
         }
     }
 

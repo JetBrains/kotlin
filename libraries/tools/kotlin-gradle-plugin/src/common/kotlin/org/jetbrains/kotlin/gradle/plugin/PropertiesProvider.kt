@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -197,15 +196,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val mppResourcesPublication: Boolean
         get() = this.booleanProperty(KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION) ?: true
 
-    val mppResourcesResolutionStrategy: KotlinTargetResourcesResolutionStrategy
-        get() = this.get(KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY)?.let {
-            val strategy = KotlinTargetResourcesResolutionStrategy.fromProperty(it)
-            if (strategy == null) {
-                project.reportDiagnostic(KotlinToolingDiagnostics.UnknownValueProvidedForResourcesStrategy(it))
-            }
-            return@let strategy
-        } ?: KotlinTargetResourcesResolutionStrategy.VariantReselection
-
+    // This property exists for cases like KT-68095
     val mppFilterResourcesByExtension: Provider<Boolean>
         get() = project.providers
             .provider<Boolean> {

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.overriddenGradleVersionForTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -166,35 +166,10 @@ class KotlinTargetResourcesPublicationImplTests {
     }
 
     @Test
-    fun `test resolution - emits diagnostic in first resolving project with variant reselection - when Gradle version is below 7_6`() {
-        val rootProject = buildProjectWithMPP(
-            projectBuilder = { withName("root") },
-            preApplyCode = {
-                setMppResourcesResolutionStrategy(KotlinTargetResourcesResolutionStrategy.VariantReselection)
-                overriddenGradleVersionForTests = GradleVersion.version("7.5.1")
-            },
-        ) { kotlin { linuxArm64() } }
-        val childProject = buildProjectWithMPP(
-            projectBuilder = { withParent(rootProject).withName("child") },
-            preApplyCode = {
-                setMppResourcesResolutionStrategy(KotlinTargetResourcesResolutionStrategy.VariantReselection)
-                overriddenGradleVersionForTests = GradleVersion.version("7.5.1")
-            },
-        ) { kotlin { linuxArm64() } }
-
-        childProject.multiplatformExtension.resourcesPublicationExtension?.resolveResources(childProject.multiplatformExtension.linuxArm64())
-        rootProject.multiplatformExtension.resourcesPublicationExtension?.resolveResources(rootProject.multiplatformExtension.linuxArm64())
-
-        childProject.assertContainsDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBeResolvedWithGradleVersion)
-        rootProject.assertNoDiagnostics(KotlinToolingDiagnostics.ResourceMayNotBeResolvedWithGradleVersion)
-    }
-
-    @Test
     fun `test resolution - doesn't emit diagnostic with variant reselection - when Gradle version is above 7_6`() {
         buildProjectWithMPP(
             preApplyCode = { overriddenGradleVersionForTests = GradleVersion.version("7.6.1") }
         ) {
-            setMppResourcesResolutionStrategy(KotlinTargetResourcesResolutionStrategy.VariantReselection)
             kotlin {
                 linuxArm64()
                 resourcesPublicationExtension?.resolveResources(linuxArm64())

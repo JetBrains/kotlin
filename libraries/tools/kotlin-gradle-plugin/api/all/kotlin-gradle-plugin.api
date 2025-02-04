@@ -1883,20 +1883,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTarget
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy : java/lang/Enum {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy$Companion;
-	public static final field ResourcesConfiguration Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public static final field VariantReselection Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public final fun getPropertyName ()Ljava/lang/String;
-	public final fun resourceArchives (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/gradle/api/file/FileCollection;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy$Companion {
-	public final fun fromProperty (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/sources/AbstractKotlinSourceSet : org/jetbrains/kotlin/gradle/plugin/sources/InternalKotlinSourceSet {
 	public fun <init> ()V
 	public fun addCustomSourceFilesExtensions (Ljava/util/List;)V
