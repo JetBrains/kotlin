@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.common.checkers
 
 import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker.InlineFunctionInfo
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.types.IrType
@@ -30,6 +30,7 @@ class IrInlineDeclarationChecker(
         val file: IrFile,
         val insideEffectivelyPrivateDeclaration: Boolean = false,
         val inlineFunction: IrFunction? = null,
+        val inliningPath: List<IrInlinedFunctionBlock> = listOf()
     ) {
         fun insideDeclaration(declaration: IrDeclaration, inlineFunction: IrFunction? = this.inlineFunction): InlineFunctionInfo {
             if (this.inlineFunction != null) return this
@@ -49,11 +50,20 @@ class IrInlineDeclarationChecker(
             klass.isEffectivelyPrivate() &&
             klass.parents.none { it == inlineFunction } // local/private classed declared in the current inline function are legal.
         ) {
-            diagnosticReporter.at(container, data.file).report(
-                SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
-                inlineFunction,
-                klass,
-            )
+            if (data.inliningPath.isNotEmpty()) {
+                diagnosticReporter.at(data.inliningPath.first(), data.file).report(
+                    SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
+                    inlineFunction,
+                    klass,
+                    data.inliningPath
+                )
+            } else {
+                diagnosticReporter.at(container, data.file).report(
+                    SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
+                    inlineFunction,
+                    klass,
+                )
+            }
         }
     }
 
@@ -67,6 +77,10 @@ class IrInlineDeclarationChecker(
 
     override fun visitClass(declaration: IrClass, data: InlineFunctionInfo?) {
         declaration.acceptChildren(this, data?.insideDeclaration(declaration))
+    }
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: InlineFunctionInfo?) {
+        inlinedBlock.acceptChildren(this, data?.copy(inliningPath = data.inliningPath + inlinedBlock))
     }
 
     override fun visitFunction(declaration: IrFunction, data: InlineFunctionInfo?) {

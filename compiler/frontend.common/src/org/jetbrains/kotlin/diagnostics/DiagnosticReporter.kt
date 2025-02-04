@@ -74,6 +74,10 @@ open class KtDiagnosticReporterWithContext(
             report(factory.chooseFactory(this), a, b)
         }
 
+        fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactoryForDeprecation3<A, B, C>, a: A, b: B, c: C) {
+            report(factory.chooseFactory(this), a, b, c)
+        }
+
         fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C) {
             sourceElement?.let {
                 reportOn(it, factory, a, b, c, this)

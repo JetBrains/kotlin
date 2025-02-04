@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/compilationErrorExposureOfPrivateTypes.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
+-Xsuppress-warning=NOTHING_TO_INLINE
+-XXLanguage\:+IrInlinerBeforeKlibSerialization

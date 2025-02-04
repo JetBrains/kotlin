@@ -1,45 +1,45 @@
-/privateTypesInsideInternalInlineFunctionError.kt:32:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:32:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:32:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:32:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:33:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:33:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:34:5: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
+/privateTypesInsideInternalInlineFunctionError.kt:34:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:35:5: error: Inline function accesses a declaration with narrower visibility: local final class `<no name provided>` defined in makeLocal
+/privateTypesInsideInternalInlineFunctionError.kt:35:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:36:5: error: Inline function accesses a declaration with narrower visibility: local final inner class Inner defined in makeEffectivelyPrivateLocal.`<no name provided>`
+/privateTypesInsideInternalInlineFunctionError.kt:36:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:39:19: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:39:19: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:40:5: error: Inline function accesses a declaration with narrower visibility: context(kotlin.Int) private final class WithContext defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:40:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:40:23: error: Inline function accesses a declaration with narrower visibility: context(kotlin.Int) private final class WithContext defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:40:23: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:41:5: error: Inline function accesses a declaration with narrower visibility: context(kotlin.Int) private final class WithContext defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:41:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:42:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:42:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:43:5: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
+/privateTypesInsideInternalInlineFunctionError.kt:43:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:44:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:44:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:50:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:50:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:50:21: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:50:21: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:51:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:51:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:52:13: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
+/privateTypesInsideInternalInlineFunctionError.kt:52:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:53:13: error: Inline function accesses a declaration with narrower visibility: local final class `<no name provided>` defined in makeLocal
+/privateTypesInsideInternalInlineFunctionError.kt:53:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:55:13: error: Inline function accesses a declaration with narrower visibility: local final inner class Inner defined in makeEffectivelyPrivateLocal.`<no name provided>`
+/privateTypesInsideInternalInlineFunctionError.kt:55:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:57:27: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:57:27: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:58:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:58:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:59:13: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
+/privateTypesInsideInternalInlineFunctionError.kt:59:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:60:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
+/privateTypesInsideInternalInlineFunctionError.kt:60:13: error: Public-API inline function accesses a non Public-API declaration

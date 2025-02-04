@@ -1876,6 +1876,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/compilationErrorConstDivByZero.args");
     }
 
+    @TestMetadata("compilationErrorExposureOfPrivateTypes.args")
+    public void testCompilationErrorExposureOfPrivateTypes() {
+      runTest("compiler/testData/cli/js/compilationErrorExposureOfPrivateTypes.args");
+    }
+
     @TestMetadata("compilationErrorK2.args")
     public void testCompilationErrorK2() {
       runTest("compiler/testData/cli/js/compilationErrorK2.args");

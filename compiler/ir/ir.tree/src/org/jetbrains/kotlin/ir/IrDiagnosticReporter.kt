@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext.Diagnost
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 
@@ -41,5 +42,9 @@ object IrDiagnosticRenderers {
             is IrProperty -> "property"
             else -> "declaration"
         }
+    }
+
+    val DECLARATION_KIND_AND_NAME = Renderer<IrDeclaration> { declaration ->
+        DECLARATION_KIND.render(declaration) + " " + (declaration as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString()
     }
 }
