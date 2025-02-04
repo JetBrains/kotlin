@@ -231,10 +231,17 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         }
 
         if (configurationKind.withRuntime) {
-            configuration.configureStandardLibs(
-                testServices.standardLibrariesPathProvider,
-                K2JVMCompilerArguments().also { it.noReflect = true }
-            )
+            if (testServices.cliBasedFacadesEnabled) {
+                val provider = testServices.standardLibrariesPathProvider
+                val isJava9Module = module.isJava9Module
+                configuration.addModularRootIfNotNull(isJava9Module, "kotlin.stdlib", provider.runtimeJarForTests())
+                configuration.addModularRootIfNotNull(isJava9Module, "kotlin.script.runtime", provider.scriptRuntimeJarForTests())
+            } else {
+                configuration.configureStandardLibs(
+                    testServices.standardLibrariesPathProvider,
+                    K2JVMCompilerArguments().also { it.noReflect = true }
+                )
+            }
         }
         configuration.addJvmClasspathRoots(getLibraryFilesExceptRealRuntime(testServices, configurationKind, module.directives))
 
@@ -399,8 +406,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         }
     }
 
+    private val TestModule.isJava9Module: Boolean
+        get() = files.any(TestFile::isModuleInfoJavaFile) || FORCE_COMPILE_AS_JAVA_MODULE in directives
+
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
-        val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile) || FORCE_COMPILE_AS_JAVA_MODULE in module.directives
+        val isJava9Module = module.isJava9Module
         for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
             if (isJava9Module) {
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(dependency))
