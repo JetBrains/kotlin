@@ -1,3 +1,4 @@
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 warning: class org.test.NotAnAnnotation1 is not an opt-in requirement marker
 warning: class org.test.NotAnAnnotation2 is not an opt-in requirement marker
 OK

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.konan.test.blackbox.toOutput
+import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
@@ -80,9 +81,16 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
         )
 
         val expectedOutput = rootDir.resolve("output.txt")
-        KotlinTestUtils.assertEqualsToFile(expectedOutput, compilationResult.toOutput())
+        KotlinTestUtils.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCompilationOutput())
 
         compareManifests(compilationResult, rootDir.resolve("manifest"))
+    }
+
+    fun String.sanitizeCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->
+        when {
+            DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX.matches(line) -> ""
+            else -> line
+        }
     }
 
     companion object {

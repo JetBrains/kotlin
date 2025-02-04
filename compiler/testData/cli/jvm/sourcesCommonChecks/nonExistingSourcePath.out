@@ -1,2 +1,3 @@
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 error: source file or directory not found: not/existing/path
 COMPILATION_ERROR

@@ -1,3 +1,4 @@
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 warning: opt-in requirement marker org.test.Unresolved1 is unresolved. Please make sure it's present in the module dependencies
 warning: opt-in requirement marker org.test.Unresolved2 is unresolved. Please make sure it's present in the module dependencies
 OK

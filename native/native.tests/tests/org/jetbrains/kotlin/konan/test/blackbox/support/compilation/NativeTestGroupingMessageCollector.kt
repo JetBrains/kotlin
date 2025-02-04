@@ -72,6 +72,7 @@ internal class NativeTestGroupingMessageCollector(
                     || isPartialLinkageWarning(message)
                     || isKlibResolver(message)
                     || isContextReceiversWarning(message)
+                    || isK1LanguageVersionWarning(message)
                 -> {
                 // These warnings are known and should not be reported as errors.
                 severity
@@ -119,6 +120,8 @@ internal class NativeTestGroupingMessageCollector(
 
     private fun isContextReceiversWarning(message: String): Boolean = message.startsWith(CONTEXT_RECEIVERS_WARNING_PREFIX)
 
+    private fun isK1LanguageVersionWarning(message: String): Boolean = message.matches(K1_LANGUAGE_VERSIONS_WARNING_REGEX)
+
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
     companion object {
@@ -129,6 +132,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val KLIB_RESOLVER_WARNING_PREFIX = "KLIB resolver: "
         private const val CONTEXT_RECEIVERS_WARNING_PREFIX = "Experimental context receivers are superseded by context parameters"
 
+        private val K1_LANGUAGE_VERSIONS_WARNING_REGEX = Regex("Language version 1.[0-9.]+ is deprecated and its support will be removed in a future version of Kotlin")
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")
 
         private fun parseLanguageFeatureArg(arg: String): String? =

@@ -1,3 +1,4 @@
+warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 error: pre-release declarations were found in dependencies. Please exclude the dependencies with such declarations and recompile with a release compiler, or use '-Xskip-prerelease-check' to suppress errors. Note that in the latter case the compiled declarations will also be marked as pre-release.
 $TESTDATA_DIR$/releaseCompilerAgainstPreReleaseLibrary/source.kt:5:16: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
 fun baz(param: A, nested: A.Nested) {
