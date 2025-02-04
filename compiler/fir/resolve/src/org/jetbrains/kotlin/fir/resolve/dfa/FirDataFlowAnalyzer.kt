@@ -64,14 +64,21 @@ class DataFlowAnalyzerContext private constructor(
      * Builds a deep independent copy of this [DataFlowAnalyzerContext].
      * The copy is not affected by changes in this context.
      */
-    fun createSnapshot(): DataFlowAnalyzerContext {
-        return DataFlowAnalyzerContext(
+    @OptIn(CfgInternals::class)
+    fun createSnapshot(): DataFlowAnalyzerContextSnapshot {
+        val copier = ControlFlowGraphCopier()
+
+        val snapshotContext = DataFlowAnalyzerContext(
             session,
-            graphBuilder = graphBuilder.createSnapshot(),
+            graphBuilder = graphBuilder.createSnapshot(copier),
             variableAssignmentAnalyzer = variableAssignmentAnalyzer.createSnapshot(),
             variableStorage = variableStorage.createSnapshot(),
             assignmentCounter = assignmentCounter
         )
+
+        copier.finish()
+
+        return DataFlowAnalyzerContextSnapshot(snapshotContext, copier.graphMapping)
     }
 
     /**
@@ -116,6 +123,17 @@ class DataFlowAnalyzerContext private constructor(
         return assignmentCounter++
     }
 }
+
+/**
+ * A deep independent snapshot of the DataFlowAnalyzerContext.
+ *
+ * @param context The snapshot itself.
+ * @param graphMapping A mapping between graphs in the original context and in the snapshot.
+ */
+class DataFlowAnalyzerContextSnapshot(
+    val context: DataFlowAnalyzerContext,
+    val graphMapping: Map<ControlFlowGraph, ControlFlowGraph>
+)
 
 @OptIn(DfaInternals::class)
 abstract class FirDataFlowAnalyzer(

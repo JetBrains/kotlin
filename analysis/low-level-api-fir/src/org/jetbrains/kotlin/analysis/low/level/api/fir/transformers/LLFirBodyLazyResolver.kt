@@ -47,9 +47,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
@@ -61,6 +63,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -178,7 +181,11 @@ private class FirPartialBodyExpressionResolveTransformer(
             // Also, restore the previous data flow analyzer state.
             // Here we create a snapshot right before the analysis, so if an exception occurs during this partial analysis,
             // we can still safely use the original 'dataFlowAnalyzerContext' from the 'analysisStateSnapshot' the next time.
-            context.dataFlowAnalyzerContext.resetFrom(resolveSnapshot.dataFlowAnalyzerContext.createSnapshot())
+            val originalContext = resolveSnapshot.dataFlowAnalyzerContext
+            val contextSnapshot = originalContext.createSnapshot()
+
+            patchControlFlowGraphReferences(block, state, contextSnapshot.graphMapping)
+            context.dataFlowAnalyzerContext.resetFrom(contextSnapshot.context)
 
             val isAnalyzedEntirely = transformStatementsPartially(
                 request, block, data,
@@ -192,6 +199,37 @@ private class FirPartialBodyExpressionResolveTransformer(
         }
 
         return block
+    }
+
+    /**
+     * Replaces references to stale [ControlFlowGraph]s in already analyzed [FirElement]s to one from the newly created snapshot.
+     * Patching does not require explicit locking as clients must only access the [ControlFlowGraph] nodes through
+     * the [LLPartialBodyAnalysisSnapshot].
+     */
+    private fun patchControlFlowGraphReferences(
+        block: FirBlock,
+        state: LLPartialBodyAnalysisState,
+        graphMapping: Map<ControlFlowGraph, ControlFlowGraph>,
+    ) {
+        val visitor = object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                if (element is FirControlFlowGraphOwner) {
+                    patchReference(element)
+                }
+                element.acceptChildren(this)
+            }
+
+            private fun patchReference(owner: FirControlFlowGraphOwner) {
+                val reference = owner.controlFlowGraphReference ?: return
+                val existingGraph = reference.controlFlowGraph ?: return
+                val newGraph = graphMapping[existingGraph] ?: return
+                owner.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(newGraph))
+            }
+        }
+
+        for (statement in block.statements.subList(0, state.analyzedFirStatementCount)) {
+            statement.accept(visitor)
+        }
     }
 
     private fun transformStatementsPartially(
