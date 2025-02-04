@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
+import org.jetbrains.kotlin.test.cli.CliDirectives
+import org.jetbrains.kotlin.test.cli.CliDirectives.ADDITIONAL_JAVA_MODULES
+import org.jetbrains.kotlin.test.cli.CliDirectives.FORCE_COMPILE_AS_JAVA_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
@@ -168,7 +171,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JvmEnvironmentConfigurationDirectives)
+        get() = listOf(JvmEnvironmentConfigurationDirectives, CliDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::CompiledClassesManager))
@@ -397,7 +400,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     }
 
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
-        val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile)
+        val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile) || FORCE_COMPILE_AS_JAVA_MODULE in module.directives
         for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
             if (isJava9Module) {
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(dependency))
@@ -410,6 +413,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         if (binaryFriends.isNotEmpty()) {
             put(JVMConfigurationKeys.FRIEND_PATHS, binaryFriends.toFileList().map { it.absolutePath })
         }
+        addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, module.directives[ADDITIONAL_JAVA_MODULES])
     }
 
     private fun List<DependencyDescription>.toFileList(): List<File> = this.flatMap(::convertDependencyToFileList)
