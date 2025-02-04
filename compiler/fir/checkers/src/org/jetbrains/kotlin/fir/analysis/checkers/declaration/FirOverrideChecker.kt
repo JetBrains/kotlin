@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -288,14 +287,21 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     ) {
         val ownDeprecation = this.getDeprecation(context.languageVersionSettings)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
-        for (overriddenSymbol in overriddenSymbols) {
-            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.languageVersionSettings)
-                ?: continue
-            val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden.all
-                ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
-                ?: continue
-            reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, overriddenSymbol, deprecationFromOverriddenSymbol, context)
-            return
+
+        val overriddenWithDeprecation = overriddenSymbols.associateWith { overriddenSymbol ->
+            overriddenSymbol.getDeprecation(context.languageVersionSettings)?.takeIf { it.isNotEmpty() }
+        }.filterValues { it != null }
+        /*
+         * If a function overrides both deprecated and non-deprecated function, it's ok to not have the @Deprecated annotation on override.
+         */
+        if (overriddenWithDeprecation.size == overriddenSymbols.size) {
+            for ((overriddenSymbol, deprecationInfoFromOverridden) in overriddenWithDeprecation) {
+                val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden!!.all
+                    ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
+                    ?: continue
+                reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, overriddenSymbol, deprecationFromOverriddenSymbol, context)
+                return
+            }
         }
 
         if (this is FirNamedFunctionSymbol) {

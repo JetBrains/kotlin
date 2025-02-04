@@ -48,19 +48,19 @@ open class EH : ErrorDeprecated, HiddenDeprecated {
 }
 
 open class NW : WarningDeprecated, NotDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
 
 open class NE : ErrorDeprecated, NotDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
 
 open class NH : HiddenDeprecated, NotDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
@@ -72,7 +72,7 @@ open class WEH: WarningDeprecated, ErrorDeprecated, HiddenDeprecated {
 }
 
 open class NWEH: NotDeprecated, WarningDeprecated, ErrorDeprecated, HiddenDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
 
     }
 }
@@ -95,7 +95,7 @@ interface EW2: E2, W2 {
 }
 
 interface HEW2: EW2, HiddenDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
     }
 }
 
