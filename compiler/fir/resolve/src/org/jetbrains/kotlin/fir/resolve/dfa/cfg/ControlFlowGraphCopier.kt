@@ -24,6 +24,7 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     private val cachedGraphs = HashMap<ControlFlowGraph, ControlFlowGraph>()
     private val cachedNodes = HashMap<CFGNode<*>, CFGNode<*>>()
 
+    private val unprocessedGraphs = ArrayDeque<ControlFlowGraph>()
     private val unprocessedNodes = ArrayDeque<CFGNode<*>>()
     private var isFinished = false
 
@@ -32,8 +33,8 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
      * Both [graph] and the resulting graph cannot be used until [finish] is called.
      */
     operator fun get(graph: ControlFlowGraph): ControlFlowGraph {
-        return cachedGraphs.computeIfAbsent(graph) { graph ->
-            ControlFlowGraph(graph.declaration, graph.name, graph.kind)
+        return getCached(graph, cachedGraphs, unprocessedGraphs) {
+            ControlFlowGraph(it.declaration, it.name, it.kind)
         }
     }
 
@@ -42,21 +43,31 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
      * Both [node] and the resulting node cannot be used until [finish] is called.
      */
     operator fun <E : FirElement, N : CFGNode<E>> get(node: N): N {
+        return getCached(node, cachedNodes, unprocessedNodes) {
+            it.accept(this, Unit)
+        }
+    }
+
+    /**
+     * Returns the existing entity of type [E] if it is already in the cache.
+     * Otherwise, creates a copy of [entity] using the [copier], and puts the copy both to the [entityCache] and to the [entityQueue].
+     */
+    private inline fun <I, E : I> getCached(entity: E, entityCache: HashMap<I, I>, entityQueue: ArrayDeque<I>, copier: (I) -> I): E {
         // Avoiding 'ConcurrentModificationException' with manual get/set
-        val cachedNode = cachedNodes[node]
+        val cachedNode = entityCache[entity]
         if (cachedNode != null) {
             @Suppress("UNCHECKED_CAST")
-            return cachedNode as N
+            return cachedNode as E
         }
 
-        val newNode = node.accept(this, Unit)
-        require(newNode != node)
+        val newEntity = copier(entity)
+        require(newEntity != entity)
 
-        cachedNodes[node] = newNode
-        unprocessedNodes.addLast(node)
+        entityCache[entity] = newEntity
+        entityQueue.addLast(entity)
 
         @Suppress("UNCHECKED_CAST")
-        return newNode as N
+        return newEntity as E
     }
 
     /**
@@ -74,14 +85,22 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
             isFinished = true
         }
 
-        for ((oldGraph, newGraph) in cachedGraphs) {
-            newGraph.copyData(from = oldGraph, ::get)
+        // Newly processed graphs may submit more nodes to the queue and vise versa
+        while (unprocessedGraphs.isNotEmpty() || unprocessedNodes.isNotEmpty()) {
+            postProcess(cachedGraphs, unprocessedGraphs, ControlFlowGraph::copyData)
+            postProcess(cachedNodes, unprocessedNodes, CFGNode<*>::copyData)
         }
+    }
 
-        while (unprocessedNodes.isNotEmpty()) {
-            val oldNode = unprocessedNodes.removeFirst()
-            val newNode = cachedNodes[oldNode] ?: error("Unprocessed node must be cached")
-            newNode.copyData(from = oldNode, ::get)
+    private fun <I> postProcess(
+        entityCache: HashMap<I, I>,
+        entityQueue: ArrayDeque<I>,
+        processor: (newEntity: I, oldEntity: I, mapper: (CFGNode<*>) -> CFGNode<*>) -> Unit,
+    ) {
+        while (entityQueue.isNotEmpty()) {
+            val oldEntity = entityQueue.removeFirst()
+            val newEntity = entityCache[oldEntity] ?: error("Unprocessed entity must be cached")
+            processor(newEntity, oldEntity, ::get)
         }
     }
 
