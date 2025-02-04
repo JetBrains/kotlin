@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.CustomOutputDiagnosticsConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyReversedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder
@@ -42,23 +43,14 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
             )
 
             useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
-            useMetaTestConfigurators(::ReversedDiagnosticsConfigurator)
+            useMetaTestConfigurators(::reversedDiagnosticsConfigurator)
         }
     }
 }
 
-internal class ReversedDiagnosticsConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
-    override fun transformTestDataPath(testDataFileName: String): String {
-        val separatorIndex = testDataFileName.lastIndexOf(File.separatorChar).takeIf { it != -1 } ?: 0
-        val dotSeparator = "."
-        val dotIndex = testDataFileName.indexOf(dotSeparator, separatorIndex)
-        if (dotIndex == -1) return testDataFileName
-
-        val reversedTestDataFileName = testDataFileName.replaceRange(dotIndex, dotIndex + dotSeparator.length, ".reversed.")
-        return if (File(reversedTestDataFileName).exists()) reversedTestDataFileName else testDataFileName
-    }
+internal fun reversedDiagnosticsConfigurator(testServices: TestServices): MetaTestConfigurator {
+    return CustomOutputDiagnosticsConfigurator(".reversed.", testServices)
 }
-
 
 class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
     override fun checkTestDataFile(testDataFile: File) {

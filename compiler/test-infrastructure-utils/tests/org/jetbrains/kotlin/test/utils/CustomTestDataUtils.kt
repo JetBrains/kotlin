@@ -12,8 +12,9 @@ private const val FIR_PREFIX = ".fir"
 private const val LATEST_LV_PREFIX = ".latestLV"
 private const val LL_FIR_PREFIX = ".ll"
 private const val REVERSED_PREFIX = ".reversed"
+private const val PARTIAL_BODY_PREFIX = ".partialBody"
 
-const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?\$"
+const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?\$"
 
 val File.isFirTestData: Boolean
     get() = isCustomTestDataWithPrefix(FIR_PREFIX)
@@ -26,6 +27,9 @@ val File.isLatestLVTestData: Boolean
  */
 val File.isLLFirTestData: Boolean
     get() = isCustomTestDataWithPrefix(LL_FIR_PREFIX)
+
+val File.isLLFirSpecializedTestData: Boolean
+    get() = isCustomTestDataWithPrefix(REVERSED_PREFIX) || isCustomTestDataWithPrefix(PARTIAL_BODY_PREFIX)
 
 val File.isCustomTestData: Boolean
     get() = isFirTestData || isLLFirTestData || isLatestLVTestData
@@ -40,6 +44,9 @@ val File.latestLVTestDataFile: File
 
 val File.reversedTestDataFile: File
     get() = getCustomTestDataFileWithPrefix(REVERSED_PREFIX)
+
+val File.partialBodyTestDataFile: File
+    get() = getCustomTestDataFileWithPrefix(PARTIAL_BODY_PREFIX)
 
 /**
  * An LL FIR test data file (`.ll.kt`) allows tailoring the expected output of a test to the LL FIR case. In very rare cases, LL FIR may

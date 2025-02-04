@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
-
+import java.io.File
 
 internal fun FirElement.renderWithClassName(): String =
     "${this::class.simpleName} `${render()}`"
@@ -114,3 +115,21 @@ private val FirDeclaration.canBeResolved: Boolean
         is FirBackingField -> propertySymbol.fir.canBeResolved
         else -> true
     }
+
+/**
+ * Configures the test data output file by replacing existing suffixes with the passed [testSuffix].
+ */
+internal class CustomOutputDiagnosticsConfigurator(
+    val testSuffix: String,
+    testServices: TestServices
+) : MetaTestConfigurator(testServices) {
+    override fun transformTestDataPath(testDataFileName: String): String {
+        val separatorIndex = testDataFileName.lastIndexOf(File.separatorChar).takeIf { it != -1 } ?: 0
+        val dotSeparator = "."
+        val dotIndex = testDataFileName.indexOf(dotSeparator, separatorIndex)
+        if (dotIndex == -1) return testDataFileName
+
+        val reversedTestDataFileName = testDataFileName.replaceRange(dotIndex, dotIndex + dotSeparator.length, testSuffix)
+        return if (File(reversedTestDataFileName).exists()) reversedTestDataFileName else testDataFileName
+    }
+}

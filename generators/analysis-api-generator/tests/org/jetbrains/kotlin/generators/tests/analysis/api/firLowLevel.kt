@@ -428,6 +428,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             modelInit()
         }
 
+        testClass<AbstractPartialBodyAnalysisDiagnosticCompilerTestDataTest> {
+            modelInit()
+        }
+
         testClass<AbstractLLBlackBoxTest> {
             model(
                 "codegen/box",
