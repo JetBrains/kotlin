@@ -199,7 +199,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             )
 
             javaSourceSet.output.setResourcesDir(Callable {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 compilation.output.resourcesDirProvider
             })
 

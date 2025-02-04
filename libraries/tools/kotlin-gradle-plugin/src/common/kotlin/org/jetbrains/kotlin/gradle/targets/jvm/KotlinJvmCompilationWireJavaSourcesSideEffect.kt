@@ -48,7 +48,7 @@ internal val KotlinJvmCompilationWireJavaSourcesSideEffect = KotlinCompilationSi
     )
 
     javaSourceSet.output.setResourcesDir(java.util.concurrent.Callable {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         compilation.output.resourcesDirProvider
     })
 }
