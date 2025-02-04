@@ -63,6 +63,9 @@ internal class ExecHandleBuilder(
     /** Arguments for the command to be executed. */
     val arguments: MutableList<String> = mutableListOf()
 
+    /**
+     * Set [arguments], replacing any that were previously added.
+     */
     fun setArguments(args: Iterable<String>) {
         arguments.clear()
         arguments.addAll(args)
@@ -119,11 +122,8 @@ internal class ExecHandleBuilder(
          */
         internal fun ObjectFactory.execHandleBuilder(
             block: ExecHandleBuilder.() -> Unit = {},
-        ): ExecHandleBuilder {
-            return ExecHandleBuilder(
-                processLaunchOptions(),
-            )
+        ): ExecHandleBuilder =
+            ExecHandleBuilder(processLaunchOptions())
                 .apply(block)
-        }
     }
 }

@@ -56,8 +56,9 @@ internal class ExecHandle(
     private val stateChanged: Condition = lock.newCondition()
 
     /** State of this [ProcessRunner]. */
-    private var state: ExecHandleState = ExecHandleState.Initial
-        set(value) {
+    // exposed for testing
+    internal var state: ExecHandleState = ExecHandleState.Initial
+        private set(value) {
             lock.withLock {
                 logger.info("[ExecHandle $displayName] Changing state to: $state")
                 field = value
@@ -143,12 +144,11 @@ internal class ExecHandle(
     }
 
     /**
-     * Block until the process has finished.
+     * Blocks until a process has finished.
      *
-     * This method is private because there's no current need to make it public,
-     * but should you find a need to get the result then make it public.
+     * If the process is never started (with [start] or [execute]) this function will wait indefinitely.
      */
-    private fun waitForFinish(): ExecResult {
+    fun waitForFinish(): ExecResult {
         lock.withLock {
             while (!state.isTerminal) {
                 try {
@@ -265,7 +265,7 @@ internal class ExecHandle(
         }
     }
 
-    private enum class ExecHandleState(val isTerminal: Boolean) {
+    internal enum class ExecHandleState(val isTerminal: Boolean) {
         Initial(false),
         Starting(false),
         Started(false),
