@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -17,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteAction
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
@@ -32,6 +31,11 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     @KaCachedService
     private val lifetimeTracker by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaBaseLifetimeTracker.getInstance(project)
+    }
+
+    @KaCachedService
+    private val restrictedAnalysisService by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinRestrictedAnalysisService.getInstance(project)
     }
 
     @KaCachedService
@@ -59,12 +63,10 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
 
         ProgressManager.checkCanceled()
 
-        /**
-         * The Analysis API is not supposed to work in the dumb mode.
-         * See [KaSession] KDoc for more details.
-         */
-        if (DumbService.isDumb(project)) {
-            throw IndexNotReadyException.create()
+        restrictedAnalysisService?.run {
+            if (isAnalysisRestricted && !isRestrictedAnalysisAllowed) {
+                rejectRestrictedAnalysis()
+            }
         }
 
         lifetimeTracker.beforeEnteringAnalysis(session)
