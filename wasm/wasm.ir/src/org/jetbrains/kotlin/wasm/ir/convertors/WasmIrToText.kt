@@ -258,8 +258,8 @@ class WasmIrToText(
                 }
             }
             is WasmImmediate.BlockType.Function -> {
-                val parameters = type.type.parameterTypes
-                val results = type.type.resultTypes
+                val parameters = type.type.owner.parameterTypes
+                val results = type.type.owner.resultTypes
                 if (parameters.isNotEmpty()) {
                     sameLineList("param") { parameters.forEach { appendType(it) } }
                 }

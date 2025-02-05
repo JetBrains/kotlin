@@ -290,7 +290,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeWasmImmediate(i: WasmImmediate): Unit =
         when (i) {
-            is WasmImmediate.BlockType.Function -> withTag(ImmediateTags.BLOCK_TYPE_FUNCTION) { serializeWasmFunctionType(i.type) }
+            is WasmImmediate.BlockType.Function -> withTag(ImmediateTags.BLOCK_TYPE_FUNCTION) { serializeWasmSymbolReadOnly(i.type, ::serializeWasmFunctionType) }
             is WasmImmediate.BlockType.Value -> withTagNullable(ImmediateTags.BLOCK_TYPE_VALUE, i.type) { serializeWasmType(i.type!!) }
             is WasmImmediate.Catch -> withTag(ImmediateTags.CATCH) { serializeCatchImmediate(i) }
             is WasmImmediate.ConstF32 -> withTag(ImmediateTags.CONST_F32) { b.writeUInt32(i.rawBits) }
@@ -647,7 +647,16 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
             serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
             serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
+            serializeNullable(specialITableTypes, ::serializeInterfaceTableTypes)
         }
+
+    private fun serializeInterfaceTableTypes(specialITableTypes: SpecialITableTypes) {
+        serializeWasmSymbolReadOnly(specialITableTypes.wasmAnyArrayType, ::serializeWasmArrayDeclaration)
+        serializeWasmSymbolReadOnly(specialITableTypes.wasmFuncArrayType, ::serializeWasmArrayDeclaration)
+        serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableType, ::serializeWasmTypeDeclaration)
+        serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableTypeToInt32, ::serializeWasmFunctionType)
+        serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableTypeToUnit, ::serializeWasmFunctionType)
+    }
 
     private fun serializeBuiltinIdSignatures(builtinIdSignatures: BuiltinIdSignatures) {
         serializeNullable(builtinIdSignatures.throwable, ::serializeIdSignature)
