@@ -69,6 +69,19 @@ public fun __root___FlattenedPackageClass__TypesOfArguments__Swift_Float__(f: Fl
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___InterfaceWithFactory")
+public fun __root___InterfaceWithFactory(): kotlin.native.internal.NativePtr {
+    val _result = InterfaceWithFactory()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___InterfaceWithFactory__TypesOfArguments__KotlinRuntime_KotlinBase__")
+public fun __root___InterfaceWithFactory__TypesOfArguments__KotlinRuntime_KotlinBase__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+    val _result = InterfaceWithFactory(__arg)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___ObjectWithFactory")
 public fun __root___ObjectWithFactory(): kotlin.native.internal.NativePtr {
     val _result = ObjectWithFactory()

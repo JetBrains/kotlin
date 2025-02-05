@@ -16,8 +16,12 @@ public typealias never = Swift.Never
 public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
 public typealias nullable_primitive = Swift.Int32?
 public typealias objectWithClassInheritance = main.OBJECT_WITH_CLASS_INHERITANCE
+public typealias objectWithInterfaceInheritance = main.OBJECT_WITH_INTERFACE_INHERITANCE
 public typealias openClass = main.OPEN_CLASS
+public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
+public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
+}
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package override init() {
         fatalError()
@@ -185,6 +189,21 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
     public static var shared: main.OBJECT_WITH_CLASS_INHERITANCE {
         get {
             return main.OBJECT_WITH_CLASS_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
+        }
+    }
+    private override init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
+public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO {
+    public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {
+        get {
+            return main.OBJECT_WITH_INTERFACE_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_INTERFACE_INHERITANCE_get())
         }
     }
     private override init() {

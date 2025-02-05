@@ -22,13 +22,23 @@ public class SirDeclarationFromKtSymbolProvider(
     public override fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> =
         when (val ktSymbol = this@sirDeclarations) {
             is KaNamedClassSymbol -> {
-                listOf(
-                    createSirClassFromKtSymbol(
-                        ktSymbol = ktSymbol,
-                        ktModule = ktModule,
-                        sirSession = sirSession,
+                if (ktSymbol.classKind == KaClassKind.INTERFACE) {
+                    listOf(
+                        SirProtocolFromKtSymbol(
+                            ktSymbol = ktSymbol,
+                            ktModule = ktModule,
+                            sirSession = sirSession,
+                        )
                     )
-                )
+                } else {
+                    listOf(
+                        createSirClassFromKtSymbol(
+                            ktSymbol = ktSymbol,
+                            ktModule = ktModule,
+                            sirSession = sirSession,
+                        )
+                    )
+                }
             }
             is KaConstructorSymbol -> {
                 listOf(

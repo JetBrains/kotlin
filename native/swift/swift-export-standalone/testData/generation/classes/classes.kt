@@ -229,22 +229,6 @@ enum class ENUM {
     class INSIDE_ENUM
 }
 
-interface OUTSIDE_PROTO {
-    // FIXME: KT-70541
-    // We can not properly detect nested classes as unsopported
-     /*
-    open class INSIDE_PROTO
-     */
-}
-
-// FIXME: See the commend above on OUTSIDE_PROTO.INSIDE_PROTO
-/*
-    class INHERITANCE_COUPLE : OUTSIDE_PROTO.INSIDE_PROTO(), OUTSIDE_PROTO
-    class INHERITANCE_SINGLE_PROTO : OUTSIDE_PROTO.INSIDE_PROTO()
-*/
-
-object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
-
 data class DATA_CLASS(val a: Int)
 
 data class DATA_CLASS_WITH_REF(val o: Any)
@@ -262,8 +246,6 @@ sealed class SEALED {
     class C : SEALED()
     object O : SEALED()
 }
-
-sealed interface SEALED_INTERFACE
 
 // copied from std, the simpliest generic inheritance that I could come up with.
 object OBJECT_WITH_GENERIC_INHERITANCE: ListIterator<Nothing> {

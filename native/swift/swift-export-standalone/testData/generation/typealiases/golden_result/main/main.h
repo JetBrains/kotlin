@@ -61,6 +61,8 @@ void __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_
 
 uintptr_t __root___OBJECT_WITH_CLASS_INHERITANCE_get();
 
+uintptr_t __root___OBJECT_WITH_INTERFACE_INHERITANCE_get();
+
 uintptr_t __root___OPEN_CLASS_init_allocate();
 
 void __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);

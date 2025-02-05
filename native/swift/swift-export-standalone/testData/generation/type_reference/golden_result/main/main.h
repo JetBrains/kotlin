@@ -111,6 +111,8 @@ uintptr_t __root___produce_DATA_CLASS();
 
 uintptr_t __root___produce_DATA_OBJECT();
 
+uintptr_t __root___produce_INTERFACE();
+
 uintptr_t __root___produce_OPEN_CLASS();
 
 uintptr_t __root___produce_class();
@@ -124,6 +126,8 @@ uintptr_t __root___produce_object_wp();
 void __root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLASS__(uintptr_t x);
 
 void __root___receive_DATA_CLASS__TypesOfArguments__main_DATA_CLASS__(uintptr_t x);
+
+void __root___receive_INTERFACE__TypesOfArguments__anyU20main_INTERFACE__(uintptr_t x);
 
 void __root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__(uintptr_t x);
 

@@ -154,6 +154,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("protocols")
+  public void testProtocols() {
+    runTest("native/swift/swift-export-standalone/testData/generation/protocols/");
+  }
+
+  @Test
   @TestMetadata("set")
   public void testSet() {
     runTest("native/swift/swift-export-standalone/testData/generation/set/");

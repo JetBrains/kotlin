@@ -19,6 +19,10 @@ uintptr_t __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(int32_t x);
 
 uintptr_t __root___FlattenedPackageClass__TypesOfArguments__Swift_Float__(float f);
 
+uintptr_t __root___InterfaceWithFactory();
+
+uintptr_t __root___InterfaceWithFactory__TypesOfArguments__KotlinRuntime_KotlinBase__(uintptr_t arg);
+
 uintptr_t __root___ObjectWithFactory();
 
 uintptr_t __root___ObjectWithFactory_get();

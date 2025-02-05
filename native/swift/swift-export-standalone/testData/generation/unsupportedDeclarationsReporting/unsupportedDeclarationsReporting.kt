@@ -10,8 +10,6 @@ class Foo {
     }
 }
 
-interface MyInterface
-
 inline fun foo() {}
 
 // FILE: packaged.kt

@@ -48,24 +48,12 @@ typealias inheritanceSingleClass = INHERITANCE_SINGLE_CLASS
 object OBJECT_WITH_CLASS_INHERITANCE: OPEN_CLASS()
 typealias objectWithClassInheritance = OBJECT_WITH_CLASS_INHERITANCE
 
-// FILE: should_be_ignored.kt
-import typealiases.Foo
-
-public annotation class OptIn
-typealias annotationClass = OptIn
-
-enum class ENUM {
-    A, B, C;
-    class INSIDE_ENUM
-}
-typealias enumClass = ENUM
+// FILE: interfaces.kt
 
 interface OUTSIDE_PROTO {
     // FIXME: KT-70541: typealiases can not properly detect unsupported nested classes
     // So we have to exclude these tests for now:
-    /*
-    abstract class INSIDE_PROTO
-    */
+//    abstract class INSIDE_PROTO
 }
 
 typealias outerInterface = OUTSIDE_PROTO
@@ -78,10 +66,24 @@ typealias inheritanceCouple = INHERITANCE_COUPLE
 
 class INHERITANCE_SINGLE_PROTO : OUTSIDE_PROTO.INSIDE_PROTO()
 typealias inhertanceSingleProto = INHERITANCE_SINGLE_PROTO
-
+*/
 object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
 typealias objectWithInterfaceInheritance = OBJECT_WITH_INTERFACE_INHERITANCE
-*/
+
+
+
+// FILE: should_be_ignored.kt
+import typealiases.Foo
+
+public annotation class OptIn
+typealias annotationClass = OptIn
+
+enum class ENUM {
+    A, B, C;
+    class INSIDE_ENUM
+}
+typealias enumClass = ENUM
+
 data class DATA_CLASS(val a: Int)
 typealias dataClass = DATA_CLASS
 

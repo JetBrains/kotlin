@@ -62,7 +62,6 @@ public extension ExportedKotlinPackages.a.b.c {
     }
 }
 // Can't export foo: inline functions are not supported yet.
-// Can't export MyInterface: interface classifiers are not supported yet.
 // Can't export Foo.Inner: inner classes are not supported yet.
 // Can't export Foo.Nested.plus: operators are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.

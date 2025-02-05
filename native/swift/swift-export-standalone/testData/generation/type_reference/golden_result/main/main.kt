@@ -397,6 +397,12 @@ public fun __root___produce_DATA_OBJECT(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___produce_INTERFACE")
+public fun __root___produce_INTERFACE(): kotlin.native.internal.NativePtr {
+    val _result = produce_INTERFACE()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___produce_OPEN_CLASS")
 public fun __root___produce_OPEN_CLASS(): kotlin.native.internal.NativePtr {
     val _result = produce_OPEN_CLASS()
@@ -437,6 +443,12 @@ public fun __root___receive_ABSTRACT_CLASS__TypesOfArguments__main_ABSTRACT_CLAS
 public fun __root___receive_DATA_CLASS__TypesOfArguments__main_DATA_CLASS__(x: kotlin.native.internal.NativePtr): Unit {
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as DATA_CLASS
     receive_DATA_CLASS(__x)
+}
+
+@ExportedBridge("__root___receive_INTERFACE__TypesOfArguments__anyU20main_INTERFACE__")
+public fun __root___receive_INTERFACE__TypesOfArguments__anyU20main_INTERFACE__(x: kotlin.native.internal.NativePtr): Unit {
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as INTERFACE
+    receive_INTERFACE(__x)
 }
 
 @ExportedBridge("__root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__")

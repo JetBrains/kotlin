@@ -328,9 +328,18 @@ private fun TranslationResult.writeModule(): SwiftExportModule {
 
 private object StandaloneSirTypeNamer : SirTypeNamer {
     override fun swiftFqName(type: SirType): String = type.swiftName
-    override fun kotlinFqName(type: SirType): String {
-        require(type is SirNominalType)
 
+    override fun kotlinFqName(type: SirType): String = when (type) {
+        is SirNominalType -> kotlinFqName(type)
+        is SirExistentialType -> kotlinFqName(type)
+        is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> error("Type $type can not be named")
+    }
+
+    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
+        ((it.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
+    }
+
+    private fun kotlinFqName(type: SirNominalType): String {
         return when(val declaration = type.typeDeclaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"

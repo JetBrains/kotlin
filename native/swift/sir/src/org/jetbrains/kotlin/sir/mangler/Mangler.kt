@@ -58,7 +58,7 @@ public val SirDeclarationParent.mangledNameOrNull: String?
         is SirEnum -> mangledNameOrNull
         is SirExtension -> mangledNameOrNull
         is SirVariable -> TODO()
-        is SirProtocol -> TODO("KT-66814")
+        is SirProtocol -> mangledNameOrNull
     }
 
 /**
@@ -70,7 +70,7 @@ public val SirNamedDeclaration.mangledNameOrNull: String?
         is SirEnum -> mangledNameOrNull
         is SirStruct -> mangledNameOrNull
         is SirTypealias -> TODO()
-        is SirProtocol -> TODO("KT-66814")
+        is SirProtocol -> mangledNameOrNull
     }
 
 /**
@@ -79,7 +79,7 @@ public val SirNamedDeclaration.mangledNameOrNull: String?
 public val SirType.mangledNameOrNull: String?
     get() = when (this) {
         is SirNominalType -> typeDeclaration.mangledNameOrNull
-        is SirExistentialType -> TODO()
+        is SirExistentialType -> null
         is SirErrorType -> null
         is SirUnsupportedType -> null
         is SirFunctionalType -> null
@@ -129,4 +129,19 @@ public val SirStruct.mangledNameOrNull: String?
 public val SirEnum.mangledNameOrNull: String?
     get() {
         return "${parent.mangledNameOrNull ?: return null}${identifier.mangledNameOrNull ?: return null}O"
+    }
+
+/**
+ * `protocol 'P'`
+ *
+ * See [spec](https://github.com/swiftlang/swift/blob/main/docs/ABI/Mangling.rst#types) for `nominal protocol type`
+ *
+ * Assumes that `decl-name` is always just an `identifier`.
+ *
+ * Note: Although the linked document has not been updated, SE-404/Swift5.10 nested protocols follow the same scheme as nested classes
+ *
+ */
+public val SirProtocol.mangledNameOrNull: String?
+    get() {
+        return "${parent.mangledNameOrNull ?: return null}${identifier.mangledNameOrNull ?: return null}P"
     }
