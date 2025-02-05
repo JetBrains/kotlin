@@ -137,6 +137,7 @@ class FirMetadataSerializer(
                 serializer!!.functionProto(withTypeParameters)?.build()
             }
             is FirMetadataSource.Script -> serializer!!.scriptProto(metadata.fir).build()
+            is FirMetadataSource.ReplSnippet -> serializer!!.snippetProto(metadata.fir).build()
             else -> null
         } ?: return null
         return message to serializer!!.stringTable as JvmStringTable
@@ -208,6 +209,13 @@ internal fun makeElementSerializer(
             languageVersionSettings,
         )
         is FirMetadataSource.Script -> FirElementSerializer.createForScript(
+            session, scopeSession,
+            metadata.fir,
+            serializerExtension,
+            approximator,
+            languageVersionSettings
+        )
+        is FirMetadataSource.ReplSnippet -> FirElementSerializer.createForSnippet(
             session, scopeSession,
             metadata.fir,
             serializerExtension,

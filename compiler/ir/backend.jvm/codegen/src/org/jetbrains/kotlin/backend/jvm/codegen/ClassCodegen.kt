@@ -282,6 +282,7 @@ class ClassCodegen private constructor(
             facadeClassName != null -> KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
             metadata is MetadataSource.Class -> KotlinClassHeader.Kind.CLASS
             metadata is MetadataSource.Script -> KotlinClassHeader.Kind.CLASS
+            metadata is MetadataSource.ReplSnippet -> KotlinClassHeader.Kind.CLASS
             metadata is MetadataSource.File -> KotlinClassHeader.Kind.FILE_FACADE
             metadata is MetadataSource.Function -> KotlinClassHeader.Kind.SYNTHETIC_CLASS
             entry is MultifileFacadeFileEntry -> KotlinClassHeader.Kind.MULTIFILE_CLASS
