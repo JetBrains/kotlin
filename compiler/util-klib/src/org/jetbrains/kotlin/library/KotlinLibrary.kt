@@ -99,7 +99,7 @@ interface IrLibrary {
     fun strings(fileIndex: Int): ByteArray
     fun declarations(fileIndex: Int): ByteArray
     fun bodies(fileIndex: Int): ByteArray
-    fun fileEntries(fileIndex: Int): ByteArray
+    fun fileEntries(fileIndex: Int): ByteArray?
 }
 
 val BaseKotlinLibrary.isNativeStdlib: Boolean

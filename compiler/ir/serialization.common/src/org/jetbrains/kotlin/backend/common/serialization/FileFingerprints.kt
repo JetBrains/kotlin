@@ -55,7 +55,9 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withSignaturesHash = cityHash128WithSeed(withTypesHash, file.signatures)
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, file.strings)
             val withBodiesHash = cityHash128WithSeed(withStringsHash, file.bodies)
-            val withFileEntriesHash = cityHash128WithSeed(withBodiesHash, file.fileEntries)
+            val withFileEntriesHash = withBodiesHash.applyIf(file.fileEntries != null ) {
+                cityHash128WithSeed(withBodiesHash, file.fileEntries!!)
+            }
             return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, file.declarations))
         }
 
@@ -66,10 +68,9 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, lib.strings(fileIndex))
             val withBodiesHash = cityHash128WithSeed(withStringsHash, lib.bodies(fileIndex))
             val withDeclarationsHash = cityHash128WithSeed(withBodiesHash, lib.declarations(fileIndex))
-            val withFileEntriesHash = withDeclarationsHash.applyIf(
-                lib.versions.abiVersion?.isAtLeast(CompatibilityMode.FIRST_HAVING_FILE_ENTRIES_TABLE) == true
-            ) {
-                cityHash128WithSeed(this, lib.fileEntries(fileIndex))
+            val fileEntries = lib.fileEntries(fileIndex)
+            val withFileEntriesHash = withDeclarationsHash.applyIf(fileEntries != null) {
+                cityHash128WithSeed(this, fileEntries!!)
             }
             return FingerprintHash(withFileEntriesHash)
         }

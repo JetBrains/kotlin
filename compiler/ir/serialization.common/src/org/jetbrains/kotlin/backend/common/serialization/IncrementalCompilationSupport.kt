@@ -85,9 +85,9 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
             icData[fileIndex].debugInfo?.let { IrArrayMemoryReader(it) }
         }
 
-    override fun fileEntry(index: Int, fileIndex: Int): ByteArray =
-        indexedFileEntries.itemBytes(fileIndex, index) {
-            IrArrayMemoryReader(icData[fileIndex].fileEntries)
+    override fun fileEntry(index: Int, fileIndex: Int): ByteArray? =
+        indexedFileEntries.itemNullableBytes(fileIndex, index) {
+            icData[fileIndex].fileEntries?.let { IrArrayMemoryReader(it) }
         }
 
     override fun file(index: Int): ByteArray = icData[index].fileData
@@ -104,7 +104,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
 
     override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 
-    override fun fileEntries(fileIndex: Int): ByteArray = icData[fileIndex].fileEntries
+    override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
 }
 
 class CurrentModuleWithICDeserializer(

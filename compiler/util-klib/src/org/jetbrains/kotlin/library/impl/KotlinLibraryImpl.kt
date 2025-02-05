@@ -114,7 +114,7 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
 
     override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
 
-    override fun fileEntry(index: Int, fileIndex: Int) = fileEntries.tableItemBytes(fileIndex, index)
+    override fun fileEntry(index: Int, fileIndex: Int) = fileEntries?.tableItemBytes(fileIndex, index)
 
     override fun file(index: Int) = files.tableItemBytes(index)
 
@@ -157,7 +157,7 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
         }
     }
 
-    private val fileEntries: IrMultiArrayFileReader by lazy {
+    private val fileEntries: IrMultiArrayFileReader? by lazy {
         IrMultiArrayFileReader(access.realFiles {
             it.irFileEntries
         })
@@ -189,8 +189,8 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
         return bodies.tableItemBytes(fileIndex)
     }
 
-    override fun fileEntries(fileIndex: Int): ByteArray {
-        return fileEntries.tableItemBytes(fileIndex)
+    override fun fileEntries(fileIndex: Int): ByteArray? {
+        return fileEntries?.tableItemBytes(fileIndex)
     }
 }
 
@@ -277,15 +277,19 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
         return dataReader?.tableItemBytes(index)
     }
 
-    private val fileToIrFileEntryMap = mutableMapOf<Int, IrArrayFileReader>()
-    override fun fileEntry(index: Int, fileIndex: Int): ByteArray {
+    private val fileToIrFileEntryMap = mutableMapOf<Int, IrArrayFileReader?>()
+    override fun fileEntry(index: Int, fileIndex: Int): ByteArray? {
         val dataReader = fileToIrFileEntryMap.getOrPut(fileIndex) {
             val fileDirectory = directories[fileIndex]
-            IrArrayFileReader(access.realFiles {
-                it.irStrings(fileDirectory)
-            })
+            access.realFiles {
+                it.irFileEntries(fileDirectory).let { diFile ->
+                    if (diFile.exists) {
+                        IrArrayFileReader(diFile)
+                    } else null
+                }
+            }
         }
-        return dataReader.tableItemBytes(index)
+        return dataReader?.tableItemBytes(index)
     }
 
     override fun file(index: Int): ByteArray {
@@ -318,7 +322,7 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
         TODO("Not yet implemented")
     }
 
-    override fun fileEntries(fileIndex: Int): ByteArray {
+    override fun fileEntries(fileIndex: Int): ByteArray? {
         TODO("Not yet implemented")
     }
 }
