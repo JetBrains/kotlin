@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.objcinterop.getObjCMethodInfo
 import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -208,11 +209,10 @@ private fun KotlinToCCallBuilder.addVariadicArguments(
         with(irBuilder) {
             val argumentTypes = unwrapVariadicArguments(elements).map { it.type }
             argumentTypes.forEachIndexed { index, type ->
-                val untypedArgument = irCall(symbols.arrayGet[symbols.array]!!.owner).apply {
+                val argument = irCall(symbols.arrayGet[symbols.array]!!, symbols.any.defaultType.makeNullable()).apply {
                     dispatchReceiver = irGet(variable)
                     putValueArgument(0, irInt(index))
-                }
-                val argument = irAs(untypedArgument, type) // Note: this cast always succeeds.
+                }.implicitCastIfNeededTo(type)
                 addArgument(argument, type, variadic = true, parameter = null)
             }
         }
@@ -508,7 +508,8 @@ private fun KotlinStubs.generateCFunction(
     val callbackBuilder = CCallbackBuilder(this, location, isObjCMethod)
 
     if (isObjCMethod) {
-        val receiver = signature.dispatchReceiverParameter!!
+        val receiver = function.dispatchReceiverParameter!!
+        require(signature.dispatchReceiverParameter!!.type.isObjCReferenceType(target, irBuiltIns)) { renderCompilerError(signature) }
         require(receiver.type.isObjCReferenceType(target, irBuiltIns)) { renderCompilerError(signature) }
         val valuePassing = ObjCReferenceValuePassing(symbols, receiver.type, retained = signature.objCConsumesReceiver())
         val kotlinArgument = with(valuePassing) { callbackBuilder.receiveValue() }
@@ -902,7 +903,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
     }
 
     private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: KonanSymbols): IrExpression =
-        irCall(symbols.interopCValueRead.owner).apply {
+        irCallWithSubstitutedType(symbols.interopCValueRead.owner, listOf(kotlinPointedType)).apply {
             extensionReceiver = kotlinPointed
             putValueArgument(0, getTypeObject())
         }
@@ -916,7 +917,9 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
         cBodyLines += "$cReturnValue;"
         val kotlinPtr = passThroughBridge("&$result", CTypes.voidPtr, symbols.nativePtrType)
 
-        kotlinBridgeStatements += irCall(symbols.interopCValueWrite.owner).apply {
+        kotlinBridgeStatements += irCallWithSubstitutedType(
+                symbols.interopCValueWrite.owner, listOf(kotlinPointedType)
+        ).apply {
             extensionReceiver = expression
             putValueArgument(0, irGet(kotlinPtr))
         }
@@ -1273,10 +1276,9 @@ private class ObjCBlockPointerValuePassing(
                 callbackBuilder.bridgeBuilder.addParameter(symbols.nativePtrType, CTypes.id)
 
         callbackBuilder.kotlinCallBuilder.arguments += with(callbackBuilder.bridgeBuilder.kotlinIrBuilder) {
-            // TODO: consider casting to [functionType].
             irCall(symbols.interopUnwrapKotlinObjectHolderImpl.owner).apply {
-                putValueArgument(0, irGet(kotlinFunctionHolderParameter) )
-            }
+                putValueArgument(0, irGet(kotlinFunctionHolderParameter))
+            }.implicitCastTo(functionType)
         }
 
         parameterValuePassings.forEach {
