@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
@@ -41,7 +40,6 @@ private fun checkAndReportDeprecatedMppProperties(project: Project) {
 }
 
 internal val deprecatedMppProperties: List<String> = listOf(
-    KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT,
     KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA,
     KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT,
     KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT,
