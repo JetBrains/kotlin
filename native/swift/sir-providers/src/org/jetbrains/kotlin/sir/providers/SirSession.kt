@@ -102,13 +102,16 @@ public interface SirDeclarationNamer {
 
 public sealed interface SirTranslationResult {
     public val allDeclarations: List<SirDeclaration>
+    public val primaryDeclaration: SirDeclaration?
 
-    public sealed interface TypeDeclaration: SirTranslationResult {
+    public sealed interface TypeDeclaration : SirTranslationResult {
         public val declaration: SirNamedDeclaration
+        override val primaryDeclaration: SirDeclaration? get() = declaration
     }
 
     public data class Untranslatable(public val origin: SirOrigin) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> get() = emptyList()
+        override val primaryDeclaration: SirDeclaration? get() = null
     }
 
     public data class RegularClass(public override val declaration: SirClass) : TypeDeclaration {
@@ -121,18 +124,23 @@ public sealed interface SirTranslationResult {
 
     public data class Constructor(public val declaration: SirInit) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
     public data class RegularVariable(public val declaration: SirVariable) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val primaryDeclaration: SirDeclaration get() = declaration
+
     }
 
     public data class ExtensionProperty(public val getter: SirFunction, public val setter: SirFunction?) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> = listOfNotNull(getter, setter)
+        override val primaryDeclaration: SirDeclaration get() = getter
     }
 
     public data class RegularFunction(public val declaration: SirFunction) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
     public data class RegularInterface(public val declaration: SirProtocol) : SirTranslationResult {
