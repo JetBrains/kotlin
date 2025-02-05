@@ -103,6 +103,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
             output.appendLine("  $packageFQN")
         }
         output.appendLine("Has IR: ${library.hasIr}")
+        output.appendLine("Has File Entries: ${library.hasFileEntriesTable}")
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
         output.appendLine("Manifest properties:")
         manifestProperties.entries.forEach { (key, value) ->

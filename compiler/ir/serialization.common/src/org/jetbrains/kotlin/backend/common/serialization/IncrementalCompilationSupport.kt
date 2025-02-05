@@ -27,7 +27,7 @@ class ICData(val icData: List<SerializedIrFile>, val containsErrorCode: Boolean)
 
 class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override val hasIr get() = true
-    override val hasFileEntries get() = true
+    override val hasFileEntriesTable get() = true
 
     private inline fun <K, R : IrTableReader<K>> Array<R?>.itemBytes(fileIndex: Int, key: K, factory: () -> R): ByteArray {
         val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
