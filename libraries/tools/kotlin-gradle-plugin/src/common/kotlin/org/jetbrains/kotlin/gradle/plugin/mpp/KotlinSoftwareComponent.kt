@@ -75,7 +75,7 @@ abstract class KotlinSoftwareComponent(
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
+                allMetadataArtifact.classifier = ""
             }
 
             this += DefaultKotlinUsageContext(
@@ -85,18 +85,6 @@ abstract class KotlinSoftwareComponent(
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
 
-            if (project.isCompatibilityMetadataVariantEnabled) {
-                // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
-                // publish the old metadata artifact:
-                this += run {
-                    DefaultKotlinUsageContext(
-                        metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        KotlinUsageContext.MavenScope.COMPILE,
-                        /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
-                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-                    )
-                }
-            }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {

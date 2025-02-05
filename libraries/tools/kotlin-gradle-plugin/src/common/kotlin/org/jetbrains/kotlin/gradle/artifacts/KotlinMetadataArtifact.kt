@@ -11,7 +11,6 @@ import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
@@ -25,9 +24,6 @@ internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements
 
     val metadataJarTask = target.createArtifactsTask { jar ->
         jar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
-        if (target.project.isCompatibilityMetadataVariantEnabled) {
-            jar.archiveClassifier.set("all")
-        }
     }
 
     /* Include 'KotlinProjectStructureMetadata' file */

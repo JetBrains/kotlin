@@ -141,7 +141,6 @@ internal fun Project.registerKotlinPluginExtensions() {
 
     KotlinTargetArtifact.extensionPoint.apply {
         register(project, KotlinMetadataArtifact)
-        register(project, KotlinLegacyCompatibilityMetadataArtifact)
         register(project, KotlinLegacyMetadataArtifact)
         register(project, KotlinJvmJarArtifact)
         register(project, KotlinJsKlibArtifact)

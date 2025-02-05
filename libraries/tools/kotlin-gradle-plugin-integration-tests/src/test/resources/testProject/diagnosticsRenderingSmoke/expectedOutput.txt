@@ -3,7 +3,7 @@
 > Configure project :subprojectA
 e: [PreHMPPFlagsError | ERROR] Deprecated Kotlin Multiplatform Properties
 The following properties are obsolete and no longer supported:
-kotlin.mpp.enableCompatibilityMetadataVariant, kotlin.mpp.hierarchicalStructureSupport
+kotlin.mpp.hierarchicalStructureSupport
 Please remove the deprecated properties from the project.
 Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
 #diagnostic-end
