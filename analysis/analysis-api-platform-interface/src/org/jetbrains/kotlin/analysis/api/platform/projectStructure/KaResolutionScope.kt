@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  */
 @KaImplementationDetail
 public abstract class KaResolutionScope : GlobalSearchScope() {
+    public abstract fun contains(element: PsiElement): Boolean
+
     public companion object {
         public fun forModule(useSiteModule: KaModule): KaResolutionScope {
             return KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
