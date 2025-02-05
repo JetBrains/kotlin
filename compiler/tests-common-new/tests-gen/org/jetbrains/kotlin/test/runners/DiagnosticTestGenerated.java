@@ -37057,6 +37057,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("javaSamTypeMismatch.kt")
+      public void testJavaSamTypeMismatch() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/javaSamTypeMismatch.kt");
+      }
+
+      @Test
       @TestMetadata("kt17765.kt")
       public void testKt17765() {
         runTest("compiler/testData/diagnostics/tests/samConversions/kt17765.kt");
