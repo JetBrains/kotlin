@@ -547,7 +547,7 @@ object Ordering : TemplateGroupBase() {
             """
             Randomly shuffles elements in this ${f.collection} in-place using the specified [random] instance as the source of randomness.
             
-            See: [A modern version of Fished-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+            See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
             """
         }
         specialFor(Lists) {

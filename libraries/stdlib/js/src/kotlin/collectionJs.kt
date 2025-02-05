@@ -114,7 +114,7 @@ public actual fun <T> MutableList<T>.fill(value: T): Unit {
 /**
  * Randomly shuffles elements in this list in-place.
  *
- * See: [A modern version of Fished-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.2")
 public actual fun <T> MutableList<T>.shuffle(): Unit = shuffle(Random)
