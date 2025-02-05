@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.KlibAbiCompatibilityLevel.ABI_LEVEL_2_2
+import org.jetbrains.kotlin.backend.common.serialization.KlibAbiCompatibilityLevel.Companion.FIRST_HAVING_FILE_ENTRIES_TABLE
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.descriptors.*
@@ -1530,7 +1531,7 @@ open class IrFileSerializer(
         }
 
         val includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
-        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
+        if (settings.abiCompatibilityLevel.isAtLeast(FIRST_HAVING_FILE_ENTRIES_TABLE)) {
             proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
         } else {
             proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
