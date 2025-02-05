@@ -1116,6 +1116,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedResourcesResolutionStrategy : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedResourcesResolutionStrategy;
+	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DisabledCinteropsCommonizationInHmppProject : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DisabledCinteropsCommonizationInHmppProject;
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
@@ -2336,7 +2341,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/compilati
 	public abstract fun getHostSpecificMetadataConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getImplementationConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getPluginConfiguration ()Lorg/gradle/api/artifacts/Configuration;
-	public abstract fun getResourcesConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getRuntimeDependencyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getRuntimeOnlyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 }
