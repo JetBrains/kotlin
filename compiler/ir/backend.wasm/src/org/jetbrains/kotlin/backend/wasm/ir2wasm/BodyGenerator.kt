@@ -757,9 +757,6 @@ class BodyGenerator(
 
     private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
         when {
-            isDownCastAlwaysSuccessInRuntime(fromType, toType) -> {
-
-            }
             isInvalidDownCast(fromType, toType) -> {
                 body.buildUnreachable(location)
             }
