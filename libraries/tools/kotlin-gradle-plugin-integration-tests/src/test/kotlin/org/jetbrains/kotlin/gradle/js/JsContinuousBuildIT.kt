@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Timeout
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.io.path.Path
 import kotlin.io.path.createFile
@@ -29,7 +30,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
 
     @GradleTest
     @TestMetadata("js-run-continuous")
-    @Timeout(value = 1, unit = java.util.concurrent.TimeUnit.MINUTES)
+    @Timeout(value = 1, unit = TimeUnit.MINUTES)
     fun testJsRunContinuousBuild(
         gradleVersion: GradleVersion,
     ) {
