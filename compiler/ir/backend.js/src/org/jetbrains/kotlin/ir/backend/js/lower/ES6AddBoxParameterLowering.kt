@@ -50,7 +50,6 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
         if (!context.es6mode || declaration !is IrConstructor || declaration.hasStrictSignature(context)) return null
 
         hackEnums(declaration)
-        hackExceptions(declaration)
         hackSimpleClassWithCapturing(declaration)
 
         if (!declaration.isSyntheticPrimaryConstructor) {
@@ -158,33 +157,5 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
 
         statements.add(firstClassFieldAssignment, statements[delegationConstructorIndex])
         statements.removeAt(delegationConstructorIndex + 1)
-    }
-
-    /**
-     * Swap call synthetic primary ctor and call extendThrowable
-     */
-    private fun hackExceptions(constructor: IrConstructor) {
-        val setPropertiesSymbol = context.setPropertiesToThrowableInstanceSymbol
-
-        val statements = (constructor.body as? IrBlockBody)?.statements ?: return
-
-        var callIndex = -1
-        var superCallIndex = -1
-        for (i in statements.indices) {
-            val s = statements[i]
-
-            if (s is IrCall && s.symbol === setPropertiesSymbol) {
-                callIndex = i
-            }
-            if (s is IrDelegatingConstructorCall && s.symbol.owner.origin === PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) {
-                superCallIndex = i
-            }
-        }
-
-        if (callIndex != -1 && superCallIndex != -1) {
-            val tmp = statements[callIndex]
-            statements[callIndex] = statements[superCallIndex]
-            statements[superCallIndex] = tmp
-        }
     }
 }
