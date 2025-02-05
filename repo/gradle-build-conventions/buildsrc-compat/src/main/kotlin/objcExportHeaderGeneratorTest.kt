@@ -22,14 +22,14 @@ import java.io.File
 const val NATIVE_TEST_DEPENDENCY_KLIBS_CONFIGURATION_NAME = "testDependencyLibraryKlibs"
 
 /**
- * Wrapper for [nativeTest] which helps to apply defaults expected by
- * projects under ':native:objcexport-header-generator:*'
+ * Wrapper for [nativeTest] which provides access to external libraries via `testDependencyKlibs` system property.
+ * Use this one when you need to write tests against external libraries like kotlinx.* ones.
  */
-fun Project.objCExportHeaderGeneratorTest(
+fun Project.nativeTestWithExternalDependencies(
     taskName: String,
-    testDisplayNameTag: String? = null,
-    configure: Test.() -> Unit = {},
-): TaskProvider<Test> {
+    requirePlatformLibs: Boolean = false,
+    configure: Test.() -> Unit = {}
+) : TaskProvider<Test> {
     /* Configuration to resolve klibs for the current host */
     val testDependencyProjectKlibs = configurations.maybeCreate("testDependencyProjectKlibs").also { testDependencyProjectKlibs ->
         testDependencyProjectKlibs.attributes {
@@ -82,7 +82,7 @@ fun Project.objCExportHeaderGeneratorTest(
     return nativeTest(
         taskName = taskName,
         tag = null,
-        requirePlatformLibs = false,
+        requirePlatformLibs = requirePlatformLibs,
     ) {
         /**
          * Setup klib dependencies that can be used in tests:
@@ -104,7 +104,20 @@ fun Project.objCExportHeaderGeneratorTest(
             /* Add dependency files as inputs to this test task */
             inputs.files(testDependencyProjectKlibs).withPathSensitivity(PathSensitivity.RELATIVE)
         }
+        configure()
+    }
+}
 
+/**
+ * Wrapper for [nativeTest] which helps to apply defaults expected by
+ * projects under ':native:objcexport-header-generator:*'
+ */
+fun Project.objCExportHeaderGeneratorTest(
+    taskName: String,
+    testDisplayNameTag: String? = null,
+    configure: Test.() -> Unit = {},
+): TaskProvider<Test> {
+    return nativeTestWithExternalDependencies(taskName = taskName) {
         useJUnitPlatform()
         enableJunit5ExtensionsAutodetection()
 
@@ -115,7 +128,6 @@ fun Project.objCExportHeaderGeneratorTest(
         if (testDisplayNameTag != null) {
             systemProperty("testDisplayName.tag", testDisplayNameTag)
         }
-
         configure()
     }
 }
