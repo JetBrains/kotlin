@@ -6,10 +6,6 @@
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirDirectInheritorsProvider"
     />
-    <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinSimpleGlobalSearchScopeMerger"
-    />
     <applicationService serviceInterface="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl"/>
   </extensions>
