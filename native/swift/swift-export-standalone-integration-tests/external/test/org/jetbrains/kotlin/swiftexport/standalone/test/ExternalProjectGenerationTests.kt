@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
-import org.jetbrains.kotlin.swiftexport.standalone.InputModule
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.Path
 
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/external/testData/generation")
 @TestDataPath("\$PROJECT_ROOT")
@@ -26,25 +22,20 @@ class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
 
     @Test
     fun `full export of testLibraryA`() {
-        validateFullLibraryDump(testLibraryAKlibFile, "testLibraryA_full_dump")
+        val klibSettings = KlibExportSettings(
+            testLibraryAKlibFile,
+            "testLibraryA",
+        )
+        validateFullLibraryDump(klibSettings, "testLibraryA_full_dump")
     }
 
-    private fun validateFullLibraryDump(klib: Path, goldenData: String) {
-        val inputModule = InputModule(
-            "testLibraryA",
-            klib,
-            createConfig()
-        )
+    private fun validateFullLibraryDump(klib: KlibExportSettings, goldenData: String) {
+        val config = klib.createConfig(tmpdir.toPath().resolve(klib.swiftModuleName))
+        val inputModule = klib.createInputModule(config)
         val result = runSwiftExport(setOf(inputModule)).getOrThrow()
         validateSwiftExportOutput(testDataDir.resolve(goldenData), result)
     }
 
-    private fun createConfig(): SwiftExportConfig {
-        return SwiftExportConfig(
-            distribution = Distribution(KonanHome.konanHomePath),
-            outputPath = tmpdir.toPath().resolve("testLibraryA")
-        )
-    }
 }
 
 private val testDataDir = File("native/swift/swift-export-standalone-integration-tests/external/testData/generation")
