@@ -1125,6 +1125,55 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-74901 : Check that all podBuild tasks are up-to-date")
+    @GradleTest
+    fun testPodBuildTasksUpToDate(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    ios.deploymentTarget = "15.0"
+                    
+                    pod("AFNetworking", version="4.0.1")            
+                    pod("SDWebImage", version="5.21.5")
+                    pod("Reachability", version="3.7.6")
+                    pod("Sentry", version="9.3.0", headers="Sentry.h")
+            
+                    pod("Intercom") {
+                        version = "19.1.1"
+                        extraOpts += listOf("-compiler-option", "-fmodules")
+                    }
+                """.trimIndent()
+            )
+
+            build(":iosArm64Binaries") {
+                assertTasksExecuted(":podBuildAFNetworkingIos")
+                assertTasksExecuted(":podBuildIntercomIos")
+                assertTasksExecuted(":podBuildReachabilityIos")
+                assertTasksExecuted(":podBuildSDWebImageIos")
+                assertTasksExecuted(":podBuildSentryIos")
+            }
+
+            build(":iosArm64Binaries") {
+                assertTasksUpToDate(":podBuildAFNetworkingIos")
+                assertTasksUpToDate(":podBuildIntercomIos")
+                assertTasksUpToDate(":podBuildReachabilityIos")
+                assertTasksUpToDate(":podBuildSDWebImageIos")
+                assertTasksUpToDate(":podBuildSentryIos")
+            }
+        }
+    }
+
     internal class GradleAndIsStaticArgumentsProvider : GradleArgumentsProvider() {
         override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
             return super.provideArguments(context).flatMap { arguments ->
