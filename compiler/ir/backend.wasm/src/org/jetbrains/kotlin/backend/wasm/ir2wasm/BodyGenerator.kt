@@ -580,7 +580,7 @@ class BodyGenerator(
         if (klassSymbol.owner.hasInterfaceSuperClass()) {
             body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalClassITable(klassSymbol), location)
         } else {
-            body.buildRefNull(WasmHeapType.Simple.Struct, location)
+            body.buildRefNull(WasmHeapType.Simple.None, location)
         }
 
         body.buildConstI32Symbol(wasmFileCodegenContext.referenceTypeId(klassSymbol), location)
@@ -691,8 +691,6 @@ class BodyGenerator(
         val function: IrFunction = callFunction.realOverrideTarget
         val isSuperCall = call is IrCall && call.superQualifierSymbol != null
         if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
-            // Generating index for indirect call
-
             val originalClass = callFunction.parentAsClass
             val realOverrideTargetClass = function.parentAsClass
             val klass = when {
@@ -700,57 +698,91 @@ class BodyGenerator(
                 else -> originalClass
             }
 
+            val klassSymbol = klass.symbol
+            val vTableGcTypeReference = wasmFileCodegenContext.referenceVTableGcType(klassSymbol)
+            val functionTypeReference = wasmFileCodegenContext.referenceFunctionType(function.symbol)
+
             if (!klass.isInterface) {
-                val classMetadata = wasmModuleMetadataCache.getClassMetadata(klass.symbol)
+                body.commentGroupStart { "Class Virtual call: ${function.fqNameWhenAvailable}" }
+
+                val classMetadata = wasmModuleMetadataCache.getClassMetadata(klassSymbol)
                 val vfSlot = classMetadata.virtualMethods.indexOfFirst { it.function == function }
                 // Dispatch receiver should be simple and without side effects at this point
                 // TODO: Verify
                 val receiver = call.dispatchReceiver!!
                 generateExpression(receiver)
-
-                body.commentGroupStart { "virtual call: ${function.fqNameWhenAvailable}" }
-
                 //TODO: check why it could be needed
                 generateRefCast(receiver.type, klass.defaultType, isRefNullCast = false, location)
 
-                body.buildStructGet(wasmFileCodegenContext.referenceGcType(klass.symbol), WasmSymbol(0), location)
-                body.buildStructGet(wasmFileCodegenContext.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot), location)
-                body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(wasmFileCodegenContext.referenceFunctionType(function.symbol)))
-                body.commentGroupEnd()
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(klassSymbol), anyToVtableId, location)
+                val vTableSlotId = WasmSymbol(vfSlot + 1) //First element is always contains Special ITable
+                body.buildStructGet(vTableGcTypeReference, vTableSlotId, location)
+                body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(functionTypeReference))
             } else {
-                val symbol = klass.symbol
-
-                body.buildInstr(WasmOp.MACRO_IF, location, WasmImmediate.SymbolI32(wasmFileCodegenContext.referenceClassITableInterfaceHasImplementors(symbol)))
                 generateExpression(call.dispatchReceiver!!)
 
-                body.commentGroupStart { "interface call: ${function.fqNameWhenAvailable}" }
-                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
-
-                val classITableReference = wasmFileCodegenContext.referenceClassITableGcType(symbol)
-                body.buildRefCastStatic(classITableReference, location)
-                body.buildStructGet(classITableReference, wasmFileCodegenContext.referenceClassITableInterfaceSlot(symbol), location)
-
-                val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(symbol).methods
-                    .indexOfFirst { it.function == function }
-
-                body.buildStructGet(wasmFileCodegenContext.referenceVTableGcType(symbol), WasmSymbol(vfSlot), location)
-                body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(wasmFileCodegenContext.referenceFunctionType(function.symbol)))
-                body.commentGroupEnd()
-                body.buildInstr(WasmOp.MACRO_ELSE, location)
-                // We came here for a call to an interface method which interface is not implemented anywhere,
-                // so we don't have a slot in the itable and can't generate a correct call,
-                // and, anyway, the call effectively is unreachable.
-                body.buildUnreachableForVerifier()
-                body.buildInstr(WasmOp.MACRO_END_IF, location)
+                val specialITableSlot = backendContext.specialSlotITableTypes.indexOf(klassSymbol)
+                if (specialITableSlot != -1) {
+                    body.commentGroupStart { "Special Interface call: ${function.fqNameWhenAvailable}" }
+                    generateSpecialITableFromAny(location)
+                    body.buildStructGet(
+                        wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
+                        WasmSymbol(specialITableSlot),
+                        location
+                    )
+                    body.buildRefCastStatic(vTableGcTypeReference, location)
+                    val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
+                        .indexOfFirst { it.function == function }
+                    body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
+                } else if (getFunctionInvokeMethod(klass) == function) {
+                    body.commentGroupStart { "Functional Interface call: ${function.fqNameWhenAvailable}" }
+                    generateSpecialITableFromAny(location)
+                    body.buildStructGet(
+                        wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
+                        WasmSymbol(backendContext.specialSlotITableTypes.size),
+                        location
+                    )
+                    body.buildConstI32(function.parameters.size - 1, location)
+                    body.buildInstr(
+                        WasmOp.ARRAY_GET,
+                        location,
+                        WasmImmediate.TypeIdx(wasmFileCodegenContext.interfaceTableTypes.wasmFuncArrayType)
+                    )
+                    body.buildRefCastStatic(functionTypeReference, location)
+                } else {
+                    body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
+                    body.buildStructGet(
+                        wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass),
+                        anyToITableId,
+                        SourceLocation.NoLocation
+                    )
+                    generateExpression(call.dispatchReceiver!!)
+                    body.buildConstI32Symbol(wasmFileCodegenContext.referenceTypeId(klassSymbol), location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceSlot), location)
+                    body.buildInstr(
+                        WasmOp.ARRAY_GET,
+                        location,
+                        WasmImmediate.TypeIdx(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType)
+                    )
+                    body.buildRefCastStatic(vTableGcTypeReference, location)
+                    val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klass.symbol).methods
+                        .indexOfFirst { it.function == function }
+                    body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
+                }
+                body.buildInstr(
+                    WasmOp.CALL_REF,
+                    location,
+                    WasmImmediate.TypeIdx(functionTypeReference)
+                )
             }
-
+            body.commentGroupEnd()
         } else {
             // Static function call
             body.buildCall(wasmFileCodegenContext.referenceFunction(function.symbol), location)
         }
 
         // Unit types don't cross function boundaries
-        if (function.returnType.isUnit() && function !is IrConstructor && function != unitGetInstance) {
+        if (function.returnType.isUnit() && function !is IrConstructor) {
             body.buildGetUnit()
         }
     }
@@ -807,6 +839,11 @@ class BodyGenerator(
         return fromType.getRuntimeClass(irBuiltIns).isSubclassOf(toType.getRuntimeClass(irBuiltIns))
     }
 
+    private fun generateSpecialITableFromAny(location: SourceLocation) {
+        body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyToVtableId, location)
+        body.buildStructGet(wasmFileCodegenContext.referenceVTableGcType(irBuiltIns.anyClass), vTableToSpecialITableId, location)
+    }
+
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
@@ -830,43 +867,80 @@ class BodyGenerator(
                 val irInterface = call.typeArguments[0]!!.getClass()
                     ?: error("No interface given for wasmIsInterface intrinsic")
                 assert(irInterface.isInterface)
-                body.buildInstr(
-                    WasmOp.MACRO_IF,
-                    location,
-                    WasmImmediate.SymbolI32(wasmFileCodegenContext.referenceClassITableInterfaceHasImplementors(irInterface.symbol))
-                )
-                val classITable = wasmFileCodegenContext.referenceClassITableGcType(irInterface.symbol)
-                val parameterLocal = functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
-                body.buildSetLocal(parameterLocal, location)
-                body.buildBlock("isInterface", WasmI32) { outerLabel ->
-                    body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Struct)) { innerLabel ->
-                        body.buildGetLocal(parameterLocal, location)
-                        body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
 
-                        body.buildBrOnCastInstr(
-                            WasmOp.BR_ON_CAST_FAIL,
-                            innerLabel,
-                            fromIsNullable = true,
-                            toIsNullable = false,
-                            from = WasmHeapType.Simple.Struct,
-                            to = WasmHeapType.Type(classITable),
-                            location,
-                        )
+                val specialSlotIndex = backendContext.specialSlotITableTypes.indexOf(irInterface.symbol)
+                if (specialSlotIndex != -1) {
+                    body.commentGroupStart { "Check special interface supported" }
+                    body.buildSetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                    body.buildBlock("SpecialIFaceTestSuccess", WasmI32) { success ->
+                        body.buildBlock("SpecialIFaceTestFail") { fail ->
+                            body.buildGetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                            generateSpecialITableFromAny(location)
 
-                        body.buildStructGet(classITable, wasmFileCodegenContext.referenceClassITableInterfaceSlot(irInterface.symbol), location)
-                        body.buildInstr(WasmOp.REF_IS_NULL, location)
-                        body.buildInstr(WasmOp.I32_EQZ, location)
-                        body.buildBr(outerLabel, location)
+                            body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
+                            body.buildStructGet(
+                                wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
+                                WasmSymbol(specialSlotIndex),
+                                location
+                            )
+                            body.buildInstr(WasmOp.REF_IS_NULL, location)
+                            body.buildInstr(WasmOp.I32_EQZ, location)
+                            body.buildBr(success, location)
+                        }
+                        body.buildConstI32(0, location)
                     }
-                    body.buildDrop(location)
-                    body.buildConstI32(0, location)
-                }
-                body.buildInstr(WasmOp.MACRO_ELSE, location)
-                body.buildDrop(location)
-                body.buildConstI32(0, location)
-                body.buildInstr(WasmOp.MACRO_END_IF, location)
-            }
+                } else {
+                    val invokeMethod = getFunctionInvokeMethod(irInterface)
+                    if (invokeMethod != null) {
+                        body.commentGroupStart { "Check functional interface supported" }
+                        body.buildSetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                        body.buildBlock("FunctionTestSuccess", WasmI32) { result ->
+                            body.buildBlock("FunctionTestFail") { fail ->
+                                body.buildGetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
+                                generateSpecialITableFromAny(location)
 
+                                body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
+                                body.buildStructGet(
+                                    wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType,
+                                    WasmSymbol(backendContext.specialSlotITableTypes.size),
+                                    location
+                                )
+                                body.buildBrInstr(WasmOp.BR_ON_NULL, fail, location)
+
+                                body.buildTeeLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_FUNC_ARRAY), location)
+
+                                body.buildInstr(WasmOp.ARRAY_LEN, location)
+
+                                val invokeMethodArity = invokeMethod.parameters.size
+                                body.buildConstI32(invokeMethodArity, location)
+
+                                body.buildInstr(WasmOp.I32_LT_U, location)
+                                body.buildBrIf(fail, location)
+
+                                body.buildGetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_FUNC_ARRAY), location)
+                                body.buildConstI32(invokeMethodArity - 1, location)
+
+                                body.buildInstr(
+                                    WasmOp.ARRAY_GET,
+                                    location,
+                                    WasmImmediate.TypeIdx(wasmFileCodegenContext.interfaceTableTypes.wasmFuncArrayType)
+                                )
+                                body.buildInstr(WasmOp.REF_IS_NULL, location)
+                                body.buildInstr(WasmOp.I32_EQZ, location)
+                                body.buildBr(result, location)
+                            }
+                            body.buildConstI32(0, location)
+                        }
+                    } else {
+                        body.commentGroupStart { "Check interface supported" }
+                        body.buildConstI32Symbol(wasmFileCodegenContext.referenceTypeId(irInterface.symbol), location)
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceSlot), location)
+                        body.buildConstI32(-1, location)
+                        body.buildInstr(WasmOp.I32_NE, location)
+                    }
+                }
+                body.commentGroupEnd()
+            }
             wasmSymbols.refCastNull -> {
                 generateRefCast(
                     fromType = call.arguments[0]!!.type,
@@ -1120,7 +1194,7 @@ class BodyGenerator(
         // PRIMITIVE -> REF -> FALSE
         // REF -> PRIMITIVE -> FALSE
         if (expectedIsPrimitive != actualIsPrimitive) {
-            // TODO Shouldn't we throw ICE instead? 
+            // TODO Shouldn't we throw ICE instead?
             body.buildUnreachableForVerifier()
             return
         }
@@ -1147,7 +1221,13 @@ class BodyGenerator(
     }
 
     override fun visitWhen(expression: IrWhen) {
-        if (!backendContext.isDebugFriendlyCompilation && tryGenerateOptimisedWhen(expression, backendContext.wasmSymbols, functionContext, wasmModuleTypeTransformer)) {
+        if (!backendContext.isDebugFriendlyCompilation && tryGenerateOptimisedWhen(
+                expression,
+                backendContext.wasmSymbols,
+                functionContext,
+                wasmModuleTypeTransformer
+            )
+        ) {
             return
         }
 
@@ -1319,5 +1399,11 @@ class BodyGenerator(
     private fun IrElement.nextLocation() = when (getSourceLocation()) {
         is SourceLocation.DefinedLocation -> SourceLocation.NextLocation
         else -> SourceLocation.NoLocation
+    }
+
+    companion object {
+        val anyToVtableId = WasmSymbol(0)
+        val anyToITableId = WasmSymbol(1)
+        val vTableToSpecialITableId = WasmSymbol(0)
     }
 }

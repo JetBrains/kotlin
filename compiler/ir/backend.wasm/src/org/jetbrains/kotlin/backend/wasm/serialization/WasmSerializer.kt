@@ -655,8 +655,6 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeWasmSymbolReadOnly(specialITableTypes.wasmAnyArrayType, ::serializeWasmArrayDeclaration)
         serializeWasmSymbolReadOnly(specialITableTypes.wasmFuncArrayType, ::serializeWasmArrayDeclaration)
         serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableType, ::serializeWasmTypeDeclaration)
-        serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableTypeToInt32, ::serializeWasmFunctionType)
-        serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableTypeToUnit, ::serializeWasmFunctionType)
     }
 
     private fun serializeBuiltinIdSignatures(builtinIdSignatures: BuiltinIdSignatures) {

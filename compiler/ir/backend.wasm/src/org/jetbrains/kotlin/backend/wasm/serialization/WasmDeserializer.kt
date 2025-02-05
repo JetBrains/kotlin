@@ -631,6 +631,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
         builtinIdSignatures = deserializeBuiltinIdSignatures(),
+        specialITableTypes = deserializeInterfaceTableTypes(),
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
@@ -664,6 +665,15 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 jsToKotlinAnyAdapter = deserializeNullable(::deserializeIdSignature),
                 unitGetInstance = deserializeNullable(::deserializeIdSignature),
                 runRootSuites = deserializeNullable(::deserializeIdSignature),
+            )
+        }
+
+    private fun deserializeInterfaceTableTypes(): SpecialITableTypes? =
+        deserializeNullable {
+            SpecialITableTypes(
+                wasmAnyArrayType = deserializeSymbol(::deserializeArrayDeclaration),
+                wasmFuncArrayType = deserializeSymbol(::deserializeArrayDeclaration),
+                specialSlotITableType = deserializeSymbol(::deserializeStructDeclaration),
             )
         }
 
