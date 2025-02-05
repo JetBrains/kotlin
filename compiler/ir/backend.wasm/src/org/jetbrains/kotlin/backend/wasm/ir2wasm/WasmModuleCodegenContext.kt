@@ -178,6 +178,12 @@ class WasmFileCodegenContext(
             )
         }
     }
+
+    val interfaceTableTypes: SpecialITableTypes by lazy {
+        SpecialITableTypes().also {
+            wasmFileFragment.specialITableTypes = it
+        }
+    }
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {
