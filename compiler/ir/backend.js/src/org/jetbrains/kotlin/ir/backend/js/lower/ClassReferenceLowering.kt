@@ -80,7 +80,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
 
     private fun getPrimitiveClass(target: IrSimpleFunction, returnType: IrType) =
         JsIrBuilder.buildCall(target.symbol, returnType).apply {
-            dispatchReceiver = JsIrBuilder.buildGetObjectValue(
+            arguments[0] = JsIrBuilder.buildGetObjectValue(
                 type = primitiveClassesObject.defaultType,
                 classSymbol = primitiveClassesObject
             )
@@ -106,7 +106,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
             val functionInterface = typeArgument.getClass()!!
             val arity = functionInterface.typeParameters.size - 1
             return getPrimitiveClass(primitiveClassFunctionClass, returnType).apply {
-                putValueArgument(0, JsIrBuilder.buildInt(context.irBuiltIns.intType, arity))
+                arguments[1] = JsIrBuilder.buildInt(context.irBuiltIns.intType, arity)
             }
         }
 
@@ -125,7 +125,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
 
         return JsIrBuilder.buildCall(reflectionSymbols.getKClass, returnType, listOf(typeArgument))
             .apply {
-                putValueArgument(0, callGetClassByType(typeArgument))
+                arguments[0] = callGetClassByType(typeArgument)
             }
     }
 
@@ -150,7 +150,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
             return JsIrBuilder.buildBlock(returnType, listOf(argument, primitiveKClass))
 
         return JsIrBuilder.buildCall(reflectionSymbols.getKClassFromExpression, returnType, listOf(typeArgument)).apply {
-            putValueArgument(0, argument)
+            arguments[0] = argument
         }
     }
 
@@ -162,7 +162,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
     private fun buildCall(name: IrSimpleFunctionSymbol, vararg args: IrExpression): IrExpression =
         JsIrBuilder.buildCall(name).apply {
             args.forEachIndexed { index, irExpression ->
-                putValueArgument(index, irExpression)
+                arguments[index] = irExpression
             }
         }
 
