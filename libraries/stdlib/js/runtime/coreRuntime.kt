@@ -185,11 +185,6 @@ internal external class JsObject {
     companion object {
         fun getPrototypeOf(obj: Any?): dynamic
         fun setPrototypeOf(obj: Any?, prototype: Any?): dynamic
-
-        @JsPolyfill("""if (typeof Object.hasOwn === "undefined") Object.hasOwn = Object.call.bind(Object.hasOwnProperty)""")
-        fun hasOwn(obj: Any?, key: String): Boolean
-
-        fun getOwnPropertyDescriptor(obj: Any?, key: String): dynamic
     }
 }
 
