@@ -13,7 +13,7 @@ import java.io.File
 
 object JUnit4Assertions : Assertions() {
     override fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String): Boolean {
-        return KotlinTestUtils.doesEqualToFile(expectedFile, actual, sanitizer).first;
+        return KotlinTestUtils.compareWithFile(expectedFile, actual, sanitizer).doesEqual;
     }
 
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {

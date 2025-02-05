@@ -11,7 +11,6 @@ import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.io.path.PathsKt;
-import kotlin.jvm.functions.Function1;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,8 +40,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt.ARGFILE_ARGUMENT;
 
@@ -50,25 +47,6 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
 
     private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
-
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?");
-
-    /**
-     * Can be used for comparing data that have numbers that can be changed on each run.
-     * For instance, for performance reports comparison.
-     */
-    private static final Function1<String, String> NUMBERS_AGNOSTIC_SANITIZER = s -> {
-        Matcher matcher = NUMBER_PATTERN.matcher(s);
-
-        StringBuffer result = new StringBuffer();
-        while (matcher.find()) {
-            String sanitizedNumber = matcher.group().contains(".") ? "REAL_NUMBER" : "INT_NUMBER";
-            matcher.appendReplacement(result, sanitizedNumber);
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
-    };
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(
             @NotNull CLICompiler<?> compiler,
@@ -145,12 +123,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             doTestAdditionalChecks(additionalTestConfig, fileName);
         }
 
-        @NotNull CommonCompilerPerformanceManager perfManager = compiler.getDefaultPerformanceManager();
-        if (perfManager.isEnabled()) {
-            File expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.log"));
-            @NotNull String actualPerfReport = perfManager.createPerformanceReport();
-            KotlinTestUtils.assertEqualsToFile(expectedPerfLogFile, actualPerfReport, NUMBERS_AGNOSTIC_SANITIZER);
-        }
+        doComparePerformanceLogs(fileName, compiler);
     }
 
     private void doTestAdditionalChecks(@NotNull File testConfigFile, @NotNull String argsFilePath) {
@@ -220,6 +193,32 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             diagnostics.add(0, diagnostics.size() + " problem(s) found:");
             Assert.fail(StringsKt.join(diagnostics, "\n"));
         }
+    }
+
+    private static void doComparePerformanceLogs(@NotNull String fileName, @NotNull CLICompiler<?> compiler) {
+        @NotNull CommonCompilerPerformanceManager perfManager = compiler.getDefaultPerformanceManager();
+        if (!perfManager.isEnabled()) return;
+
+        File expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.log"));
+        @NotNull String actualPerfReport = perfManager.createPerformanceReport();
+
+        NumbersAgnosticSanitizer sanitizer = new NumbersAgnosticSanitizer(actualPerfReport);
+
+        String expectedText =
+                KotlinTestUtils.tryLoadExpectedFile(expectedPerfLogFile, sanitizer.getPlaceholdersBasedOnActualNumbers());
+        String expectedSanitizedText = KotlinTestUtils.applyDefaultAndCustomSanitizer(expectedText, s -> s);
+
+        String sanitizedActualBasedOnExpectPlaceholders =
+                sanitizer.generatedSanitizedActualBasedOnExpectPlaceholders(expectedSanitizedText);
+
+        KotlinTestUtils.FileComparisonResult comparisonResult = new KotlinTestUtils.FileComparisonResult(
+                expectedPerfLogFile,
+                expectedText,
+                expectedSanitizedText,
+                sanitizedActualBasedOnExpectPlaceholders
+        );
+
+        KotlinTestUtils.failIfNotEqual(KotlinTestUtils.ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, comparisonResult);
     }
 
     @NotNull

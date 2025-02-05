@@ -15,8 +15,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.lang.JavaVersion;
 import junit.framework.TestCase;
-import kotlin.Pair;
-import kotlin.Triple;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
@@ -68,6 +66,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
+    public static final String ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT = "Actual data differs from file content";
     public static String TEST_MODULE_NAME = "test-module";
 
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
@@ -246,14 +245,19 @@ public class KotlinTestUtils {
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
-        assertEqualsToFile("Actual data differs from file content", expectedFile, actual, sanitizer);
+        assertEqualsToFile(ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, expectedFile, actual, sanitizer);
     }
 
-    public static Triple<Boolean, String, String> doesEqualToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
-        try {
-            String actualText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
-            String sanitizedActualText = sanitizer.invoke(actualText);
+    public static FileComparisonResult compareWithFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+        String actualSanitizedText = applyDefaultAndCustomSanitizer(actual, sanitizer);
+        String expectedText = tryLoadExpectedFile(expectedFile, actualSanitizedText);
+        String expectedSanitizedText = applyDefaultAndCustomSanitizer(expectedText, sanitizer);
 
+        return new FileComparisonResult(expectedFile, expectedText, expectedSanitizedText, actualSanitizedText);
+    }
+
+    public static String tryLoadExpectedFile(@NotNull File expectedFile, @NotNull String sanitizedActualText) {
+        try {
             if (!expectedFile.exists()) {
                 if (KtUsefulTestCase.IS_UNDER_TEAMCITY) {
                     Assert.fail("Expected data file " + expectedFile + " did not exist");
@@ -262,26 +266,44 @@ public class KotlinTestUtils {
                     Assert.fail("Expected data file did not exist. Generating: " + expectedFile);
                 }
             }
-            String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
-
-            String expectedText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
-
-            return new Triple<>(Objects.equals(sanitizer.invoke(expectedText), sanitizedActualText), expected, sanitizedActualText);
+            return FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
+    public static class FileComparisonResult {
+        public final @NotNull File expectedFile;
+        public final String expected;
+        public final String expectedSanitizedText;
+        public final String actualSanitizedText;
+        public final boolean doesEqual;
+
+        public FileComparisonResult(@NotNull File expectedFile, String expected, String expectedSanitizedText, String actualSanitizedText) {
+            this.expectedFile = expectedFile;
+            this.expected = expected;
+            this.expectedSanitizedText = expectedSanitizedText;
+            this.actualSanitizedText = actualSanitizedText;
+            this.doesEqual = Objects.equals(expectedSanitizedText, actualSanitizedText);
+        }
+    }
+
+    public static String applyDefaultAndCustomSanitizer(String text, @NotNull Function1<String, String> sanitizer) {
+        String textAfterDefaultSanitizer = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(text.trim()));
+        return sanitizer.invoke(textAfterDefaultSanitizer);
+    }
+
     public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
-        Triple<Boolean, String, String> triple = doesEqualToFile(expectedFile, actual, sanitizer);
-        if (!triple.getFirst()) {
-            String expected = triple.getSecond();
-            String sanitizedActual = triple.getThird();
+        failIfNotEqual(message, compareWithFile(expectedFile, actual, sanitizer));
+    }
+
+    public static void failIfNotEqual(@NotNull String message, FileComparisonResult fileComparisonResult) {
+        if (!fileComparisonResult.doesEqual) {
             throw new AssertionFailedError(
-                    message + ": " + expectedFile.getName(),
-                    new FileInfo(expectedFile.getAbsolutePath(), expected.getBytes(StandardCharsets.UTF_8)),
-                    sanitizedActual
+                    message + ": " + fileComparisonResult.expectedFile.getName(),
+                    new FileInfo(fileComparisonResult.expectedFile.getAbsolutePath(), fileComparisonResult.expected.getBytes(StandardCharsets.UTF_8)),
+                    fileComparisonResult.actualSanitizedText
             );
         }
     }
