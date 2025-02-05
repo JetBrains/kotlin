@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCas
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
+import org.jetbrains.kotlin.konan.test.testLibraryBKlibFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.jetbrains.kotlin.test.TestMetadata
@@ -34,20 +35,38 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
             swiftModuleName = "LibraryA",
             rootPackage = "org.jetbrains.a",
         )
-        runTestsAgainstKlib(klibSettings, testPath)
+        runTestsAgainstKlib(setOf(klibSettings), testPath)
     }
 
-    private fun runTestsAgainstKlib(klibSettings: KlibExportSettings, testPath: File) {
-        val testModule = TestModule.Given(klibSettings.path.toFile())
-        val config = klibSettings.createConfig(
-            exportResults = buildDir(testModule.name).toPath().resolve("swift_export_results")
+    @Test
+    fun `smoke test against 2 libraries combined`() {
+        val testPath = testDataDir.resolve("testLibraryA_testLibraryB_combined").absoluteFile
+        val klibSettingsA = KlibExportSettings(
+            path = testLibraryAKlibFile,
+            swiftModuleName = "LibraryA",
+            rootPackage = "org.jetbrains.a",
         )
-        val swiftExportResult = runSwiftExport(setOf(klibSettings.createInputModule(config))).getOrThrow()
+        val klibSettingsB = KlibExportSettings(
+            path = testLibraryBKlibFile,
+            swiftModuleName = "LibraryB",
+            rootPackage = "org.jetbrains.b",
+        )
+        runTestsAgainstKlib(setOf(klibSettingsA, klibSettingsB), testPath)
+    }
+
+    private fun runTestsAgainstKlib(klibSettings: Set<KlibExportSettings>, testPath: File) {
+        val testModules = klibSettings.map { TestModule.Given(it.path.toFile()) }.toSet()
+        val inputModules = klibSettings.map {
+            val config = it.createConfig(buildDir(testPath.name).toPath().resolve(it.swiftModuleName).resolve("swift_export_results"))
+            it.createInputModule(config)
+        }.toSet()
+
+        val swiftExportResult = runSwiftExport(inputModules).getOrThrow()
         val kotlinBridgeFiles = swiftExportResult.filterIsInstance<SwiftExportModule.BridgesToKotlin>().map { it.files.kotlinBridges.toFile() }
         val testCase = generateSwiftExportTestCase(
             testPathFull = testPath,
             sources = kotlinBridgeFiles,
-            dependencies = setOf(testModule),
+            dependencies = testModules,
         )
 
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
