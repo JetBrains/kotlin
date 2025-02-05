@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.swiftexport.standalone
+package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -12,6 +12,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.swiftExportConfigMap
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
+import org.jetbrains.kotlin.swiftexport.standalone.ErrorTypeStrategy
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
+import org.jetbrains.kotlin.swiftexport.standalone.UnsupportedDeclarationReporterKind
+import org.jetbrains.kotlin.swiftexport.standalone.createDummyLogger
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.assertAll
 import java.io.File
