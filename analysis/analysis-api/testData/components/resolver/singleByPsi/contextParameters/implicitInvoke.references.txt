@@ -1,0 +1,3 @@
+KtNameReferenceExpression(117,125): 'thisProp'
+  KtSimpleNameReference:
+    (in <local>: usage.<no name>) var thisProp: A
