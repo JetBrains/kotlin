@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.utils.createResolvable
+
+private const val ABI_TOOLS_DEPENDENCY_CONFIGURATION = "kotlinInternalAbiValidation"
 
 /**
  * Converts a [KotlinTarget] to a [KlibTarget].
@@ -67,8 +70,16 @@ internal val org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidBaseVariant.isTe
 
 internal fun Project.prepareAbiClasspath(): Configuration {
     val version = getKotlinPluginVersion()
-    val tools = dependencies.create("org.jetbrains.kotlin:abi-tools:$version")
-    return configurations.detachedConfiguration(tools)
+
+    return configurations.createResolvable(ABI_TOOLS_DEPENDENCY_CONFIGURATION)
+        .also {
+            it.isVisible = false
+            it.defaultDependencies { dependencies ->
+                dependencies.add(
+                    project.dependencies.create("org.jetbrains.kotlin:abi-tools:$version")
+                )
+            }
+        }
 }
 
 /**
