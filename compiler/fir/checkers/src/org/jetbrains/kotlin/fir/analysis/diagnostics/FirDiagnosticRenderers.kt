@@ -370,6 +370,15 @@ object FirDiagnosticRenderers {
     val KOTLIN_TARGETS = Renderer { targets: Collection<KotlinTarget> ->
         targets.joinToString { it.description }
     }
+
+    val STRING_TARGETS = Renderer { targets: Collection<String> ->
+        val quotedTargets = targets.joinToString { "'$it'" }
+        when (targets.size) {
+            0 -> "no targets"
+            1 -> "target $quotedTargets"
+            else -> "targets $quotedTargets"
+        }
+    }
 }
 
 fun <T> DiagnosticParameterRenderer<T>.joinToString(
