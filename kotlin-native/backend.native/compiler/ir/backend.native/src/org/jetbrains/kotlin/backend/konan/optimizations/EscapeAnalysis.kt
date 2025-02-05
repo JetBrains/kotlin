@@ -653,7 +653,7 @@ internal object EscapeAnalysis {
             else -> null
         }
 
-        private fun arraySize(itemSize: Int, length: Int): Long =
+        private fun arraySizeInBytes(itemSize: Int, length: Int): Long =
                 pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length.toLong()
 
         private fun analyze(
@@ -787,7 +787,7 @@ internal object EscapeAnalysis {
             val isActualDrain get() = this == actualDrain
         }
 
-        private data class ArrayStaticAllocation(val node: PointsToGraphNode, val irClass: IrClass, val size: Int)
+        private data class ArrayStaticAllocation(val node: PointsToGraphNode, val irClass: IrClass, val length: Int, val sizeInBytes: Int)
 
         private enum class EdgeDirection {
             FORWARD,
@@ -1666,9 +1666,9 @@ internal object EscapeAnalysis {
                             if (itemSize != null) {
                                 val sizeArgument = node.size.node
                                 val arrayLength = arrayLengthOf(sizeArgument)?.takeIf { it >= 0 }
-                                val arraySize = arraySize(itemSize, arrayLength ?: Int.MAX_VALUE)
-                                if (arraySize <= allowedToAlloc) {
-                                    stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arraySize.toInt())
+                                val arraySizeInBytes = arraySizeInBytes(itemSize, arrayLength ?: Int.MAX_VALUE)
+                                if (arraySizeInBytes <= allowedToAlloc) {
+                                    stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arrayLength!!, arraySizeInBytes.toInt())
                                 } else {
                                     // Can be placed into the local arena.
                                     lifetime = Lifetime.LOCAL
@@ -1688,13 +1688,14 @@ internal object EscapeAnalysis {
                     }
                 }
 
-                stackArrayCandidates.sortBy { it.size }
+                stackArrayCandidates.sortBy { it.sizeInBytes }
                 var remainedToAlloc = allowedToAlloc
-                for ((ptgNode, irClass, size) in stackArrayCandidates) {
+                for ((ptgNode, irClass, length, sizeInBytes) in stackArrayCandidates) {
                     if (lifetimeOf(ptgNode) != Lifetime.STACK) continue
-                    if (size <= remainedToAlloc)
-                        remainedToAlloc -= size
-                    else {
+                    if (sizeInBytes <= remainedToAlloc) {
+                        remainedToAlloc -= sizeInBytes
+                        ptgNode.forcedLifetime = Lifetime.STACK_ARRAY(length)
+                    } else {
                         remainedToAlloc = 0
                         // Do not exile primitive arrays - they ain't reference no object.
                         if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {

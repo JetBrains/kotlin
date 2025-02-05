@@ -902,14 +902,21 @@ internal abstract class FunctionGenerationContext(
             resultSlot: LLVMValueRef? = null
     ): LLVMValueRef {
         val typeInfo = codegen.typeInfoValue(irClass)
-        return if (lifetime == Lifetime.STACK) {
-            require(LLVMIsConstant(count) != 0) { "Expected a constant for the size of a stack-allocated array" }
-            stackLocalsManager.allocArray(irClass, count)
-        } else {
-            val array = call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
-            if (lifetime == Lifetime.LOCAL)
-                setObjectTag(runtime.arrayHeaderType, array, typeInfo, tag = codegen.immTwoIntPtrType /* OBJECT_TAG_LOCAL */)
-            array
+        return when (lifetime) {
+            is Lifetime.STACK_ARRAY -> stackLocalsManager.allocArray(irClass, llvm.int32(lifetime.size))
+            Lifetime.STACK -> {
+                require(irClass.symbol == context.irBuiltIns.stringClass) {
+                    "For stack arrays the STACK_ARRAY lifetime should be used, not STACK: ${irClass.render()}"
+                }
+                require(LLVMIsConstant(count) != 0) { "Expected a constant for the size of a stack-allocated string" }
+                stackLocalsManager.allocArray(irClass, count)
+            }
+            else -> {
+                val array = call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+                if (lifetime == Lifetime.LOCAL)
+                    setObjectTag(runtime.arrayHeaderType, array, typeInfo, tag = codegen.immTwoIntPtrType /* OBJECT_TAG_LOCAL */)
+                array
+            }
         }
     }
 

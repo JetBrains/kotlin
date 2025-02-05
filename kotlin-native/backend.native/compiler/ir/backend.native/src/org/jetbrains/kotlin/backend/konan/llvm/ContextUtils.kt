@@ -51,6 +51,10 @@ internal sealed class Lifetime(val slotType: SlotType) {
         }
     }
 
+    class STACK_ARRAY(val size: Int) : Lifetime(SlotType.STACK) {
+        override fun toString() = "STACK_ARRAY[$size]"
+    }
+
     // If reference is frame-local (only obtained from some call and never leaves).
     object LOCAL : Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
