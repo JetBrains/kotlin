@@ -675,23 +675,31 @@ class BodyGenerator(
             }
         }
 
-        val function: IrFunction = call.symbol.owner.realOverrideTarget
-
         call.arguments.forEach { generateExpression(it!!) }
 
-        if (tryToGenerateIntrinsicCall(call, function)) {
-            if (function.returnType.isUnit())
+        val callFunction = call.symbol.owner
+
+        if (tryToGenerateIntrinsicCall(call, callFunction)) {
+            if (callFunction.returnType.isUnit())
                 body.buildGetUnit()
             return
         }
 
         // We skip now calling any ctor because it is empty
-        if (function.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) return
+        if (callFunction.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) return
 
+        val function: IrFunction = callFunction.realOverrideTarget
         val isSuperCall = call is IrCall && call.superQualifierSymbol != null
         if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
             // Generating index for indirect call
-            val klass = function.parentAsClass
+
+            val originalClass = callFunction.parentAsClass
+            val realOverrideTargetClass = function.parentAsClass
+            val klass = when {
+                callFunction == function || !realOverrideTargetClass.isInterface || originalClass.isInterface -> realOverrideTargetClass
+                else -> originalClass
+            }
+
             if (!klass.isInterface) {
                 val classMetadata = wasmModuleMetadataCache.getClassMetadata(klass.symbol)
                 val vfSlot = classMetadata.virtualMethods.indexOfFirst { it.function == function }
