@@ -662,7 +662,11 @@ abstract class AbstractAtomicfuTransformer(
             return super.visitContainerExpression(expression, data)
         }
 
-        private fun IrExpression.isThisReceiver() = this is IrGetValue && symbol.owner.name.asString() == "<this>"
+        private fun IrExpression.isThisReceiver() =
+            this is IrGetValue && symbol.owner.let {
+                it is IrValueParameter &&
+                    (it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver)
+            }
 
         private fun IrCall.isArrayElementGetter(): Boolean =
             dispatchReceiver?.let {
