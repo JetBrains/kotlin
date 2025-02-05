@@ -101,6 +101,14 @@ var nullablePrim: Int? = null
 fun Int?.extensionOnNullablePrimitive(): Unit = TODO()
 fun Class_without_package?.extensionOnNullabeRef(): Unit = TODO()
 
+var Int?.extensionVarOnNullablePrimitive: String
+    get() = TODO()
+    set(v) = TODO()
+
+var Class_without_package?.extensionVarOnNullableRef: String
+    get() = TODO()
+    set(v) = TODO()
+
 // FILE: inheritance.kt
 
 open class OPEN_CLASS

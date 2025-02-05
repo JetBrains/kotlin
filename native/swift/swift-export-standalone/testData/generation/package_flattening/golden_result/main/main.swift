@@ -24,6 +24,16 @@ public func function(
 ) -> Swift.Int32 {
     ExportedKotlinPackages.org.kotlin.foo.function(arg: arg)
 }
+public func getX(
+    _ receiver: Swift.Int32
+) -> Swift.String {
+    ExportedKotlinPackages.org.kotlin.foo.getX(receiver)
+}
+public func y(
+    _ receiver: Swift.String
+) -> Swift.Int32 {
+    ExportedKotlinPackages.org.kotlin.foo.y(receiver)
+}
 public extension ExportedKotlinPackages.org.kotlin.foo.bar {
     public typealias Integer = Swift.Int32
 }
@@ -61,5 +71,15 @@ public extension ExportedKotlinPackages.org.kotlin.foo {
         arg: Swift.Int32
     ) -> Swift.Int32 {
         return org_kotlin_foo_function__TypesOfArguments__Swift_Int32__(arg)
+    }
+    public static func getX(
+        _ receiver: Swift.Int32
+    ) -> Swift.String {
+        return org_kotlin_foo_x_get__TypesOfArguments__Swift_Int32__(receiver)
+    }
+    public static func y(
+        _ receiver: Swift.String
+    ) -> Swift.Int32 {
+        return org_kotlin_foo_y__TypesOfArguments__Swift_String__(receiver)
     }
 }

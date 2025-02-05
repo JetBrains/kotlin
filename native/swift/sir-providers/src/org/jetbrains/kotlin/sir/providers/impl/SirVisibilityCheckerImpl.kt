@@ -45,7 +45,7 @@ public class SirVisibilityCheckerImpl(
                 ktSymbol.isConsumableBySirBuilder(ktSymbol.containingSymbol as? KaClassSymbol)
             }
             is KaVariableSymbol -> {
-                ktSymbol.isConsumableBySirBuilder() && !ktSymbol.hasHiddenAccessors
+                !ktSymbol.hasHiddenAccessors
             }
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType
                 .let {
@@ -76,14 +76,6 @@ public class SirVisibilityCheckerImpl(
         }
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inline functions are not supported yet.")
-            return false
-        }
-        return true
-    }
-
-    private fun KaVariableSymbol.isConsumableBySirBuilder(): Boolean {
-        if (isExtension) {
-            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "extension properties are not supported yet.")
             return false
         }
         return true

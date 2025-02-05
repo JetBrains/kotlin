@@ -51,7 +51,7 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
         this@translateExtensionParameter.ktSymbol.receiverParameter?.let { receiver ->
             val sirType = createParameterType(ktSymbol, receiver)
             SirParameter(
-                argumentName = receiver.name.asStringStripSpecialMarkers(),
+                parameterName = receiver.name.asStringStripSpecialMarkers(),
                 type = sirType,
                 origin = KotlinParameterOrigin.ReceiverParameter(receiver)
             )

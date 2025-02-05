@@ -18,6 +18,7 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
     private fun KaDeclarationSymbol.getName(): String? {
         return when (this) {
             is KaNamedClassSymbol -> this.classId?.shortClassName?.asString()
+            is KaPropertySymbol -> this.name.asString()
             is KaCallableSymbol -> this.mangleCallableName()
             else -> error(this)
         }

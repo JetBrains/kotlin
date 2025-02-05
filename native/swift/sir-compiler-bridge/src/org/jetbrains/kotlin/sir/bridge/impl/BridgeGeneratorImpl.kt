@@ -47,9 +47,22 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add(
                     request.descriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
-                        if (selfParameter != null && extensionReceiverParameter != null) {
-                            "__${selfParameter.name}.run { __${extensionReceiverParameter.name}.${kotlinFqName.last()}(${args.joinToString()}) }"
-                        } else "$name(${args.joinToString()})"
+                        when (request.kind) {
+                            FunctionBridgeKind.GETTER -> {
+                                val expectedParameters = if (extensionReceiverParameter != null) 1 else 0
+                                require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
+                                buildCall("")
+                            }
+                            FunctionBridgeKind.SETTER -> {
+                                val expectedParameters = if (extensionReceiverParameter != null) 2 else 1
+                                require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
+                                buildCall(" = ${args.last()}")
+                            }
+                            FunctionBridgeKind.FUNCTION -> {
+                                val actualArgs = if (extensionReceiverParameter != null) args.drop(1) else args
+                                buildCall("(${actualArgs.joinToString()})")
+                            }
+                        }
                     }
                 )
             }
@@ -58,7 +71,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                     request.descriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
                         require(args.isEmpty()) { "Received a getter $name with ${args.size} parameters instead of no parameters, aborting" }
-                        name
+                        buildCall("")
                     }
                 )
             }
@@ -67,7 +80,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                     request.descriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
                         require(args.size == 1) { "Received a setter $name with ${args.size} parameters instead of a single one, aborting" }
-                        "$name = ${args.single()}"
+                        buildCall(" = ${args.single()}")
                     }
                 )
             }
@@ -147,20 +160,32 @@ private class BridgeFunctionDescriptor(
     val errorParameter: BridgeParameter?,
     val typeNamer: SirTypeNamer,
 ) {
-    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, listOfNotNull(extensionReceiverParameter) + parameters, typeNamer)
+    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, typeNamer)
     val cBridgeName = kotlinBridgeName
 
     val allParameters
-        get() = listOfNotNull(selfParameter, extensionReceiverParameter) + parameters + listOfNotNull(errorParameter)
+        get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter)
 
     val name
-        get() = if (selfParameter != null) {
-            "__${selfParameter.name}.${kotlinFqName.last().kotlinIdentifier}"
-        } else if (extensionReceiverParameter != null) { // TODO both
-            "__${extensionReceiverParameter.name}.${kotlinFqName.last().kotlinIdentifier}"
+        get() = kotlinFqName.joinToString(separator = ".") { it.kotlinIdentifier }
+
+
+    fun buildCall(args: String): String {
+        return if (selfParameter == null) {
+            if (extensionReceiverParameter == null) {
+                "$name$args"
+            } else {
+                "__${extensionReceiverParameter.name}.$safeImportName$args"
+            }
         } else {
-            kotlinFqName.joinToString(separator = ".") { it.kotlinIdentifier }
+            val memberName = kotlinFqName.last().kotlinIdentifier
+            if (extensionReceiverParameter == null) {
+                "__${selfParameter.name}.$memberName$args"
+            } else {
+                "__${selfParameter.name}.run { __${extensionReceiverParameter.name}.$memberName$args }"
+            }
         }
+    }
 }
 
 private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
@@ -303,9 +328,16 @@ private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
 
 private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: BridgeFunctionDescriptor.() -> String) =
     FunctionBridge(
-        KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName, cinterop)),
+        KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName, cinterop) + additionalImports()),
         CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
     )
+
+private fun BridgeFunctionDescriptor.additionalImports(): List<String> {
+    if (extensionReceiverParameter != null && selfParameter == null && kotlinFqName.size > 1) {
+        return listOf("$name as $safeImportName")
+    }
+    return emptyList()
+}
 
 private fun SirCallable.bridgeParameters() = allParameters.mapIndexed { index, value -> bridgeParameter(value, index) }
 
@@ -906,3 +938,6 @@ private val kotlinKeywords = setOf(
     "annotation", "data", "inner", "tailrec", "operator", "inline", "infix", "external", "suspend", "override", "abstract", "final", "open",
     "const", "lateinit", "vararg", "noinline", "crossinline", "reified", "expect", "actual"
 )
+
+private val BridgeFunctionDescriptor.safeImportName: String
+    get() = kotlinFqName.run { if (size <= 1) single() else joinToString("_") { it.replace("_", "__") } }

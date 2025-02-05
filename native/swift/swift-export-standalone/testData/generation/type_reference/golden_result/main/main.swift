@@ -333,14 +333,24 @@ public func combine(
     return __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
 }
 public func extensionOnNullabeRef(
-    receiver: main.Class_without_package?
+    _ receiver: main.Class_without_package?
 ) -> Swift.Void {
     return __root___extensionOnNullabeRef__TypesOfArguments__main_Class_without_package_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
 }
 public func extensionOnNullablePrimitive(
-    receiver: Swift.Int32?
+    _ receiver: Swift.Int32?
 ) -> Swift.Void {
     return __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
+}
+public func getExtensionVarOnNullablePrimitive(
+    _ receiver: Swift.Int32?
+) -> Swift.String {
+    return __root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
+}
+public func getExtensionVarOnNullableRef(
+    _ receiver: main.Class_without_package?
+) -> Swift.String {
+    return __root___extensionVarOnNullableRef_get__TypesOfArguments__main_Class_without_package_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
 }
 public func nullable_input_prim(
     i: Swift.Int32?
@@ -421,6 +431,18 @@ public func recieve_object_wp(
     arg: ExportedKotlinPackages.namespace.deeper.Object_with_package
 ) -> Swift.Void {
     return __root___recieve_object_wp__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg.__externalRCRef())
+}
+public func setExtensionVarOnNullablePrimitive(
+    _ receiver: Swift.Int32?,
+    v: Swift.String
+) -> Swift.Void {
+    return __root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Int32_opt__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v)
+}
+public func setExtensionVarOnNullableRef(
+    _ receiver: main.Class_without_package?,
+    v: Swift.String
+) -> Swift.Void {
+    return __root___extensionVarOnNullableRef_set__TypesOfArguments__main_Class_without_package_opt__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? 0, v)
 }
 public extension ExportedKotlinPackages.namespace.deeper {
     public final class Class_with_package: KotlinRuntime.KotlinBase {

@@ -219,7 +219,7 @@ private fun readRequestFromFile(file: File): FunctionBridgeRequest {
         }
     }
 
-    return FunctionBridgeRequest(callable, bridgeName, fqName)
+    return FunctionBridgeRequest(callable, bridgeName, fqName, FunctionBridgeKind.FUNCTION)
 }
 
 private enum class BridgeRequestKind {

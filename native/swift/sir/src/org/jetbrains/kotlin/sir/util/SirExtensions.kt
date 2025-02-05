@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.sir.*
 
 val SirCallable.allParameters: List<SirParameter>
     get() = when (this) {
-        is SirFunction -> this.parameters
+        is SirFunction -> listOfNotNull(this.extensionReceiverParameter) + this.parameters
         is SirInit -> this.parameters
         is SirSetter -> listOf(SirParameter(parameterName = parameterName, type = this.valueType))
         is SirGetter -> listOf()

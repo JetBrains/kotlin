@@ -38,3 +38,5 @@ fun intIdentity(input: Int?): Int? = input
 fun doubleIdentity(input: Double?): Double? = input
 
 fun String?.extPrint(): String = this ?: "<null>"
+
+val String?.extPrintProp get() = this ?: "<null>"

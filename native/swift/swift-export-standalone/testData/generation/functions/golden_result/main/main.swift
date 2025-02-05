@@ -15,36 +15,116 @@ public final class Foo: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
     public func ext(
-        receiver: Swift.String
+        _ receiver: Swift.String
     ) -> Swift.Void {
         return Foo_ext__TypesOfArguments__Swift_String__(self.__externalRCRef(), receiver)
     }
+    public func getExtVal(
+        _ receiver: Swift.String
+    ) -> Swift.String {
+        return Foo_extVal_get__TypesOfArguments__Swift_String__(self.__externalRCRef(), receiver)
+    }
+    public func getExtVar(
+        _ receiver: Swift.String
+    ) -> Swift.String {
+        return Foo_extVar_get__TypesOfArguments__Swift_String__(self.__externalRCRef(), receiver)
+    }
+    public func setExtVar(
+        _ receiver: Swift.String,
+        v: Swift.String
+    ) -> Swift.Void {
+        return Foo_extVar_set__TypesOfArguments__Swift_String_Swift_String__(self.__externalRCRef(), receiver, v)
+    }
 }
 public func foo(
-    receiver: Swift.Int32
+    _ receiver: Swift.Int32
 ) -> Swift.Void {
     return __root___foo__TypesOfArguments__Swift_Int32__(receiver)
 }
 public func foo(
-    receiver: Swift.Int32?
+    _ receiver: Swift.Int32?
 ) -> Swift.Void {
     return __root___foo__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func foo(
-    receiver: main.Foo
+    _ receiver: main.Foo
 ) -> Swift.Void {
     return __root___foo__TypesOfArguments__main_Foo__(receiver.__externalRCRef())
 }
 public func foo(
-    receiver: main.Foo?
+    _ receiver: main.Foo?
 ) -> Swift.Void {
     return __root___foo__TypesOfArguments__main_Foo_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
 }
 public func foo() -> Swift.Int32 {
     return __root___foo()
 }
+public func getBar(
+    _ receiver: Swift.Int32
+) -> Swift.String {
+    return __root___bar_get__TypesOfArguments__Swift_Int32__(receiver)
+}
+public func getBar(
+    _ receiver: Swift.Int32?
+) -> Swift.String {
+    return __root___bar_get__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
+}
+public func getBar(
+    _ receiver: main.Foo
+) -> Swift.String {
+    return __root___bar_get__TypesOfArguments__main_Foo__(receiver.__externalRCRef())
+}
+public func getBar(
+    _ receiver: main.Foo?
+) -> Swift.String {
+    return __root___bar_get__TypesOfArguments__main_Foo_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
+}
+public func getFoo(
+    _ receiver: Swift.Int32
+) -> Swift.String {
+    return __root___foo_get__TypesOfArguments__Swift_Int32__(receiver)
+}
+public func getFoo(
+    _ receiver: Swift.Int32?
+) -> Swift.String {
+    return __root___foo_get__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
+}
+public func getFoo(
+    _ receiver: main.Foo
+) -> Swift.String {
+    return __root___foo_get__TypesOfArguments__main_Foo__(receiver.__externalRCRef())
+}
+public func getFoo(
+    _ receiver: main.Foo?
+) -> Swift.String {
+    return __root___foo_get__TypesOfArguments__main_Foo_opt___(receiver.map { it in it.__externalRCRef() } ?? 0)
+}
 public func return_any_should_append_runtime_import() -> KotlinRuntime.KotlinBase {
     return KotlinRuntime.KotlinBase(__externalRCRef: __root___return_any_should_append_runtime_import())
+}
+public func setFoo(
+    _ receiver: Swift.Int32,
+    v: Swift.String
+) -> Swift.Void {
+    return __root___foo_set__TypesOfArguments__Swift_Int32_Swift_String__(receiver, v)
+}
+public func setFoo(
+    _ receiver: Swift.Int32?,
+    v: Swift.String
+) -> Swift.Void {
+    return __root___foo_set__TypesOfArguments__Swift_Int32_opt__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v)
+}
+public func setFoo(
+    _ receiver: main.Foo,
+    v: Swift.String
+) -> Swift.Void {
+    return __root___foo_set__TypesOfArguments__main_Foo_Swift_String__(receiver.__externalRCRef(), v)
+}
+public func setFoo(
+    _ receiver: main.Foo?,
+    v: Swift.String
+) -> Swift.Void {
+    return __root___foo_set__TypesOfArguments__main_Foo_opt__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? 0, v)
 }
 public extension ExportedKotlinPackages.namespace1.local_functions {
     public static func foo() -> Swift.Void {

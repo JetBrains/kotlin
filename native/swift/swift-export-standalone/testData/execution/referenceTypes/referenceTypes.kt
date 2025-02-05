@@ -56,11 +56,23 @@ class Foo(var x: Int) {
     }
 
     fun Int.memberExt(): Int = x + this
+
+    var Int.memberExtProp: Int
+        get() = x + this
+        set(v) {
+            x = v - this
+        }
 }
 
 fun getX(foo: Foo) = foo.x
 
 fun Foo.extGetX() = x
+
+var Foo.extX: Int
+    get() = x
+    set(v) {
+        x = v
+    }
 
 fun makeFoo(x: Int) = Foo(x)
 

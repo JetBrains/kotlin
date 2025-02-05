@@ -56,7 +56,7 @@ internal fun ModuleWithScopeProvider.initializeSirModule(
     return with(moduleProvider) {
         SwiftModuleBuildResults(
             module = mainModule.sirModule(),
-            packages = sirSession.enumGenerator.collectedPackages
+            packages = sirSession.enumGenerator.collectedPackages,
         )
     }
 }

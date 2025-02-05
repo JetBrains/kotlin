@@ -44,11 +44,14 @@ func objectIdentityWithGlobal() throws {
 func objectIdentityWithPassThrough() throws {
     let one = Foo(x: 1)
     let two = idFoo(foo: one)
-    let three = extId(receiver: one)
+    let three = extId(one)
     try assertSame(actual: one, expected: two)
     try assertSame(actual: one, expected: three)
     try assertEquals(actual: getX(foo: one), expected: 1)
-    try assertEquals(actual: extGetX(receiver: one), expected: 1)
+    try assertEquals(actual: extGetX(one), expected: 1)
+    try assertEquals(actual: getExtX(one), expected: 1)
+    setExtX(one, v: 10)
+    try assertEquals(actual: getExtX(one), expected: 10)
 }
 
 func objectIdentityWithObject() throws {
@@ -100,8 +103,16 @@ func primitiveMethod() throws {
 
 func memberExtension() throws {
     let foo = Foo(x: 1)
-    let sum = foo.memberExt(receiver: 10)
+    let sum = foo.memberExt(10)
     try assertEquals(actual: sum, expected: 11)
+}
+
+func memberExtensionProperty() throws {
+    let foo = Foo(x: 1)
+    let sum = foo.getMemberExtProp(10)
+    try assertEquals(actual: sum, expected: 11)
+    foo.setMemberExtProp(10, v: 12)
+    try assertEquals(actual: foo.x, expected: 2)
 }
 
 func objectGetter() throws {
@@ -442,6 +453,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "primitiveSetter", method: withAutorelease(primitiveSetter)),
             TestCase(name: "primitiveMethod", method: withAutorelease(primitiveMethod)),
             TestCase(name: "memberExtension", method: withAutorelease(memberExtension)),
+            TestCase(name: "memberExtensionProperty", method: withAutorelease(memberExtensionProperty)),
             TestCase(name: "objectGetter", method: withAutorelease(objectGetter)),
             TestCase(name: "objectSetter", method: withAutorelease(objectSetter)),
             TestCase(name: "objectMethod", method: withAutorelease(objectMethod)),

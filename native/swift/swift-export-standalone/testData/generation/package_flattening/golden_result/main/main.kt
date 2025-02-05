@@ -3,6 +3,8 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import org.kotlin.foo.x as org_kotlin_foo_x
+import org.kotlin.foo.y as org_kotlin_foo_y
 
 @ExportedBridge("org_kotlin_foo_Clazz_init_allocate")
 public fun org_kotlin_foo_Clazz_init_allocate(): kotlin.native.internal.NativePtr {
@@ -39,5 +41,19 @@ public fun org_kotlin_foo_variable_get(): Int {
 public fun org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__(newValue: Int): Unit {
     val __newValue = newValue
     org.kotlin.foo.variable = __newValue
+}
+
+@ExportedBridge("org_kotlin_foo_x_get__TypesOfArguments__Swift_Int32__")
+public fun org_kotlin_foo_x_get__TypesOfArguments__Swift_Int32__(`receiver`: Int): kotlin.native.internal.NativePtr {
+    val __receiver = `receiver`
+    val _result = __receiver.org_kotlin_foo_x
+    return _result.objcPtr()
+}
+
+@ExportedBridge("org_kotlin_foo_y__TypesOfArguments__Swift_String__")
+public fun org_kotlin_foo_y__TypesOfArguments__Swift_String__(`receiver`: kotlin.native.internal.NativePtr): Int {
+    val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
+    val _result = __receiver.org_kotlin_foo_y()
+    return _result
 }
 

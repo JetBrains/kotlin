@@ -34,7 +34,15 @@ public class FunctionBridgeRequest(
      * Fully Qualified Name of Kotlin callable.
      */
     public val fqName: List<String>,
+    /**
+     * Kind of declaration on the Kotlin side.
+     */
+    public val kind: FunctionBridgeKind,
 ) : BridgeRequest
+
+public enum class FunctionBridgeKind {
+    FUNCTION, GETTER, SETTER
+}
 
 /**
  * A C-like wrapper around some Kotlin function.

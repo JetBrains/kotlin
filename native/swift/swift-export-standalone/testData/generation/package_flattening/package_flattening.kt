@@ -18,6 +18,11 @@ class Clazz
 
 fun function(arg: Int) = arg
 
+val Int.x: String
+    get() = "test"
+
+fun String.y(): Int = 5
+
 var variable: Int = 0
 
 val constant: Int = 0

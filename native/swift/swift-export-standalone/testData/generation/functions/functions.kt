@@ -70,11 +70,37 @@ fun foo(arg1: Foo?): Unit = TODO()
 // FILE: extension_fun.kt
 class Foo {
     fun String.ext(): Unit = TODO()
+    val String.extVal: String
+        get() = TODO()
+    var String.extVar: String
+        get() = TODO()
+        set(v) {}
 }
 fun Int.foo(): Unit = TODO()
 fun Int?.foo(): Unit = TODO()
 fun Foo.foo(): Unit = TODO()
 fun Foo?.foo(): Unit = TODO()
+
+var Int.foo: String
+    get() = TODO()
+    set(v) { }
+
+var Int?.foo: String
+    get() = TODO()
+    set(v) = TODO()
+
+var Foo.foo: String
+    get() = TODO()
+    set(v) = TODO()
+
+var Foo?.foo: String
+    get() = TODO()
+    set(v) = TODO()
+
+val Int.bar: String get() = TODO()
+val Int?.bar: String get() = TODO()
+val Foo.bar: String get() = TODO()
+val Foo?.bar: String get() = TODO()
 
 // FILE: suspend_function.kt
 // we do not support sus fun. This should not be exported
