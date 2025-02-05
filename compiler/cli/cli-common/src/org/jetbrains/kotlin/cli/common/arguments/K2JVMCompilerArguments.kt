@@ -146,6 +146,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @GradleOption(
         value = DefaultValue.JVM_DEFAULT_MODES,
         gradleInputType = GradleInputTypes.INPUT,
+        gradleName = "jvmDefault",
     )
     @Argument(
         value = "-jvm-default",
@@ -156,7 +157,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                                  with static methods for compatibility with code compiled in the 'disable' mode.
 -jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes."""
     )
-    var jvmDefault: String? = null
+    var jvmDefaultStable: String? = null
         set(value) {
             checkFrozen()
             field = value
@@ -469,7 +470,7 @@ The default value is 'warn'."""
 -Xjvm-default=all-compatibility  -> -jvm-default=enable
 -Xjvm-default=all                -> -jvm-default=no-compatibility"""
     )
-    var jvmDefaultOld: String? = null
+    var jvmDefault: String? = null
         set(value) {
             checkFrozen()
             field = value
@@ -867,20 +868,20 @@ This option is deprecated and will be deleted in future versions."""
 
     private fun configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode {
         val mode = when {
-            jvmDefault != null -> JvmDefaultMode.fromStringOrNull(jvmDefault).also {
+            jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
                 if (it == null) {
                     collector?.report(
                         CompilerMessageSeverity.ERROR,
-                        "Unknown -jvm-default mode: $jvmDefault, supported modes: " +
+                        "Unknown -jvm-default mode: $jvmDefaultStable, supported modes: " +
                                 "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
                     )
                 }
             }
-            jvmDefaultOld != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefaultOld).also {
+            jvmDefault != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefault).also {
                 if (it == null) {
                     collector?.report(
                         CompilerMessageSeverity.ERROR,
-                        "Unknown -Xjvm-default mode: $jvmDefaultOld, supported modes: " +
+                        "Unknown -Xjvm-default mode: $jvmDefault, supported modes: " +
                                 "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
                     )
                 }

@@ -79,7 +79,7 @@ internal object CompilerArgumentMetrics : FusMetrics {
             is K2JVMCompilerArguments -> {
                 val args = K2JVMCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
-                metricsConsumer.report(StringMetrics.JVM_DEFAULTS, args.jvmDefault ?: JvmDefaultMode.DISABLE.description)
+                metricsConsumer.report(StringMetrics.JVM_DEFAULTS, args.jvmDefaultStable ?: JvmDefaultMode.DISABLE.description)
 
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
