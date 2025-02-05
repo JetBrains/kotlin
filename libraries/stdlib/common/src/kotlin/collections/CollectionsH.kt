@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,9 +34,9 @@ public expect inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
 public expect fun <T> MutableList<T>.fill(value: T): Unit
 
 /**
- * Randomly shuffles elements in this list.
+ * Randomly shuffles elements in this list in-place.
  *
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fished-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.2")
 public expect fun <T> MutableList<T>.shuffle(): Unit

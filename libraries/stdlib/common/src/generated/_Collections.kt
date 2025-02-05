@@ -991,7 +991,7 @@ public fun <T> Iterable<T>.reversed(): List<T> {
 /**
  * Randomly shuffles elements in this list in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fished-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.3")
 public fun <T> MutableList<T>.shuffle(random: Random): Unit {
