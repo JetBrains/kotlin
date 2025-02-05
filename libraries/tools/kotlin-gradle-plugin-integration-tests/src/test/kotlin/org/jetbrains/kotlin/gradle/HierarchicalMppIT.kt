@@ -741,7 +741,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             projectPath.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
                 """
             import kotlin.test.Test
-                
+
             class UseCompileOnlyDependency {
                 @Test
                 fun myTest() = Unit
@@ -987,7 +987,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                     kotlin {
                         withSourcesJar(publish = false)
                     }
-                    
+
                     kotlin.targets.getByName("jvm").withSourcesJar()
                 """.trimIndent()
             )
@@ -1022,7 +1022,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("KT-44845: all external dependencies is unresolved in IDE with kotlin.mpp.enableGranularSourceSetsMetadata=true")
+    @DisplayName("KT-44845: all external dependencies is unresolved in IDE")
     fun testMixedScopesFilesExistKt44845(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -1366,10 +1366,10 @@ open class HierarchicalMppIT : KGPBaseTest() {
                     doFirst {
                         for (scope in listOf("api", "implementation", "compileOnly", "runtimeOnly")) {
                             println("========\n${'$'}scope\n")
-                            
+
                             kotlin.sourceSets.withType<DefaultKotlinSourceSet>().forEach { sourceSet ->
                                 println("--------\n${'$'}{sourceSet.name}")
-                                
+
                                 sourceSet
                                     .getDependenciesTransformation(
                                         "${'$'}{sourceSet.name}${'$'}{scope.capitalize()}DependenciesMetadata"
@@ -1383,7 +1383,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                                                 it.useFilesForSourceSets.keys.joinToString(","),
                                                 it.useFilesForSourceSets.values.flatten().joinToString(",")
                                         )
-                    
+
                                         println("        " + line.joinToString(" :: "))
                                     }
                                 println()
