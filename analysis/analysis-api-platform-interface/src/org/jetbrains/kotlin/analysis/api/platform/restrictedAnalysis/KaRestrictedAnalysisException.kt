@@ -17,4 +17,4 @@ package org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis
  * Distinguishing between regular exceptions and those that occurred during restricted analysis supports diagnostic efforts and even allows
  * the platform to suppress such exceptions if needed.
  */
-public abstract class KaRestrictedAnalysisException : Exception()
+public abstract class KaRestrictedAnalysisException(cause: Throwable) : Exception(cause)
