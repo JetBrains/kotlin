@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 object CLIConfigurationKeys {

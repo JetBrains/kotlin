@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 
 class K2NativeCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Native Compiler") {
 

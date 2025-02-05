@@ -17,6 +17,12 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
+import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
+import org.jetbrains.kotlin.util.CodeGenerationMeasurement
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
+import org.jetbrains.kotlin.util.GarbageCollectionMeasurement
+import org.jetbrains.kotlin.util.IRMeasurement
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
