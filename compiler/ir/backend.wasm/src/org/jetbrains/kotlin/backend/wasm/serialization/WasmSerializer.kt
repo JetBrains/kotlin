@@ -254,6 +254,7 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmHeapType.Simple.Func -> setTag(HeapTypeTags.FUNC)
             WasmHeapType.Simple.NoExtern -> setTag(HeapTypeTags.NO_EXTERN)
             WasmHeapType.Simple.None -> setTag(HeapTypeTags.NONE)
+            WasmHeapType.Simple.NoFunc -> setTag(HeapTypeTags.NO_FUNC)
             WasmHeapType.Simple.Struct -> setTag(HeapTypeTags.STRUCT)
             is WasmHeapType.Type -> withTag(HeapTypeTags.HEAP_TYPE) { serializeWasmSymbolReadOnly(type.type) { serializeWasmTypeDeclaration(it) } }
         }

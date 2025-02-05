@@ -54,6 +54,7 @@ sealed class WasmHeapType {
         object Eq : Simple("eq", -0x13)
         object Struct : Simple("struct", -0x15)
         object None : Simple("none", -0x0F)
+        object NoFunc : Simple("nofunc", -0x0D)
         object NoExtern : Simple("noextern", -0x0E)
 
         override fun toString(): String {

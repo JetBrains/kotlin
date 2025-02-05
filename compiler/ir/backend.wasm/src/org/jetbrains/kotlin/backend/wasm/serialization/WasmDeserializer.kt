@@ -196,6 +196,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.FUNC -> WasmHeapType.Simple.Func
                 HeapTypeTags.NO_EXTERN -> WasmHeapType.Simple.NoExtern
                 HeapTypeTags.NONE -> WasmHeapType.Simple.None
+                HeapTypeTags.NO_FUNC -> WasmHeapType.Simple.NoFunc
                 HeapTypeTags.STRUCT -> WasmHeapType.Simple.Struct
                 HeapTypeTags.HEAP_TYPE -> WasmHeapType.Type(deserializeSymbol(::deserializeTypeDeclaration))
                 else -> tagError(tag)
