@@ -41,11 +41,11 @@ fun Project.objCExportHeaderGeneratorTest(
         }
 
         dependencies {
-            testDependencyProjectKlibs(project(":native:objcexport-header-generator:testLibraryA"))
-            testDependencyProjectKlibs(project(":native:objcexport-header-generator:testLibraryB"))
-            testDependencyProjectKlibs(project(":native:objcexport-header-generator:testLibraryC"))
-            testDependencyProjectKlibs(project(":native:objcexport-header-generator:testInternalLibrary"))
-            testDependencyProjectKlibs(project(":native:objcexport-header-generator:testExtensionsLibrary"))
+            testDependencyProjectKlibs(project(":native:external-projects-test-utils:testLibraryA"))
+            testDependencyProjectKlibs(project(":native:external-projects-test-utils:testLibraryB"))
+            testDependencyProjectKlibs(project(":native:external-projects-test-utils:testLibraryC"))
+            testDependencyProjectKlibs(project(":native:external-projects-test-utils:testInternalLibrary"))
+            testDependencyProjectKlibs(project(":native:external-projects-test-utils:testExtensionsLibrary"))
         }
     }
 
