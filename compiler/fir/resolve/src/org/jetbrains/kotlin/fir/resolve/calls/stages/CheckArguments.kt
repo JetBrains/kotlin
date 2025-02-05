@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.typeConstructor
 
@@ -137,7 +139,8 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
             scopeSession,
             candidateExpectedType = candidateExpectedType,
             expectedFunctionType = expectedFunctionType,
-            context.returnTypeCalculator
+            context.returnTypeCalculator,
+            this,
         )
     ) {
         return null
@@ -153,35 +156,59 @@ private fun FirExpression.shouldUseSamConversion(
     candidateExpectedType: ConeKotlinType,
     expectedFunctionType: ConeKotlinType,
     returnTypeCalculator: ReturnTypeCalculator,
+    candidate: Candidate,
 ): Boolean {
-    when (val unwrapped = unwrapArgument()) {
-        is FirAnonymousFunctionExpression, is FirCallableReferenceAccess -> return true
-        else -> {
-            // Either a functional type or a subtype of a class that has a contributed `invoke`.
-            val coneType = resolvedType
-            // Argument might have an intersection type between FunctionN and the SAM type from a smart cast, in which case we don't want to use
-            // SAM conversion.
-            if (coneType.isSubtypeOf(candidateExpectedType, session)) {
-                return false
-            }
-            if (coneType.isSomeFunctionType(session)) {
-                return true
-            }
-            val classLikeExpectedFunctionType = expectedFunctionType.lowerBoundIfFlexible() as? ConeClassLikeType
-            if (classLikeExpectedFunctionType == null || coneType is ConeIntegerLiteralType) {
-                return false
-            }
+    val unwrapped = unwrapArgument()
 
-            val namedReferenceWithCandidate = unwrapped.namedReferenceWithCandidate()
-            if (namedReferenceWithCandidate?.candidate?.postponedAtoms?.any {
-                    it is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
-                            it.expectedType.typeConstructor(session.typeContext) == coneType.typeConstructor(session.typeContext)
-                } == true
-            ) {
-                return true
-            }
-            return isSubtypeForSamConversion(session, scopeSession, coneType, classLikeExpectedFunctionType, returnTypeCalculator)
-        }
+    // Always apply SAM conversion on lambdas and callable references
+    if (unwrapped is FirAnonymousFunctionExpression || unwrapped is FirCallableReferenceAccess) {
+        return true
+    }
+
+    // Always apply SAM conversion on generic call with nested lambda like `run { {} }`
+    if (unwrapped.isCallWithGenericReturnTypeAndMatchingLambda(session)) {
+        return true
+    }
+
+    val expressionType = resolvedType
+    if (expressionType is ConeIntegerLiteralType) {
+        return false
+    }
+
+    // Expression type is a subtype of expected type, no need for SAM conversion.
+    val substitutedExpectedType = candidate.substitutor.substituteOrSelf(candidateExpectedType)
+    if (candidate.csBuilder.isSubtypeConstraintCompatible(expressionType, substitutedExpectedType)) {
+        return false
+    }
+
+    if (expressionType.isSomeFunctionType(session)) {
+        return true
+    }
+
+    val expectedTypeLowerBound = expectedFunctionType.lowerBoundIfFlexible()
+    if (expectedTypeLowerBound !is ConeClassLikeType) {
+        return false
+    }
+
+    return isSubtypeForSamConversion(session, scopeSession, expressionType, expectedTypeLowerBound, returnTypeCalculator)
+
+}
+
+/**
+ * Returns true if this expression is a call having a type variable as return type,
+ * and at the same time that type variable is the expected type of a not-yet analyzed lambda.
+ *
+ * In other words, the argument is some generic call that encapsulates a nested lambda, e.g. `outerCall(argument = run { { ... } })`
+ * and the expression type is likely determined by the nested lambda, therefore, it will be a function type.
+ *
+ * In this case, we should treat it analogously to a simple lambda argument (`outerCall {}`) and apply SAM conversion.
+ */
+private fun FirExpression.isCallWithGenericReturnTypeAndMatchingLambda(session: FirSession): Boolean {
+    val expressionType = resolvedType
+    val postponedAtoms = namedReferenceWithCandidate()?.candidate?.postponedAtoms ?: return false
+    return postponedAtoms.any {
+        it is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
+                it.expectedType.typeConstructor(session.typeContext) == expressionType.typeConstructor(session.typeContext)
     }
 }
 

@@ -7,7 +7,6 @@
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
-// JVM_ABI_K1_K2_DIFF: KT-62855
 
 import helpers.*
 import kotlin.coroutines.*
