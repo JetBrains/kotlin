@@ -47,4 +47,11 @@ enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
 
     fun isAtLeast(other: KlibAbiCompatibilityLevel): Boolean =
         major > other.major || major == other.major && minor >= other.minor
+
+    companion object {
+        /**
+         * KLIBs with ABI version >= 2.2.0 have `fileEntries.knf` file with `file entries` table.
+         */
+        val FIRST_HAVING_FILE_ENTRIES_TABLE = ABI_LEVEL_2_2
+    }
 }

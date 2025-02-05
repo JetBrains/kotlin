@@ -51,11 +51,6 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
          * See also [org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor.CompatibleChecker].
          */
         val LAST_WITH_LEGACY_SIGNATURES_FOR_PRIVATE_AND_LOCAL_DECLARATIONS = KotlinAbiVersion(1, 5, 0)
-
-        /**
-         * KLIBs with ABI version >= 2.2.0 have `fileEntries.knf` file with `file entries` table.
-         */
-        val FIRST_HAVING_FILE_ENTRIES_TABLE = KotlinAbiVersion(2, 2, 0)
     }
 }
 
