@@ -16,6 +16,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     private val deprecatedProperties: List<String> = listOf(
         "kotlin.useK2",
         "kotlin.experimental.tryK2",
+        "kotlin.incremental.classpath.snapshot.enabled",
         "kotlin.internal.single.build.metrics.file",
         "kotlin.build.report.dir",
         "kotlin.native.ignoreIncorrectDependencies",
