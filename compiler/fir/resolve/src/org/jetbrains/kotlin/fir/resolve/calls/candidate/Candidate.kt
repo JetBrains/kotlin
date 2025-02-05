@@ -114,9 +114,6 @@ class Candidate(
     var resultingTypeForCallableReference: ConeKotlinType? = null
         private set
 
-    val usesSamConversion: Boolean get() = functionTypesOfSamConversions != null
-    val usesSamConversionOrSamConstructor: Boolean get() = usesSamConversion || symbol.origin == FirDeclarationOrigin.SamConstructor
-
     internal var callableReferenceAdaptation: CallableReferenceAdaptation? = null
         private set
 
@@ -127,21 +124,41 @@ class Candidate(
         require(this.callableReferenceAdaptation == null) { "callableReferenceAdaptation already initialized" }
         this.callableReferenceAdaptation = callableReferenceAdaptation
         this.resultingTypeForCallableReference = resultingTypeForCallableReference
-        usesFunctionConversion =
-            callableReferenceAdaptation?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
         if (callableReferenceAdaptation != null) {
             numDefaults = callableReferenceAdaptation.defaults
         }
     }
 
-    var usesFunctionConversion: Boolean = false
-    var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
+    /**
+     * Expressions in this set are arguments of the call that have function kind conversion applied (e.g., suspend conversion).
+     */
+    var argumentsWithFunctionKindConversion: HashSet<FirExpression>? = null
         private set
 
-    fun initializeFunctionTypesOfSamConversions(types: HashMap<FirExpression, FirSamResolver.SamConversionInfo>) {
-        require(functionTypesOfSamConversions == null) { "functionTypesOfSamConversions already initialized" }
-        functionTypesOfSamConversions = types
+    fun addFunctionKindConversionOfArgument(element: FirExpression) {
+        val set = argumentsWithFunctionKindConversion ?: HashSet<FirExpression>().also { argumentsWithFunctionKindConversion = it }
+        set += element
     }
+
+    var samConversionInfosOfArguments: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
+        private set
+
+    fun setSamConversionOfArgument(expression: FirExpression, conversionInfo: FirSamResolver.SamConversionInfo) {
+        val map = samConversionInfosOfArguments
+            ?: hashMapOf<FirExpression, FirSamResolver.SamConversionInfo>().also { samConversionInfosOfArguments = it }
+        map[expression] = conversionInfo
+    }
+
+    // Computed getters
+
+    val usesSamConversion: Boolean
+        get() = samConversionInfosOfArguments != null
+
+    val usesSamConversionOrSamConstructor: Boolean
+        get() = usesSamConversion || symbol.origin == FirDeclarationOrigin.SamConstructor
+
+    val usesFunctionKindConversion: Boolean
+        get() = argumentsWithFunctionKindConversion != null || callableReferenceAdaptation?.hasFunctionKindConversion() == true
 
     // ---------------------------------------- Argument mapping ----------------------------------------
 

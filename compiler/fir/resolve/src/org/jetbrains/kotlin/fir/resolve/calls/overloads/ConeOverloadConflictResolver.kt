@@ -223,7 +223,7 @@ class ConeOverloadConflictResolver(
         if (discriminationFlags.suspendConversions) {
             filterCandidatesByDiscriminationFlag(
                 candidates,
-                { !it.usesFunctionConversion },
+                { !it.usesFunctionKindConversion },
                 { discriminationFlags.copy(suspendConversions = false) },
             )?.let { return it }
         }
@@ -581,7 +581,7 @@ class ConeOverloadConflictResolver(
     }
 
     private fun FirValueParameter.toFunctionTypeForSamOrNull(call: Candidate): ConeKotlinType? {
-        val functionTypesOfSamConversions = call.functionTypesOfSamConversions ?: return null
+        val functionTypesOfSamConversions = call.samConversionInfosOfArguments ?: return null
         return call.argumentMapping.entries.firstNotNullOfOrNull {
             runIf(it.value == this) { functionTypesOfSamConversions[it.key.expression.unwrapArgument()]?.functionalType }
         }

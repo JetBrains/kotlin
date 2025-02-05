@@ -779,7 +779,7 @@ class FirCallCompletionResultsWriterTransformer(
 
             argument.unwrapAndFlattenArgument(flattenArrays = false).map {
                 val element: FirElement = (it as? FirAnonymousFunctionExpression)?.anonymousFunction ?: it
-                functionTypesOfSamConversions?.get(it)?.let { samInfo ->
+                samConversionInfosOfArguments?.get(it)?.let { samInfo ->
                     if (samConversions == null) samConversions = mutableMapOf()
                     samConversions[element] = FirSamResolver.SamConversionInfo(
                         functionalType = samInfo.functionalType.substituteType(this),

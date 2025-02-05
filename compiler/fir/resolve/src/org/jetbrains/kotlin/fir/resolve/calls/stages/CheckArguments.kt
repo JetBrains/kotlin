@@ -143,10 +143,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
         return null
     }
 
-    val samConversions = functionTypesOfSamConversions
-        ?: hashMapOf<FirExpression, FirSamResolver.SamConversionInfo>().also { initializeFunctionTypesOfSamConversions(it) }
-
-    samConversions[argument.unwrapArgument()] = samConversionInfo
+    setSamConversionOfArgument(argument.unwrapArgument(), samConversionInfo)
     return expectedFunctionType
 }
 
