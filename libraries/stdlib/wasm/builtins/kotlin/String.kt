@@ -22,6 +22,8 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
+     *
+     * @sample samples.text.Strings.stringPlus
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String {
@@ -93,6 +95,15 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         return thisLength - otherLength
     }
 
+    /**
+     * Indicates if [other] object is equal to this [String].
+     *
+     * An [other] object is equal to this [String] if and only if it is also a [String],
+     * it has the same [length] as this String,
+     * and characters at the same positions in each string are equal to each other.
+     *
+     * @sample samples.text.Strings.stringEquals
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean {
         if (other == null) return false
