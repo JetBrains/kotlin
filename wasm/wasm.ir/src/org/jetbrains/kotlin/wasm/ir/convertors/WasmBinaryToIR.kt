@@ -481,7 +481,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun readBlockType(): WasmImmediate.BlockType {
         val code = b.readVarInt64()
         return when {
-            code >= 0 -> WasmImmediate.BlockType.Function(functionTypes[code.toInt()])
+            code >= 0 -> WasmImmediate.BlockType.Function(WasmSymbol(functionTypes[code.toInt()]))
             code == -0x40L -> WasmImmediate.BlockType.Value(null)
             else -> WasmImmediate.BlockType.Value(readValueTypeImpl(code.toByte()))
         }
