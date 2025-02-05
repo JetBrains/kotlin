@@ -32,9 +32,17 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
+        runSwiftTests(testPathFull, testCase, swiftModules, kotlinBinaryLibrary)
+    }
+
+    fun runSwiftTests(
+        testPathFull: File,
+        testCase: TestCase,
+        swiftModules: Set<TestCompilationArtifact.Swift.Module>,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
+    ) {
         val swiftTestFiles = testPathFull.walk().filter { it.extension == "swift" }.map { testPathFull.resolve(it) }.toList()
-        val testExecutable =
-            compileTestExecutable(testPathFull.name, swiftTestFiles, swiftModules, kotlinBinaryLibrary)
+        val testExecutable = compileTestExecutable(testPathFull.name, swiftTestFiles, swiftModules, kotlinBinaryLibrary)
         runExecutableAndVerify(testCase, testExecutable)
     }
 

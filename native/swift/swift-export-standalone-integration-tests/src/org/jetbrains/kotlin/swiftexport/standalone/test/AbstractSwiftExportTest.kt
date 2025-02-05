@@ -44,7 +44,7 @@ abstract class AbstractSwiftExportTest {
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
     protected fun buildDir(testName: String) = binariesDir.resolve(testName)
     private val targets: KotlinNativeTargets get() = testRunSettings.get()
-    private val testCompilationFactory = TestCompilationFactory()
+    protected val testCompilationFactory = TestCompilationFactory()
     private val compiledSwiftCache = ThreadSafeCache<SwiftExportModule, TestCompilationArtifact.Swift.Module>()
 
     protected abstract fun runCompiledTest(
@@ -95,7 +95,7 @@ abstract class AbstractSwiftExportTest {
             testPathFull,
             kotlinBinaryLibraryName,
             kotlinFiles.toList() + additionalKtFiles.map { it.toFile() },
-            dependencies = modulesToExport
+            modules = modulesToExport
                 .flatMapToSet {
                     it.allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet()
                 } - modulesToExport,
@@ -152,7 +152,7 @@ abstract class AbstractSwiftExportTest {
         dependencies.filterIsInstance<SwiftExportModule.BridgesToKotlin>().collectKotlinBridgeFilesRecursively(into)
     }
 
-    private fun SwiftExportModule.compile(
+    protected fun SwiftExportModule.compile(
         testPathFull: File,
         allModules: Set<SwiftExportModule>,
     ): Set<TestCompilationArtifact.Swift.Module> {
@@ -237,11 +237,12 @@ abstract class AbstractSwiftExportTest {
         ).result.assertSuccess().resultingArtifact
     }
 
-    private fun generateSwiftExportTestCase(
+    protected fun generateSwiftExportTestCase(
         testPathFull: File,
         testName: String = testPathFull.name,
         sources: List<File>,
-        dependencies: Set<TestModule.Exclusive>,
+        modules: Set<TestModule.Exclusive> = emptySet(),
+        dependencies: Set<TestModule.Given>? = null,
     ): TestCase {
         val module = TestModule.newDefaultModule()
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
@@ -257,7 +258,7 @@ abstract class AbstractSwiftExportTest {
         return TestCase(
             id = TestCaseId.Named(testName),
             kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(module) + dependencies,
+            modules = setOf(module) + modules,
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
                     "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
@@ -291,7 +292,7 @@ abstract class AbstractSwiftExportTest {
             },
             extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
         ).apply {
-            initialize(null, null)
+            initialize(dependencies, null)
         }
     }
 }
