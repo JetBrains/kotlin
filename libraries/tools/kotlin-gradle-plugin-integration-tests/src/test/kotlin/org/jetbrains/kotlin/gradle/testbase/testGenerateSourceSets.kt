@@ -18,14 +18,16 @@ fun KotlinSourceSet.addIdentifierClass() = compileSource("class $name")
 fun KotlinSourceSet.compileSource(
     @Language("kotlin")
     sourceContent: String,
+    sourceName: String? = null,
 ) {
     val identifier = "${name}_${project.generateIdentifier()}"
     val identifierPath = project.layout.buildDirectory.dir("generatedSourceDir_${identifier}")
+    val generatedSourceName = (sourceName ?: "generatedSource_${identifier}") + ".kt"
     kotlin.srcDir(
         project.tasks.create("generateSourceIn_${identifier}") { task ->
             task.outputs.dir(identifierPath)
             task.doLast {
-                identifierPath.get().asFile.resolve("generatedSource_${identifier}.kt").writeText(sourceContent)
+                identifierPath.get().asFile.resolve(generatedSourceName).writeText(sourceContent)
             }
         }
     )

@@ -11,6 +11,7 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -145,6 +146,65 @@ class JvmBinariesDslIT : KGPBaseTest() {
             val runScript = if (OS.WINDOWS.isCurrentOs) "multiplatform.bat" else "multiplatform"
             assertScriptExecutionIsSuccessful(projectPath.resolve("multiplatform/build/install/multiplatform-jvm/bin/$runScript"))
         }
+    }
+
+    @DisplayName("Custom test binary distribution is runnable without testData")
+    @GradleTest
+    fun customTestBinaryDistributionIsRunnable_withoutTestData(gradleVersion: GradleVersion) {
+        val output = File.createTempFile("test-output", ".txt")
+        val testSourceName = "JvmTest"
+        val project = project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm {
+                        binaries {
+                            executable(KotlinCompilation.TEST_COMPILATION_NAME) {
+                                mainClass.set("${testSourceName}Kt")
+                            }
+                        }
+                    }
+                    sourceSets.commonMain.configure {
+                        it.compileSource(
+                            """
+                            fun commonMain() = java.io.FileWriter("${output.path}", true).use { 
+                                it.write("commonMain ")
+                            }
+                        """.trimIndent()
+                        )
+                    }
+                    sourceSets.jvmMain.configure {
+                        it.compileSource(
+                            """
+                            fun jvmMain() = java.io.FileWriter("${output.path}", true).use { 
+                                it.write("jvmMain")
+                            }
+                            """.trimIndent()
+                        )
+                    }
+                    sourceSets.jvmTest.configure {
+                        it.compileSource(
+                            """
+                            fun main() {
+                                commonMain()
+                                jvmMain()
+                            }
+                            """.trimIndent(),
+                            testSourceName,
+                        )
+                    }
+                }
+            }
+        }
+
+        project.build(":installJvmTestDist")
+        assertScriptExecutionIsSuccessful(
+            project.projectPath.resolve("build/install/empty-jvmTest/bin/empty")
+        )
+        assertEquals(
+            "commonMain jvmMain",
+            output.readText(),
+        )
     }
 
     @DisplayName("Custom test binary distribution is runnable")
