@@ -47,7 +47,7 @@ import java.util.*
  */
 open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApiBasedTest() {
     private var refinerToRegister: DummyContentScopeRefiner = DummyContentScopeRefiner()
-    override var configurator: ContentScopeProviderConfigurator = ContentScopeProviderConfigurator(refinerToRegister)
+    override var configurator: AnalysisApiFirSourceTestConfigurator = ContentScopeProviderConfigurator(refinerToRegister)
 
     override fun doTest(testServices: TestServices) {
         val namesToModules = testServices.ktTestModuleStructure.mainModules.associateBy {
@@ -268,7 +268,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
 }
 
 
-class ContentScopeProviderConfigurator(private val scopeRefinerToRegister: DummyContentScopeRefiner) :
+private class ContentScopeProviderConfigurator(private val scopeRefinerToRegister: DummyContentScopeRefiner) :
     AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = buildList {
@@ -285,7 +285,7 @@ private class ContentScopeProviderRegistrar(private val scopeRefinerToRegister: 
     }
 }
 
-class DummyContentScopeRefiner(
+private class DummyContentScopeRefiner(
     val enlargementScope: MutableMap<String, List<VirtualFile>> = mutableMapOf(),
     val restrictionScope: MutableMap<String, List<VirtualFile>> = mutableMapOf()
 ) : KotlinContentScopeRefiner {
