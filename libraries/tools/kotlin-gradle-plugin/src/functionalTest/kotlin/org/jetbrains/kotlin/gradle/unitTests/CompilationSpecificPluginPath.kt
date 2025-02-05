@@ -148,7 +148,6 @@ internal class CompilationSpecificPluginPath {
             plugins.apply(NativeSpecificPlugin::class.java)
             plugins.apply(RegularPluginWithoutNativeArtifact::class.java)
 
-            extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
 
             // With kotlin.native.useEmbeddableCompilerJar=false
             extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.native.useEmbeddableCompilerJar", "false")
