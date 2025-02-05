@@ -29,10 +29,6 @@ class GarbageCollectionMeasurement(val garbageCollectionKind: String, val millis
     override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
-class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
-    override fun render(): String = counterReport
-}
-
 class IRMeasurement(val lines: Int?, val milliseconds: Long, val kind: Kind) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("IR $kind", milliseconds, lines)
 

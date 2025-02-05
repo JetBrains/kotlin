@@ -21,6 +21,8 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     // The lock object is located not in a companion object because every module has its own instance of the performance manager
     private val counterMeasurementsLock = Any()
 
+    private fun currentTime(): Long = System.nanoTime()
+
     @Suppress("MemberVisibilityCanBePrivate")
     private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
 
@@ -31,7 +33,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     )
 
     protected var isEnabled: Boolean = false
-    private var initStartNanos = PerformanceCounter.currentTime()
+    private var initStartNanos = currentTime()
     private var analysisStart: Long = 0
     private var generationStart: Long = 0
 
@@ -60,11 +62,10 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     fun enableCollectingPerformanceStatistics() {
         isEnabled = true
-        PerformanceCounter.setTimeCounterEnabled(true)
         ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
 
-    private fun deltaTime(start: Long): Long = PerformanceCounter.currentTime() - start
+    private fun deltaTime(start: Long): Long = currentTime() - start
 
     open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
         if (!isEnabled) return
@@ -79,7 +80,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         if (!isEnabled) return
         recordGcTime()
         recordJitCompilationTime()
-        recordPerfCountersMeasurements()
     }
 
     open fun addSourcesStats(files: Int, lines: Int) {
@@ -89,25 +89,25 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     open fun notifyAnalysisStarted() {
-        analysisStart = PerformanceCounter.currentTime()
+        analysisStart = currentTime()
     }
 
     open fun notifyAnalysisFinished() {
-        val time = PerformanceCounter.currentTime() - analysisStart
+        val time = currentTime() - analysisStart
         measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyGenerationStarted() {
-        generationStart = PerformanceCounter.currentTime()
+        generationStart = currentTime()
     }
 
     open fun notifyGenerationFinished() {
-        val time = PerformanceCounter.currentTime() - generationStart
+        val time = currentTime() - generationStart
         measurements += CodeGenerationMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyIRTranslationStarted() {
-        irTranslationStart = PerformanceCounter.currentTime()
+        irTranslationStart = currentTime()
     }
 
     open fun notifyIRTranslationFinished() {
@@ -120,7 +120,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     open fun notifyIRLoweringStarted() {
-        irLoweringStart = PerformanceCounter.currentTime()
+        irLoweringStart = currentTime()
     }
 
     open fun notifyIRLoweringFinished() {
@@ -133,7 +133,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 
     open fun notifyIRGenerationStarted() {
-        irGenerationStart = PerformanceCounter.currentTime()
+        irGenerationStart = currentTime()
     }
 
     open fun notifyIRGenerationFinished() {
@@ -176,18 +176,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         measurements += CompilerInitializationMeasurement(time)
     }
 
-    private fun recordPerfCountersMeasurements() {
-        PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
-    }
-
     internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
 
-        val startTime = PerformanceCounter.currentTime()
+        val startTime = currentTime()
         try {
             return block()
         } finally {
-            val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(PerformanceCounter.currentTime() - startTime)
+            val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(currentTime() - startTime)
             synchronized(counterMeasurementsLock) {
                 val currentMeasurement = counterMeasurements[measurementClass]
                     ?: error("No counter measurement initialized for $measurementClass")
@@ -217,7 +213,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
             it is CompilerInitializationMeasurement ||
                     it is CodeAnalysisMeasurement ||
                     it is CodeGenerationMeasurement ||
-                    it is PerformanceCounterMeasurement ||
                     it is FindJavaClassMeasurement ||
                     it is BinaryClassFromKotlinFileMeasurement
         }
