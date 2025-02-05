@@ -113,6 +113,7 @@ projectStructure/KotlinResolutionScopeProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinResolutionScopeProvider.kt:KotlinResolutionScopeProvider
 projectStructure/utils.kt:@OptIn(KaExperimentalApi::class) asDebugString(Int)
 resolution/KaResolutionActivityTracker.kt:Companion:getInstance()
+restrictedAnalysis/KotlinRestrictedAnalysisService.kt:Companion:getInstance(Project)
 statistics/KaStatisticsService.kt:Companion:areStatisticsEnabled
 statistics/KaStatisticsService.kt:Companion:getInstance(Project)
 statistics/KotlinOpenTelemetryProvider.kt:Companion:getInstance(Project)

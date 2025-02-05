@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 /**
  * [KaSession], also called an *analysis session*, is the entry point to all frontend-related work. It has the following contracts:
  *
- * - It should not be accessed outside a [read action](https://plugins.jetbrains.com/docs/intellij/threading-model.html) or in [dumb mode][com.intellij.openapi.project.DumbService].
- *   It should also not be accessed from the event dispatch thread (EDT) or a write action unless explicitly allowed ([allowAnalysisOnEdt][org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt],
+ * - It should not be accessed outside a [read action](https://plugins.jetbrains.com/docs/intellij/threading-model.html).
+ * - It should only be accessed in restricted analysis mode (see `KotlinRestrictedAnalysisService` in the platform interface) when
+ *   restricted analysis is allowed by the Analysis API platform.
+ * - It should not be accessed from the event dispatch thread (EDT) or a write action unless explicitly allowed ([allowAnalysisOnEdt][org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt],
  *   [allowAnalysisFromWriteAction][org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisFromWriteAction]).
  * - It should not be leaked outside the [analyze] call it was created in. To ensure that an analysis session isn't leaked, there are
  *   additional conventions, explained further below.
