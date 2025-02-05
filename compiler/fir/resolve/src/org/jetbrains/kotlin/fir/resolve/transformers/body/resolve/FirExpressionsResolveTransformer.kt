@@ -1832,7 +1832,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         whileAnalysing(session, arrayLiteral) {
             when (data) {
                 is ResolutionMode.ContextIndependent -> { // todo fix
-                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextIndependent)
+                    arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
                     val call = components.syntheticCallGenerator.generateCollectionOfCall(
                         Name.identifier("listOf"),
                         arrayLiteral,
