@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenEnumProperty
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AbstractSuspendFunctionsLowering
@@ -186,27 +187,35 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 // Don't generate `defineProperty` if the property overrides a property from an exported class,
                 // because we've already generated `defineProperty` for the base class property.
                 // In other words, we only want to generate `defineProperty` once for each property.
-                // The exception is case when we override val with var,
-                // so we need regenerate `defineProperty` with setter.
+                // The exception is the case when we override val with var,
+                // so we need to regenerate `defineProperty` with setter.
                 // P.S. If the overridden property is owned by an interface - we should generate defineProperty
-                // for overridden property in the first class which override those properties
+                // for overridden property in the first class which overrides those properties
                 val hasOverriddenExportedInterfaceProperties = overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
-                        && !overriddenSymbols.any { it.owner.parentClassOrNull.isExportedClass(backendContext) }
+                val hasOverriddenExternalInterfaceProperties = overriddenSymbols.any { it.owner.isDefinedInsideExternalInterface() }
 
-                val getterOverridesExternal = property.getter?.overridesExternal() == true
-                val overriddenExportedGetter = !property.getter?.overriddenSymbols.isNullOrEmpty() &&
+                val getterOverridesExternal = overriddenSymbols.any { it.owner.realOverrideTarget.isEffectivelyExternal() }
+                val thereIsNewlyIntroducedExternalSetter =
+                    property.overridesExternal() && property.isVar && property.overriddenSymbols.all { !it.owner.isVar }
+
+                val overriddenExportedGetter = overriddenSymbols.isNotEmpty() &&
                         property.getter?.isOverriddenExported(backendContext) == true
 
                 val noOverriddenExportedSetter = property.setter?.isOverriddenExported(backendContext) == false
 
-                val needsOverride = (overriddenExportedGetter && noOverriddenExportedSetter) ||
-                        property.isAllowedFakeOverriddenDeclaration(backendContext)
+                val thereIsPropertyJsName = property.getJsName() != null
+                val classIsExported = irClass.isExported(backendContext)
+                val ownProperty = overriddenSymbols.isEmpty()
+                val ownExportedSetter = overriddenExportedGetter && noOverriddenExportedSetter
+                val needsOverride = ownExportedSetter || property.isOverriddenEnumProperty(backendContext)
 
-                if (irClass.isExported(backendContext) &&
-                    (overriddenSymbols.isEmpty() || needsOverride) ||
+                if (classIsExported &&
+                    (ownProperty || needsOverride) ||
                     hasOverriddenExportedInterfaceProperties ||
+                    hasOverriddenExternalInterfaceProperties ||
                     getterOverridesExternal ||
-                    property.getJsName() != null
+                    thereIsNewlyIntroducedExternalSetter ||
+                    thereIsPropertyJsName
                 ) {
                     val propertyName = context.getNameForProperty(property)
 
@@ -224,15 +233,22 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     //     });
 
                     val getterForwarder = property.getter
-                        .takeIf { it.shouldExportAccessor(backendContext) }
                         .getOrGenerateIfFinalOrEs6Mode {
                             propertyAccessorForwarder("getter forwarder") {
                                 JsReturn(JsInvocation(it))
                             }
                         }
 
+                    // We export setters in 4 cases:
+                    // 1. The class is exported and the setter its own
+                    // 2. There is @JsName annotation on property
+                    // 3. The setter is a newly introduced to an overridden external property
+                    // 4. The setter is an overridden setter defined in an external/exported interface
                     val setterForwarder = property.setter
-                        .takeIf { it.shouldExportAccessor(backendContext) }
+                        ?.takeIf { setter ->
+                            (classIsExported && (ownProperty || ownExportedSetter)) || thereIsPropertyJsName || thereIsNewlyIntroducedExternalSetter ||
+                                    setter.overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() || it.owner.isDefinedInsideExternalInterface() }
+                        }
                         .getOrGenerateIfFinalOrEs6Mode {
                             val setterArgName = JsName("value", false)
                             propertyAccessorForwarder("setter forwarder") {
@@ -276,9 +292,17 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun IrSimpleFunction.isDefinedInsideExportedInterface(): Boolean {
+        val irClass = parentClassOrNull ?: return false
         if (isJsExportIgnore() || correspondingPropertySymbol?.owner?.isJsExportIgnore() == true) return false
-        return (!isFakeOverride && parentClassOrNull.isExportedInterface(backendContext)) ||
-                overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
+        if (!isFakeOverride) return irClass.isExportedInterface(backendContext)
+        return overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
+    }
+
+    private fun IrSimpleFunction.isDefinedInsideExternalInterface(): Boolean {
+        val irClass = parentClassOrNull ?: return false
+        if (isEffectivelyExternal()) return irClass.isInterface
+        if (!isFakeOverride && irClass.isClass) return false
+        return overriddenSymbols.any { it.owner.isDefinedInsideExternalInterface() }
     }
 
     private fun IrSimpleFunction.accessorRef(): JsNameRef? =
@@ -561,14 +585,6 @@ fun JsFunction.escapedIfNeed(): JsFunction {
 
 }
 
-fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean {
-    if (this == null) return false
-
-    if (parentAsClass.isExported(context)) return true
-
-    return isAccessorOfOverriddenStableProperty(context)
-}
-
 fun IrSimpleFunction.overriddenStableProperty(context: JsIrBackendContext): Boolean {
     val property = correspondingPropertySymbol!!.owner
 
@@ -576,17 +592,7 @@ fun IrSimpleFunction.overriddenStableProperty(context: JsIrBackendContext): Bool
         return isOverriddenExported(context)
     }
 
-    return overridesExternal() || property.getJsName() != null
-}
-
-fun IrSimpleFunction.isAccessorOfOverriddenStableProperty(context: JsIrBackendContext): Boolean {
-    return overriddenStableProperty(context) || correspondingPropertySymbol!!.owner.overridesExternal()
-}
-
-private fun IrOverridableDeclaration<*>.overridesExternal(): Boolean {
-    if (this.isEffectivelyExternal()) return true
-
-    return overriddenSymbols.any { (it.owner as IrOverridableDeclaration<*>).overridesExternal() }
+    return property.getJsName() != null || overridesExternal()
 }
 
 private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true

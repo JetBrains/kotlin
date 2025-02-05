@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
+import org.jetbrains.kotlin.ir.backend.js.originalConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
@@ -76,8 +77,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
             }
 
             val boxParameter = constructor.boxParameter
-            val body = (original.body?.deepCopyWithSymbols(constructor) as IrBlockBody)
-                .also { constructor.body = it }
+            val body = (original.body as IrBlockBody).also { constructor.body = it }
 
             body.transformChildrenVoid(object : ValueRemapper(emptyMap()) {
                 override val map = original.nonDispatchParameters.zip(constructor.nonDispatchParameters)
@@ -123,8 +123,8 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
                             initializer.symbol == context.intrinsics.jsCreateExternalThisSymbol -> {
                                 map[declaration.symbol] = classThisSymbol
 
-                                val externalConstructor =
-                                    superClass?.primaryConstructor?.symbol ?: irError("Expect to have external constructor here") {
+                                val externalConstructor = (initializer.originalConstructor ?: superClass?.primaryConstructor)?.symbol
+                                    ?: irError("Expect to have external constructor here") {
                                         superClass?.let { withIrEntry("superClass", it) }
                                     }
                                 val parameters = initializer.arguments[CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS] as? IrVararg
@@ -195,7 +195,6 @@ class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBa
  * 1. Has primary constructor which delegates to a secondary
  * 2. Has secondary constructor which delegates to a primary
  * 3. Has a constructor with a box parameter, and it has an external superclass
- * 4. Is a subtype for Throwable, because we replace the super call inside constructors with `setPropertiesToThrowableInstance` call
  * Otherwise, we can generate a simple ES-class constructor in each class of the hierarchy
  */
 class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
@@ -245,8 +244,7 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
     }
 
     private fun IrClass.canBeOptimized(): Boolean {
-        return superClass?.symbol != context.throwableClass &&
-                !isSubclassOfExternalClassWithRequiredBoxParameter() &&
+        return !isSubclassOfExternalClassWithRequiredBoxParameter() &&
                 !hasPrimaryDelegatedToSecondaryOrSecondaryToPrimary()
     }
 
