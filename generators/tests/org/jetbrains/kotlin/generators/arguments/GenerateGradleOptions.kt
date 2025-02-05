@@ -650,9 +650,9 @@ private fun Printer.generateCompilerOptionsHelper(
                 if (property.name != "freeCompilerArgs") {
                     val getter = if (property.gradleReturnType.endsWith("?")) ".orNull" else ".get()"
                     val toArg = defaultValue.toArgumentConverter?.substringAfter("this") ?: ""
-                    println("args.${property.name} = from.${property.name}$getter$toArg")
+                    println("args.${property.name} = from.${property.gradleName}$getter$toArg")
                 } else {
-                    println("args.freeArgs += from.${property.name}.get()")
+                    println("args.freeArgs += from.${property.gradleName}.get()")
                 }
             }
 
@@ -686,7 +686,7 @@ private fun Printer.generateCompilerOptionsHelper(
                     gradleLazyReturnType.startsWith("org.gradle.api.provider.MapProperty") -> "putAll"
                     else -> "convention"
                 }
-                println("into.${property.name}.$mapper(from.${property.name})")
+                println("into.${property.gradleName}.$mapper(from.${property.gradleName})")
             }
         }
         println("}")
@@ -755,7 +755,7 @@ private fun Printer.generatePropertyProvider(
         println("@get:org.gradle.api.tasks.Optional")
     }
     println("@get:${property.gradleInputType}")
-    println("${modifiers.appendWhitespaceIfNotBlank}val ${property.name}: ${property.gradleLazyReturnType}")
+    println("${modifiers.appendWhitespaceIfNotBlank}val ${property.gradleName}: ${property.gradleLazyReturnType}")
 }
 
 private fun Printer.generatePropertyProviderImpl(
@@ -764,7 +764,7 @@ private fun Printer.generatePropertyProviderImpl(
 ) {
     generateOptionDeprecation(property)
     println(
-        "override ${modifiers.appendWhitespaceIfNotBlank}val ${property.name}: ${property.gradleLazyReturnType} ="
+        "override ${modifiers.appendWhitespaceIfNotBlank}val ${property.gradleName}: ${property.gradleLazyReturnType} ="
     )
     withIndent {
         val convention = if (property.gradleDefaultValue != "null") {
@@ -792,29 +792,29 @@ private fun Printer.generatePropertyGetterAndSetter(
     }
 
     if (defaultValue.fromKotlinOptionConverterProp != null) {
-        println("private val ${defaultValue.kotlinOptionsType}.${property.name}CompilerOption get() = ${defaultValue.fromKotlinOptionConverterProp}")
+        println("private val ${defaultValue.kotlinOptionsType}.${property.gradleName}CompilerOption get() = ${defaultValue.fromKotlinOptionConverterProp}")
         println()
-        println("private val ${defaultValue.type}.${property.name}KotlinOption get() = ${defaultValue.toKotlinOptionConverterProp}")
+        println("private val ${defaultValue.type}.${property.gradleName}KotlinOption get() = ${defaultValue.toKotlinOptionConverterProp}")
         println()
     }
 
     generateDoc(property)
     generateOptionDeprecation(property)
-    println("${modifiers.appendWhitespaceIfNotBlank}var ${property.name}: $returnType")
+    println("${modifiers.appendWhitespaceIfNotBlank}var ${property.gradleName}: $returnType")
     val propGetter = if (returnType.endsWith("?")) ".orNull" else ".get()"
     val getter = if (defaultValue.fromKotlinOptionConverterProp != null) {
-        "$propGetter.${property.name}KotlinOption"
+        "$propGetter.${property.gradleName}KotlinOption"
     } else {
         propGetter
     }
     val setter = if (defaultValue.toKotlinOptionConverterProp != null) {
-        ".set(value.${property.name}CompilerOption)"
+        ".set(value.${property.gradleName}CompilerOption)"
     } else {
         ".set(value)"
     }
     withIndent {
-        println("get() = options.${property.name}$getter")
-        println("set(value) = options.${property.name}$setter")
+        println("get() = options.${property.gradleName}$getter")
+        println("set(value) = options.${property.gradleName}$setter")
     }
 }
 
@@ -857,7 +857,7 @@ private fun generateMarkdown(properties: List<KProperty1<*, *>>) {
     println("| Name | Description | Possible values |Default value |")
     println("|------|-------------|-----------------|--------------|")
     for (property in properties) {
-        val name = property.name
+        val name = property.gradleName
         if (name == "includeRuntime") continue   // This option has no effect in Gradle builds
         val renderName = listOfNotNull("`$name`", property.findAnnotation<GradleDeprecatedOption>()?.let { "__(Deprecated)__" })
             .joinToString(" ")
@@ -936,6 +936,9 @@ private val KProperty1<*, *>.gradleLazyReturnTypeInstantiator: String
             else -> ".property(${returnType.withNullability(false)}::class.java)"
         }
     }
+
+private val KProperty1<*, *>.gradleName: String
+    get() = findAnnotation<GradleOption>()!!.gradleName.ifEmpty { name }
 
 private val KProperty1<*, *>.gradleInputTypeAsEnum: GradleInputTypes
     get() = findAnnotation<GradleOption>()!!.gradleInputType

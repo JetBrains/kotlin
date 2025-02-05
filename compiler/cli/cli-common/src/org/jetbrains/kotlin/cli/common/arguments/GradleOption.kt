@@ -24,7 +24,8 @@ package org.jetbrains.kotlin.cli.common.arguments
 annotation class GradleOption(
     val value: DefaultValue,
     val gradleInputType: GradleInputTypes,
-    val shouldGenerateDeprecatedKotlinOptions: Boolean = false
+    val shouldGenerateDeprecatedKotlinOptions: Boolean = false,
+    val gradleName: String = "",
 )
 
 enum class DefaultValue {
