@@ -177,6 +177,7 @@ fun TestProject.build(
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     inputStream: InputStream? = null,
+    forwardBuildOutput: Boolean = true,
     assertions: BuildResult.() -> Unit = {},
 ) = buildWithAction(
     parameters = BuildParameterization(
@@ -190,6 +191,7 @@ fun TestProject.build(
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
         environmentVariables = environmentVariables,
+        forwardBuildOutput = forwardBuildOutput,
     ),
     assertions = assertions,
     inputStream = inputStream,
@@ -211,6 +213,7 @@ fun TestProject.buildAndFail(
     enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     inputStream: InputStream? = null,
+    forwardBuildOutput: Boolean = true,
     assertions: BuildResult.() -> Unit = {},
 ) = buildWithAction(
     parameters = BuildParameterization(
@@ -224,6 +227,7 @@ fun TestProject.buildAndFail(
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
         environmentVariables = environmentVariables,
+        forwardBuildOutput = forwardBuildOutput,
     ),
     assertions = assertions,
     inputStream = inputStream,
@@ -241,6 +245,8 @@ private data class BuildParameterization(
     val enableGradleDaemonMemoryLimitInMb: Int?,
     val enableKotlinDaemonMemoryLimitInMb: Int?,
     val environmentVariables: EnvironmentalVariables,
+    /** If `true`, enable [GradleRunner.forwardOutput]. */
+    val forwardBuildOutput: Boolean,
 )
 
 private fun TestProject.buildWithAction(
@@ -272,7 +278,7 @@ private fun TestProject.buildWithAction(
             kotlinDaemonDebugPort = kotlinDaemonDebugPort
         )
         val gradleRunnerForBuild = gradleRunner
-            .also { it.forwardOutput() }
+            .also { if (parameters.forwardBuildOutput) it.forwardOutput() }
             .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
             .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
             .withArguments(allBuildArguments)
@@ -471,6 +477,7 @@ open class GradleProject(
     fun markAsUsingInjections() {
         usesInjections = true
     }
+
     var usesInjections = false
         private set
 }
@@ -597,7 +604,8 @@ private fun commonBuildSetup(
         .sortedWith(compareBy { it.toString() })
         .joinToString(separator = ",")
 
-    val gradleJvmOptions = collectGradleJvmOptions(enableGradleDaemonMemoryLimitInMb, buildOptions.fileLeaksReportFile, connectSubprocessVMToDebugger)
+    val gradleJvmOptions =
+        collectGradleJvmOptions(enableGradleDaemonMemoryLimitInMb, buildOptions.fileLeaksReportFile, connectSubprocessVMToDebugger)
     val kotlinDaemonJvmArgs = collectKotlinJvmArgs(enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort)
 
     /**
@@ -1193,7 +1201,7 @@ private fun acceptAndroidSdkLicenses(androidHome: File) {
  * Indicates if the test and the Gradle build started by the test should run in the same process.
  * This setup allows using a single debugger for both the test and the build process (including build script injections).
  *
- * Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE.
+ * Add `kotlin.gradle.autoDebugIT=false` to `local.properties` to opt out of implicit withDebug when debugging the tests in IDE.
  */
 enum class EnableGradleDebug {
     DISABLED,
@@ -1205,7 +1213,8 @@ enum class EnableGradleDebug {
             DISABLED -> return false
             ENABLED -> return true
             AUTO -> {
-                return System.getProperty("kotlin.gradle.autoDebugIT").toBoolean() && ManagementFactory.getRuntimeMXBean().inputArguments.toString().contains("-agentlib:jdwp")
+                return System.getProperty("kotlin.gradle.autoDebugIT")
+                    .toBoolean() && ManagementFactory.getRuntimeMXBean().inputArguments.toString().contains("-agentlib:jdwp")
             }
         }
     }
