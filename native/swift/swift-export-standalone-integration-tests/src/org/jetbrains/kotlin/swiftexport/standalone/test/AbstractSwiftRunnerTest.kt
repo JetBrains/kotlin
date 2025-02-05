@@ -24,7 +24,7 @@ import kotlin.io.path.*
 
 abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
 
-    private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
+    protected val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
     override fun runCompiledTest(
         testPathFull: File,
@@ -33,6 +33,16 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
+        validateSwiftExportOutput(testPathFull, swiftExportOutputs)
+    }
+
+    /**
+     * Check that [swiftExportOutputs] are the same as in [goldenData].
+     */
+    fun validateSwiftExportOutput(
+        goldenData: File,
+        swiftExportOutputs: Set<SwiftExportModule>,
+    ) {
         val flattenModules = swiftExportOutputs.flatMapToSet { it.dependencies.toSet() + it }
 
         assertAll(flattenModules.flatMap {
@@ -40,7 +50,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
                 is SwiftExportModule.BridgesToKotlin -> {
                     val files = it.files
 
-                    val expectedFiles = testPathFull.toPath() / "golden_result/"
+                    val expectedFiles = goldenData.toPath() / "golden_result/"
                     val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
                     val expectedCHeader = expectedFiles / it.name / "${it.name}.h"
                     val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
@@ -54,7 +64,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
                 is SwiftExportModule.SwiftOnly -> {
                     when (it.kind) {
                         SwiftExportModule.SwiftOnly.Kind.KotlinPackages -> {
-                            val expectedFiles = testPathFull.toPath() / "golden_result/"
+                            val expectedFiles = goldenData.toPath() / "golden_result/"
                             val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
 
                             listOf { KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
@@ -114,7 +124,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
 
 }
 
-private object KonanHome {
+object KonanHome {
     private const val KONAN_HOME_PROPERTY_KEY = "kotlin.internal.native.test.nativeHome"
 
     val konanHomePath: String
