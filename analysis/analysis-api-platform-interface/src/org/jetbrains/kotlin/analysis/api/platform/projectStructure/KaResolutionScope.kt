@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 @KaImplementationDetail
 public abstract class KaResolutionScope : GlobalSearchScope() {
     public companion object {
-        public fun getInstance(useSiteModule: KaModule): KaResolutionScope {
+        public fun forModule(useSiteModule: KaModule): KaResolutionScope {
             return KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
         }
     }

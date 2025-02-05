@@ -34,7 +34,7 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
 
     private fun createSession(context: Fe10AnalysisContext, useSiteModule: KaModule, token: KaLifetimeToken): KaFe10Session {
         return createSession {
-            val resolutionScope = KaResolutionScope.getInstance(useSiteModule)
+            val resolutionScope = KaResolutionScope.forModule(useSiteModule)
             KaFe10Session(context, useSiteModule, token, analysisSessionProvider, resolutionScope)
         }
     }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * [KaBaseResolutionScope] is not intended to be created manually,
  * it's a responsibility of [org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider]
- * Please, use [Companion.getInstance]
+ * Please, use [Companion.forModule]
  */
 @KaImplementationDetail
 internal class KaBaseResolutionScope(
