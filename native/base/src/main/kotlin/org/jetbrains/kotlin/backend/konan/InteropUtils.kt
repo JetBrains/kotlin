@@ -16,6 +16,7 @@ object InteropFqNames {
 
     const val cPointerName = "CPointer"
     const val nativePointedName = "NativePointed"
+    const val cVariableName = "CVariable"
 
     const val objCObjectBaseName = "ObjCObjectBase"
     const val objCOverrideInitName = "OverrideInit"

@@ -506,7 +506,8 @@ private fun KotlinStubs.generateCFunction(
     val callbackBuilder = CCallbackBuilder(this, location, isObjCMethod)
 
     if (isObjCMethod) {
-        val receiver = signature.dispatchReceiverParameter!!
+        val receiver = function.dispatchReceiverParameter!!
+        require(signature.dispatchReceiverParameter!!.type.isObjCReferenceType(target, irBuiltIns)) { renderCompilerError(signature) }
         require(receiver.type.isObjCReferenceType(target, irBuiltIns)) { renderCompilerError(signature) }
         val valuePassing = ObjCReferenceValuePassing(symbols, receiver.type, retained = signature.objCConsumesReceiver())
         val kotlinArgument = with(valuePassing) { callbackBuilder.receiveValue() }
@@ -899,7 +900,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
     }
 
     private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: KonanSymbols): IrExpression =
-        irCall(symbols.interopCValueRead.owner).apply {
+        irCallWithSubstitutedType(symbols.interopCValueRead.owner, listOf(symbols.cStuctVar.defaultType)).apply {
             extensionReceiver = kotlinPointed
             putValueArgument(0, getTypeObject())
         }
@@ -913,7 +914,9 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
         cBodyLines += "$cReturnValue;"
         val kotlinPtr = passThroughBridge("&$result", CTypes.voidPtr, symbols.nativePtrType)
 
-        kotlinBridgeStatements += irCall(symbols.interopCValueWrite.owner).apply {
+        kotlinBridgeStatements += irCallWithSubstitutedType(
+                symbols.interopCValueWrite.owner, listOf(symbols.interopCVariable.defaultType)
+        ).apply {
             extensionReceiver = expression
             putValueArgument(0, irGet(kotlinPtr))
         }
@@ -1254,10 +1257,9 @@ private class ObjCBlockPointerValuePassing(
                 callbackBuilder.bridgeBuilder.addParameter(symbols.nativePtrType, CTypes.id)
 
         callbackBuilder.kotlinCallBuilder.arguments += with(callbackBuilder.bridgeBuilder.kotlinIrBuilder) {
-            // TODO: consider casting to [functionType].
             irCall(symbols.interopUnwrapKotlinObjectHolderImpl.owner).apply {
-                putValueArgument(0, irGet(kotlinFunctionHolderParameter) )
-            }
+                putValueArgument(0, irGet(kotlinFunctionHolderParameter))
+            }.implicitCastTo(functionType)
         }
 
         parameterValuePassings.forEach {
