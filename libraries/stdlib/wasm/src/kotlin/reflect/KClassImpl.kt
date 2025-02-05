@@ -23,7 +23,7 @@ internal class KClassImpl<T : Any> @WasmPrimitiveConstructor constructor(interna
     override fun isInstance(value: Any?): Boolean {
         if (value !is Any) return false
         return when (typeData.isInterfaceType) {
-            true -> isInterfaceById(value, typeData.typeId)
+            true -> getInterfaceSlot(value, typeData.typeId) != -1
             false -> checkSuperTypeInstance(value)
         }
     }

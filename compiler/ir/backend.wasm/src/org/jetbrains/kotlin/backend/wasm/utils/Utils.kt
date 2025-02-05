@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.backend.wasm.utils
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrTry
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.isFunction
 
 // Backed codegen can only handle try/catch in the canonical form.
 // The defined for Wasm backend canonical form of try/catch:
@@ -31,3 +32,8 @@ internal fun IrTry.isCanonical(context: WasmBackendContext) =
 
 internal val IrClass.isAbstractOrSealed
     get() = modality == Modality.ABSTRACT || modality == Modality.SEALED
+
+internal fun getFunctionInvokeMethod(iFace: IrClass): IrSimpleFunction? {
+    if (!iFace.symbol.isFunction()) return null
+    return iFace.declarations.singleOrNull { it is IrSimpleFunction && it.overriddenSymbols.isEmpty() } as? IrSimpleFunction
+}

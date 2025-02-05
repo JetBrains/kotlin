@@ -56,6 +56,7 @@ class WasmSymbols(
         val getTypeInfoTypeDataByPtr: IrSimpleFunctionSymbol = getInternalFunction("getTypeInfoTypeDataByPtr")
         val wasmTypeInfoData: IrClassSymbol = getInternalClass("TypeInfoData")
         val kClassImpl: IrClassSymbol = getInternalClass("KClassImpl")
+        val getInterfaceSlot = getInternalFunction("getInterfaceSlot")
     }
 
     internal val reflectionSymbols: WasmReflectionSymbols = WasmReflectionSymbols()
@@ -111,6 +112,8 @@ class WasmSymbols(
     val enumEntries = getIrClass(FqName.fromSegments(listOf("kotlin", "enums", "EnumEntries")))
     val createEnumEntries = symbolFinder.topLevelFunctions(enumsInternalPackageFqName, "enumEntries")
         .find { it.descriptor.valueParameters.firstOrNull()?.type?.isFunctionType == false }!!
+
+    val appendable = getIrClass(FqName.fromSegments(listOf("kotlin", "text", "Appendable")))
 
     val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
     val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")

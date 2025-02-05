@@ -241,6 +241,10 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildInstr(WasmOp.LOCAL_SET, location, WasmImmediate.LocalIdx(local))
     }
 
+    fun buildTeeLocal(local: WasmLocal, location: SourceLocation) {
+        buildInstr(WasmOp.LOCAL_TEE, location, WasmImmediate.LocalIdx(local))
+    }
+
     fun buildGetGlobal(global: WasmSymbol<WasmGlobal>, location: SourceLocation) {
         buildInstr(WasmOp.GLOBAL_GET, location, WasmImmediate.GlobalIdx(global))
     }
