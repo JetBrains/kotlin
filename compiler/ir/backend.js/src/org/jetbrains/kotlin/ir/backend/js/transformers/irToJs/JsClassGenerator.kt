@@ -151,9 +151,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
+        fun IrSimpleFunction.hasImplicitParameters(): Boolean =
+            parameters.any { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context }
+
         if (!irClass.isInterface) {
             for (property in properties) {
-                if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
+                if (property.getter?.hasImplicitParameters() == true || property.setter?.hasImplicitParameters() == true)
                     continue
 
                 if (!property.visibility.isPublicAPI || property.isSimpleProperty || property.isJsExportIgnore())
@@ -480,7 +483,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun generateSuspendArity(): JsArrayLiteral? {
         val invokeFunctions = backendContext.mapping.suspendArityStore[irClass] ?: return null
         val arity = invokeFunctions
-            .map { it.valueParameters.size }
+            .map { it.nonDispatchParameters.size }
             .distinct()
             .map { JsIntLiteral(it) }
 
