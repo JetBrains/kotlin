@@ -46,7 +46,7 @@ internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: A
  *
  * @sample samples.collections.Collections.Lists.singletonReadOnlyList
  */
-public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)
+public actual fun <T> listOf(element: T): List<T> = ArrayList(arrayOf(element))
 
 @PublishedApi
 @SinceKotlin("1.3")
