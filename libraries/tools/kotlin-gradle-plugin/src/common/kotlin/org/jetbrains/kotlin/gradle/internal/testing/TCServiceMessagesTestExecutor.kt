@@ -57,7 +57,7 @@ class TCServiceMessagesTestExecutor(
 
             if (spec.dryRunArgs != null) {
                 execHandle = objects.execHandleBuilder {
-                    displayName = description
+                    displayName = "$description (dry run)"
 
                     setArguments(spec.dryRunArgs)
 
@@ -81,6 +81,8 @@ class TCServiceMessagesTestExecutor(
 
             try {
                 execHandle = objects.execHandleBuilder {
+                    displayName = description
+
                     setArguments(spec.processArgs)
 
                     launchOpts {
