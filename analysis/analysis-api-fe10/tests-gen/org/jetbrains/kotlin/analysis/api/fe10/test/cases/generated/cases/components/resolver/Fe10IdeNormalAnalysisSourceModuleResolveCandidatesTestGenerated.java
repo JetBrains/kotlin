@@ -2140,6 +2140,54 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
     }
 
     @Test
+    @TestMetadata("functionFromContextReceiverFromClass.kt")
+    public void testFunctionFromContextReceiverFromClass() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromClass.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromComplexCase.kt")
+    public void testFunctionFromContextReceiverFromComplexCase() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromComplexCase.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromComplexCase2.kt")
+    public void testFunctionFromContextReceiverFromComplexCase2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromComplexCase2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromFunction.kt")
+    public void testFunctionFromContextReceiverFromFunction() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromFunctionComplexCase.kt")
+    public void testFunctionFromContextReceiverFromFunctionComplexCase() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromFunctionComplexCase.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromFunctionComplexCaseWithReceiver.kt")
+    public void testFunctionFromContextReceiverFromFunctionComplexCaseWithReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromFunctionComplexCaseWithReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromProperty.kt")
+    public void testFunctionFromContextReceiverFromProperty() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("functionFromContextReceiverFromProperty2.kt")
+    public void testFunctionFromContextReceiverFromProperty2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromContextReceiverFromProperty2.kt");
+    }
+
+    @Test
     @TestMetadata("functionFromFunctionExplicitly.kt")
     public void testFunctionFromFunctionExplicitly() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/functionFromFunctionExplicitly.kt");

@@ -1,0 +1,27 @@
+KtCallExpression(119,122): 'c()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = /bar(): kotlin.Unit
+          type = Container
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Container.c(<dispatch receiver>: Container): kotlin.Unit
+          valueParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = $context_receiver_0
+              receiverType = null
+              returnType = Receiver
+              symbol = $context_receiver_0: Receiver
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /Container.c
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
