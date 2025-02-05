@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendK
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
@@ -60,12 +60,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
     open val defaultRendererOption: PrettyRendererOption? = null
 
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        with(builder) {
-            useDirectives(SymbolTestDirectives)
-        }
-    }
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(SymbolTestDirectives)
 
     abstract fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 

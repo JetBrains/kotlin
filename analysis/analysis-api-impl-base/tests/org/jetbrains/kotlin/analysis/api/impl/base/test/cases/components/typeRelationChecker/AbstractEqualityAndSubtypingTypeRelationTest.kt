@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -27,6 +28,9 @@ abstract class AbstractEqualityAndSubtypingTypeRelationTest : AbstractTypeRelati
         type2: KaType,
         testServices: TestServices,
     )
+
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(EqualityAndSubtypingTestDirectives)
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
