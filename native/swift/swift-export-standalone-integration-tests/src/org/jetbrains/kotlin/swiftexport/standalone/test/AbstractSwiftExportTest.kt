@@ -101,6 +101,7 @@ abstract class AbstractSwiftExportTest {
                 } - modulesToExport,
         )
 
+        // TODO: we don't need to compile Kotlin binary for generation tests.
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             resultingTestCase, testRunSettings,
             kind = BinaryLibraryKind.STATIC,
