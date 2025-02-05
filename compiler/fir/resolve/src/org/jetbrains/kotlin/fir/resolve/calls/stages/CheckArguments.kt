@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
+import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -16,13 +17,11 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.typeConstructor
 
 internal object CheckArguments : ResolutionStage() {
@@ -76,7 +75,7 @@ internal object CheckArguments : ResolutionStage() {
         @OptIn(UnresolvedExpressionTypeAccess::class)
         argument.coneTypeOrNull.ensureResolvedTypeDeclaration(context.session)
         val expectedType =
-            prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, callInfo, argument, parameter, context)
+            prepareExpectedType(context.session, callInfo, argument, parameter, context)
         ArgumentCheckingProcessor.resolveArgumentExpression(
             this,
             atom,
@@ -93,7 +92,6 @@ private val SAM_LOOKUP_NAME: Name = Name.special("<SAM-CONSTRUCTOR>")
 
 private fun Candidate.prepareExpectedType(
     session: FirSession,
-    scopeSession: ScopeSession,
     callInfo: CallInfo,
     argument: FirExpression,
     parameter: FirValueParameter?,
@@ -103,7 +101,7 @@ private fun Candidate.prepareExpectedType(
     val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
 
     val expectedType =
-        getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context)?.also {
+        getExpectedTypeWithSAMConversion(session, argument, basicExpectedType, context)?.also {
             session.lookupTracker?.let { lookupTracker ->
                 parameter.returnTypeRef.coneType.lowerBoundIfFlexible().classId?.takeIf { !it.isLocal }?.let { classId ->
                     lookupTracker.recordClassMemberLookup(
@@ -123,7 +121,6 @@ private fun Candidate.prepareExpectedType(
 
 private fun Candidate.getExpectedTypeWithSAMConversion(
     session: FirSession,
-    scopeSession: ScopeSession,
     argument: FirExpression,
     candidateExpectedType: ConeKotlinType,
     context: ResolutionContext,
@@ -136,10 +133,8 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 
     if (!argument.shouldUseSamConversion(
             session,
-            scopeSession,
             candidateExpectedType = candidateExpectedType,
             expectedFunctionType = expectedFunctionType,
-            context.returnTypeCalculator,
             this,
         )
     ) {
@@ -152,10 +147,8 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 
 private fun FirExpression.shouldUseSamConversion(
     session: FirSession,
-    scopeSession: ScopeSession,
     candidateExpectedType: ConeKotlinType,
     expectedFunctionType: ConeKotlinType,
-    returnTypeCalculator: ReturnTypeCalculator,
     candidate: Candidate,
 ): Boolean {
     val unwrapped = unwrapArgument()
@@ -185,13 +178,26 @@ private fun FirExpression.shouldUseSamConversion(
         return true
     }
 
-    val expectedTypeLowerBound = expectedFunctionType.lowerBoundIfFlexible()
-    if (expectedTypeLowerBound !is ConeClassLikeType) {
-        return false
+    // If the expression type is compatible with the expected function type, apply SAM conversion
+    val substitutedExpectedFunctionType = candidate.substitutor.substituteOrSelf(expectedFunctionType)
+    if (candidate.csBuilder.isSubtypeConstraintCompatible(expressionType, substitutedExpectedFunctionType)) {
+        return true
     }
 
-    return isSubtypeForSamConversion(session, scopeSession, expressionType, expectedTypeLowerBound, returnTypeCalculator)
+    // If the expected function type is a non-basic function type, check if the expression type is compatible with its basic version
+    // If yes, apply SAM conversion (with function kind conversion).
+    if (!substitutedExpectedFunctionType.isBasicFunctionOrKFunctionType(session)) {
+        val expectedFunctionTypeAsSimpleFunctionType = substitutedExpectedFunctionType
+            .lowerBoundIfFlexible()
+            // converts SuspendFunction/[Custom]Function -> Function
+            .customFunctionTypeToSimpleFunctionType(session)
 
+        if (candidate.csBuilder.isSubtypeConstraintCompatible(expressionType, expectedFunctionTypeAsSimpleFunctionType)) {
+            return true
+        }
+    }
+
+    return false
 }
 
 /**
@@ -209,71 +215,6 @@ private fun FirExpression.isCallWithGenericReturnTypeAndMatchingLambda(session: 
     return postponedAtoms.any {
         it is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
                 it.expectedType.typeConstructor(session.typeContext) == expressionType.typeConstructor(session.typeContext)
-    }
-}
-
-/**
- * This function checks whether an actual expression type is a subtype of an expected functional type in context of SAM conversion
- *
- * In more details, this function searches for an invoke symbol inside the actual expression type,
- * and then checks compatibility of invoke symbol parameter types and return type
- * with the corresponding functional type parameters and return type. During this check,
- * type parameters inside the expected functional type are considered as compatible with everything;
- * also, stub types in any positions are considered equal to anything.
- * In other aspects, a normal subtype check is used.
- */
-private fun isSubtypeForSamConversion(
-    session: FirSession,
-    scopeSession: ScopeSession,
-    actualExpressionType: ConeKotlinType,
-    classLikeExpectedFunctionType: ConeClassLikeType,
-    returnTypeCalculator: ReturnTypeCalculator
-): Boolean {
-    // TODO: can we replace the function with a call of ConeKotlinType.isSubtypeOfFunctionType from FunctionalTypeUtils.kt,
-    // or with a call of AbstractTypeChecker.isSubtypeOf ?
-    // Relevant tests that can become broken:
-    // - codegen/box/sam/passSubtypeOfFunctionSamConversion.kt
-    // - diagnostics/tests/j+k/sam/recursiveSamsAndInvoke.kt
-    val invokeSymbol =
-        actualExpressionType.findContributedInvokeSymbol(
-            session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
-        ) ?: return false
-    // Make sure the contributed `invoke` is indeed a wanted functional type by checking if types are compatible.
-    val expectedReturnType = classLikeExpectedFunctionType.returnType(session).unwrapToSimpleTypeUsingLowerBound()
-    val returnTypeCompatible =
-        // TODO: can we remove is ConeTypeParameterType check here?
-        expectedReturnType is ConeTypeParameterType ||
-                AbstractTypeChecker.isSubtypeOf(
-                    session.typeContext.newTypeCheckerState(
-                        errorTypesEqualToAnything = false,
-                        stubTypesEqualToAnything = true
-                    ),
-                    // TODO: can we remove returnTypeCalculatorFrom here
-                    returnTypeCalculator.tryCalculateReturnType(invokeSymbol.fir).coneType,
-                    expectedReturnType,
-                    isFromNullabilityConstraint = false
-                )
-    if (!returnTypeCompatible) {
-        return false
-    }
-    if (invokeSymbol.fir.valueParameters.size != classLikeExpectedFunctionType.typeArguments.size - 1) {
-        return false
-    }
-    val parameterPairs =
-        invokeSymbol.fir.valueParameters.zip(classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session))
-    return parameterPairs.all { (invokeParameter, expectedParameter) ->
-        val expectedParameterType = expectedParameter.unwrapToSimpleTypeUsingLowerBound()
-        // TODO: can we remove is ConeTypeParameterType check here?
-        expectedParameterType is ConeTypeParameterType ||
-                AbstractTypeChecker.isSubtypeOf(
-                    session.typeContext.newTypeCheckerState(
-                        errorTypesEqualToAnything = false,
-                        stubTypesEqualToAnything = true
-                    ),
-                    invokeParameter.returnTypeRef.coneType,
-                    expectedParameterType,
-                    isFromNullabilityConstraint = false
-                )
     }
 }
 
