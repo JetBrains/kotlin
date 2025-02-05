@@ -416,33 +416,6 @@ enum class WasmOp(
     PSEUDO_COMMENT_GROUP_START("<comment-group-start>", WASM_OP_PSEUDO_OPCODE),
     PSEUDO_COMMENT_GROUP_END("<comment-group-end>", WASM_OP_PSEUDO_OPCODE),
 
-    // Macro commands needed to optionally emit code (needed to support IC for ITables)
-    // Macro IF emits `then` part only if immediate linked to 1 else emits ELSE part
-    // MACRO_IF
-    // instructions1...
-    // MACRO_ELSE
-    // instructions2...
-    // MACRO_END
-    MACRO_IF("<macro-if>", WASM_OP_PSEUDO_OPCODE, listOf(CONST_I32)),
-    MACRO_ELSE("<macro-else>", WASM_OP_PSEUDO_OPCODE),
-    MACRO_END_IF("<macro-end-if>", WASM_OP_PSEUDO_OPCODE),
-
-    // Macro table emits instructions spreaded with nullrefs, like:
-    // MACRO_TABLE TableSize
-    // MACRO_TABLE_INDEX 2
-    // instructions1...
-    // MACRO_TABLE_INDEX 4
-    // instructions2...
-    // MACRO_TABLE_END
-    // emits:
-    // nullref
-    // nullref
-    // instructions1
-    // nullref
-    // instructions2
-    MACRO_TABLE("<macro-table>", WASM_OP_PSEUDO_OPCODE, listOf(CONST_I32)),
-    MACRO_TABLE_INDEX("<macro-table-index>", WASM_OP_PSEUDO_OPCODE, listOf(CONST_I32)),
-    MACRO_TABLE_END("<macro-table-end>", WASM_OP_PSEUDO_OPCODE),
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())

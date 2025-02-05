@@ -273,12 +273,6 @@ class WasmSerializer(outputStream: OutputStream) {
                 WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR -> 0xFFFF - 0
                 WasmOp.PSEUDO_COMMENT_GROUP_START -> 0xFFFF - 1
                 WasmOp.PSEUDO_COMMENT_GROUP_END -> 0xFFFF - 2
-                WasmOp.MACRO_IF -> 0xFFFF - 3
-                WasmOp.MACRO_ELSE -> 0xFFFF - 4
-                WasmOp.MACRO_END_IF -> 0xFFFF - 5
-                WasmOp.MACRO_TABLE -> 0xFFFF - 6
-                WasmOp.MACRO_TABLE_INDEX -> 0xFFFF - 7
-                WasmOp.MACRO_TABLE_END -> 0xFFFF - 8
                 else -> error("Unknown pseudo-opcode: $instr")
             }
         }
