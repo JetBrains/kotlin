@@ -132,7 +132,9 @@ internal object ArgumentCheckingProcessor {
                 val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
                 val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
                     ?: when (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
-                        true -> (session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.List) as? FirRegularClassSymbol)?.companionObjectSymbol
+                        true -> session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.List)
+                            ?.let { it as? FirRegularClassSymbol }
+                            ?.companionObjectSymbol
                             ?.declaredMemberScope(session, memberRequiredPhase = null)
                             ?.getFunctions(Name.identifier("of"))
                             ?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
