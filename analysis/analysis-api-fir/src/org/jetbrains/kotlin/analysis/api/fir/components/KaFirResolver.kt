@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -826,8 +826,8 @@ internal class KaFirResolver(
         resolveFragmentOfCall: Boolean,
         typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     ): KaCall? {
-        return when {
-            psi is KtBinaryExpression && psi.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS -> {
+        return when (psi) {
+            is KtBinaryExpression if psi.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS -> {
                 val rightOperandPsi = deparenthesize(psi.right) ?: return null
                 val leftOperandPsi = deparenthesize(psi.left) ?: return null
                 val compoundAssignKind = psi.getCompoundAssignKind()
@@ -842,7 +842,7 @@ internal class KaFirResolver(
                 )
             }
 
-            psi is KtUnaryExpression && psi.operationToken in KtTokens.INCREMENT_AND_DECREMENT -> {
+            is KtUnaryExpression if psi.operationToken in KtTokens.INCREMENT_AND_DECREMENT -> {
                 val precedence = when (psi) {
                     is KtPostfixExpression -> KaCompoundUnaryOperation.Precedence.POSTFIX
                     else -> KaCompoundUnaryOperation.Precedence.PREFIX
@@ -862,7 +862,6 @@ internal class KaFirResolver(
                     compoundOperationProvider = { KaBaseCompoundUnaryOperation(it, incOrDecOperationKind, precedence) },
                 )
             }
-
             else -> null
         }
     }
@@ -1007,8 +1006,8 @@ internal class KaFirResolver(
     }
 
     private fun FirExpression.toKtReceiverValue(): KaReceiverValue? {
-        return when {
-            this is FirSmartCastExpression -> {
+        return when (this) {
+            is FirSmartCastExpression -> {
                 val result = originalExpression.toKtReceiverValue()
                 if (result != null && isStable) {
                     KaBaseSmartCastedReceiverValue(result, smartcastType.coneType.asKtType())
@@ -1016,7 +1015,8 @@ internal class KaFirResolver(
                     result
                 }
             }
-            this is FirThisReceiverExpression && this.isImplicit -> {
+
+            is FirThisReceiverExpression if this.isImplicit -> {
                 val implicitPartiallyAppliedSymbol = when (val partiallyAppliedSymbol = calleeReference.boundSymbol) {
                     is FirClassSymbol<*> -> partiallyAppliedSymbol.toKaSymbol()
                     is FirReceiverParameterSymbol -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
@@ -1032,10 +1032,12 @@ internal class KaFirResolver(
 
                 KaBaseImplicitReceiverValue(implicitPartiallyAppliedSymbol, resolvedType.asKtType())
             }
-            this is FirResolvedQualifier && this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
+
+            is FirResolvedQualifier if this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
                 val symbol = this.symbol ?: return null
                 KaBaseImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKtType())
             }
+
             else -> {
                 val psi = psi
                 if (psi !is KtExpression) return null
