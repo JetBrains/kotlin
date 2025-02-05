@@ -2,6 +2,7 @@ KtNameReferenceExpression(60,61): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:

@@ -12,6 +12,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
       }
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

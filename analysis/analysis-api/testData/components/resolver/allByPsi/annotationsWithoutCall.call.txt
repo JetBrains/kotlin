@@ -27,6 +27,7 @@ KtAnnotationEntry(36,41): '@Anno'
     call = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -43,6 +44,7 @@ KtConstructorCalleeExpression(37,41): 'Anno'
     call = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

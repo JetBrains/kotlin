@@ -12,6 +12,7 @@ KtNameReferenceExpression(127,136): 'dummyTest'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

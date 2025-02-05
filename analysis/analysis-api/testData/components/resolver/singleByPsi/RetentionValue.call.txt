@@ -2,6 +2,7 @@ KtNameReferenceExpression(31,37): 'SOURCE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = AnnotationRetention
           isSafeNavigation = false

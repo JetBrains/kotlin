@@ -2,6 +2,7 @@ KtNameReferenceExpression(53,61): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ktClass
           isSafeNavigation = false

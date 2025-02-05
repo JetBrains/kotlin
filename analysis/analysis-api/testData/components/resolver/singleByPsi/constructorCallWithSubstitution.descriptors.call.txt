@@ -12,6 +12,7 @@ KtCallExpression(45,63): 'Foo<String>("str")'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

@@ -5,6 +5,7 @@ KtCallExpression(134,137): 'x()'
         argumentMapping = {}
         isImplicitInvoke = true
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = x
@@ -30,6 +31,7 @@ KtCallExpression(134,137): 'x()'
         argumentMapping = {}
         isImplicitInvoke = true
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = x

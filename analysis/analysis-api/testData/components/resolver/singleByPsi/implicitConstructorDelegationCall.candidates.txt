@@ -12,6 +12,7 @@ KtCallExpression(62,67): 'A(42)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

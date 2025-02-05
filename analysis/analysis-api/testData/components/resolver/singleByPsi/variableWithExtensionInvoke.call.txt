@@ -12,6 +12,7 @@ KtCallExpression(76,81): 'f("")'
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = f

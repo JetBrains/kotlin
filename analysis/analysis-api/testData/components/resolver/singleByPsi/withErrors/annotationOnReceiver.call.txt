@@ -3,6 +3,7 @@ KtAnnotationEntry(23,37): '@receiver:Anno'
     call = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

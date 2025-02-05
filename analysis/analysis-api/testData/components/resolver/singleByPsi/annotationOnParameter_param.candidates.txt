@@ -3,6 +3,7 @@ KtAnnotationEntry(35,46): '@param:Anno'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

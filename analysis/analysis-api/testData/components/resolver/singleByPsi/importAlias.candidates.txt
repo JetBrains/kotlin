@@ -4,6 +4,7 @@ KtNameReferenceExpression(99,104): 'coreR'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

@@ -4,6 +4,7 @@ KtNameReferenceExpression(55,61): 'values'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

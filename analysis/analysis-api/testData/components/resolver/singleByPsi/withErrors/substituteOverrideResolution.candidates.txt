@@ -4,6 +4,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
           original = KaExplicitReceiverValue:
             expression = b

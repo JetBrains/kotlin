@@ -12,6 +12,7 @@ KtNameReferenceExpression(82,86): 'copy'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = d
           isSafeNavigation = false

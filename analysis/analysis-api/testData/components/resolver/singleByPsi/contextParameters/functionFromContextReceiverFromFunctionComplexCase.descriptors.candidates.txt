@@ -4,6 +4,7 @@ KtCallExpression(119,122): 'c()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /bar(): kotlin.Unit
           type = Container

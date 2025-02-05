@@ -12,6 +12,7 @@ KtNameReferenceExpression(62,68): 'equals'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m1
           isSafeNavigation = false

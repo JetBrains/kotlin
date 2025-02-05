@@ -4,6 +4,7 @@ KtCallExpression(135,140): 'i()()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = i()
@@ -25,6 +26,7 @@ KtCallExpression(135,140): 'i()()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = i()
@@ -46,6 +48,7 @@ KtCallExpression(135,140): 'i()()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = i()

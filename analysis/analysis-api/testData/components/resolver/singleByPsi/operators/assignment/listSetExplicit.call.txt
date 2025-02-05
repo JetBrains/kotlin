@@ -19,6 +19,7 @@ KtNameReferenceExpression(54,57): 'set'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
           isSafeNavigation = false

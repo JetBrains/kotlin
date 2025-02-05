@@ -2,6 +2,7 @@ KtNameReferenceExpression(107,115): 'property'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = pack/Foo
           type = pack.Foo

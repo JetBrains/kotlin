@@ -12,6 +12,7 @@ KtBinaryExpression(199,207): 's1 == s2'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = s1
           isSafeNavigation = false

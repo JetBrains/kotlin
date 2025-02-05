@@ -64,6 +64,7 @@ KtSuperTypeCallEntry(118,127): 'MyClass()'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -82,6 +83,7 @@ KtConstructorCalleeExpression(118,125): 'MyClass'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -106,6 +108,7 @@ KtNameReferenceExpression(118,125): 'MyClass'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -187,6 +190,7 @@ KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -205,6 +209,7 @@ KtConstructorCalleeExpression(258,280): 'ClassWithType<MyClass>'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -229,6 +234,7 @@ KtNameReferenceExpression(258,271): 'ClassWithType'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -387,6 +393,7 @@ KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass::memberFunction
           isSafeNavigation = false
@@ -416,6 +423,7 @@ KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -437,6 +445,7 @@ KtNameReferenceExpression(506,520): 'memberFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -463,6 +472,7 @@ KtCallExpression(521,538): 'invoke(MyClass())'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass::memberFunction
           isSafeNavigation = false
@@ -500,6 +510,7 @@ KtNameReferenceExpression(521,527): 'invoke'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass::memberFunction
           isSafeNavigation = false
@@ -535,6 +546,7 @@ KtCallExpression(528,537): 'MyClass()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -553,6 +565,7 @@ KtNameReferenceExpression(528,535): 'MyClass'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -572,6 +585,7 @@ KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass::memberProperty
           isSafeNavigation = false
@@ -592,6 +606,7 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -612,6 +627,7 @@ KtNameReferenceExpression(552,566): 'memberProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -629,6 +645,7 @@ KtNameReferenceExpression(567,571): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = MyClass::memberProperty
           isSafeNavigation = false
@@ -659,6 +676,7 @@ KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Child::memberFunction
           isSafeNavigation = false
@@ -688,6 +706,7 @@ KtCallableReferenceExpression(577,598): 'Child::memberFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -709,6 +728,7 @@ KtNameReferenceExpression(584,598): 'memberFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -735,6 +755,7 @@ KtCallExpression(599,614): 'invoke(Child())'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Child::memberFunction
           isSafeNavigation = false
@@ -772,6 +793,7 @@ KtNameReferenceExpression(599,605): 'invoke'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Child::memberFunction
           isSafeNavigation = false
@@ -807,6 +829,7 @@ KtCallExpression(606,613): 'Child()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -825,6 +848,7 @@ KtNameReferenceExpression(606,611): 'Child'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -844,6 +868,7 @@ KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Child::memberProperty
           isSafeNavigation = false
@@ -864,6 +889,7 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -884,6 +910,7 @@ KtNameReferenceExpression(626,640): 'memberProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -901,6 +928,7 @@ KtNameReferenceExpression(641,645): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Child::memberProperty
           isSafeNavigation = false
@@ -926,6 +954,7 @@ KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -953,6 +982,7 @@ KtNameReferenceExpression(673,690): 'extensionFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -972,6 +1002,7 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -992,6 +1023,7 @@ KtNameReferenceExpression(712,729): 'extensionProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1014,6 +1046,7 @@ KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1035,6 +1068,7 @@ KtNameReferenceExpression(751,768): 'extensionFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1054,6 +1088,7 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1080,6 +1115,7 @@ KtNameReferenceExpression(794,811): 'extensionProperty'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1097,6 +1133,7 @@ KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ChildWithType::functionWithType
           isSafeNavigation = false
@@ -1119,6 +1156,7 @@ KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1140,6 +1178,7 @@ KtNameReferenceExpression(832,848): 'functionWithType'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1156,6 +1195,7 @@ KtNameReferenceExpression(849,853): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ChildWithType::functionWithType
           isSafeNavigation = false
@@ -1186,6 +1226,7 @@ KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(Child
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ChildWithType::propertyWithType
           isSafeNavigation = false
@@ -1213,6 +1254,7 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1233,6 +1275,7 @@ KtNameReferenceExpression(873,889): 'propertyWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1260,6 +1303,7 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ChildWithType::propertyWithType
           isSafeNavigation = false
@@ -1297,6 +1341,7 @@ KtNameReferenceExpression(890,896): 'invoke'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ChildWithType::propertyWithType
           isSafeNavigation = false
@@ -1332,6 +1377,7 @@ KtCallExpression(897,912): 'ChildWithType()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1350,6 +1396,7 @@ KtNameReferenceExpression(897,910): 'ChildWithType'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1371,6 +1418,7 @@ KtCallableReferenceExpression(919,937): '::topLevelFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1397,6 +1445,7 @@ KtNameReferenceExpression(921,937): 'topLevelFunction'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1421,6 +1470,7 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1438,6 +1488,7 @@ KtNameReferenceExpression(944,960): 'topLevelVariable'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1458,6 +1509,7 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1475,6 +1527,7 @@ KtNameReferenceExpression(968,979): 'lateinitVar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1548,6 +1601,7 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = classWithType
           isSafeNavigation = false
@@ -1567,6 +1621,7 @@ KtNameReferenceExpression(1063,1076): 'classWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1586,6 +1641,7 @@ KtNameReferenceExpression(1078,1094): 'functionWithType'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = classWithType
           isSafeNavigation = false
@@ -1605,6 +1661,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = classWithType
           isSafeNavigation = false
@@ -1625,6 +1682,7 @@ KtNameReferenceExpression(1099,1112): 'classWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1642,6 +1700,7 @@ KtNameReferenceExpression(1114,1130): 'propertyWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = classWithType
           isSafeNavigation = false
@@ -1697,6 +1756,7 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = t!!
           isSafeNavigation = false
@@ -1726,6 +1786,7 @@ KtPostfixExpression(1174,1177): 't!!'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1752,6 +1813,7 @@ KtNameReferenceExpression(1174,1175): 't'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1779,6 +1841,7 @@ KtOperationReferenceExpression(1175,1177): '!!'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1807,6 +1870,7 @@ KtNameReferenceExpression(1179,1195): 'functionWithType'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = t!!
           isSafeNavigation = false
@@ -1826,6 +1890,7 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = t!!
           isSafeNavigation = false
@@ -1856,6 +1921,7 @@ KtPostfixExpression(1200,1203): 't!!'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1882,6 +1948,7 @@ KtNameReferenceExpression(1200,1201): 't'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1909,6 +1976,7 @@ KtOperationReferenceExpression(1201,1203): '!!'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1935,6 +2003,7 @@ KtNameReferenceExpression(1205,1221): 'propertyWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = t!!
           isSafeNavigation = false

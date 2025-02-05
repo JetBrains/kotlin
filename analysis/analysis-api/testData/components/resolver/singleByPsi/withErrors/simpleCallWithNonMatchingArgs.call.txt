@@ -5,6 +5,7 @@ KtCallExpression(14,20): 'foo(1)'
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:

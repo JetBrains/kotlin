@@ -39,6 +39,7 @@ KtAnnotationEntry(59,70): '@Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -56,6 +57,7 @@ KtConstructorCalleeExpression(60,70): 'Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -79,6 +81,7 @@ KtNameReferenceExpression(60,70): 'Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -120,6 +123,7 @@ KtAnnotationEntry(122,133): '@Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -137,6 +141,7 @@ KtConstructorCalleeExpression(123,133): 'Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -160,6 +165,7 @@ KtNameReferenceExpression(123,133): 'Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -207,6 +213,7 @@ KtAnnotationEntry(185,196): '@Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -224,6 +231,7 @@ KtConstructorCalleeExpression(186,196): 'Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -247,6 +255,7 @@ KtNameReferenceExpression(186,196): 'Repeatable'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -392,6 +401,7 @@ KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -425,6 +435,7 @@ KtConstructorCalleeExpression(424,437): 'AnnoWithArray'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -464,6 +475,7 @@ KtNameReferenceExpression(424,437): 'AnnoWithArray'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -518,6 +530,7 @@ KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -560,6 +573,7 @@ KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -593,6 +607,7 @@ KtConstructorCalleeExpression(450,463): 'AnnoWithArray'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -632,6 +647,7 @@ KtNameReferenceExpression(450,463): 'AnnoWithArray'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -692,6 +708,7 @@ KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -734,6 +751,7 @@ KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -767,6 +785,7 @@ KtConstructorCalleeExpression(482,495): 'AnnoWithArray'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -806,6 +825,7 @@ KtNameReferenceExpression(482,495): 'AnnoWithArray'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -860,6 +880,7 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -908,6 +929,7 @@ KtNameReferenceExpression(496,506): 'intArrayOf'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -962,6 +984,7 @@ KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -995,6 +1018,7 @@ KtConstructorCalleeExpression(518,532): 'AnnoWithKClass'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1034,6 +1058,7 @@ KtNameReferenceExpression(518,532): 'AnnoWithKClass'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1082,6 +1107,7 @@ KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1115,6 +1141,7 @@ KtConstructorCalleeExpression(558,572): 'AnnoWithKClass'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1154,6 +1181,7 @@ KtNameReferenceExpression(558,572): 'AnnoWithKClass'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1205,6 +1233,7 @@ KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1238,6 +1267,7 @@ KtConstructorCalleeExpression(602,623): 'AnnoWithArrayOfKClass'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1277,6 +1307,7 @@ KtNameReferenceExpression(602,623): 'AnnoWithArrayOfKClass'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1324,6 +1355,7 @@ KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKCl
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1377,6 +1409,7 @@ KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArra
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1410,6 +1443,7 @@ KtConstructorCalleeExpression(677,702): 'AnnoWithAnotherAnnotation'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1449,6 +1483,7 @@ KtNameReferenceExpression(677,702): 'AnnoWithAnotherAnnotation'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1496,6 +1531,7 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1539,6 +1575,7 @@ KtNameReferenceExpression(703,710): 'arrayOf'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1581,6 +1618,7 @@ KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1618,6 +1656,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1652,6 +1691,7 @@ KtNameReferenceExpression(715,728): 'AnnoWithArray'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1706,6 +1746,7 @@ KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1752,6 +1793,7 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1786,6 +1828,7 @@ KtNameReferenceExpression(744,757): 'AnnoWithArray'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1840,6 +1883,7 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1888,6 +1932,7 @@ KtNameReferenceExpression(758,768): 'intArrayOf'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1942,6 +1987,7 @@ KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1975,6 +2021,7 @@ KtConstructorCalleeExpression(785,799): 'AnnoWithString'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -2014,6 +2061,7 @@ KtNameReferenceExpression(785,799): 'AnnoWithString'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -2054,6 +2102,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = stringConstant
           isSafeNavigation = false
@@ -2081,6 +2130,7 @@ KtNameReferenceExpression(800,814): 'stringConstant'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -2108,6 +2158,7 @@ KtOperationReferenceExpression(815,816): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = stringConstant
           isSafeNavigation = false

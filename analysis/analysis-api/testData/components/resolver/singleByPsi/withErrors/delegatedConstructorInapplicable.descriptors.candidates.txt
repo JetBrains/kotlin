@@ -12,6 +12,7 @@ KtConstructorCalleeExpression(40,41): 'A'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

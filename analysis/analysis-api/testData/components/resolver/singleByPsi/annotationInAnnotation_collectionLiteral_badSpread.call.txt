@@ -13,6 +13,7 @@ KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:

@@ -4,6 +4,7 @@ KtCallExpression(76,88): 'javaMethod()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false

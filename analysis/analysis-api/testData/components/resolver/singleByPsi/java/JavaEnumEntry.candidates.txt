@@ -2,6 +2,7 @@ KtNameReferenceExpression(69,76): 'RUNTIME'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = java.lang.annotation.RetentionPolicy
           isSafeNavigation = false

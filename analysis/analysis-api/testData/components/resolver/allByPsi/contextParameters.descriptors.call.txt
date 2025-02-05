@@ -50,6 +50,7 @@ KtNameReferenceExpression(58,59): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -101,6 +102,7 @@ KtDotQualifiedExpression(130,140): 'this.bar()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -127,6 +129,7 @@ KtCallExpression(135,140): 'bar()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -147,6 +150,7 @@ KtNameReferenceExpression(135,138): 'bar'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -232,6 +236,7 @@ KtDotQualifiedExpression(243,253): 'this.bar()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -258,6 +263,7 @@ KtCallExpression(248,253): 'bar()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -278,6 +284,7 @@ KtNameReferenceExpression(248,251): 'bar'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -354,6 +361,7 @@ KtCallExpression(349,360): 'funMember()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Base
           type = Base
@@ -373,6 +381,7 @@ KtNameReferenceExpression(349,358): 'funMember'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Base
           type = Base
@@ -393,6 +402,7 @@ KtNameReferenceExpression(369,383): 'propertyMember'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Base
           type = Base
@@ -451,6 +461,7 @@ KtCallExpression(441,542): 'with(Base()) {'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -506,6 +517,7 @@ KtNameReferenceExpression(441,445): 'with'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -547,6 +559,7 @@ KtCallExpression(446,452): 'Base()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -564,6 +577,7 @@ KtNameReferenceExpression(446,450): 'Base'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -614,6 +628,7 @@ KtCallExpression(464,536): 'with(A()) {'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -667,6 +682,7 @@ KtNameReferenceExpression(464,468): 'with'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -708,6 +724,7 @@ KtCallExpression(469,472): 'A()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -725,6 +742,7 @@ KtNameReferenceExpression(469,470): 'A'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -757,6 +775,7 @@ KtCallExpression(488,499): 'funMember()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -795,6 +814,7 @@ KtNameReferenceExpression(488,497): 'funMember'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -834,6 +854,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []

@@ -12,6 +12,7 @@ KtCallExpression(8,40): 'Comparator {x: Int, y: Int -> 1}'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

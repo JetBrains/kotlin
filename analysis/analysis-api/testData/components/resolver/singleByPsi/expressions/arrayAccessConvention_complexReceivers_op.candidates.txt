@@ -5,6 +5,7 @@ KtOperationReferenceExpression(189,191): '+='
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
             isSafeNavigation = false
@@ -26,6 +27,7 @@ KtOperationReferenceExpression(189,191): '+='
             contextParameters = []
             callableId = kotlin/Int.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -50,6 +52,7 @@ KtOperationReferenceExpression(189,191): '+='
         "a"
       ]
       setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Foo
           type = Foo

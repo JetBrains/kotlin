@@ -4,6 +4,7 @@ KtCallExpression(202,209): '(foo)()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (foo)
           isSafeNavigation = false
@@ -24,6 +25,7 @@ KtCallExpression(202,209): '(foo)()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = (foo)
           isSafeNavigation = false

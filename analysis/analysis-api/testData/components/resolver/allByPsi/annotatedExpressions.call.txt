@@ -35,6 +35,7 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -67,6 +68,7 @@ KtConstructorCalleeExpression(39,45): 'Target'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -105,6 +107,7 @@ KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = AnnotationTarget
           isSafeNavigation = false
@@ -127,6 +130,7 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = AnnotationTarget
           isSafeNavigation = false
@@ -155,6 +159,7 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -187,6 +192,7 @@ KtConstructorCalleeExpression(76,85): 'Retention'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -225,6 +231,7 @@ KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = AnnotationRetention
           isSafeNavigation = false
@@ -247,6 +254,7 @@ KtNameReferenceExpression(106,112): 'SOURCE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = AnnotationRetention
           isSafeNavigation = false
@@ -305,6 +313,7 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -337,6 +346,7 @@ KtConstructorCalleeExpression(173,177): 'Anno'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -385,6 +395,7 @@ KtBinaryExpression(178,189): '0 + integer'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 0
           isSafeNavigation = false
@@ -424,6 +435,7 @@ KtOperationReferenceExpression(180,181): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 0
           isSafeNavigation = false
@@ -450,6 +462,7 @@ KtNameReferenceExpression(182,189): 'integer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -468,6 +481,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = usage()
           isSafeNavigation = false
@@ -501,6 +515,7 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -533,6 +548,7 @@ KtConstructorCalleeExpression(193,197): 'Anno'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -571,6 +587,7 @@ KtNameReferenceExpression(198,205): 'integer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -589,6 +606,7 @@ KtCallExpression(207,214): 'usage()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -606,6 +624,7 @@ KtNameReferenceExpression(207,212): 'usage'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -626,6 +645,7 @@ KtCallExpression(216,226): 'toString()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = usage()
           isSafeNavigation = false
@@ -646,6 +666,7 @@ KtNameReferenceExpression(216,224): 'toString'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = usage()
           isSafeNavigation = false

@@ -60,6 +60,7 @@ KtBinaryExpression(37,45): 'this - i'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -102,6 +103,7 @@ KtOperationReferenceExpression(42,43): '-'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -128,6 +130,7 @@ KtNameReferenceExpression(44,45): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -178,6 +181,7 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -204,6 +208,7 @@ KtNameReferenceExpression(98,107): 'parameter'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -230,6 +235,7 @@ KtOperationReferenceExpression(108,115): 'myMinus'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -272,6 +278,7 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = newParameter + 1
@@ -308,6 +315,7 @@ KtBinaryExpression(145,161): 'newParameter + 1'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -334,6 +342,7 @@ KtNameReferenceExpression(145,157): 'newParameter'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -360,6 +369,7 @@ KtOperationReferenceExpression(158,159): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -399,6 +409,7 @@ KtOperationReferenceExpression(162,169): 'myMinus'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = newParameter + 1
@@ -441,6 +452,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -467,6 +479,7 @@ KtNameReferenceExpression(195,207): 'newParameter'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -493,6 +506,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -529,6 +543,7 @@ KtNameReferenceExpression(208,212): 'plus'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = newParameter
           isSafeNavigation = false
@@ -571,6 +586,7 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -597,6 +613,7 @@ KtNameReferenceExpression(213,222): 'parameter'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -623,6 +640,7 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -659,6 +677,7 @@ KtNameReferenceExpression(223,230): 'myMinus'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = parameter
@@ -691,6 +710,7 @@ KtNameReferenceExpression(231,247): 'oneMoreParameter'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:

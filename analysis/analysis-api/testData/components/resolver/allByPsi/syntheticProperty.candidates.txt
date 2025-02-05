@@ -51,6 +51,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -84,6 +85,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -118,6 +120,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -152,6 +155,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -186,6 +190,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -220,6 +225,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -254,6 +260,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -288,6 +295,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -321,6 +329,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -355,6 +364,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -390,6 +400,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -423,6 +434,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -457,6 +469,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -491,6 +504,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -525,6 +539,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -559,6 +574,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -593,6 +609,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -627,6 +644,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -660,6 +678,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -694,6 +713,7 @@ KtNameReferenceExpression(78,83): 'print'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -725,6 +745,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -745,6 +766,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -784,6 +806,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -801,6 +824,7 @@ KtNameReferenceExpression(94,103): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -821,6 +845,7 @@ KtBinaryExpression(109,132): 'javaClass.something = 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -842,6 +867,7 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -863,6 +889,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -902,6 +929,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -919,6 +947,7 @@ KtNameReferenceExpression(119,128): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -940,6 +969,7 @@ KtOperationReferenceExpression(129,130): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -967,6 +997,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
             isSafeNavigation = false
@@ -988,6 +1019,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
             contextParameters = []
             callableId = kotlin/Int.plus
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1006,6 +1038,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1026,6 +1059,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1065,6 +1099,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1082,6 +1117,7 @@ KtNameReferenceExpression(147,156): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1105,6 +1141,7 @@ KtOperationReferenceExpression(157,159): '+='
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
             isSafeNavigation = false
@@ -1126,6 +1163,7 @@ KtOperationReferenceExpression(157,159): '+='
             contextParameters = []
             callableId = kotlin/Int.plus
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1149,6 +1187,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
             isSafeNavigation = false
@@ -1163,6 +1202,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1181,6 +1221,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1201,6 +1242,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1240,6 +1282,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1257,6 +1300,7 @@ KtNameReferenceExpression(176,185): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1279,6 +1323,7 @@ KtOperationReferenceExpression(185,187): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
             isSafeNavigation = false
@@ -1293,6 +1338,7 @@ KtOperationReferenceExpression(185,187): '++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1313,6 +1359,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
             isSafeNavigation = false
@@ -1327,6 +1374,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
             callableId = kotlin/Int.dec
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1347,6 +1395,7 @@ KtOperationReferenceExpression(192,194): '--'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
             isSafeNavigation = false
@@ -1361,6 +1410,7 @@ KtOperationReferenceExpression(192,194): '--'
             callableId = kotlin/Int.dec
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1379,6 +1429,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1399,6 +1450,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1438,6 +1490,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1455,6 +1508,7 @@ KtNameReferenceExpression(204,213): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1478,6 +1532,7 @@ KtPostfixExpression(219,230): 'something++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
             isSafeNavigation = false
@@ -1492,6 +1547,7 @@ KtPostfixExpression(219,230): 'something++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1528,6 +1584,7 @@ KtNameReferenceExpression(219,228): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1568,6 +1625,7 @@ KtOperationReferenceExpression(228,230): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
             isSafeNavigation = false
@@ -1582,6 +1640,7 @@ KtOperationReferenceExpression(228,230): '++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1620,6 +1679,7 @@ KtPostfixExpression(235,248): '(something)++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
             isSafeNavigation = false
@@ -1634,6 +1694,7 @@ KtPostfixExpression(235,248): '(something)++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1673,6 +1734,7 @@ KtNameReferenceExpression(236,245): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1713,6 +1775,7 @@ KtOperationReferenceExpression(246,248): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
             isSafeNavigation = false
@@ -1727,6 +1790,7 @@ KtOperationReferenceExpression(246,248): '++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1763,6 +1827,7 @@ KtBinaryExpression(253,268): '(something) = 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1805,6 +1870,7 @@ KtNameReferenceExpression(254,263): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1844,6 +1910,7 @@ KtOperationReferenceExpression(265,266): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1886,6 +1953,7 @@ KtBinaryExpression(273,298): '(javaClass.something) = 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1910,6 +1978,7 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -1931,6 +2000,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1970,6 +2040,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -1987,6 +2058,7 @@ KtNameReferenceExpression(284,293): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -2008,6 +2080,7 @@ KtOperationReferenceExpression(295,296): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false

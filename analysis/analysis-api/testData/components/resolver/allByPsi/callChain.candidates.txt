@@ -57,6 +57,7 @@ KtBinaryExpression(27,35): 'this + a'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -94,6 +95,7 @@ KtBinaryExpression(27,35): 'this + a'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -131,6 +133,7 @@ KtBinaryExpression(27,35): 'this + a'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -168,6 +171,7 @@ KtBinaryExpression(27,35): 'this + a'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -204,6 +208,7 @@ KtBinaryExpression(27,35): 'this + a'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -241,6 +246,7 @@ KtBinaryExpression(27,35): 'this + a'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -285,6 +291,7 @@ KtOperationReferenceExpression(32,33): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -322,6 +329,7 @@ KtOperationReferenceExpression(32,33): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -359,6 +367,7 @@ KtOperationReferenceExpression(32,33): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -396,6 +405,7 @@ KtOperationReferenceExpression(32,33): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -432,6 +442,7 @@ KtOperationReferenceExpression(32,33): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -469,6 +480,7 @@ KtOperationReferenceExpression(32,33): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -497,6 +509,7 @@ KtNameReferenceExpression(34,35): 'a'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -571,6 +584,7 @@ KtNameReferenceExpression(79,80): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -607,6 +621,7 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
@@ -644,6 +659,7 @@ KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1.foo(2).bar(3) as? Int
@@ -687,6 +703,7 @@ KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1.foo(2)
@@ -724,6 +741,7 @@ KtDotQualifiedExpression(101,109): '1.foo(2)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1
@@ -764,6 +782,7 @@ KtCallExpression(103,109): 'foo(2)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1
@@ -801,6 +820,7 @@ KtNameReferenceExpression(103,106): 'foo'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1
@@ -847,6 +867,7 @@ KtCallExpression(110,116): 'bar(3)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1.foo(2)
@@ -884,6 +905,7 @@ KtNameReferenceExpression(110,113): 'bar'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1.foo(2)
@@ -942,6 +964,7 @@ KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1.foo(2).bar(3) as? Int
@@ -979,6 +1002,7 @@ KtNameReferenceExpression(127,130): 'foo'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 1.foo(2).bar(3) as? Int
@@ -1022,6 +1046,7 @@ KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4.bar(5)
@@ -1059,6 +1084,7 @@ KtDotQualifiedExpression(131,139): '4.bar(5)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4
@@ -1099,6 +1125,7 @@ KtCallExpression(133,139): 'bar(5)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4
@@ -1136,6 +1163,7 @@ KtNameReferenceExpression(133,136): 'bar'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4
@@ -1182,6 +1210,7 @@ KtCallExpression(140,146): 'bar(6)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4.bar(5)
@@ -1219,6 +1248,7 @@ KtNameReferenceExpression(140,143): 'bar'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = 4.bar(5)
@@ -1265,6 +1295,7 @@ KtCallExpression(148,154): 'bar(0)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
@@ -1302,6 +1333,7 @@ KtNameReferenceExpression(148,151): 'bar'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))

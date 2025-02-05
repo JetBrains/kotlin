@@ -12,6 +12,7 @@ KtOperationReferenceExpression(169,171): 'in'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = MyClass()

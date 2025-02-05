@@ -4,6 +4,7 @@ KtNameReferenceExpression(56,58): 'CA'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

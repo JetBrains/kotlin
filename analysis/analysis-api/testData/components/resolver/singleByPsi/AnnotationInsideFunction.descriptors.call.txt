@@ -3,6 +3,7 @@ KtNameReferenceExpression(59,69): 'Annotation'
     call = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

@@ -4,6 +4,7 @@ KtPrefixExpression(191,200): '-variable'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false

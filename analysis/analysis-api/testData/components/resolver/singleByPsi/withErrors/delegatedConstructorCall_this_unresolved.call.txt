@@ -5,6 +5,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
         argumentMapping = {}
         kind = THIS_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:
@@ -34,6 +35,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
         argumentMapping = {}
         kind = THIS_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:

@@ -12,6 +12,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -51,6 +52,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -88,6 +90,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -125,6 +128,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -162,6 +166,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -199,6 +204,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -236,6 +242,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -273,6 +280,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -310,6 +318,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -347,6 +356,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -384,6 +394,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -421,6 +432,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -458,6 +470,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -495,6 +508,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -532,6 +546,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -570,6 +585,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -609,6 +625,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -645,6 +662,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -685,6 +703,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)
@@ -725,6 +744,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = listOf(1, 2, 3)

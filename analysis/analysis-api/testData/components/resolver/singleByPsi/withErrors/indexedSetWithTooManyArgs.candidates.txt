@@ -26,6 +26,7 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = c
           isSafeNavigation = false

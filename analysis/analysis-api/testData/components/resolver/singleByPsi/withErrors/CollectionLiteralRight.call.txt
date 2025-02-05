@@ -26,6 +26,7 @@ KtCollectionLiteralExpression(20,29): '[1, 2, 3]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

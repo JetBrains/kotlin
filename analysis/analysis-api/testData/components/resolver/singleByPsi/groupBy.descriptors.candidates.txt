@@ -12,6 +12,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -59,6 +60,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -114,6 +116,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -161,6 +164,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -207,6 +211,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -254,6 +259,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -300,6 +306,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -347,6 +354,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -393,6 +401,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -440,6 +449,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -486,6 +496,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -533,6 +544,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -579,6 +591,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -626,6 +639,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -672,6 +686,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -719,6 +734,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -765,6 +781,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -812,6 +829,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -858,6 +876,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -905,6 +924,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -951,6 +971,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -998,6 +1019,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1044,6 +1066,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1091,6 +1114,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1137,6 +1161,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1184,6 +1209,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1230,6 +1256,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1277,6 +1304,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1316,6 +1344,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1363,6 +1392,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1417,6 +1447,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1463,6 +1494,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()
@@ -1510,6 +1542,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = nums.withIndex()

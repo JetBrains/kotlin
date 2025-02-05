@@ -4,6 +4,7 @@ KtCallExpression(93,99): 'peek()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo()
           isSafeNavigation = false

@@ -5,6 +5,7 @@ KtConstructorDelegationCall(106,118): 'super(1, "")'
         argumentMapping = {}
         kind = SUPER_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:

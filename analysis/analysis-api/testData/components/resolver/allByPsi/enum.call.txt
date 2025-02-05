@@ -54,6 +54,7 @@ KtSuperTypeCallEntry(54,57): '(1)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -87,6 +88,7 @@ KtConstructorCalleeExpression(54,54): ''
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -126,6 +128,7 @@ KtEnumEntrySuperclassReferenceExpression(54,54): ''
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -174,6 +177,7 @@ KtSuperTypeCallEntry(76,79): '(2)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -207,6 +211,7 @@ KtConstructorCalleeExpression(76,76): ''
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -246,6 +251,7 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -290,6 +296,7 @@ KtNameReferenceExpression(114,115): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = <anonymous>
@@ -337,6 +344,7 @@ KtDotQualifiedExpression(234,244): 'this.baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -363,6 +371,7 @@ KtCallExpression(239,244): 'baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -383,6 +392,7 @@ KtNameReferenceExpression(239,242): 'baz'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -425,6 +435,7 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = with
           isSafeNavigation = false
@@ -444,6 +455,7 @@ KtNameReferenceExpression(307,311): 'with'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -460,6 +472,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = with
           isSafeNavigation = false
@@ -479,6 +492,7 @@ KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -501,6 +515,7 @@ KtNameReferenceExpression(345,350): 'Entry'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -520,6 +535,7 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.Entry
           isSafeNavigation = false
@@ -539,6 +555,7 @@ KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -561,6 +578,7 @@ KtNameReferenceExpression(375,380): 'Entry'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -580,6 +598,7 @@ KtNameReferenceExpression(381,385): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.Entry
           isSafeNavigation = false
@@ -599,6 +618,7 @@ KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -621,6 +641,7 @@ KtNameReferenceExpression(410,423): 'EntryWithBody'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -640,6 +661,7 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.EntryWithBody
           isSafeNavigation = false
@@ -659,6 +681,7 @@ KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -681,6 +704,7 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor
           isSafeNavigation = false
@@ -700,6 +724,7 @@ KtNameReferenceExpression(462,463): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.EntryWithBody
           isSafeNavigation = false
@@ -719,6 +744,7 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithoutConstructor
           isSafeNavigation = false
@@ -741,6 +767,7 @@ KtNameReferenceExpression(492,499): 'entries'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithoutConstructor
           isSafeNavigation = false
@@ -760,6 +787,7 @@ KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithoutConstructor
           isSafeNavigation = false
@@ -782,6 +810,7 @@ KtNameReferenceExpression(527,532): 'Entry'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithoutConstructor
           isSafeNavigation = false
@@ -801,6 +830,7 @@ KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithoutConstructor
           isSafeNavigation = false
@@ -823,6 +853,7 @@ KtNameReferenceExpression(560,573): 'EntryWithBody'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithoutConstructor
           isSafeNavigation = false

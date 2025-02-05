@@ -127,6 +127,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -147,6 +148,7 @@ KtConstructorCalleeExpression(186,193): 'Base<C>'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -344,6 +346,7 @@ KtCallExpression(392,405): 'NestedClass()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -362,6 +365,7 @@ KtNameReferenceExpression(392,403): 'NestedClass'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -386,6 +390,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = c1
           isSafeNavigation = false
@@ -405,6 +410,7 @@ KtNameReferenceExpression(422,424): 'c1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -424,6 +430,7 @@ KtCallExpression(425,432): 'Inner()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = c1
           isSafeNavigation = false
@@ -445,6 +452,7 @@ KtNameReferenceExpression(425,430): 'Inner'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = c1
           isSafeNavigation = false

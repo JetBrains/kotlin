@@ -2,6 +2,7 @@ KtNameReferenceExpression(144,147): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false

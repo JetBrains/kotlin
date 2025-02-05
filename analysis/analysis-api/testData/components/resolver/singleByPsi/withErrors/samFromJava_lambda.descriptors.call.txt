@@ -19,6 +19,7 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = handler
           isSafeNavigation = false

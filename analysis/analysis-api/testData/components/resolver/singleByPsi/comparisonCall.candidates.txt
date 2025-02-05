@@ -12,6 +12,7 @@ KtBinaryExpression(31,36): 'i < j'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = i
           isSafeNavigation = false
@@ -49,6 +50,7 @@ KtBinaryExpression(31,36): 'i < j'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = i
           isSafeNavigation = false
@@ -86,6 +88,7 @@ KtBinaryExpression(31,36): 'i < j'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = i
           isSafeNavigation = false
@@ -123,6 +126,7 @@ KtBinaryExpression(31,36): 'i < j'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = i
           isSafeNavigation = false
@@ -159,6 +163,7 @@ KtBinaryExpression(31,36): 'i < j'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = i
           isSafeNavigation = false
@@ -196,6 +201,7 @@ KtBinaryExpression(31,36): 'i < j'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = i
           isSafeNavigation = false

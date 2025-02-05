@@ -2,6 +2,7 @@ KtNameReferenceExpression(54,58): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = JavaEnum.A
           isSafeNavigation = false

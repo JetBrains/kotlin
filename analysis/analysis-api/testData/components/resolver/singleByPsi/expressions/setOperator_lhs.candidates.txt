@@ -19,6 +19,7 @@ KtArrayAccessExpression(93,104): 'variable[0]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false

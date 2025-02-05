@@ -2,6 +2,7 @@ KtNameReferenceExpression(80,83): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Child
           type = kotlin.Unit

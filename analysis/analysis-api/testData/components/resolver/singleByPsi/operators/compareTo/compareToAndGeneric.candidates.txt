@@ -12,6 +12,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -49,6 +50,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = m

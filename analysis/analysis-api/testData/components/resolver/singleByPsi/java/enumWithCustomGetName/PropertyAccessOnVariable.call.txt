@@ -2,6 +2,7 @@ KtNameReferenceExpression(62,66): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = enum
           isSafeNavigation = false

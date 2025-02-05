@@ -12,6 +12,7 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []

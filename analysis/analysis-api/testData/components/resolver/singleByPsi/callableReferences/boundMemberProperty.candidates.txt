@@ -2,6 +2,7 @@ KtCallableReferenceExpression(87,95): 'obj::foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = obj
           isSafeNavigation = false

@@ -5,6 +5,7 @@ module1 - main1.kt:
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = Common()
             isSafeNavigation = false
@@ -26,6 +27,7 @@ module2 - main2.kt:
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = Common()
             isSafeNavigation = false

@@ -43,6 +43,7 @@ KtConstructorDelegationCall(61,61): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -61,6 +62,7 @@ KtConstructorDelegationReferenceExpression(61,61): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -97,6 +99,7 @@ KtConstructorDelegationCall(88,88): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -115,6 +118,7 @@ KtConstructorDelegationReferenceExpression(88,88): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -189,6 +193,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -222,6 +227,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -257,6 +263,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -290,6 +297,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -321,6 +329,7 @@ KtNameReferenceExpression(176,178): 'ci'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -366,6 +375,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -400,6 +410,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -434,6 +445,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -468,6 +480,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -498,6 +511,7 @@ KtNameReferenceExpression(216,218): 'cs'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -526,6 +540,7 @@ KtDotQualifiedExpression(245,257): 'super.call()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = super
           isSafeNavigation = false
@@ -553,6 +568,7 @@ KtCallExpression(251,257): 'call()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = super
           isSafeNavigation = false
@@ -574,6 +590,7 @@ KtNameReferenceExpression(251,255): 'call'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = super
           isSafeNavigation = false
@@ -618,6 +635,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -651,6 +669,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -686,6 +705,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -719,6 +739,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -760,6 +781,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -793,6 +815,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -850,6 +873,7 @@ KtConstructorDelegationCall(339,345): 'this()'
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -867,6 +891,7 @@ KtConstructorDelegationCall(339,345): 'this()'
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -894,6 +919,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -911,6 +937,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1021,6 +1048,7 @@ KtConstructorDelegationCall(446,454): 'super(1)'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1055,6 +1083,7 @@ KtConstructorDelegationReferenceExpression(446,451): 'super'
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

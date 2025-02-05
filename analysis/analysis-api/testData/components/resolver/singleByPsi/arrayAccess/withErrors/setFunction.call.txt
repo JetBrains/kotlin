@@ -20,6 +20,7 @@ KtArrayAccessExpression(59,63): '1[2]'
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = 1

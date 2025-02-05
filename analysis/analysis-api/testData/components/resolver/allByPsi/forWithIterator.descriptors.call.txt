@@ -107,6 +107,7 @@ KtDotQualifiedExpression(147,166): 'this@iterator.start'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -138,6 +139,7 @@ KtNameReferenceExpression(161,166): 'start'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -176,6 +178,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = current
           isSafeNavigation = false
@@ -202,6 +205,7 @@ KtNameReferenceExpression(196,203): 'current'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<no name provided>
@@ -230,6 +234,7 @@ KtOperationReferenceExpression(204,206): '<='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = current
           isSafeNavigation = false
@@ -256,6 +261,7 @@ KtDotQualifiedExpression(207,224): 'this@iterator.end'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -287,6 +293,7 @@ KtNameReferenceExpression(221,224): 'end'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@iterator
           isSafeNavigation = false
@@ -326,6 +333,7 @@ KtPostfixExpression(256,265): 'current++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
             isSafeNavigation = false
@@ -340,6 +348,7 @@ KtPostfixExpression(256,265): 'current++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<no name provided>
@@ -356,6 +365,7 @@ KtNameReferenceExpression(256,263): 'current'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<no name provided>
@@ -376,6 +386,7 @@ KtOperationReferenceExpression(263,265): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
             isSafeNavigation = false
@@ -390,6 +401,7 @@ KtOperationReferenceExpression(263,265): '++'
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = <anonymous>
           type = f.<no name provided>
@@ -441,6 +453,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -488,6 +501,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

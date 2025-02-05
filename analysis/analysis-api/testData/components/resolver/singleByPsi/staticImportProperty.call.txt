@@ -2,6 +2,7 @@ KtNameReferenceExpression(94,97): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject
           type = one.two.TopLevelObject

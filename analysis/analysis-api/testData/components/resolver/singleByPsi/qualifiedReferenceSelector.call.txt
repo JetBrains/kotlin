@@ -2,6 +2,7 @@ KtNameReferenceExpression(44,45): 'y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = A
           isSafeNavigation = false

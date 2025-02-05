@@ -19,6 +19,7 @@ KtBinaryExpression(93,108): 'variable[0] = 4'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false

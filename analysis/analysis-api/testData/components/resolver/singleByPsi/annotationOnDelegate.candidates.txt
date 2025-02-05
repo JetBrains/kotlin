@@ -3,6 +3,7 @@ KtAnnotationEntry(0,18): '@delegate:Suppress'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

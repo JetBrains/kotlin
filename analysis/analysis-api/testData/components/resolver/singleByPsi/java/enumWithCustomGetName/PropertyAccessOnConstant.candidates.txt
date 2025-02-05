@@ -2,6 +2,7 @@ KtNameReferenceExpression(54,58): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = JavaEnum.A
           isSafeNavigation = false
@@ -21,6 +22,7 @@ KtNameReferenceExpression(54,58): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = JavaEnum.A
           isSafeNavigation = false

@@ -4,6 +4,7 @@ KtCallExpression(104,109): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.Nested
           type = one.two.TopLevelObject.Nested
@@ -23,6 +24,7 @@ KtCallExpression(104,109): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.Nested
           type = one.two.TopLevelObject.Nested

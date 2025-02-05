@@ -4,6 +4,7 @@ KtCallableReferenceExpression(141,150): 'list::add'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
           isSafeNavigation = false

@@ -13,6 +13,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:
@@ -50,6 +51,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:
@@ -87,6 +89,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:

@@ -5,6 +5,7 @@ KtOperationReferenceExpression(250,252): '+='
         kind = PLUS_ASSIGN
         operand = MyClass()
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable[0]
             isSafeNavigation = false
@@ -26,6 +27,7 @@ KtOperationReferenceExpression(250,252): '+='
             contextParameters = []
             callableId = /MyClass.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false
@@ -50,6 +52,7 @@ KtOperationReferenceExpression(250,252): '+='
         0
       ]
       setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false

@@ -2,6 +2,7 @@ KtNameReferenceExpression(63,64): 'i'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a
           isSafeNavigation = false

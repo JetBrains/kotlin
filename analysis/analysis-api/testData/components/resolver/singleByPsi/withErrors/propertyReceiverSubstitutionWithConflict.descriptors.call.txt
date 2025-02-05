@@ -3,6 +3,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
     candidateCalls = [
       KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = f
@@ -19,6 +20,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
         typeArgumentsMapping = {},
       KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = f

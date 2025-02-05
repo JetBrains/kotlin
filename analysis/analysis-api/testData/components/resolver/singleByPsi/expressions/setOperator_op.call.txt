@@ -19,6 +19,7 @@ KtOperationReferenceExpression(105,106): '='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false

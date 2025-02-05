@@ -5,6 +5,7 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
