@@ -509,9 +509,12 @@ include ":native:swift:sir",
         ":native:swift:sir-compiler-bridge",
         ":native:swift:sir-providers",
         ":native:swift:swift-export-standalone",
-        ":native:swift:swift-export-embeddable",
         ":native:swift:swift-export-ide",
         ":generators:sir-tests-generator"
+
+if (!buildProperties.inJpsBuildIdeaSync) {
+    include ":native:swift:swift-export-embeddable"
+}
 
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
