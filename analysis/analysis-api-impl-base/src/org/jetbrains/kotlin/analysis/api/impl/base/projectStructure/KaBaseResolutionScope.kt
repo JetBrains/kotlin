@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.sessions
+package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -11,21 +11,21 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.platform.sessions.KaResolutionScope
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * [KaBaseResolutionScope] encapsulates special handling required for
  * generated and shadowed scopes provided by [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider].
- * After KT-74541 is fixed, these scopes will be contained directly in [KaModule.contentScope].
+ * After KT-74541 is fixed, these scopes will be contained directly in [org.jetbrains.kotlin.analysis.api.projectStructure.KaModule.contentScope].
  *
  * [KaBaseResolutionScope] is not intended to be created manually,
  * it's a responsibility of [org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider]
- * Please, use [KaResolutionScope.getInstance]
+ * Please, use [Companion.getInstance]
  */
 @KaImplementationDetail
-class KaBaseResolutionScope internal constructor(
+internal class KaBaseResolutionScope(
     private val useSiteModule: KaModule,
     private val resolutionScope: GlobalSearchScope,
 ) : KaResolutionScope() {
@@ -60,7 +60,7 @@ class KaBaseResolutionScope internal constructor(
 
         val ktFile = virtualFile.findPsiFile(useSiteModule.project) as? KtFile ?: return false
         if (ktFile.isDangling) {
-            val module = KaModuleProvider.getModule(useSiteModule.project, ktFile, useSiteModule)
+            val module = KaModuleProvider.Companion.getModule(useSiteModule.project, ktFile, useSiteModule)
             return isFromGeneratedModule(module)
         }
 
