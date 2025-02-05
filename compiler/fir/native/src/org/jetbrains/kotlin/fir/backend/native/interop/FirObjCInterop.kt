@@ -34,7 +34,7 @@ fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
             firClassSymbol?.let {
                 val unsubstitutedScope = it.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
                 // call of `processFunctionsByName()` is needed only for necessary side-effect before `getDirectOverriddenFunctions` call
-                unsubstitutedScope.processFunctionsByName(symbol.name) {}
+                unsubstitutedScope.processFunctionsByName(symbol.name, mutableListOf())
                 unsubstitutedScope.getDirectOverriddenFunctions(symbol).firstNotNullOfOrNull {
                     require(it != this) { "Function ${symbol.name}() is wrongly contained in its own getDirectOverriddenFunctions" }
                     it.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)

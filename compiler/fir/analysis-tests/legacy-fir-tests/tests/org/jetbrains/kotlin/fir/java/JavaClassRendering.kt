@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 @OptIn(SymbolInternals::class)
 fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: FirSession, renderInnerClasses: () -> Unit) {
@@ -51,7 +52,11 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
 
             when (declaration) {
                 is FirJavaConstructor -> scopeToUse!!.processDeclaredConstructors(::renderAndCache)
-                is FirJavaMethod -> scopeToUse!!.processFunctionsByName(declaration.name, ::renderAndCache)
+                is FirJavaMethod -> {
+                    val out = mutableListOf<FirNamedFunctionSymbol>()
+                    scopeToUse!!.processFunctionsByName(declaration.name, out)
+                    out.forEach(::renderAndCache)
+                }
                 is FirJavaField -> scopeToUse!!.processPropertiesByName(declaration.name, ::renderAndCache)
                 is FirEnumEntry -> scopeToUse!!.processPropertiesByName(declaration.name, ::renderAndCache)
                 else -> {

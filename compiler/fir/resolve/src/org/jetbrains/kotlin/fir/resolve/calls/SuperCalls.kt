@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -131,7 +132,11 @@ private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name:
             scopeSession = scopeSession,
             callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
-        )?.processFunctionsByName(name) { add(it.fir) }
+        )?.let { scope ->
+            val functions = mutableListOf<FirNamedFunctionSymbol>()
+            scope.processFunctionsByName(name, functions)
+            addAll(functions.map { it.fir })
+        }
     }
 
 private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =

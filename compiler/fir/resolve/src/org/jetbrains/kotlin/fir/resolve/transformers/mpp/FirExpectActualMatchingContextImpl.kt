@@ -249,7 +249,9 @@ class FirExpectActualMatchingContextImpl private constructor(
     }
 
     private fun FirScope.getMembersTo(destination: MutableList<in FirCallableSymbol<*>>, name: Name) {
-        processFunctionsByName(name) { destination.add(it) }
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        processFunctionsByName(name, functions)
+        destination.addAll(functions)
         processPropertiesByName(name) { destination.add(it) }
     }
 

@@ -450,14 +450,17 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
 
         if (metIncorrectMember) break
 
-        classUseSiteMemberScope.processFunctionsByName(candidateName) { functionSymbol ->
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        classUseSiteMemberScope.processFunctionsByName(candidateName, functions)
+        for (functionSymbol in functions) {
             val firFunction = functionSymbol.fir
             if (!firFunction.resolvedIsAbstract ||
                 firFunction.isPublicInObject(checkOnlyName = false)
-            ) return@processFunctionsByName
+            ) continue
 
             if (resultMethod != null) {
                 metIncorrectMember = true
+                break
             } else {
                 resultMethod = firFunction
             }

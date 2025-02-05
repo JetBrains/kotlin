@@ -145,10 +145,12 @@ class Fir2IrDataClassMembersGenerator(
             val contributedSyntheticFunctions =
                 buildMap<Name, FirSimpleFunction> {
                     for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
-                        scope.processFunctionsByName(name) {
+                        val functions = mutableListOf<FirNamedFunctionSymbol>()
+                        scope.processFunctionsByName(name, functions)
+                        for (it in functions) {
                             // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
-                            if (it.origin !is FirDeclarationOrigin.Synthetic) return@processFunctionsByName
-                            if (it.containingClassLookupTag() != klass.symbol.toLookupTag()) return@processFunctionsByName
+                            if (it.origin !is FirDeclarationOrigin.Synthetic) continue
+                            if (it.containingClassLookupTag() != klass.symbol.toLookupTag()) continue
                             require(!contains(name)) {
                                 "Two synthetic functions $name were found in data/value class ${klass.name}:\n" +
                                         "${this[name]?.render()}\n${it.fir.render()}"
@@ -311,7 +313,9 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol(session)!!.fir)
                 }
                 val scope = klass.symbol.unsubstitutedScope(c)
-                return scope.getFunctions(HASHCODE_NAME).first { symbol ->
+                val functions = mutableListOf<FirNamedFunctionSymbol>()
+                scope.processFunctionsByName(HASHCODE_NAME, functions)
+                return functions.first { symbol ->
                     val function = symbol.fir
                     function.valueParameters.isEmpty() && function.receiverParameter == null && function.contextParameters.isEmpty()
                 }

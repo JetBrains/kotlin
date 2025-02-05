@@ -272,7 +272,9 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         predicate: (FirNamedFunctionSymbol) -> Boolean
     ): Boolean {
         var result = false
-        context.session.declaredMemberScope(this, memberRequiredPhase = null).processFunctionsByName(name) { sym ->
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        context.session.declaredMemberScope(this, memberRequiredPhase = null).processFunctionsByName(name, functions)
+        for (sym in functions) {
             if (!result) {
                 result = predicate(sym)
             }
@@ -319,7 +321,9 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         var symbol: FirCallableSymbol<*>? = null
 
         for (scope in scopes) {
-            scope.processFunctionsByName(name) { sym ->
+            val functions = mutableListOf<FirNamedFunctionSymbol>()
+            scope.processFunctionsByName(name, functions)
+            for (sym in functions) {
                 if (sym.isVisible(context) && isApplicable(sym)) found = true
                 symbol = sym
             }

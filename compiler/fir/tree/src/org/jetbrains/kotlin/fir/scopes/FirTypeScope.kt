@@ -321,7 +321,7 @@ fun FirTypeScope.getDirectOverriddenProperties(
 fun FirTypeScope.retrieveDirectOverriddenOf(memberSymbol: FirCallableSymbol<*>): List<FirCallableSymbol<*>> {
     return when (memberSymbol) {
         is FirNamedFunctionSymbol -> {
-            processFunctionsByName(memberSymbol.name) {}
+            processFunctionsByName(memberSymbol.name, mutableListOf())
             getDirectOverriddenFunctions(memberSymbol)
         }
 

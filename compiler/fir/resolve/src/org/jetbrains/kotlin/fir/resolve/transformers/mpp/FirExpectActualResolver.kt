@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
@@ -57,7 +58,9 @@ object FirExpectActualResolver {
                         else -> {
                             val scope = FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
                             mutableListOf<FirCallableSymbol<*>>().apply {
-                                scope.processFunctionsByName(callableId.callableName) { add(it) }
+                                val functions = mutableListOf<FirNamedFunctionSymbol>()
+                                scope.processFunctionsByName(callableId.callableName, functions)
+                                addAll(functions)
                                 scope.processPropertiesByName(callableId.callableName) { add(it) }
                             }
                         }

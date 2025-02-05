@@ -89,26 +89,96 @@ abstract class FirAbstractImportingScope(
         }
     }
 
+    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> processCallablesFromImportsByNameToList(
+        name: Name?,
+        imports: List<FirResolvedImport>,
+        out: MutableList<S>,
+        crossinline buildImportedCopy: S.(ClassId) -> S,
+        processCallablesByName: FirContainingNamesAwareScope.(Name, MutableList<S>) -> Unit,
+        getTopLevelCallableSymbols: (FqName, Name) -> List<S>
+    ) {
+        for (import in imports) {
+            val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
+            val parentClassId = import.resolvedParentClassId
+            if (parentClassId != null) {
+                val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedClass(session)
+                val staticsScope = staticsScopeOwnerSymbol?.getStaticsScope()
+                if (staticsScope != null) {
+                    val tempList = mutableListOf<S>()
+                    staticsScope.processCallablesByName(importedName, tempList)
+                    for (it in tempList) {
+                        if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
+                            out.add(it.buildImportedCopy(staticsScopeOwnerSymbol.classId))
+                        } else {
+                            out.add(it)
+                        }
+                    }
+                    continue
+                }
+            }
+            if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
+                out.addAll(getTopLevelCallableSymbols(import.packageFqName, importedName))
+            }
+        }
+    }
+
+    protected fun processFunctionsByName(name: Name?, imports: List<FirResolvedImport>, out: MutableList<FirNamedFunctionSymbol>) {
+        for (import in imports) {
+            val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
+            val parentClassId = import.resolvedParentClassId
+            if (parentClassId != null) {
+                val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedClass(session)
+                val staticsScope = staticsScopeOwnerSymbol?.getStaticsScope()
+                if (staticsScope != null) {
+                    val tempList = mutableListOf<FirNamedFunctionSymbol>()
+                    staticsScope.processFunctionsByName(importedName, tempList)
+                    for (it in tempList) {
+                        if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
+                            out.add(it.fir.buildImportedVersion(staticsScopeOwnerSymbol.classId).symbol)
+                        } else {
+                            out.add(it)
+                        }
+                    }
+                    continue
+                }
+            }
+            if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
+                out.addAll(provider.getTopLevelFunctionSymbols(import.packageFqName, importedName))
+            }
+        }
+    }
+
     protected fun processFunctionsByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallablesFromImportsByName(
-            name,
-            imports,
-            processor,
-            { classId -> fir.buildImportedVersion(classId).symbol },
-            FirContainingNamesAwareScope::processFunctionsByName,
-            provider::getTopLevelFunctionSymbols
-        )
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        processFunctionsByName(name, imports, result)
+        result.forEach(processor)
     }
 
     protected fun processPropertiesByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirVariableSymbol<*>) -> Unit) {
-        processCallablesFromImportsByName(
-            name,
-            imports,
-            processor,
-            { classId -> fir.buildImportedVersion(classId).symbol },
-            FirContainingNamesAwareScope::processPropertiesByName,
-            provider::getTopLevelPropertySymbols
-        )
+        for (import in imports) {
+            val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
+            val parentClassId = import.resolvedParentClassId
+            if (parentClassId != null) {
+                val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedClass(session)
+                val staticsScope = staticsScopeOwnerSymbol?.getStaticsScope()
+                if (staticsScope != null) {
+                    staticsScope.processPropertiesByName(importedName) {
+                        if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
+                            processor(it.fir.buildImportedVersion(staticsScopeOwnerSymbol.classId).symbol)
+                        } else {
+                            processor(it)
+                        }
+                    }
+                    continue
+                }
+            }
+            if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
+                provider.getTopLevelPropertySymbols(import.packageFqName, importedName).forEach(processor)
+            }
+        }
     }
 
     @DelicateScopeAPI

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
 
@@ -37,18 +38,20 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
         val containingClass = declaration.getContainingClass() ?: return
 
         var reported = false
-        containingClass.unsubstitutedScope(context).processFunctionsByName(name) {
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        containingClass.unsubstitutedScope(context).processFunctionsByName(name, functions)
+        for (function in functions) {
             @OptIn(SymbolInternals::class)
-            val hiddenFir = it.fir
+            val hiddenFir = function.fir
             if (!reported && hiddenFir.isHiddenToOvercomeSignatureClash == true && !hiddenFir.isFinal) {
                 if (declaration.computeJvmDescriptor() == hiddenFir.computeJvmDescriptor()) {
-                    val regularBase = hiddenFir.initialSignatureAttr ?: return@processFunctionsByName
+                    val regularBase = hiddenFir.initialSignatureAttr ?: continue
                     val description = when {
                         mayBeRenamedBuiltIn -> "a renamed function"
                         else -> "a function with erased parameters"
                     }
                     reporter.reportOn(
-                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase, context
+                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, function, description, regularBase, context
                     )
                     reported = true
                 }

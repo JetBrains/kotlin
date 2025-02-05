@@ -136,7 +136,7 @@ class FirStatusResolver(
             )
 
             val symbol = function.symbol
-            scope.processFunctionsByName(function.name) {}
+            scope.processFunctionsByName(function.name, mutableListOf())
             scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
                 if (session.visibilityChecker.isVisibleForOverriding(
                         candidateInDerivedClass = function, candidateInBaseClass = overriddenSymbol.fir

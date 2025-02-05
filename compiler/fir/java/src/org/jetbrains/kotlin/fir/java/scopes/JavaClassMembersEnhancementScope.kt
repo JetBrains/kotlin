@@ -41,13 +41,15 @@ class JavaClassMembersEnhancementScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        useSiteMemberScope.processFunctionsByName(name) process@{ original ->
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        useSiteMemberScope.processFunctionsByName(name, functions)
+        for (original in functions) {
             val symbol = signatureEnhancement.enhancedFunction(original, name)
             val enhancedFunction = (symbol.fir as? FirSimpleFunction)
             val enhancedFunctionSymbol = enhancedFunction?.symbol ?: symbol
             enhancedToOriginalFunctions[enhancedFunctionSymbol] = original
-            processor(enhancedFunctionSymbol)
+            out.add(enhancedFunctionSymbol)
         }
     }
 

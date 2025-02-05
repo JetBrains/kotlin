@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.toLookupTag
@@ -169,16 +171,16 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         val names = scope.getCallableNames()
         var hasAbstract = false
         for (name in names) {
-            scope.processFunctionsByName(name) {
-                if (it.isAbstract) {
-                    hasAbstract = true
-                }
+            val functions = mutableListOf<FirNamedFunctionSymbol>()
+            scope.processFunctionsByName(name, functions)
+            if (functions.any { it.isAbstract }) {
+                hasAbstract = true
             }
             if (hasAbstract) return true
-            scope.processPropertiesByName(name) {
-                if (it.isAbstract) {
-                    hasAbstract = true
-                }
+            val properties = mutableListOf<FirVariableSymbol<*>>()
+            scope.processPropertiesByName(name) { properties.add(it) }
+            if (properties.any { it.isAbstract }) {
+                hasAbstract = true
             }
             if (hasAbstract) return true
         }

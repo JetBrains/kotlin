@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -307,11 +308,25 @@ class FirCallCompletionResultsWriterTransformer(
             return result ?: error("Not found synthetic property: ${fir.renderWithType()}")
         }
 
-        return findSingleSubstitutedSymbolWithOriginal(original.symbol) { processor ->
+        return findSingleSubstitutedSymbolWithOriginal(original.symbol) { result ->
             when (original) {
-                is FirSimpleFunction -> scope.processFunctionsByName(original.name, processor)
-                is FirProperty -> scope.processPropertiesByName(original.name, processor)
-                is FirConstructor -> scope.processDeclaredConstructors(processor)
+                is FirSimpleFunction -> {
+                    val tempList = mutableListOf<FirNamedFunctionSymbol>()
+                    scope.processFunctionsByName(original.name, tempList)
+                    result.addAll(tempList.map { it as FirCallableSymbol<*> })
+                }
+                is FirProperty -> {
+                    val tempList = mutableListOf<FirVariableSymbol<*>>()
+                    scope.processPropertiesByName(original.name) { tempList.add(it) }
+                    @Suppress("UNCHECKED_CAST")
+                    result.addAll(tempList as Collection<FirCallableSymbol<*>>)
+                }
+                is FirConstructor -> {
+                    val tempList = mutableListOf<FirConstructorSymbol>()
+                    scope.processDeclaredConstructors { tempList.add(it) }
+                    @Suppress("UNCHECKED_CAST")
+                    result.addAll(tempList as Collection<FirCallableSymbol<*>>)
+                }
                 else -> error("Unexpected declaration kind ${original.render()}")
             }
         }
@@ -319,20 +334,19 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun findSingleSubstitutedSymbolWithOriginal(
         original: FirBasedSymbol<*>,
-        processCallables: ((FirCallableSymbol<*>) -> Unit) -> Unit,
+        processCallables: (MutableList<FirCallableSymbol<*>>) -> Unit,
     ): FirBasedSymbol<*> {
-        var result: FirBasedSymbol<*>? = null
+        val symbols = mutableListOf<FirCallableSymbol<*>>()
+        processCallables(symbols)
 
-        processCallables { symbol ->
-            if (symbol.originalForSubstitutionOverride == original) {
-                check(result == null) {
-                    "Expected single, but ${result!!.fir.render()} and ${symbol.fir.render()} found"
-                }
-                result = symbol
-            }
+        val matchingSymbols = symbols.filter { it.originalForSubstitutionOverride == original }
+        check(matchingSymbols.size <= 1) {
+            val first = matchingSymbols.first()
+            val second = matchingSymbols[1]
+            "Expected single, but ${first.fir.render()} and ${second.fir.render()} found"
         }
 
-        return result ?: error("No symbol found for ${original.fir.render()}")
+        return matchingSymbols.firstOrNull() ?: error("No symbol found for ${original.fir.render()}")
     }
 
     override fun transformQualifiedAccessExpression(

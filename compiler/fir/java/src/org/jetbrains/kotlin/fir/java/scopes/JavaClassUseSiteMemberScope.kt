@@ -347,7 +347,7 @@ class JavaClassUseSiteMemberScope(
     private fun FirNamedFunctionSymbol.doesOverrideRenamedBuiltins(): Boolean {
         // e.g. 'removeAt' or 'toInt'
         val builtinName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name) ?: return false
-        val builtinSpecialFromSuperTypes = supertypeScopeContext.collectMembersGroupedByScope(builtinName, FirScope::processFunctionsByName)
+        val builtinSpecialFromSuperTypes = supertypeScopeContext.collectMembersGroupedByScopeToList(builtinName) { name, list -> processFunctionsByName(name, list) }
             .flatMap { (scope, symbols) ->
                 symbols.filter { it.doesOverrideBuiltinWithDifferentJvmName(scope, session) }
             }
@@ -387,7 +387,7 @@ class JavaClassUseSiteMemberScope(
      */
     private fun FirNamedFunctionSymbol.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters(): Boolean {
         if (!name.sameAsBuiltinMethodWithErasedValueParameters) return false
-        val candidatesToOverride = supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
+        val candidatesToOverride = supertypeScopeContext.collectIntersectionResultsForCallablesToList(name) { name, list -> processFunctionsByName(name, list) }
             .flatMap { it.overriddenMembers }
             .filterNot { (member, _) ->
                 member.valueParameterSymbols.all { it.resolvedReturnType.lowerBoundIfFlexible().isAny }
@@ -431,7 +431,7 @@ class JavaClassUseSiteMemberScope(
         collectDeclaredFunctions(name, result)
         val explicitlyDeclaredFunctions = result.toSet()
 
-        val functionsWithScopeFromSupertypes = supertypeScopeContext.collectMembersGroupedByScope(name, FirScope::processFunctionsByName)
+        val functionsWithScopeFromSupertypes = supertypeScopeContext.collectMembersGroupedByScopeToList(name) { name, list -> processFunctionsByName(name, list) }
 
         if (
             !name.sameAsRenamedInJvmBuiltin &&

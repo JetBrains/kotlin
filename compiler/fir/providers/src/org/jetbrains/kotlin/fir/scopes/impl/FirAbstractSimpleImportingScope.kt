@@ -32,9 +32,9 @@ abstract class FirAbstractSimpleImportingScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
         val imports = simpleImports[name] ?: return
-        processFunctionsByName(null, imports, processor)
+        processFunctionsByName(null, imports, out)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

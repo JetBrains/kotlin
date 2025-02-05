@@ -176,7 +176,9 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirCla
 
         collect(declaredFunction, FirRedeclarationPresenter.represent(declaredFunction), functionDeclarations)
 
-        unsubstitutedScope.processFunctionsByName(declaredFunction.name) { anotherFunction ->
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        unsubstitutedScope.processFunctionsByName(declaredFunction.name, functions)
+        for (anotherFunction in functions) {
             if (anotherFunction != declaredFunction && anotherFunction.isCollectable() && anotherFunction.isVisibleInClass(klass)) {
                 collect(anotherFunction, FirRedeclarationPresenter.represent(anotherFunction), functionDeclarations)
             }
@@ -387,9 +389,11 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
 
         // Function source
         if (groupHasSimpleFunctions || group.constructors.isNotEmpty()) {
-            packageMemberScope.processFunctionsByName(declarationName) {
-                collect(group.simpleFunctions, it)
-                collect(group.constructors, it)
+            val functions = mutableListOf<FirNamedFunctionSymbol>()
+            packageMemberScope.processFunctionsByName(declarationName, functions)
+            for (function in functions) {
+                collect(group.simpleFunctions, function)
+                collect(group.constructors, function)
             }
         }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 fun FirRegularClass.generatedNestedClassifiers(session: FirSession): List<FirClassLikeDeclaration> {
     val scope = session.declaredMemberScope(this, memberRequiredPhase = null)
@@ -32,9 +33,11 @@ fun FirRegularClass.generatedMembers(session: FirSession): List<FirCallableDecla
     val scope = session.declaredMemberScope(this, memberRequiredPhase = null)
     val result = mutableListOf<FirCallableDeclaration>()
     for (name in scope.getCallableNames()) {
-        scope.processFunctionsByName(name) {
-            if (it.fir.origin.generated) {
-                result += it.fir
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        scope.processFunctionsByName(name, functions)
+        for (function in functions) {
+            if (function.fir.origin.generated) {
+                result += function.fir
             }
         }
         scope.processPropertiesByName(name) {

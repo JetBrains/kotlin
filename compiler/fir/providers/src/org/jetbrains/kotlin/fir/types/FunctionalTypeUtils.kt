@@ -202,17 +202,14 @@ private fun ConeKotlinType.isSubtypeOfFunctionType(session: FirSession, expected
 fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirNamedFunctionSymbol? {
     require(this.isSomeFunctionType(session))
     val functionN = lookupTag.toClassSymbol(session)?.fir ?: return null
-    var baseInvokeSymbol: FirNamedFunctionSymbol? = null
+    val functions = mutableListOf<FirNamedFunctionSymbol>()
     functionN.unsubstitutedScope(
         session,
         scopeSession,
         withForcedTypeCalculator = false,
         memberRequiredPhase = null,
-    ).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
-        baseInvokeSymbol = functionSymbol
-        return@processFunctionsByName
-    }
-    return baseInvokeSymbol
+    ).processFunctionsByName(OperatorNameConventions.INVOKE, functions)
+    return functions.firstOrNull()
 }
 
 fun ConeKotlinType.findContributedInvokeSymbol(
@@ -236,12 +233,10 @@ fun ConeKotlinType.findContributedInvokeSymbol(
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return null
 
-    var declaredInvoke: FirNamedFunctionSymbol? = null
-    scope.processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
-        if (functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size) {
-            declaredInvoke = functionSymbol
-            return@processFunctionsByName
-        }
+    val functions = mutableListOf<FirNamedFunctionSymbol>()
+    scope.processFunctionsByName(OperatorNameConventions.INVOKE, functions)
+    val declaredInvoke = functions.firstOrNull { functionSymbol ->
+        functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size
     }
 
     var overriddenInvoke: FirFunctionSymbol<*>? = null

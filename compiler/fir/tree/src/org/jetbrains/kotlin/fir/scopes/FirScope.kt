@@ -23,8 +23,21 @@ abstract class FirScope {
 
     open fun processFunctionsByName(
         name: Name,
+        out: MutableList<FirNamedFunctionSymbol>
+    ) {
+    }
+
+    @Deprecated(
+        message = "Use processFunctionsByName(Name, MutableList<FirNamedFunctionSymbol>) instead",
+        replaceWith = ReplaceWith("processFunctionsByName(name, mutableListOf<FirNamedFunctionSymbol>().apply { processor(it) })")
+    )
+    fun processFunctionsByName(
+        name: Name,
         processor: (FirNamedFunctionSymbol) -> Unit
     ) {
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        processFunctionsByName(name, result)
+        result.forEach(processor)
     }
 
     open fun processPropertiesByName(
@@ -64,7 +77,7 @@ fun FirScope.getClassifiers(name: Name): List<FirClassifierSymbol<*>> = mutableL
 }
 
 fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
-    processFunctionsByName(name, this::add)
+    processFunctionsByName(name, this)
 }
 
 fun FirScope.getProperties(name: Name): List<FirVariableSymbol<*>> = mutableListOf<FirVariableSymbol<*>>().apply {

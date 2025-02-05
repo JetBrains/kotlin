@@ -50,15 +50,13 @@ class FirPackageMemberScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
         if (name in excludedNames) return
 
         val symbols = functionCache.getOrPut(name) {
             symbolProvider.getTopLevelFunctionSymbols(fqName, name)
         }
-        for (symbol in symbols) {
-            processor(symbol)
-        }
+        out.addAll(symbols)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

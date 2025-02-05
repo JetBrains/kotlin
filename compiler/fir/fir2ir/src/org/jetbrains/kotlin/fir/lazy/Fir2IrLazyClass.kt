@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.ir.IrElement
@@ -175,9 +176,12 @@ class Fir2IrLazyClass(
         fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
             if (scope == null) return
             for (name in scope.getCallableNames()) {
-                scope.processFunctionsByName(name) { symbol ->
+                val functions = mutableListOf<FirNamedFunctionSymbol>()
+                scope.processFunctionsByName(name, functions)
+                for (symbol in functions) {
+                    val declaration = symbol.fir as? FirSimpleFunction ?: continue
                     when {
-                        !shouldBuildStub(symbol.fir) -> {}
+                        !shouldBuildStub(declaration) -> {}
                         else -> {
                             // Lazy declarations are created together with their symbol, so it's safe to take the owner here
                             @OptIn(UnsafeDuringIrConstructionAPI::class)

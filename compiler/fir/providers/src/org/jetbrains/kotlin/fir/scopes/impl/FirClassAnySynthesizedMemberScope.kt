@@ -95,30 +95,38 @@ class FirClassAnySynthesizedMemberScope(
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
         if (name !in ANY_MEMBER_NAMES) {
-            declaredMemberScope.processFunctionsByName(name, processor)
+            declaredMemberScope.processFunctionsByName(name, out)
             return
         }
+
         var synthesizedFunctionIsNeeded = true
-        declaredMemberScope.processFunctionsByName(name) process@{ fromDeclaredScope ->
+        val tempList = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name, tempList)
+        for (fromDeclaredScope in tempList) {
             if (fromDeclaredScope.matchesSomeAnyMember(name)) {
                 // TODO: should we handle fromDeclaredScope.origin == FirDeclarationOrigin.Delegated somehow?
                 // See also KT-58926
                 synthesizedFunctionIsNeeded = false
             }
-            processor(fromDeclaredScope)
+            out.add(fromDeclaredScope)
         }
+
         if (!synthesizedFunctionIsNeeded) return
-        superKlassScope?.processFunctionsByName(name) { fromSuperType ->
+
+        tempList.clear()
+        superKlassScope?.processFunctionsByName(name, tempList)
+        for (fromSuperType in tempList) {
             if (synthesizedFunctionIsNeeded) {
                 if (fromSuperType.rawStatus.modality == Modality.FINAL && fromSuperType.matchesSomeAnyMember(name)) {
                     synthesizedFunctionIsNeeded = false
                 }
             }
         }
+
         if (!synthesizedFunctionIsNeeded) return
-        processor(synthesizedCache.synthesizedFunction.getValue(name, this))
+        out.add(synthesizedCache.synthesizedFunction.getValue(name, this))
     }
 
     private fun FirNamedFunctionSymbol.matchesSomeAnyMember(name: Name): Boolean {

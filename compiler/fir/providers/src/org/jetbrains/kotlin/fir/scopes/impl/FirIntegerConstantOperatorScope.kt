@@ -47,13 +47,15 @@ class FirIntegerConstantOperatorScope(
 
     private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
         // Constant conversion for those unary operators works only for signed integers
         val isUnaryOperator = !isUnsigned && (name in ConvertibleIntegerOperators.unaryOperatorNames)
         val isBinaryOperator = name in ConvertibleIntegerOperators.binaryOperatorsNames
         if (!isUnaryOperator && !isBinaryOperator) {
-            return baseScope.processFunctionsByName(name, processor)
+            baseScope.processFunctionsByName(name, out)
+            return
         }
+
         val requiresUnsignedOperand = isUnsigned && name !in binaryOperatorsWithSignedArgument
         val wrappedSymbol = mappedFunctions.getOrPut(name) {
             val allFunctions = baseScope.getFunctions(name)
@@ -70,8 +72,11 @@ class FirIntegerConstantOperatorScope(
             }
             wrapIntOperator(functionSymbol)
         }
-        processor(wrappedSymbol)
-        baseScope.processFunctionsByName(name, processor)
+        out.add(wrappedSymbol)
+
+        val tempList = mutableListOf<FirNamedFunctionSymbol>()
+        baseScope.processFunctionsByName(name, tempList)
+        out.addAll(tempList)
     }
 
     private fun wrapIntOperator(originalSymbol: FirNamedFunctionSymbol): FirNamedFunctionSymbol {

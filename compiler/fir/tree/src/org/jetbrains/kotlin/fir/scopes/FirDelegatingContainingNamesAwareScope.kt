@@ -36,9 +36,9 @@ abstract class FirDelegatingContainingNamesAwareScope(protected val delegate: Fi
 
     override fun processFunctionsByName(
         name: Name,
-        processor: (FirNamedFunctionSymbol) -> Unit,
+        out: MutableList<FirNamedFunctionSymbol>
     ) {
-        delegate.processFunctionsByName(name, processor)
+        delegate.processFunctionsByName(name, out)
     }
 
     override fun processPropertiesByName(
@@ -77,9 +77,9 @@ abstract class FirDelegatingTypeScope(private val delegate: FirTypeScope) : FirT
 
     override fun processFunctionsByName(
         name: Name,
-        processor: (FirNamedFunctionSymbol) -> Unit,
+        out: MutableList<FirNamedFunctionSymbol>
     ) {
-        delegate.processFunctionsByName(name, processor)
+        delegate.processFunctionsByName(name, out)
     }
 
     override fun processPropertiesByName(

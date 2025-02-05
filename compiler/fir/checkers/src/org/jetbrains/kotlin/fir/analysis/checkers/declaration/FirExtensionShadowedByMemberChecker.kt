@@ -62,7 +62,11 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
             )
             is FirSimpleFunction -> findFirstSymbolByCondition<FirNamedFunctionSymbol>(
                 condition = { it.isVisible(context) && it.shadows(declaration.symbol, context) },
-                processMembers = { scope.processFunctionsByName(declaration.name, it) },
+                processMembers = {
+                    val functions = mutableListOf<FirNamedFunctionSymbol>()
+                    scope.processFunctionsByName(declaration.name, functions)
+                    functions.forEach(it)
+                },
             )
             else -> return
         }
@@ -89,7 +93,11 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
 
                 val invoke = findFirstSymbolByCondition(
                     condition = { it.isVisible(context) && it.isOperator && it.shadows(declaration.symbol, context) },
-                    processMembers = { returnTypeScope.processFunctionsByName(OperatorNameConventions.INVOKE, it) },
+                    processMembers = {
+                        val functions = mutableListOf<FirNamedFunctionSymbol>()
+                        returnTypeScope.processFunctionsByName(OperatorNameConventions.INVOKE, functions)
+                        functions.forEach(it)
+                    },
                 )
 
                 invoke?.to(property)

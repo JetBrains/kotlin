@@ -32,10 +32,10 @@ class FirTypeIntersectionScope private constructor(
         scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
         // Important optimization: avoid creating cache keys for names that are definitely absent
         if (name !in getCallableNames()) return
-        processCallablesByName(name, processor, FirScope::processFunctionsByName)
+        processCallablesByNameToList(name, out, FirScope::processFunctionsByName)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -55,6 +55,25 @@ class FirTypeIntersectionScope private constructor(
             val symbol = resultOfIntersection.chosenSymbol
             overriddenSymbols[symbol] = resultOfIntersection.overriddenMembers
             processor(symbol)
+        }
+    }
+
+    private inline fun <D : FirCallableSymbol<*>> processCallablesByNameToList(
+        name: Name,
+        out: MutableList<D>,
+        processCallables: FirScope.(Name, MutableList<D>) -> Unit
+    ) {
+        val tempList = mutableListOf<D>()
+        val callablesWithOverridden = intersectionContext.collectIntersectionResultsForCallables(name) { n, p ->
+            processCallables(n, tempList)
+            tempList.forEach(p)
+            tempList.clear()
+        }
+
+        for (resultOfIntersection in callablesWithOverridden) {
+            val symbol = resultOfIntersection.chosenSymbol
+            overriddenSymbols[symbol] = resultOfIntersection.overriddenMembers
+            out.add(symbol)
         }
     }
 

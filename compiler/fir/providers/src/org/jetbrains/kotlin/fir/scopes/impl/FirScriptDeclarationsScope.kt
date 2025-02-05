@@ -56,9 +56,9 @@ class FirScriptDeclarationsScope(
         result
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
         if (name == SpecialNames.INIT) return
-        processCallables(name, processor)
+        processCallables(name, out)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -73,6 +73,18 @@ class FirScriptDeclarationsScope(
         for (symbol in symbols) {
             if (symbol is D) {
                 processor(symbol)
+            }
+        }
+    }
+
+    private inline fun <reified D : FirCallableSymbol<*>> processCallables(
+        name: Name,
+        out: MutableList<D>
+    ) {
+        val symbols = callablesIndex[name] ?: emptyList()
+        for (symbol in symbols) {
+            if (symbol is D) {
+                out.add(symbol)
             }
         }
     }

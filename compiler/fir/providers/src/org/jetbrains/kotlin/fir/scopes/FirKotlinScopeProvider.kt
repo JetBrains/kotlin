@@ -166,10 +166,12 @@ class FirKotlinScopeProvider(
             declaredMemberScope.processDeclaredConstructors(processor)
         }
 
-        override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-            declaredMemberScope.processFunctionsByName(name) {
-                if (FirPlatformDeclarationFilter.isFunctionAvailable(it.fir, session)) {
-                    processor(it)
+        override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+            val tempList = mutableListOf<FirNamedFunctionSymbol>()
+            declaredMemberScope.processFunctionsByName(name, tempList)
+            for (symbol in tempList) {
+                if (FirPlatformDeclarationFilter.isFunctionAvailable(symbol.fir, session)) {
+                    out.add(symbol)
                 }
             }
         }

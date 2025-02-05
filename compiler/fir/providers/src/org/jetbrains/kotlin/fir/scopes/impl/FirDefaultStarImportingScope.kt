@@ -63,8 +63,23 @@ class FirDefaultStarImportingScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processSymbolsByName(name, FirScope::processFunctionsByName, processor)
+    private fun <S : FirCallableSymbol<*>> processSymbolsByNameToList(
+        name: Name,
+        out: MutableList<S>,
+        processingFactory: FirScope.(Name, MutableList<S>) -> Unit,
+    ) {
+        val tempList = mutableListOf<S>()
+        first.processingFactory(name, tempList)
+        if (tempList.isNotEmpty()) {
+            out.addAll(tempList)
+            return
+        }
+
+        second.processingFactory(name, out)
+    }
+
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+        processSymbolsByNameToList(name, out, FirScope::processFunctionsByName)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

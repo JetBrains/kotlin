@@ -53,8 +53,32 @@ class FirUnstableSmartcastTypeScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        return processComposite(FirScope::processFunctionsByName, name, processor)
+    private inline fun <T : FirCallableSymbol<*>> processCompositeToList(
+        process: FirTypeScope.(Name, MutableList<T>) -> Unit,
+        name: Name,
+        result: MutableList<T>
+    ) {
+        val unique = mutableSetOf<T>()
+        val tempList = mutableListOf<T>()
+
+        originalScope.process(name, tempList)
+        for (symbol in tempList) {
+            unique += symbol
+            result += symbol
+        }
+
+        tempList.clear()
+        smartcastScope.process(name, tempList)
+        for (symbol in tempList) {
+            if (symbol !in unique) {
+                markSymbolFromUnstableSmartcast(symbol)
+                result += symbol
+            }
+        }
+    }
+
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+        processCompositeToList(FirScope::processFunctionsByName, name, out)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

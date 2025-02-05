@@ -29,10 +29,13 @@ class FirScopeWithCallableCopyReturnTypeUpdater(
     private val delegate: FirTypeScope,
     private val callableCopyTypeCalculator: CallableCopyTypeCalculator
 ) : FirDelegatingTypeScope(delegate) {
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        delegate.processFunctionsByName(name) {
-            updateReturnType(it.fir)
-            processor(it)
+
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+        val tempList = mutableListOf<FirNamedFunctionSymbol>()
+        delegate.processFunctionsByName(name, tempList)
+        for (symbol in tempList) {
+            updateReturnType(symbol.fir)
+            out.add(symbol)
         }
     }
 

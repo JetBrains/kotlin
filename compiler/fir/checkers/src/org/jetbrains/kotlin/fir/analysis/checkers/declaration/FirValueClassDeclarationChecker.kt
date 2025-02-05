@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -161,10 +163,12 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
         val classScope = declaration.unsubstitutedScope(context)
         for (reservedName in reservedNames) {
-            classScope.processFunctionsByName(Name.identifier(reservedName)) {
-                val functionSymbol = it.unwrapFakeOverrides()
-                if (functionSymbol.isAbstract) return@processFunctionsByName
-                val containingClassSymbol = functionSymbol.getContainingClassSymbol() ?: return@processFunctionsByName
+            val functions = mutableListOf<FirNamedFunctionSymbol>()
+            classScope.processFunctionsByName(Name.identifier(reservedName), functions)
+            for (function in functions) {
+                val functionSymbol = function.unwrapFakeOverrides()
+                if (functionSymbol.isAbstract) continue
+                val containingClassSymbol = functionSymbol.getContainingClassSymbol() ?: continue
                 if (containingClassSymbol == declaration.symbol) {
                     if (functionSymbol.source?.kind is KtRealSourceElementKind) {
                         reporter.reportOn(

@@ -57,14 +57,13 @@ abstract class AbstractFirUseSiteMemberScope(
         }
     }
 
-    final override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    final override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
         // Important optimization: avoid creating cache keys for names that are definitely absent
         if (name !in getCallableNames()) return
-        functions.getOrPut(name) {
+        val cached = functions.getOrPut(name) {
             collectFunctions(name)
-        }.forEach {
-            processor(it)
         }
+        out.addAll(cached)
     }
 
     protected open fun collectFunctions(
@@ -76,9 +75,11 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     protected fun collectDeclaredFunctions(name: Name, destination: MutableList<FirNamedFunctionSymbol>) {
-        declaredMemberScope.processFunctionsByName(name) { symbol ->
-            if (symbol.isStatic) return@processFunctionsByName
-            if (!symbol.isVisibleInCurrentClass()) return@processFunctionsByName
+        val tempList = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name, tempList)
+        for (symbol in tempList) {
+            if (symbol.isStatic) continue
+            if (!symbol.isVisibleInCurrentClass()) continue
             val directOverridden = computeDirectOverriddenForDeclaredFunction(symbol)
             directOverriddenFunctions[symbol] = directOverridden
             destination += symbol.replaceWithWrapperSymbolIfNeeded()
@@ -146,7 +147,7 @@ abstract class AbstractFirUseSiteMemberScope(
 
     private fun getFunctionsFromSupertypesByName(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
         return functionsFromSupertypes.getOrPut(name) {
-            supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
+            supertypeScopeContext.collectIntersectionResultsForCallablesToList(name, FirScope::processFunctionsByName)
         }
     }
 

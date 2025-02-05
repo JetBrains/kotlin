@@ -103,7 +103,7 @@ class FirTypeIntersectionScopeContext(
     }
 
     fun collectFunctions(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
-        return collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
+        return collectIntersectionResultsForCallablesToList(name, FirScope::processFunctionsByName)
     }
 
     inline fun <D : FirCallableSymbol<*>> collectMembersGroupedByScope(
@@ -129,6 +129,27 @@ class FirTypeIntersectionScopeContext(
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ): List<ResultOfIntersection<D>> {
         return convertGroupedCallablesToIntersectionResults(collectMembersGroupedByScope(name, processCallables))
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun <D : FirCallableSymbol<*>> collectIntersectionResultsForCallablesToList(
+        name: Name,
+        noinline processCallables: FirScope.(Name, MutableList<D>) -> Unit
+    ): List<ResultOfIntersection<D>> {
+        return convertGroupedCallablesToIntersectionResults(collectMembersGroupedByScopeToList(name, processCallables))
+    }
+
+    fun <D : FirCallableSymbol<*>> collectMembersGroupedByScopeToList(
+        name: Name,
+        processCallables: FirScope.(Name, MutableList<D>) -> Unit
+    ): List<Pair<FirTypeScope, List<D>>> {
+        return scopes.mapNotNull { scope ->
+            val resultForScope = mutableListOf<D>()
+            scope.processCallables(name, resultForScope)
+            resultForScope.takeIf { it.isNotEmpty() }?.let {
+                scope to it
+            }
+        }
     }
 
     fun <D : FirCallableSymbol<*>> convertGroupedCallablesToIntersectionResults(

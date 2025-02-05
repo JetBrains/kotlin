@@ -70,21 +70,17 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
 
     override fun processFunctionsByName(
         name: Name,
-        processor: (FirNamedFunctionSymbol) -> Unit
+        out: MutableList<FirNamedFunctionSymbol>
     ) {
-        var foundMemberInAny = false
-
-        anyTypeScope?.processFunctionsByName(name) {
-            foundMemberInAny = true
-            processor(it)
-        }
-
-        if (foundMemberInAny) {
+        val tempList = mutableListOf<FirNamedFunctionSymbol>()
+        anyTypeScope?.processFunctionsByName(name, tempList)
+        if (tempList.isNotEmpty()) {
+            out.addAll(tempList)
             return
         }
 
         session.dynamicMembersStorage.functionsCacheByName.getValue(name, null).also {
-            processor(it.symbol)
+            out.add(it.symbol)
         }
     }
 

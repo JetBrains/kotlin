@@ -111,7 +111,10 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
         }
 
         for (name in classScope.getCallableNames()) {
-            classScope.processFunctionsByName(name, ::collectSymbol)
+            val functions = mutableListOf<FirNamedFunctionSymbol>()
+            classScope.processFunctionsByName(name, functions)
+            functions.forEach(::collectSymbol)
+
             classScope.processPropertiesByName(name, ::collectSymbol)
         }
 

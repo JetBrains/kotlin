@@ -28,10 +28,12 @@ class JavaClassStaticEnhancementScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        useSiteStaticScope.processFunctionsByName(name) process@{ original ->
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+        val tempList = mutableListOf<FirNamedFunctionSymbol>()
+        useSiteStaticScope.processFunctionsByName(name, tempList)
+        tempList.forEach { original ->
             val enhancedFunction = signatureEnhancement.enhancedFunction(original, name)
-            processor(enhancedFunction)
+            out.add(enhancedFunction)
         }
     }
 

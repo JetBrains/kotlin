@@ -77,7 +77,9 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
         processor
     )
 
-    processFunctionsByName(callInfo.name, processor)
+    val functions = mutableListOf<FirNamedFunctionSymbol>()
+    processFunctionsByName(callInfo.name, functions)
+    functions.forEach(processor)
 }
 
 private fun FirScope.getFirstClassifierOrNull(

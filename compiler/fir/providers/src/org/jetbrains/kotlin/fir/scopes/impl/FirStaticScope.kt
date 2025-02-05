@@ -24,10 +24,12 @@ class FirStaticScope(private val delegateScope: FirContainingNamesAwareScope) : 
         delegateScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        delegateScope.processFunctionsByName(name) {
-            if (it.fir.isStatic) {
-                processor(it)
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+        val tempList = mutableListOf<FirNamedFunctionSymbol>()
+        delegateScope.processFunctionsByName(name, tempList)
+        for (symbol in tempList) {
+            if (symbol.fir.isStatic) {
+                out.add(symbol)
             }
         }
     }

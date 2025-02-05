@@ -65,7 +65,7 @@ internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     processor: (FirNamedFunctionSymbol) -> Unit
 ) {
     val scope = containingClass.unsubstitutedScope(c)
-    scope.processFunctionsByName(name) {}
+    scope.processFunctionsByName(name, mutableListOf<FirNamedFunctionSymbol>())
     scope.processOverriddenFunctionsFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!c.session.visibilityChecker.isVisibleForOverriding(
                 candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir

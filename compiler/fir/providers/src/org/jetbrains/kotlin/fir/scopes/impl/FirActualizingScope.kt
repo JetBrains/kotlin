@@ -39,8 +39,8 @@ class FirActualizingScope(private val delegate: FirScope) : FirScope() {
         delegate.processDeclaredConstructors(processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallableSymbolsByName(name, FirScope::processFunctionsByName, processor)
+    override fun processFunctionsByName(name: Name, out: MutableList<FirNamedFunctionSymbol>) {
+        processCallableSymbolsByNameToList(name, out, FirScope::processFunctionsByName)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -73,6 +73,34 @@ class FirActualizingScope(private val delegate: FirScope) : FirScope() {
         for (symbol in filteredSymbols) {
             processor(symbol)
         }
+    }
+
+    private fun <S : FirCallableSymbol<*>> processCallableSymbolsByNameToList(
+        name: Name,
+        out: MutableList<S>,
+        processingFactory: FirScope.(Name, MutableList<S>) -> Unit,
+    ) {
+        val filteredSymbols = mutableSetOf<S>()
+        // All matched `expect` callables should be preserved to make it possible to filter them out later if corresponding actuals are found
+        val ignoredExpectSymbols = mutableSetOf<FirBasedSymbol<*>>()
+
+        val tempList = mutableListOf<S>()
+        delegate.processingFactory(name, tempList)
+        for (symbol in tempList) {
+            if (symbol.isActual) {
+                val matchedExpectSymbol = symbol.getSingleMatchedExpectForActualOrNull()
+                if (matchedExpectSymbol != null) {
+                    filteredSymbols.remove(matchedExpectSymbol) // Filter out matched expects candidates
+                    ignoredExpectSymbols.add(matchedExpectSymbol)
+                }
+            } else if (symbol.isExpect && symbol in ignoredExpectSymbols) {
+                // Skip the found `expect` because there is already a matched actual
+                continue
+            }
+            filteredSymbols.add(symbol)
+        }
+
+        out.addAll(filteredSymbols)
     }
 
     @DelicateScopeAPI

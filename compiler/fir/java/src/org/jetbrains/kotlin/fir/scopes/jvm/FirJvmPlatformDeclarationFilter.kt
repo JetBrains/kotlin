@@ -9,18 +9,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.scopes.FirPlatformDeclarationFilter
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 internal object FirJvmPlatformDeclarationFilter {
     fun isFunctionAvailable(function: FirSimpleFunction, javaClassScope: FirTypeScope, session: FirSession): Boolean {
         if (FirPlatformDeclarationFilter.isFunctionAvailable(function, session)) return true
 
-        var isFunctionPresentInJavaAnalogue = false
         val jvmDescriptorOfKotlinFunction = function.computeJvmDescriptor()
-        javaClassScope.processFunctionsByName(function.name) { javaAnalogueFunctionSymbol ->
-            if (javaAnalogueFunctionSymbol.fir.computeJvmDescriptor() == jvmDescriptorOfKotlinFunction) {
-                isFunctionPresentInJavaAnalogue = true
-            }
+        val functions = mutableListOf<FirNamedFunctionSymbol>()
+        javaClassScope.processFunctionsByName(function.name, functions)
+        return functions.any { javaAnalogueFunctionSymbol: FirNamedFunctionSymbol ->
+            javaAnalogueFunctionSymbol.fir.computeJvmDescriptor() == jvmDescriptorOfKotlinFunction
         }
-        return isFunctionPresentInJavaAnalogue
     }
 }
