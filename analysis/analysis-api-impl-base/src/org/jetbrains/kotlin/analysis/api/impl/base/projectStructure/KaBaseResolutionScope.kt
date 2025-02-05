@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.findPsiFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
@@ -45,8 +45,18 @@ internal class KaBaseResolutionScope(
         return resolutionScope.contains(file) || isFromGeneratedModule(file)
     }
 
-    override fun toString(): String {
-        return "Analysis scope for $useSiteModule. Resolution scope: $resolutionScope"
+    override fun contains(element: PsiElement): Boolean {
+        val containingFile = element.containingFile ?: return false
+
+        containingFile.virtualFile?.let { return contains(it) }
+
+        val ktFile = element.containingFile as? KtFile ?: return false
+        if (!ktFile.isDangling) {
+            return false
+        }
+
+        val module = KaModuleProvider.Companion.getModule(useSiteModule.project, ktFile, useSiteModule)
+        return isFromGeneratedModule(module)
     }
 
     /**
@@ -54,20 +64,15 @@ internal class KaBaseResolutionScope(
      * which are not dangling files
      */
     fun isFromGeneratedModule(virtualFile: VirtualFile): Boolean {
-        virtualFile.analysisContextModule?.let {
-            return isFromGeneratedModule(it)
-        }
-
-        val ktFile = virtualFile.findPsiFile(useSiteModule.project) as? KtFile ?: return false
-        if (ktFile.isDangling) {
-            val module = KaModuleProvider.Companion.getModule(useSiteModule.project, ktFile, useSiteModule)
-            return isFromGeneratedModule(module)
-        }
-
-        return false
+        val analysisContextModule = virtualFile.analysisContextModule ?: return false
+        return isFromGeneratedModule(analysisContextModule)
     }
 
     fun isFromGeneratedModule(analysisContextModule: KaModule): Boolean {
         return analysisContextModule == useSiteModule || analysisContextModule in useSiteModule.allDirectDependencies()
+    }
+
+    override fun toString(): String {
+        return "Analysis scope for $useSiteModule. Resolution scope: $resolutionScope"
     }
 }
