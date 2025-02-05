@@ -42,6 +42,8 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
                 // There will be a compilation error if a suspend function is called from the inside.
                 analysisSession.action()
             }
+        } catch (throwable: Throwable) {
+            handleAnalysisException(throwable, analysisSession, useSiteElement)
         } finally {
             afterLeavingAnalysis(analysisSession, useSiteElement)
         }
@@ -61,6 +63,8 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
                 // There will be a compilation error if a suspend function is called from the inside.
                 analysisSession.action()
             }
+        } catch (throwable: Throwable) {
+            handleAnalysisException(throwable, analysisSession, useSiteModule)
         } finally {
             afterLeavingAnalysis(analysisSession, useSiteModule)
         }
@@ -75,12 +79,27 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement)
 
     /**
-     * [beforeEnteringAnalysis] hooks into analysis *before* [analyze]'s action is executed.
-     *
-     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
+     * This function has the same contracts as [beforeEnteringAnalysis] for [KtElement]s.
      */
     @KaImplementationDetail
     public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule)
+
+    /**
+     * [handleAnalysisException] handles any [Throwable] that occurred during analysis and was caught by [analyze].
+     *
+     * [Error]s should generally be rethrown. That said, the signature includes [Throwable] and not [Exception] to stay as wide as possible
+     * to avoid risking breaking binary compatibility down the line.
+     *
+     * The signature of [handleAnalysisException] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
+     */
+    @KaImplementationDetail
+    public abstract fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: KtElement): Nothing
+
+    /**
+     * This function has the same contracts as [handleAnalysisException] for [KtElement]s.
+     */
+    @KaImplementationDetail
+    public abstract fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteModule: KaModule): Nothing
 
     /**
      * [afterLeavingAnalysis] hooks into analysis *after* [analyze]'s action has been executed.
@@ -91,9 +110,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement)
 
     /**
-     * [afterLeavingAnalysis] hooks into analysis *after* [analyze]'s action has been executed.
-     *
-     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
+     * This function has the same contracts as [afterLeavingAnalysis] for [KtElement]s.
      */
     @KaImplementationDetail
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule)

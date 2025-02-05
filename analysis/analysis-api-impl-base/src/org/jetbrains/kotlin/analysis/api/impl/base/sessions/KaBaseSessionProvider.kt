@@ -73,6 +73,18 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         writeActionStartedChecker.beforeEnteringAnalysis()
     }
 
+    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: KtElement): Nothing {
+        handleAnalysisException(throwable)
+    }
+
+    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteModule: KaModule): Nothing {
+        handleAnalysisException(throwable)
+    }
+
+    private fun handleAnalysisException(throwable: Throwable): Nothing {
+        throw throwable
+    }
+
     override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
         afterLeavingAnalysis(session)
     }
