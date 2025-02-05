@@ -1,6 +1,5 @@
-import org.junit.jupiter.api.MethodOrderer.MethodName
-import org.junit.jupiter.api.TestMethodOrder
 import java.io.File
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -11,7 +10,7 @@ const val remoteDebug = false
 val root = generateSequence(File("").absoluteFile) { it.parentFile }.first { it.resolve("ReadMe.md").exists() }
 const val debugPort = 5005
 
-@TestMethodOrder(MethodName::class)
+// @Execution(ExecutionMode.CONCURRENT)
 class Test {
     @Test
     fun basicOverloadResolution() = doTest {
@@ -325,7 +324,7 @@ fun doTest(setup: TestBuilder.() -> Unit) {
         println("Waiting for remote debug...")
     }
 
-    val tmpDir = File("/tmp/kotlin-cl-tests/")
+    val tmpDir = Files.createTempDirectory("kotlin-cl-tests").toFile()
     try {
         tmpDir.deleteRecursively()
         check(tmpDir.mkdirs())
