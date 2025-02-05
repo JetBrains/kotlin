@@ -1031,7 +1031,7 @@ private class InteropTransformerPart2(
             val rawPtr = irTemporary(irCall(symbols.interopAllocObjCObject.owner).apply {
                 putValueArgument(0, getObjCClass(symbols, constructedClass.symbol))
             })
-            val instance = irTemporary(irCall(symbols.interopInterpretObjCPointer.owner).apply {
+            val instance = irTemporary(irCallWithSubstitutedType(symbols.interopInterpretObjCPointer.owner, listOf(expression.type)).apply {
                 putValueArgument(0, irGet(rawPtr))
             })
             // Balance pointer retained by alloc:
@@ -1196,7 +1196,7 @@ private class InteropTransformerPart2(
             putValueArgument(1, expression.getValueArgument(0))
             putValueArgument(2, expression.getValueArgument(1))
             putValueArgument(3, jobPointer)
-        }
+        }.implicitCastTo(expression.type)
         executeImplCall.transformChildrenVoid()
 
         builder.at(expression)
