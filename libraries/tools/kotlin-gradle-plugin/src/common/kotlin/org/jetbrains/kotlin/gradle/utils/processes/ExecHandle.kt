@@ -50,6 +50,9 @@ internal class ExecHandle(
     val ignoreExitValue: Boolean,
     private val executor: Executor,
 ) {
+    /** A tag prefix for [logger] messages. */
+    private val logTag: String = "[ExecHandle $displayName]"
+
     /** Lock to guard mutable state. */
     private val lock: Lock = ReentrantLock()
 
@@ -60,7 +63,7 @@ internal class ExecHandle(
     internal var state: ExecHandleState = ExecHandleState.Initial
         private set(value) {
             lock.withLock {
-                logger.info("[ExecHandle $displayName] Changing state from $field to $value")
+                logger.info("$logTag Changing state from $field to $value")
                 field = value
                 stateChanged.signalAll()
             }
@@ -78,7 +81,7 @@ internal class ExecHandle(
         try {
             abort()
         } catch (t: Throwable) {
-            logger.error("failed to abort '$displayName'", t)
+            logger.error("$logTag failed to abort '$displayName'", t)
         }
     }
 
@@ -86,7 +89,7 @@ internal class ExecHandle(
      * Start the process, blocking until the process has started.
      */
     fun start(): ExecHandle {
-        logger.info("Starting process '$displayName'. Working directory: $directory Command: $command ${arguments.joinToString(" ")}")
+        logger.info("$logTag Starting process '$displayName'. Working directory: $directory Command: $command ${arguments.joinToString(" ")}")
         lock.withLock {
             check(stateIn(ExecHandleState.Initial)) { "Cannot start process '$displayName' because it has already been started" }
             state = ExecHandleState.Starting
@@ -100,7 +103,7 @@ internal class ExecHandle(
             executor.execute(runner)
 
             while (stateIn(ExecHandleState.Starting)) {
-                logger.info("[ExecHandle $displayName] Waiting until process started")
+                logger.info("$logTag Waiting until process started")
                 try {
                     stateChanged.await()
                 } catch (e: InterruptedException) {
@@ -113,7 +116,7 @@ internal class ExecHandle(
                 execResult!!.rethrowFailure()
             }
 
-            logger.info("[ExecHandle $displayName] Successfully started process")
+            logger.info("$logTag Successfully started process")
         }
         return this
     }
@@ -188,7 +191,7 @@ internal class ExecHandle(
             execResult = newResult
         }
 
-        logger.info("[ExecHandle $displayName] finished with exit value $exitValue (state: $newState)")
+        logger.info("$logTag finished with exit value $exitValue (state: $newState)")
     }
 
     private fun execExceptionFor(failureCause: Throwable?, currentState: ExecHandleState): ExecException? {
@@ -289,26 +292,12 @@ internal class ExecHandle(
         private var process: Process? = null
         private var aborted: Boolean = false
 
-        fun abortProcess() {
-            lock.withLock {
-                if (aborted) {
-                    return
-                }
-                aborted = true
-                if (process != null) {
-                    streamsHandler.disconnect()
-                    logger.info("[ExecHandle ${execHandle.displayName}] Abort requested. Destroying process.")
-                    process!!.destroy()
-                }
-            }
-        }
-
         override fun run() {
             try {
                 startProcess()
                 execHandle.started()
 
-                logger.info("[ExecHandle ${execHandle.displayName}] Started. Waiting until streams are handled...")
+                logger.info("${execHandle.logTag} Started. Waiting until streams are handled...")
                 streamsHandler.start()
 
                 val exitValue = process!!.waitFor()
@@ -320,6 +309,20 @@ internal class ExecHandle(
                 }
             } catch (t: Throwable) {
                 execHandle.failed(t)
+            }
+        }
+
+        fun abortProcess() {
+            lock.withLock {
+                if (aborted) {
+                    return
+                }
+                aborted = true
+                if (process != null) {
+                    streamsHandler.disconnect()
+                    logger.info("${execHandle.logTag} Abort requested. Destroying process.")
+                    process!!.destroy()
+                }
             }
         }
 
@@ -372,7 +375,7 @@ internal class ExecHandle(
             Runtime.getRuntime().addShutdownHook(thread)
         }
 
-        private fun removeShutdownHook(hook: Runnable) {
+        private fun ExecHandle.removeShutdownHook(hook: Runnable) {
             val thread = shutdownHooks.remove(hook)
             try {
                 if (thread != null) {
@@ -385,7 +388,7 @@ internal class ExecHandle(
                 // Caused by: java.lang.IllegalStateException: Shutdown in progress
                 //        at java.base/java.lang.ApplicationShutdownHooks.remove(ApplicationShutdownHooks.java:82)
                 //        at java.base/java.lang.Runtime.removeShutdownHook(Runtime.java:243)
-                logger.error("Removing shutdown hook $thread failed", e)
+                logger.error("$logTag Removing shutdown hook $thread failed", e)
             }
         }
 
