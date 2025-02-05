@@ -32,7 +32,8 @@ public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
      * which should enlarge [KaModule.baseContentScope] to form [KaModule.contentScope].
      *
      * If some file from [getEnlargementScopes] is already contained in [KaModule.baseContentScope],
-     * nothing happens.
+     * the resulting [KaModule.contentScope] will function the same way w.r.t. this file,
+     * i.e., as if this file wasn't initially present.
      */
     public fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 
@@ -41,7 +42,8 @@ public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
      * which should restrict [KaModule.baseContentScope] to form [KaModule.contentScope].
      *
      * If some file from [getRestrictionScopes] is not contained in [KaModule.baseContentScope],
-     * nothing happens.
+     * the resulting [KaModule.contentScope] will function the same way w.r.t. this file,
+     * i.e., as if this file was initially present.
      */
     public fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 
