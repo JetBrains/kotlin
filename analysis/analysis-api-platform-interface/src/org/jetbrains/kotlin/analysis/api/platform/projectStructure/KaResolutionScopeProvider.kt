@@ -9,7 +9,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
-import org.jetbrains.kotlin.analysis.api.platform.sessions.KaResolutionScope
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
