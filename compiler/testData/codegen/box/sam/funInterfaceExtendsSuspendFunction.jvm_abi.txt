@@ -1,0 +1,3 @@
+MODULE main
+	Missing in K1
+		FunInterfaceExtendsSuspendFunctionKt$sam$Foo$0.class

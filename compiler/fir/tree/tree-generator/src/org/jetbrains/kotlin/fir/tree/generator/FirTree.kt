@@ -977,6 +977,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +field("expression", expression)
+        +field("usesFunctionKindConversion", boolean)
     }
 
     val resolvedQualifier: Element by element(Expression) {

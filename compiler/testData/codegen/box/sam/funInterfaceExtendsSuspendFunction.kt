@@ -1,5 +1,5 @@
 // ISSUE: KT-74673
-// IGNORE_BACKEND_K2: ANY
+// JVM_ABI_K1_K2_DIFF: KT-74673
 
 fun interface Foo<P> : suspend (P) -> Unit
 
