@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -277,11 +277,11 @@ private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Bool
         }
 
 private data class BackendJobFragment(
-    val irModule: IrModuleFragment,
-    val cacheDeserializationStrategy: CacheDeserializationStrategy?,
-    val dependenciesTracker: DependenciesTracker,
-    val llvmModuleSpecification: LlvmModuleSpecification,
-    val performanceManager: CommonCompilerPerformanceManager?,
+        val irModule: IrModuleFragment,
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val dependenciesTracker: DependenciesTracker,
+        val llvmModuleSpecification: LlvmModuleSpecification,
+        val performanceManager: CommonCompilerPerformanceManager?,
 )
 
 private fun PhaseEngine<out Context>.splitIntoFragments(

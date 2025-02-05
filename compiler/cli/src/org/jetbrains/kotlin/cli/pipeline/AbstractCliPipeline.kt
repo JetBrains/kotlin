@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import java.io.File
 
 abstract class AbstractCliPipeline<A : CommonCompilerArguments> {

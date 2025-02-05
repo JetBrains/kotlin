@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 
 abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext> {
     object CheckMessageCollector : CheckCompilationErrors() {

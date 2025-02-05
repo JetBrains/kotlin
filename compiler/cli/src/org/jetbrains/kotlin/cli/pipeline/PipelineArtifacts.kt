@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 
 abstract class PipelineArtifact
 
