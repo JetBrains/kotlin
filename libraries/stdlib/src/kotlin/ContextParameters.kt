@@ -9,7 +9,11 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.internal.NoInfer
 
-/** Retrieves the closest context argument or implicit receiver in scope */
+/**
+ * Retrieves the closest context argument or implicit receiver in scope
+ * @sample samples.misc.ContextParameters.implicitContextParameter
+ * @sample samples.misc.ContextParameters.implicitReceiver
+ */
 context(context: A) public fun <A> implicit(): @NoInfer A = context
 
 /** Runs the specified [block] with [context] in scope */
