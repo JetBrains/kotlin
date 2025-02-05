@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.attributeValueByName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 object KotlinUsages {
@@ -65,7 +64,7 @@ object KotlinUsages {
     private fun consumerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
         when {
             platformType in jvmPlatformTypes -> JAVA_API
-            platformType == common && !project.isCompatibilityMetadataVariantEnabled -> KOTLIN_METADATA
+            platformType == common -> KOTLIN_METADATA
             else -> KOTLIN_API
         }
     )
