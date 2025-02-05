@@ -1,0 +1,1 @@
+This module contains an infrastructure for using real-world libraries in tests.
