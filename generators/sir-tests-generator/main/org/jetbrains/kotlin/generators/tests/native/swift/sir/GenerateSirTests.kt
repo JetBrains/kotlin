@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfigurat
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestModel
 import org.jetbrains.kotlin.generators.tests.frontendFir
 import org.jetbrains.kotlin.generators.tests.provider
-import org.jetbrains.kotlin.swiftexport.standalone.AbstractSwiftExportExecutionTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
-import org.jetbrains.kotlin.swiftexport.standalone.AbstractKlibBasedSwiftRunnerTest
+import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractKlibBasedSwiftRunnerTest
+import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportExecutionTest
 
 
 fun main() {
@@ -33,8 +33,8 @@ fun main() {
             }
         }
         testGroup(
-            "native/swift/swift-export-standalone/tests-gen/",
-            "native/swift/swift-export-standalone/testData/generation"
+            "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
+            "native/swift/swift-export-standalone-integration-tests/simple/testData/generation"
         ) {
             testClass<AbstractKlibBasedSwiftRunnerTest>(
                 suiteTestClassName = "KlibBasedSwiftExportRunnerTest",
@@ -48,8 +48,8 @@ fun main() {
         }
         // Swift Export Standalone
         testGroup(
-            "native/swift/swift-export-standalone/tests-gen/",
-            "native/swift/swift-export-standalone/testData/execution"
+            "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
+            "native/swift/swift-export-standalone-integration-tests/simple/testData/execution"
         ) {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportExecutionTestGenerated",

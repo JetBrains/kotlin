@@ -511,6 +511,8 @@ include ":native:swift:sir",
         ":native:swift:sir-providers",
         ":native:swift:swift-export-standalone",
         ":native:swift:swift-export-ide",
+        ":native:swift:swift-export-standalone-integration-tests",
+        ":native:swift:swift-export-standalone-integration-tests:simple",
         ":generators:sir-tests-generator"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
