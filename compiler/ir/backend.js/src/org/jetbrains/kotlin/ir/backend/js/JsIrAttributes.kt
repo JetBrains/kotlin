@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
+import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
+import org.jetbrains.kotlin.ir.expressions.IrCall
 
 /**
  * Whether the class's ES6 constructor requires an additional `box` value parameter.
@@ -52,3 +54,8 @@ var IrClass.objectGetInstanceFunction: IrSimpleFunction? by irAttribute(followAt
  * @see org.jetbrains.kotlin.ir.backend.js.lower.ObjectDeclarationLowering
  */
 internal var IrClass.objectInstanceField: IrField? by irAttribute(followAttributeOwner = false)
+
+/**
+ * Replaced in ES6 mode delegating constructor to reconstruct it in the optimized bundle
+ */
+internal var IrCall.originalConstructor: IrConstructor? by irAttribute(followAttributeOwner = false)

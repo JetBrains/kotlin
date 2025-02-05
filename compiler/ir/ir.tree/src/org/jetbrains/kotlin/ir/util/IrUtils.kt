@@ -393,6 +393,11 @@ fun IrDeclaration.hasInterfaceParent() =
 fun IrPossiblyExternalDeclaration.isEffectivelyExternal(): Boolean =
     this.isExternal
 
+fun <T : IrOverridableDeclaration<*>> T.overridesExternal(): Boolean {
+    if (this.isEffectivelyExternal()) return true
+    return overriddenSymbols.any { @Suppress("UNCHECKED_CAST") (it.owner as T).overridesExternal() }
+}
+
 fun IrDeclaration.isEffectivelyExternal(): Boolean =
     this is IrPossiblyExternalDeclaration && this.isExternal
 

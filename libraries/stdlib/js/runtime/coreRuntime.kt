@@ -149,40 +149,35 @@ internal fun captureStack(instance: Throwable, constructorFunction: Any) {
     }
 }
 
-internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
-    val throwable = js("new Error()")
-    throwable.message = if (isUndefined(message)) {
+private fun defineMessage(message: String?, cause: Throwable?): String? =
+    if (isUndefined(message)) {
         if (isUndefined(cause)) message else cause?.toString() ?: VOID
     } else message ?: VOID
+
+internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
+    val throwable = js("new Error()")
+    throwable.message = defineMessage(message, cause)
     throwable.cause = cause
     throwable.name = "Throwable"
     return throwable.unsafeCast<Throwable>()
 }
 
-internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
-    js("Error").call(this_)
-    setPropertiesToThrowableInstance(this_, message, cause)
+internal fun setupCauseParameter(cause: Throwable?) = js("{ cause: cause }")
+internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
+    this_.name = JsObject.getPrototypeOf(this_).constructor.name
+    if (message == null) {
+        this_.message = if (isUndefined(message)) cause?.toString() ?: VOID else VOID
+    }
 }
 
-internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
-    val errorInfo = calculateErrorInfo(JsObject.getPrototypeOf(this_))
-    if ((errorInfo and 0x1) == 0) {
-        @Suppress("IfThenToElvis")
-        this_.message = if (message == null) {
-            @Suppress("SENSELESS_COMPARISON")
-            if (message !== null) {
-                // undefined
-                cause?.toString() ?: VOID
-            } else {
-                // real null
-                VOID
-            }
-        } else message
-    }
-    if ((errorInfo and 0x2) == 0) {
-        this_.cause = cause
-    }
-    this_.name = JsObject.getPrototypeOf(this_).constructor.name
+private fun defineFieldOnInstance(this_: dynamic, name: String, value: dynamic) {
+    js("Object.defineProperty(this_, name, { configurable: true, writable: true, value: value })")
+}
+
+internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
+    defineFieldOnInstance(this_, "message", defineMessage(message, cause))
+    defineFieldOnInstance(this_, "cause", cause)
+    defineFieldOnInstance(this_, "name", JsObject.getPrototypeOf(this_).constructor.name)
 }
 
 @JsName("Object")
@@ -190,6 +185,11 @@ internal external class JsObject {
     companion object {
         fun getPrototypeOf(obj: Any?): dynamic
         fun setPrototypeOf(obj: Any?, prototype: Any?): dynamic
+
+        @JsPolyfill("""if (typeof Object.hasOwn === "undefined") Object.hasOwn = Object.call.bind(Object.hasOwnProperty)""")
+        fun hasOwn(obj: Any?, key: String): Boolean
+
+        fun getOwnPropertyDescriptor(obj: Any?, key: String): dynamic
     }
 }
 

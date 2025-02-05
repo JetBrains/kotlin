@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
+import org.jetbrains.kotlin.ir.backend.js.originalConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -310,6 +311,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                     constructor.isEffectivelyExternal() ->
                         JsIrBuilder.buildCall(context.intrinsics.jsCreateExternalThisSymbol)
                             .apply {
+                                originalConstructor = constructor
                                 putValueArgument(0, getCurrentConstructorReference(constructorReplacement))
                                 putValueArgument(1, expression.symbol.owner.parentAsClass.jsConstructorReference(context))
                                 putValueArgument(2, irAnyArray(expression.valueArguments.memoryOptimizedMap { it ?: context.getVoid() }))

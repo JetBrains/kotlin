@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isTmpForInline
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT
+import org.jetbrains.kotlin.ir.backend.js.lower.EXTERNAL_SUPER_ACCESSORS_ORIGIN
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
@@ -176,6 +177,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
         val syntheticVariable = when (declaration.origin) {
             IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
+            EXTERNAL_SUPER_ACCESSORS_ORIGIN -> true
             ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT -> true
             else -> declaration.isTmpForInline
         }

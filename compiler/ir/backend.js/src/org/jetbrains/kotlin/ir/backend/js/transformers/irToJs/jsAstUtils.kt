@@ -170,8 +170,9 @@ fun translateCall(
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
     val currentDispatchReceiver = context.currentFunction?.parentClassOrNull
+    val staticContext = context.staticContext
 
-    context.staticContext.intrinsics[function.symbol]?.let {
+    staticContext.intrinsics[function.symbol]?.let {
         return it(expression, context)
     }
 
@@ -183,12 +184,10 @@ fun translateCall(
     // @JsName-annotated external and interface's property accessors are translated as function calls
     if (function.getJsName() == null) {
         val property = function.correspondingPropertySymbol?.owner
-        if (
-            property != null &&
-            (property.isEffectivelyExternal() || function.isExportedMember(context.staticContext.backendContext))
-        ) {
-            if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(context.staticContext.backendContext)) {
+        if (property != null && (property.isEffectivelyExternal() || function.isExportedMember(staticContext.backendContext) && expression.superQualifierSymbol == null)) {
+            if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(staticContext.backendContext)) {
                 val propertyName = context.getNameForProperty(property)
+
                 val nameRef = when (jsDispatchReceiver) {
                     null -> JsNameRef(propertyName)
                     else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
@@ -225,9 +224,9 @@ fun translateCall(
             val nameForStaticDeclaration = context.getNameForStaticDeclaration(target)
             JsNameRef(Namer.CALL_FUNCTION, JsNameRef(nameForStaticDeclaration))
         } else {
-            val qualifierName = klass.getClassRef(context.staticContext)
+            val qualifierName = klass.getClassRef(staticContext)
             val targetName = context.getNameForMemberFunction(target)
-            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName, context.staticContext))
+            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName, staticContext))
             JsNameRef(Namer.CALL_FUNCTION, qPrototype)
         }
 
