@@ -4,6 +4,7 @@ KtNameReferenceExpression(140,151): 'materialize'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = myClass
           isSafeNavigation = false

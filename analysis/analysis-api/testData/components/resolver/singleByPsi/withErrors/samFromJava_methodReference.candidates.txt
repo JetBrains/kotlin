@@ -12,6 +12,7 @@ KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = handler
           isSafeNavigation = false

@@ -12,6 +12,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a
           isSafeNavigation = false
@@ -49,6 +50,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = x

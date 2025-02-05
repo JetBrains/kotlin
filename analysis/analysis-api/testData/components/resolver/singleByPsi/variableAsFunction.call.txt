@@ -12,6 +12,7 @@ KtCallExpression(35,39): 'x(1)'
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = x
           isSafeNavigation = false

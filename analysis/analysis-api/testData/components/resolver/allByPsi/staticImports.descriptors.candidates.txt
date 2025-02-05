@@ -202,6 +202,7 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject
           isSafeNavigation = false
@@ -226,6 +227,7 @@ KtCallExpression(430,435): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject
           isSafeNavigation = false
@@ -247,6 +249,7 @@ KtNameReferenceExpression(430,433): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject
           isSafeNavigation = false
@@ -274,6 +277,7 @@ KtCallExpression(458,463): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject
           type = one.two.TopLevelObject
@@ -294,6 +298,7 @@ KtNameReferenceExpression(458,461): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject
           type = one.two.TopLevelObject
@@ -318,6 +323,7 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject
           isSafeNavigation = false
@@ -341,6 +347,7 @@ KtNameReferenceExpression(502,505): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject
           isSafeNavigation = false
@@ -364,6 +371,7 @@ KtNameReferenceExpression(528,531): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject
           type = one.two.TopLevelObject
@@ -406,6 +414,7 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject.NestedObject
           isSafeNavigation = false
@@ -436,6 +445,7 @@ KtCallExpression(687,692): 'baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject.NestedObject
           isSafeNavigation = false
@@ -457,6 +467,7 @@ KtNameReferenceExpression(687,690): 'baz'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject.NestedObject
           isSafeNavigation = false
@@ -484,6 +495,7 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = NestedObject
           isSafeNavigation = false
@@ -508,6 +520,7 @@ KtCallExpression(734,739): 'baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = NestedObject
           isSafeNavigation = false
@@ -529,6 +542,7 @@ KtNameReferenceExpression(734,737): 'baz'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = NestedObject
           isSafeNavigation = false
@@ -556,6 +570,7 @@ KtCallExpression(762,767): 'baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.NestedObject
           type = one.two.TopLevelObject.NestedObject
@@ -576,6 +591,7 @@ KtNameReferenceExpression(762,765): 'baz'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.NestedObject
           type = one.two.TopLevelObject.NestedObject
@@ -600,6 +616,7 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject.NestedObject
           isSafeNavigation = false
@@ -629,6 +646,7 @@ KtNameReferenceExpression(819,822): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = TopLevelObject.NestedObject
           isSafeNavigation = false
@@ -652,6 +670,7 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = NestedObject
           isSafeNavigation = false
@@ -675,6 +694,7 @@ KtNameReferenceExpression(864,867): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = NestedObject
           isSafeNavigation = false
@@ -698,6 +718,7 @@ KtNameReferenceExpression(890,893): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.NestedObject
           type = one.two.TopLevelObject.NestedObject
@@ -717,6 +738,7 @@ KtBinaryExpression(899,910): 'doo = "str"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.NestedObject
           type = one.two.TopLevelObject.NestedObject
@@ -737,6 +759,7 @@ KtNameReferenceExpression(899,902): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.NestedObject
           type = one.two.TopLevelObject.NestedObject
@@ -757,6 +780,7 @@ KtOperationReferenceExpression(903,904): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.NestedObject
           type = one.two.TopLevelObject.NestedObject

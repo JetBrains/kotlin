@@ -11,6 +11,7 @@ KtAnnotationEntry(90,110): '@Annotation(Color.R)'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

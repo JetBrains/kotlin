@@ -12,6 +12,7 @@ KtNameReferenceExpression(331,351): 'serializeFirstTarget'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = serializer
           isSafeNavigation = false

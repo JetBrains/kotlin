@@ -12,6 +12,7 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /RunnerModule
           type = RunnerModule

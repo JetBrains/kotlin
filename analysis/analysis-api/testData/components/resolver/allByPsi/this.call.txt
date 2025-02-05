@@ -37,6 +37,7 @@ KtCallExpression(66,71): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass
           type = one.MyClass
@@ -56,6 +57,7 @@ KtNameReferenceExpression(66,69): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass
           type = one.MyClass
@@ -78,6 +80,7 @@ KtDotQualifiedExpression(80,90): 'this.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -104,6 +107,7 @@ KtCallExpression(85,90): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -124,6 +128,7 @@ KtNameReferenceExpression(85,88): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -147,6 +152,7 @@ KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -179,6 +185,7 @@ KtCallExpression(112,117): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -199,6 +206,7 @@ KtNameReferenceExpression(112,115): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -246,6 +254,7 @@ KtCallExpression(203,208): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter
           type = one.MyClass.InnerOuter
@@ -265,6 +274,7 @@ KtNameReferenceExpression(203,206): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter
           type = one.MyClass.InnerOuter
@@ -287,6 +297,7 @@ KtDotQualifiedExpression(221,231): 'this.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -313,6 +324,7 @@ KtCallExpression(226,231): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -333,6 +345,7 @@ KtNameReferenceExpression(226,229): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -356,6 +369,7 @@ KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -388,6 +402,7 @@ KtCallExpression(260,265): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -408,6 +423,7 @@ KtNameReferenceExpression(260,263): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -431,6 +447,7 @@ KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -463,6 +480,7 @@ KtCallExpression(291,296): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -483,6 +501,7 @@ KtNameReferenceExpression(291,294): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -530,6 +549,7 @@ KtCallExpression(403,408): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
           type = one.MyClass.InnerOuter.InnerNested
@@ -549,6 +569,7 @@ KtNameReferenceExpression(403,406): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
           type = one.MyClass.InnerOuter.InnerNested
@@ -571,6 +592,7 @@ KtDotQualifiedExpression(425,435): 'this.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -597,6 +619,7 @@ KtCallExpression(430,435): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -617,6 +640,7 @@ KtNameReferenceExpression(430,433): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -640,6 +664,7 @@ KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -672,6 +697,7 @@ KtCallExpression(469,474): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -692,6 +718,7 @@ KtNameReferenceExpression(469,472): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -715,6 +742,7 @@ KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -747,6 +775,7 @@ KtCallExpression(507,512): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -767,6 +796,7 @@ KtNameReferenceExpression(507,510): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -790,6 +820,7 @@ KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -822,6 +853,7 @@ KtCallExpression(542,547): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -842,6 +874,7 @@ KtNameReferenceExpression(542,545): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -907,6 +940,7 @@ KtCallExpression(625,630): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -945,6 +979,7 @@ KtNameReferenceExpression(625,628): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -986,6 +1021,7 @@ KtDotQualifiedExpression(651,661): 'this.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -1012,6 +1048,7 @@ KtCallExpression(656,661): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -1032,6 +1069,7 @@ KtNameReferenceExpression(656,659): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -1055,6 +1093,7 @@ KtDotQualifiedExpression(682,697): 'this@anon.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@anon
           isSafeNavigation = false
@@ -1087,6 +1126,7 @@ KtCallExpression(692,697): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@anon
           isSafeNavigation = false
@@ -1107,6 +1147,7 @@ KtNameReferenceExpression(692,695): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@anon
           isSafeNavigation = false
@@ -1130,6 +1171,7 @@ KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -1162,6 +1204,7 @@ KtCallExpression(735,740): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -1182,6 +1225,7 @@ KtNameReferenceExpression(735,738): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -1205,6 +1249,7 @@ KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -1237,6 +1282,7 @@ KtCallExpression(777,782): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -1257,6 +1303,7 @@ KtNameReferenceExpression(777,780): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -1280,6 +1327,7 @@ KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -1312,6 +1360,7 @@ KtCallExpression(816,821): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -1332,6 +1381,7 @@ KtNameReferenceExpression(816,819): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -1370,6 +1420,7 @@ KtCallExpression(857,1107): 'myWith { t ->'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
@@ -1414,6 +1465,7 @@ KtNameReferenceExpression(857,863): 'myWith'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
@@ -1461,6 +1513,7 @@ KtCallExpression(891,896): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1499,6 +1552,7 @@ KtNameReferenceExpression(891,894): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -1540,6 +1594,7 @@ KtDotQualifiedExpression(917,927): 'this.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -1566,6 +1621,7 @@ KtCallExpression(922,927): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -1586,6 +1642,7 @@ KtNameReferenceExpression(922,925): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -1609,6 +1666,7 @@ KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@myWith
           isSafeNavigation = false
@@ -1641,6 +1699,7 @@ KtCallExpression(960,965): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@myWith
           isSafeNavigation = false
@@ -1661,6 +1720,7 @@ KtNameReferenceExpression(960,963): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@myWith
           isSafeNavigation = false
@@ -1684,6 +1744,7 @@ KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -1716,6 +1777,7 @@ KtCallExpression(1003,1008): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -1736,6 +1798,7 @@ KtNameReferenceExpression(1003,1006): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerNested
           isSafeNavigation = false
@@ -1759,6 +1822,7 @@ KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -1791,6 +1855,7 @@ KtCallExpression(1045,1050): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -1811,6 +1876,7 @@ KtNameReferenceExpression(1045,1048): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@InnerOuter
           isSafeNavigation = false
@@ -1834,6 +1900,7 @@ KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -1866,6 +1933,7 @@ KtCallExpression(1084,1089): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -1886,6 +1954,7 @@ KtNameReferenceExpression(1084,1087): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@MyClass
           isSafeNavigation = false
@@ -1919,6 +1988,7 @@ KtCallExpression(1125,1194): 'myWith label@{'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
@@ -1958,6 +2028,7 @@ KtNameReferenceExpression(1125,1131): 'myWith'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
@@ -2008,6 +2079,7 @@ KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@label
           isSafeNavigation = false
@@ -2040,6 +2112,7 @@ KtCallExpression(1171,1176): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@label
           isSafeNavigation = false
@@ -2060,6 +2133,7 @@ KtNameReferenceExpression(1171,1174): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this@label
           isSafeNavigation = false
@@ -2160,6 +2234,7 @@ KtCallExpression(1272,1282): 'body(this)'
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = body
           isSafeNavigation = false
@@ -2213,6 +2288,7 @@ KtNameReferenceExpression(1272,1276): 'body'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:

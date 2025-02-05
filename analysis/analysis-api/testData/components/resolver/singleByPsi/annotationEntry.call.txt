@@ -11,6 +11,7 @@ KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

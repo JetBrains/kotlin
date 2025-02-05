@@ -4,6 +4,7 @@ KtCallExpression(50,57): 'myRun()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = foo/Foo

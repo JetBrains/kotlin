@@ -19,6 +19,7 @@ KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKCl
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

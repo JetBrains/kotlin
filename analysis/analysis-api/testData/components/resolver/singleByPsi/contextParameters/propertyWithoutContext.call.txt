@@ -3,6 +3,7 @@ KtNameReferenceExpression(84,87): 'foo'
     candidateCalls = [
       KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaVariableSignature:

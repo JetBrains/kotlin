@@ -19,6 +19,7 @@ KtCallExpression(168,182): 'foo(1L, "str")'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = base
           isSafeNavigation = false

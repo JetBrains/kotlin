@@ -12,6 +12,7 @@ KtNameReferenceExpression(83,94): 'setListener'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = jClass
           isSafeNavigation = false

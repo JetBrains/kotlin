@@ -3,6 +3,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass
             isSafeNavigation = false
@@ -24,6 +25,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass
             isSafeNavigation = false
@@ -46,6 +48,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass
             isSafeNavigation = false
@@ -67,6 +70,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass
             isSafeNavigation = false
@@ -88,6 +92,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass
             isSafeNavigation = false
@@ -110,6 +115,7 @@
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []

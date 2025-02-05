@@ -12,6 +12,7 @@ KtDotQualifiedExpression(48,54): 'A.y(1)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = A
           isSafeNavigation = false

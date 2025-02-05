@@ -4,6 +4,7 @@ KtNameReferenceExpression(174,180): 'stream'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = collection
           isSafeNavigation = false

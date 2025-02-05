@@ -4,6 +4,7 @@ KtPrefixExpression(31,34): '++i'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = i
             isSafeNavigation = false
@@ -18,6 +19,7 @@ KtPrefixExpression(31,34): '++i'
             callableId = kotlin/Int.inc
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:

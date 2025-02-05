@@ -19,6 +19,7 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

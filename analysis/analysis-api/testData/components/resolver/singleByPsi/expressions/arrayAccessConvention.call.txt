@@ -5,6 +5,7 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
         kind = PLUS_ASSIGN
         operand = 1
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
             isSafeNavigation = false
@@ -26,6 +27,7 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
             contextParameters = []
             callableId = kotlin/Int.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -50,6 +52,7 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
         "a"
       ]
       setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false

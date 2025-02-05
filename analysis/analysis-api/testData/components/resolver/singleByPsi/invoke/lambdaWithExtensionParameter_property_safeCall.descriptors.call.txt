@@ -3,6 +3,7 @@ KtNameReferenceExpression(93,99): 'action'
     candidateCalls = [
       KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = foo
             isSafeNavigation = true

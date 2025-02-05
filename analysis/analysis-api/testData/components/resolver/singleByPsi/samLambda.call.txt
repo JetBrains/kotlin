@@ -12,6 +12,7 @@ KtCallExpression(143,162): 'test { uiMethod() }'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Test
           type = Test

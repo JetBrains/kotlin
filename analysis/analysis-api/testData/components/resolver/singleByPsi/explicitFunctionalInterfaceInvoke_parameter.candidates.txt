@@ -4,6 +4,7 @@ KtNameReferenceExpression(77,83): 'invoke'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = param
           isSafeNavigation = false

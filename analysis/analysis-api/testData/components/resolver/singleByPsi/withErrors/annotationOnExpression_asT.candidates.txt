@@ -11,6 +11,7 @@ KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
