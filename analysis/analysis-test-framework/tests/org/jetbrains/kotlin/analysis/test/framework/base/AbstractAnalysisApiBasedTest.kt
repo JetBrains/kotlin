@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.base
 
+import com.intellij.mock.MockApplication
+import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
@@ -12,16 +14,19 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
+import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.registerAllServices
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.psi.KtElement
@@ -44,6 +49,8 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
@@ -73,6 +80,16 @@ import kotlin.io.path.nameWithoutExtension
 @ExtendWith(UpdateTestDataSupport::class)
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: AnalysisApiTestConfigurator
+
+    /**
+     * Allows easily specifying additional service registrars in tests which rely on a preset configurator, such as tests generated for FIR
+     * or Standalone configured via [AnalysisApiTestConfiguratorFactory][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactory].
+     *
+     * By convention, the override should include `super.additionalServiceRegistrars` to inherit additional service registrars from the
+     * supertype.
+     */
+    open val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+        get() = emptyList()
 
     /**
      * Consider implementing this method if you can choose some main file in your test case. It can be, for example, a file with a caret.
@@ -169,6 +186,26 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     protected open fun configureTest(builder: TestConfigurationBuilder) {
         configurator.configureTest(builder, disposable)
+
+        additionalServiceRegistrars.ifNotEmpty {
+            builder.usePreAnalysisHandlers(::AdditionalServiceRegistrarsPreAnalysisHandler.bind(this))
+        }
+    }
+
+    private class AdditionalServiceRegistrarsPreAnalysisHandler(
+        testServices: TestServices,
+        private val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>,
+    ) : PreAnalysisHandler(testServices) {
+        /**
+         * This handler should run after [ProjectStructureInitialisationPreAnalysisHandler][org.jetbrains.kotlin.analysis.test.framework.services.ProjectStructureInitialisationPreAnalysisHandler],
+         * so the environment is already initialized (see [AnalysisApiEnvironmentManager][org.jetbrains.kotlin.analysis.test.framework.services.AnalysisApiEnvironmentManager]).
+         */
+        override fun preprocessModuleStructure(moduleStructure: TestModuleStructure) {
+            val application = testServices.environmentManager.getApplication() as MockApplication
+            val project = testServices.environmentManager.getProject() as MockProject
+
+            serviceRegistrars.registerAllServices(application, project, testServices)
+        }
     }
 
     data class ModuleWithMainFile(val mainFile: KtFile?, val module: KtTestModule)

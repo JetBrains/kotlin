@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 import kotlin.test.fail
 
 abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
-    override val configurator: AnalysisApiFirSourceTestConfigurator = ErrorResistanceConfigurator
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
+    override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+        get() = super.additionalServiceRegistrars + listOf(ErrorResistanceServiceRegistrar)
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         withResolveSession(mainFile) { firResolveSession ->
@@ -55,14 +58,6 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
             }
         }
     }
-}
-
-private object ErrorResistanceConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = buildList {
-            addAll(super.serviceRegistrars)
-            add(ErrorResistanceServiceRegistrar)
-        }
 }
 
 private object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistrar() {

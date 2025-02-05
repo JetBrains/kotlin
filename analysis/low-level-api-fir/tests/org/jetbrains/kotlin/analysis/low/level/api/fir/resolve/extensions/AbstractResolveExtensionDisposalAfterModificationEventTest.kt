@@ -28,6 +28,11 @@ import org.jetbrains.kotlin.test.services.assertions
  * A simple test which detects when resolve extension disposal after modification events/session invalidation doesn't work *at all*.
  */
 abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : AbstractAnalysisApiBasedTest() {
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
+    override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+        get() = super.additionalServiceRegistrars + listOf(ResolveExtensionDisposalTestServiceRegistrar)
+
     override fun doTestByMainFile(
         mainFile: KtFile,
         mainModule: KtTestModule,
@@ -46,9 +51,6 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
             "The resolve extension should be disposed after the modification event has been published."
         }
     }
-
-    override val configurator: AnalysisApiTestConfigurator
-        get() = ResolveExtensionDisposalTestConfigurator
 }
 
 class KaResolveExtensionWithDisposalTracker() : KaResolveExtension() {
@@ -65,14 +67,6 @@ class KaResolveExtensionWithDisposalTracker() : KaResolveExtension() {
 
 class KaResolveExtensionWithDisposalTrackerProvider() : KaResolveExtensionProvider() {
     override fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> = listOf(KaResolveExtensionWithDisposalTracker())
-}
-
-object ResolveExtensionDisposalTestConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = buildList {
-            addAll(super.serviceRegistrars)
-            add(ResolveExtensionDisposalTestServiceRegistrar)
-        }
 }
 
 object ResolveExtensionDisposalTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {

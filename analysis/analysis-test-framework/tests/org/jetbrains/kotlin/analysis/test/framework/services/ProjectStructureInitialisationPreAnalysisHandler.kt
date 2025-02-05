@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.registerApplicationServices
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.registerProjectExtensionPoints
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.registerProjectServices
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.registerProjectModelServices
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -27,12 +31,12 @@ class ProjectStructureInitialisationPreAnalysisHandler(
         val project = testServices.environmentManager.getProject() as MockProject
         val application = testServices.environmentManager.getApplication() as MockApplication
 
-        configurator.registerApplicationServices(application, testServices)
+        configurator.serviceRegistrars.registerApplicationServices(application, testServices)
         createAndRegisterKtModules(moduleStructure, project)
-        configurator.registerProjectExtensionPoints(project, testServices)
-        configurator.registerProjectServices(project, testServices)
+        configurator.serviceRegistrars.registerProjectExtensionPoints(project, testServices)
+        configurator.serviceRegistrars.registerProjectServices(project, testServices)
         testServices.environmentManager.initializeProjectStructure()
-        configurator.registerProjectModelServices(project, testServices)
+        configurator.serviceRegistrars.registerProjectModelServices(project, testServices)
     }
 
     private fun createAndRegisterKtModules(moduleStructure: TestModuleStructure, project: MockProject) {

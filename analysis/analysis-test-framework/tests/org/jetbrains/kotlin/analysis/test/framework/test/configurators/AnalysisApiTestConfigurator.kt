@@ -5,20 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 
-import com.intellij.mock.MockApplication
-import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.ApplicationServiceRegistration
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path
@@ -53,21 +48,4 @@ abstract class AnalysisApiTestConfigurator {
         testServices: TestServices,
         project: Project,
     ): KtTestModuleStructure
-
-    fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
-        serviceRegistrars.forEach { it.registerProjectExtensionPoints(project, testServices) }
-    }
-
-    fun registerProjectServices(project: MockProject, testServices: TestServices) {
-        serviceRegistrars.forEach { it.registerProjectServices(project, testServices) }
-    }
-
-    @OptIn(TestInfrastructureInternals::class)
-    fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
-        serviceRegistrars.forEach { it.registerProjectModelServices(project, testServices.testConfiguration.rootDisposable, testServices) }
-    }
-
-    fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        ApplicationServiceRegistration.register(application, serviceRegistrars, testServices)
-    }
 }

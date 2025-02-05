@@ -17,6 +17,22 @@ interface AnalysisApiServiceRegistrar<in DATA> {
     fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: DATA)
 }
 
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerApplicationServices(application: MockApplication, data: T) {
+    ApplicationServiceRegistration.register(application, this, data)
+}
+
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectExtensionPoints(project: MockProject, data: T) {
+    forEach { it.registerProjectExtensionPoints(project, data) }
+}
+
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectServices(project: MockProject, data: T) {
+    forEach { it.registerProjectServices(project, data) }
+}
+
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectModelServices(project: MockProject, disposable: Disposable, data: T) {
+    forEach { it.registerProjectModelServices(project, disposable, data) }
+}
+
 abstract class AnalysisApiSimpleServiceRegistrar : AnalysisApiServiceRegistrar<Any> {
     open fun registerApplicationServices(application: MockApplication) {}
 
