@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.Directive
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.directives.model.StringDirective
-import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -83,6 +80,12 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * or Standalone configured via [AnalysisApiTestConfiguratorFactory][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactory].
      */
     open val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+        get() = emptyList()
+
+    /**
+     * Allows easily specifying additional directives without overriding [configureTest].
+     */
+    open val additionalDirectives: List<DirectivesContainer>
         get() = emptyList()
 
     /**
@@ -183,6 +186,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         additionalServiceRegistrars.ifNotEmpty {
             builder.usePreAnalysisHandlers(::AdditionalServiceRegistrarsPreAnalysisHandler.bind(this))
+        }
+
+        additionalDirectives.ifNotEmpty {
+            builder.useDirectives(*toTypedArray())
         }
     }
 
