@@ -133,7 +133,7 @@ private constructor(
                 }
             }
 
-            val resolutionScope = KaResolutionScope.getInstance(useSiteModule)
+            val resolutionScope = KaResolutionScope.forModule(useSiteModule)
 
             return createSession {
                 KaFirSession(
