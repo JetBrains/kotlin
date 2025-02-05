@@ -1,0 +1,3 @@
+KtNameReferenceExpression(99,100): 'a'
+  KtSimpleNameReference:
+    (in <local>: usage) val a: A

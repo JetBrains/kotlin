@@ -2244,6 +2244,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
     }
 
     @Test
+    @TestMetadata("implicitInvoke.kt")
+    public void testImplicitInvoke() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/implicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitInvoke2.kt")
+    public void testImplicitInvoke2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/implicitInvoke2.kt");
+    }
+
+    @Test
     @TestMetadata("propertyDeclarationSiteSubstitution.kt")
     public void testPropertyDeclarationSiteSubstitution() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/propertyDeclarationSiteSubstitution.kt");
