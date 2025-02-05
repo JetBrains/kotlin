@@ -263,7 +263,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.fqn)
         output.writeArray(value.fileMetadata)
         value.debugInfo?.let { output.writeArray(it) }
-        output.writeArray(value.fileEntries)
+        value.fileEntries?.let { output.writeArray(it) }
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
@@ -336,7 +336,7 @@ private class IrTranslationResultMap(
         fqn: ByteArray,
         newFileMetadata: ByteArray,
         debugInfos: ByteArray?,
-        fileEntries: ByteArray,
+        fileEntries: ByteArray?,
     ) {
         this[sourceFile] =
             IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries)

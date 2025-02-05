@@ -25,7 +25,10 @@ class IrMonoliticWriterImpl(_irLayout: IrKotlinLibraryLayout) : IrWriterImpl(_ir
             IrArrayWriter(map { it.strings }).writeIntoFile(irLayout.irStrings.absolutePath)
             IrArrayWriter(map { it.bodies }).writeIntoFile(irLayout.irBodies.absolutePath)
             IrArrayWriter(mapNotNull { it.debugInfo }).writeIntoFile(irLayout.irDebugInfo.absolutePath)
-            IrArrayWriter(mapNotNull { it.fileEntries }).writeIntoFile(irLayout.irFileEntries.absolutePath)
+            val fileEntries = mapNotNull { it.fileEntries }
+            if (fileEntries.isNotEmpty()) {
+                IrArrayWriter(fileEntries).writeIntoFile(irLayout.irFileEntries.absolutePath)
+            }
         }
     }
 }
@@ -55,6 +58,8 @@ class IrPerFileWriterImpl(_irLayout: IrKotlinLibraryLayout) : IrWriterImpl(_irLa
         irLayout.irSignatures(fileDir).writeBytes(file.signatures)
         irLayout.irStrings(fileDir).writeBytes(file.strings)
         irLayout.irBodies(fileDir).writeBytes(file.bodies)
-        irLayout.irFileEntries(fileDir).writeBytes(file.fileEntries)
+        file.fileEntries?.let {
+            irLayout.irFileEntries(fileDir).writeBytes(it)
+        }
     }
 }
