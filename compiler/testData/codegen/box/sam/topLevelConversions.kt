@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-67869
+// LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
+
 fun interface MyFun {
     fun foo(x: String): Int
 }
