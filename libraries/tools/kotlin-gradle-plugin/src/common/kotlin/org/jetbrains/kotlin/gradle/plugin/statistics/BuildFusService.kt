@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.Serializable
-import javax.inject.Inject
 
 
 internal interface UsesBuildFusService : Task {

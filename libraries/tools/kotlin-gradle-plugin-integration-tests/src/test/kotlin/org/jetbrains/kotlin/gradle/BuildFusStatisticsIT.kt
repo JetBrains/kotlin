@@ -88,7 +88,11 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                         )
                         assertOutputContainsExactlyTimes(
                             "[KOTLIN] Initialize BuildFusService${'$'}Inject",
-                            2
+                            1
+                        )
+                        assertOutputContainsExactlyTimes(
+                            "[KOTLIN] Initialize FlowActionBuildFusService${'$'}Inject",
+                            1
                         )
                     }
                 }
