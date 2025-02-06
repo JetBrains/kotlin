@@ -5,29 +5,29 @@ package kt235
 
 fun main() {
     val array = MyArray()
-    val f: () -> String = {
-        <!RETURN_TYPE_MISMATCH!>array[2] = 23<!> //error: Type mismatch: inferred type is Int (!!!) but String was expected
-    }
-    val g: () -> String = {
+    val f: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+        array[2] = 23 //error: Type mismatch: inferred type is Int (!!!) but String was expected
+    }<!>
+    val g: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
-        <!RETURN_TYPE_MISMATCH!>x += 2<!>  //no error, but it should be here
-    }
-    val h: () -> String = {
+        x += 2  //no error, but it should be here
+    }<!>
+    val h: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
-        <!RETURN_TYPE_MISMATCH!>x = 2<!>  //the same
-    }
+        x = 2  //the same
+    }<!>
     val array1 = MyArray1()
-    val i: () -> String = {
-        <!RETURN_TYPE_MISMATCH!>array1[2] = 23<!>
-    }
+    val i: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+        array1[2] = 23
+    }<!>
 
-    val fi: () -> String = {
-        <!RETURN_TYPE_MISMATCH!>array[2] = 23<!>
-    }
-    val gi: () -> String = {
+    val fi: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+        array[2] = 23
+    }<!>
+    val gi: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
-        <!RETURN_TYPE_MISMATCH!>x += 21<!>
-    }
+        x += 21
+    }<!>
 
     var m: MyNumber = MyNumber()
     val a: () -> MyNumber = {
