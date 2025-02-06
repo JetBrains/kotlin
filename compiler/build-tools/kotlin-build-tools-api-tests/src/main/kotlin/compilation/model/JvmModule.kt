@@ -62,9 +62,10 @@ class JvmModule(
             project.projectId,
             strategyConfig,
             compilationConfig,
-            sourcesDirectory.listDirectoryEntries()
+            sourcesDirectory.walk()
                 .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
-                .map { it.toFile() },
+                .map { it.toFile() }
+                .toList(),
             defaultCompilationArguments + additionalCompilationArguments,
         )
     }
