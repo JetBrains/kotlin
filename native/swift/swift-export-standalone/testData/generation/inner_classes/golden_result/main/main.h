@@ -1,6 +1,10 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+uintptr_t Outer_Inner_InnerInner_init_allocate();
+
+void Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__(uintptr_t __kt, uintptr_t outer);
+
 int32_t Outer_Inner_foo(uintptr_t self);
 
 uintptr_t Outer_Inner_init_allocate();

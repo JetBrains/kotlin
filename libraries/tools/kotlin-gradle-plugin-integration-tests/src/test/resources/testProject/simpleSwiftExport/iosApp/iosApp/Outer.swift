@@ -1,6 +1,4 @@
-@_implementationOnly import KotlinBridges_main
 import KotlinRuntime
-import KotlinRuntimeSupport
 
 public final class Outer: KotlinRuntime.KotlinBase {
     public final class Inner: KotlinRuntime.KotlinBase {
@@ -11,11 +9,14 @@ public final class Outer: KotlinRuntime.KotlinBase {
                 super.init(__externalRCRef: __externalRCRef)
             }
             public init(
-                outer: main.Outer.Inner
+                outer: InnerClass.Outer.Inner
             ) {
                 let __kt = Outer_Inner_InnerInner_init_allocate()
                 super.init(__externalRCRef: __kt)
-                Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__(__kt, outer.__externalRCRef())
+                Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_InnerClass_Outer_Inner__(__kt, outer.__externalRCRef())
+            }
+            public func getOutPropertyFromInnerClass() -> Swift.Int32 {
+                return Outer_Inner_InnerInner_getOutPropertyFromInnerClass(self.__externalRCRef())
             }
         }
         package override init(
@@ -24,14 +25,19 @@ public final class Outer: KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __externalRCRef)
         }
         public init(
-            outer: main.Outer
+            outer: InnerClass.Outer
         ) {
             let __kt = Outer_Inner_init_allocate()
             super.init(__externalRCRef: __kt)
-            Outer_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer__(__kt, outer.__externalRCRef())
+            Outer_Inner_init_initialize__TypesOfArguments__Swift_UInt_InnerClass_Outer__(__kt, outer.__externalRCRef())
         }
-        public func foo() -> Swift.Int32 {
-            return Outer_Inner_foo(self.__externalRCRef())
+        public func getOuterProperty() -> Swift.Int32 {
+            return Outer_Inner_getOuterProperty(self.__externalRCRef())
+        }
+    }
+    public var outerProperty: Swift.Int32 {
+        get {
+            return Outer_outerProperty_get(self.__externalRCRef())
         }
     }
     public override init() {

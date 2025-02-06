@@ -9,5 +9,11 @@ class Outer {
         fun getOuterProperty(): Int {
             return outerProperty
         }
+
+        inner class InnerInner {
+            fun getOutPropertyFromInnerClass(): Int {
+                return getOuterProperty()
+            }
+        }
     }
 }

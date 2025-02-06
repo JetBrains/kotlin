@@ -1,9 +1,23 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Outer::class, "4main5OuterC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Outer.Inner::class, "4main5OuterC5InnerC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Outer.Inner.InnerInner::class, "4main5OuterC5InnerC10InnerInnerC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+
+@ExportedBridge("Outer_Inner_InnerInner_init_allocate")
+public fun Outer_Inner_InnerInner_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<Outer.Inner.InnerInner>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__")
+public fun Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__(__kt: kotlin.native.internal.NativePtr, outer: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val __outer = kotlin.native.internal.ref.dereferenceExternalRCRef(outer) as Outer.Inner
+    kotlin.native.internal.initInstance(____kt, (__outer as Outer.Inner).InnerInner())
+}
 
 @ExportedBridge("Outer_Inner_foo")
 public fun Outer_Inner_foo(self: kotlin.native.internal.NativePtr): Int {

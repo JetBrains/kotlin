@@ -1,9 +1,17 @@
 import InnerClass
 
-func testInnerClassInit() throws {
+func testSimpleInnerClass() throws {
     let outer = Outer()
     let inner = Outer.Inner(outer: outer)
     try assertEquals(actual: outer.outerProperty, expected: inner.getOuterProperty())
+
+}
+
+func testNestedInnerClass() throws {
+    let outer = Outer()
+    let inner = Outer.Inner(outer: outer)
+    let innerInner = Outer.Inner.InnerInner(outer: inner)
+    try assertEquals(actual: outer.outerProperty, expected: innerInner.getOutPropertyFromInnerClass())
 }
 
 class InnerClassTests : TestProvider {
@@ -12,7 +20,8 @@ class InnerClassTests : TestProvider {
     init() {
         providers.append(self)
         tests = [
-            TestCase(name: "testInnerClassInit", method: withAutorelease(testInnerClassInit))
+            TestCase(name: "testSimpleInnerClass", method: withAutorelease(testSimpleInnerClass)),
+            TestCase(name: "testNestedInnerClass", method: withAutorelease(testNestedInnerClass))
         ]
     }
 }

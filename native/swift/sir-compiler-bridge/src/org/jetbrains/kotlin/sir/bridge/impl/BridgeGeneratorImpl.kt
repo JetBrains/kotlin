@@ -95,8 +95,13 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 if (request.callable.origin is InnerInitSource) {
                     add(
                         request.initializationDescriptor(typeNamer).createFunctionBridge {
+                            require(kotlinFqName.size >= 2) {
+                                "Expected >=2 inner constructor parameters, but were ${kotlinFqName.size}: ${kotlinFqName.joinToString(",")}"
+                            }
                             val args = argNames(this)
-                            "kotlin.native.internal.initInstance(${args[0]}, (${args[1]} as ${kotlinFqName[0]}).${kotlinFqName[1]}())"
+                            val outerClassName = kotlinFqName.dropLast(1).joinToString(".")
+                            val innerConstructorName = kotlinFqName.last()
+                            "kotlin.native.internal.initInstance(${args[0]}, (${args[1]} as $outerClassName).$innerConstructorName())"
                         }
                     )
                 } else {
@@ -281,7 +286,11 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     buildCallSite: BridgeFunctionDescriptor.() -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
-    add("public fun $kotlinBridgeName(${allParameters.filter { it.isRenderable }.joinToString { "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}" }}): ${returnType.kotlinType.repr} {")
+    add(
+        "public fun $kotlinBridgeName(${
+            allParameters.filter { it.isRenderable }.joinToString { "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}" }
+        }): ${returnType.kotlinType.repr} {"
+    )
     val indent = "    "
 
     allParameters.forEach {
@@ -294,7 +303,8 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     } else {
         val resultName = "_result"
         if (errorParameter != null) {
-            add("""
+            add(
+                """
             try {
                 val $resultName = $callSite
                 return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
@@ -302,7 +312,8 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
                 __${errorParameter.name}.value = StableRef.create(error).asCPointer()
                 return ${returnType.kotlinType.defaultValue}
             }
-            """.trimIndent().prependIndent(indent))
+            """.trimIndent().prependIndent(indent)
+            )
         } else {
             add("${indent}val $resultName = $callSite")
             add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}")
@@ -403,7 +414,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
         SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first())) {
             is Bridge.AsObject,
             is Bridge.AsObjCBridged,
-            -> Bridge.AsOptionalWrapper(bridge)
+                -> Bridge.AsOptionalWrapper(bridge)
 
             is Bridge.AsOpaqueObject -> {
                 if (bridge.swiftType.isNever) {
@@ -414,7 +425,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
             }
 
             is Bridge.AsIs,
-            -> Bridge.AsOptionalWrapper(
+                -> Bridge.AsOptionalWrapper(
                 if (bridge.swiftType.isChar)
                     Bridge.OptionalChar(bridge.swiftType)
                 else
@@ -639,7 +650,7 @@ private sealed class Bridge(
 
     open class AsObjCBridged(
         swiftType: SirType,
-        cType: CType
+        cType: CType,
     ) : Bridge(swiftType, KotlinType.ObjCObjectUnretained, cType) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
@@ -656,7 +667,7 @@ private sealed class Bridge(
 
     /** To be used inside NS* collections. `null`s are wrapped as `NSNull`.  */
     open class AsObjCBridgedOptional(
-        swiftType: SirType
+        swiftType: SirType,
     ) : AsObjCBridged(swiftType, CType.id) {
 
         override val inSwiftSources = object : NilableIdentityValueConversion {
@@ -671,7 +682,7 @@ private sealed class Bridge(
     }
 
     open class AsNSNumber(
-        swiftType: SirType
+        swiftType: SirType,
     ) : AsObjCBridged(swiftType, CType.NSNumber) {
         override val inSwiftSources = object : NilableIdentityValueConversion {
             override fun renderNil(): String = super@AsNSNumber.inSwiftSources.renderNil()
@@ -717,7 +728,7 @@ private sealed class Bridge(
 
     abstract class AsNSCollection(
         swiftType: SirNominalType,
-        cType: CType
+        cType: CType,
     ) : AsObjCBridged(swiftType, cType) {
         abstract inner class InSwiftSources : InSwiftSourcesConversion {
             override fun renderNil(): String = super@AsNSCollection.inSwiftSources.renderNil()
@@ -889,7 +900,8 @@ private sealed class Bridge(
         override val inKotlinSources: ValueConversion
             get() = IdentityValueConversion
 
-        override val inSwiftSources: InSwiftSourcesConversion get() = object : InSwiftSourcesConversion {
+        override val inSwiftSources: InSwiftSourcesConversion
+            get() = object : InSwiftSourcesConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                     return "&$valueExpression"
                 }
@@ -921,7 +933,7 @@ private val SirType.isChar: Boolean
     get() = this is SirNominalType && typeDeclaration == SirSwiftModule.utf16CodeUnit
 
 private val KotlinType.defaultValue: String
-    get() = when(this) {
+    get() = when (this) {
         KotlinType.Unit -> "Unit"
         KotlinType.Boolean -> "false"
         KotlinType.Char -> "'\\u0000'"
@@ -935,7 +947,7 @@ private val KotlinType.defaultValue: String
         KotlinType.ULong,
             -> "0"
         KotlinType.Float,
-        KotlinType.Double
+        KotlinType.Double,
             -> "0.0"
         KotlinType.PointerToKotlinObject -> error("PointerToKotlinObject shouldn't appear in return type position")
         KotlinType.KotlinObject,
@@ -944,7 +956,8 @@ private val KotlinType.defaultValue: String
         KotlinType.String -> ""
     }
 
-private val String.cIdentifier: String get() = let {
+private val String.cIdentifier: String
+    get() = let {
         this.takeIf(cIdentifierRegex::matches) ?: this.replace(cIdentifierNonCompliantRegex) { match ->
             match.value.map {
                 String.format("%02X", it.code)
