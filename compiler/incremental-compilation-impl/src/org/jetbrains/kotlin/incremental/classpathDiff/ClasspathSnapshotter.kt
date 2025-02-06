@@ -158,9 +158,6 @@ class ClassSnapshotter(
 
     fun snapshot(): List<ClassSnapshot> {
         return classes.map { snapshotClass(it) }
-
-        // TODO: check that it works with package hierarchy inside of the module (foo/bar/clas.class etc)
-        //TODO metrics are a MUST as i now realizes
     }
 
     /**
