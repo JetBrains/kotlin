@@ -11,7 +11,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
-import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import javax.inject.Inject
 
@@ -30,7 +29,6 @@ abstract class FlowActionBuildFusService @Inject constructor(
                 spec.parameters.buildStatisticsConfiguration.set(KotlinBuildStatsConfiguration(project))
                 spec.parameters.buildId.value(buildUidService.map { it.buildId }).disallowChanges()
             }.also { buildService ->
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
                 StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult(buildService)
             }
         }
@@ -38,19 +36,19 @@ abstract class FlowActionBuildFusService @Inject constructor(
 
     private val configurationMetrics: ListProperty<MetricContainer> = objects.listProperty(MetricContainer::class.java)
 
-    override fun addConfigurationTimeMetric(metric: Provider<MetricContainer>) {
+    fun addConfigurationTimeMetric(metric: Provider<MetricContainer>) {
         synchronized(this) {
             configurationMetrics.add(metric)
         }
     }
 
-    override fun addConfigurationTimeMetric(metric: MetricContainer) {
+    fun addConfigurationTimeMetric(metric: MetricContainer) {
         synchronized(this) {
             configurationMetrics.add(metric)
         }
     }
 
-    override fun addConfigurationTimeMetrics(metrics: List<MetricContainer>) {
+    fun addConfigurationTimeMetrics(metrics: List<MetricContainer>) {
         providerFactory.provider {
             synchronized(this) {
                 configurationMetrics.addAll(metrics)
@@ -58,7 +56,7 @@ abstract class FlowActionBuildFusService @Inject constructor(
         }
     }
 
-    override fun getConfigurationTimeMetrics(): Provider<List<MetricContainer>> {
+    fun getConfigurationTimeMetrics(): Provider<List<MetricContainer>> {
         return providerFactory.provider {
             synchronized(this) {
                 configurationMetrics.disallowChanges()
