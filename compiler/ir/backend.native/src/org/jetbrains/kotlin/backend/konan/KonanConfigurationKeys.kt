@@ -36,6 +36,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<List<String>>("paths to directories containing caches")
         val AUTO_CACHEABLE_FROM: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("paths to the root directories from which dependencies are to be cached automatically")
+        val EXPLICIT_CACHES_ONLY: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create<Boolean>("do not cache libraries implicitly")
         val AUTO_CACHE_DIR: CompilerConfigurationKey<String>
                 = CompilerConfigurationKey.create<String>("path to the directory where to put caches for auto-cacheable dependencies")
         val INCREMENTAL_CACHE_DIR: CompilerConfigurationKey<String>

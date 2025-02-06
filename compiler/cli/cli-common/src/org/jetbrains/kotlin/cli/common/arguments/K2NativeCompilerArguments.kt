@@ -166,6 +166,12 @@ By default caches will be placed into the kotlin-native system cache directory."
     var autoCacheableFrom: Array<String>? = null
 
     @Argument(
+        value = "-Xexplicit-caches-only",
+        description = """Do not build caches for libraries if they are not listed as cacheable.""",
+    )
+    var explicitCachesOnly: Boolean = false
+
+    @Argument(
         value = "-Xauto-cache-dir",
         valueDescription = "<path>",
         description = "Path to the directory where caches for auto-cacheable dependencies should be put.",
