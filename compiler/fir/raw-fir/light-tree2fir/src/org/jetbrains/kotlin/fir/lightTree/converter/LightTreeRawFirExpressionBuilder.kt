@@ -873,8 +873,8 @@ class LightTreeRawFirExpressionBuilder(
         if (hasSubject && subjectVariable == null) {
             val name = SpecialNames.WHEN_SUBJECT
             subjectVariable = buildProperty {
-                source = subjectExpression.source?.fakeElement(KtFakeSourceElementKind.WhenImplicitSubject)
-                origin = FirDeclarationOrigin.Source
+                source = subjectExpression.source?.fakeElement(KtFakeSourceElementKind.WhenGeneratedSubject)
+                origin = FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
                 moduleData = baseModuleData
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 this.name = name
