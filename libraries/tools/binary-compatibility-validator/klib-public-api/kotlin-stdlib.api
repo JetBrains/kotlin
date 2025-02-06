@@ -13725,6 +13725,9 @@ final inline fun <#A: reified kotlin/Any?> kotlin.test/assertIs(kotlin/Any?, kot
 final inline fun <#A: reified kotlin/Any?> kotlin.test/assertIsNot(kotlin/Any?, kotlin/String? = ...) // kotlin.test/assertIsNot|assertIsNot(kotlin.Any?;kotlin.String?){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final inline fun <#A: reified kotlin/Function<*>> kotlinx.cinterop.internal/convertBlockPtrToKotlinFunction(kotlin.native.internal/NativePtr): #A // kotlinx.cinterop.internal/convertBlockPtrToKotlinFunction|convertBlockPtrToKotlinFunction(kotlin.native.internal.NativePtr){0§<kotlin.Function<*>>}[0]
+
+// Targets: [native]
 final inline fun <#A: reified kotlin/Number> (kotlin/Number).kotlinx.cinterop/narrow(): #A // kotlinx.cinterop/narrow|narrow@kotlin.Number(){0§<kotlin.Number>}[0]
 
 // Targets: [native]

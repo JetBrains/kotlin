@@ -8,7 +8,11 @@ package kotlinx.cinterop.internal
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObject
+import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.NativePtr
+import kotlin.native.internal.TypedIntrinsic
 
 /**
  * Detaches the Objective-C object from this Kotlin wrapper. More specifically, releases the Obj-C reference and zeroes
@@ -26,3 +30,8 @@ import kotlinx.cinterop.ObjCObject
 @GCUnsafeCall("Kotlin_objc_detachObjCObject")
 @OptIn(BetaInteropApi::class)
 public external fun detachObjCObject(obj: ObjCObject)
+
+@OptIn(ExperimentalForeignApi::class)
+@InternalForKotlinNative
+@TypedIntrinsic(IntrinsicType.BLOCK_PTR_TO_FUNCTION_OBJECT)
+public external inline fun <reified R : Function<*>> convertBlockPtrToKotlinFunction(blockPtr: NativePtr): R
