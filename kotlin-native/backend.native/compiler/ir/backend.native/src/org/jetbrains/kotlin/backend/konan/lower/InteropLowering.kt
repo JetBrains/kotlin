@@ -58,9 +58,13 @@ private fun addSubstitutedTypesFromReceiver(
         return null
     }
 
+    callee as IrSimpleFunction
     val allClassSuperTypes = receiverType.getAllClassSuperTypes()
     val receiverClassType = allClassSuperTypes.firstOrNull { it.classOrFail == receiverClass.symbol }
-            ?: receiverType.takeIf { (callee as IrSimpleFunction).allOverriddenFunctions.any { it.isFromAny() } }
+            ?: receiverType.takeIf {
+                callee.resolveFakeOverrideMaybeAbstract()!!.parentAsClass == receiverType.classOrNull?.owner
+                        || callee.allOverriddenFunctions.any { it.isFromAny() }
+            }
             ?: error("Can't find ${receiverClass.render()} in the super types of ${receiverType.render()}: " +
                     "[${allClassSuperTypes.joinToString { it.render() }}]\n${receiver.dump()}\n${callee.dump()}")
 
