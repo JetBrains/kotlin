@@ -28,7 +28,7 @@ object PlatformClassMappedToKotlinImportsChecker : FirFileChecker(MppCheckerKind
 
             val kotlinClass = context.session.platformClassMapper.getCorrespondingKotlinClass(classId)
             if (kotlinClass != null) {
-                reporter.reportOn(import.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, classId, context)
+                reporter.reportOn(import.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, kotlinClass, context)
             }
         }
     }
