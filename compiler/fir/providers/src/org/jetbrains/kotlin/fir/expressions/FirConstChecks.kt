@@ -167,7 +167,7 @@ private class FirConstCheckVisitor(
             return ConstantArgumentKind.NOT_CONST
         }
 
-        whenExpression.subject?.accept(this, data)?.ifNotValidConst { return it }
+        whenExpression.subjectVariable?.initializer?.accept(this, data)?.ifNotValidConst { return it }
         for (branch in whenExpression.branches) {
             when (branch.condition) {
                 is FirElseIfTrueCondition -> { /* skip */ }

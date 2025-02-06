@@ -26,7 +26,7 @@ FILE: kt56283.fir.kt
         public final fun f(other: R|A|): R|kotlin/Unit| {
             R|<local>/other|.R|/A.foo|
             R|<local>/other|.R|/A.bar|()
-            when (R|<local>/other|) {
+            when (lval <when-subject>: R|A| = R|<local>/other|) {
                 ($subj$ is R|B|) ->  {
                     R|<local>/other|.R|/A.foo|
                     R|<local>/other|.R|/A.bar|()

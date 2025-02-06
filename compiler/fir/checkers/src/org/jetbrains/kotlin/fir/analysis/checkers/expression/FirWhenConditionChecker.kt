@@ -27,7 +27,7 @@ object FirWhenConditionChecker : FirWhenExpressionChecker(MppCheckerKind.Common)
             if (condition is FirElseIfTrueCondition) continue
             checkCondition(condition, context, reporter)
         }
-        if (expression.subject != null) {
+        if (expression.subjectVariable != null) {
             checkDuplicatedLabels(expression, context, reporter)
         }
     }

@@ -86,7 +86,7 @@ object FirUnusedExpressionChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
 
         override fun visitWhenExpression(whenExpression: FirWhenExpression, data: UsageState) {
             when (val variable = whenExpression.subjectVariable) {
-                null -> whenExpression.subject?.accept(this, UsageState.Used)
+                null -> whenExpression.subjectVariable?.initializer?.accept(this, UsageState.Used)
                 else -> variable.accept(this, UsageState.Used)
             }
             for (branch in whenExpression.branches) {

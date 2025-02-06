@@ -20,7 +20,7 @@ FILE: unqualifiedEnum.kt
 
     }
     public final fun trivial(s: R|test/Sample|): R|kotlin/Int| {
-        ^trivial when (R|<local>/s|) {
+        ^trivial when (lval <when-subject>: R|test/Sample| = R|<local>/s|) {
             ==($subj$, R|test/Sample.FIRST|) ->  {
                 Int(1)
             }
@@ -60,7 +60,7 @@ FILE: unqualifiedEnum.kt
 
         public final fun priority(s: R|test/Sample|): R|kotlin/Int| {
             lval FIRST: R|test/Sample| = Q|test/Sample|.R|test/Sample.THIRD|
-            ^priority when (R|<local>/s|) {
+            ^priority when (lval <when-subject>: R|test/Sample| = R|<local>/s|) {
                 ==($subj$, R|<local>/FIRST|) ->  {
                     Int(3)
                 }

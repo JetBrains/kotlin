@@ -30,7 +30,7 @@ FILE: exhaustiveness_sealedSubClass.kt
 
     }
     public final fun test_1(e: R|A|): R|kotlin/Unit| {
-        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+        lval a: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|C|) ->  {
                 Int(1)
             }
@@ -42,7 +42,7 @@ FILE: exhaustiveness_sealedSubClass.kt
             }
         }
         .R|kotlin/Int.plus|(Int(0))
-        lval b: R|kotlin/Int| = when (R|<local>/e|) {
+        lval b: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|B|) ->  {
                 Int(1)
             }
@@ -51,7 +51,7 @@ FILE: exhaustiveness_sealedSubClass.kt
             }
         }
         .R|kotlin/Int.plus|(Int(0))
-        lval c: R|kotlin/Int| = when (R|<local>/e|) {
+        lval c: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|B|) ->  {
                 Int(1)
             }
@@ -66,7 +66,7 @@ FILE: exhaustiveness_sealedSubClass.kt
             }
         }
         .R|kotlin/Int.plus|(Int(0))
-        lval d: R|kotlin/Int| = when (R|<local>/e|) {
+        lval d: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|E|) ->  {
                 Int(1)
             }
@@ -77,7 +77,7 @@ FILE: exhaustiveness_sealedSubClass.kt
         .R|kotlin/Int.plus|(Int(0))
     }
     public final fun test_2(e: R|A|): R|kotlin/Unit| {
-        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+        lval a: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|D|) ->  {
                 Int(1)
             }
@@ -86,7 +86,7 @@ FILE: exhaustiveness_sealedSubClass.kt
             }
         }
         .R|kotlin/Int.plus|(Int(0))
-        lval b: R|kotlin/Int| = when (R|<local>/e|) {
+        lval b: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|B|) ->  {
                 Int(1)
             }
@@ -98,7 +98,7 @@ FILE: exhaustiveness_sealedSubClass.kt
             }
         }
         .R|kotlin/Int.plus|(Int(0))
-        lval c: R|kotlin/Int| = when (R|<local>/e|) {
+        lval c: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|B|) ->  {
                 Int(1)
             }
@@ -107,7 +107,7 @@ FILE: exhaustiveness_sealedSubClass.kt
             }
         }
         .R|kotlin/Int.plus|(Int(0))
-        lval d: R|kotlin/Int| = when (R|<local>/e|) {
+        lval d: R|kotlin/Int| = when (lval <when-subject>: R|A| = R|<local>/e|) {
             ($subj$ is R|C|) ->  {
                 Int(1)
             }
