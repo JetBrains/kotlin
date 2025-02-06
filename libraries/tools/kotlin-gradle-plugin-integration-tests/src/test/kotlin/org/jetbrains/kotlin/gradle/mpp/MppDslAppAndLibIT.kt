@@ -30,7 +30,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             libProjectPath = "new-mpp-lib-and-app/sample-lib",
             appProjectPath = "new-mpp-lib-and-app/sample-app",
             gradleVersion = gradleVersion,
-            hmppSupport = true,
         )
     }
 
@@ -41,7 +40,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         libProjectPath = "new-mpp-lib-and-app/sample-lib",
         appProjectPath = "new-mpp-lib-and-app/sample-app",
         gradleVersion = gradleVersion,
-        hmppSupport = false,
     )
 
     @GradleTest
@@ -52,7 +50,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             libProjectPath = "new-mpp-lib-and-app/sample-lib-gradle-kotlin-dsl",
             appProjectPath = "new-mpp-lib-and-app/sample-app-gradle-kotlin-dsl",
             gradleVersion = gradleVersion,
-            hmppSupport = true,
         )
     }
 
@@ -60,15 +57,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         libProjectPath: String,
         appProjectPath: String,
         gradleVersion: GradleVersion,
-        hmppSupport: Boolean,
     ) {
         val additionalBuildArgs = buildList {
-            if (hmppSupport) {
-                add("-P" + "kotlin.mpp.hierarchicalStructureSupport")
-                add("-P" + "kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError,KotlinTargetAlreadyDeclaredError")
-            } else {
-                add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
-            }
+            add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
         }
 
         val localRepoDir = defaultLocalRepo(gradleVersion)
