@@ -1,1 +1,1 @@
--XXLanguage:-ApproximateIntegerLiteralTypesInReceiverPosition -XXLanguage:-ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+-XXLanguage:-ApproximateIntegerLiteralTypesInReceiverPosition

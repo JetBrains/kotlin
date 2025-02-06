@@ -7601,12 +7601,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
-    @TestMetadata("kt12908_2.kt")
-    public void testKt12908_2() {
-      runTest("compiler/testData/codegen/box/controlStructures/kt12908_2.kt");
-    }
-
-    @Test
     @TestMetadata("kt1441.kt")
     public void testKt1441() {
       runTest("compiler/testData/codegen/box/controlStructures/kt1441.kt");
@@ -18902,12 +18896,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     @TestMetadata("kt39824.kt")
     public void testKt39824() {
       runTest("compiler/testData/codegen/box/inference/kt39824.kt");
-    }
-
-    @Test
-    @TestMetadata("kt42042.kt")
-    public void testKt42042() {
-      runTest("compiler/testData/codegen/box/inference/kt42042.kt");
     }
 
     @Test
@@ -44066,12 +44054,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     @TestMetadata("exceptionOnNoMatch.kt")
     public void testExceptionOnNoMatch() {
       runTest("compiler/testData/codegen/box/when/exceptionOnNoMatch.kt");
-    }
-
-    @Test
-    @TestMetadata("exhaustiveBoolean.kt")
-    public void testExhaustiveBoolean() {
-      runTest("compiler/testData/codegen/box/when/exhaustiveBoolean.kt");
     }
 
     @Test

@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Other plugins tests")
@@ -223,14 +222,15 @@ class SubpuginsIT : KGPBaseTest() {
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleTest
     fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
+        val firstNonDeprecated = KotlinVersion.firstNonDeprecated.name
         project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
             val languageVersionConfiguration = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_7_6)) {
                 """
                 afterEvaluate {
                     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
                         // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-                        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
-                        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
+                        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$firstNonDeprecated)
+                        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$firstNonDeprecated)
                     }
                 }
                 """.trimIndent()

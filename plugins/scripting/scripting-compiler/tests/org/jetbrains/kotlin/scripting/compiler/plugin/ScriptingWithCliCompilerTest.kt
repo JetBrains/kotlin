@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
 import java.io.File
 import java.net.URLClassLoader
@@ -231,23 +232,26 @@ class ScriptingWithCliCompilerTest {
             "warning: script 'simpleScript.main.kts' is not supposed to be used along with regular Kotlin sources, and will be ignored in the future versions"
 
         val unresolvedScriptError =
-            "simpleScriptInstance.kt:3:13: error: unresolved reference: SimpleScript_main"
+            "simpleScriptInstance.kt:3:13: error: unresolved reference 'SimpleScript_main'."
 
-        compileVariant(CommonCompilerArguments::languageVersion.cliArgument, "1.7").let { (errLines, exitCode) ->
+        val earlierVersion = "1.8"
+        val laterVersion = LanguageVersion.LATEST_STABLE.versionString
+
+        compileVariant(CommonCompilerArguments::languageVersion.cliArgument, earlierVersion).let { (errLines, exitCode) ->
             assertTrue(errLines.any { it.startsWith(scriptInSourceRootWarning) })
             assertEquals(ExitCode.OK, exitCode)
         }
 
         compileVariant(
             CommonCompilerArguments::languageVersion.cliArgument,
-            "1.7",
+            earlierVersion,
             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument
         ).let { (errLines, exitCode) ->
             assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
             assertEquals(ExitCode.OK, exitCode)
         }
 
-        compileVariant(CommonCompilerArguments::languageVersion.cliArgument, "1.9").let { (errLines, exitCode) ->
+        compileVariant(CommonCompilerArguments::languageVersion.cliArgument, laterVersion).let { (errLines, exitCode) ->
             if (errLines.none { it.endsWith(unresolvedScriptError) }) {
                 fail("Expecting unresolved reference: SimpleScript_main error, got:\n${errLines.joinToString("\n")}")
             }
@@ -256,7 +260,7 @@ class ScriptingWithCliCompilerTest {
 
         compileVariant(
             CommonCompilerArguments::languageVersion.cliArgument,
-            "1.9",
+            laterVersion,
             withScriptInstance = false
         ).let { (errLines, exitCode) ->
             assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })

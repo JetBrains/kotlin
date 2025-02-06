@@ -20,6 +20,8 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 internal class CompilerOptionsIT : KGPBaseTest() {
+    private val firstNonDeprecatedKotlinVersion = KotlinVersion.firstNonDeprecated
+    private val latestStableKotlinVersion = KotlinVersion.DEFAULT
 
     // In Gradle 7.3-8.0 'kotlin-dsl' plugin tries to set up freeCompilerArgs in doFirst task action
     // Related issue: https://github.com/gradle/gradle/issues/22091
@@ -50,8 +52,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                     afterEvaluate {
                         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
                             // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-                            compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
-                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
+                            compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${firstNonDeprecatedKotlinVersion.name})
+                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${firstNonDeprecatedKotlinVersion.name})
                         }
                     }
                     """.trimIndent()
@@ -488,11 +490,13 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Syncs languageSettings changes to the related compiler options")
     @MppGradlePluginTests
     fun syncLanguageSettingsToCompilerOptions(gradleVersion: GradleVersion) {
+        val firstNonDeprecatedVersion = firstNonDeprecatedKotlinVersion.version
+        val latestStableVersion = latestStableKotlinVersion.version
         project("mpp-default-hierarchy", gradleVersion) {
             buildScriptInjection {
                 kotlinMultiplatform.sourceSets.configureEach { sourceSet ->
-                    sourceSet.languageSettings.apiVersion = "1.7"
-                    sourceSet.languageSettings.languageVersion = "1.8"
+                    sourceSet.languageSettings.apiVersion = firstNonDeprecatedVersion
+                    sourceSet.languageSettings.languageVersion = latestStableVersion
                 }
                 project.tasks.register("printCompilerOptions") { task ->
                     val taskName = project.property("kotlinTaskToCheck") as String
@@ -518,8 +522,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 "compileKotlinIosArm64"
             ).forEach { task ->
                 build("printCompilerOptions", "-PkotlinTaskToCheck=$task") {
-                    assertOutputContains("###AV:KOTLIN_1_7")
-                    assertOutputContains("###LV:KOTLIN_1_8")
+                    assertOutputContains("###AV:${firstNonDeprecatedKotlinVersion.name}")
+                    assertOutputContains("###LV:${latestStableKotlinVersion.name}")
                 }
             }
         }
@@ -530,11 +534,13 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Syncs compiler option changes to the related language settings")
     @MppGradlePluginTests
     fun syncCompilerOptionsToLanguageSettings(gradleVersion: GradleVersion) {
+        val firstNonDeprecatedVersion = firstNonDeprecatedKotlinVersion
+        val latestStableVersion = latestStableKotlinVersion
         project("mpp-default-hierarchy", gradleVersion) {
             buildScriptInjection {
                 project.tasks.withType(KotlinCompilationTask::class.java).all { task ->
-                    task.compilerOptions.apiVersion.set(KotlinVersion.KOTLIN_1_7)
-                    task.compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                    task.compilerOptions.apiVersion.set(firstNonDeprecatedVersion)
+                    task.compilerOptions.languageVersion.set(latestStableVersion)
                 }
                 project.tasks.register("printLanguageSettingsOptions") { task ->
                     val languageSettingsProvider = project.provider {
@@ -562,8 +568,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 "iosArm64Main",
             ).forEach { sourceSet ->
                 build("printLanguageSettingsOptions", "-PkotlinSourceSet=${sourceSet}") {
-                    assertOutputContains("###AV:1.7")
-                    assertOutputContains("###LV:1.8")
+                    assertOutputContains("###AV:${firstNonDeprecatedKotlinVersion.version}")
+                    assertOutputContains("###LV:${latestStableKotlinVersion.version}")
                 }
             }
         }

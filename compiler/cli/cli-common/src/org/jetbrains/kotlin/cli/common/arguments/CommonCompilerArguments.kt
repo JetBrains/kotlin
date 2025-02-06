@@ -1018,7 +1018,11 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
                 featuresThatForcePreReleaseBinaries += feature
             }
 
-            if (state == LanguageFeature.State.DISABLED && feature.sinceVersion?.isUnsupported == true) {
+            if (
+                state == LanguageFeature.State.DISABLED &&
+                feature.sinceVersion?.isUnsupported == true &&
+                feature.behaviorAfterSinceVersion == LanguageFeatureBehaviorAfterSinceVersion.CannotBeDisabled
+            ) {
                 disabledFeaturesFromUnsupportedVersions += feature
             }
 

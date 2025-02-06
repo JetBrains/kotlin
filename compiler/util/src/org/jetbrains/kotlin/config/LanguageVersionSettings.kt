@@ -6,16 +6,24 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.config.LanguageFeature.Kind.*
+import org.jetbrains.kotlin.config.LanguageFeatureBehaviorAfterSinceVersion.CanStillBeDisabledForNow
+import org.jetbrains.kotlin.config.LanguageFeatureBehaviorAfterSinceVersion.CannotBeDisabled
 import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
+
+sealed class LanguageFeatureBehaviorAfterSinceVersion {
+    data object CannotBeDisabled : LanguageFeatureBehaviorAfterSinceVersion()
+    data class CanStillBeDisabledForNow(val relevantTicketId: String) : LanguageFeatureBehaviorAfterSinceVersion()
+}
 
 enum class LanguageFeature(
     val sinceVersion: LanguageVersion?,
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
     internal val isEnabledWithWarning: Boolean = false,
-    val kind: Kind = OTHER // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
+    val kind: Kind = OTHER, // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
+    val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
 
@@ -209,7 +217,7 @@ enum class LanguageFeature(
      *  - preference of a type use annotation to annotation of another type: KT-24392
      *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
      */
-    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7),
+    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7, behaviorAfterSinceVersion = CanStillBeDisabledForNow("KT-76100")),
     OptInRelease(KOTLIN_1_7),
     ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, kind = BUG_FIX),
     UseBuilderInferenceWithoutAnnotation(KOTLIN_1_7),
@@ -617,15 +625,15 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //            1.0..1.6        1.7..1.9           2.0..2.2    2.3
+        //            1.0..1.7        1.8..1.9           2.0..2.2    2.3
         // Language:  UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
 
         @JvmField
-        val FIRST_API_SUPPORTED = KOTLIN_1_7
+        val FIRST_API_SUPPORTED = KOTLIN_1_8
 
         @JvmField
-        val FIRST_SUPPORTED = KOTLIN_1_7
+        val FIRST_SUPPORTED = KOTLIN_1_8
 
         @JvmField
         val FIRST_NON_DEPRECATED = KOTLIN_2_0

@@ -108,7 +108,7 @@ class BuildReportsIT : KGPBaseTest() {
             "kotlin-js-plugin-project",
             "compileKotlinJs",
             gradleVersion,
-            languageVersion = KotlinVersion.KOTLIN_1_7.version
+            languageVersion = KotlinVersion.DEFAULT.version,
         )
     }
 
