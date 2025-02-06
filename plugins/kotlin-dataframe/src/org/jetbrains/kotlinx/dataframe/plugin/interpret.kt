@@ -366,22 +366,30 @@ fun SessionContext.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): 
         .mapIndexed { i, symbol -> symbol to coneClassLikeType.typeArguments[i] }
         .toMap()
 
-    var propertySymbols = declarationSymbols.filterIsInstance<FirPropertySymbol>()
-    val annotations = propertySymbols.mapNotNull {
-        val orderArgument = it.getAnnotationByClassId(
-            Names.ORDER_ANNOTATION,
-            session
-        )?.argumentMapping?.mapping?.get(Names.ORDER_ARGUMENT)
-        (orderArgument as? FirLiteralExpression)?.value as? Int
-    }
-    if (propertySymbols.size == annotations.size) {
-        propertySymbols = propertySymbols.zip(annotations).sortedBy { it.second }.map { it.first }
-    }
+    val propertySymbols = declarationSymbols
+        .filterIsInstance<FirPropertySymbol>()
+        .sortPropertiesByOrderAnnotation(sessionContext = this)
+
     val columns = propertySymbols.mapNotNull { propertySymbol ->
         columnOf(propertySymbol, mapping)
     }
 
     return PluginDataFrameSchema(columns)
+}
+
+private fun List<FirPropertySymbol>.sortPropertiesByOrderAnnotation(sessionContext: SessionContext): List<FirPropertySymbol> {
+    var result = this
+    val annotations = result.mapNotNull {
+        val orderArgument = it.getAnnotationByClassId(
+            Names.ORDER_ANNOTATION,
+            sessionContext.session
+        )?.argumentMapping?.mapping?.get(Names.ORDER_ARGUMENT)
+        (orderArgument as? FirLiteralExpression)?.value as? Int
+    }
+    if (result.size == annotations.size) {
+        result = result.zip(annotations).sortedBy { it.second }.map { it.first }
+    }
+    return result
 }
 
 private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): ColumnsResolver {
@@ -425,6 +433,7 @@ private fun SessionContext.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeP
                 ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
+                ?.sortPropertiesByOrderAnnotation(this)
                 ?.mapNotNull { columnOf(it, mapping) }
                 ?: emptyList()
 
@@ -438,6 +447,7 @@ private fun SessionContext.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeP
                 ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
+                ?.sortPropertiesByOrderAnnotation(this)
                 ?.mapNotNull { columnOf(it, mapping) }
                 ?: emptyList()
             SimpleColumnGroup(name, nestedColumns)
