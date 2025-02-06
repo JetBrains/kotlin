@@ -95,8 +95,9 @@ class ClassSnapshotter(
     //      it's a limitation but it's not too bad for the initial solution //TODO (KT-62555) ??? is it not too bad?
     private val generatorContext: ClassInfoGeneratorContext = if (settings.parseInlinedLocalClasses) {
         ClassInfoGeneratorContextWithLocalClassSnapshotting(
-            localClassHashProvider = { className: FqName ->
-                1L //TODO fix
+            localClassHashProvider = { className: FqName -> //TODO(core) fix my types, it's internal name actually!!!!
+                val jvmClassName = JvmClassName.byInternalName(className.toString())
+                classNameToClassFileMap[jvmClassName]?.let { hashClass(it) } ?: 0L
             }
         )
     } else {
@@ -156,70 +157,18 @@ class ClassSnapshotter(
     }
 
     fun snapshot(): List<ClassSnapshot> {
-        val firstPass = classes.map { snapshotClass(it) }
+        return classes.map { snapshotClass(it) }
 
-        when (generatorContext) {
-            is DefaultClassInfoGeneratorContext -> return firstPass
-            is ClassInfoGeneratorContextWithLocalClassSnapshotting -> {
-                if (generatorContext.incompleteClassSnapshots.isEmpty()) {
-                    return firstPass
-                }
-                //TODO enrich data
-                println("ics")
-                println(generatorContext.incompleteClassSnapshots)
-                println("mlcu")
-                println(generatorContext.methodToLocalClassUsages)
-                println("lcss")
-                println(generatorContext.localClassStateSnapshots)
+        // here's a major fault point - what if we've identified the potential local classes poorly,
+        // what if we're falling through to external dependencies, etc
+        // the basic answer is ignoring everything we can't find, because it's clearly not a module-local local class
 
-                println("can work with:")
-                println(classes.map { it.classFile.unixStyleRelativePath })
+        // also would be nice to avoid parsing non-local classes
 
-                for (entry in generatorContext.localClassStateSnapshots) {
-                    // here's a major fault point - what if we've identified the potential local classes poorly,
-                    // what if we're falling through to external dependencies, etc
-                    // the basic answer is ignoring everything we can't find, because it's clearly not a module-local local class
-
-                    // also would be nice to avoid parsing non-local classes
-
-                    // well, anyway
-                    // TODO: check that it works with package hierarchy inside of the module (foo/bar/clas.class etc)
-                    val internalClassName = JvmClassName.byInternalName(entry.key)
-                    val basicClassAccessor = classNameToClassFileMap.get(internalClassName) ?: continue
-                    val basicClassFileWithContents = classFileToInaccessibleClassContentsMap.get(basicClassAccessor) ?: continue
-                    val fullBodySnapshot = InlineFunctionSnapshotter.getFullClassSnapshot(basicClassFileWithContents.contents)
-                    entry.setValue(fullBodySnapshot)
-                }
-
-                for (entry in generatorContext.incompleteClassSnapshots) {
-                }
-
-                println("done")
-                println("ics")
-                println(generatorContext.incompleteClassSnapshots)
-                println("mlcu")
-                println(generatorContext.methodToLocalClassUsages)
-                println("lcss")
-                println(generatorContext.localClassStateSnapshots)
-
-                val secondPass = ArrayList<ClassSnapshot>(firstPass)
-                for (i in secondPass.indices) {
-                    //TODO cheap-replace the affected items
-                    val originalItem = secondPass[i]
-                    if (originalItem is AccessibleClassSnapshot) {
-                        // TODO test case - inline fun in an inaccisble class
-                        val fqName = originalItem.classId.asSingleFqName()
-                        if (fqName.toString() in generatorContext.incompleteClassSnapshots) {
-                            secondPass[i] = originalItem.
-                        }
-                    }
-
-                        //TODO ok so, loadContents shouldn't be necessary, need to take proper accessor
-                        //TODO metrics are a MUST as i now realizes
-                }
-                return secondPass
-            }
-        }
+        // well, anyway
+        // TODO: check that it works with package hierarchy inside of the module (foo/bar/clas.class etc)
+        // TODO test case - inline fun in an inaccisble class
+        //TODO metrics are a MUST as i now realizes
     }
 
     /**

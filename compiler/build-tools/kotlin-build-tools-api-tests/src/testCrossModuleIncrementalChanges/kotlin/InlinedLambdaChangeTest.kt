@@ -33,13 +33,10 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 assertCompiledSources(module, "inlinedLambda.kt")
             }
             app.compile { module, scenarioModule ->
-                //assertCompiledSources(module, "callSite.kt")
-                assertCompiledSources(module, emptySet())
+                assertCompiledSources(module, "callSite.kt")
             }
             app.executeCompiledCode("CallSiteKt") {
-                // this is why KT-62555 is a bug - the call site now has inlined the old version of the code,
-                // and incremental build did not pick it up
-                assertExactOutput(INITIAL_OUTPUT)
+                assertExactOutput(WITH_NEW_LAMBDA_BODY)
             }
 
             lib.replaceFileWithVersion("inlinedLambda.kt", "changeFunctionBody")
@@ -52,22 +49,6 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             }
             app.executeCompiledCode("CallSiteKt") {
                 assertExactOutput(WITH_BOTH_CHANGES)
-            }
-
-            /**
-             * Bonus round: now we go back to the second step. Reverse change of lambda body forces the recompilation
-             * of call site. And now the updated lambda code would be inlined
-             */
-            lib.replaceFileWithVersion("inlinedLambda.kt", "changeLambdaBody")
-
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLambda.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "callSite.kt")
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(WITH_NEW_LAMBDA_BODY)
             }
         }
     }

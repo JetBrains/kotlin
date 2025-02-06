@@ -87,16 +87,24 @@ object InlineFunctionSnapshotter {
     fun getFullClassSnapshot(classContents: ByteArray): Long {
         val classNode = ClassNode()
         val textifier = Textifier()
-        val classVisitor = TraceClassVisitor(classNode, textifier, null)
-        ClassReader(classContents).accept(classVisitor, 0)
+        //val classVisitor = TraceClassVisitor(classNode, textifier, null)
+        //ClassReader(classContents).accept(classVisitor, 0)
+
+       // val symbolTable = SymbolTable()
+
+        //aha, okay
+        //TODO: so basically, normal TraceClassVisitor skips the constant pool, and sometimes it's the pitfall
+        // let's go in the other direction: use full file hash first, add test to account for insignificant changes, then think
+        //TODO surely i need to think (btw ClassReader exposes constants well enough)
 
         // it is a possible optimization to create one instance per transform and reuse it
-        val digester = MessageDigest.getInstance("MD5")
-        for (item in textifier.getText()) {
-            if (item is String) {
-                digester.update(item.toByteArray())
-            }
-        }
-        return digestedByteArrayToLong(digester.digest())
+//        val digester = MessageDigest.getInstance("MD5")
+//        for (item in textifier.getText()) {
+//            if (item is String) {
+//                digester.update(item.toByteArray())
+//            }
+//        }
+//        return digestedByteArrayToLong(digester.digest())
+        return classContents.hashToLong()
     }
 }

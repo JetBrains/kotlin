@@ -99,7 +99,9 @@ internal object ExtraClassInfoGenerator {
                 )
                 val usedInstances = context.methodToUsedClassesMap.get(methodKey) ?: mutableSetOf()
                 for (instanceFqName in usedInstances) {
-                    methodHash = methodHash xor context.localClassHashProvider(instanceFqName)
+                    val tmp = context.localClassHashProvider(instanceFqName)
+                    println("method $methodKey ownHash $methodHash fqname $instanceFqName extrahash $tmp")
+                    methodHash = methodHash xor tmp //TODO clean up when printlns are dropped
                 }
             }
             inlineFunctionsAndAccessors[methodSignature]!! to methodHash
