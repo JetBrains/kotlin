@@ -36,7 +36,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         setIdeaIoUseFallback() // TODO (KT-73573): probably could be removed
         val performanceManager = createPerformanceManager(arguments, services)
         if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics()
+            performanceManager.enableCollectingPerformanceStatistics(isK2 = true)
         }
 
         val messageCollector = GroupingMessageCollector(

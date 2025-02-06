@@ -77,14 +77,15 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     }
 
     private fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
-        if (shouldRunK2(messageCollector, arguments)) {
+        val shouldRunK2 = shouldRunK2(messageCollector, arguments)
+        if (shouldRunK2) {
             val code = doExecutePhased(arguments, services, messageCollector)
             if (code != null) return code
         }
 
         val performanceManager = createPerformanceManager(arguments, services)
         if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics()
+            performanceManager.enableCollectingPerformanceStatistics(isK2 = shouldRunK2)
         }
 
         val configuration = CompilerConfiguration()
