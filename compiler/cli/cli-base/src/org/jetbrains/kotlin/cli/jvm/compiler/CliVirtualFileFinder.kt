@@ -17,13 +17,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.DOT_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import java.io.InputStream
 
 class CliVirtualFileFinder(
     private val index: JvmDependenciesIndex,
     private val scope: GlobalSearchScope,
-    private val enableSearchInCtSym: Boolean
-) : VirtualFileFinder() {
+    private val enableSearchInCtSym: Boolean,
+    perfManager: CommonCompilerPerformanceManager?,
+) : VirtualFileFinder(perfManager) {
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
         findBinaryOrSigClass(classId)
 
