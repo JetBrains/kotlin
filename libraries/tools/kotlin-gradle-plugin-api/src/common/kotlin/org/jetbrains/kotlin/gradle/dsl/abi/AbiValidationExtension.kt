@@ -178,7 +178,7 @@ interface AbiValidationVariantSpec : Named {
     /**
      * Provides configuration for dumps stored in the old format that are used separately in the [Binary Compatibility validator plugin](https://github.com/Kotlin/binary-compatibility-validator).
      *
-     * Used this property for a smooth migration from the old to the new dump format.
+     * Use this property for a smooth migration from the old to the new dump format.
      */
     @ExperimentalAbiValidation
     val legacyDump: AbiValidationLegacyDumpExtension
