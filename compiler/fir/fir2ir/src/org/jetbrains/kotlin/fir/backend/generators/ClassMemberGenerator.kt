@@ -131,6 +131,7 @@ internal class ClassMemberGenerator(
                         body.statements += irDelegatingConstructorCall
                     }
 
+                    // TODO(KT-72994) remove when context receivers are removed
                     if (containingClass is FirRegularClass && containingClass.contextParameters.isNotEmpty()) {
                         val contextReceiverFields =
                             c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)

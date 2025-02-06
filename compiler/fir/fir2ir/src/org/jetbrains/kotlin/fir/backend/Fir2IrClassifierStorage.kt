@@ -248,6 +248,7 @@ class Fir2IrClassifierStorage(
         return getIrClass(lookupTag)?.symbol
     }
 
+    // TODO(KT-72994) remove when context receivers are removed
     fun getFieldsWithContextReceiversForClass(irClass: IrClass, klass: FirClass): List<IrField> {
         if (klass !is FirRegularClass || klass.contextParameters.isEmpty()) return emptyList()
 
