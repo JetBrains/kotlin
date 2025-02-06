@@ -11,11 +11,11 @@ public final class Foo: KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __externalRCRef)
         }
         public init(
-            outer: main.Foo
+            outer__: main.Foo
         ) {
             let __kt = Foo_Inner_init_allocate()
             super.init(__externalRCRef: __kt)
-            Foo_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Foo__(__kt, outer.__externalRCRef())
+            Foo_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Foo__(__kt, outer__.__externalRCRef())
         }
     }
     public final class Nested: KotlinRuntime.KotlinBase {

@@ -2,18 +2,18 @@
 // MODULE: InnerClass
 // FILE: main.kt
 class Outer {
-
-    val outerProperty = 42
-
     inner class Inner {
-        fun getOuterProperty(): Int {
-            return outerProperty
-        }
+        inner class InnerInner
+    }
+}
 
-        inner class InnerInner {
-            fun getOutPropertyFromInnerClass(): Int {
-                return getOuterProperty()
-            }
+class OuterWithParam(val outerParam: Int) {
+    inner class InnerWithParam(val innerParamA: Int, val innerParamB: Int) {
+        inner class InnerInnerWithParam(val innerInnerParam: Int) {
+            fun getOuter(): Int = outerParam
+            fun getInnerA(): Int = innerParamA
+            fun getInnerB(): Int = innerParamB
+            fun getInnerInner(): Int = innerInnerParam
         }
     }
 }

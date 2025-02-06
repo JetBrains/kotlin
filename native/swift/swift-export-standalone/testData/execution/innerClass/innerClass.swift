@@ -1,17 +1,19 @@
 import InnerClass
 
-func testSimpleInnerClass() throws {
+func testInnerClass() {
     let outer = Outer()
-    let inner = Outer.Inner(outer: outer)
-    try assertEquals(actual: outer.outerProperty, expected: inner.getOuterProperty())
-
+    let inner = Outer.Inner(outer__: outer)
+    let innerInner = Outer.Inner.InnerInner(outer__: inner)
 }
 
-func testNestedInnerClass() throws {
-    let outer = Outer()
-    let inner = Outer.Inner(outer: outer)
-    let innerInner = Outer.Inner.InnerInner(outer: inner)
-    try assertEquals(actual: outer.outerProperty, expected: innerInner.getOutPropertyFromInnerClass())
+func testNestedInnerClassWithParameters() throws {
+    let outer = OuterWithParam(outerParam: 0)
+    let inner = OuterWithParam.InnerWithParam(innerParamA: 1, innerParamB: 2, outer__: outer)
+    let innerInner = OuterWithParam.InnerWithParam.InnerInnerWithParam(innerInnerParam: 3, outer__: inner)
+    try assertEquals(actual: innerInner.getOuter(), expected: 0)
+    try assertEquals(actual: innerInner.getInnerA(), expected: 1)
+    try assertEquals(actual: innerInner.getInnerB(), expected: 2)
+    try assertEquals(actual: innerInner.getInnerInner(), expected: 3)
 }
 
 class InnerClassTests : TestProvider {
@@ -20,8 +22,8 @@ class InnerClassTests : TestProvider {
     init() {
         providers.append(self)
         tests = [
-            TestCase(name: "testSimpleInnerClass", method: withAutorelease(testSimpleInnerClass)),
-            TestCase(name: "testNestedInnerClass", method: withAutorelease(testNestedInnerClass))
+            TestCase(name: "testInnerClass", method: withAutorelease(testInnerClass)),
+            TestCase(name: "testNestedInnerClassWithParameters", method: withAutorelease(testNestedInnerClassWithParameters))
         ]
     }
 }

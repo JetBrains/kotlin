@@ -95,13 +95,19 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 if (request.callable.origin is InnerInitSource) {
                     add(
                         request.initializationDescriptor(typeNamer).createFunctionBridge {
-                            require(kotlinFqName.size >= 2) {
-                                "Expected >=2 inner constructor parameters, but were ${kotlinFqName.size}: ${kotlinFqName.joinToString(",")}"
-                            }
                             val args = argNames(this)
-                            val outerClassName = kotlinFqName.dropLast(1).joinToString(".")
+                            require(kotlinFqName.size >= 2) {
+                                "Expected >=2 kotlinFqName.size, but were ${kotlinFqName.size}: ${kotlinFqName.joinToString(",")}"
+                            }
+                            require(args.size >= 2) {
+                                "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
+                            }
+                            val outerConstructorName = kotlinFqName.dropLast(1).joinToString(".")
                             val innerConstructorName = kotlinFqName.last()
-                            "kotlin.native.internal.initInstance(${args[0]}, (${args[1]} as $outerClassName).$innerConstructorName())"
+                            val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
+                            val innerConstructorCall = "(${args.last()} as $outerConstructorName).$innerConstructorName($innerConstructorArgs)"
+
+                            "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
                         }
                     )
                 } else {

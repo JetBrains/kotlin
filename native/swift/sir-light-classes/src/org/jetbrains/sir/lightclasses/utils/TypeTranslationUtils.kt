@@ -74,6 +74,7 @@ private fun <P : KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol
 }
 
 private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {
+    val parameterName = "outer__" //Temporary solution until there is no generic parameter mangling
     return withSessions {
         val sirFromKtSymbol = this@getOuterParameterOfInnerClass
         if (sirFromKtSymbol is SirInitFromKtSymbol && isInner(sirFromKtSymbol)) {
@@ -84,7 +85,7 @@ private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterPar
                 { error("Unsupported type") },
                 {})
             outType?.run {
-                SirParameter(argumentName = "outer", type = this)
+                SirParameter(argumentName = parameterName, type = this)
             }
         } else null
     }

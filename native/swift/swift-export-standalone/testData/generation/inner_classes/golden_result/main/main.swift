@@ -11,11 +11,11 @@ public final class Outer: KotlinRuntime.KotlinBase {
                 super.init(__externalRCRef: __externalRCRef)
             }
             public init(
-                outer: main.Outer.Inner
+                outer__: main.Outer.Inner
             ) {
                 let __kt = Outer_Inner_InnerInner_init_allocate()
                 super.init(__externalRCRef: __kt)
-                Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__(__kt, outer.__externalRCRef())
+                Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__(__kt, outer__.__externalRCRef())
             }
         }
         package override init(
@@ -24,11 +24,11 @@ public final class Outer: KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __externalRCRef)
         }
         public init(
-            outer: main.Outer
+            outer__: main.Outer
         ) {
             let __kt = Outer_Inner_init_allocate()
             super.init(__externalRCRef: __kt)
-            Outer_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer__(__kt, outer.__externalRCRef())
+            Outer_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer__(__kt, outer__.__externalRCRef())
         }
         public func foo() -> Swift.Int32 {
             return Outer_Inner_foo(self.__externalRCRef())
