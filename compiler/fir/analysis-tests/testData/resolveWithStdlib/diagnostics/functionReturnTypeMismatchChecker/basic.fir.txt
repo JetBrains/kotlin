@@ -34,7 +34,7 @@ FILE: basic.kt
     public final infix fun R|() -> kotlin/Unit|.foo(x: R|A.() -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun okWithLambda(): R|kotlin/String| {
-        foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@foo Unit
         }
         .R|/foo|(foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
@@ -45,7 +45,7 @@ FILE: basic.kt
         ^okWithLambda String()
     }
     public final fun errorWithLambda(): R|kotlin/String| {
-        foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@foo Unit
         }
         .R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {

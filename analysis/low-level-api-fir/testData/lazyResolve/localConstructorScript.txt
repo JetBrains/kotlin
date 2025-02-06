@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
             }
 
             public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] E, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F> foo(): R|() -> <local>/C<F, E, F>| {
-                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
+                ^foo [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=NoInline>  {
                     local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Outer(E), [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
                         public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
             }
 
             public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] E, [ResolvedTo(CONSTANT_EVALUATION)] F> foo(): R|() -> <local>/C<F, E, F>| {
-                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
+                ^foo [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=NoInline>  {
                     local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(CONSTANT_EVALUATION)] Outer(E), [ResolvedTo(CONSTANT_EVALUATION)] Outer(F)> : R|kotlin/Any| {
                         public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
             }
 
             public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] E, [ResolvedTo(ANNOTATION_ARGUMENTS)] F> foo(): R|() -> <local>/C<F, E, F>| {
-                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
+                ^foo [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=NoInline>  {
                     local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(ANNOTATION_ARGUMENTS)] Outer(E), [ResolvedTo(ANNOTATION_ARGUMENTS)] Outer(F)> : R|kotlin/Any| {
                         public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> <local>/C<F, E, F>| {
-                ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
+                ^foo [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=NoInline>  {
                     local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] Outer(E), [ResolvedTo(BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
                         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
@@ -332,7 +332,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> <local>/C<F, E, F>| {
-                ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
+                ^foo [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=NoInline>  {
                     local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] Outer(E), [ResolvedTo(BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
                         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
@@ -355,4 +355,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
             }
 
         }
-
