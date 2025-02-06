@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
-import org.jetbrains.kotlin.util.tryMeasureFindJavaClassTime
+import org.jetbrains.kotlin.util.FindJavaClassMeasurement
+import org.jetbrains.kotlin.util.tryMeasureTime
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -83,7 +84,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     }
 
     private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
-        return perfManager.tryMeasureFindJavaClassTime {
+        return perfManager.tryMeasureTime(FindJavaClassMeasurement::class) {
             findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
         }
     }
@@ -198,38 +199,39 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
-    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> = perfManager.tryMeasureFindJavaClassTime {
-        val result = ArrayList<PsiClass>(1)
-        forEachClassId(qName) { classId ->
-            val relativeClassName = classId.relativeClassName.asString()
+    override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> =
+        perfManager.tryMeasureTime(FindJavaClassMeasurement::class) {
+            val result = ArrayList<PsiClass>(1)
+            forEachClassId(qName) { classId ->
+                val relativeClassName = classId.relativeClassName.asString()
 
-            // Search java sources first. For build tools, it makes sense to build new files passing all the
-            // class files for the previous build on the class path.
-            result.addIfNotNull(
-                singleJavaFileRootsIndex.findJavaSourceClass(classId)
-                    ?.takeIf { it in scope }
-                    ?.findPsiClassInVirtualFile(relativeClassName)
-            )
-
-            index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
-                val psiClass =
-                    findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                // Search java sources first. For build tools, it makes sense to build new files passing all the
+                // class files for the previous build on the class path.
+                result.addIfNotNull(
+                    singleJavaFileRootsIndex.findJavaSourceClass(classId)
                         ?.takeIf { it in scope }
                         ?.findPsiClassInVirtualFile(relativeClassName)
-                if (psiClass != null) {
-                    result.add(psiClass)
+                )
+
+                index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
+                    val psiClass =
+                        findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                            ?.takeIf { it in scope }
+                            ?.findPsiClassInVirtualFile(relativeClassName)
+                    if (psiClass != null) {
+                        result.add(psiClass)
+                    }
+                    // traverse all
+                    true
                 }
-                // traverse all
-                true
+
+                if (result.isNotEmpty()) {
+                    return@tryMeasureTime result.toTypedArray()
+                }
             }
 
-            if (result.isNotEmpty()) {
-                return@tryMeasureFindJavaClassTime result.toTypedArray()
-            }
+            PsiClass.EMPTY_ARRAY
         }
-
-        PsiClass.EMPTY_ARRAY
-    }
 
     override fun findPackage(packageName: String): PsiPackage? {
         var found = false

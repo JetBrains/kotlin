@@ -9,20 +9,27 @@ import java.io.File
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
 
 /**
  * Generally, the class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
  * to get reliable performance measurements.
- * However, [measureFindJavaClassTime] written to be thread-safe because there is no absolute guarantee
+ * However, [measureTime] written to be thread-safe because there is no absolute guarantee
  * that external measurements are collected in a single thread.
  */
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
     // The lock object is located not in a companion object because every module has its own instance of the performance manager
-    private val findJavaClassLock = Any()
+    private val counterMeasurementsLock = Any()
 
     @Suppress("MemberVisibilityCanBePrivate")
     private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
-    private var findJavaClassMeasurement: FindJavaClassMeasurement = FindJavaClassMeasurement(0, 0)
+
+    // Initialize the counter measurements in strict order to get rid of difference in the same report
+    private val counterMeasurements: MutableMap<KClass<*>, CounterMeasurement> = mutableMapOf(
+        FindJavaClassMeasurement::class to FindJavaClassMeasurement(0, 0),
+        BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
+    )
+
     protected var isEnabled: Boolean = false
     private var initStartNanos = PerformanceCounter.currentTime()
     private var analysisStart: Long = 0
@@ -41,7 +48,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
-    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + findJavaClassMeasurement
+    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + counterMeasurements.values
 
     fun addMeasurementResults(newMeasurements:  List<PerformanceMeasurement>) {
         measurements += newMeasurements
@@ -173,7 +180,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
     }
 
-    internal fun <T> measureFindJavaClassTime(block: () -> T): T {
+    internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
 
         val startTime = PerformanceCounter.currentTime()
@@ -181,9 +188,17 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
             return block()
         } finally {
             val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(PerformanceCounter.currentTime() - startTime)
-            synchronized(findJavaClassLock) {
-                findJavaClassMeasurement =
-                    FindJavaClassMeasurement(findJavaClassMeasurement.count + 1, findJavaClassMeasurement.milliseconds + elapsedMillis)
+            synchronized(counterMeasurementsLock) {
+                val currentMeasurement = counterMeasurements[measurementClass]
+                    ?: error("No counter measurement initialized for $measurementClass")
+                val newCount = currentMeasurement.count + 1
+                val newElapsed = currentMeasurement.milliseconds + elapsedMillis
+                val newMeasurement = when (measurementClass) {
+                    FindJavaClassMeasurement::class -> FindJavaClassMeasurement(newCount, newElapsed)
+                    BinaryClassFromKotlinFileMeasurement::class -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
+                    else -> error("The measurement for $measurementClass is not supported")
+                }
+                counterMeasurements[measurementClass] = newMeasurement
             }
         }
     }
@@ -199,14 +214,18 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     fun renderCompilerPerformance(): String {
         val relevantMeasurements = getMeasurementResults().filter {
-            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement ||
-                    it is FindJavaClassMeasurement
+            it is CompilerInitializationMeasurement ||
+                    it is CodeAnalysisMeasurement ||
+                    it is CodeGenerationMeasurement ||
+                    it is PerformanceCounterMeasurement ||
+                    it is FindJavaClassMeasurement ||
+                    it is BinaryClassFromKotlinFileMeasurement
         }
 
         return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
     }
 }
 
-fun <T> CommonCompilerPerformanceManager?.tryMeasureFindJavaClassTime(block: () -> T): T {
-    return if (this == null) return block() else measureFindJavaClassTime(block)
+fun <T> CommonCompilerPerformanceManager?.tryMeasureTime(measurementClass: KClass<*>, block: () -> T): T {
+    return if (this == null) return block() else measureTime(measurementClass, block)
 }

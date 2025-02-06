@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.util.BinaryClassFromKotlinFileMeasurement
+import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.tryMeasureTime
 import java.io.FileNotFoundException
 import java.io.IOException
 
@@ -45,10 +47,14 @@ class VirtualFileKotlinClass private constructor(
 
     companion object Factory {
         private val LOG = Logger.getInstance(VirtualFileKotlinClass::class.java)
-        private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
-        internal fun create(file: VirtualFile, metadataVersion: MetadataVersion, fileContent: ByteArray?): KotlinClassFinder.Result? {
-            return perfCounter.time {
+        internal fun create(
+            file: VirtualFile,
+            metadataVersion: MetadataVersion,
+            fileContent: ByteArray?,
+            perfManager: CommonCompilerPerformanceManager?,
+        ): KotlinClassFinder.Result? {
+            return perfManager.tryMeasureTime(BinaryClassFromKotlinFileMeasurement::class) {
                 assert(file.extension == JavaClassFileType.INSTANCE.defaultExtension || file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
@@ -58,7 +64,7 @@ class VirtualFileKotlinClass private constructor(
                             VirtualFileKotlinClass(file, name, classVersion, header, innerClasses)
                         }
 
-                        return@time kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }
+                        return@tryMeasureTime kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }
                             ?: KotlinClassFinder.Result.ClassFileContent(byteContent)
                     }
                 } catch (e: FileNotFoundException) {

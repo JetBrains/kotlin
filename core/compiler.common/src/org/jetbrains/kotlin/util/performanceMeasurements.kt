@@ -41,13 +41,18 @@ class IRMeasurement(val lines: Int?, val milliseconds: Long, val kind: Kind) : P
     }
 }
 
-sealed class JvmMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
+sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
     abstract val description: String
-    override fun render(): String = "$description performed $count times" + (if (milliseconds == 0L) "" else ", total time $milliseconds ms\"")
+    override fun render(): String =
+        "$description performed $count times" + (if (milliseconds == 0L) "" else ", total time $milliseconds ms")
 }
 
-class FindJavaClassMeasurement(count: Int, milliseconds: Long) : JvmMeasurement(count, milliseconds) {
+class FindJavaClassMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
     override val description: String = "Find Java class"
+}
+
+class BinaryClassFromKotlinFileMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
+    override val description: String = "Binary class from Kotlin file"
 }
 
 private fun formatMeasurement(name: String, time: Long, lines: Int?): String =
