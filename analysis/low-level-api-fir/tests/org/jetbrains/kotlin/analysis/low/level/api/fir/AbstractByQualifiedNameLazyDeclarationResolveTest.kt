@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = listOf(Directives)
+        get() = super.additionalDirectives + listOf(Directives)
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val psiFile = mainFile ?: mainModule.files.first()

@@ -25,7 +25,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = listOf(Directives)
+        get() = super.additionalDirectives + listOf(Directives)
 
     private object Directives : SimpleDirectivesContainer() {
         val IGNORE_PARENTING_CHECK by directive(description = "Ignore the test")

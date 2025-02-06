@@ -84,7 +84,7 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = listOf(Directives)
+        get() = super.additionalDirectives + listOf(Directives)
 
     private object Directives : SimpleDirectivesContainer() {
         val BODY_RESOLVE by directive("Resolve a declaration to body to collect types from the body as well")

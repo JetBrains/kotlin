@@ -84,6 +84,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     /**
      * Allows easily specifying additional directives without overriding [configureTest].
+     *
+     * If the test doesn't inherit directly from [AbstractAnalysisApiBasedTest], by convention, the override should include
+     * `super.additionalDirectives`.
      */
     open val additionalDirectives: List<DirectivesContainer>
         get() = emptyList()

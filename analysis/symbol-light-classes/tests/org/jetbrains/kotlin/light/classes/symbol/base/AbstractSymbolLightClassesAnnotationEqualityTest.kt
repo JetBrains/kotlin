@@ -96,7 +96,7 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = listOf(Directives)
+        get() = super.additionalDirectives + listOf(Directives)
 
     private object Directives : SimpleDirectivesContainer() {
         val EXPECTED by valueDirective(description = "Expected annotation qualifier to check equality") {

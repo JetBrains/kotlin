@@ -26,7 +26,7 @@ abstract class AbstractClassSubtypingTypeRelationTest : AbstractTypeRelationTest
     protected abstract val errorTypePolicy: KaSubtypingErrorTypePolicy
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = listOf(ClassSubtypingTestDirectives)
+        get() = super.additionalDirectives + listOf(ClassSubtypingTestDirectives)
 
     override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
         val type = getTypeAtMarker(mainFile, testServices, qualifier = "type1")
