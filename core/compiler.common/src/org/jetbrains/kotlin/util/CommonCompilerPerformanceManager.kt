@@ -19,20 +19,16 @@ import kotlin.reflect.KClass
  */
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
     // The lock object is located not in a companion object because every module has its own instance of the performance manager
-    private val findJavaClassLock = Any()
+    private val counterMeasurementsLock = Any()
 
     @Suppress("MemberVisibilityCanBePrivate")
     private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
 
     // Initialize the counter measurements in strict order to get rid of difference in the same report
-    private val counterMeasurements: MutableList<CounterMeasurement> = mutableListOf(
-        FindJavaClassMeasurement(0, 0),
-        BinaryClassFromKotlinFileMeasurement(0, 0),
-    ).also { measurements ->
-        assert(measurements.distinctBy { it::class }.size == measurements.size) {
-            "All counter measurements should be unique"
-        }
-    }
+    private val counterMeasurements: MutableMap<KClass<*>, CounterMeasurement> = mutableMapOf(
+        FindJavaClassMeasurement::class to FindJavaClassMeasurement(0, 0),
+        BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
+    )
 
     protected var isEnabled: Boolean = false
     private var initStartNanos = PerformanceCounter.currentTime()
@@ -52,7 +48,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
-    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + counterMeasurements
+    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + counterMeasurements.values
 
     fun addMeasurementResults(newMeasurements:  List<PerformanceMeasurement>) {
         measurements += newMeasurements
@@ -192,10 +188,9 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
             return block()
         } finally {
             val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(PerformanceCounter.currentTime() - startTime)
-            synchronized(counterMeasurements) {
-                val currentMeasurementIndex = counterMeasurements.indexOfFirst { it::class == measurementClass }
-                    .takeIf { it >= 0 } ?: error("No counter measurement initialized for $measurementClass")
-                val currentMeasurement = counterMeasurements[currentMeasurementIndex]
+            synchronized(counterMeasurementsLock) {
+                val currentMeasurement = counterMeasurements[measurementClass]
+                    ?: error("No counter measurement initialized for $measurementClass")
                 val newCount = currentMeasurement.count + 1
                 val newElapsed = currentMeasurement.milliseconds + elapsedMillis
                 val newMeasurement = when (measurementClass) {
@@ -203,7 +198,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
                     BinaryClassFromKotlinFileMeasurement::class -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
                     else -> error("The measurement for $measurementClass is not supported")
                 }
-                counterMeasurements[currentMeasurementIndex] = newMeasurement
+                counterMeasurements[measurementClass] = newMeasurement
             }
         }
     }
