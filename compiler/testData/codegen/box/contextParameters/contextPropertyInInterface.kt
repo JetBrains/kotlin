@@ -1,6 +1,5 @@
 // LANGUAGE: +ContextParameters
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-75016
 
 interface I {
