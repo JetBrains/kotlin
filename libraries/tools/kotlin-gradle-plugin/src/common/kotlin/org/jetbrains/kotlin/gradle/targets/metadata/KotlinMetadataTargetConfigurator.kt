@@ -31,12 +31,7 @@ internal val Project.isKotlinGranularMetadataEnabled: Boolean
     get() = true // enableGranularSourceSetsMetadata is always true
 
 internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
-    get() = with(PropertiesProvider(this)) {
-        when {
-            !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
-            else -> true
-        }
-    }
+    get() = true // hierarchical structure is always enabled
 
 
 class KotlinMetadataTargetConfigurator :
