@@ -63,6 +63,16 @@ class With0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
+class PerRowCol : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: ConvertApproximation by arg()
+    val Arguments.infer by ignore()
+    val Arguments.type: TypeApproximation by type(name("expression"))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return convertImpl(receiver.schema, receiver.columns, type)
+    }
+}
+
 internal fun KotlinTypeFacade.convertImpl(
     pluginDataFrameSchema: PluginDataFrameSchema,
     columns: List<List<String>>,

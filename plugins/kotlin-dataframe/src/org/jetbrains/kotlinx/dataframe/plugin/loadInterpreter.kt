@@ -105,6 +105,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColumnsConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
@@ -206,6 +207,7 @@ internal inline fun <reified T> String.load(): T {
         "Convert6" -> Convert6()
         "To0" -> To0()
         "With0" -> With0()
+        "PerRowCol" -> PerRowCol()
         "Explode0" -> Explode0()
         "Read0" -> Read0()
         "Insert0" -> Insert0()
