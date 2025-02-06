@@ -544,11 +544,13 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         //   the dynamic type will "consume" all other, erasing information.
         // Example (2): if (x == null) { ... },
         //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
+        val nonNothingTypes = allTypes.filter { !it.isKindOfNothing }
         if (
             intersectedType.isKindOfNothing &&
             !originalType.isNullableNothing &&
             !originalType.isNothing &&
-            originalType !is ConeStubType
+            originalType !is ConeStubType &&
+            nonNothingTypes.isNotEmpty()
         ) {
             smartcastTypeWithoutNullableNothing = buildResolvedTypeRef {
                 source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
