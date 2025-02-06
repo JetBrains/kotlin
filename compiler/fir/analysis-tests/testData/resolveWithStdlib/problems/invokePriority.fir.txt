@@ -5,7 +5,7 @@ FILE: invokePriority.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            lval foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 
@@ -25,7 +25,7 @@ FILE: invokePriority.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final val foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
@@ -64,7 +64,7 @@ FILE: invokePriority.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val f: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            public final val f: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 

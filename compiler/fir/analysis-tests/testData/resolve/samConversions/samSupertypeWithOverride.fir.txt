@@ -10,7 +10,7 @@ FILE: main.kt
             ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(1)))
         }
         ))
-        lval x: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
+        lval x: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=Unknown>  {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
 
