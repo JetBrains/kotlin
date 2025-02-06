@@ -52,7 +52,7 @@ object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiEl
             )
         }
 
-        if (element.subject == null) {
+        if (element.subjectVariable == null) {
             reporter.reportOn(source, FirErrors.WHEN_GUARD_WITHOUT_SUBJECT, context)
         } else {
             if (source.getChild(KtTokens.COMMA, depth = 1) != null) {

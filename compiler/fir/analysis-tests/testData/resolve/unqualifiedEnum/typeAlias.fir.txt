@@ -18,7 +18,7 @@ FILE: typeAlias.kt
     }
     public final typealias Other = R|Some|
     public final fun foo(o: R|{Other=} Some|): R|kotlin/Int| {
-        ^foo when (R|<local>/o|) {
+        ^foo when (lval <when-subject>: R|{Other=} Some| = R|<local>/o|) {
             ==($subj$, R|/Some.FIRST|) ->  {
                 Int(1)
             }

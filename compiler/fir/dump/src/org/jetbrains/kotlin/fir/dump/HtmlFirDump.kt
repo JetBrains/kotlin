@@ -1441,7 +1441,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 keyword("when")
                 +" ("
                 whenExpression.subjectVariable?.let { generate(it) }
-                    ?: whenExpression.subject?.let { generate(it) }
+                    ?: whenExpression.subjectVariable?.initializer?.let { generate(it) }
                 +") {"
             }
             withIdentLevel {

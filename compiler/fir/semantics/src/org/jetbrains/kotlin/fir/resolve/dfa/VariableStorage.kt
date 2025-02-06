@@ -49,6 +49,7 @@ class VariableStorage(private val session: FirSession) {
         val isImplicit = unwrapped is FirThisReceiverExpression ||
                 unwrapped.toResolvedCallableSymbol(session)?.isContextParameter() == true
         val symbol = when (unwrapped) {
+//            is FirWhenSubjectExpression -> unwrapped.whenRef.value.subjectVariable?.takeIf { it.isExplicitWhenSubjectVariable }?.symbol
             is FirWhenSubjectExpression -> unwrapped.whenRef.value.subjectVariable?.symbol
             is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)
             is FirResolvable -> unwrapped.calleeReference.symbol
@@ -104,7 +105,8 @@ class VariableStorage(private val session: FirSession) {
 
     private tailrec fun FirExpression.unwrapElement(): FirExpression? {
         return when (this) {
-            is FirWhenSubjectExpression -> (whenRef.value.takeIf { it.subjectVariable == null }?.subject ?: return this).unwrapElement()
+//            is FirWhenSubjectExpression -> (whenRef.value.subjectVariable?.takeIf { !it.isExplicitWhenSubjectVariable }?.initializer ?: return this).unwrapElement()
+            is FirWhenSubjectExpression -> this
             is FirSmartCastExpression -> originalExpression.unwrapElement()
             // Safe assignments (a?.x = b) have non-expression selectors. In this case the entire safe call
             // is not really an expression either, so we shouldn't produce any kinds of statements on it.

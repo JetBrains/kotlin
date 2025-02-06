@@ -468,7 +468,7 @@ abstract class FirDataFlowAnalyzer(
          *   right argument
          */
         val leftConst = when (leftOperand) {
-            is FirWhenSubjectExpression -> leftOperand.whenRef.value.subject
+            is FirWhenSubjectExpression -> leftOperand.whenRef.value.subjectVariable?.initializer
             else -> leftOperand
         } as? FirLiteralExpression
         val rightConst = rightOperand as? FirLiteralExpression

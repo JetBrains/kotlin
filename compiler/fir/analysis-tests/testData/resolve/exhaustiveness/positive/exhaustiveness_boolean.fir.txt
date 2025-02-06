@@ -1,12 +1,12 @@
 FILE: exhaustiveness_boolean.kt
     public final fun test_1(b: R|kotlin/Boolean|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int| = when (R|<local>/b|) {
+        lval x: R|kotlin/Int| = when (lval <when-subject>: R|kotlin/Boolean| = R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }
         }
 
-        lval y: R|kotlin/Int| = when (R|<local>/b|) {
+        lval y: R|kotlin/Int| = when (lval <when-subject>: R|kotlin/Boolean| = R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }
@@ -15,7 +15,7 @@ FILE: exhaustiveness_boolean.kt
             }
         }
 
-        lval z: R|kotlin/Int| = when (R|<local>/b|) {
+        lval z: R|kotlin/Int| = when (lval <when-subject>: R|kotlin/Boolean| = R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }
@@ -26,7 +26,7 @@ FILE: exhaustiveness_boolean.kt
 
     }
     public final fun test_2(b: R|kotlin/Boolean?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int| = when (R|<local>/b|) {
+        lval x: R|kotlin/Int| = when (lval <when-subject>: R|kotlin/Boolean?| = R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }
@@ -35,7 +35,7 @@ FILE: exhaustiveness_boolean.kt
             }
         }
 
-        lval y: R|kotlin/Int| = when (R|<local>/b|) {
+        lval y: R|kotlin/Int| = when (lval <when-subject>: R|kotlin/Boolean?| = R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }

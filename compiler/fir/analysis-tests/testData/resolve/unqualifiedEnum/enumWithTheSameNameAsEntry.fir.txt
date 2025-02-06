@@ -17,7 +17,7 @@ FILE: enumWithTheSameNameAsEntry.kt
 
     }
     public final fun test(a: R|A|): R|kotlin/String| {
-        ^test when (R|<local>/a|) {
+        ^test when (lval <when-subject>: R|A| = R|<local>/a|) {
             ==($subj$, R|/A.A|.<Unresolved name: A>#) ->  {
                 String(A)
             }

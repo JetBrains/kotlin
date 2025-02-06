@@ -109,7 +109,7 @@ internal class ImplementationPrinter(
                                     )
                                 }
 
-                                "dispatchReceiver", "extensionReceiver", "subjectVariable", "companionObject" -> {
+                                "dispatchReceiver", "extensionReceiver", "companionObject" -> {
                                 }
 
                                 else -> {
