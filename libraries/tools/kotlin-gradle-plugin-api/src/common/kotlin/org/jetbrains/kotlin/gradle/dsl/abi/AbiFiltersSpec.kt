@@ -93,7 +93,7 @@ interface AbiFiltersSpec {
     }
 
     /**
-     * Configures the [included] with the provided configuration.
+     * Configures the [included] variable with the provided configuration.
      */
     fun included(action: Action<AbiFilterSetSpec>) {
         action.execute(included)
