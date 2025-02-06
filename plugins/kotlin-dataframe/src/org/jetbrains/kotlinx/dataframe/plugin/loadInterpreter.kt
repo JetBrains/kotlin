@@ -90,6 +90,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Merge0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeId
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeInto0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveAfter0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveInto0
@@ -277,6 +282,11 @@ internal inline fun <reified T> String.load(): T {
         "MoveToRight0" -> MoveToRight0()
         "MoveAfter0" -> MoveAfter0()
         "GroupByAdd" -> GroupByAdd()
+        "Merge0" -> Merge0()
+        "MergeInto0" -> MergeInto0()
+        "MergeId" -> MergeId()
+        "MergeBy0" -> MergeBy0()
+        "MergeBy1" -> MergeBy1()
         else -> error("$this")
     } as T
 }
