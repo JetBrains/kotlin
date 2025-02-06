@@ -19,8 +19,8 @@ public class SirDeclarationFromKtSymbolProvider(
     private val ktModule: KaModule,
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
-    public override fun KaDeclarationSymbol.toSIR(): SirTranslationResult =
-        when (val ktSymbol = this@toSIR) {
+    public override fun KaDeclarationSymbol.toSir(): SirTranslationResult =
+        when (val ktSymbol = this@toSir) {
             is KaNamedClassSymbol -> {
                 if (ktSymbol.classKind == KaClassKind.INTERFACE) {
                     SirProtocolFromKtSymbol(
@@ -56,7 +56,7 @@ public class SirDeclarationFromKtSymbolProvider(
                         SirTranslationResult.ExtensionProperty(it, ktSymbol.setter?.toSirFunction(ktSymbol))
                     } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
                 } else {
-                    ktSymbol.toSirVariable().let(SirTranslationResult::RegularVariable)
+                    ktSymbol.toSirVariable().let(SirTranslationResult::RegularProperty)
                 }
             }
             is KaTypeAliasSymbol -> {
