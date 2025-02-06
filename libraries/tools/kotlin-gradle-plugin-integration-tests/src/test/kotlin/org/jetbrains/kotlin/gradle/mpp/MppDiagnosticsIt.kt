@@ -250,6 +250,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     private val deprecatedFlags: Map<String, String>
         get() = mapOf(
             "kotlin.internal.mpp.hierarchicalStructureByDefault" to "true",
+            "kotlin.mpp.enableCompatibilityMetadataVariant" to "false",
             "kotlin.mpp.hierarchicalStructureSupport" to "true",
             "kotlin.native.enableDependencyPropagation" to "false",
         )
