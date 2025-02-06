@@ -31,7 +31,7 @@ interface KotlinLegacyAbiCheckTask : Task {
     val referenceDir: Provider<Directory>
 
     /**
-     * A irectory containing ABI dumps for the current project's classes.
+     * A directory containing ABI dumps for the current project's classes.
      */
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
