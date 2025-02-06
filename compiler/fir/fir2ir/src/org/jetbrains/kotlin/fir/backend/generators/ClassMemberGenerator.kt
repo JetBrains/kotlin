@@ -108,7 +108,7 @@ internal class ClassMemberGenerator(
                         irFunction.putParametersInScope(firFunction)
                     }
                 }
-                val irParameters = valueParameters.drop(firFunction.contextParameters.size)
+                val irParameters = parameters.filter { it.kind == IrParameterKind.Regular }
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
                 for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
                     visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
@@ -137,12 +137,14 @@ internal class ClassMemberGenerator(
                         val thisParameter =
                             conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
 
+                        val irContextParameters = parameters.filter { it.kind == IrParameterKind.Context }
+
                         for (index in containingClass.contextParameters.indices) {
                             require(contextReceiverFields.size > index) {
                                 "Not defined context receiver #${index} for $irClass. " +
                                         "Context receivers found: $contextReceiverFields"
                             }
-                            val irValueParameter = valueParameters[index]
+                            val irValueParameter = irContextParameters[index]
                             body.statements.add(
                                 IrSetFieldImpl(
                                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -315,7 +317,12 @@ internal class ClassMemberGenerator(
                                 if (isSetter) {
                                     IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
                                         setReceiver(declaration)
-                                        value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
+                                        value = IrGetValueImpl(
+                                            startOffset,
+                                            endOffset,
+                                            propertyType,
+                                            parameters.first { it.kind == IrParameterKind.Regular }.symbol
+                                        )
                                     }
                                 } else {
                                     IrReturnImpl(
