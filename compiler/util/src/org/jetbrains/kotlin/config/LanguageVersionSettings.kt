@@ -385,7 +385,7 @@ enum class LanguageFeature(
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_3, kind = BUG_FIX), // KT-11914 Deprecation phase 2
     ReportExposedTypeForInternalTypeParameterBounds(KOTLIN_2_3, kind = BUG_FIX), // KTLC-275
     EnableDfaWarningsInK2(KOTLIN_2_3, kind = OTHER), // KT-50965
-    ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, kind = OTHER), // KT-67869
+    ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_2, kind = OTHER), // KT-67869
 
     // End of 2.* language features --------------------------------------------------
 

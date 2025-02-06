@@ -146,9 +146,9 @@ internal fun FirAnonymousFunction.computeReturnType(
     }
 
     return when {
-        !isLambda && returnTypeRef is FirResolvedTypeRef ->
-            expectedReturnType
-                ?: error("For anonymous function with explicit return types, their \"expectedType\" is the `returnTypeRef` (not nullable)")
+//        !isLambda && returnTypeRef is FirResolvedTypeRef ->
+//            expectedReturnType
+//                ?: error("For anonymous function with explicit return types, their \"expectedType\" is the `returnTypeRef` (not nullable)")
         isPassedAsFunctionArgument && !commonSuperType.fullyExpandedType(session).isUnit ->
             expectedReturnType ?: commonSuperType
         else -> commonSuperType
