@@ -84,7 +84,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
         val performanceManager = createPerformanceManager(arguments, services)
         if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics()
+            performanceManager.enableCollectingPerformanceStatistics(isK2 = false)
         }
 
         val configuration = CompilerConfiguration()

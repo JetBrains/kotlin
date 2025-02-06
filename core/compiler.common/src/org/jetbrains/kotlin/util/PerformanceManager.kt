@@ -33,6 +33,7 @@ abstract class PerformanceManager(private val presentableName: String) {
     )
 
     protected var isEnabled: Boolean = false
+    private var isK2: Boolean = true
     private var initStartNanos = currentTime()
     private var analysisStart: Long = 0
     private var generationStart: Long = 0
@@ -52,7 +53,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + counterMeasurements.values
 
-    fun addMeasurementResults(newMeasurements:  List<PerformanceMeasurement>) {
+    fun addMeasurementResults(newMeasurements: List<PerformanceMeasurement>) {
         measurements += newMeasurements
     }
 
@@ -60,8 +61,12 @@ abstract class PerformanceManager(private val presentableName: String) {
         measurements.clear()
     }
 
-    fun enableCollectingPerformanceStatistics() {
+    fun enableCollectingPerformanceStatistics(isK2: Boolean) {
         isEnabled = true
+        this.isK2 = isK2
+        if (!isK2) {
+            PerformanceCounter.setTimeCounterEnabled(true)
+        }
         ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
 
@@ -80,6 +85,9 @@ abstract class PerformanceManager(private val presentableName: String) {
         if (!isEnabled) return
         recordGcTime()
         recordJitCompilationTime()
+        if (!isK2) {
+            recordPerfCountersMeasurements()
+        }
     }
 
     open fun addSourcesStats(files: Int, lines: Int) {
@@ -176,6 +184,10 @@ abstract class PerformanceManager(private val presentableName: String) {
         measurements += CompilerInitializationMeasurement(time)
     }
 
+    private fun recordPerfCountersMeasurements() {
+        PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
+    }
+
     internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
 
@@ -213,6 +225,7 @@ abstract class PerformanceManager(private val presentableName: String) {
             it is CompilerInitializationMeasurement ||
                     it is CodeAnalysisMeasurement ||
                     it is CodeGenerationMeasurement ||
+                    it is PerformanceCounterMeasurement ||
                     it is FindJavaClassMeasurement ||
                     it is BinaryClassFromKotlinFileMeasurement
         }
