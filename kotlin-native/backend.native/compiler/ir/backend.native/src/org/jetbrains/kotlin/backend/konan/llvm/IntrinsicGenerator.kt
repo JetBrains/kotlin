@@ -57,6 +57,7 @@ internal enum class IntrinsicType {
     OBJC_CREATE_SUPER_STRUCT,
     OBJC_INIT_BY,
     OBJC_GET_SELECTOR,
+    BLOCK_PTR_TO_FUNCTION_OBJECT,
     // Other
     CREATE_UNINITIALIZED_INSTANCE,
     CREATE_UNINITIALIZED_ARRAY,
@@ -283,6 +284,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.COMPARE_AND_SET_FIELD,
                 IntrinsicType.COMPARE_AND_EXCHANGE_FIELD,
                 IntrinsicType.GET_AND_SET_FIELD,
+                IntrinsicType.BLOCK_PTR_TO_FUNCTION_OBJECT,
                 IntrinsicType.GET_AND_ADD_FIELD ->
                     reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.OBJC_INIT_BY,
