@@ -67,10 +67,6 @@ abstract class KotlinSoftwareComponent(
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
 
-        if (!project.isKotlinGranularMetadataEnabled) {
-            val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
-            return@future metadataTarget.createUsageContexts(metadataCompilation)
-        }
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
