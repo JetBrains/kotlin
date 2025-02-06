@@ -303,5 +303,5 @@ modules:
 - compiler/frontend.common.jvm
 - build-common
 - repo/codebase-tests
-#- repo/artifacts-tests
+- repo/artifacts-tests
 - test-instrumenter

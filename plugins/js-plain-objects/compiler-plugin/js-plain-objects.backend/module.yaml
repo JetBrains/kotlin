@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
   
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - com.jetbrains.intellij.platform:util-rt:233.13135.128
   - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
@@ -80,3 +77,15 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains:annotations:13.0
+  - #org.jetbrains.kotlin.kotlin.plugins.js-plain-objects.compiler-plugin.js-plain-objects.backend.main
+  - ./../../../../js/js.ast
+  - ./../js-plain-objects.common
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

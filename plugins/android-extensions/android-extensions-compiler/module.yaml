@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
   
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.fusesource.jansi:jansi:2.4.0
   - javax.annotation:jsr250-api:1.0
@@ -125,3 +122,25 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - com.jetbrains.intellij.platform:diagnostic:233.13135.128
+  - #kotlin.plugins.android-extensions-compiler.main
+  - ./../../../dependencies/intellij-core
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

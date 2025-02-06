@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - io.vavr:vavr:0.10.4
   - com.jetbrains.intellij.platform:util-rt:233.13135.128
@@ -76,3 +73,69 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - io.vavr:vavr:0.10.4
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - org.jetbrains:annotations:13.0
+  - ./../../../compiler/cli/cli-common
+  - ./../../../core/compiler.common.jvm
+  - ./../../../js/js.frontend
+  - ./../../../compiler/ir/backend.common
+  - ./../../../compiler/frontend
+  - ./../../../core/deserialization.common.jvm
+  - ./../../../dependencies/intellij-core
+  - ./../kotlinx-serialization.common
+  - ./../../../compiler/config.jvm
+  - ./../../../compiler/plugin-api
+  - ./../../../js/js.config
+  - ./../../../wasm/wasm.config
+  - ./../../../compiler/config
+  - ./../../../core/util.runtime
+  - ./../../../native/utils
+  - ./../../../core/compiler.common
+  - ./../../../js/js.serializer
+  - ./../../../core/compiler.common.js
+  - ./../../../compiler/util
+  - ./../../../js/js.parser
+  - ./../../../js/js.ast
+  - ./../../../compiler/backend-common
+  - ./../../../compiler/ir/ir.tree
+  - ./../../../compiler/ir/ir.interpreter
+  - ./../../../core/deserialization
+  - ./../../../compiler/resolution
+  - ./../../../core/descriptors
+  - ./../../../compiler/frontend.common-psi
+  - ./../../../compiler/psi
+  - ./../../../compiler/frontend.common
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - ./../../../compiler/container
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../../core/deserialization.common
+  - ./../../../core/metadata.jvm
+  - ./../../../core/metadata
+  - ./../../../compiler/util-klib
+  - ./../../../compiler/util-io
+  - ./../../../compiler/serialization
+  - ./../../../compiler/compiler.version
+  - ./../../../compiler/resolution.common
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains.intellij.deps:asm-all:9.0
@@ -63,3 +60,30 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains:annotations:13.0
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - #org.jetbrains.kotlin.kotlin.compiler.resolution.common.jvm.main
+  - ./../resolution.common
+  - ./../../core/compiler.common.jvm
+  - ./../psi
+  - ./../util
+  - ./../../core/compiler.common
+  - ./../frontend.common
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../compiler.version
+  - ./../../core/util.runtime
+  - ./../../libraries/tools/kotlin-annotations-jvm
+  - ./../config
+  - ./../container
+  - ./../../core/metadata
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

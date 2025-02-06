@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
   
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil:8.5.4-9
@@ -71,3 +68,37 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,-opt-in, org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.inject:javax.inject:1
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - #org.jetbrains.kotlin.kotlin.compiler.ir.serialization.common.main
+  - ./../ir.tree
+  - ./../../serialization
+  - ./../../util-klib-metadata
+  - ./../../util-klib
+  - ./../../frontend.common-psi
+  - ./../../psi
+  - ./../../util
+  - ./../../frontend.common
+  - ./../../../core/deserialization
+  - ./../../../core/descriptors
+  - ./../../resolution
+  - ./../../util-io
+  - ./../../../core/compiler.common
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../compiler.version
+  - ./../../../core/util.runtime
+  - ./../../config
+  - ./../../container
+  - ./../../../core/deserialization.common
+  - ./../../../core/metadata
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - ./../../resolution.common
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

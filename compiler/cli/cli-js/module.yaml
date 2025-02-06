@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.fusesource.jansi:jansi:2.4.0
   - io.vavr:vavr:0.10.4
@@ -144,3 +141,137 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.fusesource.jansi:jansi:2.4.0
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - org.jetbrains:annotations:13.0
+  - javax.annotation:jsr250-api:1.0
+  - org.jetbrains.intellij.deps:asm-all:9.0
+  - com.google.guava:guava:33.3.1-jre
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - com.google.guava:failureaccess:1.0.2
+  - com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+  - com.google.code.findbugs:jsr305:3.0.2
+  - org.checkerframework:checker-qual:3.43.0
+  - com.google.errorprone:error_prone_annotations:2.28.0
+  - com.google.j2objc:j2objc-annotations:3.0.0
+  - org.jetbrains:annotations:23.0.0
+  - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
+  - ./..
+  - ./../../ir/backend.wasm
+  - ./../../ir/backend.js
+  - ./../../ir/backend.common
+  - ./../../ir/serialization.js
+  - ./../../backend-common
+  - ./../../../wasm/wasm.frontend
+  - ./../cli-common
+  - ./../../frontend
+  - ./../../../wasm/wasm.config
+  - ./../../fir/fir-serialization
+  - ./../../ir/ir.tree
+  - ./../../util
+  - ./../../../js/js.sourcemap
+  - ./../../../dependencies/intellij-core
+  - ./../cli-base
+  - ./../../backend
+  - ./../../fir/fir-entrypoint
+  - ./../../plugin-api
+  - ./../../fir/checkers/checkers.jvm
+  - ./../../fir/java
+  - ./../../fir/resolve
+  - ./../../fir/checkers/checkers.js
+  - ./../../fir/checkers/checkers.native
+  - ./../../fir/checkers/checkers.wasm
+  - ./../../fir/checkers
+  - ./../../fir/semantics
+  - ./../../fir/providers
+  - ./../../fir/raw-fir/psi2fir
+  - ./../../serialization
+  - ./../../fir/fir2ir
+  - ./../../ir/ir.inline
+  - ./../../util-io
+  - ./../../ir/serialization.common
+  - ./../../../js/js.ast
+  - ./../../../wasm/wasm.ir
+  - ./../../ir/ir.interpreter
+  - ./../../ir/ir.psi2ir
+  - ./../../../js/js.frontend
+  - ./../../../core/descriptors
+  - ./../../config.jvm
+  - ./../../../js/js.config
+  - ./../../config
+  - ./../../../native/utils
+  - ./../../../core/util.runtime
+  - ./../../frontend.common-psi
+  - ./../../psi
+  - ./../../frontend.common
+  - ./../../resolution
+  - ./../../../core/deserialization
+  - ./../../container
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../fir/tree
+  - ./../../fir/cones
+  - ./../../compiler.version
+  - ./../../ir/backend.jvm
+  - ./../../light-classes
+  - ./../../javac-wrapper
+  - ./../../frontend.java
+  - ./../../frontend/cfg
+  - ./../../resolution.common
+  - ./../../../native/frontend-native
+  - ./../../util-klib-metadata
+  - ./../../util-klib
+  - ./../../backend.common.jvm
+  - ./../../ir/ir.actualization
+  - ./../../fir/raw-fir/light-tree2fir
+  - ./../../../core/descriptors.jvm
+  - ./../../fir/native
+  - ./../../resolution.common.jvm
+  - ./../../frontend.common.jvm
+  - ./../../fir/fir-deserialization
+  - ./../../../core/metadata.jvm
+  - ./../../../core/compiler.common.jvm
+  - ./../../fir/checkers/checkers.web.common
+  - ./../../../core/compiler.common.js
+  - ./../../fir/raw-fir/raw-fir.common
+  - ./../../../core/compiler.common
+  - ./../../../js/js.serializer
+  - ./../../../js/js.parser
+  - ./../../../core/metadata
+  - ./../../../core/deserialization.common
+  - ./../../../analysis/light-classes-base
+  - ./../../../core/deserialization.common.jvm
+  - ./../../ir/backend.jvm/entrypoint
+  - ./../../fir/fir2ir/jvm-backend
+  - ./../../../js/js.translator
+  - ./../../ir/serialization.jvm
+  - ./../../../core/compiler.common.native
+  - ./../../ir/backend.jvm/lower
+  - ./../../ir/backend.jvm/codegen
+  - ./../../../core/compiler.common.wasm
+  - ./../../../core/compiler.common.web
+  - ./../../ir/serialization.native
+  - ./../../ir/ir.objcinterop
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

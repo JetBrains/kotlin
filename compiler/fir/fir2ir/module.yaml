@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
   
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - javax.inject:javax.inject:1
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
@@ -81,3 +78,74 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals,-opt-in, org.jetbrains.kotlin.types.model.K2Only,-opt-in, org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+  - com.jetbrains.intellij.platform:util:233.13135.128
+  - com.jetbrains.intellij.platform:util-base:233.13135.128
+  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+  - com.jetbrains.intellij.platform:core:233.13135.128
+  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+  - com.jetbrains.intellij.platform:extensions:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+  - com.jetbrains.intellij.java:java-psi:233.13135.128
+  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - io.vavr:vavr-match:0.10.4
+  - ./../../../core/descriptors.jvm
+  - ./../../ir/backend.common
+  - ./../../ir/serialization.common
+  - ./../../ir/ir.tree
+  - ./../../../core/descriptors
+  - ./../fir-serialization
+  - ./../resolve
+  - ./../fir-deserialization
+  - ./../semantics
+  - ./../providers
+  - ./../tree
+  - ./../cones
+  - ./../../../dependencies/intellij-core
+  - ./../../../core/deserialization
+  - ./../../../core/compiler.common.jvm
+  - ./../../../core/deserialization.common.jvm
+  - ./../../../core/util.runtime
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - ./../../backend-common
+  - ./../../frontend
+  - ./../../util
+  - ./../../ir/ir.interpreter
+  - ./../../serialization
+  - ./../../util-klib-metadata
+  - ./../../util-klib
+  - ./../../frontend.common
+  - ./../../../core/compiler.common
+  - ./../java
+  - ./../../resolution.common
+  - ./../../../core/deserialization.common
+  - ./../../../core/metadata
+  - ./../../../core/metadata.jvm
+  - ./../../resolution
+  - ./../../frontend.common-psi
+  - ./../../psi
+  - ./../../config
+  - ./../../container
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../compiler.version
+  - ./../../util-io
+  - ./../checkers
+  - ./../../config.jvm
+  - ./../../resolution.common.jvm
+  - ./../../frontend.common.jvm
+  - ./../raw-fir/raw-fir.common
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals,org.jetbrains.kotlin.types.model.K2Only,org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

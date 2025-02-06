@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
@@ -52,3 +49,45 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains:annotations:13.0
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - ./../../cli/cli-common
+  - ./../../../build-common
+  - ./../../build-tools/kotlin-build-tools-api
+  - ./../../config.jvm
+  - ./../../../js/js.config
+  - ./../../../wasm/wasm.config
+  - ./../../plugin-api
+  - ./../../config
+  - ./../../../native/utils
+  - ./../../../core/util.runtime
+  - ./../../../core/compiler.common.jvm
+  - ./../../frontend
+  - ./../../util
+  - ./../../../core/metadata
+  - ./../../../core/compiler.common
+  - ./../../util-klib
+  - ./../../util-io
+  - ./../../frontend.common-psi
+  - ./../../psi
+  - ./../../frontend.common
+  - ./../../../core/deserialization
+  - ./../../resolution
+  - ./../../../core/descriptors
+  - ./../../container
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../compiler.version
+  - ./../../../core/deserialization.common
+  - ./../../resolution.common
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

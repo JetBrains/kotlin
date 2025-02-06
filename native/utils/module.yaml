@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
@@ -21,3 +18,14 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xsam-conversions=class, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xsuppress-version-warnings, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains:annotations:13.0
+  - ./../../compiler/util-klib
+  - ./../../compiler/util-io
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xsam-conversions=class, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xsuppress-version-warnings, -Xwhen-guards]

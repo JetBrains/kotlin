@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - com.google.guava:guava:33.3.1-jre
   - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
@@ -43,3 +40,36 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xexplicit-api=warning, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - com.google.guava:guava:33.3.1-jre
+  - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - com.google.guava:failureaccess:1.0.2
+  - com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+  - com.google.code.findbugs:jsr305:3.0.2
+  - org.checkerframework:checker-qual:3.43.0
+  - com.google.errorprone:error_prone_annotations:2.28.0
+  - com.google.j2objc:j2objc-annotations:3.0.0
+  - org.jetbrains:annotations:13.0
+  - javax.inject:javax.inject:1
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - ./../semantics
+  - ./../providers
+  - ./../../resolution.common
+  - ./../tree
+  - ./../cones
+  - ./../../../core/compiler.common
+  - ./../../../core/util.runtime
+  - ./../../util
+  - ./../../frontend.common
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - ./../../compiler.version
+  - ./../../config
+  - ./../../container
+  - ./../../../core/metadata
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xexplicit-api=warning, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

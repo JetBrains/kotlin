@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
@@ -40,3 +37,22 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - com.google.code.gson:gson:2.11.0
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - com.google.errorprone:error_prone_annotations:2.27.0
+  - org.jetbrains:annotations:13.0
+  - org.junit.jupiter:junit-jupiter-api:5.10.1
+  - org.junit.platform:junit-platform-commons:1.10.1
+  - org.opentest4j:opentest4j:1.3.0
+  - org.apiguardian:apiguardian-api:1.1.2
+  - #org.jetbrains.kotlin.kotlin.compiler.build-tools.kotlin-build-statistics.main
+  - ./../kotlin-build-tools-api
+  - ./../../tests-mutes/mutes-junit5
+  - ./../../tests-mutes
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

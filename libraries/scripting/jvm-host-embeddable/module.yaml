@@ -9,9 +9,6 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
   
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
@@ -25,3 +22,16 @@ dependencies:
 
 module:
   layout: gradle-jvm
+
+
+test-dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - org.jetbrains.intellij.deps:trove4j:1.0.20200330
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
+  - #org.jetbrains.kotlin.kotlin.kotlin-scripting-jvm-host.main
+  - ./../scripting-jvm
+  - ./../../../prepare/compiler-embeddable
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../common

@@ -9,11 +9,13 @@ repositories:
   - https://www.jetbrains.com/intellij-repository/releases
 
 
-test-dependencies:
-    - org.jetbrains.kotlin:kotlin-test:2.1.20-dev-6663
-
 dependencies:
   - org.jetbrains:annotations:21.0.0
 
 module:
   layout: gradle-jvm
+
+
+test-dependencies:
+  - org.jetbrains:annotations:21.0.0
+  - #org.jetbrains.kotlin.kotlin.analysis.analysis-tools.deprecated-k1-frontend-internals-for-ide-generated.main
