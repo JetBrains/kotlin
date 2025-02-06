@@ -377,6 +377,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("perRowCol.kt")
+  public void testPerRowCol() {
+    runTest("testData/box/perRowCol.kt");
+  }
+
+  @Test
   @TestMetadata("platformType.kt")
   public void testPlatformType() {
     runTest("testData/box/platformType.kt");
