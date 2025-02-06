@@ -713,6 +713,7 @@ private fun KotlinStubs.mapType(
     type.isFloat() -> TrivialValuePassing(irBuiltIns.floatType, CTypes.float)
     type.isDouble() -> TrivialValuePassing(irBuiltIns.doubleType, CTypes.double)
     type.isCPointer(symbols) -> TrivialValuePassing(type, CTypes.voidPtr)
+    type == symbols.nativePtrType -> TrivialValuePassing(type, CTypes.voidPtr)
     type.isTypeOfNullLiteral() && variadic -> TrivialValuePassing(symbols.interopCPointer.starProjectedType.makeNullable(), CTypes.voidPtr)
     type.isUByte() -> TrivialValuePassing(type, CTypes.unsignedChar)
     type.isUShort() -> TrivialValuePassing(type, CTypes.unsignedShort)
