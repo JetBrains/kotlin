@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 //TODO there was some heavy junie usage, check descriptions and comments at cleanup stage
+//TODO metrics metrics metrics
 class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("When inlined lambda's body changes, its call site is recompiled")
@@ -155,6 +156,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         }
     }
 
+
+    //TODO check, i think i havent read this one
+    //TODO remove copyrights because they are actively harmful to this test (deubg info yep)
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in lambda inside inline property getter trigger recompilation")
     @TestMetadata("ic-scenarios/inline-local-class/inline-property/lib")

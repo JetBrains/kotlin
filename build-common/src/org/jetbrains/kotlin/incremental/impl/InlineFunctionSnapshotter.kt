@@ -33,14 +33,12 @@ private class InlineFunctionsSpecialSupportClassVisitor(
                 name?.let { descriptor?.let { JvmMemberSignature.Method(name, descriptor) } }?.let { signature ->
                     ClassInfoGeneratorContextWithLocalClassSnapshotting.MethodWithOwner(classNode.name, signature)
                 }
-                //TODO(62555) test inline accessors
-            // TODO why is nullability so bad here
 
             override fun visitFieldInsn(opcode: Int, owner: String?, name: String?, descriptor: String?) {
                 if (opcode == Opcodes.GETSTATIC && name == "INSTANCE") {
                     ///println("getstaticing $owner $name $descriptor")
                     context.addFqNameUsage(methodSignature!!, FqName(owner!!))
-                    //TODO fix !!
+                    //TODO why is nullability so bad here, fix !!
                 }
                 super.visitFieldInsn(opcode, owner, name, descriptor)
             }
