@@ -76,6 +76,9 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.gradleNodeModules.set(gradleNodeModulesProvider)
         }
 
+        val rootPackageDirectory = nodeJsRoot.rootPackageDirectory
+        val packageManager = nodeJsRoot.packageManagerExtension.map { it.packageManager }
+
         val npmInstall = project.registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) { npmInstall ->
             with(nodeJs) {
                 npmInstall.dependsOn(project.nodeJsSetupTaskProvider)
@@ -98,7 +101,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             npmInstall.rootNodeJsEnvironment
                 .value(
                     project.rootProject.kotlinNodeJsEnvSpec.env.map {
-                        asNodeJsEnvironment(nodeJsRoot, it)
+                        asNodeJsEnvironment(rootPackageDirectory, packageManager, it)
                     }
                 )
                 .disallowChanges()
@@ -175,7 +178,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             task.rootNodeJsEnvironment
                 .value(
                     nodeJs.env.map {
-                        asNodeJsEnvironment(nodeJsRoot, it)
+                        asNodeJsEnvironment(rootPackageDirectory, packageManager, it)
                     }
                 )
                 .disallowChanges()
