@@ -1,0 +1,56 @@
+Module: lib1
+FILE: Lib.kt
+    @FILE:R|kotlin/MustUseReturnValue|()
+    @R|kotlin/MustUseReturnValue|() public final class Lib : R|kotlin/Any| {
+        public constructor(): R|Lib| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getStuff(): R|kotlin/String| {
+            ^getStuff String()
+        }
+
+        @R|kotlin/MustUseReturnValue|() public final class LibNested : R|kotlin/Any| {
+            public constructor(): R|Lib.LibNested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun getStuff2(): R|kotlin/String| {
+                ^getStuff2 String()
+            }
+
+        }
+
+        @R|kotlin/MustUseReturnValue|() public final inner class LibInner : R|kotlin/Any| {
+            public Lib.constructor(): R|Lib.LibInner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun getStuff3(): R|kotlin/String| {
+                ^getStuff3 String()
+            }
+
+        }
+
+    }
+    @R|kotlin/MustUseReturnValue|() public final fun foo(): R|Lib.LibInner| {
+        lval lib: R|Lib| = R|/Lib.Lib|()
+        R|<local>/lib|.R|/Lib.getStuff|()
+        Q|Lib|.R|/Lib.LibNested.LibNested|().R|/Lib.LibNested.getStuff2|()
+        R|<local>/lib|.R|/Lib.LibInner.LibInner|().R|/Lib.LibInner.getStuff3|()
+        ^foo R|<local>/lib|.R|/Lib.LibInner.LibInner|()
+    }
+Module: main
+FILE: App.kt
+    @FILE:R|kotlin/MustUseReturnValue|()
+    @R|kotlin/MustUseReturnValue|() public final fun bar(): R|Lib.LibInner| {
+        lval lib: R|Lib| = R|/Lib.Lib|()
+        R|<local>/lib|.R|/Lib.getStuff|()
+        Q|Lib|.R|/Lib.LibNested.LibNested|().R|/Lib.LibNested.getStuff2|()
+        R|<local>/lib|.R|/Lib.LibInner.LibInner|().R|/Lib.LibInner.getStuff3|()
+        ^bar R|/foo|()
+    }
+    @R|kotlin/MustUseReturnValue|() public final fun main(): R|kotlin/Unit| {
+        R|/bar|()
+        lval x: R|Lib.LibInner| = R|/bar|()
+    }

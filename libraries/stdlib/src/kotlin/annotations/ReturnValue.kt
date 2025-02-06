@@ -9,8 +9,11 @@ package kotlin
  * Expresses that calls of the annotated function are ignorable.
  * Ignorable calls would not trigger a warning from Kotlin's return value checker, even if they are not used.
  *
- * This annotation only makes sense when used together with 'Return value checker' feature.
+ * This annotation only makes sense when used together with the 'Return value checker' feature.
  * Placing it without enabling the corresponding feature would result in a compiler error.
+ *
+ * Please note that this feature is currently experimental and this annotation may be changed without further notice
+ * or deprecation cycle. This, in particular, concerns annotation's target list.
  */
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
@@ -19,14 +22,17 @@ public annotation class IgnorableReturnValue
 
 /**
  * Marks the *scope* (file or class) in which all the functions are non-ignorable.
- * Kotlin's return value checker would report warning in case the result of non-ignorable function call is not used.
+ * Kotlin's return value checker would report a warning in case the result of a non-ignorable function call is not used.
  *
  * This annotation is usually placed by the Kotlin compiler itself when the corresponding 'Return value checker' feature
  * is set to the 'full' mode. There is no need to place it manually except for certain migration scenarios.
  *
- * This annotation only makes sense when used together with 'Return value checker' feature.
+ * This annotation only makes sense when used together with the 'Return value checker' feature.
  * Placing it without enabling the corresponding feature would result in a compiler error.
+ *
+ * Please note that this feature is currently experimental and this annotation may be changed without further notice
+ * or deprecation cycle. This, in particular, concerns annotation's target list.
  */
-@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @SinceKotlin("2.2")
 public annotation class MustUseReturnValue

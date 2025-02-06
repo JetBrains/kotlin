@@ -1,0 +1,38 @@
+Module: lib1
+FILE: Lib.kt
+    public final class Lib : R|kotlin/Any| {
+        public constructor(): R|Lib| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getStuff(): R|kotlin/String| {
+            ^getStuff String()
+        }
+
+    }
+    public final fun toplvl(): R|kotlin/String| {
+        ^toplvl String()
+    }
+    @R|kotlin/MustUseReturnValue|() public final fun alreadyApplied(): R|kotlin/String| {
+        ^alreadyApplied String()
+    }
+    public final fun foo(): R|kotlin/String| {
+        R|/Lib.Lib|()
+        R|/Lib.Lib|().R|/Lib.getStuff|()
+        R|/toplvl|()
+        ^foo R|/Lib.Lib|().R|/Lib.getStuff|()
+    }
+Module: main
+FILE: App.kt
+    public final fun bar(): R|kotlin/String| {
+        R|/Lib.Lib|()
+        R|/Lib.Lib|().R|/Lib.getStuff|()
+        R|/foo|()
+        R|/toplvl|()
+        ^bar R|/foo|()
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/bar|()
+        R|/alreadyApplied|()
+        lval x: R|kotlin/String| = R|/bar|()
+    }

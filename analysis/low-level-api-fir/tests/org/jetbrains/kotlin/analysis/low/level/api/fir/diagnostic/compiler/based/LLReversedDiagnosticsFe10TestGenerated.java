@@ -9592,6 +9592,40 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/crvFull")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CrvFull {
+      @Test
+      public void testAllFilesPresentInCrvFull() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crvFull"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("anonObjects.kt")
+      public void testAnonObjects() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/anonObjects.kt");
+      }
+
+      @Test
+      @TestMetadata("basic.kt")
+      public void testBasic() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/basic.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedClasses.kt")
+      public void testNestedClasses() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/nestedClasses.kt");
+      }
+
+      @Test
+      @TestMetadata("nonCompilerAnnotations.kt")
+      public void testNonCompilerAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/nonCompilerAnnotations.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
     @TestDataPath("$PROJECT_ROOT")
     public class CyclicHierarchy {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -74,7 +75,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         // Exclusions
         val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()
 
-        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck(context.session)) return false
+        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck(context)) return false
 
         if (resolvedSymbol?.isExcluded(context.session) == true) return false
 
@@ -134,14 +135,20 @@ private fun FirExpression.isLocalPropertyOrParameterOrThis(): Boolean {
 private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
     hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
 
-private fun FirCallableSymbol<*>.isSubjectToCheck(session: FirSession): Boolean {
+private fun FirCallableSymbol<*>.isSubjectToCheck(context: CheckerContext): Boolean {
+    val session = context.session
+    val fullMode = context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL
+
     // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
     if (this.callableId.packageName.asString() == "kotlin") return true
     callableId.ifMappedTypeCollection { return it }
 
-    val classOrFile = getContainingSymbol(session) ?: return false
-    return classOrFile.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)
+    val containingSymbol = getContainingSymbol(session)
+    if (fullMode && (this.isLocalMember || containingSymbol is FirAnonymousObjectSymbol)) return true
+
+    val relevantAnnotations = containingSymbol?.resolvedAnnotationsWithClassIds ?: resolvedAnnotationsWithClassIds
+    return relevantAnnotations.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)
 }
 
 // TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,
@@ -173,6 +180,7 @@ private inline fun CallableId.ifMappedTypeCollection(nonIgnorableCollectionMetho
             "addAll",
             "remove",
             "removeAt",
+            "removeAll",
             "set",
             "put",
             "retainAll",

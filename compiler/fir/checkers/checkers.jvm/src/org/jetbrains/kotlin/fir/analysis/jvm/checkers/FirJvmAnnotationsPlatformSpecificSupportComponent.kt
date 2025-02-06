@@ -27,6 +27,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
 
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
         JvmStandardClassIds.Annotations.Java.Deprecated,
+        StandardClassIds.Annotations.MustUseReturnValue,
         StandardClassIds.Annotations.WasExperimental,
         JvmStandardClassIds.Annotations.JvmRecord,
     )
