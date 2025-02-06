@@ -78,6 +78,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     /**
      * Allows easily specifying additional service registrars in tests which rely on a preset configurator, such as tests generated for FIR
      * or Standalone configured via [AnalysisApiTestConfiguratorFactory][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactory].
+     *
+     * If the test doesn't inherit directly from [AbstractAnalysisApiBasedTest], by convention, the override should include
+     * `super.additionalServiceRegistrars`.
      */
     open val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = emptyList()
