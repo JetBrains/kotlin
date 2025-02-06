@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -94,6 +95,26 @@ internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjec
         sourceSet.addDependencyForLegacyImport(stdlib)
     }
 }
+
+
+//TODO remove
+internal fun Project.getNativeDistributionDependenciesOld(target: CommonizerTarget): FileCollection {
+    return when (target) {
+        is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
+        is SharedCommonizerTarget -> {
+            val klibs = project.commonizedNativeDistributionKlibsOrNull(target) ?: return project.files()
+            project.files(klibs)
+        }
+    }
+}
+
+private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection =
+    getOriginalPlatformLibrariesFor(target.konanTarget)
+
+internal fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
+    konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
+}
+//---------
 
 internal fun Project.getNativeDistributionDependencies(konanDistribution: Provider<KonanDistribution>, target: CommonizerTarget): FileCollection {
     return when (target) {
