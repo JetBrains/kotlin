@@ -1,0 +1,14 @@
+interface Calculator {
+    inline fun calculate(): Int
+}
+
+val calculator = object : Calculator {
+    private inline fun internalCalculate(): Int {
+        val lambda = {
+            40 + 2 + 3
+        }
+        return lambda()
+    }
+
+    override inline fun calculate(): Int = internalCalculate()
+}
