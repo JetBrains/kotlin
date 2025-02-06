@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.build.asm
 
-import kotlinx.metadata.hasAnnotations
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.hasAnnotations
+import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ClassWriter
