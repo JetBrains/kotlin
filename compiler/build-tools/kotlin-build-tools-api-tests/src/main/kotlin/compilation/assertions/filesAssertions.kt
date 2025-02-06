@@ -59,10 +59,14 @@ fun CompilationOutcome.assertOutputs(module: Module, expectedOutputs: Set<String
             if (!wasPreviously) notDeclaredFiles.add(currentFile)
         }
     }
-    assert(filesLeft.isEmpty()) {
-        "The following files were declared as expected, but not actually produced: $filesLeft"
-    }
-    assert(notDeclaredFiles.isEmpty()) {
-        "The following files weren't declared as expected output files: $notDeclaredFiles"
+    assert(filesLeft.isEmpty() && notDeclaredFiles.isEmpty()) {
+        val errors = mutableListOf<String>()
+        if (filesLeft.isNotEmpty()) {
+            errors.add("The following files were declared as expected, but not actually produced: $filesLeft")
+        }
+        if (notDeclaredFiles.isNotEmpty()) {
+            errors.add("The following files weren't declared as expected output files: $notDeclaredFiles")
+        }
+        errors.joinToString(separator = "\n")
     }
 }
