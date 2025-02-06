@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
  * However, [measureTime] written to be thread-safe because there is no absolute guarantee
  * that external measurements are collected in a single thread.
  */
-abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
+abstract class PerformanceManager(private val presentableName: String) {
     // The lock object is located not in a companion object because every module has its own instance of the performance manager
     private val counterMeasurementsLock = Any()
 
@@ -221,6 +221,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }
 }
 
-fun <T> CommonCompilerPerformanceManager?.tryMeasureTime(measurementClass: KClass<*>, block: () -> T): T {
+fun <T> PerformanceManager?.tryMeasureTime(measurementClass: KClass<*>, block: () -> T): T {
     return if (this == null) return block() else measureTime(measurementClass, block)
 }

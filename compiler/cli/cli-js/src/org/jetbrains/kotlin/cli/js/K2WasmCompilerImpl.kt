@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 
 internal class K2WasmCompilerImpl(
@@ -29,7 +29,7 @@ internal class K2WasmCompilerImpl(
     outputName: String,
     outputDir: File,
     messageCollector: MessageCollector,
-    performanceManager: CommonCompilerPerformanceManager?,
+    performanceManager: PerformanceManager?,
 ) : K2JsCompilerImplBase(
     arguments = arguments,
     configuration = configuration,

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 
 abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
@@ -131,12 +131,12 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
     }
 
     abstract fun createCompoundPhase(arguments: A): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<A>, *>
-    abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
+    abstract val defaultPerformanceManager: PerformanceManager
 
     /**
      * Some CLIs might support non-standard performance managers, so this method is needed to be able to create such a manager if needed.
      */
-    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager {
+    protected open fun createPerformanceManager(arguments: A, services: Services): PerformanceManager {
         return defaultPerformanceManager
     }
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.BinaryClassFromKotlinFileMeasurement
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.tryMeasureTime
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -52,7 +52,7 @@ class VirtualFileKotlinClass private constructor(
             file: VirtualFile,
             metadataVersion: MetadataVersion,
             fileContent: ByteArray?,
-            perfManager: CommonCompilerPerformanceManager?,
+            perfManager: PerformanceManager?,
         ): KotlinClassFinder.Result? {
             return perfManager.tryMeasureTime(BinaryClassFromKotlinFileMeasurement::class) {
                 assert(file.extension == JavaClassFileType.INSTANCE.defaultExtension || file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }

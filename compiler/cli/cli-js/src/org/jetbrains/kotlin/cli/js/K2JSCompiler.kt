@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -47,9 +47,9 @@ import java.io.File
 
 
 class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
-    class K2JSCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JS Compiler")
+    class K2JSCompilerPerformanceManager : PerformanceManager("Kotlin to JS Compiler")
 
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2JSCompilerPerformanceManager()
+    override val defaultPerformanceManager: PerformanceManager = K2JSCompilerPerformanceManager()
 
     override fun createArguments(): K2JSCompilerArguments {
         return K2JSCompilerArguments()
