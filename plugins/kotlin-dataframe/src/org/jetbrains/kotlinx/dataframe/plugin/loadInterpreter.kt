@@ -107,6 +107,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameMapping
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColumnsConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
@@ -224,6 +225,7 @@ internal inline fun <reified T> String.load(): T {
         "ReadJson0" -> ReadJson0()
         "ReadCSV0" -> ReadCSV0()
         "Rename" -> Rename()
+        "RenameMapping" -> RenameMapping()
         "Select0" -> Select0()
         "Expr0" -> Expr0()
         "And0" -> And0()
