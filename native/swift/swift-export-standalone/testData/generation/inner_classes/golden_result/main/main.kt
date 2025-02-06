@@ -14,7 +14,7 @@ public fun Outer_Inner_InnerInner_init_allocate(): kotlin.native.internal.Native
 
 @ExportedBridge("Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__")
 public fun Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer_Inner__(__kt: kotlin.native.internal.NativePtr, outer__: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __outer__ = kotlin.native.internal.ref.dereferenceExternalRCRef(outer__) as Outer.Inner
     kotlin.native.internal.initInstance(____kt, (__outer__ as Outer.Inner).InnerInner())
 }
@@ -34,7 +34,7 @@ public fun Outer_Inner_init_allocate(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("Outer_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer__")
 public fun Outer_Inner_init_initialize__TypesOfArguments__Swift_UInt_main_Outer__(__kt: kotlin.native.internal.NativePtr, outer__: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __outer__ = kotlin.native.internal.ref.dereferenceExternalRCRef(outer__) as Outer
     kotlin.native.internal.initInstance(____kt, (__outer__ as Outer).Inner())
 }
