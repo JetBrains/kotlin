@@ -315,6 +315,10 @@ void Kotlin_objc_release(id ptr) {
   objc_release(ptr);
 }
 
+void* Kotlin_Block_copy(void* blockPtr) {
+    return _Block_copy(blockPtr);
+}
+
 void Kotlin_objc_detachObjCObject(KRef ref) {
   id associatedObject = GetAssociatedObject(ref);
   while (true) {
@@ -357,6 +361,11 @@ void* Kotlin_objc_retain(void* ptr) {
 
 void Kotlin_objc_release(void* ptr) {
   RuntimeAssert(false, "Objective-C interop is disabled");
+}
+
+void* Kotlin_Block_copy(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
 }
 
 void Kotlin_objc_detachObjCObject(void* ref) {

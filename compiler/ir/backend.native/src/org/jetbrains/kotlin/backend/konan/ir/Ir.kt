@@ -155,6 +155,8 @@ class KonanSymbols(
     val interopObjCClassOf = interopClass(InteropFqNames.objCClassOfName)
     val interopObjCProtocol = interopClass(InteropFqNames.objCProtocolName)
 
+    val interopBlockCopy = interopFunction("Block_copy")
+
     val interopObjCRelease = interopFunction("objc_release")
 
     val interopObjCRetain = interopFunction("objc_retain")

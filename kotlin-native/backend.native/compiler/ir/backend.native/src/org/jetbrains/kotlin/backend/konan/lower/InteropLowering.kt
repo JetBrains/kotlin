@@ -99,6 +99,8 @@ private abstract class BaseInteropIrTransformer(
             override val language: String
                 get() = klib?.manifestProperties?.getProperty("language") ?: "C"
 
+            override val isSwiftExportEnabled = context.config.swiftExport
+
             override fun addKotlin(declaration: IrDeclaration) {
                 addTopLevel(declaration)
             }
@@ -1149,6 +1151,13 @@ private class InteropTransformer(
                         putValueArgument(1, expression.getValueArgument(0))
                         putValueArgument(2, expression.getValueArgument(1))
                         putValueArgument(3, jobPointer)
+                    }
+                }
+                IntrinsicType.BLOCK_PTR_TO_FUNCTION_OBJECT -> {
+                    generateWithStubs {
+                        val blockPtr = expression.arguments.single()!!
+                        val functionType = expression.typeArguments[0]!!
+                        convertBlockPtrToKotlinFunction(builder, blockPtr, functionType)
                     }
                 }
                 else -> expression

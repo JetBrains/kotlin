@@ -13224,6 +13224,9 @@ final fun kotlin/fromBits(kotlin/Long): kotlin/Double // kotlin/fromBits|fromBit
 final fun kotlinx.cinterop.internal/detachObjCObject(kotlinx.cinterop/ObjCObject) // kotlinx.cinterop.internal/detachObjCObject|detachObjCObject(kotlinx.cinterop.ObjCObject){}[0]
 
 // Targets: [native]
+final fun kotlinx.cinterop/Block_copy(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlinx.cinterop/Block_copy|Block_copy(kotlin.native.internal.NativePtr){}[0]
+
+// Targets: [native]
 final fun kotlinx.cinterop/CreateKStringFromNSString(kotlin.native.internal/NativePtr): kotlin/String? // kotlinx.cinterop/CreateKStringFromNSString|CreateKStringFromNSString(kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
@@ -13723,6 +13726,9 @@ final inline fun <#A: reified kotlin/Any?> kotlin.test/assertIs(kotlin/Any?, kot
 
 // Targets: [native]
 final inline fun <#A: reified kotlin/Any?> kotlin.test/assertIsNot(kotlin/Any?, kotlin/String? = ...) // kotlin.test/assertIsNot|assertIsNot(kotlin.Any?;kotlin.String?){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final inline fun <#A: reified kotlin/Function<*>> kotlinx.cinterop.internal/convertBlockPtrToKotlinFunction(kotlin.native.internal/NativePtr): #A // kotlinx.cinterop.internal/convertBlockPtrToKotlinFunction|convertBlockPtrToKotlinFunction(kotlin.native.internal.NativePtr){0§<kotlin.Function<*>>}[0]
 
 // Targets: [native]
 final inline fun <#A: reified kotlin/Number> (kotlin/Number).kotlinx.cinterop/narrow(): #A // kotlinx.cinterop/narrow|narrow@kotlin.Number(){0§<kotlin.Number>}[0]

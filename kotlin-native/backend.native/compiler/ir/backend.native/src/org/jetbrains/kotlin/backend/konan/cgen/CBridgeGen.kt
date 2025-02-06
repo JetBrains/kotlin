@@ -48,6 +48,9 @@ internal interface KotlinStubs {
     val symbols: KonanSymbols
     val target: KonanTarget
     val language: String
+
+    val isSwiftExportEnabled: Boolean
+
     fun addKotlin(declaration: IrDeclaration)
     fun addC(lines: List<String>)
     fun getUniqueCName(prefix: String): String
@@ -713,6 +716,7 @@ private fun KotlinStubs.mapType(
     type.isFloat() -> TrivialValuePassing(irBuiltIns.floatType, CTypes.float)
     type.isDouble() -> TrivialValuePassing(irBuiltIns.doubleType, CTypes.double)
     type.isCPointer(symbols) -> TrivialValuePassing(type, CTypes.voidPtr)
+    (isSwiftExportEnabled && type == symbols.nativePtrType) -> TrivialValuePassing(type, CTypes.voidPtr)
     type.isTypeOfNullLiteral() && variadic -> TrivialValuePassing(symbols.interopCPointer.starProjectedType.makeNullable(), CTypes.voidPtr)
     type.isUByte() -> TrivialValuePassing(type, CTypes.unsignedChar)
     type.isUShort() -> TrivialValuePassing(type, CTypes.unsignedShort)
@@ -1033,6 +1037,22 @@ private fun IrBuilderWithScope.convertPossiblyRetainedObjCPointer(
     }
 } else {
     convert(pointer)
+}
+
+internal fun KotlinStubs.convertBlockPtrToKotlinFunction(builder: IrBuilderWithScope, blockPtr: IrExpression, functionType: IrType): IrExpression {
+    // blockPtr can be stack-allocated, so copy it first.
+    val copiedBlockPtr = builder.irCall(symbols.interopBlockCopy).apply {
+        arguments[0] = blockPtr
+    }
+    val valuePassing = mapBlockType(
+            type = functionType,
+            retained = true,
+            location = blockPtr
+    )
+    check(valuePassing.cToBridged("foo") == "foo")
+    with(valuePassing) {
+        return builder.bridgedToKotlin(copiedBlockPtr, symbols)
+    }
 }
 
 private class ObjCBlockPointerValuePassing(
