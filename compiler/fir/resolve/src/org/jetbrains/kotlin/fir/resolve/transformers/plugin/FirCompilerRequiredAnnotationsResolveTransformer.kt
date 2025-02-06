@@ -8,14 +8,20 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
@@ -25,11 +31,18 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 /**
@@ -116,28 +129,80 @@ class FirCompilerRequiredAnnotationsResolveProcessor(
     }
 }
 
+private class FirAdditionalAnnotationsPlacementTransformer(
+    val session: FirSession,
+) : FirDefaultTransformer<Nothing?>() {
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        return element // TODO: should likely be recursive for nested classes
+    }
+
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+        file.replaceAnnotations(file.symbol.addMustUseValueAnnotation(file.annotations))
+        return file
+    }
+
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+        regularClass.replaceAnnotations(regularClass.symbol.addMustUseValueAnnotation(regularClass.annotations))
+        return regularClass
+    }
+
+    val mustUseReturnValueClassId = ClassId(FqName("kotlin"), FqName("MustUseReturnValue"), false)
+
+    private fun FirBasedSymbol<*>.addMustUseValueAnnotation(existingAnnotations: List<FirAnnotation>): List<FirAnnotation> {
+        fun FirAnnotation.isMustUseReturnValue(): Boolean =
+            toAnnotationClassId(session) == mustUseReturnValueClassId
+
+        if (existingAnnotations.any(FirAnnotation::isMustUseReturnValue)) return existingAnnotations
+
+        val mustUseValueSymbol = session.symbolProvider.getClassLikeSymbolByClassId(mustUseReturnValueClassId) ?: return existingAnnotations
+        val mustUseValueClassSymbol = mustUseValueSymbol as? FirRegularClassSymbol  ?: return existingAnnotations
+        val mustUseValueCtor = mustUseValueClassSymbol.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return existingAnnotations
+
+        val annCall = buildAnnotationCall {
+            argumentList = FirEmptyArgumentList
+            annotationTypeRef = buildResolvedTypeRef {
+                coneType = mustUseValueClassSymbol.defaultType()
+            }
+            calleeReference = buildResolvedNamedReference {
+                name = mustUseValueClassSymbol.name
+                resolvedSymbol = mustUseValueCtor
+            }
+            annotationResolvePhase = FirAnnotationResolvePhase.CompilerRequiredAnnotations
+
+            containingDeclarationSymbol = this@addMustUseValueAnnotation
+        }
+        return existingAnnotations + annCall
+    }
+}
+
 abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
     final override val session: FirSession,
     computationSession: CompilerRequiredAnnotationsComputationSession
 ) : FirAbstractPhaseTransformer<Nothing?>(COMPILER_REQUIRED_ANNOTATIONS) {
     abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
+    private val additionalAnnotationResolveTransformer = FirAdditionalAnnotationsPlacementTransformer(session)
 
     val extensionService: FirExtensionService = session.extensionService
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         throw IllegalStateException("Should not be here")
     }
 
+
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         withFileAnalysisExceptionWrapping(file) {
             checkSessionConsistency(file)
             file.resolveAnnotations()
+            file.acceptChildren(additionalAnnotationResolveTransformer, null)
+            additionalAnnotationResolveTransformer.transformFile(file, data)
         }
         return file
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
-        return annotationTransformer.transformRegularClass(regularClass, null)
+        val result = annotationTransformer.transformRegularClass(regularClass, null)
+        val regularClass1 = result as? FirRegularClass ?: return result
+        return additionalAnnotationResolveTransformer.transformRegularClass(regularClass1, null)
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirStatement {

@@ -220,6 +220,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
 
     forTestsMatching("compiler/testData/diagnostics/tests/crv/*") {
         defaultDirectives {
+            RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.CHECKER
+        }
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/crvMultiModule/*") {
+        defaultDirectives {
             RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.FULL
             +WITH_EXTRA_CHECKERS
             DIAGNOSTICS with "-UNUSED_VARIABLE"

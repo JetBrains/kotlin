@@ -9502,6 +9502,22 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/crvMultiModule")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CrvMultiModule {
+      @Test
+      public void testAllFilesPresentInCrvMultiModule() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crvMultiModule"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("basic.kt")
+      public void testBasic() {
+        runTest("compiler/testData/diagnostics/tests/crvMultiModule/basic.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
     @TestDataPath("$PROJECT_ROOT")
     public class CyclicHierarchy {

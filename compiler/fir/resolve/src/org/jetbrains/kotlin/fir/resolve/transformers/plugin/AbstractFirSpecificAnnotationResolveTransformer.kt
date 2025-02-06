@@ -458,6 +458,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         resolveFile(file) {
+            file.transformAnnotations(this, data)
             file.transformDeclarations(this, data)
         }
 
