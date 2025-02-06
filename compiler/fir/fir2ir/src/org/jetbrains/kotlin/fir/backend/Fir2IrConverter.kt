@@ -331,20 +331,21 @@ class Fir2IrConverter(
             ).apply fragmentFunction@{
                 setParent(irClass)
                 addDeclarationToParent(this, irClass)
-                valueParameters = conversionData.injectedValues.mapIndexed { index, injectedValue ->
+                parameters = conversionData.injectedValues.mapIndexed { index, injectedValue ->
                     val isMutated = injectedValue.isMutated
 
                     IrFactoryImpl.createValueParameter(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        if (isMutated) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
-                        Name.identifier("p$index"),
-                        injectedValue.typeRef.toIrType(typeConverter),
+                        origin = if (isMutated) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
+                        kind = IrParameterKind.Regular,
+                        name = Name.identifier("p$index"),
+                        type = injectedValue.typeRef.toIrType(typeConverter),
                         isAssignable = isMutated,
-                        injectedValue.irParameterSymbol,
+                        symbol = injectedValue.irParameterSymbol,
                         varargElementType = null,
                         isCrossinline = false,
                         isNoinline = false,
-                        isHidden = false
+                        isHidden = false,
                     ).apply {
                         parent = this@fragmentFunction
                     }
