@@ -10,7 +10,6 @@ import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
@@ -21,9 +20,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.platform.isMultiPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
@@ -31,6 +27,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
@@ -68,7 +65,6 @@ import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
@@ -250,7 +246,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         configuration.registerModuleDependencies(module)
 
-        configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+        if (ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
+            configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+        }
 
         setupK2CliConfiguration(module, configuration)
 
@@ -271,6 +269,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
             )
         } else {
+            check(ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
+                "PROVIDE_JAVA_AS_BINARIES should be used only in combination with ENABLE_FOREIGN_ANNOTATIONS"
+            }
             if (javaModuleInfoFiles.isNotEmpty()) {
                 configuration.addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFiles)
             } else {
