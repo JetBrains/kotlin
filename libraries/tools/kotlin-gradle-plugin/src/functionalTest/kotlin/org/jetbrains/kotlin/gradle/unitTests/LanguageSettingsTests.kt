@@ -66,8 +66,7 @@ class LanguageSettingsTests {
         ).forEach { taskName ->
             val compileTask = project.tasks.getByName(taskName) as KotlinCompilationTask<*>
             with(compileTask.compilerOptions) {
-                @Suppress("DEPRECATION")
-                assertEquals(apiVersion.orNull, KotlinVersion.KOTLIN_1_7)
+                assertEquals(apiVersion.orNull, KotlinVersion.KOTLIN_1_8)
                 assertEquals(languageVersion.orNull, KotlinVersion.KOTLIN_1_8)
             }
         }
@@ -91,8 +90,7 @@ class LanguageSettingsTests {
 
             tasks.withType<KotlinCompilationTask<*>>().all {
                 it.compilerOptions {
-                    @Suppress("DEPRECATION")
-                    apiVersion.set(KotlinVersion.KOTLIN_1_7)
+                    apiVersion.set(KotlinVersion.KOTLIN_1_8)
                     languageVersion.set(KotlinVersion.KOTLIN_1_8)
                 }
             }
