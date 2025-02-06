@@ -218,6 +218,14 @@ class Strings {
     }
 
     @Sample
+    fun partitionIndexed() {
+        fun isVowelOnEvenThPosition(idx: Int, c: Char) = "aeuio".contains(c, ignoreCase = true) && idx % 2 == 0
+        val string = "Discussion"
+        val result = string.partitionIndexed(::isVowelOnEvenThPosition)
+        assertPrints(result, "(uo, Discssin)")
+    }
+
+    @Sample
     fun stringToByteArray() {
         val charset = Charsets.UTF_8
         val byteArray = "Hello".toByteArray(charset)

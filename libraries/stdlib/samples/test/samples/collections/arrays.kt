@@ -154,6 +154,14 @@ class Arrays {
             assertPrints(even, "[2, 4]")
             assertPrints(odd, "[1, 3, 5]")
         }
+
+        @Sample
+        fun partitionIndexedArrayOfPrimitives() {
+            val array = intArrayOf(0, 1, 2, 3, 4, 8, 6)
+            val (numbersOnSameIndexAsValue, theOthers) = array.partitionIndexed { idx, elm -> idx == elm }
+            assertPrints(numbersOnSameIndexAsValue, "[0, 1, 2, 3, 4, 6]")
+            assertPrints(theOthers, "[8]")
+        }
     }
 
     class ContentOperations {
