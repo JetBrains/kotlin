@@ -17,7 +17,7 @@ import javax.inject.Inject
 abstract class FlowActionBuildFusService @Inject constructor(
     private val objects: ObjectFactory,
     private val providerFactory: ProviderFactory,
-) : BuildFusService<BuildFusService.Parameters>(objects) {
+) : BuildFusService<BuildFusService.Parameters>() {
     companion object {
         internal fun registerIfAbsentImpl(
             project: Project,

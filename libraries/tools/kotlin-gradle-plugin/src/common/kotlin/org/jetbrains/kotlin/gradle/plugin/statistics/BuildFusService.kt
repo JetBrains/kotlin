@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logging
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -45,7 +44,7 @@ internal interface UsesBuildFusService : Task {
     val buildFusService: Property<BuildFusService<out BuildFusService.Parameters>?>
 }
 
-abstract class BuildFusService<T : BuildFusService.Parameters> @Inject constructor(private val objects: ObjectFactory) :
+abstract class BuildFusService<T : BuildFusService.Parameters> :
     BuildService<T>,
     AutoCloseable, OperationCompletionListener {
     protected var buildFailed: Boolean = false
