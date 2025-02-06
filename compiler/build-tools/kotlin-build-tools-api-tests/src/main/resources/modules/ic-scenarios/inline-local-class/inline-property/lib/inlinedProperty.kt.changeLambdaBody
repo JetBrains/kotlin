@@ -1,0 +1,7 @@
+val value: Int
+    inline get() {
+        val lambda = {
+            40 + 2 + 3
+        }
+        return lambda()
+    }

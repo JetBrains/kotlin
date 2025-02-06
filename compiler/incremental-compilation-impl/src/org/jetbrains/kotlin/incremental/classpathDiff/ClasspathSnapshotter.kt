@@ -159,15 +159,7 @@ class ClassSnapshotter(
     fun snapshot(): List<ClassSnapshot> {
         return classes.map { snapshotClass(it) }
 
-        // here's a major fault point - what if we've identified the potential local classes poorly,
-        // what if we're falling through to external dependencies, etc
-        // the basic answer is ignoring everything we can't find, because it's clearly not a module-local local class
-
-        // also would be nice to avoid parsing non-local classes
-
-        // well, anyway
         // TODO: check that it works with package hierarchy inside of the module (foo/bar/clas.class etc)
-        // TODO test case - inline fun in an inaccisble class
         //TODO metrics are a MUST as i now realizes
     }
 
