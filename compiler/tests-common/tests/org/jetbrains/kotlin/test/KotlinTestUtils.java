@@ -15,7 +15,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.lang.JavaVersion;
 import junit.framework.TestCase;
-import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
@@ -248,37 +247,62 @@ public class KotlinTestUtils {
         assertEqualsToFile("Actual data differs from file content", expectedFile, actual, sanitizer);
     }
 
-    public static Pair<Boolean, String> doesEqualToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+    public static FileComparisonResult compareExpectFileWithActualText(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
-            String actualText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
+            String actualSanitizedText = applyDefaultAndCustomSanitizer(actual, sanitizer);
 
             if (!expectedFile.exists()) {
                 if (KtUsefulTestCase.IS_UNDER_TEAMCITY) {
                     Assert.fail("Expected data file " + expectedFile + " did not exist");
                 } else {
-                    FileUtil.writeToFile(expectedFile, actualText);
+                    FileUtil.writeToFile(expectedFile, actualSanitizedText);
                     Assert.fail("Expected data file did not exist. Generating: " + expectedFile);
                 }
             }
-            String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
+            String expectedText = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
-            String expectedText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
+            String expectedSanitizedText = applyDefaultAndCustomSanitizer(expectedText, sanitizer);
 
-            return new Pair<>(Objects.equals(sanitizer.invoke(expectedText), sanitizer.invoke(actualText)), expected);
+            return new FileComparisonResult(expectedFile, expectedText, expectedSanitizedText, actualSanitizedText);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
+    public static class FileComparisonResult {
+        public final @NotNull File expectedFile;
+        public final @NotNull String expectedText;
+        public final @NotNull String expectedSanitizedText;
+        public final @NotNull String actualSanitizedText;
+        public final boolean doesEqual;
+
+        public FileComparisonResult(
+                @NotNull File expectedFile,
+                @NotNull String expectedText,
+                @NotNull String expectedSanitizedText,
+                @NotNull String actualSanitizedText
+        ) {
+            this.expectedFile = expectedFile;
+            this.expectedText = expectedText;
+            this.expectedSanitizedText = expectedSanitizedText;
+            this.actualSanitizedText = actualSanitizedText;
+            this.doesEqual = Objects.equals(expectedSanitizedText, actualSanitizedText);
+        }
+    }
+
+    private static String applyDefaultAndCustomSanitizer(String text, @NotNull Function1<String, String> sanitizer) {
+        String textAfterDefaultSanitizer = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(text.trim()));
+        return sanitizer.invoke(textAfterDefaultSanitizer);
+    }
+
     public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
-        Pair<Boolean, String> pair = doesEqualToFile(expectedFile, actual, sanitizer);
-        String expected = pair.getSecond();
-        if (!pair.getFirst()) {
+        FileComparisonResult comparisonResult = compareExpectFileWithActualText(expectedFile, actual, sanitizer);
+        if (!comparisonResult.doesEqual) {
             throw new AssertionFailedError(
                     message + ": " + expectedFile.getName(),
-                    new FileInfo(expectedFile.getAbsolutePath(), expected.getBytes(StandardCharsets.UTF_8)),
-                    actual
+                    new FileInfo(expectedFile.getAbsolutePath(), comparisonResult.expectedText.getBytes(StandardCharsets.UTF_8)),
+                    comparisonResult.actualSanitizedText
             );
         }
     }
