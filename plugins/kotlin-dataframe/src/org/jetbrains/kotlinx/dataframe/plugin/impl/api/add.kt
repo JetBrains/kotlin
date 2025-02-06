@@ -10,6 +10,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dsl
+import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
 typealias TypeApproximation = Marker
@@ -17,6 +18,7 @@ typealias TypeApproximation = Marker
 class Add : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.name: String by arg()
+    val Arguments.infer by ignore()
     val Arguments.type: TypeApproximation by type(name("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {

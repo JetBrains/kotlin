@@ -28,7 +28,7 @@ internal class Select0 : AbstractInterpreter<PluginDataFrameSchema>() {
 internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver by ignore()
     val Arguments.name: String by arg(defaultValue = Present("untitled"))
-    val Arguments.infer: Infer by enum(defaultValue = Present(Infer.Nulls))
+    val Arguments.infer by ignore()
     val Arguments.expression: TypeApproximation by type()
 
     override fun Arguments.interpret(): ColumnsResolver {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.enum
+import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
@@ -54,6 +55,7 @@ internal class Convert6 : AbstractInterpreter<PluginDataFrameSchema>() {
 
 class With0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: ConvertApproximation by arg()
+    val Arguments.infer by ignore()
     val Arguments.type: TypeApproximation by type(name("rowConverter"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {

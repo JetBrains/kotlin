@@ -245,6 +245,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("infer.kt")
+  public void testInfer() {
+    runTest("testData/box/infer.kt");
+  }
+
+  @Test
   @TestMetadata("injectAccessors.kt")
   public void testInjectAccessors() {
     runTest("testData/box/injectAccessors.kt");
