@@ -21,7 +21,9 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationRequested
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
@@ -67,14 +70,6 @@ abstract class BuildFusService<T : BuildFusService.Parameters> @Inject construct
     internal fun reportFusMetrics(reportAction: (StatisticsValuesConsumer) -> Unit) {
         reportAction(fusMetricsConsumer)
     }
-
-    abstract fun addConfigurationTimeMetric(metric: Provider<MetricContainer>)
-
-    abstract fun addConfigurationTimeMetric(metric: MetricContainer)
-
-    abstract fun addConfigurationTimeMetrics(metrics: List<MetricContainer>)
-
-    abstract fun getConfigurationTimeMetrics(): Provider<List<MetricContainer>>
 
     private val projectEvaluatedTime: Long = System.currentTimeMillis()
 
@@ -136,6 +131,18 @@ abstract class BuildFusService<T : BuildFusService.Parameters> @Inject construct
                 FlowActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider)
             } else {
                 CloseActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider)
+            }.also { buildService ->
+                //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
+                // buildService.get() call will cause parameters calculation and configuration cache storage.
+
+                //Gradle throws an exception when Gradle version less than 7.4 with configuration cache enabled and buildSrc,
+                @Suppress("DEPRECATION")
+                if (GradleVersion.current().baseVersion >= GradleVersion.version("7.4")
+                    || !project.isConfigurationCacheEnabled
+                    || project.currentBuildId().name != "buildSrc"
+                ) {
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
+                }
             }
         }
     }
