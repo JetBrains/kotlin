@@ -104,6 +104,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
+  @TestMetadata("ambiguousExpects.kt")
+  public void testAmbiguousExpects() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/ambiguousExpects.kt");
+  }
+
+  @Test
   @TestMetadata("annotationArgArrayVsOutArray.kt")
   public void testAnnotationArgArrayVsOutArray() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationArgArrayVsOutArray.kt");
