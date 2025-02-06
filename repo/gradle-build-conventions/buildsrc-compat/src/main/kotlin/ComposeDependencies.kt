@@ -3,6 +3,7 @@ import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.kotlin.dsl.maven
+import org.gradle.kotlin.dsl.assign
 import java.net.URI
 
 /*

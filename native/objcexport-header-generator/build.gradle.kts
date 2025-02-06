@@ -48,11 +48,11 @@ tasks.test.configure {
 }
 
 objCExportHeaderGeneratorTest("testK1", testDisplayNameTag = "K1") {
-    classpath += k1TestRuntimeClasspath
+    classpath.from(k1TestRuntimeClasspath)
 }
 
 objCExportHeaderGeneratorTest("testAnalysisApi", testDisplayNameTag = "AA") {
-    classpath += analysisApiRuntimeClasspath
+    classpath.from(analysisApiRuntimeClasspath)
 }
 
 tasks.check.configure {
