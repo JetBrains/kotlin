@@ -1,30 +1,30 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_FIR_DUMP
 // ISSUE: KT-67869
-//// LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
+// LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
 
 fun interface MyFun {
     fun foo(x: String): Int
 }
 
-val topLevel: MyFun = <!INITIALIZER_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length }<!>
+val topLevel: MyFun = { it.length }
 
-fun baz(x: MyFun = <!INITIALIZER_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length }<!>): MyFun = x
+fun baz(x: MyFun = { it.length }): MyFun = x
 
 class A(
-    val classMember: MyFun = <!INITIALIZER_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length }<!>
+    val classMember: MyFun = { it.length }
 )
 
-fun returnExpr(): MyFun = <!RETURN_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length }<!>
+fun returnExpr(): MyFun = { it.length }
 
 fun returnExplicit(): MyFun {
-    return <!RETURN_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length }<!>
+    return { it.length }
 }
 
 val withGetter: MyFun
-    get() = <!RETURN_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length }<!>
+    get() = { it.length }
 
 fun main() {
-    var local: MyFun = <!INITIALIZER_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length }<!>
-    local = <!ASSIGNMENT_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length + 1 }<!>
+    var local: MyFun = { it.length }
+    local = { it.length + 1 }
 }

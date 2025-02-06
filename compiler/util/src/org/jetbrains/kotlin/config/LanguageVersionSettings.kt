@@ -376,7 +376,6 @@ enum class LanguageFeature(
     AllowDnnTypeOverridingFlexibleType(KOTLIN_2_2, kind = OTHER), // KT-74049
     PreferDependentTypeVariablesWithProperArgumentConstraint(KOTLIN_2_2, kind = OTHER), // KT-71854
     ForbidEnumEntryNamedEntries(KOTLIN_2_2, kind = BUG_FIX), // KT-72829, KT-58920
-    ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_2), // KT-67869
 
     // 2.3
 
@@ -387,6 +386,7 @@ enum class LanguageFeature(
     ReportExposedTypeForInternalTypeParameterBounds(KOTLIN_2_3, kind = BUG_FIX), // KTLC-275
     EnableDfaWarningsInK2(KOTLIN_2_3, kind = OTHER), // KT-50965
     AllowEagerSupertypeAccessibilityChecks(KOTLIN_2_3, kind = OTHER), // KT-73611
+    ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, kind = OTHER), // KT-67869
 
     // End of 2.* language features --------------------------------------------------
 
