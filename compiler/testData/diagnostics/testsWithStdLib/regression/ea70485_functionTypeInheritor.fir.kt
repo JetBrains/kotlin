@@ -14,5 +14,5 @@ fun test() {
 }
 
 fun test2() {
-    val f: Ext = <!INITIALIZER_TYPE_MISMATCH!>{}<!>
+    val f: Ext = <!ARGUMENT_TYPE_MISMATCH!>{}<!>
 }
