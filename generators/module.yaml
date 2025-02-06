@@ -162,12 +162,12 @@ test-dependencies:
   - ./../plugins/sam-with-receiver
   - ./../plugins/assign-plugin
   - ./../plugins/kotlinx-serialization
-  - ./../plugins/kapt4
-  - ./../plugins/kapt3/kapt3-compiler
+#  - ./../plugins/kapt4
+#  - ./../plugins/kapt3/kapt3-compiler
   - ./../plugins/scripting/scripting-tests
   - ./../analysis/analysis-test-framework
   - ./../analysis/analysis-api-impl-base
-  - ./../plugins/kapt3/kapt3-cli
+#  - ./../plugins/kapt3/kapt3-cli
   - ./../compiler/tests-common-new
   - ./../compiler/test-infrastructure
   - ./../compiler/incremental-compilation-impl
@@ -217,8 +217,8 @@ test-dependencies:
   - ./../plugins/kotlinx-serialization/kotlinx-serialization.k2
   - ./../plugins/kotlinx-serialization/kotlinx-serialization.backend
   - ./../libraries/kotlinx-metadata/metadata-jvm
-  - ./../plugins/kapt3/kapt3-base
-  - ./../plugins/kapt3/kapt3-runtime
+#  - ./../plugins/kapt3/kapt3-base
+#  - ./../plugins/kapt3/kapt3-runtime
   - ./../libraries/tools/kotlinp/kotlinp-jvm
   - ./../plugins/scripting/scripting-compiler-impl
   - ./../libraries/scripting/scripting-jvm
