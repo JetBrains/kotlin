@@ -1092,7 +1092,7 @@ class CallAndReferenceGenerator(
                         irArgument.insertCastForSmartcastWithIntersection(argumentType, substitutedParameterType)
                     }
                     is FirWhenSubjectExpression -> {
-                        insertCastToArgument(argument.whenRef.value.subject!!)
+                        insertCastToArgument(argument.whenRef.value.subjectVariable?.initializer!!)
                     }
                     else -> irArgument
                 }

@@ -5,7 +5,7 @@ FILE: emptyWhen.kt
 
     }
     public final fun test_2(x: R|kotlin/Int|): R|kotlin/Unit| {
-        when (R|<local>/x|) {
+        when (lval <when-subject>: R|kotlin/Int| = R|<local>/x|) {
         }
 
     }

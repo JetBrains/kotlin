@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
@@ -874,6 +875,22 @@ class LightTreeRawFirExpressionBuilder(
         subjectExpression = subjectVariable?.initializer ?: subjectExpression
         val hasSubject = subjectExpression != null
 
+        if (hasSubject && subjectVariable == null) {
+            val name = SpecialNames.WHEN_SUBJECT
+            subjectVariable = buildProperty {
+                source = subjectExpression.source?.fakeElement(KtFakeSourceElementKind.WhenGeneratedSubject)
+                origin = FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
+                moduleData = baseModuleData
+                returnTypeRef = FirImplicitTypeRefImplWithoutSource
+                this.name = name
+                initializer = subjectExpression
+                isVar = false
+                symbol = FirPropertySymbol(name)
+                isLocal = true
+                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+            }
+        }
+
         @OptIn(FirContractViolation::class)
         val subject = FirExpressionRef<FirWhenExpression>()
         var shouldBind = hasSubject
@@ -882,7 +899,6 @@ class LightTreeRawFirExpressionBuilder(
         }
         return buildWhenExpression {
             source = whenExpression.toFirSourceElement()
-            this.subject = subjectExpression
             this.subjectVariable = subjectVariable
             usedAsExpression = whenExpression.usedAsExpression
             for (entry in whenEntries) {

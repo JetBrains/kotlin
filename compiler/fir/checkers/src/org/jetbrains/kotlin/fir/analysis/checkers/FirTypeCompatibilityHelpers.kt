@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal fun FirExpression.unwrapToMoreUsefulExpression() = when (this) {
-    is FirWhenSubjectExpression -> whenRef.value.subject ?: this
+    is FirWhenSubjectExpression -> whenRef.value.subjectVariable?.initializer ?: this
     else -> this
 }
 

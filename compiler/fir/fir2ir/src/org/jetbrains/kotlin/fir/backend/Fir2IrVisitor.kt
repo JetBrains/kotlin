@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
@@ -525,9 +526,15 @@ class Fir2IrVisitor(
             }
         )
         if (initializer != null) {
-            irVariable.initializer =
-                convertToIrExpression(initializer)
-                    .prepareExpressionForGivenExpectedType(initializer, initializer.resolvedType, variable.returnTypeRef.coneType)
+            val convertedInitializer = convertToIrExpression(initializer)
+                .prepareExpressionForGivenExpectedType(initializer, initializer.resolvedType, variable.returnTypeRef.coneType)
+            // In FIR smart-casted types from initializers of variables are not saved to the types of the variables themselves.
+            // Ensuring the IrVariable's type of an implicit when-subject is as narrow as that of the initializer is important,
+            // for example, for `ieee754` comparisons of `Double`s.
+            if (irVariable.name == SpecialNames.WHEN_SUBJECT) {
+                irVariable.type = convertedInitializer.type
+            }
+            irVariable.initializer = convertedInitializer
         }
         annotationGenerator.generate(irVariable, variable)
         return irVariable
@@ -1441,9 +1448,9 @@ class Fir2IrVisitor(
 
     private fun generateWhenSubjectVariable(whenExpression: FirWhenExpression): IrVariable? {
         val subjectVariable = whenExpression.subjectVariable
-        val subjectExpression = whenExpression.subject
+        val subjectExpression = whenExpression.subjectVariable?.initializer
         return when {
-            subjectVariable != null -> subjectVariable.accept(this, null) as IrVariable
+            subjectVariable != null && !subjectVariable.isImplicitWhenSubjectVariable -> subjectVariable.accept(this, null) as IrVariable
             subjectExpression != null ->
                 conversionScope.scope().createTemporaryVariable(convertToIrExpression(subjectExpression), "subject")
             else -> null

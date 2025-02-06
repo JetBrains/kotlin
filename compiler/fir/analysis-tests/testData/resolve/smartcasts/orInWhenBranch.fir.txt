@@ -2,7 +2,7 @@ FILE: orInWhenBranch.kt
     public final fun R|kotlin/String|.foo(): R|kotlin/Unit| {
     }
     public final fun test_1(a: R|kotlin/Any?|): R|kotlin/Unit| {
-        when (R|<local>/a|) {
+        when (lval <when-subject>: R|kotlin/Any?| = R|<local>/a|) {
             ($subj$ is R|kotlin/String|) || ($subj$ is R|kotlin/Any|) ->  {
                 R|<local>/a|.R|/foo<None of the following candidates is applicable because of receiver type mismatch: [/foo]>#|()
             }
@@ -18,7 +18,7 @@ FILE: orInWhenBranch.kt
 
     }
     public final fun test_3(a: R|kotlin/Any?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
-        when (R|<local>/a|) {
+        when (lval <when-subject>: R|kotlin/Any?| = R|<local>/a|) {
             ($subj$ is R|kotlin/String|) || ==($subj$, R|<local>/b|) ->  {
                 R|<local>/a|.R|/foo<None of the following candidates is applicable because of receiver type mismatch: [/foo]>#|()
             }

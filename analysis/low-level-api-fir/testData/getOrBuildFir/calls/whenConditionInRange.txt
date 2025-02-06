@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] whenConditionInRange.kt
     }
     public final operator [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> [ResolvedTo(CONTRACTS)] R|T|.contains([ResolvedTo(CONTRACTS)] int: R|kotlin/Int|): R|kotlin/Boolean| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
-        when (Int(1)) {
+        when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|kotlin/Int| = Int(1)) {
             R|/MyClass.MyClass|().R|/contains|<R|MyClass|>($subj$) ->  {
                 Boolean(true)
             }

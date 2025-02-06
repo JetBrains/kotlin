@@ -23,7 +23,7 @@ FILE: kt37327.kt
             }
         }
 
-        when (this@R|/foo|) {
+        when (lval <when-subject>: R|Q| = this@R|/foo|) {
             ($subj$ is R|B|) ->  {
                 this@R|/foo|.R|/B.x|
             }

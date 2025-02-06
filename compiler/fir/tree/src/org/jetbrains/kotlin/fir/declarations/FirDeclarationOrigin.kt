@@ -40,6 +40,7 @@ sealed class FirDeclarationOrigin(
         object ForwardDeclaration : Synthetic()
         object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
+        object ImplicitWhenSubject : Synthetic()
     }
 
     object DynamicScope : FirDeclarationOrigin()

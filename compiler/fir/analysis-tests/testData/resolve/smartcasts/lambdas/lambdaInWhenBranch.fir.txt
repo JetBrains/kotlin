@@ -27,7 +27,7 @@ FILE: lambdaInWhenBranch.kt
 
     }
     private final fun foo(p: R|Sealed|): R|kotlin/Unit| {
-        when (R|<local>/p|) {
+        when (lval <when-subject>: R|Sealed| = R|<local>/p|) {
             ($subj$ is R|SubClass1|) ->  {
                 String().R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                     ^ R|<local>/it|
@@ -40,7 +40,7 @@ FILE: lambdaInWhenBranch.kt
         }
 
         R|<local>/p|.<Unresolved name: t>#
-        when (R|<local>/p|) {
+        when (lval <when-subject>: R|Sealed| = R|<local>/p|) {
             ($subj$ is R|SubClass1|) ->  {
                 R|<local>/p|.R|/SubClass1.t|
             }

@@ -40,7 +40,7 @@ FILE: selfReferentialAnnotation.kt
     }
     public final fun box(): R|kotlin/String| {
         lval result: R|kotlin/String| = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.values*s|().R|kotlin/collections/joinToString|<R|MyRequiresOptIn.MyLevel|>()
-        ^box when (R|<local>/result|) {
+        ^box when (lval <when-subject>: R|kotlin/String| = R|<local>/result|) {
             ==($subj$, String(WARNING, ERROR)) ->  {
                 String(OK)
             }

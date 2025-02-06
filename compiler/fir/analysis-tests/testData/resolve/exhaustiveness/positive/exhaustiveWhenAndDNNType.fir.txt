@@ -26,7 +26,7 @@ FILE: exhaustiveWhenAndDNNType.kt
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval flag: R|SomeEnum| = Q|SomeEnum|.R|/SomeEnum.A1|
-        lval b: R|B| = when (R|<local>/flag|!!) {
+        lval b: R|B| = when (lval <when-subject>: R|SomeEnum| = R|<local>/flag|!!) {
             ==($subj$, Q|SomeEnum|.R|/SomeEnum.A1|) ->  {
                 R|/B.B|()
             }
@@ -39,7 +39,7 @@ FILE: exhaustiveWhenAndDNNType.kt
     }
     public final fun test_2(): R|kotlin/Unit| {
         lval flag: R|SomeEnum| = Q|SomeEnum|.R|/SomeEnum.A1|
-        lval b: R|B| = when (R|<local>/flag|!!) {
+        lval b: R|B| = when (lval <when-subject>: R|SomeEnum| = R|<local>/flag|!!) {
             ==($subj$, Q|SomeEnum|.R|/SomeEnum.A1|) ->  {
                 R|/B.B|()
             }
@@ -52,7 +52,7 @@ FILE: exhaustiveWhenAndDNNType.kt
     }
     public final fun test_3(): R|kotlin/Unit| {
         lval flag: R|SomeEnum| = Q|SomeEnum|.R|/SomeEnum.A1|
-        lval b: R|B| = when (R|<local>/flag|) {
+        lval b: R|B| = when (lval <when-subject>: R|SomeEnum| = R|<local>/flag|) {
             ==($subj$, Q|SomeEnum|.R|/SomeEnum.A1|) ->  {
                 R|/B.B|()
             }

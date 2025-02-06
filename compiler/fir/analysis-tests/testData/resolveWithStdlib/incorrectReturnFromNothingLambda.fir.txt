@@ -32,7 +32,7 @@ FILE: incorrectReturnFromNothingLambda.kt
 
     }
     public final inline fun <T, E> R|Result4k<T, E>|.onFailure(block: R|(Failure<E>) -> kotlin/Nothing|): R|T| {
-        ^onFailure when (this@R|/onFailure|) {
+        ^onFailure when (lval <when-subject>: R|Result4k<T, E>| = this@R|/onFailure|) {
             ($subj$ is R|Success<T>|) ->  {
                 this@R|/onFailure|.R|SubstitutionOverride</Success.value: R|T|>|
             }

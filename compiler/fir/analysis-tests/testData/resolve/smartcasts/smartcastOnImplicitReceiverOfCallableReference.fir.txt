@@ -4,7 +4,7 @@ FILE: smartcastOnImplicitReceiverOfCallableReference.kt
 
     }
     public final fun R|kotlin/Any|.test_1(): R|kotlin/Unit| {
-        when (this@R|/test_1|) {
+        when (lval <when-subject>: R|kotlin/Any| = this@R|/test_1|) {
             ($subj$ is R|A|) ->  {
                 this@R|/test_1|.R|/A.foo|()
                 ::R|/A.foo|
@@ -16,7 +16,7 @@ FILE: smartcastOnImplicitReceiverOfCallableReference.kt
 
     }
     public final fun R|kotlin/Any|.test_2(): R|kotlin/Unit| {
-        when (this@R|/test_2|) {
+        when (lval <when-subject>: R|kotlin/Any| = this@R|/test_2|) {
             ($subj$ is R|A|) ->  {
                 this@R|/test_2|.R|/A.foo|()
                 fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {

@@ -445,7 +445,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(whenSubjectExpression) {
             default("coneTypeOrNull") {
-                value = "whenRef.value.subject?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()"
+                value = "whenRef.value.subjectVariable?.initializer?.coneTypeOrNull ?: StandardClassIds.Unit.constructClassLikeType()"
                 withGetter = true
             }
             additionalImports(whenExpression, standardClassIdsType, constructClassLikeTypeImport)

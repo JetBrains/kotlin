@@ -104,7 +104,6 @@ class VariableStorage(private val session: FirSession) {
 
     private tailrec fun FirExpression.unwrapElement(): FirExpression? {
         return when (this) {
-            is FirWhenSubjectExpression -> (whenRef.value.takeIf { it.subjectVariable == null }?.subject ?: return this).unwrapElement()
             is FirSmartCastExpression -> originalExpression.unwrapElement()
             // Safe assignments (a?.x = b) have non-expression selectors. In this case the entire safe call
             // is not really an expression either, so we shouldn't produce any kinds of statements on it.

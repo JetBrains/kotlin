@@ -4,7 +4,7 @@ FILE: nonExhaustiveWhenWithoutCoercionToUnit.kt
     }
     public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
         R|/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            when (R|<local>/a|) {
+            when (lval <when-subject>: R|kotlin/Any| = R|<local>/a|) {
                 ($subj$ is R|kotlin/String|) ->  {
                     Int(1)
                 }

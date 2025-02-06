@@ -509,6 +509,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("unstableSmartcastImplicitWhenSubject.kt")
+  public void testUnstableSmartcastImplicitWhenSubject() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/unstableSmartcastImplicitWhenSubject.kt");
+  }
+
+  @Test
   @TestMetadata("valueParameter.kt")
   public void testValueParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/valueParameter.kt");

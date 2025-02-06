@@ -594,7 +594,7 @@ class FirRenderer(
             if (subjectVariable != null) {
                 subjectVariable.accept(this)
             } else {
-                whenExpression.subject?.accept(this)
+                whenExpression.subjectVariable?.initializer?.accept(this)
             }
             printer.println(") {")
             printer.pushIndent()

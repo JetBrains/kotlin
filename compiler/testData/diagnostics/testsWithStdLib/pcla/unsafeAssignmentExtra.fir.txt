@@ -51,7 +51,7 @@ FILE: unsafeAssignmentExtra.fir.kt
                 }
             }
 
-            when (R|<local>/condition|) {
+            when (lval <when-subject>: R|kotlin/Boolean| = R|<local>/condition|) {
                 ==($subj$, Boolean(true)) ->  {
                     this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/Int|>| = Int(87)
                 }
@@ -70,7 +70,7 @@ FILE: unsafeAssignmentExtra.fir.kt
         lval value2: R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>| = R|/myBuilder|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = myBuilder@fun R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|it(kotlin/Comparable<*> & java/io/Serializable)|>| = Int(45)
-            when (R|<local>/condition|) {
+            when (lval <when-subject>: R|kotlin/Boolean| = R|<local>/condition|) {
                 ==($subj$, Boolean(true)) ->  {
                     this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|it(kotlin/Comparable<*> & java/io/Serializable)|>| = Int(87)
                 }

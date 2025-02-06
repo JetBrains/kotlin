@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirWhenSubjectChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val subject = expression.subject
+        val subject = expression.subjectVariable?.initializer
         val subjectVariable = expression.subjectVariable
         val source = (subjectVariable ?: subject)?.source ?: return
         when {
