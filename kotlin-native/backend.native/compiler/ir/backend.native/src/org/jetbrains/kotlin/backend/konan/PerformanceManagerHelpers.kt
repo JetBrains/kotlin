@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 
-class K2NativeCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Native Compiler") {
+class K2NativeCompilerPerformanceManager : PerformanceManager("Kotlin to Native Compiler") {
 
     private val children = mutableListOf<ChildCompilerPerformanceManager>()
 
@@ -19,7 +19,7 @@ class K2NativeCompilerPerformanceManager : CommonCompilerPerformanceManager("Kot
      *
      * WARNING: not thread-safe!
      */
-    internal fun createChild(): CommonCompilerPerformanceManager {
+    internal fun createChild(): PerformanceManager {
         return ChildCompilerPerformanceManager().also {
             children += it
         }
@@ -37,16 +37,16 @@ class K2NativeCompilerPerformanceManager : CommonCompilerPerformanceManager("Kot
         }
     }
 
-    private inner class ChildCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Native Compiler per single thread")
+    private inner class ChildCompilerPerformanceManager : PerformanceManager("Kotlin to Native Compiler per single thread")
 }
 
-var CompilerConfiguration.performanceManager: CommonCompilerPerformanceManager?
+var CompilerConfiguration.performanceManager: PerformanceManager?
     get() = this[CLIConfigurationKeys.PERF_MANAGER]
     set(v) {
         this.putIfNotNull(CLIConfigurationKeys.PERF_MANAGER, v)
     }
 
-internal inline fun <T> CommonCompilerPerformanceManager?.trackAnalysis(fn: () -> T): T {
+internal inline fun <T> PerformanceManager?.trackAnalysis(fn: () -> T): T {
     this?.notifyAnalysisStarted()
     try {
         return fn()
@@ -55,7 +55,7 @@ internal inline fun <T> CommonCompilerPerformanceManager?.trackAnalysis(fn: () -
     }
 }
 
-internal inline fun <T> CommonCompilerPerformanceManager?.trackIRTranslation(fn: () -> T): T {
+internal inline fun <T> PerformanceManager?.trackIRTranslation(fn: () -> T): T {
     this?.notifyIRTranslationStarted()
     try {
         return fn()
@@ -64,7 +64,7 @@ internal inline fun <T> CommonCompilerPerformanceManager?.trackIRTranslation(fn:
     }
 }
 
-internal inline fun <T> CommonCompilerPerformanceManager?.trackGeneration(fn: () -> T): T {
+internal inline fun <T> PerformanceManager?.trackGeneration(fn: () -> T): T {
     this?.notifyGenerationStarted()
     try {
         return fn()
@@ -73,7 +73,7 @@ internal inline fun <T> CommonCompilerPerformanceManager?.trackGeneration(fn: ()
     }
 }
 
-internal inline fun <T> CommonCompilerPerformanceManager?.trackIRLowering(fn: () -> T): T {
+internal inline fun <T> PerformanceManager?.trackIRLowering(fn: () -> T): T {
     this?.notifyIRLoweringStarted()
     try {
         return fn()

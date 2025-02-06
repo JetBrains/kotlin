@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.FindJavaClassMeasurement
 import org.jetbrains.kotlin.util.tryMeasureTime
 import org.jetbrains.kotlin.utils.SmartList
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
 // which is indirectly invoked from PsiPackage.getSubPackages
 class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
-    private var perfManager: CommonCompilerPerformanceManager? = null
+    private var perfManager: PerformanceManager? = null
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<JvmPackagePartProvider>
@@ -74,7 +74,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         packagePartProviders: List<JvmPackagePartProvider>,
         singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
         usePsiClassFilesReading: Boolean,
-        perfManager: CommonCompilerPerformanceManager?,
+        perfManager: PerformanceManager?,
     ) {
         this.index = index
         this.packagePartProviders = packagePartProviders

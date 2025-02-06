@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 
 class WebCliPipeline(
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager
+    override val defaultPerformanceManager: PerformanceManager
 ) : AbstractCliPipeline<K2JSCompilerArguments>() {
     override fun createCompoundPhase(arguments: K2JSCompilerArguments): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JSCompilerArguments>, *> {
         return when {

@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
 import org.jetbrains.kotlin.util.CodeGenerationMeasurement
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import org.jetbrains.kotlin.util.IRMeasurement
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -686,7 +686,7 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
-    protected fun reportPerformanceData(defaultPerformanceManager: CommonCompilerPerformanceManager) {
+    protected fun reportPerformanceData(defaultPerformanceManager: PerformanceManager) {
         defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)

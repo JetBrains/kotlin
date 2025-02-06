@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 
 /**
  * Dynamic driver does not "know" upfront which phases will be executed.
  */
-internal class DynamicCompilerDriver(private val performanceManager: CommonCompilerPerformanceManager?) : CompilerDriver() {
+internal class DynamicCompilerDriver(private val performanceManager: PerformanceManager?) : CompilerDriver() {
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
         usingNativeMemoryAllocator {

@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.sure
 
 abstract class VirtualFileFinder(
-    private val perfManager: CommonCompilerPerformanceManager? = null // The parameter has `null` default to prevent fixing external code (IntelliJ)
+    private val perfManager: PerformanceManager? = null // The parameter has `null` default to prevent fixing external code (IntelliJ)
 ) : KotlinClassFinder {
     abstract fun findVirtualFileWithHeader(classId: ClassId): VirtualFile?
 

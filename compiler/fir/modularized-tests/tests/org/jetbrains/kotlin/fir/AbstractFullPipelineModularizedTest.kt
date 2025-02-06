@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
 import org.jetbrains.kotlin.util.CodeGenerationMeasurement
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import org.jetbrains.kotlin.util.GarbageCollectionMeasurement
 import org.jetbrains.kotlin.util.IRMeasurement
@@ -292,7 +292,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         configureArguments(args, moduleData)
 
         val manager = CompilerPerformanceManager()
-        val services = Services.Builder().register(CommonCompilerPerformanceManager::class.java, manager).build()
+        val services = Services.Builder().register(PerformanceManager::class.java, manager).build()
         val collector = TestMessageCollector()
         val result = try {
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
@@ -328,7 +328,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     }
 
 
-    private inner class CompilerPerformanceManager : CommonCompilerPerformanceManager("Modularized test performance manager") {
+    private inner class CompilerPerformanceManager : PerformanceManager("Modularized test performance manager") {
 
         fun reportCumulativeTime(): CumulativeTime {
             val measurements = getMeasurementResults()

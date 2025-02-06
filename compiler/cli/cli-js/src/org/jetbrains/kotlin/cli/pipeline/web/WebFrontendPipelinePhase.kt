@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.nio.file.Paths
 

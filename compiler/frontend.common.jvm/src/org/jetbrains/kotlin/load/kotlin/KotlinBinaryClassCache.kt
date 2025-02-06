@@ -12,7 +12,7 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -79,7 +79,7 @@ class KotlinBinaryClassCache : Disposable {
             file: VirtualFile,
             metadataVersion: MetadataVersion,
             fileContent: ByteArray? = null,
-            perfManager: CommonCompilerPerformanceManager? = null, // The parameter has `null` default to prevent fixing external code (IntelliJ)
+            perfManager: PerformanceManager? = null, // The parameter has `null` default to prevent fixing external code (IntelliJ)
         ): KotlinClassFinder.Result? {
             if (file.extension != JavaClassFileType.INSTANCE.defaultExtension &&
                 file.fileType !== JavaClassFileType.INSTANCE

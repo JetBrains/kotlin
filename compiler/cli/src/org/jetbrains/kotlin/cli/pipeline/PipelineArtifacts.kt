@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.util.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManager
 
 abstract class PipelineArtifact
 
@@ -28,7 +28,7 @@ data class ArgumentsPipelineArtifact<out A : CommonCompilerArguments>(
     val services: Services,
     val rootDisposable: Disposable,
     val messageCollector: GroupingMessageCollector,
-    val performanceManager: CommonCompilerPerformanceManager,
+    val performanceManager: PerformanceManager,
 ) : PipelineArtifact() {
     val diagnosticCollector: BaseDiagnosticsCollector = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 }
