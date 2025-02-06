@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeDistributionBuildService
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -51,13 +50,11 @@ private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDe
 
     val commonizerTarget = commonizerTarget.await() ?: return
     val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
-    val nativeBuildService = KotlinNativeDistributionBuildService.registerIfAbsent(project, nativeBundleBuildService)
-
-    val nativeDependency =
-        nativeBuildService.orNull?.getNativeDistributionDependencies(
-            project,
-            commonizerTarget
-        )
+    val nativeDependency = KotlinNativeBundleBuildService.getNativeDistributionDependencies(
+        project,
+        commonizerTarget,
+        nativeBundleBuildService
+    )
 
     val updatedCompileDependencyFiles = project.files().from(
         stdlib,
