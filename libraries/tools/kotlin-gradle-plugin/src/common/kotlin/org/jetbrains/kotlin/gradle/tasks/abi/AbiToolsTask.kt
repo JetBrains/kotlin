@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.abi.tools.api.AbiToolsInterface
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationVariantSpec
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import java.util.*
+import java.util.Locale.getDefault
 import kotlin.reflect.KClass
 
 /**
@@ -56,7 +57,7 @@ internal abstract class AbiToolsTask : DefaultTask(), UsesClassLoadersCachingBui
             val suffix = if (variantName == AbiValidationVariantSpec.MAIN_VARIANT_NAME) {
                 ""
             } else {
-                variantName.capitalize()
+                variantName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString() }
             }
 
             return "$baseName$suffix"
