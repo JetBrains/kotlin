@@ -33,7 +33,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case1(): R|kotlin/Unit| {
         lval flag: R|A| = Q|A|.R|/A.A1|
-        lval l0: R|B| = when (R|<local>/flag|!!) {
+        lval l0: R|B| = when (lval <when-subject>: R|A| = R|<local>/flag|!!) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -46,7 +46,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case2(): R|kotlin/Unit| {
         lval flag: R|A| = Q|A|.R|/A.A1|
-        lval l0: R|B| = when (R|<local>/flag|) {
+        lval l0: R|B| = when (lval <when-subject>: R|A| = R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -59,7 +59,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case3(): R|kotlin/Unit| {
         lval flag: R|A| = Q|A|.R|/A.A1|
-        lval l1: R|B| = when (R|<local>/flag|!!) {
+        lval l1: R|B| = when (lval <when-subject>: R|A| = R|<local>/flag|!!) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -72,7 +72,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case4(): R|kotlin/Unit| {
         lval flag: R|A| = Q|A|.R|/A.A1|
-        lval l2: R|B| = when (R|<local>/flag|) {
+        lval l2: R|B| = when (lval <when-subject>: R|A| = R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -85,7 +85,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case5(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = Q|A|.R|/A.A1|
-        lval l1: R|B| = when (R|<local>/flag|) {
+        lval l1: R|B| = when (lval <when-subject>: R|kotlin/Any| = R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -101,7 +101,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case6(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = Q|A|.R|/A.A1|
-        lval l1: R|B| = when (R|<local>/flag|!!) {
+        lval l1: R|B| = when (lval <when-subject>: R|kotlin/Any| = R|<local>/flag|!!) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -117,7 +117,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case7(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = Q|A|.R|/A.A1|
-        lval l1: R|B| = when (R|<local>/flag|) {
+        lval l1: R|B| = when (lval <when-subject>: R|kotlin/Any| = R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -133,7 +133,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case8(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = Q|A|.R|/A.A1|
-        lval l1: R|B| = when (R|<local>/flag|!!) {
+        lval l1: R|B| = when (lval <when-subject>: R|kotlin/Any| = R|<local>/flag|!!) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -149,7 +149,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case9(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = Q|A|.R|/A.A1|
-        lval l1: R|B| = when (R|<local>/flag|) {
+        lval l1: R|B| = when (lval <when-subject>: R|kotlin/Any| = R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }

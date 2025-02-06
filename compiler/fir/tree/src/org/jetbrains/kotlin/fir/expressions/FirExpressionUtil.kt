@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
@@ -138,13 +139,16 @@ fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
 
 fun FirExpression.unwrapExpression(): FirExpression =
     when (this) {
-        is FirWhenSubjectExpression -> whenRef.value.subject?.unwrapExpression() ?: this
+        is FirWhenSubjectExpression -> whenRef.value.subjectVariable?.initializer?.unwrapExpression() ?: this
         is FirSmartCastExpression -> originalExpression.unwrapExpression()
         is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapExpression()
         is FirCheckNotNullCall -> argument.unwrapExpression()
         is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapExpression()
         else -> this
     }
+
+val FirVariable.isImplicitWhenSubjectVariable: Boolean
+    get() = origin == FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
 
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {

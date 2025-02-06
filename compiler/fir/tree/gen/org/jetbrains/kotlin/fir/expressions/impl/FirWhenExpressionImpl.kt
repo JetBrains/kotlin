@@ -28,7 +28,6 @@ internal class FirWhenExpressionImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var calleeReference: FirReference,
-    override var subject: FirExpression?,
     override var subjectVariable: FirVariable?,
     override val branches: MutableList<FirWhenBranch>,
     override var exhaustivenessStatus: ExhaustivenessStatus?,
@@ -38,18 +37,13 @@ internal class FirWhenExpressionImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)
-        val subjectVariable_ = subjectVariable
-        if (subjectVariable_ != null) {
-            subjectVariable_.accept(visitor, data)
-        } else {
-            subject?.accept(visitor, data)
-        }
+        subjectVariable?.accept(visitor, data)
         branches.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
         transformCalleeReference(transformer, data)
-        transformSubject(transformer, data)
+        transformSubjectVariable(transformer, data)
         transformBranches(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -65,13 +59,8 @@ internal class FirWhenExpressionImpl(
         return this
     }
 
-    override fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        if (subjectVariable != null) {
-            subjectVariable = subjectVariable?.transform(transformer, data)
-            subject = subjectVariable?.initializer
-        } else {
-            subject = subject?.transform(transformer, data)
-        }
+    override fun <D> transformSubjectVariable(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
+        subjectVariable = subjectVariable?.transform(transformer, data)
         return this
     }
 

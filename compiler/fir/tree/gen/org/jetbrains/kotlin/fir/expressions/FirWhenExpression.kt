@@ -25,7 +25,6 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val calleeReference: FirReference
-    abstract val subject: FirExpression?
     abstract val subjectVariable: FirVariable?
     abstract val branches: List<FirWhenBranch>
     abstract val exhaustivenessStatus: ExhaustivenessStatus?
@@ -50,7 +49,7 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression
 
-    abstract fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpression
+    abstract fun <D> transformSubjectVariable(transformer: FirTransformer<D>, data: D): FirWhenExpression
 
     abstract fun <D> transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpression
 

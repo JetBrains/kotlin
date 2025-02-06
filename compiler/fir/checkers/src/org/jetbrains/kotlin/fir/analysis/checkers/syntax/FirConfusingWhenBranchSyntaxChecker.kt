@@ -37,7 +37,7 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val subjectType = element.subject?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
+        val subjectType = element.subjectVariable?.initializer?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
         val booleanSubject = subjectType.isBooleanOrNullableBoolean
         val tree = source.treeStructure
         val entries = source.lighterASTNode.getChildren(tree).filter { it.tokenType == WHEN_ENTRY }
@@ -83,7 +83,7 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val subjectType = element.subject?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
+        val subjectType = element.subjectVariable?.initializer?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
         val booleanSubject = subjectType.isBooleanOrNullableBoolean
         val whenExpression = psi as KtWhenExpression
         if (whenExpression.subjectExpression == null && whenExpression.subjectVariable == null) return

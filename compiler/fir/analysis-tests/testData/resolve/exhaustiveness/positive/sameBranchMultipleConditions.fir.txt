@@ -30,7 +30,7 @@ FILE: sameBranchMultipleConditions.kt
 
     }
     public final fun ok(a: R|A|): R|B| {
-        ^ok when (R|<local>/a|) {
+        ^ok when (lval <when-subject>: R|A| = R|<local>/a|) {
             ($subj$ is R|X|) ->  {
                 R|<local>/a|
             }
@@ -41,7 +41,7 @@ FILE: sameBranchMultipleConditions.kt
 
     }
     public final fun problem(a: R|A|): R|B| {
-        ^problem when (R|<local>/a|) {
+        ^problem when (lval <when-subject>: R|A| = R|<local>/a|) {
             ($subj$ is R|X|) || ($subj$ is R|Y|) ->  {
                 R|<local>/a|
             }

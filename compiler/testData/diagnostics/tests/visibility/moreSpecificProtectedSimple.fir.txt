@@ -28,7 +28,7 @@ FILE: moreSpecificProtectedSimple.fir.kt
             R|<local>/a|.R|/A.foo|(R|<local>/d|).R|/M1.success|
             R|<local>/b|.R|/B.baz|(R|<local>/d|).R|kotlin/String.length|
             R|<local>/b|.R|/B.foo|(R|<local>/d|).R|kotlin/String.length|
-            when (R|<local>/a|) {
+            when (lval <when-subject>: R|A| = R|<local>/a|) {
                 ($subj$ is R|B|) ->  {
                     R|<local>/a|.R|/A.baz|(R|<local>/d|).<Unresolved name: length>#
                     R|<local>/a|.R|/A.baz|(R|<local>/d|).R|/M1.success|
