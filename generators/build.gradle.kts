@@ -55,7 +55,7 @@ dependencies {
     testApi(protobufSourceSet.output)
     testApi(protobufCompareSourceSet.output)
 
-    testApi(projectTests(":compiler:cli"))
+    testApi(project(":compiler:cli"))
     testApi(projectTests(":compiler:incremental-compilation-impl"))
     testApi(projectTests(":plugins:jvm-abi-gen"))
     testApi(projectTests(":plugins:parcelize:parcelize-compiler"))
