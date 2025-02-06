@@ -206,12 +206,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object WhenCondition : KtFakeSourceElementKind()
 
     /**
-     * `when (x) { "abc" -> 42 }` --> `when(val $subj = x) { $subj == "abc" -> 42 }`
-     * where `val $subj = x` has a fake source, which is the same as the source of `x`.
-     */
-    object WhenImplicitSubject : KtFakeSourceElementKind()
-
-    /**
      * for primary constructor parameter the corresponding class property is generated
      * with a fake sources which refers to this the corresponding parameter
      */

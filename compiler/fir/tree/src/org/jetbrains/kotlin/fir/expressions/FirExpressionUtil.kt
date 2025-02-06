@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -149,7 +148,7 @@ fun FirExpression.unwrapExpression(): FirExpression =
     }
 
 val FirVariable.isExplicitWhenSubjectVariable: Boolean
-    get() = source?.kind != KtFakeSourceElementKind.WhenImplicitSubject
+    get() = origin != FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
 
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {

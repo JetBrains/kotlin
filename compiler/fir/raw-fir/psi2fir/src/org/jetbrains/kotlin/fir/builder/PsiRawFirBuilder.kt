@@ -2857,9 +2857,9 @@ open class PsiRawFirBuilder(
             if (hasSubject && subjectVariable == null) {
                 val name = SpecialNames.WHEN_SUBJECT
                 subjectVariable = buildProperty {
-                    source = subjectExpression.source?.fakeElement(KtFakeSourceElementKind.WhenImplicitSubject)
+                    source = subjectExpression.source?.fakeElement(KtFakeSourceElementKind.WhenGeneratedSubject)
                     moduleData = baseModuleData
-                    origin = FirDeclarationOrigin.Source
+                    origin = FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
                     returnTypeRef = FirImplicitTypeRefImplWithoutSource
                     this.name = name
                     initializer = subjectExpression
