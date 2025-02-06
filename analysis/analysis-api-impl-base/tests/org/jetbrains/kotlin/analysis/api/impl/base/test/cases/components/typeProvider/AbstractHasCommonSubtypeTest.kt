@@ -25,7 +25,7 @@ import java.io.File
 
 abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
-        val ktFile = mainFile ?: mainModule.ktFiles.first()
+        val ktFile = mainFile ?: mainModule.ktFiles.first().psiFile
         val errors = mutableListOf<String>()
         val originalText = ktFile.text
         val actualTextBuilder = StringBuilder()

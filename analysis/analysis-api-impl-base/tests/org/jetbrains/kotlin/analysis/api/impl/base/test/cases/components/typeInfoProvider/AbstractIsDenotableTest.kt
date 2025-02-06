@@ -33,7 +33,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
     val undenotableName = Name.identifier("Nondenotable")
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
-        val ktFile = mainFile ?: mainModule.ktFiles.first()
+        val ktFile = mainFile ?: mainModule.ktFiles.first().psiFile
         val actualText = buildString {
             ktFile.accept(object : KtTreeVisitorVoid() {
                 override fun visitElement(element: PsiElement) {

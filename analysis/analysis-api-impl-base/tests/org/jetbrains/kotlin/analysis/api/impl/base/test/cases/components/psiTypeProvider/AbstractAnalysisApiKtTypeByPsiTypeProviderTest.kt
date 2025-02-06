@@ -53,8 +53,9 @@ private fun getTestDataContext(testServices: TestServices): TestDataContext {
     var useSitePosition: PsiElement? = null
 
     testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
-        val psiFiles = ktTestModule.files
-        for (psiFile in psiFiles) {
+        val testFiles = ktTestModule.testFiles
+        for (testFile in testFiles) {
+            val psiFile = testFile.psiFile
             val targetOffset = testServices.expressionMarkerProvider.getCaretOrNull(psiFile)
             if (targetOffset != null) {
                 if (psiDeclaration != null) error("Only one target method is expected")
