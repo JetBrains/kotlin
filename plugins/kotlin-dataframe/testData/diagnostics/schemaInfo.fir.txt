@@ -167,16 +167,16 @@ FILE: schemaInfo.kt
             }
 
             local abstract class Participants_181 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val firstName: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val lastName: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val lastName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Participants_181|
@@ -261,16 +261,16 @@ FILE: schemaInfo.kt
             }
 
             local abstract class Participants_181 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val firstName: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val lastName: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val lastName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Participants_181|
@@ -352,16 +352,16 @@ FILE: schemaInfo.kt
             }
 
             local abstract class GroupParticipants_461 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val city: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val firstName: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val firstName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val lastName: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val lastName: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/GroupParticipants_461|
