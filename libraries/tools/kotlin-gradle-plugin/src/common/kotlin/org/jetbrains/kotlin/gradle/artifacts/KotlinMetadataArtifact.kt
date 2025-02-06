@@ -11,13 +11,12 @@ import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
-    if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled) return@KotlinTargetArtifact
+    if (target !is KotlinMetadataTarget) return@KotlinTargetArtifact
 
     apiElements.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
     apiElements.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))

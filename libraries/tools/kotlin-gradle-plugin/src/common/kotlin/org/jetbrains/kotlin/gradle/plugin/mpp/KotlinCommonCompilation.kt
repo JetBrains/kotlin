@@ -9,7 +9,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import javax.inject.Inject
@@ -31,8 +30,7 @@ open class KotlinCommonCompilation @Inject internal constructor(compilation: Kot
         get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>
 
     internal val isKlibCompilation: Boolean
-        get() = target.project.isKotlinGranularMetadataEnabled && !forceCompilationToKotlinMetadata
+        get() = !forceCompilationToKotlinMetadata
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
 }
-
