@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlinx.dataframe.api.rename
 import org.jetbrains.kotlinx.dataframe.api.renameToCamelCase
 import org.jetbrains.kotlinx.dataframe.api.toCamelCase
@@ -7,6 +8,7 @@ import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
@@ -37,6 +39,22 @@ class RenameInto : AbstractSchemaModificationInterpreter() {
             selected = columns.mapTo(mutableSetOf()) { it.path.path },
             nextName = { newNames[i].also { i += 1 } },
         )
+    }
+}
+
+class RenameMapping : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver by dataFrame()
+    val Arguments.mappings: List<Interpreter.Success<Pair<*, *>>> by arg()
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val mappings = mappings.map {
+            val it = it.value
+            val name = (it.first as? FirLiteralExpression)?.value as? String
+            val newName = (it.second as? FirLiteralExpression)?.value  as? String
+            if (name == null || newName == null) return PluginDataFrameSchema(emptyList())
+            name to newName
+        }
+
+        return receiver.asDataFrame().rename(*mappings.toTypedArray()).toPluginDataFrameSchema()
     }
 }
 
