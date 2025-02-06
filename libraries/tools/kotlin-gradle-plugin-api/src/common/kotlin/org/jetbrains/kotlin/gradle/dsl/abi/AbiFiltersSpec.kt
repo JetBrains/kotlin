@@ -174,7 +174,7 @@ interface AbiFilterSetSpec {
     /**
      * Filter by annotations placed on the declaration.
      *
-     * If a class, top-level function or property, or class member (a property or a function) is annotated with one of the specified annotations then this declaration matches the filter.
+     * If a class, top-level function or property, or class member (a property or a function) is annotated with one of the specified annotations, then this declaration matches the filter.
      *
      * For exclusions, matching classes, top-level symbols, or members are excluded from the dump. For inclusions, matching classes or members are included in the dump.
      *
