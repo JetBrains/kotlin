@@ -6,17 +6,26 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.js
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.buildValueParameter
-import org.jetbrains.kotlin.ir.util.IdSignature.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.CAST
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.IMPLICIT_CAST
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.platform.isJs
 
@@ -37,6 +46,8 @@ private const val INVOKE = "invoke"
 private const val APPEND = "append"
 private const val ATOMIC_ARRAY_OF_NULLS_FACTORY = "atomicArrayOfNulls"
 private const val REENTRANT_LOCK_FACTORY = "reentrantLock"
+
+private var IrSimpleFunction.transformedAtomicExtension: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
 class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
 
@@ -73,13 +84,13 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         }
 
         private fun IrDeclarationContainer.transformAllAtomicExtensions() {
-            declarations.filter { it is IrFunction && it.isAtomicExtension() }.forEach { atomicExtension ->
-                atomicExtension as IrFunction
+            declarations.filter { it is IrSimpleFunction && it.isAtomicExtension() }.forEach { atomicExtension ->
+                atomicExtension as IrSimpleFunction
                 declarations.add(transformAtomicExtension(atomicExtension))
             }
         }
 
-        private fun transformAtomicExtension(atomicExtension: IrFunction): IrFunction {
+        private fun transformAtomicExtension(atomicExtension: IrSimpleFunction): IrSimpleFunction {
             // Transform the signature of the inline Atomic* extension declaration:
             // inline fun AtomicRef<T>.foo(arg) { ... } -> inline fun <T> foo(arg', atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit)
             val newDeclaration = atomicExtension.deepCopyWithSymbols(atomicExtension.parent)
@@ -91,6 +102,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 buildValueParameter(newDeclaration, SETTER, setterType)
             )
             newDeclaration.extensionReceiverParameter = null
+            atomicExtension.transformedAtomicExtension = newDeclaration
             return newDeclaration
         }
     }
@@ -204,8 +216,10 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 // inline fun foo(atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit) { bar(atomicfu$getter, atomicfu$setter) }
                 propertyGetterCall.getReceiverAccessors(data)?.let { accessors ->
                     val declaration = expression.symbol.owner
-                    val transformedAtomicExtension =
-                        getDeclarationWithAccessorParameters(declaration, declaration.extensionReceiverParameter)
+                    val transformedAtomicExtension = declaration.transformedAtomicExtension ?: error(
+                        "Failed to find the transformed atomic extension function with accessor parameters " +
+                                "corresponding to the original declaration: ${declaration.render()}"
+                    )
                     val irCall = buildCall(
                         expression.startOffset,
                         expression.endOffset,
@@ -318,29 +332,6 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             )
         }
 
-        private fun getDeclarationWithAccessorParameters(
-            declaration: IrFunction,
-            extensionReceiverParameter: IrValueParameter?
-        ): IrSimpleFunction {
-            require(extensionReceiverParameter != null)
-            val paramsCount = declaration.valueParameters.size
-            val receiverType = extensionReceiverParameter.type.atomicToValueType()
-            return (declaration.parent as? IrDeclarationContainer)?.let { parent ->
-                parent.declarations.singleOrNull {
-                    it is IrSimpleFunction &&
-                            it.name == declaration.symbol.owner.name &&
-                            it.valueParameters.size == paramsCount + 2 &&
-                            it.valueParameters.dropLast(2).withIndex()
-                                .all { p -> p.value.render() == declaration.valueParameters[p.index].render() } &&
-                            it.valueParameters[paramsCount].name.asString() == GETTER && it.valueParameters[paramsCount + 1].name.asString() == SETTER &&
-                            it.getGetterReturnType()?.render() == receiverType.render()
-                } as? IrSimpleFunction
-            } ?: error(
-                "Failed to find the transformed atomic extension function with accessor parameters " +
-                        "corresponding to the original declaration: ${declaration.render()} in the parent: ${declaration.parent.render()}"
-            )
-        }
-
         private fun IrCall.isArrayElementGetter(): Boolean =
             dispatchReceiver?.let {
                 it.type.isAtomicArrayType() && symbol.owner.name.asString() == GET
@@ -428,7 +419,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         }
     }
 
-    private fun IrFunction.isAtomicExtension(): Boolean =
+    private fun IrSimpleFunction.isAtomicExtension(): Boolean =
         extensionReceiverParameter?.let { it.type.isAtomicValueType() && this.isInline } ?: false
 
     private fun IrSymbol.isKotlinxAtomicfuPackage() =
