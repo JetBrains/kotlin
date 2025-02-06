@@ -106,8 +106,8 @@ fun Fir2IrComponents.createSafeCallConstruction(
                 hasExtensionReceiver = false,
                 origin = IrStatementOrigin.EQEQ
             ).apply {
-                putValueArgument(0, IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol))
-                putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType))
+                arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+                arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
             }
             branches += IrBranchImpl(
                 condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
