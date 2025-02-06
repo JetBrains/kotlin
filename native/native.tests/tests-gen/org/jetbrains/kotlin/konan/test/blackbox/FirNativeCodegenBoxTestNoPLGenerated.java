@@ -7839,6 +7839,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+      }
+
+      @Test
       @TestMetadata("contextualAnonymousFunction.kt")
       public void testContextualAnonymousFunction() {
         runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
@@ -17401,6 +17407,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @Test
       public void testAllFilesPresentInExtensionProperties() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/extensionProperties/contextPropertyInInterface.kt");
       }
 
       @Test

@@ -7291,6 +7291,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+      }
+
+      @Test
       @TestMetadata("contextualAnonymousFunction.kt")
       public void testContextualAnonymousFunction() {
         runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
@@ -16127,6 +16133,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("accessorForPrivateSetter.kt")
       public void testAccessorForPrivateSetter() {
         runTest("compiler/testData/codegen/box/extensionProperties/accessorForPrivateSetter.kt");
+      }
+
+      @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/extensionProperties/contextPropertyInInterface.kt");
       }
 
       @Test
