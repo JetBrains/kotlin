@@ -454,6 +454,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       }
 
       @Test
+      @TestMetadata("blockToFunction.kt")
+      public void testBlockToFunction() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/blockToFunction.kt");
+      }
+
+      @Test
       @TestMetadata("direct.kt")
       public void testDirect() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/direct.kt");
