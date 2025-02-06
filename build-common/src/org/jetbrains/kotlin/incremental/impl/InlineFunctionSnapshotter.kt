@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.incremental.impl
 
-import org.jetbrains.kotlin.incremental.digestedByteArrayToLong
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.util.Textifier
-import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
-import java.security.MessageDigest
 
 private class InlineFunctionsSpecialSupportClassVisitor(
     val classNode: ClassNode,
@@ -40,38 +36,16 @@ private class InlineFunctionsSpecialSupportClassVisitor(
                 //TODO(62555) test inline accessors
             // TODO why is nullability so bad here
 
-            override fun visitCode() {
-                println("visit begin of methodvisitor? $name")
-                textifier.text
-                super.visitCode()
-            }
-
             override fun visitFieldInsn(opcode: Int, owner: String?, name: String?, descriptor: String?) {
                 if (opcode == Opcodes.GETSTATIC && name == "INSTANCE") {
-                    println("getstaticing $owner $name $descriptor")
+                    ///println("getstaticing $owner $name $descriptor")
                     context.addFqNameUsage(methodSignature!!, FqName(owner!!))
                     //TODO fix !!
                 }
                 super.visitFieldInsn(opcode, owner, name, descriptor)
             }
-
-            override fun visitTypeInsn(opcode: Int, type: String?) {
-                println("visitTypeInsn $type - do we care?") //TODO delete printlns btw
-                super.visitTypeInsn(opcode, type)
-            }
-
-            override fun visitEnd() {
-                println("visit end of methodvisitor")
-                println("textified: ${textifier.getText()}")
-                super.visitEnd()
-            }
         }
         return TraceMethodVisitor(methodVisitor, textifier)
-    }
-
-    override fun visitInnerClass(name: String?, outerName: String?, innerName: String?, access: Int) {
-        println("visit inner class $name")
-        super.visitInnerClass(name, outerName, innerName, access)
     }
 }
 
