@@ -10,7 +10,6 @@ dependencies {
     testImplementation(project(":compiler:ir.objcinterop"))
     testImplementation(project(":compiler:ir.backend.native"))
     testImplementation(project(":compiler:ir.serialization.native"))
-    testImplementation(project(":compiler:ir.backend.native"))
     testImplementation(project(":compiler:test-infrastructure"))
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(projectTests(":native:native.tests"))
