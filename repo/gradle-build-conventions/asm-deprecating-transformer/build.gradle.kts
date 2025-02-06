@@ -26,7 +26,7 @@ kotlin {
 dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     implementation(libs.intellij.asm)
-    implementation(libs.kotlinx.metadataJvm)
+    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}")
     implementation(libs.diff.utils)
     compileOnly(libs.shadow.gradlePlugin)
 }
