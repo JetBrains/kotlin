@@ -24,7 +24,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Explode0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Expr0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.From
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Group0
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AggregateDslInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert1
@@ -89,6 +89,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Merge0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeId
@@ -242,11 +243,12 @@ internal inline fun <reified T> String.load(): T {
         "Exclude1" -> Exclude1()
         "RenameInto" -> RenameInto()
         "DataFrameGroupBy" -> DataFrameGroupBy()
-        "GroupByInto" -> GroupByInto()
+        "AggregateDslInto" -> AggregateDslInto()
         "ReadJsonStr" -> ReadJsonStr()
         "DataRowReadJsonStr" -> DataRowReadJsonStr()
         "ReadDelimStr" -> ReadDelimStr()
         "GroupByToDataFrame" -> GroupByToDataFrame()
+        "GroupByInto" -> GroupByInto()
         "ToDataFrameFrom0" -> ToDataFrameFrom()
         "All0" -> All0()
         "ColsOf0" -> ColsOf0()

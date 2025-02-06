@@ -11,5 +11,9 @@ fun box(): String {
     val df1 = df.groupBy { b }.toDataFrame()
     df1.group[0].a
     df1.group[0].b
+
+    val df2 = df.groupBy { b }.into("gr")
+    df2.gr[0].a
+    df2.gr[0].b
     return "OK"
 }
