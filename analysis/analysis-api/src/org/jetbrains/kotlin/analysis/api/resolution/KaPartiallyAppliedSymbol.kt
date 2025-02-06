@@ -40,7 +40,7 @@ public interface KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCa
      * The list is available if the callable is declared with context parameters.
      */
     @KaExperimentalApi
-    public val contextArguments: List<KaReceiverValue> get() = emptyList()
+    public val contextArguments: List<KaReceiverValue>
 }
 
 /**

@@ -2,7 +2,33 @@ KtNameReferenceExpression(122,125): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Int
+              visibility: PUBLIC
+            type = kotlin.Int,
+          KaImplicitReceiverValue:
+            symbol = contextParameter: kotlin.String
+            type = kotlin.String
+        ]
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:

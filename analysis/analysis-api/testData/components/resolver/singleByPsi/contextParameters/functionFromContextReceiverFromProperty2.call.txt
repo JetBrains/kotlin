@@ -4,7 +4,11 @@ KtCallExpression(120,123): 'c()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = Container: Container
+            type = Container
+        ]
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:

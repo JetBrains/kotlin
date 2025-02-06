@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -82,10 +83,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import org.jetbrains.kotlin.utils.exceptions.*
 
 internal class KaFirResolver(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -508,6 +506,7 @@ internal class KaFirResolver(
             dispatchReceiver: FirExpression?,
             extensionReceiver: FirExpression?,
             explicitReceiverKind: ExplicitReceiverKind,
+            contextArguments: List<FirExpression>,
         ): KaPartiallyAppliedSymbol<KaCallableSymbol, KaCallableSignature<KaCallableSymbol>> {
             isImplicitInvoke = true
 
@@ -601,6 +600,7 @@ internal class KaFirResolver(
                 backingSignature = signature,
                 dispatchReceiver = dispatchReceiverValue,
                 extensionReceiver = extensionReceiverValue,
+                contextArguments = contextArguments.toKaContextParameterValues(),
             )
         }
 
@@ -611,9 +611,10 @@ internal class KaFirResolver(
 
                     // Implicit invoke (e.g., `x()`) will have a different callee symbol (e.g., `x`) than the candidate (e.g., `invoke`).
                     createKtPartiallyAppliedSymbolForImplicitInvoke(
-                        candidate.dispatchReceiver?.expression,
-                        candidate.chosenExtensionReceiver?.expression,
-                        candidate.explicitReceiverKind,
+                        dispatchReceiver = candidate.dispatchReceiver?.expression,
+                        extensionReceiver = candidate.chosenExtensionReceiver?.expression,
+                        explicitReceiverKind = candidate.explicitReceiverKind,
+                        contextArguments = candidate.contextArguments(),
                     )
                 }
 
@@ -621,6 +622,7 @@ internal class KaFirResolver(
                     backingSignature = signature,
                     dispatchReceiver = candidate.dispatchReceiver?.expression?.toKtReceiverValue(),
                     extensionReceiver = candidate.chosenExtensionReceiver?.expression?.toKtReceiverValue(),
+                    contextArguments = candidate.contextArguments().toKaContextParameterValues(),
                 )
             }
 
@@ -631,22 +633,34 @@ internal class KaFirResolver(
                     ExplicitReceiverKind.EXTENSION_RECEIVER
                 }
 
-                createKtPartiallyAppliedSymbolForImplicitInvoke(fir.dispatchReceiver, fir.extensionReceiver, explicitReceiverKind)
+                createKtPartiallyAppliedSymbolForImplicitInvoke(
+                    dispatchReceiver = fir.dispatchReceiver,
+                    extensionReceiver = fir.extensionReceiver,
+                    explicitReceiverKind = explicitReceiverKind,
+                    contextArguments = fir.contextArguments,
+                )
             }
 
             fir is FirQualifiedAccessExpression -> KaBasePartiallyAppliedSymbol(
-                signature,
-                fir.dispatchReceiver?.toKtReceiverValue(),
-                fir.extensionReceiver?.toKtReceiverValue(),
+                backingSignature = signature,
+                dispatchReceiver = fir.dispatchReceiver?.toKtReceiverValue(),
+                extensionReceiver = fir.extensionReceiver?.toKtReceiverValue(),
+                contextArguments = fir.contextArguments.toKaContextParameterValues(),
             )
 
             fir is FirVariableAssignment -> KaBasePartiallyAppliedSymbol(
-                signature,
-                fir.dispatchReceiver?.toKtReceiverValue(),
-                fir.extensionReceiver?.toKtReceiverValue(),
+                backingSignature = signature,
+                dispatchReceiver = fir.dispatchReceiver?.toKtReceiverValue(),
+                extensionReceiver = fir.extensionReceiver?.toKtReceiverValue(),
+                contextArguments = fir.contextArguments.toKaContextParameterValues(),
             )
 
-            else -> KaBasePartiallyAppliedSymbol(signature, dispatchReceiver = null, extensionReceiver = null)
+            else -> KaBasePartiallyAppliedSymbol(
+                backingSignature = signature,
+                dispatchReceiver = null,
+                extensionReceiver = null,
+                contextArguments = emptyList(),
+            )
         }
 
         return when (fir) {
@@ -962,6 +976,7 @@ internal class KaFirResolver(
             backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
             dispatchReceiver = dispatchReceiver?.toKtReceiverValue(),
             extensionReceiver = extensionReceiver?.toKtReceiverValue(),
+            contextArguments = contextArguments.toKaContextParameterValues(),
         )
     }
 
@@ -1002,7 +1017,21 @@ internal class KaFirResolver(
             backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
             dispatchReceiver = dispatchReceiverValue,
             extensionReceiver = extensionReceiverValue,
+            contextArguments = contextArguments.toKaContextParameterValues(),
         )
+    }
+
+    private fun List<FirExpression>.toKaContextParameterValues(): List<KaReceiverValue> {
+        return mapNotNull { expression ->
+            val receiverValue = expression.toKtReceiverValue()
+            if (receiverValue == null) {
+                logger<KaFirResolver>().logErrorWithAttachment("Unexpected null receiver value for context argument") {
+                    withFirEntry("expression", expression)
+                }
+            }
+
+            receiverValue
+        }
     }
 
     private fun FirExpression.toKtReceiverValue(): KaReceiverValue? {
@@ -1016,21 +1045,30 @@ internal class KaFirResolver(
                 }
             }
 
-            is FirThisReceiverExpression if this.isImplicit -> {
-                val implicitPartiallyAppliedSymbol = when (val partiallyAppliedSymbol = calleeReference.boundSymbol) {
-                    is FirClassSymbol<*> -> partiallyAppliedSymbol.toKaSymbol()
-                    is FirReceiverParameterSymbol -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
+            is FirThisReceiverExpression if isImplicit -> {
+                val symbol = when (val firSymbol = calleeReference.boundSymbol) {
+                    is FirClassSymbol<*> -> firSymbol.toKaSymbol()
+                    is FirReceiverParameterSymbol -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(firSymbol)
                         ?: return null
 
-                    is FirValueParameterSymbol -> firSymbolBuilder.variableBuilder.buildParameterSymbol(partiallyAppliedSymbol)
+                    is FirValueParameterSymbol -> firSymbolBuilder.variableBuilder.buildParameterSymbol(firSymbol)
                     is FirTypeAliasSymbol, is FirTypeParameterSymbol -> errorWithFirSpecificEntries(
-                        message = "Unexpected FirThisOwnerSymbol ${partiallyAppliedSymbol::class.simpleName}",
-                        fir = partiallyAppliedSymbol.fir
+                        message = "Unexpected ${FirThisOwnerSymbol::class.simpleName}: ${firSymbol::class.simpleName}",
+                        fir = firSymbol.fir
                     )
+
                     null -> return null
                 }
 
-                KaBaseImplicitReceiverValue(implicitPartiallyAppliedSymbol, resolvedType.asKtType())
+                KaBaseImplicitReceiverValue(symbol, resolvedType.asKtType())
+            }
+
+            is FirPropertyAccessExpression if source?.kind is KtFakeSourceElementKind.ImplicitContextParameterArgument -> {
+                val firSymbol = calleeReference.symbol ?: return null
+
+                require(firSymbol is FirValueParameterSymbol) { "Unexpected symbol ${firSymbol::class.simpleName}" }
+                val symbol = firSymbolBuilder.variableBuilder.buildParameterSymbol(firSymbol)
+                KaBaseImplicitReceiverValue(symbol, resolvedType.asKtType())
             }
 
             is FirResolvedQualifier if this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
@@ -1186,7 +1224,13 @@ internal class KaFirResolver(
         analysisSession.apply {
             return constructors.map { constructor ->
                 val signature = constructor.toKaSignature()
-                val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(signature as KaFunctionSignature<*>, null, null)
+                val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
+                    backingSignature = signature as KaFunctionSignature<*>,
+                    dispatchReceiver = null,
+                    extensionReceiver = null,
+                    contextArguments = emptyList(),
+                )
+
                 val firTypeArgumentsMapping = toFirTypeArgumentsMapping(constructor)
                 val typeArgumentsMapping = firTypeArgumentsMapping.asKaTypeParametersMapping()
                 KaBaseSimpleFunctionCall(partiallyAppliedSymbol, emptyMap(), typeArgumentsMapping, false)
@@ -1351,10 +1395,12 @@ internal class KaFirResolver(
                     val defaultArrayOfSymbol = arrayOfSymbol(arrayOf) ?: return null
                     val substitutor = createSubstitutorFromTypeArguments(defaultArrayOfSymbol)
                     val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
-                        with(useSiteSession) { defaultArrayOfSymbol.substitute(substitutor) },
-                        null,
-                        null,
+                        backingSignature = with(useSiteSession) { defaultArrayOfSymbol.substitute(substitutor) },
+                        dispatchReceiver = null,
+                        extensionReceiver = null,
+                        contextArguments = emptyList(),
                     )
+
                     KaBaseErrorCallInfo(
                         listOf(
                             KaBaseSimpleFunctionCall(
@@ -1376,10 +1422,12 @@ internal class KaFirResolver(
         } ?: return null
         val substitutor = createSubstitutorFromTypeArguments(arrayOfSymbol)
         val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
-            with(analysisSession) { arrayOfSymbol.substitute(substitutor) },
-            null,
-            null,
+            backingSignature = with(analysisSession) { arrayOfSymbol.substitute(substitutor) },
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            contextArguments = emptyList(),
         )
+
         return KaBaseSuccessCallInfo(
             KaBaseSimpleFunctionCall(
                 partiallyAppliedSymbol,
@@ -1413,13 +1461,14 @@ internal class KaFirResolver(
                 KaBaseSuccessCallInfo(
                     KaBaseSimpleFunctionCall(
                         KaBasePartiallyAppliedSymbol(
-                            kaSignature,
-                            KaBaseExplicitReceiverValue(
+                            backingSignature = kaSignature,
+                            dispatchReceiver = KaBaseExplicitReceiverValue(
                                 expression = leftPsi,
                                 backingType = leftOperand.resolvedType.asKtType(),
                                 isSafeNavigation = false,
                             ),
-                            null
+                            extensionReceiver = null,
+                            contextArguments = emptyList(),
                         ),
                         mapOf(rightPsi to kaSignature.valueParameters.first()),
                         emptyMap(),

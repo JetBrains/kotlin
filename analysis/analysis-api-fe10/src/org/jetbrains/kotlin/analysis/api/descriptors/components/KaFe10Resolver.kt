@@ -452,6 +452,7 @@ internal class KaFe10Resolver(
                 backingSignature = signature,
                 dispatchReceiver = extensionReceiver?.toKtReceiverValue(context, this),
                 extensionReceiver = null,
+                contextArguments = contextReceivers.mapNotNull { it.toKtReceiverValue(context, this) },
             )
         } else {
             return KaBasePartiallyAppliedSymbol(
@@ -459,6 +460,7 @@ internal class KaFe10Resolver(
                 dispatchReceiver = dispatchReceiver?.toKtReceiverValue(context, this, smartCastDispatchReceiverType)
                     ?: targetDescriptor.dispatchReceiverForImportedCallables(),
                 extensionReceiver = extensionReceiver?.toKtReceiverValue(context, this),
+                contextArguments = contextReceivers.mapNotNull { it.toKtReceiverValue(context, this) },
             )
         }
     }

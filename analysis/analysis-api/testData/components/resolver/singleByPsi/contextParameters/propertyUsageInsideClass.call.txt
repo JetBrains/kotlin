@@ -2,7 +2,11 @@ KtNameReferenceExpression(195,209): 'propertyMember'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = a: A
+            type = A
+        ]
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Base
           type = Base
