@@ -7,7 +7,6 @@ package kotlin.metadata.test
 
 import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
@@ -28,7 +27,6 @@ class DifferentVersionsTest {
     )
 
     @Test
-    @Disabled("Enable when KT-74254 is fixed")
     fun readsCurrentVersion() {
         assertContentEquals(MetadataVersion.INSTANCE.toArray(), metadata.metadataVersion)
         assertIs<KotlinClassMetadata.Class>(KotlinClassMetadata.readStrict(metadata))
