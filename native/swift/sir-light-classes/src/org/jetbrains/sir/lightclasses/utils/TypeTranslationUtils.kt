@@ -46,7 +46,7 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
                     }
                 }
             SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))
-        } + listOfNotNull(getOuterParameterOfInnerClass())
+        }
     }
 }
 
@@ -73,20 +73,3 @@ private fun <P : KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol
     )
 }
 
-private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {
-    val parameterName = "outer__" //Temporary solution until there is no generic parameter mangling
-    return withSessions {
-        val sirFromKtSymbol = this@getOuterParameterOfInnerClass
-        if (sirFromKtSymbol is SirInitFromKtSymbol && isInner(sirFromKtSymbol)) {
-            val outSymbol = (ktSymbol.containingSymbol?.containingSymbol as? KaNamedClassSymbol)
-            val outType = outSymbol?.defaultType?.translateType(
-                this.useSiteSession,
-                { error("Error translating type") },
-                { error("Unsupported type") },
-                {})
-            outType?.run {
-                SirParameter(argumentName = parameterName, type = this)
-            }
-        } else null
-    }
-}
