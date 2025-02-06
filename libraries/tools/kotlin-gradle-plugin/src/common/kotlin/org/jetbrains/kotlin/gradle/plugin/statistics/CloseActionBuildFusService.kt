@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
-import javax.inject.Inject
 
-abstract class CloseActionBuildFusService @Inject constructor(private val objects: ObjectFactory) :
-    BuildFusService<CloseActionBuildFusService.Parameters>(objects) {
+abstract class CloseActionBuildFusService:
+    BuildFusService<CloseActionBuildFusService.Parameters>() {
 
     interface Parameters : BuildFusService.Parameters {
         val configurationMetrics: ListProperty<MetricContainer>
