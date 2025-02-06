@@ -7,7 +7,7 @@ import kotlinx.metadata.jvm.UnstableMetadataApi
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 description = "Kotlin Full Reflection Library"
 
@@ -83,14 +83,17 @@ if (kotlinBuildProperties.includeJava9) {
     )
 }
 
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.freeCompilerArgs.set(
-        listOf(
-            "-Xallow-kotlin-package",
-            "-Xno-new-java-annotation-targets",
-            "-Xdont-warn-on-error-suppression",
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.set(
+            listOf(
+                "-Xallow-kotlin-package",
+                "-Xno-new-java-annotation-targets",
+                "-Xdont-warn-on-error-suppression",
+            )
         )
-    )
+        moduleName.set("kotlin-reflection")
+    }
 }
 
 @CacheableTransformer
