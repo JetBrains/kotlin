@@ -491,6 +491,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("reorder.kt")
+  public void testReorder() {
+    runTest("testData/box/reorder.kt");
+  }
+
+  @Test
   @TestMetadata("Schema.kt")
   public void testSchema() {
     runTest("testData/box/Schema.kt");
