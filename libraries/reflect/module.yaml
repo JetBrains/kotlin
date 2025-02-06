@@ -29,22 +29,3 @@ dependencies:
 
 module:
   layout: gradle-jvm
-
-
-test-dependencies:
-  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
-  - org.jetbrains:annotations:13.0
-  - javax.inject:javax.inject:1
-  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-  - ./api
-  - ./../../core/metadata
-  - ./../../core/metadata.jvm
-  - ./../../core/compiler.common
-  - ./../../core/compiler.common.jvm
-  - ./../../core/deserialization.common
-  - ./../../core/deserialization.common.jvm
-  - ./../../core/descriptors
-  - ./../../core/descriptors.jvm
-  - ./../../core/deserialization
-  - ./../../core/descriptors.runtime
-  - ./../../core/util.runtime

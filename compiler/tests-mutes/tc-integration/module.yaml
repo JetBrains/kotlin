@@ -43,39 +43,3 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
-
-
-test-dependencies:
-  - com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20-dev-6663
-  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
-  - io.ktor:ktor-client-cio-jvm:2.3.13
-  - io.ktor:ktor-client-content-negotiation-jvm:2.3.13
-  - io.ktor:ktor-serialization-jackson-jvm:2.3.13
-  - com.fasterxml.jackson.core:jackson-databind:2.18.1
-  - com.fasterxml.jackson.core:jackson-annotations:2.18.1
-  - org.jetbrains.kotlin:kotlin-reflect:1.8.10
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.20-dev-6663
-  - org.jetbrains:annotations:23.0.0
-  - org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.1
-  - org.slf4j:slf4j-api:1.7.36
-  - com.fasterxml.jackson.core:jackson-core:2.18.1
-  - io.ktor:ktor-client-core-jvm:2.3.13
-  - io.ktor:ktor-http-cio-jvm:2.3.13
-  - io.ktor:ktor-websockets-jvm:2.3.13
-  - io.ktor:ktor-network-tls-jvm:2.3.13
-  - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1
-  - io.ktor:ktor-serialization-jvm:2.3.13
-  - io.ktor:ktor-http-jvm:2.3.13
-  - io.ktor:ktor-websocket-serialization-jvm:2.3.13
-  - io.ktor:ktor-events-jvm:2.3.13
-  - io.ktor:ktor-network-jvm:2.3.13
-  - io.ktor:ktor-utils-jvm:2.3.13
-  - io.ktor:ktor-io-jvm:2.3.13
-  - org.jetbrains.kotlin:kotlin-reflect:1.8.22
-  - org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.1
-  - ./..
-
-test-settings:
-  kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

@@ -15,8 +15,3 @@ module:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction, -Xskip-prerelease-check, -Xwhen-guards]
-
-
-test-settings:
-  kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,kotlin.RequiresOptIn,org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction, -Xskip-prerelease-check, -Xwhen-guards]

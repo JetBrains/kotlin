@@ -26,19 +26,3 @@ module:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
-
-
-test-dependencies:
-  - org.jetbrains.intellij.deps:asm-all:9.0
-  - org.apache.commons:commons-text:1.10.0
-  - org.apache.commons:commons-lang3:3.12.0
-  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
-  - org.jetbrains:annotations:13.0
-  - ./../kotlinp/kotlinp-jvm
-  - ./../../kotlinx-metadata/metadata-jvm
-  - ./../../kotlinx-metadata
-  - ./../kotlinp
-
-test-settings:
-  kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

@@ -25,18 +25,3 @@ dependencies:
 
 module:
   layout: gradle-jvm
-
-
-test-dependencies:
-  - com.github.ben-manes.caffeine:caffeine:2.9.3
-  - org.checkerframework:checker-qual:3.43.0
-  - com.google.errorprone:error_prone_annotations:2.28.0
-  - io.opentelemetry:opentelemetry-api:1.41.0
-  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
-  - io.opentelemetry:opentelemetry-context:1.41.0
-  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
-  - org.jetbrains.intellij.deps:trove4j:1.0.20200330
-  - org.jetbrains:annotations:13.0
-  - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
-  - ./../../../prepare/compiler-embeddable
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
