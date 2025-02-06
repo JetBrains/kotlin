@@ -1,15 +1,13 @@
-@file:Suppress("INVISIBLE_REFERENCE")
-
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlinx.dataframe.AnyCol
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.api.asDataColumn
 import org.jetbrains.kotlinx.dataframe.api.cast
 import org.jetbrains.kotlinx.dataframe.api.dataFrameOf
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.columns.FrameColumn
-import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnGroupImpl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
 fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> {
@@ -28,11 +26,10 @@ private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
     return dataFrameOf(columns).cast()
 }
 
-@Suppress("INVISIBLE_REFERENCE")
 fun SimpleCol.asDataColumn(): DataColumn<*> {
     val column = when (this) {
         is SimpleDataColumn -> DataColumn.createByType(this.name, listOf(this.type))
-        is SimpleColumnGroup -> DataColumn.createColumnGroup(this.name, this.columns().map()) as ColumnGroupImpl<*>
+        is SimpleColumnGroup -> DataColumn.createColumnGroup(this.name, this.columns().map()).asDataColumn()
         is SimpleFrameColumn -> DataColumn.createFrameColumn(this.name, listOf(this.columns().map()))
     }
     return column

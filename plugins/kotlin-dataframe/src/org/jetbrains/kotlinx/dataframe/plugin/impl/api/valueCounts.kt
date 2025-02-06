@@ -1,8 +1,7 @@
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlinx.dataframe.api.ValueCount
+import org.jetbrains.kotlinx.dataframe.impl.ColumnNameGenerator
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
@@ -22,7 +21,7 @@ class ValueCounts : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val res = columns?.resolve(receiver)?.map { it.column } ?: receiver.columns()
-        val generator = org.jetbrains.kotlinx.dataframe.impl.ColumnNameGenerator(res.map { it.name })
+        val generator = ColumnNameGenerator(res.map { it.name })
         val count = SimpleDataColumn(generator.addUnique(resultColumn), session.builtinTypes.intType.type.wrap())
         return PluginDataFrameSchema(res + count)
     }
