@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -252,45 +253,45 @@ class Fir2IrLazyProperty(
 
         accessor.classifiersGenerator.setTypeParameters(accessor, fir, typeOrigin)
 
-        val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
-        if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
-            accessor.dispatchReceiverParameter = accessor.declareThisReceiverParameter(
-                c,
-                thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
-                thisOrigin = accessor.origin,
-            )
-        }
+        accessor.parameters = buildList {
+            val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
+            if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
+                this += accessor.declareThisReceiverParameter(
+                    c,
+                    thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
+                    thisOrigin = accessor.origin,
+                    kind = IrParameterKind.DispatchReceiver,
+                )
+            }
 
-        accessor.extensionReceiverParameter = fir.receiverParameter?.let {
-            accessor.declareThisReceiverParameter(
-                c,
-                thisType = it.typeRef.toIrType(typeConverter, typeOrigin),
-                thisOrigin = accessor.origin,
-                explicitReceiver = it
-            )
-        }
-
-        accessor.valueParameters = buildList {
             callablesGenerator.addContextParametersTo(
                 accessor.fir.contextParametersForFunctionOrContainingProperty(),
                 accessor,
                 this@buildList
             )
 
+            fir.receiverParameter?.let {
+                this += accessor.declareThisReceiverParameter(
+                    c,
+                    thisType = it.typeRef.toIrType(typeConverter, typeOrigin),
+                    thisOrigin = accessor.origin,
+                    explicitReceiver = it,
+                    kind = IrParameterKind.ExtensionReceiver,
+                )
+            }
+
             if (accessor.isSetter) {
                 val valueParameter = firAccessor?.valueParameters?.firstOrNull()
-                add(
-                    callablesGenerator.createDefaultSetterParameter(
-                        accessor.startOffset, accessor.endOffset,
-                        (valueParameter?.returnTypeRef ?: accessor.fir.returnTypeRef).toIrType(
-                            typeConverter, typeOrigin
-                        ),
-                        parent = accessor,
-                        firValueParameter = valueParameter,
-                        name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
-                        isCrossinline = valueParameter?.isCrossinline == true,
-                        isNoinline = valueParameter?.isNoinline == true
-                    )
+                this += callablesGenerator.createDefaultSetterParameter(
+                    accessor.startOffset, accessor.endOffset,
+                    (valueParameter?.returnTypeRef ?: accessor.fir.returnTypeRef).toIrType(
+                        typeConverter, typeOrigin
+                    ),
+                    parent = accessor,
+                    firValueParameter = valueParameter,
+                    name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
+                    isCrossinline = valueParameter?.isCrossinline == true,
+                    isNoinline = valueParameter?.isNoinline == true
                 )
             }
         }

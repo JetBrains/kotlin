@@ -40,7 +40,6 @@ class Fir2IrLazyConstructor(
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
-        this.contextReceiverParametersCount = fir.contextParameters.size
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
