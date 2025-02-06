@@ -24,16 +24,6 @@ import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiUpdateTask
 import org.jetbrains.kotlin.gradle.utils.newInstance
 
 /**
- * Creates an instance of [AbiFiltersSpecImpl].
- */
-internal fun ObjectFactory.AbiFiltersSpecImpl(): AbiFiltersSpecImpl = newInstance<AbiFiltersSpecImpl>()
-
-/**
- * Creates an instance of [AbiFilterSetSpec].
- */
-internal fun ObjectFactory.AbiFilterSetSpec(): AbiFilterSetSpec = newInstance<AbiFilterSetSpec>()
-
-/**
  * Creates an instance of [AbiValidationKlibKindExtension].
  */
 internal fun ObjectFactory.AbiValidationKlibKindExtension(): AbiValidationKlibKindExtension = newInstance<AbiValidationKlibKindExtension>()

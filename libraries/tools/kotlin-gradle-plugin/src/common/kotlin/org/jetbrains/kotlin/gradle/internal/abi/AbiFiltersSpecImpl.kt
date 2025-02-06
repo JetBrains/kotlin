@@ -17,6 +17,12 @@ import javax.inject.Inject
  */
 @ExperimentalAbiValidation
 internal abstract class AbiFiltersSpecImpl @Inject constructor(objects: ObjectFactory) : AbiFiltersSpec {
-    override val excluded: AbiFilterSetSpec = objects.AbiFilterSetSpec()
-    override val included: AbiFilterSetSpec = objects.AbiFilterSetSpec()
+    override val excluded: AbiFilterSetSpec = objects.newInstance<AbiFilterSetSpec>()
+    override val included: AbiFilterSetSpec = objects.newInstance<AbiFilterSetSpec>()
 }
+
+/**
+ * Creates an instance of [AbiFiltersSpecImpl].
+ */
+internal fun ObjectFactory.AbiFiltersSpecImpl(): AbiFiltersSpecImpl = newInstance<AbiFiltersSpecImpl>()
+
