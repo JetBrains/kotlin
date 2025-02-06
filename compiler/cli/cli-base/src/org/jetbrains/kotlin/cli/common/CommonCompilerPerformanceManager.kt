@@ -18,9 +18,8 @@ import java.util.concurrent.TimeUnit
  * that external measurements are collected in a single thread.
  */
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
-    companion object {
-        val findJavaClassLock = Any()
-    }
+    // The lock object is located not in a companion object because every module has its own instance of the performance manager
+    private val findJavaClassLock = Any()
 
     @Suppress("MemberVisibilityCanBePrivate")
     private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
