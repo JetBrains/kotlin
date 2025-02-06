@@ -76,12 +76,10 @@ internal class ClassMemberGenerator(
             }
 
             allDeclarations.forEach { declaration ->
-                when {
-                    declaration is FirTypeAlias -> {
-                    }
-                    declaration is FirConstructor && declaration.isPrimary -> {
-                    }
-                    declaration is FirRegularClass && declaration.visibility == Visibilities.Local -> {
+                when (declaration) {
+                    is FirTypeAlias -> {}
+                    is FirConstructor if declaration.isPrimary -> {}
+                    is FirRegularClass if declaration.visibility == Visibilities.Local -> {
                         val irNestedClass = classifierStorage.getIrClass(declaration)
                         irNestedClass.parent = irClass
                         conversionScope.withParent(irNestedClass) {
