@@ -79,7 +79,7 @@ interface AbiFiltersSpec {
     val included: AbiFilterSetSpec
 
     /**
-     * Configures the [excluded] with the provided configuration.
+     * Configures the [excluded] variable with the provided configuration.
      */
     fun excluded(action: Action<AbiFilterSetSpec>) {
         action.execute(excluded)
