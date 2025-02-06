@@ -1036,6 +1036,22 @@ private fun IrBuilderWithScope.convertPossiblyRetainedObjCPointer(
     convert(pointer)
 }
 
+internal fun KotlinStubs.convertBlockPtrToKotlinFunction(builder: IrBuilderWithScope, blockPtr: IrExpression, functionType: IrType): IrExpression {
+    // blockPtr can be stack-allocated, so copy it first.
+    val copiedBlockPtr = builder.irCall(symbols.interopBlockCopy).apply {
+        arguments[0] = blockPtr
+    }
+    val valuePassing = mapBlockType(
+            type = functionType,
+            retained = true,
+            location = blockPtr
+    )
+    check(valuePassing.cToBridged("foo") == "foo")
+    with(valuePassing) {
+        return builder.bridgedToKotlin(copiedBlockPtr, symbols)
+    }
+}
+
 private class ObjCBlockPointerValuePassing(
         val stubs: KotlinStubs,
         private val location: IrElement,
