@@ -67,7 +67,7 @@ val expectedNullableUnitExplicitReturnString: () -> Unit? = l@ {
 
 fun expectedFlexibleUnitExplicitReturnString() {
     A.foo = l@ {
-        return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH!>""<!>
     }
 }
 
