@@ -4,7 +4,30 @@ KtCallExpression(117,127): 'thisProp()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp

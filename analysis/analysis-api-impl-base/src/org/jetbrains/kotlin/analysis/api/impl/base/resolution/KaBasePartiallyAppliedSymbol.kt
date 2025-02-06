@@ -19,9 +19,11 @@ class KaBasePartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableS
     private val backingSignature: C,
     dispatchReceiver: KaReceiverValue?,
     extensionReceiver: KaReceiverValue?,
+    contextArguments: List<KaReceiverValue>,
 ) : KaPartiallyAppliedSymbol<S, C> {
     override val token: KaLifetimeToken get() = backingSignature.token
     override val signature: C get() = withValidityAssertion { backingSignature }
     override val dispatchReceiver: KaReceiverValue? by validityAsserted(dispatchReceiver)
     override val extensionReceiver: KaReceiverValue? by validityAsserted(extensionReceiver)
+    override val contextArguments: List<KaReceiverValue> by validityAsserted(contextArguments)
 }

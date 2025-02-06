@@ -12,7 +12,11 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = <unused var>: kotlin.Int
+            type = kotlin.Int
+        ]
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []

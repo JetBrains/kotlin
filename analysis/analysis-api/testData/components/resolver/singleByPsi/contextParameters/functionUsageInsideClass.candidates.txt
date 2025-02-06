@@ -4,7 +4,11 @@ KtCallExpression(181,192): 'funMember()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = a: A
+            type = A
+        ]
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Base
           type = Base

@@ -934,7 +934,30 @@ KtPrefixExpression(890,899): '+thisProp'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -963,7 +986,30 @@ KtOperationReferenceExpression(890,891): '+'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1009,7 +1055,30 @@ KtPrefixExpression(908,910): '+a'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1038,7 +1107,30 @@ KtOperationReferenceExpression(908,909): '+'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1092,7 +1184,30 @@ KtBinaryExpression(919,931): 'thisProp + 1'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1154,7 +1269,30 @@ KtOperationReferenceExpression(928,929): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1202,7 +1340,30 @@ KtBinaryExpression(940,945): 'a + 1'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1264,7 +1425,30 @@ KtOperationReferenceExpression(942,943): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1312,7 +1496,30 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1380,7 +1587,30 @@ KtArrayAccessExpression(974,978): 'a[1]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1455,7 +1685,30 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1514,7 +1767,30 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1596,7 +1872,30 @@ KtOperationReferenceExpression(999,1000): '='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1694,7 +1993,30 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1753,7 +2075,30 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1835,7 +2180,30 @@ KtOperationReferenceExpression(1018,1019): '='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -1918,7 +2286,30 @@ KtCallExpression(1032,1042): 'thisProp()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -1967,7 +2358,30 @@ KtCallExpression(1051,1054): 'a()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -2024,7 +2438,30 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -2086,7 +2523,30 @@ KtOperationReferenceExpression(1072,1074): '+='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = thisProp
@@ -2134,7 +2594,30 @@ KtBinaryExpression(1085,1091): 'a += 1'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -2196,7 +2679,30 @@ KtOperationReferenceExpression(1087,1089): '+='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
@@ -2236,7 +2742,30 @@ KtPostfixExpression(1100,1110): 'thisProp++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
+          contextArguments = [
+            KaImplicitReceiverValue:
+              symbol = KaReceiverParameterSymbol:
+                annotations: []
+                callableId: null
+                compilerVisibility: Public
+                contextReceivers: []
+                isActual: false
+                isExpect: false
+                isExtension: false
+                isVal: true
+                location: LOCAL
+                modality: FINAL
+                name: <receiver>
+                origin: SOURCE
+                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                receiverParameter: null
+                returnType: KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: A
+                visibility: PUBLIC
+              type = A
+          ]
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = thisProp
@@ -2293,7 +2822,30 @@ KtOperationReferenceExpression(1108,1110): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
+          contextArguments = [
+            KaImplicitReceiverValue:
+              symbol = KaReceiverParameterSymbol:
+                annotations: []
+                callableId: null
+                compilerVisibility: Public
+                contextReceivers: []
+                isActual: false
+                isExpect: false
+                isExtension: false
+                isVal: true
+                location: LOCAL
+                modality: FINAL
+                name: <receiver>
+                origin: SOURCE
+                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                receiverParameter: null
+                returnType: KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: A
+                visibility: PUBLIC
+              type = A
+          ]
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = thisProp
@@ -2387,7 +2939,30 @@ KtPostfixExpression(1123,1126): 'a++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
+          contextArguments = [
+            KaImplicitReceiverValue:
+              symbol = KaReceiverParameterSymbol:
+                annotations: []
+                callableId: null
+                compilerVisibility: Public
+                contextReceivers: []
+                isActual: false
+                isExpect: false
+                isExtension: false
+                isVal: true
+                location: LOCAL
+                modality: FINAL
+                name: <receiver>
+                origin: SOURCE
+                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                receiverParameter: null
+                returnType: KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: A
+                visibility: PUBLIC
+              type = A
+          ]
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = a
@@ -2444,7 +3019,30 @@ KtOperationReferenceExpression(1124,1126): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
+          contextArguments = [
+            KaImplicitReceiverValue:
+              symbol = KaReceiverParameterSymbol:
+                annotations: []
+                callableId: null
+                compilerVisibility: Public
+                contextReceivers: []
+                isActual: false
+                isExpect: false
+                isExtension: false
+                isVal: true
+                location: LOCAL
+                modality: FINAL
+                name: <receiver>
+                origin: SOURCE
+                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                receiverParameter: null
+                returnType: KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: A
+                visibility: PUBLIC
+              type = A
+          ]
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = a
@@ -2492,7 +3090,30 @@ KtBinaryExpression(1136,1141): 'b + 1'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2554,7 +3175,30 @@ KtOperationReferenceExpression(1138,1139): '+'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2594,7 +3238,30 @@ KtPrefixExpression(1150,1152): '+b'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2623,7 +3290,30 @@ KtOperationReferenceExpression(1150,1151): '+'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2677,7 +3367,30 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2752,7 +3465,30 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2811,7 +3547,30 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2893,7 +3652,30 @@ KtOperationReferenceExpression(1179,1180): '='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -2976,7 +3758,30 @@ KtCallExpression(1193,1196): 'b()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -3033,7 +3838,30 @@ KtBinaryExpression(1205,1211): 'b += 1'
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -3095,7 +3923,30 @@ KtOperationReferenceExpression(1207,1209): '+='
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: A
+              visibility: PUBLIC
+            type = A
+        ]
         dispatchReceiver = KaExplicitReceiverValue:
           expression = b
           isSafeNavigation = false
@@ -3135,7 +3986,30 @@ KtPostfixExpression(1220,1223): 'b++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
+          contextArguments = [
+            KaImplicitReceiverValue:
+              symbol = KaReceiverParameterSymbol:
+                annotations: []
+                callableId: null
+                compilerVisibility: Public
+                contextReceivers: []
+                isActual: false
+                isExpect: false
+                isExtension: false
+                isVal: true
+                location: LOCAL
+                modality: FINAL
+                name: <receiver>
+                origin: SOURCE
+                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                receiverParameter: null
+                returnType: KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: A
+                visibility: PUBLIC
+              type = A
+          ]
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b
             isSafeNavigation = false
@@ -3192,7 +4066,30 @@ KtOperationReferenceExpression(1221,1223): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
+          contextArguments = [
+            KaImplicitReceiverValue:
+              symbol = KaReceiverParameterSymbol:
+                annotations: []
+                callableId: null
+                compilerVisibility: Public
+                contextReceivers: []
+                isActual: false
+                isExpect: false
+                isExtension: false
+                isVal: true
+                location: LOCAL
+                modality: FINAL
+                name: <receiver>
+                origin: SOURCE
+                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                receiverParameter: null
+                returnType: KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: A
+                visibility: PUBLIC
+              type = A
+          ]
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b
             isSafeNavigation = false

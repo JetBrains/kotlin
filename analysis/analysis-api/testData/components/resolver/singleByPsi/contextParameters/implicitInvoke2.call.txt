@@ -4,7 +4,11 @@ KtCallExpression(99,102): 'a()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = <unused var>: A
+            type = A
+        ]
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = a
