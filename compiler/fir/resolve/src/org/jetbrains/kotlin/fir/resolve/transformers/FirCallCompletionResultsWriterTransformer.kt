@@ -1191,7 +1191,8 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
-        if (arrayLiteral.isResolved) return arrayLiteral
+        // if (arrayLiteral.isResolved) return arrayLiteral
+        // require(arrayLiteral.isResolved) // todo
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
         val expectedArrayElementType = expectedArrayType?.let { getCollectionLiteralElementType(it, session, scopeSession) }
         val call: FirFunctionCall

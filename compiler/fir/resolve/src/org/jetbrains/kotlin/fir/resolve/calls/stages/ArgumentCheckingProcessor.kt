@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -117,47 +114,61 @@ internal object ArgumentCheckingProcessor {
 
     // -------------------------------------------- Real implementation --------------------------------------------
 
+    private fun ArgumentContext.initConeResolvedCollectionLiteralAtom(
+        wrapperAtom: ConeResolutionAtomWithPostponedChild,
+        expression: FirArrayLiteral,
+        elementType: ConeKotlinType?,
+        expectedType: ConeKotlinType,
+    ): ConeResolvedCollectionLiteralAtom {
+        val subAtoms = expression.arguments.map { ConeResolutionAtom.createRawAtom(it) }
+        val postponedAtom = ConeResolvedCollectionLiteralAtom(expression, subAtoms, elementType, expectedType)
+        wrapperAtom.subAtom = postponedAtom
+        candidate.addPostponedAtom(postponedAtom)
+        return postponedAtom
+    }
+
     private fun ArgumentContext.resolveArgumentExpression(atom: ConeResolutionAtom) {
         when (atom) { // todo
             is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
-            }
-            // todo probably, this should be moved somewhere to "completion", but IDK how, and IDK why, it's just my intuition
-            is ConeCollectionLiteralResolutionAtom -> {
-                val collectionLiteralArgumentContext = this@resolveArgumentExpression
-                if (collectionLiteralArgumentContext.expectedType == null) {
-                    return
-                }
-                val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
-                val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
-                    ?: when (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
-                        true -> session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.List)
-                            ?.let { it as? FirRegularClassSymbol }
-                            ?.companionObjectSymbol
-                            ?.declaredMemberScope(session, memberRequiredPhase = null)
-                            ?.getFunctions(Name.identifier("of"))
-                            ?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
-                        else -> null
+                is FirArrayLiteral -> {
+                    val collectionLiteralArgumentContext = this@resolveArgumentExpression
+                    if (collectionLiteralArgumentContext.expectedType == null) {
+                        return // todo
                     }
-                if (ofFunction == null) {
-                    reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
-                    return
-                }
-                val freshVars = ofFunction.typeParameterSymbols.map { ConeTypeParameterBasedTypeVariable(it) }
-                val substr = substitutorByMap(freshVars.associate { it.typeParameterSymbol to it.defaultType }, session)
-                for (freshVar in freshVars) csBuilder.registerVariable(freshVar)
 
-                val collectionLiteralElementType = getCollectionLiteralElementType(ofFunction)
-                resolvePlainExpressionArgument(
-                    atom.expression,
-                    argumentType = substr.substituteOrSelf(ofFunction.resolvedReturnType)
-                )
-                val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(
-                    expectedType = substr.substituteOrSelf(collectionLiteralElementType),
-                )
-                for (atom in atom.subAtoms) {
-                    collectionLiteralElementContext.resolveArgumentExpression(atom)
+                    val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
+                    val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
+                        ?: when (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
+                            true -> session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.List)
+                                ?.let { it as? FirRegularClassSymbol }
+                                ?.companionObjectSymbol
+                                ?.declaredMemberScope(session, memberRequiredPhase = null)
+                                ?.getFunctions(Name.identifier("of"))
+                                ?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+                            else -> null
+                        }
+                    if (ofFunction == null) {
+                        // reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
+                        initConeResolvedCollectionLiteralAtom(atom, atom.expression, elementType = null, expectedType)
+                        return
+                    }
+                    val freshVars = ofFunction.typeParameterSymbols.map { ConeTypeParameterBasedTypeVariable(it) }
+                    val substr = substitutorByMap(freshVars.associate { it.typeParameterSymbol to it.defaultType }, session)
+                    for (freshVar in freshVars) csBuilder.registerVariable(freshVar)
+
+                    val elementType = substr.substituteOrSelf(getCollectionLiteralElementType(ofFunction))
+                    val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(expectedType = elementType)
+                    val postponedAtom = initConeResolvedCollectionLiteralAtom(atom, atom.expression, elementType, expectedType)
+                    postponedAtom.analyzed = true
+                    for (atom in postponedAtom.subAtoms) {
+                        collectionLiteralElementContext.resolveArgumentExpression(atom)
+                    }
+                    resolvePlainExpressionArgument(
+                        atom.expression,
+                        argumentType = substr.substituteOrSelf(ofFunction.resolvedReturnType)
+                    )
                 }
             }
 

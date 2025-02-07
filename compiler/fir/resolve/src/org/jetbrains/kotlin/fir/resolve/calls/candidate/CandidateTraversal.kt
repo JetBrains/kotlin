@@ -52,6 +52,12 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
             processCandidatesAndPostponedAtoms(atom.subAtom)
         }
 
+        // collection literals
+        is ConeResolvedCollectionLiteralAtom -> {
+            postponedAtomsProcessor(atom)
+            atom.subAtoms.forEach(::processCandidatesAndPostponedAtoms)
+        }
+
         // candidates
         is ConeAtomWithCandidate -> {
             val candidate = atom.candidate
@@ -66,6 +72,5 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
 
         is ConeResolutionAtomWithSingleChild -> processCandidatesAndPostponedAtoms(atom.subAtom)
         is ConeResolutionAtomWithPostponedChild -> processCandidatesAndPostponedAtoms(atom.subAtom)
-        is ConeCollectionLiteralResolutionAtom -> atom.subAtoms.forEach(::processCandidatesAndPostponedAtoms)
     }
 }

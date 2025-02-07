@@ -98,36 +98,42 @@ class VariableFixationFinder(
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
-    ): TypeVariableFixationReadiness = when {
-        !notFixedTypeVariables.contains(variable) || dependencyProvider.isVariableRelatedToTopLevelType(variable) ||
-                variableHasUnprocessedConstraintsInForks(variable) ->
-            TypeVariableFixationReadiness.FORBIDDEN
+    ): TypeVariableFixationReadiness {
+        val variableHasProperArgumentConstraints = variableHasProperArgumentConstraints(variable)
+        return when {
+            !notFixedTypeVariables.contains(variable) || dependencyProvider.isVariableRelatedToTopLevelType(variable) ||
+                    variableHasUnprocessedConstraintsInForks(variable) ->
+                TypeVariableFixationReadiness.FORBIDDEN
 
-        // Might be fixed, but this condition should come earlier than the next one,
-        // because self-type-based cases do not have proper constraints, though they assumed to be fixed
-        isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
-            TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
+            // Might be fixed, but this condition should come earlier than the next one,
+            // because self-type-based cases do not have proper constraints, though they assumed to be fixed
+            isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
+                TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
 
-        // Prevents from fixation
-        !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-        // PCLA only
-        dependencyProvider.isRelatedToOuterTypeVariable(variable) -> TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY
-
-        // All cases below do not prevent fixation but just define the priority order of a variable
-        hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        // TODO: Consider removing this kind of readiness, see KT-63032
-        allConstraintsTrivialOrNonProper(variable) -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
-        dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
-        variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
-            TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
-        isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
-        inferenceCompatibilityModeEnabled -> {
-            when {
-                variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
-                else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
+            // Prevents from fixation
+            !variableHasProperArgumentConstraints -> {
+                val foo = variableHasProperArgumentConstraints(variable)
+                TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
             }
+            // PCLA only
+            dependencyProvider.isRelatedToOuterTypeVariable(variable) -> TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY
+
+            // All cases below do not prevent fixation but just define the priority order of a variable
+            hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+            // TODO: Consider removing this kind of readiness, see KT-63032
+            allConstraintsTrivialOrNonProper(variable) -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
+            dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
+            variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
+                TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
+            isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
+            inferenceCompatibilityModeEnabled -> {
+                when {
+                    variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
+                    else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
+                }
+            }
+            else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
         }
-        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
     }
 
     private fun Context.variableHasUnprocessedConstraintsInForks(variableConstructor: TypeConstructorMarker): Boolean {
@@ -189,7 +195,8 @@ class VariableFixationFinder(
         val candidate =
             allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider) } ?: return null
 
-        return when (getTypeVariableReadiness(candidate, dependencyProvider)) {
+        val typeVariableReadiness = getTypeVariableReadiness(candidate, dependencyProvider)
+        return when (typeVariableReadiness) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
             TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
             TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY ->
@@ -219,6 +226,7 @@ class VariableFixationFinder(
 
     private fun Context.isProperArgumentConstraint(c: Constraint) =
         isProperType(c.type)
+                // Known bug: this condition is not always propagated KT-69266
                 && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*>
                 && !c.isNullabilityConstraint
 

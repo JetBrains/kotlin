@@ -40,7 +40,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private val languageVersionSettings = components.session.languageVersionSettings
 
     fun interface PostponedAtomAnalyzer {
-        fun analyze(postponedResolvedAtom: ConePostponedResolvedAtom, withPCLASession: Boolean)
+        fun analyze(postponedResolvedAtom: ConePostponedResolvedAtom, withPCLASession: Boolean) // org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer
     }
 
     fun complete(
@@ -69,7 +69,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             }
 
             // TODO: This is very slow, KT-59680
-            val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
+            val postponedArguments: List<ConePostponedResolvedAtom> = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
             if (completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA && hasLambdaToAnalyze(
                     languageVersionSettings,
@@ -244,7 +244,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 argument.reviseExpectedType(revisedExpectedType)
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom ->
                 argument.transformToResolvedLambda(c.getBuilder(), resolutionContext, revisedExpectedType)
-            else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
+            else -> throw IllegalStateException("Unsupported postponed argument type of ${argument::class}")
         }
 
         return true
@@ -355,6 +355,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                         if (postponedAtom.needsResolution) {
                             postponedAtom.collectNotFixedVariables()
                         }
+                    }
+                    is ConeResolvedCollectionLiteralAtom -> {
+                        postponedAtom.collectNotFixedVariables()
                     }
                 }
             }

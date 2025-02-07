@@ -74,6 +74,11 @@ class PostponedArgumentsAnalyzer(
                 )
 
             is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
+
+            is ConeResolvedCollectionLiteralAtom -> {
+                argument.expression.replaceConeTypeOrNull(argument.expectedType)
+                argument.analyzed = true
+            }
         }
     }
 

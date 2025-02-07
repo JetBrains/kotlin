@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -80,10 +81,11 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
             return when (expression) {
                 null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
-                is FirArrayLiteral -> ConeCollectionLiteralResolutionAtom(
-                    expression,
-                    expression.arguments.map { createRawAtom(it, allowUnresolvedExpression)!! }
-                )
+                is FirArrayLiteral -> ConeResolutionAtomWithPostponedChild(expression)
+                // ConeCollectionLiteralResolutionAtom(
+                //     expression,
+                //     expression.arguments.map { createRawAtom(it, allowUnresolvedExpression)!! }
+                // )
                 is FirCallableReferenceAccess -> when {
                     expression.isResolved -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
@@ -143,14 +145,34 @@ class ConeResolutionAtomWithPostponedChild(override val expression: FirExpressio
         }
 }
 
-class ConeCollectionLiteralResolutionAtom(override val expression: FirArrayLiteral, val subAtoms: List<ConeResolutionAtom>) :
-    ConeResolutionAtom()
+// class ConeCollectionLiteralResolutionAtom(override val expression: FirArrayLiteral, val subAtoms: List<ConeResolutionAtom>) :
+//     ConeResolutionAtom()
 
 sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false
     abstract override val expectedType: ConeKotlinType?
+}
+
+//  ------------- Collection literals -------------
+
+class ConeResolvedCollectionLiteralAtom(
+    override val expression: FirArrayLiteral,
+    val subAtoms: List<ConeResolutionAtom>,
+    elementType: ConeKotlinType?,
+    override val expectedType: ConeKotlinType,
+) : ConePostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType {
+    override val inputTypes: Collection<ConeKotlinType> = listOfNotNull(elementType)
+    override val outputType: ConeKotlinType?
+        get() = TODO("Not yet implemented")
+
+    private var _revisedExpectedType: KotlinTypeMarker? = null
+    override val revisedExpectedType: KotlinTypeMarker?
+        get() = _revisedExpectedType
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        _revisedExpectedType = expectedType
+    }
 }
 
 //  ------------- Lambdas -------------

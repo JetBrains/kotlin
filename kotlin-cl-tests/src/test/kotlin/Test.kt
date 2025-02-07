@@ -1,3 +1,5 @@
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
@@ -10,10 +12,10 @@ const val remoteDebug = false
 val root = generateSequence(File("").absoluteFile) { it.parentFile }.first { it.resolve("ReadMe.md").exists() }
 const val debugPort = 5005
 
-// @Execution(ExecutionMode.CONCURRENT)
+@Execution(ExecutionMode.CONCURRENT)
 class Test {
     @Test
-    fun basicOverloadResolution() = doTest {
+    fun overloadResolution_basic() = doTest {
         mainKt = """
             fun <T> id(t: T) = t
             @JvmName("outer1") fun outer(a: List<Int>): Unit = error("fail")
@@ -22,35 +24,68 @@ class Test {
                 outer([""])
                 outer([id("")])
             }
-        """
+        """.trimIndent()
+    }
+
+    @Test
+    fun overloadResolution_genericVsSet() = doTest {
+        mainKt = """
+            fun <T> outer(t: T): Unit = error("fail")
+            fun outer(t: Set<*>) = Unit
+            fun main() = outer([1])
+        """.trimIndent()
+    }
+
+    @Test
+    fun heapPollutionIsPrevented() = doTest {
+        mainKt = """
+            fun <T> heapPollution(a: T): Array<T> = [a]
+            fun main() {
+                heapPollution(1)
+            }
+        """.trimIndent()
+        expectedCompilationError = """
+            main.kt:1:41: error: [TYPE_PARAMETER_AS_REIFIED] Cannot use 'T' as reified type parameter. Use a class instead.
+            fun <T> heapPollution(a: T): Array<T> = [a]
+                                                    ^^^
+        """.trimIndent()
     }
 
     // @Test
-    // fun passCollectionLiteralToGeneric_green() = doTest { // todo fix
+    // fun genericTypeMismatch() = doTest { // todo compiler crash
     //     mainKt = """
-    //         fun <T> outer(t: T) = Unit
-    //         fun main() = outer<Set<Int>>([1])
+    //         fun <T> outer(): T = [1]
+    //         fun main(): Unit = outer()
     //     """.trimIndent()
     // }
 
     @Test
-    fun passCollectionLiteralToGeneric_red() = doTest { // todo better error message
+    fun passCollectionLiteralToGeneric_explicitTypeArg_green() = doTest {
         mainKt = """
             fun <T> outer(t: T) = Unit
-            fun main() = outer([1])
-        """.trimIndent()
-        expectedCompilationError = """
-            main.kt:2:14: error: [CANNOT_INFER_PARAMETER_TYPE] Cannot infer type for this parameter. Specify it explicitly.
-            fun main() = outer([1])
-                         ^^^^^
-            main.kt:2:20: error: [EXPECTED_TYPE_DOESNT_CONTAIN_COMPANION_OPERATOR_OF_FUNCTION] Type 'TypeVariable(T)' doesnt contain 'operator fun of' function in its 'companion object'
-            fun main() = outer([1])
-                               ^^^
+            fun main() = outer<Set<Int>>([1])
         """.trimIndent()
     }
 
     @Test
-    fun passCollectionLiteralToGenericWithUpperBound_red() = doTest {
+    fun passCollectionLiteralToGeneric_red_1() = doTest { // todo rename to overloadResolution...
+        mainKt = """
+            fun <T> outer(t: T): Unit = error("fail")
+            fun <T: Set<*>> outer(t: T) = Unit
+            fun main() = outer([1])
+        """.trimIndent()
+    }
+
+    @Test
+    fun passCollectionLiteralToGeneric_red_wip() = doTest { // todo fix
+        mainKt = """
+            fun <T> outer(t: T) = Unit
+            fun main() = outer([1])
+        """.trimIndent()
+    }
+
+    @Test
+    fun passCollectionLiteralToGenericWithUpperBound_red() = doTest { // todo should be green
         mainKt = """
             fun <T : List<Int>> outer(t: T) = Unit
             fun main() {
@@ -92,9 +127,6 @@ class Test {
             main.kt:5:32: error: [CANNOT_INFER_PARAMETER_TYPE] Cannot infer type for this parameter. Specify it explicitly.
                         fun main() = outer(id([""]))
                                            ^^
-            main.kt:5:35: error: [EXPECTED_TYPE_DOESNT_CONTAIN_COMPANION_OPERATOR_OF_FUNCTION] Type 'TypeVariable(T)' doesnt contain 'operator fun of' function in its 'companion object'
-                        fun main() = outer(id([""]))
-                                              ^^^^
         """.trimIndent()
     }
 
@@ -174,6 +206,19 @@ class Test {
         """.trimIndent()
     }
 
+    // @Test
+    // fun customType_funOfIsNotDefined() = doTest { // todo crashes the compiler
+    //     mainKt = """
+    //         class IntList
+    //         fun main() {
+    //             val x: IntList = [1]
+    //         }
+    //     """.trimIndent()
+    //     expectedCompilationError = """
+    //         todo
+    //     """.trimIndent()
+    // }
+
     @Test
     fun expectedTypeFromFunParameter() = doTest {
         mainKt = """
@@ -183,11 +228,48 @@ class Test {
     }
 
     @Test
+    fun materializeOperatorFunOfUpperBounds() = doTest {
+        mainKt = """
+            class IntList { companion object { operator fun <T : Number> of(vararg elems: T) = IntList() } }
+            fun <T> materialize(): T = 1 as T
+            fun main() {
+                val x: IntList = [materialize()]
+            }
+        """.trimIndent()
+    }
+
+    @Test
+    fun materializeInner() = doTest {
+        mainKt = """
+            fun outer(a: Set<Number>) = Unit
+            fun <R> materialize(): R = 1 as R
+            fun main() {
+                outer([materialize()])
+                // outer([1, 2, materialize()]) // todo uncomment
+            }
+        """.trimIndent()
+    }
+
+    @Test
     fun sandbox() = doTest {
         mainKt = """
-            fun outer(a: List<Int>) = Unit
+            fun outer(a: Set<Number>) = Unit
+            fun <R> materialize(): R = 1 as R
             fun main() {
-                outer([1])
+                outer(setOf(materialize()))
+                // outer([1, 2, materialize()]) // todo uncomment
+            }
+        """.trimIndent()
+    }
+
+    @Test
+    fun materializeInnerUpperBound() = doTest {
+        mainKt = """
+            // Related: KT-69266
+            fun <R: Number> outer(a: Set<R>) = Unit
+            fun <T> materialize(): T = 1 as T
+            fun main() {
+                outer([materialize()])
             }
         """.trimIndent()
     }
@@ -196,21 +278,24 @@ class Test {
     fun basics() = doTest {
         mainKt = """
             @Suppress("UNCHECKED_CAST") fun <K> materialize(): K = 1 as K
-            fun println(a: Any) = Unit
+            fun acceptAny(a: Any) = Unit
+            fun <T> select(vararg x: T) = x.first()
             fun acceptList(a: List<Int>) = Unit
             fun main() {
-                val x = [1]
-                val y = ["foo"]
-                val z: Any = [1]
-                val w: Set<Int> = [1]
-                println(x)
-                acceptList(x)
-                println([1])
+                val a = [1]
+                val b = ["foo"]
+                val c: Any = [1]
+                val d: Set<Int> = [1]
+                acceptAny(a)
+                acceptList(a)
+                acceptAny([1])
                 [1]
-                val a: Set<Int> = [materialize()]
+                val e: Set<Int> = [materialize()]
+                val f = [select(1, materialize())]
+                val g: Any = [1]
 
-                println(y)
-                println([""])
+                acceptAny(b)
+                acceptAny([""])
             }
             fun foo(): List<Int> = [1]
         """
@@ -247,19 +332,35 @@ class Test {
         """.trimIndent()
     }
 
-    // @Test
-    // fun matrix() = doTest { // todo fix
-    //     mainKt = """
-    //         fun main() {
-    //             val x = [[1]]
-    //             val y = [[[1]]]
-    //             val z: List<List<Int>> = [[1]]
-    //         }
-    //     """
-    // }
+    @Test
+    fun matrixOverloadResolution() = doTest {
+        mainKt = """
+            @JvmName("outer1") fun outer(a: List<List<Int>>): Unit = error("fail")
+            @JvmName("outer2") fun outer(a: List<List<String>>) = Unit
+
+            fun main() {
+                outer([[""]])
+            }
+        """.trimIndent()
+    }
 
     @Test
-    fun innerIntVsLongOverload() = doTest { // todo reconsider as separate language feature
+    fun matrix() = doTest { // todo fix
+        mainKt = """
+            fun main() {
+                val a = [[1]]
+                // val b: Any = [[1]]
+                // val c: List<List<Int>> = [[1]]
+                // val d: List<Set<Int>> = [[1]]
+                // val e: Set<List<Int>> = [[1]]
+                // val f: Set<Set<Int>> = [[1]]
+                // val g: Set<*> = [[1]]
+            }
+        """.trimIndent()
+    }
+
+    @Test
+    fun innerIntVsLongOverload() = doTest {
         mainKt = """
             @JvmName("outer1") fun outer(a: Iterable<Long>): Unit = error("fail")
             @JvmName("outer2") fun outer(a: Iterable<Int>): Unit = Unit
@@ -290,6 +391,9 @@ class Test {
             fun main() = outer([1])
         """.trimIndent()
     }
+
+    // @Test
+    // fun interopWithJava() = doTest {  } // todo write
 
     @Test
     fun nestedCallableReference() = doTest {
@@ -335,8 +439,14 @@ fun doTest(setup: TestBuilder.() -> Unit) {
             $root/dist/kotlinc/bin/kotlinc \
                 -Xrender-internal-diagnostic-names \
                 main.kt 2> /dev/stdout
-        """.trimIndent().binBashExec(tmpDir)
-        assertEquals(test.expectedCompilationError.trim(), actualCompilationOutput.trim())
+        """.trimIndent().binBashExec(tmpDir, jvmRemoteDebug = remoteDebug)
+        assertEquals(
+            test.expectedCompilationError.trim(),
+            actualCompilationOutput.lines()
+                .filter { !it.contains("Listening for transport dt_socket at address") }
+                .joinToString("\n")
+                .trim()
+        )
         if (test.expectedCompilationError.isEmpty()) {
             assertEquals(0, compilationExitCode)
         } else {
@@ -354,7 +464,7 @@ fun doTest(setup: TestBuilder.() -> Unit) {
     }
 }
 
-fun String.binBashExec(dir: File): Pair<String, Int> {
+fun String.binBashExec(dir: File, jvmRemoteDebug: Boolean = false): Pair<String, Int> {
     val builder = ProcessBuilder(
         "/bin/bash",
         "-c",
@@ -365,7 +475,7 @@ fun String.binBashExec(dir: File): Pair<String, Int> {
     )
         .directory(dir)
         .apply {
-            if (remoteDebug) {
+            if (jvmRemoteDebug) {
                 environment().put("JAVA_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:$debugPort")
             }
         }

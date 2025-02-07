@@ -270,7 +270,7 @@ private fun processConstraintStorageFromAtom(
         is ConeResolutionAtomWithSingleChild -> {
             processConstraintStorageFromAtom(atom.subAtom ?: return false, processor)
         }
-        is ConeCollectionLiteralResolutionAtom -> {
+        is ConeResolvedCollectionLiteralAtom -> {
             var result = false
             for (subAtom in atom.subAtoms) {
                 result = processConstraintStorageFromAtom(subAtom, processor) || result

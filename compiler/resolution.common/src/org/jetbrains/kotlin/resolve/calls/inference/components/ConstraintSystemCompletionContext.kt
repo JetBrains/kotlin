@@ -55,7 +55,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         }
 
         if (argumentToAnalyze != null) {
-            analyze(argumentToAnalyze)
+            analyze(argumentToAnalyze) // org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer
             return true
         }
 

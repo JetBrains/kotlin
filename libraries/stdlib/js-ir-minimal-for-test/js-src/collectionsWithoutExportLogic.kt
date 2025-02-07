@@ -44,6 +44,12 @@ public actual interface List<out E> : Collection<E> {
     public actual fun listIterator(): ListIterator<E>
     public actual fun listIterator(index: Int): ListIterator<E>
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    public actual companion object {
+        public actual fun <T> of(): List<T> = TODO("Not implemented in reduced runtime")
+        public actual fun <T> of(element: T): List<T> = TODO("Not implemented in reduced runtime")
+        public actual fun <T> of(vararg elements: T): List<T> = TODO("Not implemented in reduced runtime")
+    }
 }
 
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
@@ -60,6 +66,12 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     actual override fun listIterator(): MutableListIterator<E>
     actual override fun listIterator(index: Int): MutableListIterator<E>
     actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+
+    public actual companion object {
+        public actual fun <T> of(): MutableList<T> = TODO("Not implemented in reduced runtime")
+        public actual fun <T> of(element: T): MutableList<T> = TODO("Not implemented in reduced runtime")
+        public actual fun <T> of(vararg elements: T): MutableList<T> = TODO("Not implemented in reduced runtime")
+    }
 }
 
 public actual interface Set<out E> : Collection<E> {
@@ -68,6 +80,12 @@ public actual interface Set<out E> : Collection<E> {
     actual override fun contains(element: @UnsafeVariance E): Boolean
     actual override fun iterator(): Iterator<E>
     actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    public actual companion object {
+        public actual fun <T> of(): Set<T> = TODO("Not implemented in reduced runtime")
+        public actual fun <T> of(element: T): Set<T> = TODO("Not implemented in reduced runtime")
+        public actual fun <T> of(vararg elements: T): Set<T> = TODO("Not implemented in reduced runtime")
+    }
 }
 
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
@@ -78,6 +96,12 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     actual override fun removeAll(elements: Collection<E>): Boolean
     actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
+
+    // public actual companion object {
+    //     public actual fun <T> of(): MutableSet<T> = TODO("Not implemented in reduced runtime")
+    //     public actual fun <T> of(element: T): MutableSet<T> = TODO("Not implemented in reduced runtime")
+    //     public actual fun <T> of(vararg elements: T): MutableSet<T> = TODO("Not implemented in reduced runtime")
+    // }
 }
 
 public actual interface Map<K, out V> {
