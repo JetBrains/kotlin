@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -22,12 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -39,7 +30,7 @@ import org.jetbrains.kotlin.test.services.assertions
  */
 abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResolveTestCase() {
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
-        val file = mainFile ?: mainModule.files.first()
+        val file = mainFile ?: mainModule.psiFiles.first()
         val declaration = when (file) {
             is KtFile -> testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(file)
             is PsiJavaFile -> testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<PsiMember>(file)

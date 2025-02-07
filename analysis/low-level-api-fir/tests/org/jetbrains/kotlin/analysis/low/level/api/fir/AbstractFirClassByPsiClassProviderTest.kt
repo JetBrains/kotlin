@@ -18,11 +18,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import kotlin.collections.any
-import kotlin.collections.flatMap
-import kotlin.collections.single
-import kotlin.collections.toList
-import kotlin.text.endsWith
 
 abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBasedTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
@@ -34,7 +29,7 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
                 testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<PsiClass>(testServices).single().first
             }
             is KaLibraryModule -> {
-                mainModule.files
+                mainModule.psiFiles
                     .filterIsInstance<PsiJavaFile>()
                     .flatMap { it.classes.toList() }
                     .flatMap { it.withAllNestedClasses() }

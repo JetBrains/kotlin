@@ -53,7 +53,7 @@ private fun getTestDataContext(testServices: TestServices): TestDataContext {
     var useSitePosition: PsiElement? = null
 
     testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
-        val psiFiles = ktTestModule.files
+        val psiFiles = ktTestModule.psiFiles
         for (psiFile in psiFiles) {
             val targetOffset = testServices.expressionMarkerProvider.getCaretOrNull(psiFile)
             if (targetOffset != null) {
