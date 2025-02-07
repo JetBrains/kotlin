@@ -18,7 +18,6 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirValueParameterSymbol <unused var>: R|kotlin/Int|
                 FirValueParameterSymbol a: R|one/A|
                 FirValueParameterSymbol p: R|kotlin/Boolean|
     Element 8

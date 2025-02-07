@@ -13,6 +13,8 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
     Element 6
         Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol c: R|kotlin/Any|
     Element 7
         Context parameters:
             FirValueParameterSymbol c: R|kotlin/Any|

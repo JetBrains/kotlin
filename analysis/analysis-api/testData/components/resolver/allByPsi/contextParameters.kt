@@ -37,4 +37,4 @@ fun usageOutsideClass() {
 }
 
 // LANGUAGE: +ContextParameters
-// IGNORE_STABILITY: candidates
+// IGNORE_STABILITY_K1: candidates

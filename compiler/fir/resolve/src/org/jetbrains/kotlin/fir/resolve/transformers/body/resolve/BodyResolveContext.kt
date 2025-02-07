@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -756,17 +756,17 @@ class BodyResolveContext(
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
             if (function is FirSimpleFunction) {
+                for (contextParameter in function.contextParameters) {
+                    storeValueParameterIfNeeded(contextParameter, holder.session)
+                }
+
                 // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
                 // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
                 // if an uninitialized parameter is accessed by a preceding parameter.
-                for (contextParameter in function.contextParameters) {
-                    if (!contextParameter.isLegacyContextReceiver()) {
-                        storeVariable(contextParameter, holder.session)
-                    }
-                }
                 for (parameter in function.valueParameters) {
                     storeVariable(parameter, holder.session)
                 }
+
                 val receiverTypeRef = function.receiverParameter?.typeRef
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
@@ -888,10 +888,14 @@ class BodyResolveContext(
         session: FirSession,
         f: () -> T
     ): T {
-        if ((!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) && !valueParameter.isLegacyContextReceiver()) {
+        storeValueParameterIfNeeded(valueParameter, session)
+        return withContainer(valueParameter, f)
+    }
+
+    fun storeValueParameterIfNeeded(valueParameter: FirValueParameter, session: FirSession) {
+        if (!valueParameter.isLegacyContextReceiver() && (!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR)) {
             storeVariable(valueParameter, session)
         }
-        return withContainer(valueParameter, f)
     }
 
     @OptIn(PrivateForInline::class)
@@ -925,15 +929,21 @@ class BodyResolveContext(
                 withContainer(accessor, f)
             }
         }
+
         return withTowerDataCleanup {
             val receiverTypeRef = property.receiverParameter?.typeRef
             addLocalScope(FirLocalScope(holder.session))
+            for (parameter in property.contextParameters) {
+                storeValueParameterIfNeeded(parameter, holder.session)
+            }
+
             if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.isLocal && property.delegate == null &&
                 property.contextParameters.isEmpty()
             ) {
                 storeBackingField(property, holder.session)
             }
+
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)

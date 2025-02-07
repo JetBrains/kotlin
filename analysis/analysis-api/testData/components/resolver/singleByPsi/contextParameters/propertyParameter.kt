@@ -11,4 +11,3 @@ val check: Unit
     }
 
 // LANGUAGE: +ContextParameters
-// IGNORE_STABILITY_K2: candidates

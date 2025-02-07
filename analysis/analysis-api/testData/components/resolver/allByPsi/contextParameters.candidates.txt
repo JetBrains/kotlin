@@ -469,7 +469,22 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(273,274): 'a'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = A
+          symbol = a: A
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtCallExpression(275,282): 'foo("")'
   KaApplicableCallCandidateInfo:

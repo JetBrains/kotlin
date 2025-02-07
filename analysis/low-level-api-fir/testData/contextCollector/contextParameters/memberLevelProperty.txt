@@ -17,6 +17,8 @@ Tower Data Context:
                 Type: one.B
     Element 7
         Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|one/A|
     Element 8
         Context parameters:
             FirValueParameterSymbol a: R|one/A|
