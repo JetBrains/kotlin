@@ -21,20 +21,9 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.parseAnalysisFlags
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.cliBasedFacadesEnabled
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.isKtFile
-import org.jetbrains.kotlin.test.services.isKtsFile
-import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
-import org.jetbrains.kotlin.test.services.sourceFileProvider
-import org.jetbrains.kotlin.test.services.targetPlatform
-import org.jetbrains.kotlin.test.services.transitiveDependsOnDependencies
+import org.jetbrains.kotlin.test.services.*
 
 class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -53,12 +42,6 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val rawFlags = module.directives[ConfigurationDirectives.KOTLIN_CONFIGURATION_FLAGS]
-        parseAnalysisFlags(rawFlags).forEach { (key, value) ->
-            @Suppress("UNCHECKED_CAST")
-            configuration.put(key as CompilerConfigurationKey<Any>, value)
-        }
-
         if (module.targetPlatform(testServices).isCommon() && WITH_STDLIB in module.directives) {
             configuration.add(
                 CLIConfigurationKeys.CONTENT_ROOTS,

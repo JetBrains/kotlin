@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=inline
+// STRING_CONCAT: inline
 // WITH_STDLIB
 
 import kotlin.test.assertEquals

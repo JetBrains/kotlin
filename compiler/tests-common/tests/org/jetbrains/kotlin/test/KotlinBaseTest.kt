@@ -121,29 +121,15 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
     }
 
     companion object {
-        @JvmStatic
-        fun updateConfigurationByDirectivesInTestFiles(
-            testFilesWithConfigurationDirectives: List<TestFile>,
-            configuration: CompilerConfiguration
-        ) {
-            updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, false)
-        }
-
-
         private fun updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives: List<TestFile>,
             configuration: CompilerConfiguration,
             usePreparsedDirectives: Boolean
         ) {
             var explicitLanguageVersionSettings: LanguageVersionSettings? = null
-            val kotlinConfigurationFlags: MutableList<String> = ArrayList(0)
             for (testFile in testFilesWithConfigurationDirectives) {
                 val content = testFile.content
                 val directives = if (usePreparsedDirectives) testFile.directives else KotlinTestUtils.parseDirectives(content)
-                val flags = directives.listValues("KOTLIN_CONFIGURATION_FLAGS")
-                if (flags != null) {
-                    kotlinConfigurationFlags.addAll(flags)
-                }
                 val targetString = directives["JVM_TARGET"]
                 if (targetString != null) {
                     val jvmTarget = JvmTarget.fromString(targetString)
@@ -183,15 +169,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
             if (explicitLanguageVersionSettings != null) {
                 configuration.languageVersionSettings = explicitLanguageVersionSettings
             }
-            updateConfigurationWithFlags(configuration, kotlinConfigurationFlags)
-        }
-
-        private fun updateConfigurationWithFlags(configuration: CompilerConfiguration, flags: List<String>) {
-            val configurationFlags = parseAnalysisFlags(flags)
-            configurationFlags.entries.forEach { (key, value) ->
-                @Suppress("UNCHECKED_CAST")
-                configuration.put(key as CompilerConfigurationKey<Any>, value)
-            }
         }
 
         fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
@@ -206,15 +183,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
                 }
             }
             return if (addReflect) ConfigurationKind.ALL else if (addRuntime) ConfigurationKind.NO_KOTLIN_REFLECT else ConfigurationKind.JDK_ONLY
-        }
-
-        fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
-            for (file in files) {
-                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
-                    return TestJdkKind.FULL_JDK
-                }
-            }
-            return TestJdkKind.MOCK_JDK
         }
     }
 }
