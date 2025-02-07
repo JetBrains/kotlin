@@ -2,8 +2,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/ExplicitApiMode : java/lang/E
 	public static final field Disabled Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public static final field Strict Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public static final field Warning Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
-	public final fun getCliOption ()Ljava/lang/String;
-	public final fun toCompilerArg ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 }
@@ -1028,9 +1026,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExecuti
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinGradlePluginExtensionPoint {
 	public abstract fun get (Lorg/gradle/api/Project;)Ljava/util/List;
 	public abstract fun register (Lorg/gradle/api/Project;Ljava/lang/Object;)V
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinGradleSubplugin {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinHierarchyBuilder {
