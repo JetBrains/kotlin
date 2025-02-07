@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 private const val dumpBridges = false
 
-internal class CStubsManager(private val target: KonanTarget, private val generationState: NativeGenerationState) {
+internal class CStubsManager(private val target: KonanTarget, val fileLowerStateHolder: FileLowerStateHolder) {
 
-    fun getUniqueName(prefix: String) = generationState.fileLowerState.getCStubUniqueName(prefix)
+    fun getUniqueName(prefix: String) = fileLowerStateHolder.state.getCStubUniqueName(prefix)
 
     fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, language: String) {
         val stubs = languageToStubs.getOrPut(language) { mutableListOf() }

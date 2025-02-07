@@ -40,7 +40,7 @@ internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, Ir
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: LoweringList, modules: List<IrModuleFragment>) {
     for (module in modules) {
         for (file in module.files) {
-            context.fileLowerState = FileLowerState()
+            context.fileLowerStateHolder.state = FileLowerState()
             lowerings.fold(file) { loweredFile, lowering ->
                 runPhase(lowering, loweredFile)
             }
@@ -366,7 +366,9 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
 )
 
 private val interopPhase = createFileLoweringPhase(
-        lowering = ::InteropLowering,
+        lowering = { generationState: NativeGenerationState ->
+            InteropLowering(generationState.context, generationState.cStubsManager, generationState.dependenciesTracker)
+        },
         name = "Interop",
 )
 

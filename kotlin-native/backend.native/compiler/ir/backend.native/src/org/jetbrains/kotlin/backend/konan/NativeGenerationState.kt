@@ -36,6 +36,10 @@ internal class FileLowerState {
             "$prefix${cStubCount++}"
 }
 
+internal class FileLowerStateHolder {
+    lateinit var state: FileLowerState
+}
+
 internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder {
     val llvm: BasicLlvmHelpers
     val llvmContext: LLVMContextRef
@@ -72,7 +76,7 @@ internal class NativeGenerationState(
     val liveVariablesAtSuspensionPoints = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
     val visibleVariablesAtSuspensionPoints = mutableMapOf<IrSuspensionPoint, List<IrVariable>>()
 
-    lateinit var fileLowerState: FileLowerState
+    val fileLowerStateHolder = FileLowerStateHolder()
 
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
@@ -84,7 +88,7 @@ internal class NativeGenerationState(
     val runtime by runtimeDelegate
     override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
-    val cStubsManager = CStubsManager(config.target, this)
+    val cStubsManager = CStubsManager(config.target, fileLowerStateHolder)
     lateinit var llvmDeclarations: LlvmDeclarations
 
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()

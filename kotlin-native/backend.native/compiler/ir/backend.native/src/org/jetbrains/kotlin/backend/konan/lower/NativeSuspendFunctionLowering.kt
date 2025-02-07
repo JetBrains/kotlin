@@ -27,7 +27,7 @@ internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
 ) : AbstractSuspendFunctionsLowering<Context>(generationState.context) {
     private val symbols = context.ir.symbols
-    private val fileLowerState = generationState.fileLowerState
+    private val fileLowerState = generationState.fileLowerStateHolder.state
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState
 
