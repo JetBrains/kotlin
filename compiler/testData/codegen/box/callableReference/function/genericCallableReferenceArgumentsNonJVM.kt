@@ -1,8 +1,5 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
-
 // WITH_STDLIB
-// WITH_REFLECT
 
 import kotlin.test.assertEquals
 

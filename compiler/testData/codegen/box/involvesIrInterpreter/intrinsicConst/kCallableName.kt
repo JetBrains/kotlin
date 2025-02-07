@@ -1,5 +1,4 @@
 // LANGUAGE: +IntrinsicConstEvaluation
-// DONT_TARGET_EXACT_BACKEND: JVM
 // IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
 
 fun <T> T.id() = this

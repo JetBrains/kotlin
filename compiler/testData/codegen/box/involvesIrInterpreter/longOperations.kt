@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 fun <T> T.id() = this
 
 const val minusOneVal = <!EVALUATED("-1")!>-1L<!>

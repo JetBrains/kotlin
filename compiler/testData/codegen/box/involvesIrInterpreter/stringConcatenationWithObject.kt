@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
-
 object K : Code("K")
 
 open class Code(val x: String) {

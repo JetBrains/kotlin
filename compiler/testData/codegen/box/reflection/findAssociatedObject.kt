@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
 // WITH_STDLIB
