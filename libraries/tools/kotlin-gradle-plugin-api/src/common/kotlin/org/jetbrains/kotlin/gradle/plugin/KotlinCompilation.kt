@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+private object KT_60584
+
 /**
  * # Kotlin compilation
  * Represents the configuration of a Kotlin Compiler invocation.
@@ -318,7 +320,10 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
      * Further details:
      * https://kotl.in/compilation-source-deprecation
      */
-    @Deprecated("scheduled for removal with Kotlin 2.1")
+    @Deprecated(
+        "Scheduled for removal with Kotlin 2.3. Please see the migration guide: https://kotl.in/compilation-source-deprecation",
+        level = DeprecationLevel.ERROR,
+    )
     fun source(sourceSet: KotlinSourceSet)
 
     /**

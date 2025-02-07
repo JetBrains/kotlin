@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal class KotlinCompilationImpl constructor(
+internal class KotlinCompilationImpl(
     private val params: Params,
 ) : InternalKotlinCompilation<KotlinCommonOptions> {
 
@@ -93,7 +93,7 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = sourceSets.kotlinSourceSets
 
-    @Deprecated("scheduled for removal with Kotlin 2.1")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun source(sourceSet: KotlinSourceSet) {
         project.kotlinToolingDiagnosticsCollector.report(project, KotlinCompilationSourceDeprecation(Throwable()))
         sourceSets.source(sourceSet)

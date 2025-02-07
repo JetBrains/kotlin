@@ -1,6 +1,6 @@
-[KotlinCompilationSourceDeprecation | WARNING] `KotlinCompilation.source(KotlinSourceSet)` Method Deprecated
+[KotlinCompilationSourceDeprecation | ERROR] `KotlinCompilation.source(KotlinSourceSet)` Method Deprecated
 `KotlinCompilation.source(KotlinSourceSet)` method is deprecated
-and will be removed in upcoming Kotlin releases.
+and will be removed in Kotlin 2.3
 Please use `KotlinCompilation.defaultSourceSet` instead.
 See https://kotl.in/compilation-source-deprecation for details.
 ----
