@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.extractTypeForGivenRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
+import org.jetbrains.kotlin.resolve.calls.inference.isEqualityConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -198,17 +198,7 @@ class ResultTypeResolver(
         // compiler/testData/diagnostics/tests/unsignedTypes/conversions/inferenceForSignedAndUnsignedTypes.kt
         if (resultType.typeConstructor(c).isIntegerLiteralTypeConstructor(c)) return false
 
-        var createsContradiction = false
-        c.runTransaction {
-            addEqualityConstraint(
-                approximatedResultType,
-                variableWithConstraints.typeVariable.defaultType(c),
-                SimpleConstraintSystemConstraintPosition
-            )
-            createsContradiction = hasContradiction
-            false
-        }
-        return createsContradiction
+        return !c.isEqualityConstraintCompatible(approximatedResultType, variableWithConstraints.typeVariable.defaultType(c))
     }
 
     private fun Context.prepareSubAndSuperTypesLegacy(

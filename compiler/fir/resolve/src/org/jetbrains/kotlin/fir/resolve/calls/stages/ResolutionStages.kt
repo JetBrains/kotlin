@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.isAnyOfDelegateOperators
-import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatibl
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
@@ -1022,17 +1020,9 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
         val lambdaType = StandardClassIds.Function
             .constructClassLikeType(arrayOf(context.session.builtinTypes.nothingType.coneType))
 
-        var shouldReportError = false
-
         // We don't add the constraint to the system in the end, we only check for contradictions and roll back the transaction.
         // This ensures we don't get any issues if a different function type constraint is added later, e.g., during completion.
-        csBuilder.runTransaction {
-            addSubtypeConstraint(lambdaType, expectedType, ConeArgumentConstraintPosition(anonymousFunction))
-            shouldReportError = hasContradiction
-            false
-        }
-
-        if (shouldReportError) {
+        if (!csBuilder.isSubtypeConstraintCompatible(lambdaType, expectedType)) {
             sink.reportDiagnostic(
                 ArgumentTypeMismatch(
                     expectedType,

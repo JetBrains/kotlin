@@ -124,6 +124,11 @@ fun ConstraintSystemBuilder.isSubtypeConstraintCompatible(
     upperType: KotlinTypeMarker,
 ): Boolean = isConstraintCompatible(lowerType, upperType, ConstraintKind.LOWER)
 
+fun ConstraintSystemBuilder.isEqualityConstraintCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+): Boolean = isConstraintCompatible(lowerType, upperType, ConstraintKind.EQUALITY)
+
 private fun ConstraintSystemBuilder.isConstraintCompatible(
     lowerType: KotlinTypeMarker,
     upperType: KotlinTypeMarker,
