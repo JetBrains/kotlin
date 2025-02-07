@@ -1,10 +1,14 @@
 KtCallExpression(97,102): 'foo()'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = p: T
+            type = it(A & T & Any)
+        ]
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,5 +27,4 @@ KtCallExpression(97,102): 'foo()'
           ]
           callableId = /foo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'A' found.>
     isInBestCandidates = true

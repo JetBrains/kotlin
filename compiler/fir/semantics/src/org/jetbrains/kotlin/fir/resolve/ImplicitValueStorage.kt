@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve
 
 import kotlinx.collections.immutable.*
-import org.jetbrains.kotlin.fir.declarations.FirTowerDataElement
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
+import org.jetbrains.kotlin.fir.declarations.FirTowerDataElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -117,13 +117,15 @@ class ImplicitValueStorage private constructor(
         implicitValue.updateTypeFromSmartcast(type)
     }
 
-    fun createSnapshot(keepMutable: Boolean): ImplicitValueStorage {
-        return ImplicitValueStorage(
-            implicitReceiverStack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
-            implicitReceiversByLabel,
-            implicitValuesBySymbol,
-        )
-    }
+    fun createSnapshot(keepMutable: Boolean): ImplicitValueStorage = ImplicitValueStorage(
+        implicitReceiverStack = implicitReceiverStack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
+        implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, (name, receiverValues) ->
+            receiverValues.fold(accOuterMap) { accMap, receiverValue ->
+                accMap.put(name, receiverValue.createSnapshot(keepMutable))
+            }
+        },
+        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { (_, v) -> v.createSnapshot(keepMutable) }.toPersistentMap(),
+    )
 }
 
 fun Set<ImplicitReceiverValue<*>>.singleWithoutDuplicatingContextReceiversOrNull(): ImplicitReceiverValue<*>? {
