@@ -314,29 +314,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompiler
 	public abstract fun getUseEsClasses ()Lorg/gradle/api/provider/Property;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceCompilerToolOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
-	public abstract fun getDevMode ()Lorg/gradle/api/provider/Property;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonToolOptions {
-	public abstract fun getDevMode ()Z
-	public abstract fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceCompilerToolOptions;
-	public abstract fun setDevMode (Z)V
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions$DefaultImpls {
-	public static fun getAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun getDevMode (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun getFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Ljava/util/List;
-	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
-	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
-	public static fun setDevMode (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
-	public static fun setFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Ljava/util/List;)V
-	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
-	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions {
 	public abstract fun getFriendModulesDisabled ()Z
 	public abstract fun getMain ()Ljava/lang/String;

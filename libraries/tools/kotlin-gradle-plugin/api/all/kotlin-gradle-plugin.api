@@ -176,19 +176,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompile$DefaultImpls 
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsCompile;Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsDce : org/gradle/api/Task, org/jetbrains/kotlin/gradle/tasks/KotlinToolTask {
-	public abstract fun dceOptions (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun getDceOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;
-	public abstract fun getKeep ()Ljava/util/List;
-	public abstract fun keep ([Ljava/lang/String;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsDce$DefaultImpls {
-	public static fun dceOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDce;Lkotlin/jvm/functions/Function1;)V
-	public static fun toolOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDce;Lkotlin/jvm/functions/Function1;)V
-	public static fun toolOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDce;Lorg/gradle/api/Action;)V
-}
-
 public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinJsProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleTargetExtension, org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder {
 	public field irPreset Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSingleTargetPreset;
 	public fun <init> (Lorg/gradle/api/Project;)V
@@ -3371,7 +3358,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
 	public abstract fun commonWebpackConfig (Lorg/gradle/api/Action;)V
-	public abstract fun dceTask (Lorg/gradle/api/Action;)V
 	public abstract fun runTask (Lorg/gradle/api/Action;)V
 	public abstract fun webpackTask (Lorg/gradle/api/Action;)V
 }
@@ -3731,7 +3717,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinBrowserJsI
 	public fun commonWebpackConfig (Lorg/gradle/api/Action;)V
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
-	public fun dceTask (Lorg/gradle/api/Action;)V
 	public fun getTestTaskDescription ()Ljava/lang/String;
 	public fun runTask (Lorg/gradle/api/Action;)V
 	public fun webpackTask (Lorg/gradle/api/Action;)V
