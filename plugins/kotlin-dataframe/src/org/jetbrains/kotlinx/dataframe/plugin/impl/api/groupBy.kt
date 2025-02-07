@@ -44,7 +44,7 @@ class GroupByDsl {
     val columns = mutableListOf<NamedValue>()
 }
 
-class GroupByInto : AbstractInterpreter<Unit>() {
+class AggregateDslInto : AbstractInterpreter<Unit>() {
     val Arguments.dsl: GroupByDsl by arg()
     val Arguments.receiver: FirExpression by arg(lens = Interpreter.Id)
     val Arguments.name: String by arg()
@@ -144,6 +144,18 @@ fun KotlinTypeFacade.createPluginDataFrameSchema(keys: List<ColumnWithPathApprox
 
 
     return PluginDataFrameSchema(rootColumns)
+}
+
+class GroupByInto : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: GroupBy by groupBy()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val grouped = listOf(SimpleFrameColumn(column, receiver.groups.columns()))
+        return PluginDataFrameSchema(
+            receiver.keys.columns() + grouped
+        )
+    }
 }
 
 class GroupByToDataFrame : AbstractSchemaModificationInterpreter() {
