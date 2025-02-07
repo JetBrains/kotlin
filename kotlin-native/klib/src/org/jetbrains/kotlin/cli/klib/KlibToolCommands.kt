@@ -105,11 +105,14 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
             output.appendLine("  $packageFQN")
         }
         output.appendLine("Has IR: ${library.hasIr}")
+        val irInfo = KlibIrInfoLoader(library).loadIrInfo()
+        irInfo?.meaningfulInlineFunctionNumber?.let { output.appendLine("  Non-local inline functions: $it") }
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
         output.appendLine("Manifest properties:")
         manifestProperties.entries.forEach { (key, value) ->
             output.appendLine("  $key=$value")
         }
+        library.loadSizeInfo(irInfo)?.renderTo(output)
     }
 
     companion object {
@@ -138,6 +141,17 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 
                 return false
             }
+
+        private fun KlibElementWithSize.renderTo(appendable: Appendable, indent: Int = 0) {
+            appendable.appendLine("  ".repeat(indent) + name + ": " + prettySize())
+            children.sortedBy { it.name }.forEach { it.renderTo(appendable, indent + 1) }
+        }
+
+        private fun KlibElementWithSize.prettySize(): String {
+            val sizeRawString = (size / 1024).toString()
+            val sizeDotSeparatedString = sizeRawString.reversed().chunked(3).joinToString(".").reversed()
+            return "$sizeDotSeparatedString KB"
+        }
     }
 }
 
