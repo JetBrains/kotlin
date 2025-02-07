@@ -1,6 +1,4 @@
 // LANGUAGE: +InlineClasses
-// Completely incorrect bytecode - see `box/inlineClasses/toStringOfUnboxedNullable.kt`
-// IGNORE_BACKEND: JVM
 
 // FILE: Z.kt
 inline class Z(val x: Any)

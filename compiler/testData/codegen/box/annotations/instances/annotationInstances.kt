@@ -1,8 +1,3 @@
-// IGNORE_BACKEND: JVM
-
-// (supported: JVM_IR, JS_IR(_ES6), NATIVE)
-// Regular JS works too, but without proper hashCode or equals
-
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
 

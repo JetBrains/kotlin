@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // WITH_REFLECT
 // LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
 

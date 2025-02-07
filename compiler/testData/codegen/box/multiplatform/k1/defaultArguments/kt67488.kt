@@ -1,9 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 
-// IGNORE_BACKEND: JVM
-// The legacy JVM backend throws java.lang.InstantiationError
-
-
 // FILE: common.kt
 expect annotation class A()
 

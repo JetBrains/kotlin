@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM
-// Parcel.readException throws the exception it reads and only supports a small number of exception types.
-// If we have to parcel an exception we should instead use read/writeSerializable (compare KT-31830)
 // WITH_STDLIB
 
 @file:JvmName("TestKt")

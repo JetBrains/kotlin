@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 fun box(): String {
     var cur = 0
     class Node(l: Int) {

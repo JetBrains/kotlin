@@ -1,11 +1,7 @@
 // LANGUAGE: +SuspendConversion
 // WITH_STDLIB
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: JVM_IR, JS_IR, JS_IR_ES6, WASM
 // WASM_MUTE_REASON: FAILS_IN_JS_IR
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JVM, JVM_IR
-
 
 fun checkEqual(x: Any, y: Any) {
     if (x != y || y != x) throw AssertionError("$x and $y should be equal")

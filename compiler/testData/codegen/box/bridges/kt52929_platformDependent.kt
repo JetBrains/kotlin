@@ -2,7 +2,6 @@
 // WITH_STDLIB
 // FULL_JDK
 // JVM_TARGET: 1.8
-// IGNORE_BACKEND: JVM
 // FILE: lib.kt
 
 open class KotlinMap<K> : MutableMap<K, String> by mutableMapOf() {

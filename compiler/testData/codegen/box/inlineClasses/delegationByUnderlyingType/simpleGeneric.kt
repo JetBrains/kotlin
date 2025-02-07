@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +InlineClassImplementationByDelegation, +GenericInlineClassParameter
 
 interface I {

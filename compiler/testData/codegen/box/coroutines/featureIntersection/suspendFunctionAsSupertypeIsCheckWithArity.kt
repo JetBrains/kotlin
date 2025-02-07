@@ -1,5 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // FIR status: not supported in JVM
 // LANGUAGE: +SuspendFunctionAsSupertype
 

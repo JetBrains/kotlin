@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 // FILE: 1.kt
 package a

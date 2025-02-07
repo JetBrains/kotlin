@@ -290,7 +290,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           GETFIELD (Test, h, [J)
           INVOKEVIRTUAL (android/os/Parcel, writeLongArray, ([J)V)
         LABEL (L6)
-        LINENUMBER (18)
+        LINENUMBER (17)
           RETURN
         LABEL (L7)
     }

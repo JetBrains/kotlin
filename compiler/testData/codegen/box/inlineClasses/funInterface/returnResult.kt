@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 fun interface ResultHandler<T> {
     @Suppress("RESULT_CLASS_IN_RETURN_TYPE")

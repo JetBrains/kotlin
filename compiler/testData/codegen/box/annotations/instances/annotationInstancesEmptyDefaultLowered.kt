@@ -1,12 +1,8 @@
-// IGNORE_BACKEND: JVM
-
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
 
-/**
- * This test checks if annotation instantiation works correctly, when annotation class is lowered before instantiation point.
- * So, filename of classes containing annotations should be earlier, than for box function
- */
+// This test checks if annotation instantiation works correctly, when annotation class is lowered before instantiation point.
+// So, filename of classes containing annotations should be earlier, than for box function
 // FILE: a.kt
 
 package test

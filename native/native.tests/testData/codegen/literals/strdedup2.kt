@@ -1,10 +1,6 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // TODO: string deduplication across several components seems to require
 // linking them as bitcode modules before translating to machine code.
-// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // DISABLE_NATIVE
 // WITH_STDLIB
 

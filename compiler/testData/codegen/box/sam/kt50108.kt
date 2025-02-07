@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 
 fun interface IFoo {
     fun foo(): String

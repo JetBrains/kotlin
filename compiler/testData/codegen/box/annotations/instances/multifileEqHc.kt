@@ -1,10 +1,5 @@
-// IGNORE_BACKEND: JVM
-
-// (supported: JVM_IR, JS_IR(_E6))
-
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
-
 
 // FILE: a.kt
 package a

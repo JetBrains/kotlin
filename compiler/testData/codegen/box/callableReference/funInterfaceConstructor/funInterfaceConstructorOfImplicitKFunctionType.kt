@@ -1,8 +1,4 @@
 // LANGUAGE: +KotlinFunInterfaceConstructorReference
-
-// IGNORE_BACKEND: JVM
-//  ^ unsupported in old JVM BE
-
 // JVM_ABI_K1_K2_DIFF: KT-63861
 
 fun interface KRunnable {

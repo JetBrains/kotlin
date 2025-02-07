@@ -1,6 +1,5 @@
 // LANGUAGE: +SuspendFunctionsInFunInterfaces +JvmIrEnabledByDefault
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_STDLIB

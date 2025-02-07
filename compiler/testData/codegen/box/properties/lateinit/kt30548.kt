@@ -1,6 +1,3 @@
-
-// IGNORE_BACKEND: JVM
-
 class Test {
     companion object {
         private lateinit var INSTANCE: String

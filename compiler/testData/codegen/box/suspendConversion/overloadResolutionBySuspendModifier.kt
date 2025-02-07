@@ -1,6 +1,5 @@
 // LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
 //  java.lang.IllegalStateException: OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
 //  public fun foo(x: () -> Int): Unit defined in root package in file overloadResolutionBySuspendModifier.kt

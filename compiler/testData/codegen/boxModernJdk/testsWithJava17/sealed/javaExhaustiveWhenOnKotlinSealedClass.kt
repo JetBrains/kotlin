@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
 // ENABLE_JVM_PREVIEW
 

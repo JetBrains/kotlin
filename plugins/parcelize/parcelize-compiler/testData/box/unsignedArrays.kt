@@ -1,6 +1,5 @@
 // OPT_IN: kotlin.ExperimentalUnsignedTypes
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 @file:JvmName("TestKt")
 package test

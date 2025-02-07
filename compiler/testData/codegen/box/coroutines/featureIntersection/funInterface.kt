@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +SuspendFunctionsInFunInterfaces, +JvmIrEnabledByDefault
 // SKIP_DCE_DRIVEN
 

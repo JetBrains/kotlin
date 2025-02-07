@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 // This test fails on Native with test grouping and package renaming enabled,
 // because the latter doesn't yet handle annotation toString implementations properly.
 // Disable test grouping as a workaround:

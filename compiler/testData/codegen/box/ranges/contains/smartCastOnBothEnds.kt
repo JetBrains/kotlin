@@ -1,8 +1,5 @@
 // WITH_STDLIB
 
-// Fails on the old JVM backend because of KT-42017.
-// IGNORE_BACKEND: JVM
-
 fun checkDouble(a: Double?, b: Double?, c: Double): Boolean = a != null && b != null && c !in a..b
 fun checkFloat(a: Float?, b: Float?, c: Float): Boolean = a != null && b != null && c !in a..b
 fun checkLong(a: Long?, b: Long?, c: Long): Boolean = a != null && b != null && c !in a..b
