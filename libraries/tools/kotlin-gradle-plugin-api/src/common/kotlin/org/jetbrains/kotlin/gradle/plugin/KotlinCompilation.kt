@@ -318,7 +318,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
      * Further details:
      * https://kotl.in/compilation-source-deprecation
      */
-    @Deprecated("scheduled for removal with Kotlin 2.1")
+    @Deprecated("Scheduled for removal with Kotlin 2.3. Please see the migration guide: https://kotl.in/compilation-source-deprecation")
     fun source(sourceSet: KotlinSourceSet)
 
     /**

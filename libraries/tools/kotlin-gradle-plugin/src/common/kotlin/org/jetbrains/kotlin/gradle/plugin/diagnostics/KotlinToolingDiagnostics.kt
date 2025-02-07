@@ -924,13 +924,13 @@ object KotlinToolingDiagnostics {
     object KotlinTargetAlreadyDeclaredWarning : KotlinTargetAlreadyDeclared(WARNING)
     object KotlinTargetAlreadyDeclaredError : KotlinTargetAlreadyDeclared(ERROR)
 
-    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
+    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(trace: Throwable?) = build(throwable = trace) {
             title("`KotlinCompilation.source(KotlinSourceSet)` Method Deprecated")
                 .description {
                     """
                     `KotlinCompilation.source(KotlinSourceSet)` method is deprecated
-                    and will be removed in upcoming Kotlin releases.
+                    and will be removed in Kotlin 2.3
                     """.trimIndent()
                 }
                 .solution {
