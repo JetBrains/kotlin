@@ -32,7 +32,8 @@ abstract class PerformanceManager(private val presentableName: String) {
         BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
     )
 
-    protected var isEnabled: Boolean = false
+    var isEnabled: Boolean = false
+        protected set
     private var isK2: Boolean = true
     private var initStartNanos = currentTime()
     private var analysisStart: Long = 0
@@ -154,7 +155,12 @@ abstract class PerformanceManager(private val presentableName: String) {
     }
 
     fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport())
+        destination.writeBytes(createPerformanceReport().toByteArray())
+    }
+
+    fun createPerformanceReport(): String = buildString {
+        append("$presentableName performance report\n")
+        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
     }
 
     private fun recordGcTime() {
@@ -210,11 +216,6 @@ abstract class PerformanceManager(private val presentableName: String) {
             }
         }
     }
-
-    private fun createPerformanceReport(): ByteArray = buildString {
-        append("$presentableName performance report\n")
-        getMeasurementResults().map { it.render() }.sorted().forEach { append("$it\n") }
-    }.toByteArray()
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)

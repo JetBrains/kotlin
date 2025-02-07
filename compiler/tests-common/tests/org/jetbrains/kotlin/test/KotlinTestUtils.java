@@ -66,6 +66,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
+    public static final String ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT = "Actual data differs from file content";
     public static String TEST_MODULE_NAME = "test-module";
 
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
@@ -244,26 +245,29 @@ public class KotlinTestUtils {
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
-        assertEqualsToFile("Actual data differs from file content", expectedFile, actual, sanitizer);
+        assertEqualsToFile(ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, expectedFile, actual, sanitizer);
     }
 
     public static FileComparisonResult compareExpectFileWithActualText(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
-        try {
-            String actualSanitizedText = applyDefaultAndCustomSanitizer(actual, sanitizer);
+        Function0<String> getActualSanitizedText = () -> applyDefaultAndCustomSanitizer(actual, sanitizer);
 
+        String expectedText = tryLoadExpectedFile(expectedFile, getActualSanitizedText);
+        String expectedSanitizedText = applyDefaultAndCustomSanitizer(expectedText, sanitizer);
+
+        return new FileComparisonResult(expectedFile, expectedText, expectedSanitizedText, getActualSanitizedText.invoke());
+    }
+
+    public static String tryLoadExpectedFile(@NotNull File expectedFile, @NotNull Function0<String> getSanitizedActualText) {
+        try {
             if (!expectedFile.exists()) {
                 if (KtUsefulTestCase.IS_UNDER_TEAMCITY) {
                     Assert.fail("Expected data file " + expectedFile + " did not exist");
                 } else {
-                    FileUtil.writeToFile(expectedFile, actualSanitizedText);
+                    FileUtil.writeToFile(expectedFile, getSanitizedActualText.invoke());
                     Assert.fail("Expected data file did not exist. Generating: " + expectedFile);
                 }
             }
-            String expectedText = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
-
-            String expectedSanitizedText = applyDefaultAndCustomSanitizer(expectedText, sanitizer);
-
-            return new FileComparisonResult(expectedFile, expectedText, expectedSanitizedText, actualSanitizedText);
+            return FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
@@ -291,18 +295,21 @@ public class KotlinTestUtils {
         }
     }
 
-    private static String applyDefaultAndCustomSanitizer(String text, @NotNull Function1<String, String> sanitizer) {
+    public static String applyDefaultAndCustomSanitizer(String text, @NotNull Function1<String, String> sanitizer) {
         String textAfterDefaultSanitizer = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(text.trim()));
         return sanitizer.invoke(textAfterDefaultSanitizer);
     }
 
     public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
-        FileComparisonResult comparisonResult = compareExpectFileWithActualText(expectedFile, actual, sanitizer);
-        if (!comparisonResult.doesEqual) {
+        failIfNotEqual(message, compareExpectFileWithActualText(expectedFile, actual, sanitizer));
+    }
+
+    public static void failIfNotEqual(@NotNull String message, FileComparisonResult fileComparisonResult) {
+        if (!fileComparisonResult.doesEqual) {
             throw new AssertionFailedError(
-                    message + ": " + expectedFile.getName(),
-                    new FileInfo(expectedFile.getAbsolutePath(), comparisonResult.expectedText.getBytes(StandardCharsets.UTF_8)),
-                    comparisonResult.actualSanitizedText
+                    message + ": " + fileComparisonResult.expectedFile.getName(),
+                    new FileInfo(fileComparisonResult.expectedFile.getAbsolutePath(), fileComparisonResult.expectedText.getBytes(StandardCharsets.UTF_8)),
+                    fileComparisonResult.actualSanitizedText
             );
         }
     }
