@@ -1,0 +1,37 @@
+FILE: wrongNullability.fir.kt
+    public final class IntLongPair : R|kotlin/Any| {
+        public constructor(i: R|kotlin/Int|, l: R|kotlin/Long|): R|IntLongPair| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final val l: R|kotlin/Long| = R|<local>/l|
+            public get(): R|kotlin/Long|
+
+    }
+    public abstract interface Process : R|kotlin/Any| {
+        public abstract fun pid(): R|kotlin/Int|
+
+        public abstract fun totalCpuDuration(): R|kotlin/Long?|
+
+    }
+    public final fun run(filter: R|java/util/function/IntPredicate|, allProcesses: R|java/util/stream/Stream<Process>|): R|kotlin/collections/List<IntLongPair>| {
+        ^run R|<local>/allProcesses|.R|SubstitutionOverride<java/util/stream/Stream.filter: R|ft<java/util/stream/Stream<Process!>, java/util/stream/Stream<Process!>?>|>|(<L> = SAM(filter@fun <anonymous>(it: R|@EnhancedNullability Process!|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ R|<local>/filter|.R|java/util/function/IntPredicate.test|(R|<local>/it|.R|/Process.pid|())
+        }
+        )).R|SubstitutionOverride<java/util/stream/Stream.map: R|ft<java/util/stream/Stream<R!>, java/util/stream/Stream<R!>?>|>|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?) IntLongPair!|>(<L> = SAM(map@fun <anonymous>(it: R|@EnhancedNullability Process!|): R|@EnhancedNullability IntLongPair!| <inline=NoInline>  {
+            lval duration: R|kotlin/Long?| = R|<local>/it|.R|/Process.totalCpuDuration|()
+            ^ when () {
+                !=(R|<local>/duration|, Null(null)) ->  {
+                    R|/IntLongPair.IntLongPair|(R|<local>/it|.R|/Process.pid|(), R|<local>/duration|)
+                }
+                else ->  {
+                    Null(null)
+                }
+            }
+
+        }
+        )).R|kotlin/streams/toList|<R|IntLongPair!|>()
+    }
