@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
 import org.jetbrains.kotlin.utils.toSmartList
@@ -130,12 +129,6 @@ fun generateKLib(
         builtInsPlatform,
         wasmTarget,
     )
-}
-
-fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
-    return DFS.topologicalOrder(moduleDependencies.keys) { m ->
-        moduleDependencies.getValue(m)
-    }.reversed()
 }
 
 fun deserializeDependencies(

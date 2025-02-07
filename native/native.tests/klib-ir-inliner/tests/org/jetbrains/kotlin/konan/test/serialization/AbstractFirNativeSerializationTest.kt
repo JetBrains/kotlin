@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
@@ -174,7 +175,5 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
     klibArtifactsHandlersStep {
         useHandlers(::KlibBackendDiagnosticsHandler)
     }
-    // TODO: KT-73171 uncomment the following line after fixing discrepancies between IR in before-serialization and after-deserialization state.
-    // Or as soon those tests with discrepancies are muted.
-    // irHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) }) }
+    deserializedIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) }) }
 }
