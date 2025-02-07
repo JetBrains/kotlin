@@ -319,7 +319,9 @@ internal object ArgumentCheckingProcessor {
             }
 
             else -> {
-                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) return // no errors
+                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
+                    return // no errors
+                }
 
                 val smartcastExpression = expression as? FirSmartCastExpression
                 if (smartcastExpression != null && !smartcastExpression.isStable) {
