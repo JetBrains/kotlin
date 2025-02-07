@@ -98,7 +98,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     @Test
     fun testDriverProducesRunnableBinaries() {
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
-            testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
 
@@ -128,7 +127,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     @Test
     fun testDriverVersion() {
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
-                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
         // No need to test with different GC schedulers
@@ -274,7 +272,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     @Test
     fun testSplitCompilationPipelineWithKlibResolverFlags() {
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
-                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
 
