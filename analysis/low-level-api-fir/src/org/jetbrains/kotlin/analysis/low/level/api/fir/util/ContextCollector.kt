@@ -796,10 +796,8 @@ private class ContextCollectorVisitor(
 
         onActiveBody {
             context.withAnonymousFunction(anonymousFunction, bodyHolder) {
-                for (parameter in anonymousFunction.valueParameters) {
-                    process(parameter)
-                    context.storeVariable(parameter, bodyHolder.session)
-                }
+                processList(anonymousFunction.contextParameters)
+                processList(anonymousFunction.valueParameters)
 
                 dumpContext(anonymousFunction, ContextKind.BODY)
 
@@ -812,7 +810,6 @@ private class ContextCollectorVisitor(
                 }
             }
         }
-
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor(anonymousObject) {
