@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKi
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Tag
+import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
 @Tag("cexport")
@@ -24,7 +26,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
 
     protected fun runTest(@TestDataFile testFile: String) {
         val path = Path(testFile)
-        val goldenDataHeaderFile = path.parent.resolve(path.nameWithoutExtension + ".h")
+        val goldenDataHeaderFile = resolveTargetSpecificGoldenDataFile(path)
 
         val moduleName: String = path.nameWithoutExtension
         val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
@@ -57,5 +59,13 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
             ?: error("No header file found for ${moduleName}")
 
         KotlinTestUtils.assertEqualsToFile(goldenDataHeaderFile.toFile(), headerFile.readText())
+    }
+
+    private fun resolveTargetSpecificGoldenDataFile(pathToTestFile: Path): Path {
+        val testName = pathToTestFile.nameWithoutExtension
+        val parentDirectory = pathToTestFile.parent
+        val targetSpecificFile = parentDirectory.resolve("$testName.${targets.testTarget}.h")
+        val commonFile = parentDirectory.resolve("$testName.h")
+        return if (targetSpecificFile.exists()) targetSpecificFile else commonFile
     }
 }
