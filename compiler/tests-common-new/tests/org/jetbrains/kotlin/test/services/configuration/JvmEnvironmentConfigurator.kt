@@ -414,7 +414,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
             if (isJava9Module) {
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(dependency))
-            } else {
+            }
+            if (FORCE_COMPILE_AS_JAVA_MODULE !in module.directives) {
                 addJvmClasspathRoot(dependency)
             }
         }
