@@ -44,7 +44,7 @@ class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
     }
 
     private fun emitMetadata(irClass: IrClass, annotation: IrConstructorCall) {
-        val value = (annotation.getValueArgument(0) as IrConst).value as Int
+        val value = (annotation.arguments[0] as IrConst).value as Int
 
         context.metadataDeclarationRegistrar.addCustomMetadataExtension(
             irClass,
@@ -70,7 +70,7 @@ class MetadataExtensionExtractor(val context: IrPluginContext) : IrVisitorVoid()
 
     override fun visitFunction(declaration: IrFunction) {
         if (!declaration.hasAnnotation(markerAnnotationFqName)) return
-        val parameterClass = declaration.valueParameters.firstOrNull()?.type?.classOrNull?.owner ?: return
+        val parameterClass = declaration.parameters.firstOrNull { it.kind == IrParameterKind.Regular }?.type?.classOrNull?.owner ?: return
         val valueFromMetadata = context.metadataDeclarationRegistrar.getCustomMetadataExtension(
             parameterClass,
             pluginId
