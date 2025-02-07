@@ -15,6 +15,11 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 
 /**
+ * ======================================== WARNING ========================================
+ * This test is K1-only.
+ * K2 JVM tests are using the CLI pipeline by default and don't require any special setup
+ * =========================================================================================
+ *
  * In contrast to the normal diagnostic tests, compiles the modules in the test to JVM artifacts, and checks diagnostics along the way
  * (reported both by frontend and JVM backend).
  *
