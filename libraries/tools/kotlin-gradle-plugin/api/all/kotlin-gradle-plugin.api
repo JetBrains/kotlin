@@ -585,22 +585,12 @@ public final class org/jetbrains/kotlin/gradle/plugin/GradleUtilsKt {
 	public static final fun getExtraProperties (Lorg/gradle/api/plugins/ExtensionAware;)Lorg/gradle/api/plugins/ExtraPropertiesExtension;
 }
 
-public class org/jetbrains/kotlin/gradle/plugin/KaptAnnotationProcessorOptions : org/jetbrains/kotlin/gradle/dsl/KaptArguments {
-	public fun <init> ()V
-	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/Object;Ljava/lang/Object;)V
-	public fun arg (Ljava/lang/Object;[Ljava/lang/Object;)V
-	public fun arg (Ljava/lang/String;[Ljava/lang/String;)V
-	public final fun execute (Lgroovy/lang/Closure;)V
-}
-
 public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig {
 	public fun <init> ()V
 	public fun annotationProcessor (Ljava/lang/String;)V
 	public fun annotationProcessors ([Ljava/lang/String;)V
 	public fun arguments (Lkotlin/jvm/functions/Function1;)V
 	public fun arguments (Lorg/gradle/api/Action;)V
-	public final fun getAdditionalArguments (Lorg/gradle/api/Project;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/Map;
-	public final fun getAdditionalArgumentsForJavac (Lorg/gradle/api/Project;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/List;
 	public fun getCorrectErrorTypes ()Z
 	public fun getDetectMemoryLeaks ()Ljava/lang/String;
 	public fun getDumpDefaultParameterValues ()Z
@@ -630,15 +620,6 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 	public fun setStripMetadata (Z)V
 	public fun setUseBuildCache (Z)V
 	public fun setUseLightAnalysis (Z)V
-}
-
-public class org/jetbrains/kotlin/gradle/plugin/KaptJavacOptionsDelegate : org/jetbrains/kotlin/gradle/dsl/KaptJavacOption {
-	public fun <init> ()V
-	public final fun execute (Lgroovy/lang/Closure;)V
-	public fun option (Ljava/lang/Object;)V
-	public fun option (Ljava/lang/Object;Ljava/lang/Object;)V
-	public fun option (Ljava/lang/String;)V
-	public fun option (Ljava/lang/String;Ljava/lang/String;)V
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/KotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper {
