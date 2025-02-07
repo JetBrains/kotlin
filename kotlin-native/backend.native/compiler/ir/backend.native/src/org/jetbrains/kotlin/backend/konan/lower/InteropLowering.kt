@@ -267,7 +267,7 @@ private abstract class BaseInteropIrTransformer(
             expression
         else builder.irBlock {
             +trampoline
-            +irFunctionReference(expression.type, trampoline.symbol).apply {
+            +irFunctionReference(expression.type, trampoline.symbol, expression.reflectionTarget).apply {
                 (0..<expression.typeArgumentsCount).forEach { index ->
                     this.putTypeArgument(index, expression.getTypeArgument(index))
                 }
