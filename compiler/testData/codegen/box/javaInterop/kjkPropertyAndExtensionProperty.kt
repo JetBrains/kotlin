@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM, JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 
 // FILE: J.java
 public class J extends D {}
