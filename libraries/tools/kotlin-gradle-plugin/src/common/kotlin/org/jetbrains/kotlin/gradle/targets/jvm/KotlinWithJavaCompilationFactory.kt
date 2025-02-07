@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch", "TYPEALIAS_EXPANSION_DEPRECATION") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.*

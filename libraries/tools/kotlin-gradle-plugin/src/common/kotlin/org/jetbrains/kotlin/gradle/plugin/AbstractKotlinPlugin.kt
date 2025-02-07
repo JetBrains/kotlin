@@ -186,7 +186,7 @@ internal abstract class AbstractKotlinPlugin(
                         })
                     }
 
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION_ERROR")
                     kotlinCompilation.addSourceSet(kotlinSourceSet)
                     project.compatibilityConventionRegistrar.addConvention(javaSourceSet, kotlinSourceSetDslName, kotlinSourceSet)
                     javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinSourceSet.kotlin)
@@ -196,7 +196,7 @@ internal abstract class AbstractKotlinPlugin(
             }
 
             kotlinTarget.compilations.all { kotlinCompilation ->
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 kotlinCompilation.addSourceSet(kotlinCompilation.defaultSourceSet)
             }
 

@@ -47,7 +47,11 @@ interface IncrementalSyncTask : Task {
      * @suppress
      */
     @get:Internal
-    @Deprecated("Use destinationDirectory with Provider API", ReplaceWith("destinationDirectory.get()"))
+    @Deprecated(
+        "Scheduled for removal in Kotlin 2.3. Use destinationDirectory with Provider API",
+        ReplaceWith("destinationDirectory.get()"),
+        level = DeprecationLevel.ERROR
+    )
     val destinationDir: File
         get() = destinationDirectory.get()
 }

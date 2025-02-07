@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.parseJsonOrThrow
 import org.junit.jupiter.api.DisplayName
@@ -112,6 +113,7 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KotlinToolingMetadata tasks are avaialbe in Kotlin JS browser project")
+    @TestMetadata("kotlin-js-browser-project")
     fun tasksAreAvailableInKotlinJsBrowser(
         gradleVersion: GradleVersion,
         @TempDir localRepository: Path

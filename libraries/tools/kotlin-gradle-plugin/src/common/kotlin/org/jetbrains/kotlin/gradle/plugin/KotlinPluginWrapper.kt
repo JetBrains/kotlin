@@ -295,7 +295,7 @@ abstract class AbstractKotlinJsPluginWrapper : KotlinBasePluginWrapper() {
 }
 
 abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrapper() {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     override fun getPlugin(project: Project): Plugin<Project> = KotlinMultiplatformPlugin()
 
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>

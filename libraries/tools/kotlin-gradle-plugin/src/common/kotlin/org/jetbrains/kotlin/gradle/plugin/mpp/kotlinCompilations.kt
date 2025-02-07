@@ -104,7 +104,7 @@ internal inline fun <@Suppress("DEPRECATION") reified T : KotlinCommonOptions> I
     return this as InternalKotlinCompilation<T>
 }
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
 internal inline fun <reified T : KotlinCommonCompilerOptions> DeprecatedHasCompilerOptions<*>.castCompilerOptionsType(): DeprecatedHasCompilerOptions<T> {
     this.options as T
     @Suppress("UNCHECKED_CAST")

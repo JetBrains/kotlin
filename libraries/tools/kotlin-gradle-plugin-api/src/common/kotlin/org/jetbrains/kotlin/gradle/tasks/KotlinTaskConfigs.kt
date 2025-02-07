@@ -148,8 +148,9 @@ interface KotlinJvmCompile : BaseKotlinCompile,
      * @suppress
      */
     @get:Deprecated(
-        message = "Please migrate to compilerOptions.moduleName",
-        replaceWith = ReplaceWith("compilerOptions.moduleName")
+        message = "Please migrate to compilerOptions.moduleName. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compilerOptions.moduleName"),
+        level = DeprecationLevel.ERROR,
     )
     @get:Optional
     @get:Input
@@ -161,8 +162,9 @@ interface KotlinJvmCompile : BaseKotlinCompile,
     // JVM specific
     @get:Internal("Takes part in compiler args.")
     @Deprecated(
-        message = "Configure compilerOptions directly",
-        replaceWith = ReplaceWith("compilerOptions")
+        message = "Configure compilerOptions directly. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compilerOptions"),
+        level = DeprecationLevel.ERROR,
     )
     val parentKotlinOptions: Property<KotlinJvmOptionsDeprecated>
 
@@ -219,8 +221,9 @@ interface KaptGenerateStubs : KotlinJvmCompile {
      * @suppress
      */
     @get:Deprecated(
-        message = "Please migrate to compilerOptions.moduleName",
-        replaceWith = ReplaceWith("compilerOptions.moduleName")
+        message = "Please migrate to compilerOptions.moduleName. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compilerOptions.moduleName"),
+        level = DeprecationLevel.ERROR,
     )
     @get:Optional
     @get:Input

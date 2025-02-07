@@ -36,17 +36,18 @@ import org.jetbrains.kotlin.gradle.plugin.registerKotlinPluginExtensions
  *  At the time of writing this comment: We take heavy usage of the [KotlinProjectSetupAction.extensionPoint] to provide
  *  additional project configuration for multiplatform.
  */
-@Deprecated("Scheduled for removal in Kotlin 2.1")
+@Deprecated("Scheduled for removal in Kotlin 2.3", level = DeprecationLevel.ERROR)
 class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(project: Project) = Unit
 
     companion object {
         @Deprecated(
-            "Scheduled for removal in Kotlin 2.1",
+            "Scheduled for removal in Kotlin 2.3",
             replaceWith = ReplaceWith(
                 "KotlinMetadataTarget.METADATA_TARGET_NAME",
                 imports = ["org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget"]
-            )
+            ),
+            level = DeprecationLevel.ERROR,
         )
         const val METADATA_TARGET_NAME = KotlinMetadataTarget.METADATA_TARGET_NAME
     }

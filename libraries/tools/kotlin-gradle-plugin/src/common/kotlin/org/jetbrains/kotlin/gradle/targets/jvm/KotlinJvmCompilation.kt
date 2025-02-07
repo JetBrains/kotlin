@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.lenient
 import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
 open class KotlinJvmCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
     internal val defaultJavaSourceSet: SourceSet,
@@ -40,13 +40,21 @@ open class KotlinJvmCompilation @Inject internal constructor(
     override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
 
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    @Deprecated(
+        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
     override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
         get() = compilation.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = compilation.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -95,7 +103,7 @@ open class KotlinJvmCompilation @Inject internal constructor(
         }
     }
 
-    @Deprecated("Conditionally creating Java source sets is deprecated. Check 'defaultJavaSourceSet' instead.")
+    @Deprecated("Conditionally creating Java source sets is deprecated. Check 'defaultJavaSourceSet' instead. Scheduled for removal in Kotlin 2.4.")
     internal fun maybeCreateJavaSourceSet(): SourceSet {
         check(target.withJavaEnabled)
         val sourceSet = target.project.javaSourceSets.maybeCreate(compilationName)
