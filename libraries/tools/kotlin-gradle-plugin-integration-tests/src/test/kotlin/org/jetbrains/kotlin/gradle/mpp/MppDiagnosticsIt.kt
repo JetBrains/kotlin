@@ -17,7 +17,10 @@ import kotlin.io.path.writeText
 @MppGradlePluginTests
 class MppDiagnosticsIt : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(compilerArgumentsLogLevel = null)
+        get() = super.defaultBuildOptions.copy(
+            compilerArgumentsLogLevel = null,
+            ignoreWarningModeSeverityOverride = true
+        )
 
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {

@@ -30,6 +30,7 @@ data class BuildOptions(
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
+    val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
     val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.DISABLED,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
@@ -283,6 +284,10 @@ data class BuildOptions(
 
         if (showDiagnosticsStacktrace != null) {
             arguments.add("-Pkotlin.internal.diagnostics.showStacktrace=$showDiagnosticsStacktrace")
+        }
+
+        if (ignoreWarningModeSeverityOverride != null) {
+            arguments.add("-Pkotlin.internal.diagnostics.ignoreWarningMode=$ignoreWarningModeSeverityOverride")
         }
 
         if (stacktraceMode != null) {

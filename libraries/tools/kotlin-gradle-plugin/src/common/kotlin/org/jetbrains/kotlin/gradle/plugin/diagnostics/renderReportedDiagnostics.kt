@@ -25,17 +25,21 @@ internal fun renderReportedDiagnostic(
     logger: Logger,
     renderingOptions: ToolingDiagnosticRenderingOptions
 ) {
-    // Early return if warnings are disabled and it's not an error and not fatal
-    if (renderingOptions.warningMode == WarningMode.None && diagnostic.severity == WARNING) {
-        return
-    }
-
-    val effectiveSeverity = if (diagnostic.severity == WARNING && renderingOptions.warningMode == WarningMode.Fail)
-        ERROR
-    else
+    val effectiveSeverity = if (renderingOptions.ignoreWarningMode) {
         diagnostic.severity
+    } else {
+        // Early return if warnings are disabled and it's not an error and not fatal
+        if (renderingOptions.warningMode == WarningMode.None && diagnostic.severity == WARNING) {
+            return
+        }
 
-    //TODO: KT-74986 Support WarningMode.Summary mode for gradle diagnostics
+        if (diagnostic.severity == WARNING && renderingOptions.warningMode == WarningMode.Fail)
+            ERROR
+        else
+            diagnostic.severity
+
+        //TODO: KT-74986 Support WarningMode.Summary mode for gradle diagnostics
+    }
 
     when (effectiveSeverity) {
         WARNING -> logger.warn("w: ${diagnostic.render(renderingOptions)}\n")

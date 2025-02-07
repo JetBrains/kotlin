@@ -2,6 +2,7 @@
 w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] Usage of Internal Kotlin Gradle Plugin Properties Detected
 ATTENTION! This build uses the following Kotlin Gradle Plugin properties:
 
+kotlin.internal.diagnostics.ignoreWarningMode
 kotlin.internal.suppressGradlePluginErrors
 
 Internal properties are not recommended for production use.

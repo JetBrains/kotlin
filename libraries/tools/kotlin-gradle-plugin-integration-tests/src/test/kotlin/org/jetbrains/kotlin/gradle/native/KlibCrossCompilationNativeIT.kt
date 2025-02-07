@@ -18,6 +18,10 @@ import java.nio.file.Path
 @DisplayName("Tests for checking klib cross-compilation in KGP")
 @NativeGradlePluginTests
 class KlibCrossCompilationNativeIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            ignoreWarningModeSeverityOverride = true
+        )
 
     @GradleTest
     @TestMetadata("klibCrossCompilationDefaultSettings")

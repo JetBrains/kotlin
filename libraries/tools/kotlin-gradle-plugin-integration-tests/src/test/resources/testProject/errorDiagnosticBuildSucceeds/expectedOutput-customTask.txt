@@ -12,3 +12,13 @@ The following Kotlin source sets were configured but not added to any Kotlin com
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
 See https://kotl.in/connecting-source-sets
 #diagnostic-end
+
+w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] Usage of Internal Kotlin Gradle Plugin Properties Detected
+ATTENTION! This build uses the following Kotlin Gradle Plugin properties:
+
+kotlin.internal.diagnostics.ignoreWarningMode
+
+Internal properties are not recommended for production use.
+Stability and future compatibility of the build is not guaranteed.
+Please consider using the public API instead of internal properties.
+#diagnostic-end

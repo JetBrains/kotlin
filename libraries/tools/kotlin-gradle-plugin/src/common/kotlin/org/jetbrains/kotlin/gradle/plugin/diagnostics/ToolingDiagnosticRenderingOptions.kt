@@ -20,6 +20,7 @@ internal class ToolingDiagnosticRenderingOptions(
     val suppressedErrorIds: List<String>,
     val showStacktrace: Boolean,
     val showSeverityEmoji: Boolean,
+    val ignoreWarningMode: Boolean,
     val warningMode: WarningMode
 ) : Serializable {
     companion object {
@@ -42,6 +43,7 @@ internal class ToolingDiagnosticRenderingOptions(
                     suppressedErrorIds = suppressedGradlePluginErrors,
                     showStacktrace = showStacktrace,
                     showSeverityEmoji = !project.isInIdeaEnvironment.get() && !HostManager.hostIsMingw,
+                    ignoreWarningMode = internalDiagnosticsIgnoreWarningMode ?: false,
                     warningMode = project.gradle.startParameter.warningMode
                 )
             }

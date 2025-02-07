@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_NEXT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_KARMA_BROWSERS
@@ -429,6 +430,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val internalDiagnosticsShowStacktrace: Boolean?
         get() = booleanProperty(KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE)
 
+    /**
+     * *Overrides* the default option for changing diagnostics severity when WarningMode is set to Fail
+     */
+    val internalDiagnosticsIgnoreWarningMode: Boolean?
+        get() = booleanProperty(KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE)
+
     val suppressedGradlePluginWarnings: List<String>
         get() = property(PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS).orNull?.split(",").orEmpty()
 
@@ -728,6 +735,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createDefaultMultiplatformPublications")
         val KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.useParsableFormatting")
         val KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.showStacktrace")
+        val KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.ignoreWarningMode")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = property("$KOTLIN_INTERNAL_NAMESPACE.suppressGradlePluginErrors")
         val KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS =
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createArchiveTasksForCustomCompilations")
