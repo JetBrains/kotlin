@@ -49577,6 +49577,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("unnamedDependsOnNamed_allModulePath.kt")
+      public void testUnnamedDependsOnNamed_allModulePath() {
+        runTest("compiler/testData/diagnostics/jvmIntegration/modules/unnamedDependsOnNamed_allModulePath.kt");
+      }
+
+      @Test
       @TestMetadata("unnamedDoesNotReadNotAdded.kt")
       public void testUnnamedDoesNotReadNotAdded() {
         runTest("compiler/testData/diagnostics/jvmIntegration/modules/unnamedDoesNotReadNotAdded.kt");
