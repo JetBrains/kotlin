@@ -24,7 +24,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Explode0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Expr0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.From
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Group0
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AggregateDslInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert1
@@ -89,7 +89,13 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Merge0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeId
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeInto0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveAfter0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveInto0
@@ -100,7 +106,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameMapping
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColumnsConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
@@ -115,6 +123,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCounts
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCase
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCaseClause
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReorderColumnsByName
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
@@ -201,6 +210,7 @@ internal inline fun <reified T> String.load(): T {
         "Convert6" -> Convert6()
         "To0" -> To0()
         "With0" -> With0()
+        "PerRowCol" -> PerRowCol()
         "Explode0" -> Explode0()
         "Read0" -> Read0()
         "Insert0" -> Insert0()
@@ -217,6 +227,7 @@ internal inline fun <reified T> String.load(): T {
         "ReadJson0" -> ReadJson0()
         "ReadCSV0" -> ReadCSV0()
         "Rename" -> Rename()
+        "RenameMapping" -> RenameMapping()
         "Select0" -> Select0()
         "Expr0" -> Expr0()
         "And0" -> And0()
@@ -233,11 +244,12 @@ internal inline fun <reified T> String.load(): T {
         "Exclude1" -> Exclude1()
         "RenameInto" -> RenameInto()
         "DataFrameGroupBy" -> DataFrameGroupBy()
-        "GroupByInto" -> GroupByInto()
+        "AggregateDslInto" -> AggregateDslInto()
         "ReadJsonStr" -> ReadJsonStr()
         "DataRowReadJsonStr" -> DataRowReadJsonStr()
         "ReadDelimStr" -> ReadDelimStr()
         "GroupByToDataFrame" -> GroupByToDataFrame()
+        "GroupByInto" -> GroupByInto()
         "ToDataFrameFrom0" -> ToDataFrameFrom()
         "All0" -> All0()
         "ColsOf0" -> ColsOf0()
@@ -277,6 +289,12 @@ internal inline fun <reified T> String.load(): T {
         "MoveToRight0" -> MoveToRight0()
         "MoveAfter0" -> MoveAfter0()
         "GroupByAdd" -> GroupByAdd()
+        "Merge0" -> Merge0()
+        "MergeInto0" -> MergeInto0()
+        "MergeId" -> MergeId()
+        "MergeBy0" -> MergeBy0()
+        "MergeBy1" -> MergeBy1()
+        "ReorderColumnsByName" -> ReorderColumnsByName()
         else -> error("$this")
     } as T
 }

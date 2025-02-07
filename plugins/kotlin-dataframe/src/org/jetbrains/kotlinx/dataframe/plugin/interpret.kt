@@ -145,99 +145,7 @@ fun <T> KotlinTypeFacade.interpret(
         val expectedReturnType = expectedArgument.klass
         val value: Interpreter.Success<Any?>? = when (expectedArgument.lens) {
             is Interpreter.Value -> {
-                when (val expression = it.expression) {
-                    is FirLiteralExpression -> Interpreter.Success(expression.value!!)
-                    is FirVarargArgumentsExpression -> {
-                        val args = expression.arguments.map {
-                            when (it) {
-                                is FirLiteralExpression -> it.value
-                                is FirCallableReferenceAccess -> {
-                                    toKPropertyApproximation(it, session)
-                                }
-                                is FirFunctionCall -> {
-                                    it.loadInterpreter()?.let { processor ->
-                                        interpret(it, processor, emptyMap(), reporter)
-                                    }
-                                }
-                                else -> null
-                            }
-
-                        }
-                        Interpreter.Success(args)
-                    }
-
-                    is FirFunctionCall -> {
-                        val interpreter = expression.loadInterpreter()
-                        if (interpreter == null) {
-                            // if the plugin already transformed call, its original form is the last expression of .let { }
-                            val argument = expression.arguments.getOrNull(0)
-                            val last = (argument as? FirAnonymousFunctionExpression)?.anonymousFunction?.body?.statements?.lastOrNull()
-                            val call = (last as? FirReturnExpression)?.result as? FirFunctionCall
-                            call?.loadInterpreter()?.let {
-                                interpret(call, it, emptyMap(), reporter)
-                            }
-                        } else {
-                            interpreter.let {
-                                val result = interpret(expression, interpreter, emptyMap(), reporter)
-                                result
-                            }
-                        }
-                    }
-
-                    is FirPropertyAccessExpression -> {
-                        (expression.calleeReference as? FirResolvedNamedReference)?.let {
-                            val symbol = it.resolvedSymbol
-                            val firPropertySymbol = symbol as? FirPropertySymbol
-                            val literalInitializer = runIf(firPropertySymbol?.resolvedReturnType?.canHaveLiteralInitializer == true) {
-                                firPropertySymbol?.resolvedInitializer as? FirLiteralExpression
-                            }
-                            if (symbol is FirEnumEntrySymbol) {
-                                Interpreter.Success(
-                                    DataFrameCallableId(
-                                        packageName = symbol.callableId.packageName.asString(),
-                                        className = symbol.callableId.className!!.asString(),
-                                        callableName = symbol.callableId.callableName.asString()
-                                    )
-                                )
-                            } else if (literalInitializer != null) {
-                                Interpreter.Success(literalInitializer.value)
-                            } else {
-                                Interpreter.Success(columnWithPathApproximations(expression))
-                            }
-                        }
-                    }
-
-                    is FirCallableReferenceAccess -> {
-                        Interpreter.Success(toKPropertyApproximation(expression, session))
-                    }
-
-                    is FirAnonymousFunctionExpression -> {
-                        val result = (expression.anonymousFunction.body?.statements?.lastOrNull() as? FirReturnExpression)?.result
-                        val col: Any? = when (result) {
-                            is FirPropertyAccessExpression -> {
-                                columnWithPathApproximations(result)
-                            }
-
-                            is FirFunctionCall -> {
-                                val interpreter = result.loadInterpreter()
-                                if (interpreter == null) {
-                                    reporter.reportInterpretationError(result, "Cannot load interpreter")
-                                }
-                                interpreter?.let {
-                                    val value = interpret(result, interpreter, reporter = reporter)?.value
-                                    value
-                                }
-                            }
-
-                            is FirErrorExpression -> null
-
-                            else -> null
-                        }
-                        col?.let { Interpreter.Success(it) }
-                    }
-
-                    else -> null
-                }
+                extractValue(it.expression, reporter)
             }
 
             is Interpreter.ReturnType -> {
@@ -312,6 +220,104 @@ fun <T> KotlinTypeFacade.interpret(
     }
 }
 
+private fun KotlinTypeFacade.extractValue(
+    expression: FirExpression?,
+    reporter: InterpretationErrorReporter
+): Interpreter.Success<Any?>? = when (expression) {
+    is FirLiteralExpression -> Interpreter.Success(expression.value!!)
+    is FirVarargArgumentsExpression -> {
+        val args = expression.arguments.map {
+            when (it) {
+                is FirLiteralExpression -> it.value
+                is FirCallableReferenceAccess -> {
+                    toKPropertyApproximation(it, session)
+                }
+
+                is FirFunctionCall -> {
+                    it.loadInterpreter()?.let { processor ->
+                        interpret(it, processor, emptyMap(), reporter)
+                    }
+                }
+
+                else -> null
+            }
+
+        }
+        Interpreter.Success(args)
+    }
+
+    is FirFunctionCall -> {
+        val interpreter = expression.loadInterpreter()
+        if (interpreter == null) {
+            // if the plugin already transformed call, its original form is the last expression of .let { }
+            val argument = expression.arguments.getOrNull(0)
+            val last = (argument as? FirAnonymousFunctionExpression)?.anonymousFunction?.body?.statements?.lastOrNull()
+            val call = (last as? FirReturnExpression)?.result as? FirFunctionCall
+            call?.loadInterpreter()?.let {
+                interpret(call, it, emptyMap(), reporter)
+            }
+        } else {
+            interpreter.let {
+                val result = interpret(expression, interpreter, emptyMap(), reporter)
+                result
+            }
+        }
+    }
+
+    is FirPropertyAccessExpression -> {
+        (expression.calleeReference as? FirResolvedNamedReference)?.let {
+            val symbol = it.resolvedSymbol
+            val firPropertySymbol = symbol as? FirPropertySymbol
+            val literalInitializer = firPropertySymbol?.resolvedInitializer
+
+            if (symbol is FirEnumEntrySymbol) {
+                Interpreter.Success(
+                    DataFrameCallableId(
+                        packageName = symbol.callableId.packageName.asString(),
+                        className = symbol.callableId.className!!.asString(),
+                        callableName = symbol.callableId.callableName.asString()
+                    )
+                )
+            } else if (literalInitializer != null) {
+                extractValue(literalInitializer, reporter)
+            } else {
+                Interpreter.Success(columnWithPathApproximations(expression))
+            }
+        }
+    }
+
+    is FirCallableReferenceAccess -> {
+        Interpreter.Success(toKPropertyApproximation(expression, session))
+    }
+
+    is FirAnonymousFunctionExpression -> {
+        val result = (expression.anonymousFunction.body?.statements?.lastOrNull() as? FirReturnExpression)?.result
+        val col: Any? = when (result) {
+            is FirPropertyAccessExpression -> {
+                columnWithPathApproximations(result)
+            }
+
+            is FirFunctionCall -> {
+                val interpreter = result.loadInterpreter()
+                if (interpreter == null) {
+                    reporter.reportInterpretationError(result, "Cannot load interpreter")
+                }
+                interpreter?.let {
+                    val value = interpret(result, interpreter, reporter = reporter)?.value
+                    value
+                }
+            }
+
+            is FirErrorExpression -> null
+
+            else -> null
+        }
+        col?.let { Interpreter.Success(it) }
+    }
+
+    else -> null
+}
+
 fun interpretationFrameworkError(message: String): Nothing = throw InterpretationFrameworkError(message)
 
 class InterpretationFrameworkError(message: String) : Error(message)
@@ -360,22 +366,30 @@ fun SessionContext.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): 
         .mapIndexed { i, symbol -> symbol to coneClassLikeType.typeArguments[i] }
         .toMap()
 
-    var propertySymbols = declarationSymbols.filterIsInstance<FirPropertySymbol>()
-    val annotations = propertySymbols.mapNotNull {
-        val orderArgument = it.getAnnotationByClassId(
-            Names.ORDER_ANNOTATION,
-            session
-        )?.argumentMapping?.mapping?.get(Names.ORDER_ARGUMENT)
-        (orderArgument as? FirLiteralExpression)?.value as? Int
-    }
-    if (propertySymbols.size == annotations.size) {
-        propertySymbols = propertySymbols.zip(annotations).sortedBy { it.second }.map { it.first }
-    }
+    val propertySymbols = declarationSymbols
+        .filterIsInstance<FirPropertySymbol>()
+        .sortPropertiesByOrderAnnotation(sessionContext = this)
+
     val columns = propertySymbols.mapNotNull { propertySymbol ->
         columnOf(propertySymbol, mapping)
     }
 
     return PluginDataFrameSchema(columns)
+}
+
+private fun List<FirPropertySymbol>.sortPropertiesByOrderAnnotation(sessionContext: SessionContext): List<FirPropertySymbol> {
+    var result = this
+    val annotations = result.mapNotNull {
+        val orderArgument = it.getAnnotationByClassId(
+            Names.ORDER_ANNOTATION,
+            sessionContext.session
+        )?.argumentMapping?.mapping?.get(Names.ORDER_ARGUMENT)
+        (orderArgument as? FirLiteralExpression)?.value as? Int
+    }
+    if (result.size == annotations.size) {
+        result = result.zip(annotations).sortedBy { it.second }.map { it.first }
+    }
+    return result
 }
 
 private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): ColumnsResolver {
@@ -419,6 +433,7 @@ private fun SessionContext.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeP
                 ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
+                ?.sortPropertiesByOrderAnnotation(this)
                 ?.mapNotNull { columnOf(it, mapping) }
                 ?: emptyList()
 
@@ -432,6 +447,7 @@ private fun SessionContext.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeP
                 ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
+                ?.sortPropertiesByOrderAnnotation(this)
                 ?.mapNotNull { columnOf(it, mapping) }
                 ?: emptyList()
             SimpleColumnGroup(name, nestedColumns)

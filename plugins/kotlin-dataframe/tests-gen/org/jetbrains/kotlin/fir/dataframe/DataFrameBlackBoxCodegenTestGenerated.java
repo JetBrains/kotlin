@@ -245,6 +245,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("infer.kt")
+  public void testInfer() {
+    runTest("testData/box/infer.kt");
+  }
+
+  @Test
   @TestMetadata("injectAccessors.kt")
   public void testInjectAccessors() {
     runTest("testData/box/injectAccessors.kt");
@@ -305,6 +311,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("merge.kt")
+  public void testMerge() {
+    runTest("testData/box/merge.kt");
+  }
+
+  @Test
   @TestMetadata("modifySchemaInAggregate.kt")
   public void testModifySchemaInAggregate() {
     runTest("testData/box/modifySchemaInAggregate.kt");
@@ -362,6 +374,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("parametrizedDataFrame.kt")
   public void testParametrizedDataFrame() {
     runTest("testData/box/parametrizedDataFrame.kt");
+  }
+
+  @Test
+  @TestMetadata("perRowCol.kt")
+  public void testPerRowCol() {
+    runTest("testData/box/perRowCol.kt");
   }
 
   @Test
@@ -461,9 +479,21 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("renameMapping.kt")
+  public void testRenameMapping() {
+    runTest("testData/box/renameMapping.kt");
+  }
+
+  @Test
   @TestMetadata("renameToCamelCase.kt")
   public void testRenameToCamelCase() {
     runTest("testData/box/renameToCamelCase.kt");
+  }
+
+  @Test
+  @TestMetadata("reorder.kt")
+  public void testReorder() {
+    runTest("testData/box/reorder.kt");
   }
 
   @Test
