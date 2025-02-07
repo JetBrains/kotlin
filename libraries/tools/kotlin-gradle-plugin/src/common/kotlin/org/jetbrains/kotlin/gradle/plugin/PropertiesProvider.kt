@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -68,7 +67,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.ExperimentalTime
 
 internal class PropertiesProvider private constructor(private val project: Project) {
     val buildReportSingleFile: String?
@@ -206,18 +204,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val mppResourcesPublication: Boolean
         get() = this.booleanProperty(KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION) ?: true
-
-    val mppResourcesResolutionStrategy: KotlinTargetResourcesResolutionStrategy
-        get() = this.get(KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY)?.let {
-            val strategy = KotlinTargetResourcesResolutionStrategy.fromProperty(it)
-            if (strategy == null) {
-                project.reportDiagnostic(KotlinToolingDiagnostics.UnknownValueProvidedForResourcesStrategy(it))
-            }
-            if (strategy == KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration) {
-                project.reportDiagnostic(KotlinToolingDiagnostics.DeprecatedResourcesResolutionStrategy())
-            }
-            return@let strategy
-        } ?: KotlinTargetResourcesResolutionStrategy.VariantReselection
 
     val mppFilterResourcesByExtension: Provider<Boolean>
         get() = project.providers

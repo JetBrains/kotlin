@@ -1100,8 +1100,12 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties;
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedErrorGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedErrorGradleProperties;
+}
+
+public class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;)V
 	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
@@ -1130,9 +1134,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedResourcesResolutionStrategy : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedResourcesResolutionStrategy;
-	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedWarningGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedWarningGradleProperties;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DisabledCinteropsCommonizationInHmppProject : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
@@ -1410,11 +1413,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownAppleFrameworkBuildType : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownAppleFrameworkBuildType;
-	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownValueProvidedForResourcesStrategy : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownValueProvidedForResourcesStrategy;
 	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
@@ -2383,20 +2381,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTarget
 	public final fun getResourcesBaseDirectory ()Lorg/gradle/api/provider/Provider;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy : java/lang/Enum {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy$Companion;
-	public static final field ResourcesConfiguration Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public static final field VariantReselection Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public final fun getPropertyName ()Ljava/lang/String;
-	public final fun resourceArchives (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/gradle/api/file/FileCollection;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy$Companion {
-	public final fun fromProperty (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/performance/KotlinPerformancePlugin : org/gradle/api/Plugin {
