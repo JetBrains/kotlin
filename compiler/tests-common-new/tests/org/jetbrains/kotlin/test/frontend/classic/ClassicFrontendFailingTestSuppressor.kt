@@ -5,26 +5,19 @@
 
 package org.jetbrains.kotlin.test.frontend.classic
 
-import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.frontend.AbstractFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.AbstractFailingFacadeSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
-class ClassicFrontendFailingTestSuppressor(testServices: TestServices) : AbstractFailingTestSuppressor(testServices) {
+class ClassicFrontendFailingTestSuppressor(testServices: TestServices) : AbstractFailingFacadeSuppressor(testServices) {
 
     override fun testFile(): File {
         return testServices.moduleStructure.originalTestDataFiles.first()
     }
 
-    override fun hasFailure(failedAssertions: List<WrappedException>): Boolean {
-        return failedAssertions.any {
-            when (it) {
-                is WrappedException.FromFacade -> it.facade is ClassicFrontendFacade
-                is WrappedException.FromHandler -> it.handler.artifactKind == FrontendKinds.ClassicFrontend
-                else -> false
-            }
-        }
-    }
+    override val facadeKind: TestArtifactKind<*>
+        get() = FrontendKinds.ClassicFrontend
 }

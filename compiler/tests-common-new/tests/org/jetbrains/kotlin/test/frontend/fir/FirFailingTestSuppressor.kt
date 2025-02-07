@@ -5,28 +5,20 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.frontend.AbstractFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.AbstractFailingFacadeSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import java.io.File
 
-class FirFailingTestSuppressor(testServices: TestServices) : AbstractFailingTestSuppressor(testServices) {
+class FirFailingTestSuppressor(testServices: TestServices) : AbstractFailingFacadeSuppressor(testServices) {
 
     override fun testFile(): File {
         return testServices.moduleStructure.originalTestDataFiles.first().firTestDataFile
     }
 
-    override fun hasFailure(failedAssertions: List<WrappedException>): Boolean {
-        return failedAssertions.any {
-            val kind = when (it) {
-                is WrappedException.FromFacade -> it.facade.outputKind
-                is WrappedException.FromHandler -> it.handler.artifactKind
-                else -> return@any false
-            }
-            kind == FrontendKinds.FIR
-        }
-    }
+    override val facadeKind: TestArtifactKind<*>
+        get() = FrontendKinds.FIR
 }
