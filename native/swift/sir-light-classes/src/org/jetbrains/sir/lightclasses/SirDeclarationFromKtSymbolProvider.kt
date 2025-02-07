@@ -8,69 +8,63 @@ package org.jetbrains.sir.lightclasses
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTranslationResult
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.sir.lightclasses.nodes.*
 
 public class SirDeclarationFromKtSymbolProvider(
     private val ktModule: KaModule,
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
-
-    public override fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> =
-        when (val ktSymbol = this@sirDeclarations) {
+    public override fun KaDeclarationSymbol.toSir(): SirTranslationResult =
+        when (val ktSymbol = this@toSir) {
             is KaNamedClassSymbol -> {
                 if (ktSymbol.classKind == KaClassKind.INTERFACE) {
-                    listOf(
-                        SirProtocolFromKtSymbol(
-                            ktSymbol = ktSymbol,
-                            ktModule = ktModule,
-                            sirSession = sirSession,
-                        )
-                    )
+                    SirProtocolFromKtSymbol(
+                        ktSymbol = ktSymbol,
+                        ktModule = ktModule,
+                        sirSession = sirSession,
+                    ).let(SirTranslationResult::RegularInterface)
                 } else {
-                    listOf(
-                        createSirClassFromKtSymbol(
-                            ktSymbol = ktSymbol,
-                            ktModule = ktModule,
-                            sirSession = sirSession,
-                        )
-                    )
+                    createSirClassFromKtSymbol(
+                        ktSymbol = ktSymbol,
+                        ktModule = ktModule,
+                        sirSession = sirSession,
+                    ).let(SirTranslationResult::RegularClass)
                 }
             }
             is KaConstructorSymbol -> {
-                listOf(
-                    SirInitFromKtSymbol(
-                        ktSymbol = ktSymbol,
-                        ktModule = ktModule,
-                        sirSession = sirSession,
-                    )
-                )
+                SirInitFromKtSymbol(
+                    ktSymbol = ktSymbol,
+                    ktModule = ktModule,
+                    sirSession = sirSession,
+                ).let(SirTranslationResult::Constructor)
             }
             is KaNamedFunctionSymbol -> {
-                listOf(
-                    SirFunctionFromKtSymbol(
-                        ktSymbol = ktSymbol,
-                        ktModule = ktModule,
-                        sirSession = sirSession,
-                    )
-                )
+                SirFunctionFromKtSymbol(
+                    ktSymbol = ktSymbol,
+                    ktModule = ktModule,
+                    sirSession = sirSession,
+                ).let(SirTranslationResult::RegularFunction)
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {
-                    listOfNotNull(ktSymbol.getter?.toSirFunction(ktSymbol), ktSymbol.setter?.toSirFunction(ktSymbol))
-                } else listOf(ktSymbol.toSirVariable())
+                    ktSymbol.getter?.toSirFunction(ktSymbol)?.let {
+                        SirTranslationResult.ExtensionProperty(it, ktSymbol.setter?.toSirFunction(ktSymbol))
+                    } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
+                } else {
+                    ktSymbol.toSirVariable().let(SirTranslationResult::RegularProperty)
+                }
             }
             is KaTypeAliasSymbol -> {
-                listOf(
-                    SirTypealiasFromKtSymbol(
-                        ktSymbol = ktSymbol,
-                        ktModule = ktModule,
-                        sirSession = sirSession,
-                    )
-                )
+                SirTypealiasFromKtSymbol(
+                    ktSymbol = ktSymbol,
+                    ktModule = ktModule,
+                    sirSession = sirSession,
+                ).let(SirTranslationResult::TypeAlias)
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
         }

@@ -60,7 +60,7 @@ private class SirClassFromKtSymbol(
         ktSymbol.superTypes.filterIsInstanceAnd<KaClassType> {
             it.isRegularClass && it.classId != DefaultTypeClassIds.ANY
         }.firstOrNull()?.let {
-            it.symbol.sirDeclarations().firstIsInstanceOrNull<SirClass>()
+            it.symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirClass>()
                 ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
                 ?.let { SirNominalType(it) }
         } ?: let {
@@ -177,7 +177,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filterIsInstance<KaClassType>().mapNotNull { it.expandedSymbol }.filter {
                 it.classKind == KaClassKind.INTERFACE
             }.flatMap {
-                it.sirDeclarations().filterIsInstance<SirProtocol>().also {
+                it.toSir().allDeclarations.filterIsInstance<SirProtocol>().also {
                     it.forEach {
                         ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
                     }

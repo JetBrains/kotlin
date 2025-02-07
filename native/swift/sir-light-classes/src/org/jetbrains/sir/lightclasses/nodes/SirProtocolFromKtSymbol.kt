@@ -49,7 +49,7 @@ internal class SirProtocolFromKtSymbol(
             .mapNotNull { it.symbol as? KaClassSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
             .mapNotNull {
-                it.sirDeclarations().firstIsInstanceOrNull<SirProtocol>()?.also {
+                it.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()?.also {
                     ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
                 }
             }
