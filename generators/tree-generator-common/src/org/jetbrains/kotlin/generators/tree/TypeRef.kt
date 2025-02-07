@@ -208,7 +208,12 @@ data class Lambda(
 }
 
 sealed interface TypeParameterRef : TypeRef, TypeRefWithNullability {
-    override fun substitute(map: TypeParameterSubstitutionMap): TypeRef = map[this] ?: this
+    override fun substitute(map: TypeParameterSubstitutionMap): TypeRef {
+        map[this]?.let {
+            return (it as? TypeRefWithNullability)?.copy(this.nullable) ?: it
+        }
+        return this
+    }
 }
 
 data class PositionTypeParameterRef(
