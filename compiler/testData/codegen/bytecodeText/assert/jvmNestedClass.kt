@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
+// ASSERTIONS_MODE: jvm
 
 class Outer {
     class Inner {

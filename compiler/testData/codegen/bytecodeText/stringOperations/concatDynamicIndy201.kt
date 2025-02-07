@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy
+// STRING_CONCAT: indy
 // JVM_TARGET: 11
 fun box() {
     val z = "0"

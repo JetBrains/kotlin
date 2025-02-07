@@ -71,4 +71,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val ENABLE_DEBUG_MODE by directive("Enable debug mode for compilation")
+
+    val DISABLE_OPTIMIZATION by directive("Disable optimization")
 }
