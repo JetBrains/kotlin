@@ -1349,7 +1349,7 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
+    object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(): ToolingDiagnostic = build {
             title("History-Based Incremental Compilation Deprecated for JVM Platform")
                 .description {
