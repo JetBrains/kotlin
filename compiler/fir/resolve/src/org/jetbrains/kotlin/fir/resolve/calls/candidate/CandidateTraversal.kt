@@ -71,6 +71,6 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
         }
 
         is ConeResolutionAtomWithSingleChild -> processCandidatesAndPostponedAtoms(atom.subAtom)
-        is ConeResolutionAtomWithPostponedChild -> processCandidatesAndPostponedAtoms(atom.subAtom)
+        is ConeResolutionAtomWithPostponedChild -> processCandidatesAndPostponedAtoms(atom.postponedSubAtom)
     }
 }

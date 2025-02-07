@@ -122,7 +122,7 @@ internal object ArgumentCheckingProcessor {
     ): ConeResolvedCollectionLiteralAtom {
         val subAtoms = expression.arguments.map { ConeResolutionAtom.createRawAtom(it) }
         val postponedAtom = ConeResolvedCollectionLiteralAtom(expression, subAtoms, elementType, expectedType)
-        wrapperAtom.subAtom = postponedAtom
+        wrapperAtom.postponedSubAtom = postponedAtom
         candidate.addPostponedAtom(postponedAtom)
         return postponedAtom
     }
@@ -360,7 +360,7 @@ internal object ArgumentCheckingProcessor {
         val expression = atom.callableReferenceExpression
         val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(expression)
         val postponedAtom = ConeResolvedCallableReferenceAtom(expression, expectedType, lhs, context.session)
-        atom.subAtom = postponedAtom
+        atom.postponedSubAtom = postponedAtom
         candidate.addPostponedAtom(postponedAtom)
     }
 
@@ -373,7 +373,7 @@ internal object ArgumentCheckingProcessor {
 
     /**
      * @return true in case [ConeLambdaWithTypeVariableAsExpectedTypeAtom] was created and set as
-     * [ConeResolutionAtomWithPostponedChild.subAtom] of the [atom] and a postponed atom of the
+     * [ConeResolutionAtomWithPostponedChild.postponedSubAtom] of the [atom] and a postponed atom of the
      * [ArgumentCheckingProcessor.ArgumentContext.candidate].
      * In case of false result, this function works as pure (it does not change inference state).
      */
@@ -394,7 +394,7 @@ internal object ArgumentCheckingProcessor {
         }
         ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.lambdaExpression, expectedType, candidate).also {
             candidate.addPostponedAtom(it)
-            atom.subAtom = it
+            atom.postponedSubAtom = it
         }
         return true
     }
@@ -417,7 +417,7 @@ internal object ArgumentCheckingProcessor {
             sourceForFunctionExpression = expression.source,
         ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
 
-        atom.subAtom = resolvedArgument
+        atom.postponedSubAtom = resolvedArgument
         candidate.addPostponedAtom(resolvedArgument)
 
         if (expectedType != null) {

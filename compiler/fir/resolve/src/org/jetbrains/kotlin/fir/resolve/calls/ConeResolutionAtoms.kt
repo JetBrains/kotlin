@@ -138,7 +138,7 @@ class ConeSimpleLeafResolutionAtom(override val expression: FirExpression, allow
 class ConeAtomWithCandidate(override val expression: FirExpression, val candidate: Candidate) : ConeResolutionAtom()
 
 class ConeResolutionAtomWithPostponedChild(override val expression: FirExpression) : ConeResolutionAtom() {
-    var subAtom: ConePostponedResolvedAtom? = null
+    var postponedSubAtom: ConePostponedResolvedAtom? = null
         set(value) {
             require(field == null) { "subAtom already initialized" }
             field = value
