@@ -129,16 +129,20 @@ private fun IrType.getAllClassSuperTypes(): List<IrType> {
 
 private fun IrFunction.isFromAny() = this.parentClassOrNull?.isAny() == true
 
-internal class InteropLowering(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
+internal class InteropLowering(
+        val context: Context,
+        val cStubsManager: CStubsManager,
+        val dependenciesTracker: DependenciesTracker,
+) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         // TODO: merge these lowerings.
-        InteropLoweringPart1(generationState).lower(irFile)
-        InteropLoweringPart2(generationState).lower(irFile)
+        InteropLoweringPart1(context, cStubsManager, dependenciesTracker).lower(irFile)
+        InteropLoweringPart2(context, cStubsManager, dependenciesTracker).lower(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        InteropLoweringPart1(generationState).lower(irBody, container)
-        InteropLoweringPart2(generationState).lower(irBody, container)
+        InteropLoweringPart1(context, cStubsManager, dependenciesTracker).lower(irBody, container)
+        InteropLoweringPart2(context, cStubsManager, dependenciesTracker).lower(irBody, container)
     }
 }
 
@@ -152,11 +156,12 @@ private fun IrDeclaration.getUniqueName(context: Context) =
         getUniqueName(this.getPackageFragment(), context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this))
 
 private abstract class BaseInteropIrTransformer(
-        protected val generationState: NativeGenerationState,
+        protected val context: Context,
+        protected val cStubsManager: CStubsManager,
+        protected val dependenciesTracker: DependenciesTracker,
         protected val irFile: IrFile?,
         private val uniqueName: String,
-) : IrBuildingTransformer(generationState.context) {
-    protected val context = generationState.context
+) : IrBuildingTransformer(context) {
     protected val symbols = context.ir.symbols
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
@@ -213,9 +218,6 @@ private abstract class BaseInteropIrTransformer(
         }
 
         return object : KotlinStubs {
-            private val context = generationState.context
-            private val cStubsManager = generationState.cStubsManager
-
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.ir.symbols
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
@@ -239,7 +241,7 @@ private abstract class BaseInteropIrTransformer(
                     "$uniquePrefix${cStubsManager.getUniqueName(prefix)}"
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
-                    generationState.fileLowerState.getFunctionReferenceImplUniqueName(prefix)
+                    cStubsManager.fileLowerStateHolder.state.getFunctionReferenceImplUniqueName(prefix)
 
             override val target get() = context.config.target
 
@@ -350,12 +352,15 @@ private abstract class BaseInteropIrTransformer(
     }
 }
 
-private class InteropLoweringPart1(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
-    private val context = generationState.context
+private class InteropLoweringPart1(
+        val context: Context,
+        val cStubsManager: CStubsManager,
+        val dependenciesTracker: DependenciesTracker,
+) : FileLoweringPass, BodyLoweringPass {
     private var topLevelInitializersCounter = 0
 
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformerPart1(generationState, irFile, irFile.uniqueName)
+        val transformer = InteropTransformerPart1(context, cStubsManager, dependenciesTracker, irFile, irFile.uniqueName)
         irFile.transformChildrenVoid(transformer)
         transformer.eagerTopLevelInitializersForObjCClasses.forEach {
             irFile.addTopLevelInitializer(it, threadLocal = false, eager = true)
@@ -363,7 +368,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val transformer = InteropTransformerPart1(generationState, container.fileOrNull, container.getUniqueName(context))
+        val transformer = InteropTransformerPart1(context, cStubsManager, dependenciesTracker, container.fileOrNull, container.getUniqueName(context))
         container.transform(transformer, null)
         require(transformer.eagerTopLevelInitializersForObjCClasses.isEmpty()) { "A local Obj-C class in an inline function is not supported" }
     }
@@ -396,10 +401,12 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private class InteropTransformerPart1(
-        generationState: NativeGenerationState,
+        context: Context,
+        cStubsManager: CStubsManager,
+        dependenciesTracker: DependenciesTracker,
         irFile: IrFile?,
         uniqueName: String,
-) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
+) : BaseInteropIrTransformer(context, cStubsManager, dependenciesTracker, irFile, uniqueName) {
     val eagerTopLevelInitializersForObjCClasses = mutableListOf<IrExpression>()
 
     private fun IrBuilderWithScope.callAlloc(classPtr: IrExpression): IrExpression =
@@ -788,7 +795,7 @@ private class InteropTransformerPart1(
     ): IrExpression = generateExpressionWithStubs(call) {
         if (method.parent !is IrClass) {
             // Category-provided.
-            generationState.dependenciesTracker.add(method)
+            dependenciesTracker.add(method)
         }
 
         this.generateObjCCall(
@@ -944,26 +951,30 @@ private class InteropTransformerPart1(
 /**
  * Lowers some interop intrinsic calls.
  */
-private class InteropLoweringPart2(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
-    private val context = generationState.context
-
+private class InteropLoweringPart2(
+        val context: Context,
+        val cStubsManager: CStubsManager,
+        val dependenciesTracker: DependenciesTracker,
+) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformerPart2(generationState, irFile, irFile.uniqueName)
+        val transformer = InteropTransformerPart2(context, cStubsManager, dependenciesTracker, irFile, irFile.uniqueName)
         irFile.transformChildrenVoid(transformer)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val transformer = InteropTransformerPart2(generationState, container.fileOrNull, container.getUniqueName(context))
+        val transformer = InteropTransformerPart2(context, cStubsManager, dependenciesTracker, container.fileOrNull, container.getUniqueName(context))
         container.transform(transformer, null)
     }
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private class InteropTransformerPart2(
-        generationState: NativeGenerationState,
+        context: Context,
+        cStubsManager: CStubsManager,
+        dependenciesTracker: DependenciesTracker,
         irFile: IrFile?,
         uniqueName: String,
-) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
+) : BaseInteropIrTransformer(context, cStubsManager, dependenciesTracker, irFile, uniqueName) {
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
         if (declaration.isKotlinObjCClass()) {
@@ -1125,7 +1136,7 @@ private class InteropTransformerPart2(
     private fun generateCCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
 
-        generationState.dependenciesTracker.add(function)
+        dependenciesTracker.add(function)
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )

@@ -57,7 +57,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         return if (reflectionTarget == null) {
             SpecialNames.NO_NAME_PROVIDED
         } else {
-            generationState.fileLowerState.getFunctionReferenceImplUniqueName("FUNCTION_REFERENCE_FOR$${reflectionTarget.name}$").synthesizedName
+            generationState.fileLowerStateHolder.state.getFunctionReferenceImplUniqueName("FUNCTION_REFERENCE_FOR$${reflectionTarget.name}$").synthesizedName
         }
     }
 
