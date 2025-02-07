@@ -112,6 +112,15 @@ FILE fqName:<root> fileName:/module_a_classWithAllPropertiesConstructor.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:hasContext visibility:public modality:FINAL <> ($this:<root>.Base, c:kotlin.String) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Base
+      contextReceiverParametersCount: 1
+      VALUE_PARAMETER name:c index:0 type:kotlin.String
+      BLOCK_BODY
+    FUN name:hasExtension visibility:public modality:FINAL <> ($this:<root>.Base, $receiver:kotlin.String) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Base
+      $receiver: VALUE_PARAMETER name:$receiver type:kotlin.String
+      BLOCK_BODY
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     PROPERTY name:s visibility:public modality:FINAL [val]
@@ -178,6 +187,12 @@ FILE fqName:<root> fileName:/Derived.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hasExtension visibility:public modality:FINAL <> ($this:<root>.Base, <this>:<root>.Base, <receiver>:kotlin.String) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public final fun hasExtension (<this>: <root>.Base, <receiver>: kotlin.String): kotlin.Unit declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:<root>.Base
+      VALUE_PARAMETER name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER name:<receiver> index:1 type:kotlin.String
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Base
@@ -186,6 +201,10 @@ FILE fqName:<root> fileName:/Derived.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:hasExtension visibility:public modality:FINAL <> (<this>:<root>.Derived, <receiver>:kotlin.String) returnType:kotlin.Unit
+      VALUE_PARAMETER name:<this> index:0 type:<root>.Derived
+      VALUE_PARAMETER name:<receiver> index:1 type:kotlin.String
+      BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final a: <root>.A declared in <root>.Base
