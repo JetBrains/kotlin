@@ -518,6 +518,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("nestedContextParameter.kt")
+    public void testNestedContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/nestedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedContextParameterAfter.kt")
+    public void testNestedContextParameterAfter() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/nestedContextParameterAfter.kt");
+    }
+
+    @Test
     @TestMetadata("propertyContextReceiver.kt")
     public void testPropertyContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/propertyContextReceiver.kt");

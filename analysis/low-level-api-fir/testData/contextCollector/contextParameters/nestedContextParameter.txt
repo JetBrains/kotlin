@@ -1,0 +1,114 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T : R|Another?|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|T|
+                FirValueParameterSymbol action: R|@ContextFunctionTypeParams (D, @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function2<B, C, kotlin/Unit>) -> kotlin/Unit|
+    Element 8
+        Context parameters:
+            FirValueParameterSymbol a: R|T|
+                Type: A & T & Any
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval d: R|D|
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|D|
+                Type: D
+    Element 13
+        Scope: FirLocalScope
+    Element 14
+        Scope: FirLocalScope
+    Element 15
+        Scope: FirLocalScope
+    Element 16
+        Context parameters:
+            FirValueParameterSymbol <unused var>: R|B|
+                Type: B
+    Element 17
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|C|
+                Type: C
+    Element 18
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|T|
+    Types:
+        BaseA
+        kotlin.Any
+        A
+
+FILE: [ResolvedTo(IMPORTS)] nestedContextParameter.kt
+    public final? [ResolvedTo(TYPES)] interface BaseA : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(TYPES)] interface Another : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(TYPES)] class A : R|BaseA|, R|Another| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+    public final? [ResolvedTo(TYPES)] class B : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class D : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|D| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context([ResolvedTo(CONTRACTS)] <unused var>: R|A|, [ResolvedTo(CONTRACTS)] <unused var>: R|B|, [ResolvedTo(CONTRACTS)] <unused var>: R|C|, [ResolvedTo(CONTRACTS)] <unused var>: R|D|)
+    public final [ResolvedTo(CONTRACTS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(BODY_RESOLVE)] a: R|T|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|Another?|> usage([ResolvedTo(BODY_RESOLVE)] action: R|@ContextFunctionTypeParams (D, @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function2<B, C, kotlin/Unit>) -> kotlin/Unit|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|BaseA|) ->  {
+                [ResolvedTo(BODY_RESOLVE)] lval d: R|D| = R|/D.D|()
+                R|kotlin/with|<R|D|, R|kotlin/Unit|>(R|<local>/d|, <L> = [ResolvedTo(BODY_RESOLVE)] with@fun [ResolvedTo(BODY_RESOLVE)] R|D|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    when () {
+                        (R|<local>/a| is R|A|) ->  {
+                            R|<local>/action|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|, <L> = context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|B|) [ResolvedTo(BODY_RESOLVE)] action@fun [ResolvedTo(BODY_RESOLVE)] R|C|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                                R|/check|()
+                            }
+                            )
+                        }
+                    }
+
+                }
+                )
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
