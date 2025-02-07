@@ -41,10 +41,10 @@ class PhasedPipelineChecker(
             return failedAssertions + reportMissingDirective(failedAssertions)
         }
 
-        val (suppressibleFailures, nonSuppressibleFailures, hasFailuresInNonLeafModule) = sortFailures(failedAssertions)
+        val (suppressibleFailures, nonSuppressibleFailures, hasFailuresInNonLeafModule, hasNonSuppressibleFailuresFromFacade) = sortFailures(failedAssertions)
 
         return nonSuppressibleFailures + when {
-            suppressibleFailures.isEmpty() && !hasFailuresInNonLeafModule -> checkPhaseConsistency()
+            suppressibleFailures.isEmpty() && !hasNonSuppressibleFailuresFromFacade && !hasFailuresInNonLeafModule -> checkPhaseConsistency()
             else -> emptyList()
         }
     }
@@ -147,6 +147,7 @@ class PhasedPipelineChecker(
         val suppressibleFailures: List<WrappedException>,
         val nonSuppressibleFailures: List<WrappedException>,
         val hasFailuresInNonLeafModule: Boolean,
+        val hasNonSuppressibleFailuresFromFacade: Boolean,
     )
 
     private fun sortFailures(failedAssertions: List<WrappedException>): SortedFailures {
@@ -154,6 +155,7 @@ class PhasedPipelineChecker(
         val nonSuppressibleFailures = mutableListOf<WrappedException>()
         val targetedPhase = getTargetedPhase()!!
         var hasFailuresInNonLeafModule = false
+        var hasNonSuppressibleFailuresFromFacade = false
 
         fun processFailure(module: TestModule?, kind: TestArtifactKind<*>, exception: WrappedException): MutableList<WrappedException> {
             val actualPhase = kind.toPhase()
@@ -165,10 +167,19 @@ class PhasedPipelineChecker(
                 actualPhase == null -> nonSuppressibleFailures
                 actualPhase == targetedPhase -> when {
                     exception is WrappedException.FromHandler && exception.failureDisablesNextSteps -> suppressibleFailures
+                    exception is WrappedException.FromFacade -> {
+                        hasNonSuppressibleFailuresFromFacade = true
+                        nonSuppressibleFailures
+                    }
                     else -> nonSuppressibleFailures
                 }
                 actualPhase > targetedPhase -> suppressibleFailures
-                actualPhase < targetedPhase -> nonSuppressibleFailures
+                actualPhase < targetedPhase -> {
+                    if (exception is WrappedException.FromFacade) {
+                        hasNonSuppressibleFailuresFromFacade = true
+                    }
+                    nonSuppressibleFailures
+                }
                 else -> shouldNotBeCalled()
             }
         }
@@ -188,7 +199,8 @@ class PhasedPipelineChecker(
         return SortedFailures(
             suppressibleFailures = suppressibleFailures,
             nonSuppressibleFailures = nonSuppressibleFailures,
-            hasFailuresInNonLeafModule
+            hasFailuresInNonLeafModule,
+            hasNonSuppressibleFailuresFromFacade
         )
     }
 }
