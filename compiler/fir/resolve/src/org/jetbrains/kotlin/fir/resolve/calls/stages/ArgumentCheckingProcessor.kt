@@ -115,16 +115,16 @@ internal object ArgumentCheckingProcessor {
     // -------------------------------------------- Real implementation --------------------------------------------
 
     private fun ArgumentContext.initConeResolvedCollectionLiteralAtom(
-        wrapperAtom: ConeResolutionAtomWithPostponedChild,
+        wrapperAtom: ConeCollectionLiteralResolutionAtom,
         expression: FirArrayLiteral,
         elementType: ConeKotlinType?,
         expectedType: ConeKotlinType,
-    ): ConeResolvedCollectionLiteralAtom {
-        val subAtoms = expression.arguments.map { ConeResolutionAtom.createRawAtom(it) }
-        val postponedAtom = ConeResolvedCollectionLiteralAtom(expression, subAtoms, elementType, expectedType)
+        analyzed: Boolean,
+    ) {
+        val postponedAtom = ConeResolvedLeafCollectionLiteralAtom(expression, elementType, expectedType)
         wrapperAtom.postponedSubAtom = postponedAtom
         candidate.addPostponedAtom(postponedAtom)
-        return postponedAtom
+        postponedAtom.analyzed = analyzed
     }
 
     private fun ArgumentContext.resolveArgumentExpression(atom: ConeResolutionAtom) {
@@ -132,44 +132,43 @@ internal object ArgumentCheckingProcessor {
             is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
-                is FirArrayLiteral -> {
-                    val collectionLiteralArgumentContext = this@resolveArgumentExpression
-                    if (collectionLiteralArgumentContext.expectedType == null) {
-                        return // todo
-                    }
-
-                    val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
-                    val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
-                        ?: when (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
-                            true -> session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.List)
-                                ?.let { it as? FirRegularClassSymbol }
-                                ?.companionObjectSymbol
-                                ?.declaredMemberScope(session, memberRequiredPhase = null)
-                                ?.getFunctions(Name.identifier("of"))
-                                ?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
-                            else -> null
-                        }
-                    if (ofFunction == null) {
-                        // reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
-                        initConeResolvedCollectionLiteralAtom(atom, atom.expression, elementType = null, expectedType)
-                        return
-                    }
-                    val freshVars = ofFunction.typeParameterSymbols.map { ConeTypeParameterBasedTypeVariable(it) }
-                    val substr = substitutorByMap(freshVars.associate { it.typeParameterSymbol to it.defaultType }, session)
-                    for (freshVar in freshVars) csBuilder.registerVariable(freshVar)
-
-                    val elementType = substr.substituteOrSelf(getCollectionLiteralElementType(ofFunction))
-                    val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(expectedType = elementType)
-                    val postponedAtom = initConeResolvedCollectionLiteralAtom(atom, atom.expression, elementType, expectedType)
-                    postponedAtom.analyzed = true
-                    for (atom in postponedAtom.subAtoms) {
-                        collectionLiteralElementContext.resolveArgumentExpression(atom)
-                    }
-                    resolvePlainExpressionArgument(
-                        atom.expression,
-                        argumentType = substr.substituteOrSelf(ofFunction.resolvedReturnType)
-                    )
+            }
+            is ConeCollectionLiteralResolutionAtom -> {
+                val collectionLiteralArgumentContext = this@resolveArgumentExpression
+                if (collectionLiteralArgumentContext.expectedType == null) {
+                    return // todo
                 }
+
+                val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
+                val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
+                    ?: when (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
+                        true -> session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.List)
+                            ?.let { it as? FirRegularClassSymbol }
+                            ?.companionObjectSymbol
+                            ?.declaredMemberScope(session, memberRequiredPhase = null)
+                            ?.getFunctions(Name.identifier("of"))
+                            ?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+                        else -> null
+                    }
+                if (ofFunction == null) {
+                    // reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
+                    initConeResolvedCollectionLiteralAtom(atom, atom.expression, elementType = null, expectedType, analyzed = false)
+                    return
+                }
+                val freshVars = ofFunction.typeParameterSymbols.map { ConeTypeParameterBasedTypeVariable(it) }
+                val substr = substitutorByMap(freshVars.associate { it.typeParameterSymbol to it.defaultType }, session)
+                for (freshVar in freshVars) csBuilder.registerVariable(freshVar)
+
+                val elementType = substr.substituteOrSelf(getCollectionLiteralElementType(ofFunction))
+                val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(expectedType = elementType)
+                initConeResolvedCollectionLiteralAtom(atom, atom.expression, elementType, expectedType, analyzed = true)
+                for (atom in atom.subAtoms) {
+                    collectionLiteralElementContext.resolveArgumentExpression(atom)
+                }
+                resolvePlainExpressionArgument(
+                    atom.expression,
+                    argumentType = substr.substituteOrSelf(ofFunction.resolvedReturnType)
+                )
             }
 
             is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom.expression)

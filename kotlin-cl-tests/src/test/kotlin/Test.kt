@@ -230,8 +230,9 @@ class Test {
     @Test
     fun materializeOperatorFunOfUpperBounds() = doTest {
         mainKt = """
+            // Related: KT-69266
             class IntList { companion object { operator fun <T : Number> of(vararg elems: T) = IntList() } }
-            fun <T> materialize(): T = 1 as T
+            @Suppress("UNCHECKED_CAST") fun <T> materialize(): T = 1 as T
             fun main() {
                 val x: IntList = [materialize()]
             }
@@ -242,10 +243,10 @@ class Test {
     fun materializeInner() = doTest {
         mainKt = """
             fun outer(a: Set<Number>) = Unit
-            fun <R> materialize(): R = 1 as R
+            @Suppress("UNCHECKED_CAST") fun <R> materialize(): R = 1 as R
             fun main() {
                 outer([materialize()])
-                // outer([1, 2, materialize()]) // todo uncomment
+                outer([1, 2, materialize()])
             }
         """.trimIndent()
     }
@@ -254,9 +255,10 @@ class Test {
     fun sandbox() = doTest {
         mainKt = """
             fun outer(a: Set<Number>) = Unit
-            fun <R> materialize(): R = 1 as R
+            fun <R> materializeR(): R = 1 as R
+            fun <E> materializeE(): E = 1 as E
             fun main() {
-                outer(setOf(materialize()))
+                outer(setOf(materializeR(), materializeE()))
                 // outer([1, 2, materialize()]) // todo uncomment
             }
         """.trimIndent()
@@ -267,7 +269,7 @@ class Test {
         mainKt = """
             // Related: KT-69266
             fun <R: Number> outer(a: Set<R>) = Unit
-            fun <T> materialize(): T = 1 as T
+            @Suppress("UNCHECKED_CAST") fun <T> materialize(): T = 1 as T
             fun main() {
                 outer([materialize()])
             }

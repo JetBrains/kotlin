@@ -356,7 +356,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                             postponedAtom.collectNotFixedVariables()
                         }
                     }
-                    is ConeResolvedCollectionLiteralAtom -> {
+                    is ConeResolvedLeafCollectionLiteralAtom -> {
                         postponedAtom.collectNotFixedVariables()
                     }
                 }

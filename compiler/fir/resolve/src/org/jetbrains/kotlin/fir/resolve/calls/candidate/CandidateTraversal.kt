@@ -31,6 +31,7 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
     if (!visited.add(atom)) return
     when (atom) {
         is ConeSimpleLeafResolutionAtom -> {}
+        is ConeResolvedLeafCollectionLiteralAtom -> {}
 
         // lambdas
         is ConeResolvedLambdaAtom -> {
@@ -53,8 +54,8 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
         }
 
         // collection literals
-        is ConeResolvedCollectionLiteralAtom -> {
-            postponedAtomsProcessor(atom)
+        is ConeCollectionLiteralResolutionAtom -> {
+            atom.postponedSubAtom?.let(postponedAtomsProcessor)
             atom.subAtoms.forEach(::processCandidatesAndPostponedAtoms)
         }
 
