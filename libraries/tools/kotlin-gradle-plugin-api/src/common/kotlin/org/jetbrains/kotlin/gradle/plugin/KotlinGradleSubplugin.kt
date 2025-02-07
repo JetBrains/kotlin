@@ -259,11 +259,3 @@ open class SubpluginArtifact(val groupId: String, val artifactId: String, val ve
  * @suppress this class should not be a part of KGP-API
  */
 class JetBrainsSubpluginArtifact(artifactId: String) : SubpluginArtifact(groupId = "org.jetbrains.kotlin", artifactId = artifactId)
-
-/**
- * @suppress
- * Marker interface left here for backward compatibility with older plugin versions.
- * Remove once minimal supported Gradle version will use Kotlin 1.7+.
- */
-@Deprecated(level = DeprecationLevel.HIDDEN, message = "")
-interface KotlinGradleSubplugin
