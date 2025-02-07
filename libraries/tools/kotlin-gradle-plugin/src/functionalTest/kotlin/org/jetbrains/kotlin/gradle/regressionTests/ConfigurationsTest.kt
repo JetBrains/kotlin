@@ -486,7 +486,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     dependencies {
                         api(
                             // Deprecated in KT-58759, remove test after deletion
-                            @Suppress("DEPRECATION")
+                            @Suppress("DEPRECATION_ERROR")
                             platform("test:platform-dependency:1.0.0")
                         )
                     }
@@ -513,7 +513,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     dependencies {
                         implementation(
                             // Deprecated in KT-58759, remove test after deletion
-                            @Suppress("DEPRECATION")
+                            @Suppress("DEPRECATION_ERROR")
                             enforcedPlatform("test:enforced-platform-dependency")
                         )
                     }

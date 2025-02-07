@@ -81,7 +81,7 @@ the intransitiveMetadataConfigurationName will not extend this mechanism, since 
 relies on dependencies being added explicitly by the Kotlin Gradle Plugin
  */
 private fun InternalKotlinSourceSet.configureLegacyMetadataDependenciesConfigurations(resolvableMetadataConfiguration: Configuration) {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     listOf(
         apiMetadataConfigurationName,
         implementationMetadataConfigurationName,

@@ -185,7 +185,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
             task.mapDiagnosticLocations = ext.mapDiagnosticLocations
             if (ext is KaptExtension) {
                 task.annotationProcessorFqNames.set(providers.provider {
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION_ERROR")
                     ext.processors.split(',').filter { it.isNotEmpty() }
                 })
             }

@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.gradle.plugin
 /**
  * @suppress
  */
-@Deprecated("Use KotlinSourceSetTree instead")
+@Deprecated("Scheduled for removal in Kotlin 2.3. Use KotlinSourceSetTree instead", level = DeprecationLevel.ERROR)
 interface KotlinTargetHierarchy {
 
     /**
      * @suppress
      */
-    @Deprecated("Use KotlinSourceSetTree instead", replaceWith = ReplaceWith("KotlinSourceSetTree"))
+    @Deprecated(
+        "Scheduled for removal in Kotlin 2.3. Use KotlinSourceSetTree instead",
+        level = DeprecationLevel.ERROR,
+        replaceWith = ReplaceWith("KotlinSourceSetTree")
+    )
     class SourceSetTree(val name: String)  {
         override fun toString(): String = name
 
@@ -27,7 +31,12 @@ interface KotlinTargetHierarchy {
             return name.hashCode()
         }
 
-        @Suppress("DEPRECATION")
+        @Deprecated(
+            "Scheduled for removal in Kotlin 2.3. Use KotlinSourceSetTree instead",
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("KotlinSourceSetTree")
+        )
+        @Suppress("DEPRECATION_ERROR")
         companion object {
             val main = SourceSetTree("main")
             val test = SourceSetTree("test")

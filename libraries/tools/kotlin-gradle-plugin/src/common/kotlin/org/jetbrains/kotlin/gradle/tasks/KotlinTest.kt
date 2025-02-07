@@ -26,7 +26,11 @@ abstract class KotlinTest : AbstractTestTask() {
     var targetName: String? = null
 
     @Internal // Taken into account by excludePatterns.
-    @Deprecated("Use filter.excludePatterns instead.", ReplaceWith("filter.excludePatterns"))
+    @Deprecated(
+        "Use filter.excludePatterns instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("filter.excludePatterns"),
+        level = DeprecationLevel.ERROR
+    )
     var excludes = mutableSetOf<String>()
 
     protected val filterExt: DefaultTestFilter
@@ -39,7 +43,7 @@ abstract class KotlinTest : AbstractTestTask() {
     val includePatterns: Set<String>
         @Input get() = filterExt.includePatterns + filterExt.commandLineIncludePatterns
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val excludePatterns: Set<String>
         @Input get() = excludes + filterExt.excludePatterns
 

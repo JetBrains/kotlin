@@ -229,7 +229,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("$KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION.nowarn") ?: false
 
     /** @see org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.IncorrectCompileOnlyDependencyWarning */
-    @Deprecated("Replaced with diagnostic IncorrectCompileOnlyDependencyWarning")
+    @Deprecated(
+        "Replaced with diagnostic IncorrectCompileOnlyDependencyWarning. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     val ignoreIncorrectNativeDependencies: Boolean?
         get() = booleanProperty("kotlin.native.ignoreIncorrectDependencies")
 

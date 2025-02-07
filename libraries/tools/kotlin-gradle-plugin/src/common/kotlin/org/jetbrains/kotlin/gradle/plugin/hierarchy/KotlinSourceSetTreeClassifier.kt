@@ -90,7 +90,7 @@ sealed interface KotlinSourceSetTreeClassifier {
 /**
  * To support old API (moved from .mpp.targetHierarchy to .hierarchy package)
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 internal class SourceSetTreeClassifierWrapper(
     val classifier: org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.SourceSetTreeClassifier,
 ) : KotlinSourceSetTreeClassifier {

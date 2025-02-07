@@ -21,7 +21,7 @@ constructor(name: String) : org.jetbrains.kotlin.gradle.targets.js.webpack.Kotli
 }
 
 kotlin {
-    target {
+    js {
         browser {
             webpackTask {
                 cssSupport {

@@ -10,7 +10,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
 internal val ConfigureBuildSideEffect = KotlinTargetSideEffect { target ->
     val project = target.project
 
