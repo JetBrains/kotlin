@@ -27,7 +27,7 @@ kotlin {
             attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
 
             compilations.main {
-                tasks.getByName(compileKotlinTaskName) {
+                compileTaskProvider.configure {
                     kotlinOptions {
                         jvmTarget = '1.8'
                     }

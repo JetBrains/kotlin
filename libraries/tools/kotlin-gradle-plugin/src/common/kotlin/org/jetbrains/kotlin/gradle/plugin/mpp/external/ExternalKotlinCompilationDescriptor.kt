@@ -66,8 +66,8 @@ interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompila
     val friendArtifactResolver: FriendArtifactResolver<T>?
     val compilationAssociator: CompilationAssociator<T>
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Use .sourceSetTreeClassifierV2 instead")
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use .sourceSetTreeClassifierV2 instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     val sourceSetTreeClassifier: SourceSetTreeClassifier
     val sourceSetTreeClassifierV2: KotlinSourceSetTreeClassifier?
 
@@ -87,7 +87,7 @@ fun <T : DecoratedExternalKotlinCompilation> ExternalKotlinCompilationDescriptor
             compilationFactory = compilationFactory,
             friendArtifactResolver = friendArtifactResolver,
             compilationAssociator = compilationAssociator,
-            sourceSetTreeClassifier = @Suppress("DEPRECATION") sourceSetTreeClassifier,
+            sourceSetTreeClassifier = @Suppress("DEPRECATION_ERROR") sourceSetTreeClassifier,
             sourceSetTreeClassifierV2 = sourceSetTreeClassifierV2,
             configure = this.configure
         )
@@ -104,8 +104,8 @@ class ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlinComp
     var friendArtifactResolver: FriendArtifactResolver<T>? = null
     var compilationAssociator: CompilationAssociator<T> = CompilationAssociator.default
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Use sourceSetTreeClassifierV2 instead")
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use sourceSetTreeClassifierV2 instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     var sourceSetTreeClassifier: SourceSetTreeClassifier = SourceSetTreeClassifier.Default
     var sourceSetTreeClassifierV2: KotlinSourceSetTreeClassifier? = null
 
@@ -127,8 +127,8 @@ private data class ExternalKotlinCompilationDescriptorImpl<T : DecoratedExternal
     override val compilationFactory: CompilationFactory<T>,
     override val friendArtifactResolver: FriendArtifactResolver<T>?,
     override val compilationAssociator: CompilationAssociator<T>,
-    @Deprecated("Use .sourceSetTreeClassifierV2 instead")
-    @Suppress("DEPRECATION")
+    @Deprecated("Use .sourceSetTreeClassifierV2 instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     override val sourceSetTreeClassifier: SourceSetTreeClassifier,
     override val sourceSetTreeClassifierV2: KotlinSourceSetTreeClassifier?,
     override val configure: ((T) -> Unit)?,

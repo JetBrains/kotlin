@@ -194,7 +194,7 @@ class KotlinHierarchyTemplateTest {
         )
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test
     fun `test - filterCompilations`() = project.runLifecycleAwareTest {
         val template = KotlinHierarchyTemplate {
@@ -225,7 +225,7 @@ class KotlinHierarchyTemplateTest {
         )
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test
     fun `test - filterCompilations - include them again`() = project.runLifecycleAwareTest {
         val template = KotlinHierarchyTemplate {

@@ -68,7 +68,7 @@ kotlin.sourceSets.forEach { println(it.kotlin.srcDirs) }
 afterEvaluate {
     kotlin {
         jvm("jvm6").compilations.create("benchmark") {
-            tasks.named("assemble") { dependsOn(compileKotlinTask) }
+            tasks.named("assemble") { dependsOn(compileTaskProvider) }
         }
     }
 }

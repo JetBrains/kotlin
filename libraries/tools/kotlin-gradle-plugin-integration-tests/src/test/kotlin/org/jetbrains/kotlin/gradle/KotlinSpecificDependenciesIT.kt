@@ -77,6 +77,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("JS: kotlin-stdlib dependency is added by default")
     @GradleTest
+    @TestMetadata("kotlin-js-plugin-project")
     @BrokenOnMacosTest
     fun testStdlibByDefaultJs(gradleVersion: GradleVersion) {
         project(
@@ -98,6 +99,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("JS: kotlin-stdlib dependency is not added when disabled via properties")
     @GradleTest
+    @TestMetadata("kotlin-js-plugin-project")
     @BrokenOnMacosTest
     fun testStdlibDisabledJs(gradleVersion: GradleVersion) {
         project(
@@ -444,6 +446,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("JS: Kotlin test single dependency")
     @GradleTest
+    @TestMetadata("kotlin-js-plugin-project")
     @BrokenOnMacosTest
     fun kotlinTestSingleDependencyJs(gradleVersion: GradleVersion) {
         project(

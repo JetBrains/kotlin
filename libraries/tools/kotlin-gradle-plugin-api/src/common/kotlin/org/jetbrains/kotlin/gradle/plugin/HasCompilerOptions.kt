@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
  * @suppress
  */
 @Deprecated(
-    message = "Not consistent with other DSL to configure compiler options."
+    message = "Not consistent with other DSL to configure compiler options. Scheduled for removal in Kotlin 2.3.",
+    level = DeprecationLevel.ERROR,
 )
 interface HasCompilerOptions<out CO : KotlinCommonCompilerOptions> {
     /**

@@ -46,7 +46,10 @@ internal suspend fun InternalKotlinCompilation<*>.awaitAllKotlinSourceSets(): Se
     return allKotlinSourceSets
 }
 
-@Deprecated("KT-58234: Adding source sets to Compilation is not recommended. Please consider using dependsOn.")
+@Deprecated(
+    "KT-58234: Adding source sets to Compilation is not recommended. Please consider using dependsOn. Scheduled for removal in Kotlin 2.3.",
+    level = DeprecationLevel.ERROR
+)
 internal fun KotlinCompilation<*>.addSourceSet(kotlinSourceSet: KotlinSourceSet) {
     internal.decoratedInstance.compilation.sourceSets.source(kotlinSourceSet)
 }

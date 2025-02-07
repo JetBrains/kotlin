@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.fail
 
-@Suppress("DEPRECATION") /* Configurations are scheduled for removal */
+@Suppress("DEPRECATION_ERROR") /* Configurations are scheduled for removal */
 class KT55929MetadataConfigurationsTest {
 
     @Test

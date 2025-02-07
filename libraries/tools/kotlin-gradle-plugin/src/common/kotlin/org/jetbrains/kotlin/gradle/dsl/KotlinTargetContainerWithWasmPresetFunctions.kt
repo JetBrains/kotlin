@@ -61,26 +61,46 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     @ExperimentalWasmDsl
     fun wasmWasi(configure: Action<KotlinWasmWasiTargetDsl>) = wasmWasi { configure.execute(this) }
 
-    @Deprecated("Use wasmJs instead", replaceWith = ReplaceWith("wasmJs(name, configure)"))
+    @Deprecated(
+        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("wasmJs(name, configure)"),
+        level = DeprecationLevel.ERROR
+    )
     @ExperimentalWasmDsl
     fun wasm(
         name: String = "wasmJs",
         configure: KotlinWasmJsTargetDsl.() -> Unit = { },
     ): KotlinWasmJsTargetDsl = wasmJs(name, configure)
 
-    @Deprecated("Use wasmJs instead", replaceWith = ReplaceWith("wasmJs()"))
+    @Deprecated(
+        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("wasmJs()"),
+        level = DeprecationLevel.ERROR
+    )
     @ExperimentalWasmDsl
     fun wasm() = wasmJs()
 
-    @Deprecated("Use wasmJs instead", replaceWith = ReplaceWith("wasmJs(name)"))
+    @Deprecated(
+        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("wasmJs(name)"),
+        level = DeprecationLevel.ERROR
+    )
     @ExperimentalWasmDsl
     fun wasm(name: String) = wasmJs(name)
 
-    @Deprecated("Use wasmJs instead", replaceWith = ReplaceWith("wasmJs(name, configure)"))
+    @Deprecated(
+        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("wasmJs(name, configure)"),
+        level = DeprecationLevel.ERROR
+    )
     @ExperimentalWasmDsl
     fun wasm(name: String, configure: Action<KotlinWasmJsTargetDsl>) = wasmJs(name, configure)
 
-    @Deprecated("Use wasmJs instead", replaceWith = ReplaceWith("wasmJs(configure)"))
+    @Deprecated(
+        "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("wasmJs(configure)"),
+        level = DeprecationLevel.ERROR
+    )
     @ExperimentalWasmDsl
     fun wasm(configure: Action<KotlinWasmJsTargetDsl>) = wasmJs(configure)
 }

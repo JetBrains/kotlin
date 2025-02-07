@@ -106,7 +106,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
             -> false
 
             KotlinPlatformType.native -> {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 PropertiesProvider(project).ignoreIncorrectNativeDependencies == true
             }
         }

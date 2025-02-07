@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
 
-@Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+@Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
 internal fun ObjectFactory.KotlinWithJavaTargetForJvm(
     project: Project,
     targetName: String = "",
@@ -51,7 +51,7 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : AbstractKotlinTarget(project),
     HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {

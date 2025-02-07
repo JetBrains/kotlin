@@ -38,7 +38,7 @@ private fun DefaultTask.configureCompileAllTask(
     description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
     inputs.files(Callable {
         // the task may not be registered at this point, reference it lazily
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         compilation.compileKotlinTaskProvider.map { it.outputs.files }
     })
 

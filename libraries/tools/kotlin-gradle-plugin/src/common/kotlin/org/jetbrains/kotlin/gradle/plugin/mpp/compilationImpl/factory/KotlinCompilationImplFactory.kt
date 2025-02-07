@@ -68,7 +68,7 @@ internal class KotlinCompilationImplFactory(
 
     fun interface KotlinCompilerOptionsFactory {
         data class Options(
-            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") val compilerOptions: DeprecatedHasCompilerOptions<*>,
+            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") val compilerOptions: DeprecatedHasCompilerOptions<*>,
             @Suppress("DEPRECATION") val kotlinOptions: KotlinCommonOptions
         )
 

@@ -92,7 +92,7 @@ private fun excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project: Pr
 
 // there several JVM-like targets, like KotlinWithJava, or KotlinAndroid, and they don't have common supertype
 // aside from KotlinTarget
-@Suppress("DEPRECATION") // KT-58227, KT-64273
+@Suppress("DEPRECATION_ERROR") // KT-58227, KT-64273
 private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilations() {
     compilations.all {
         listOfNotNull(

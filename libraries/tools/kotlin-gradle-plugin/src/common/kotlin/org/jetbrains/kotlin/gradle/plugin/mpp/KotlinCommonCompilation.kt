@@ -18,10 +18,14 @@ interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation
 
 @Suppress("DEPRECATION")
 open class KotlinCommonCompilation @Inject internal constructor(compilation: KotlinCompilationImpl) :
-    @Suppress("DEPRECATION") AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
+    @Suppress("DEPRECATION_ERROR") AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
     KotlinMetadataCompilation<KotlinCommonOptions> {
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
     override val compileKotlinTask: KotlinCompileCommon
         get() = compilation.compileKotlinTask as KotlinCompileCommon
 

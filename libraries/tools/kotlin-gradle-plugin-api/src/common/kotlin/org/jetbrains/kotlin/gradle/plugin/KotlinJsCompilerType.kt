@@ -14,7 +14,10 @@ enum class KotlinJsCompilerType {
     /**
      * @suppress
      */
-    @Deprecated("The legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
+    @Deprecated(
+        message = "The legacy compiler is deprecated. Migrate your project to the new IR-based compiler. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     LEGACY,
 
     /**
@@ -25,7 +28,10 @@ enum class KotlinJsCompilerType {
     /**
      * @suppress
      */
-    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
+    @Deprecated(
+        message = "The legacy compiler is deprecated. Migrate your project to the new IR-based compiler. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     BOTH;
 
     /**
@@ -48,20 +54,20 @@ enum class KotlinJsCompilerType {
 /**
  * @suppress
  */
-@Deprecated("This method is planned to be removed")
+@Deprecated(message = "Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 val KotlinJsCompilerType.lowerName
     get() = name.lowercase()
 
 /**
  * @suppress
  */
-@Suppress("DEPRECATION")
-@Deprecated("This method is planned to be removed")
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(message = "Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
     val truncatedString = removeSuffix(compilerType.lowerName)
     if (this != truncatedString) {
         return truncatedString
     }
 
-    return removeSuffix(compilerType.lowerName.capitalize(Locale.ENGLISH))
+    return removeSuffix(compilerType.lowerName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ENGLISH) else it.toString() })
 }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.klibModuleName
 
 internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilationImplFactory.KotlinCompilerOptionsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         val compilerOptions = object : DeprecatedHasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
             override val options: KotlinMultiplatformCommonCompilerOptions = target.project.objects
                 .KotlinMultiplatformCommonCompilerOptionsDefault(target.project)
@@ -58,7 +58,7 @@ internal object KotlinNativeCompilerOptionsFactory : KotlinCompilationImplFactor
 
 internal object KotlinJsCompilerOptionsFactory : KotlinCompilationImplFactory.KotlinCompilerOptionsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         val compilerOptions = object : DeprecatedHasCompilerOptions<KotlinJsCompilerOptions> {
             override val options: KotlinJsCompilerOptions = target.project.objects
                 .KotlinJsCompilerOptionsDefault(target.project)
@@ -76,7 +76,7 @@ internal object KotlinJsCompilerOptionsFactory : KotlinCompilationImplFactory.Ko
 
 internal object KotlinJvmCompilerOptionsFactory : KotlinCompilationImplFactory.KotlinCompilerOptionsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         val compilerOptions = object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
             override val options: KotlinJvmCompilerOptions = target.project.objects
                 .KotlinJvmCompilerOptionsDefault(target.project)

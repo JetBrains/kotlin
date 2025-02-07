@@ -147,13 +147,17 @@ interface KotlinHierarchyBuilder {
     /**
      * @suppress
      */
-    @Deprecated("Use 'excludeCompilations' instead", ReplaceWith("excludeCompilations(predicate)"))
+    @Deprecated("Use 'excludeCompilations' instead", ReplaceWith("excludeCompilations(predicate)"), level = DeprecationLevel.ERROR)
     fun withoutCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = excludeCompilations(predicate)
 
     /**
      * @suppress
      */
-    @Deprecated("Use plain 'withoutCompilations(!predicate) instead'", ReplaceWith("withoutCompilations { !predicate(it) }"))
+    @Deprecated(
+        "Use plain 'withoutCompilations(!predicate) instead'. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("withoutCompilations { !predicate(it) }"),
+        level = DeprecationLevel.ERROR
+    )
     fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = excludeCompilations { !predicate(it) }
 
     /**
@@ -227,7 +231,11 @@ interface KotlinHierarchyBuilder {
     /**
      * @suppress
      */
-    @Deprecated("Renamed to 'withWasmJs''", replaceWith = ReplaceWith("withWasmJs()"))
+    @Deprecated(
+        "Renamed to 'withWasmJs'. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("withWasmJs()"),
+        level = DeprecationLevel.ERROR
+    )
     fun withWasm()
 
     /**

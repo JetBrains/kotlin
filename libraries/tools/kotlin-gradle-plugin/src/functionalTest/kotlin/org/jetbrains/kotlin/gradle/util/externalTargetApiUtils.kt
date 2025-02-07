@@ -18,7 +18,7 @@ class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(d
         "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
                 "    compilerOptions {}\n}"
     )
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    @Suppress("UNCHECKED_CAST", "DEPRECATION", "DEPRECATION_ERROR")
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
         get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>
 }
