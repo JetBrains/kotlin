@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.opentest4j.AssertionFailedError
 import java.util.concurrent.ExecutionException
@@ -575,5 +576,9 @@ private val Throwable.isIllegalPsiException: Boolean
     get() = when (this) {
         is KaBaseSymbolProvider.KaBaseIllegalPsiException -> true
         is ExecutionException -> cause?.isIllegalPsiException == true
+        is KotlinIllegalArgumentExceptionWithAttachments -> {
+            message?.startsWith("Creating ${KaVariableSymbol::class.simpleName} for function type parameter is not possible.") == true
+        }
+
         else -> false
     }
