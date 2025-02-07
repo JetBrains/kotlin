@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
 import org.junit.Assert
 import java.io.File
@@ -63,8 +63,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val COMMON_IR = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 4)
-    private val REFLECT_IR = FlavorConfig(TargetBackend.ANDROID_IR, "reflect_ir", 1)
+    private val commonFlavor = FlavorConfig(TargetBackend.ANDROID, "common", 4)
+    private val reflectFlavor = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
 
     class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {
 
@@ -159,7 +159,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             File("compiler/testData/codegen/boxInline")
         )
 
-        generateTestMethodsForDirectories(COMMON_IR, REFLECT_IR, *folders)
+        generateTestMethodsForDirectories(commonFlavor, reflectFlavor, *folders)
 
         pendingUnitTestGenerators.values.forEach { it.generate() }
     }
@@ -394,7 +394,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun TestConfigurationBuilder.configure() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
-            targetBackend = TargetBackend.ANDROID_IR
+            targetBackend = TargetBackend.ANDROID
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
