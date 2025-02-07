@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -30,7 +33,13 @@ private fun computeHomeDirectory(): String {
 fun <T> runWithEnablingFirUseOption(testServices: TestServices, module: TestModule, lambda: () -> T): T {
     val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
     compilerConfiguration.put(USE_FIR, true)
+    val previousLanguageSettings = compilerConfiguration.languageVersionSettings
+    compilerConfiguration.languageVersionSettings = object : LanguageVersionSettings by previousLanguageSettings {
+        override val languageVersion: LanguageVersion
+            get() = LanguageVersion.LATEST_STABLE
+    }
     val result = lambda()
+    compilerConfiguration.languageVersionSettings = previousLanguageSettings
     compilerConfiguration.put(USE_FIR, false)
     return result
 }
