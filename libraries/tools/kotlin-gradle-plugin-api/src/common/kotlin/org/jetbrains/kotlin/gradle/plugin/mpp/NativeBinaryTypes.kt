@@ -46,8 +46,8 @@ enum class NativeBuildType(
 
     /** @suppress **/
     @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("UNUSED_PARAMETER")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, ReplaceWith(""))
+    @Suppress("DEPRECATION_ERROR", "UNUSED_PARAMETER")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
     fun embedBitcode(target: KonanTarget) = BitcodeEmbeddingMode.DISABLE
 
     /** @suppress **/
@@ -136,6 +136,8 @@ enum class NativeOutputKind(
  * @property BITCODE Bitcode is embedded as part of the binary, allowing later optimization.
  * @property MARKER Only a placeholder marker is embedded instead of actual bitcode.
  */
+@OptIn(InternalKotlinGradlePluginApi::class)
+@Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 enum class BitcodeEmbeddingMode {
     /** Don't embed LLVM IR bitcode. */
     DISABLE,
@@ -150,4 +152,4 @@ enum class BitcodeEmbeddingMode {
 /** @suppress **/
 @InternalKotlinGradlePluginApi
 const val BITCODE_EMBEDDING_DEPRECATION_MESSAGE =
-    "Bitcode embedding is not supported anymore. Configuring it has no effect. The corresponding DSL parameters will be removed in Kotlin 2.2"
+    "Bitcode embedding is not supported anymore. Configuring it has no effect. The corresponding DSL parameters will be removed in Kotlin 2.3"

@@ -95,6 +95,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
     @GradleTest
+    @TestMetadata("native-configuration-cache")
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
             val commonizeNativeDistributionTask = ":lib:commonizeNativeDistribution"
@@ -129,6 +130,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         enabledOnCI = [OS.LINUX, OS.MAC],
     )
     @GradleTest
+    @TestMetadata("native-configuration-cache")
     fun testWithDownloadingKotlinNativeAndDependencies(gradleVersion: GradleVersion, @TempDir konanTempDir: Path) {
         // with Configuration Cache we currently have such a problem KT-66423
         val buildOptions = buildOptionsToAvoidKT66423(gradleVersion, konanTempDir)
@@ -146,6 +148,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @GradleTest
+    @TestMetadata("native-configuration-cache")
     fun testCInteropCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
             testConfigurationCacheOf(":lib:commonizeCInterop")

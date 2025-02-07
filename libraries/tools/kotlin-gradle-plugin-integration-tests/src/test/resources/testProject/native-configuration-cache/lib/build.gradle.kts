@@ -69,14 +69,12 @@ kotlinArtifacts {
         modes(DEBUG, RELEASE)
         target = iosArm64
         isStatic = false
-        embedBitcode = EmbedBitcodeMode.MARKER
         kotlinOptions {
             verbose = false
         }
     }
     Native.FatFramework("myfatframe") {
         targets(iosX64, iosSimulatorArm64)
-        embedBitcode = EmbedBitcodeMode.DISABLE
         kotlinOptions {
             suppressWarnings = false
         }
