@@ -26,7 +26,7 @@ kotlin.sourceSets {
     }
 }
 
-kotlin.target {
+kotlin.js {
     nodejs()
     browser {
         testTask {
@@ -39,9 +39,9 @@ kotlin.target {
     }
 }
 
-kotlin.target.compilations.create("benchmark") {
+kotlin.js().compilations.create("benchmark") {
     defaultSourceSet.dependencies {
-        val main by kotlin.target.compilations
+        val main by kotlin.js().compilations
         implementation(main.compileDependencyFiles + main.output.classesDirs)
         runtimeOnly(files(main.runtimeDependencyFiles))
     }

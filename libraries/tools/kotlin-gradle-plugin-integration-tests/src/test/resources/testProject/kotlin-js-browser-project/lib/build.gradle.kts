@@ -8,7 +8,7 @@ dependencies {
 }
 
 kotlin {
-    target {
+    js {
         useCommonJs()
         browser {
         }

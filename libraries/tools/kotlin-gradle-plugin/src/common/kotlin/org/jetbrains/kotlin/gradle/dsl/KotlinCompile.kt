@@ -13,8 +13,9 @@ interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>,
     KotlinCompilationTask<KotlinJsCompilerOptions>
 
 @Deprecated(
-    message = "Moved into API artifact",
-    replaceWith = ReplaceWith("KotlinJvmCompile", "org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile")
+    message = "Moved into API artifact. Scheduled for removal in Kotlin 2.3.",
+    replaceWith = ReplaceWith("KotlinJvmCompile", "org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile"),
+    level = DeprecationLevel.ERROR,
 )
 interface KotlinJvmCompile : KotlinJvmCompileApi
 

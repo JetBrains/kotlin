@@ -347,8 +347,9 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation)")
+        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
+        replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation)"),
+        level = DeprecationLevel.ERROR,
     )
     fun enforcedPlatform(notation: Any): Dependency =
         project.dependencies.enforcedPlatform(notation)
@@ -357,8 +358,9 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation, configureAction)")
+        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
+        replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation, configureAction)"),
+        level = DeprecationLevel.ERROR,
     )
     fun enforcedPlatform(notation: Any, configureAction: Action<in Dependency>): Dependency =
         project.dependencies.enforcedPlatform(notation, configureAction)
@@ -367,8 +369,9 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.platform(notation)")
+        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
+        replaceWith = ReplaceWith("project.dependencies.platform(notation)"),
+        level = DeprecationLevel.ERROR,
     )
     fun platform(notation: Any): Dependency =
         project.dependencies.platform(notation)
@@ -377,8 +380,9 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.platform(notation, configureAction)")
+        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
+        replaceWith = ReplaceWith("project.dependencies.platform(notation, configureAction)"),
+        level = DeprecationLevel.ERROR,
     )
     fun platform(notation: Any, configureAction: Action<in Dependency>): Dependency =
         project.dependencies.platform(notation, configureAction)
@@ -386,7 +390,10 @@ interface KotlinDependencyHandler : HasProject {
     /**
      * @suppress
      */
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun npm(
         name: String,
         version: String,
@@ -420,7 +427,10 @@ interface KotlinDependencyHandler : HasProject {
     /**
      * @suppress
      */
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun npm(
         name: String,
         directory: File,
@@ -455,7 +465,10 @@ interface KotlinDependencyHandler : HasProject {
     /**
      * @suppress
      */
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun npm(
         directory: File,
         generateExternals: Boolean
@@ -552,7 +565,10 @@ interface KotlinDependencyHandler : HasProject {
     /**
      * @suppress
      */
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun optionalNpm(
         name: String,
         version: String,
@@ -587,7 +603,10 @@ interface KotlinDependencyHandler : HasProject {
     /**
      * @suppress
      */
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun optionalNpm(
         name: String,
         directory: File,
@@ -623,7 +642,10 @@ interface KotlinDependencyHandler : HasProject {
     /**
      * @suppress
      */
-    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
+    @Deprecated(
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     fun optionalNpm(
         directory: File,
         generateExternals: Boolean

@@ -10,5 +10,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.utils.targets
 
-@Deprecated("Scheduled for removal in Kotlin 2.1", ReplaceWith("targets", "org.jetbrains.kotlin.gradle.utils.targets"))
+@Deprecated(
+    "Scheduled for removal in Kotlin 2.3",
+    ReplaceWith("targets", "org.jetbrains.kotlin.gradle.utils.targets"),
+    level = DeprecationLevel.ERROR
+)
 val KotlinProjectExtension.targets: Iterable<KotlinTarget> get() = targets

@@ -21,8 +21,9 @@ internal abstract class AbstractProjectMppDependencyProjectStructureMetadataExtr
 ) : MppDependencyProjectStructureMetadataExtractor()
 
 @Deprecated(
-    message = "This class is not compatible with gradle project Isolation",
-    replaceWith = ReplaceWith("ProjectMppDependencyProjectStructureMetadataExtractor")
+    message = "This class is not compatible with Gradle Isolated Projects. Scheduled for removal in Kotlin 2.3.",
+    replaceWith = ReplaceWith("ProjectMppDependencyProjectStructureMetadataExtractor"),
+    level = DeprecationLevel.ERROR,
 )
 internal class ProjectMppDependencyProjectStructureMetadataExtractorDeprecated(
     projectPath: String,

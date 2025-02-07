@@ -25,7 +25,7 @@ internal sealed class KotlinCompilationInfo {
     abstract val targetDisambiguationClassifier: String?
     abstract val compilationName: String
     abstract val moduleName: String
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     abstract val compilerOptions: DeprecatedHasCompilerOptions<*>
     abstract val compileKotlinTaskName: String
     abstract val compileAllTaskName: String
@@ -57,7 +57,7 @@ internal sealed class KotlinCompilationInfo {
         override val moduleName: String
             get() = origin.moduleNameForCompilation().get()
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
         override val compilerOptions: DeprecatedHasCompilerOptions<*>
             get() = origin.compilerOptions
 

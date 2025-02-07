@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
-@Deprecated("Use KotlinCompilation<T> instead")
+@Deprecated("Use KotlinCompilation<T> instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>
 internal constructor(compilation: KotlinCompilationImpl) : AbstractKotlinCompilation<T>(compilation), KotlinCompilationToRunnableFiles<T> {
 

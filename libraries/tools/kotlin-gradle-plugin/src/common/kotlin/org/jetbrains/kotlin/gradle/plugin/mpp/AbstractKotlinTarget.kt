@@ -128,7 +128,7 @@ abstract class AbstractKotlinTarget(
         return listOfNotNull(
             COMPILE to apiElementsConfigurationName,
             (RUNTIME to runtimeElementsConfigurationName).takeIf {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 producingCompilation is KotlinCompilationToRunnableFiles
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->

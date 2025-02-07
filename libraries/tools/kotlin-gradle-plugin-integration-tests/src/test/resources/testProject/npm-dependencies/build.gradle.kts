@@ -34,6 +34,6 @@ kotlin.sourceSets {
     }
 }
 
-kotlin.target {
+kotlin.js {
     nodejs()
 }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @KotlinGradlePluginPublicDsl
 abstract class KotlinMultiplatformExtension
 @Inject

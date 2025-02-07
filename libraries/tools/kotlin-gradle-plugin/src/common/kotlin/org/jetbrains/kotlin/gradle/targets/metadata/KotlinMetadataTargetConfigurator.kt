@@ -70,7 +70,7 @@ class KotlinMetadataTargetConfigurator :
                     // it isn't necessary for KLib compilations
                     // see [KotlinCompilationSourceSetInclusion.AddSourcesWithoutDependsOnClosure]
                     defaultSourceSet.internal.dependsOnClosure.forAll {
-                        @Suppress("DEPRECATION")
+                        @Suppress("DEPRECATION_ERROR")
                         addSourceSet(it)
                     }
                 } else {

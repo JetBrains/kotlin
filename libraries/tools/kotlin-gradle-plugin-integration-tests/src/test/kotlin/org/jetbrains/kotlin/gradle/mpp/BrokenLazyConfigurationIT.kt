@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
@@ -35,6 +36,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
     @MppGradlePluginTests
     @GradleTest
     @DisplayName("works in JS")
+    @TestMetadata("kotlin-js-browser-project")
     fun testBrokenTcaInJs(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             val subprojects = listOf("app", "base", "lib")

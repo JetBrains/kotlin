@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
 @Suppress("DEPRECATION")
-@Deprecated("Use KotlinCompilation<T> instead")
+@Deprecated("Use KotlinCompilation<T> instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions> internal constructor(compilation: KotlinCompilationImpl) :
     DecoratedKotlinCompilation<T>(compilation)
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 internal typealias DeprecatedAbstractKotlinCompilation<T> = AbstractKotlinCompilation<T>

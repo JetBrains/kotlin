@@ -125,7 +125,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             )
         )
         registeredKotlinJvmCompileTask.configure {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             it.moduleName.set(taskCompilerOptions.moduleName)
         }
         return registeredKotlinJvmCompileTask

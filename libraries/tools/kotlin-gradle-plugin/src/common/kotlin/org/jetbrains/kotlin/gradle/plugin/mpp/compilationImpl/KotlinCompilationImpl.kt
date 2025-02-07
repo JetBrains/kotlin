@@ -42,7 +42,7 @@ internal class KotlinCompilationImpl(
         val compilationTaskNames: KotlinCompilationTaskNamesContainer,
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") val compilerOptions: DeprecatedHasCompilerOptions<*>,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") val compilerOptions: DeprecatedHasCompilerOptions<*>,
         val kotlinOptions: KotlinCommonOptions,
         val compilationAssociator: KotlinCompilationAssociator,
         val compilationFriendPathsResolver: KotlinCompilationFriendPathsResolver,
@@ -150,13 +150,20 @@ internal class KotlinCompilationImpl(
     override val compileAllTaskName: String
         get() = params.compilationTaskNames.compileAllTaskName
 
-    @Suppress("deprecation")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("deprecation_error")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR,
+    )
     override val compileKotlinTask: KotlinCompile<KotlinCommonOptions>
         get() = compileKotlinTaskProvider.get()
 
-    @Suppress("deprecation")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Deprecated(
+        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<KotlinCommonOptions>>
         get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate  task $compileKotlinTaskName")
 
@@ -179,7 +186,7 @@ internal class KotlinCompilationImpl(
         "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
                 "    compilerOptions {}\n}"
     )
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     override val compilerOptions: DeprecatedHasCompilerOptions<*>
         get() = params.compilerOptions
 

@@ -60,7 +60,7 @@ abstract class KotlinCompile @Inject constructor(
     objectFactory: ObjectFactory,
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
     K2MultiplatformCompilationTask,
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl {
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") KotlinJvmCompileDsl {
 
     @Suppress("DEPRECATION")
     @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
@@ -70,7 +70,11 @@ abstract class KotlinCompile @Inject constructor(
     )
 
     @Suppress("DEPRECATION")
-    @Deprecated("Configure compilerOptions directly", replaceWith = ReplaceWith("compilerOptions"))
+    @Deprecated(
+        "Configure compilerOptions directly. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compilerOptions"),
+        level = DeprecationLevel.ERROR,
+    )
     override val parentKotlinOptions: Property<KotlinJvmOptions> = objectFactory
         .property(kotlinOptions)
         .chainedDisallowChanges()
@@ -97,8 +101,9 @@ abstract class KotlinCompile @Inject constructor(
     abstract override val libraries: ConfigurableFileCollection
 
     @get:Deprecated(
-        message = "Please migrate to compilerOptions.moduleName",
-        replaceWith = ReplaceWith("compilerOptions.moduleName")
+        message = "Please migrate to compilerOptions.moduleName. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compilerOptions.moduleName"),
+        level = DeprecationLevel.ERROR,
     )
     @get:Optional
     @get:Input
@@ -307,7 +312,7 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     protected fun overrideArgsUsingTaskModuleNameWithWarning(
         args: K2JVMCompilerArguments
     ) {

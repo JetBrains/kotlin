@@ -52,9 +52,10 @@ interface KotlinTargetComponent : SoftwareComponent {
      * @suppress
      */
     @Deprecated(
-        message = "Sources artifacts are now published as separate variant " +
+        message = "Scheduled for removal in Kotlin 2.3. Sources artifacts are now published as separate variant " +
                 "use target.sourcesElementsConfigurationName to obtain necessary information",
-        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName"),
+        level = DeprecationLevel.ERROR,
     )
     val sourcesArtifacts: Set<PublishArtifact>
 }

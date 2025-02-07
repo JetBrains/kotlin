@@ -9,6 +9,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build services usages in tasks are declared with `usesService`")
@@ -33,6 +34,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @DisplayName("Build services are registered for Kotlin/JS browser projects")
     @GradleTest
     @JsGradlePluginTests
+    @TestMetadata("kotlin-js-browser-project")
     fun testJsBrowserProject(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-browser-project",

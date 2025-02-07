@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import java.nio.file.Files
 import kotlin.streams.asSequence
 import kotlin.test.assertEquals
@@ -101,6 +102,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @TestMetadata("kotlin-js-plugin-project")
     fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
         testBuildReportInFile(
             "kotlin-js-plugin-project",

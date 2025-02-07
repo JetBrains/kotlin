@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.utils.*
 import javax.inject.Inject
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
 open class KotlinJvmAndroidCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
     val androidVariant: DeprecatedAndroidBaseVariant
@@ -36,13 +36,21 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
     internal val testedVariantArtifacts: Property<FileCollection> =
         compilation.project.objects.property(FileCollection::class.java)
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = compilation.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
+    @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
+    @Deprecated(
+        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("compileTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
         get() = compilation.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
 
