@@ -129,7 +129,7 @@ FILE: unsupportedContextParameters.kt
     context(vararg x: R|kotlin/Array<out kotlin/String>|, y: R|kotlin/String|, z: R|kotlin/String|, crossinline f1: R|() -> kotlin/Unit|, noinline f2: R|() -> kotlin/Unit|)
     public final inline fun contextHasModifier(): R|kotlin/Unit| {
     }
-    public final fun test(): R|kotlin/Unit| {
+    public final fun test(collection: R|kotlin/Array<kotlin/Pair<kotlin/Int, kotlin/Int>>|): R|kotlin/Unit| {
         context(s: R|kotlin/String|)
         lval x: R|kotlin/Int| = Int(1)
         context(s: R|kotlin/String|)
@@ -138,5 +138,44 @@ FILE: unsupportedContextParameters.kt
             else ->  {
             }
         }
+
+         {
+            lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(10)).R|kotlin/ranges/IntProgression.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval item: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                 {
+                }
+
+            }
+
+        }
+
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>| = R|<local>/collection|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Pair<kotlin/Int, kotlin/Int>|>|()
+                lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+                lval c: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+                 {
+                }
+
+            }
+
+        }
+
+        lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(2))
+        lval <unused var>: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+        local final fun local(f: R|kotlin/Int| = Int(1)): R|kotlin/Unit| {
+        }
+
+    }
+    public final class PropertyInConstructor : R|kotlin/Any| {
+        public constructor(k: R|kotlin/Boolean| = Boolean(true)): R|PropertyInConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val k: R|kotlin/Boolean| = R|<local>/k|
+            public get(): R|kotlin/Boolean|
 
     }

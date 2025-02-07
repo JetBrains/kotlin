@@ -1,4 +1,10 @@
 FILE: contextInLocalFunction.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
     public final fun test(): R|kotlin/Unit| {
         context(c: R|kotlin/String|)
         local final fun local(): R|kotlin/Unit| {
@@ -6,6 +12,10 @@ FILE: contextInLocalFunction.kt
 
         context(c: R|kotlin/String|)
         local final fun local2(): R|kotlin/Unit| {
+        }
+
+        context(c: R|kotlin/String|)
+        @R|Ann|() local final fun local3(): R|kotlin/Unit| {
         }
 
     }

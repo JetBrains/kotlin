@@ -4,7 +4,7 @@
 fun box(): String {
     val f = context(a: String) fun () = a
 
-    return with("OK") {
+    return f("O") + with("K") {
         f()
     }
 }

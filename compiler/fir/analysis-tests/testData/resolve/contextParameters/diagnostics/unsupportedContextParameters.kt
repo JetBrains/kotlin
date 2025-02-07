@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
 // LANGUAGE: +ContextParameters
 
 <!UNSUPPORTED!>context(_: String)<!>
@@ -86,7 +87,7 @@ fun contextHasDefaultValue() {}
 context(<!WRONG_MODIFIER_TARGET!>vararg<!> x: String, <!VAL_OR_VAR_ON_FUN_PARAMETER!>var<!> y: String, <!VAL_OR_VAR_ON_FUN_PARAMETER!>val<!> z: String, <!WRONG_MODIFIER_TARGET!>crossinline<!> f1: () -> Unit, <!WRONG_MODIFIER_TARGET!>noinline<!> f2: () -> Unit)
 <!NOTHING_TO_INLINE!>inline<!> fun contextHasModifier() {}
 
-fun test() {
+fun test(collection : Array<Pair<Int,Int>>) {
     <!UNSUPPORTED!>context(s: String)<!>
     val x = 1
 
@@ -95,4 +96,15 @@ fun test() {
     when (<!UNSUPPORTED!>context(s: String)<!> val z = 1) {
         else -> {}
     }
+
+    for (<!UNSUPPORTED!>context(a: String)<!> item: Int in 1..10) { }
+
+    for (<!UNSUPPORTED!>context(a: String)<!> (b, c) in collection) { }
+
+    <!UNSUPPORTED!>context(a: String)<!>
+    val (_, b) = Pair(1, 2)
+
+    fun local(<!UNSUPPORTED!>context(a: A)<!> f: Int = 1) { }
 }
+
+class PropertyInConstructor(<!UNSUPPORTED!>context(a: String)<!> val k: Boolean = true)

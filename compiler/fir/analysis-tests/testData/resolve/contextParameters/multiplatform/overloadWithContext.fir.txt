@@ -1,0 +1,204 @@
+Module: m1-common
+FILE: common.kt
+    public final expect class Test1 : R|kotlin/Any| {
+        public final expect fun foo(): R|kotlin/Unit|
+
+    }
+    public final expect class Test2 : R|kotlin/Any| {
+        context(a: R|kotlin/Int|)
+        public final expect fun foo(): R|kotlin/Unit|
+
+    }
+    public final expect class Test3 : R|kotlin/Any| {
+        public final expect val a: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final expect class Test4 : R|kotlin/Any| {
+        context(a: R|kotlin/Int|)
+        public final expect val a: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final expect class Test5 : R|kotlin/Any| {
+        public final expect fun foo(a: R|kotlin/Int|): R|kotlin/String|
+
+    }
+FILE: jvm.kt
+    public final actual class Test1 : R|kotlin/Any| {
+        public constructor(): R|Test1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|kotlin/Int|)
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final actual class Test2 : R|kotlin/Any| {
+        public constructor(): R|Test2| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|kotlin/Int|)
+        public final actual fun foo(): R|kotlin/Unit| {
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final actual class Test3 : R|kotlin/Any| {
+        public constructor(): R|Test3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        context(a: R|kotlin/Int|)
+        public final val a: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+    }
+    public final actual class Test4 : R|kotlin/Any| {
+        public constructor(): R|Test4| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|kotlin/Int|)
+        public final actual val a: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public final actual class Test5 : R|kotlin/Any| {
+        public constructor(): R|Test5| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual fun foo(a: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String()
+        }
+
+        context(a: R|kotlin/Int|)
+        public final val foo: R|() -> kotlin/Unit|
+            public get(): R|() -> kotlin/Unit| {
+                ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    ^ Unit
+                }
+
+            }
+
+    }
+Module: m2-jvm
+FILE: common.kt
+    public final expect class Test1 : R|kotlin/Any| {
+        public final expect fun foo(): R|kotlin/Unit|
+
+    }
+    public final expect class Test2 : R|kotlin/Any| {
+        context(a: R|kotlin/Int|)
+        public final expect fun foo(): R|kotlin/Unit|
+
+    }
+    public final expect class Test3 : R|kotlin/Any| {
+        public final expect val a: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final expect class Test4 : R|kotlin/Any| {
+        context(a: R|kotlin/Int|)
+        public final expect val a: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final expect class Test5 : R|kotlin/Any| {
+        public final expect fun foo(a: R|kotlin/Int|): R|kotlin/String|
+
+    }
+FILE: jvm.kt
+    public final actual class Test1 : R|kotlin/Any| {
+        public constructor(): R|Test1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|kotlin/Int|)
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final actual class Test2 : R|kotlin/Any| {
+        public constructor(): R|Test2| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|kotlin/Int|)
+        public final actual fun foo(): R|kotlin/Unit| {
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final actual class Test3 : R|kotlin/Any| {
+        public constructor(): R|Test3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        context(a: R|kotlin/Int|)
+        public final val a: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+    }
+    public final actual class Test4 : R|kotlin/Any| {
+        public constructor(): R|Test4| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|kotlin/Int|)
+        public final actual val a: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public final actual class Test5 : R|kotlin/Any| {
+        public constructor(): R|Test5| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual fun foo(a: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String()
+        }
+
+        context(a: R|kotlin/Int|)
+        public final val foo: R|() -> kotlin/Unit|
+            public get(): R|() -> kotlin/Unit| {
+                ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    ^ Unit
+                }
+
+            }
+
+    }
