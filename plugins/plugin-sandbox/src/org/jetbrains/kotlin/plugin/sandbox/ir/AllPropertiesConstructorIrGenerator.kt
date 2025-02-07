@@ -95,10 +95,10 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
             klass.properties.toList().sortedWith(Comparator.comparing { if (it.origin == IrDeclarationOrigin.FAKE_OVERRIDE) 0 else 1 })
         val overriddenProperties = properties.takeWhile { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
         val superConstructor = when {
-            superClass.defaultType.isAny() -> superClass.constructors.singleOrNull { it.valueParameters.isEmpty() }
+            superClass.defaultType.isAny() -> superClass.constructors.singleOrNull { c -> c.parameters.none { it.kind == IrParameterKind.Regular } }
             else -> {
                 require(superClass.hasAnnotation())
-                superClass.constructors.singleOrNull { it.valueParameters.isNotEmpty() }
+                superClass.constructors.singleOrNull { c -> c.parameters.any { it.kind == IrParameterKind.Regular } }
             }
         } ?: error("All properies constructor not found")
 
@@ -108,10 +108,11 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
             returnType = klass.defaultType
         }.also { ctor ->
             ctor.parent = klass
-            ctor.valueParameters = properties.map { property ->
+            ctor.parameters = properties.map { property ->
                 buildValueParameter(ctor) {
                     type = property.getter!!.returnType
                     name = property.name
+                    kind = IrParameterKind.Regular
                 }
             }
             ctor.body = context.irFactory.createBlockBody(
@@ -121,12 +122,11 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
                         ctor.startOffset, ctor.endOffset, context.irBuiltIns.unitType,
                         superConstructor.symbol, 0,
                     ).apply {
-                        ctor.valueParameters.take(overriddenProperties.size).forEachIndexed { index, parameter ->
-                            putValueArgument(
-                                index,
-                                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, parameter.symbol)
-                            )
-                        }
+                        ctor.parameters.filter { it.kind == IrParameterKind.Regular }
+                            .take(overriddenProperties.size)
+                            .forEachIndexed { index, parameter ->
+                                arguments[index] = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, parameter.symbol)
+                            }
                     }
                 )
             )
