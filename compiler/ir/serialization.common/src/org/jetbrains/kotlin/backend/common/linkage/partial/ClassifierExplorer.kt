@@ -43,21 +43,24 @@ internal class ClassifierExplorer(
         )
     }
 
-    @OptIn(InternalSymbolFinderAPI::class)  // KT-73430: Consider pre-finding these symbols and storing them into Symbols
+    @OptIn(InternalSymbolFinderAPI::class)
     private val permittedAnnotationParameterSymbols: Set<IrClassSymbol> by lazy {
-        buildSet {
-            this += permittedAnnotationArrayParameterSymbols
+        permittedAnnotationArrayParameterSymbols + setOf(
+            builtIns.booleanClass, builtIns.booleanArray,
+            builtIns.charClass, builtIns.charArray,
+            builtIns.floatClass, builtIns.floatArray,
+            builtIns.doubleClass, builtIns.doubleArray,
 
-            PrimitiveType.entries.forEach {
-                addIfNotNull(builtIns.symbolFinder.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>
-                addIfNotNull(builtIns.symbolFinder.findClass(it.arrayTypeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>Array
-            }
+            builtIns.byteClass, builtIns.byteArray,
+            builtIns.shortClass, builtIns.shortArray,
+            builtIns.intClass, builtIns.intArray,
+            builtIns.longClass, builtIns.longArray,
 
-            UnsignedType.entries.forEach {
-                addIfNotNull(builtIns.symbolFinder.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>
-                addIfNotNull(builtIns.symbolFinder.findClass(it.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>Array
-            }
-        }
+            builtIns.ubyteClass, builtIns.ubyteArray,
+            builtIns.ushortClass, builtIns.ushortArray,
+            builtIns.uintClass, builtIns.uintArray,
+            builtIns.ulongClass, builtIns.ulongArray,
+        ).filterNotNull()
     }
 
     private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }

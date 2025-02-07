@@ -93,6 +93,18 @@ class Fir2IrBuiltinSymbolsContainer(
     val longClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Long) }
     val longType: IrType get() = longClass.defaultTypeWithoutArguments
 
+    val ubyteClass: IrClassSymbol by lazy { loadClass(StandardClassIds.UByte) }
+    val ubyteType: IrType get() = ubyteClass.defaultTypeWithoutArguments
+
+    val ushortClass: IrClassSymbol by lazy { loadClass(StandardClassIds.UShort) }
+    val ushortType: IrType get() = ushortClass.defaultTypeWithoutArguments
+
+    val uintClass: IrClassSymbol by lazy { loadClass(StandardClassIds.UInt) }
+    val uintType: IrType get() = uintClass.defaultTypeWithoutArguments
+
+    val ulongClass: IrClassSymbol by lazy { loadClass(StandardClassIds.ULong) }
+    val ulongType: IrType get() = ulongClass.defaultTypeWithoutArguments
+
     val floatClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Float) }
     val floatType: IrType get() = floatClass.defaultTypeWithoutArguments
 
@@ -183,6 +195,15 @@ class Fir2IrBuiltinSymbolsContainer(
     val longArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.LONG) }
     val floatArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.FLOAT) }
     val doubleArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.DOUBLE) }
+
+    private fun loadUnsignedArray(unsignedType: UnsignedType): IrClassSymbol {
+        return loadClass(ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("${unsignedType.typeName}Array")))
+    }
+
+    val ubyteArray: IrClassSymbol by lazy { loadUnsignedArray(UnsignedType.UBYTE) }
+    val ushortArray: IrClassSymbol by lazy { loadUnsignedArray(UnsignedType.USHORT) }
+    val uintArray: IrClassSymbol by lazy { loadUnsignedArray(UnsignedType.UINT) }
+    val ulongArray: IrClassSymbol by lazy { loadUnsignedArray(UnsignedType.ULONG) }
 
     @Fir2IrBuiltInsInternals
     internal val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> by lazy {
