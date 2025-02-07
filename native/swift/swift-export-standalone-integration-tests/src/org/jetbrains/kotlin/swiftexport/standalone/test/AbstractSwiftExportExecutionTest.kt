@@ -15,15 +15,23 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider.getTestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.createDummyLogger
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
+
+    @BeforeEach
+    fun checkHost() {
+        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
+    }
 
     override fun runCompiledTest(
         testPathFull: File,
