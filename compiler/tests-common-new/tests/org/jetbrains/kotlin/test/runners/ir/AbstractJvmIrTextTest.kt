@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
-import org.jetbrains.kotlin.test.services.TestPhaseLabel
+import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
@@ -42,12 +42,12 @@ abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.Frontend
         }
 
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhaseLabel.BACKEND
+            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
         }
 
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
-            ::PhasedPipelineChecker.bind(TestPhaseLabel.BACKEND)
+            ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )
         enableMetaInfoHandler()
     }

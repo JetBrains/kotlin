@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.NonSourceErrorMessagesHan
 import org.jetbrains.kotlin.test.frontend.fir.handlers.PsiLightTreeMetaInfoProcessor
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
-import org.jetbrains.kotlin.test.services.TestPhaseLabel
+import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhaseLabel.BACKEND
+            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
             LANGUAGE + "+EnableDfaWarningsInK2"
         }
 

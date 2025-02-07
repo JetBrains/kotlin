@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class PhasedPipelineChecker(
     testServices: TestServices,
-    val defaultRunPipelineTill: TestPhaseLabel? = null,
+    val defaultRunPipelineTill: TestPhase? = null,
 ) : AfterAnalysisChecker(testServices) {
     override val order: Order
         get() = Order.P4
@@ -49,14 +49,14 @@ class PhasedPipelineChecker(
         }
     }
 
-    private fun getTargetedPhase(): TestPhaseLabel? {
+    private fun getTargetedPhase(): TestPhase? {
         return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull() ?: defaultRunPipelineTill
     }
 
-    private fun TestArtifactKind<*>.toPhase(): TestPhaseLabel? = when (this) {
-        is FrontendKind -> TestPhaseLabel.FRONTEND
-        is BackendKind -> TestPhaseLabel.FIR2IR
-        is ArtifactKind -> TestPhaseLabel.BACKEND
+    private fun TestArtifactKind<*>.toPhase(): TestPhase? = when (this) {
+        is FrontendKind -> TestPhase.FRONTEND
+        is BackendKind -> TestPhase.FIR2IR
+        is ArtifactKind -> TestPhase.BACKEND
         else -> null
     }
 

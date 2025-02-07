@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.services.TestPhaseLabel
+import org.jetbrains.kotlin.test.services.TestPhase
 
 object TestPhaseDirectives : SimpleDirectivesContainer() {
     /**
-     * See: [TestPhaseLabel] for the list of values.
-     * If not set, the test will be generated into [FRONTEND][TestPhaseLabel.FRONTEND]
+     * See: [TestPhase] for the list of values.
+     * If not set, the test will be generated into [FRONTEND][TestPhase.FRONTEND]
      * phases, but the infrastructure will still complain about the missing directive.
      */
-    val RUN_PIPELINE_TILL by enumDirective<TestPhaseLabel>(
+    val RUN_PIPELINE_TILL by enumDirective<TestPhase>(
         description = "Verify that the test runs successfully until the specified phase (including). See `TestPhaseLabel` for the list of phases"
     )
 
@@ -32,7 +32,7 @@ object TestPhaseDirectives : SimpleDirectivesContainer() {
      * Important: [LATEST_PHASE_IN_PIPELINE] should be defined once per test runner and shouldn't be additionally set in any
      * particular test.
      */
-    val LATEST_PHASE_IN_PIPELINE by enumDirective<TestPhaseLabel>(
+    val LATEST_PHASE_IN_PIPELINE by enumDirective<TestPhase>(
         description = "The last phase of the pipeline in the test"
     )
 
