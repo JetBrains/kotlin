@@ -1,0 +1,127 @@
+element: check()
+implicit receivers:
+  type: C
+  owner symbol: KaFirAnonymousFunctionSymbol
+
+  type: D
+  owner symbol: KaFirAnonymousFunctionSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 1
+      val d: D
+    constructors: 0
+
+  LocalScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 11
+    packages: 0
+    classifiers: 0
+    callables: 2
+      a: T
+      action: context(D) (context(B) C.() -> kotlin.Unit) -> kotlin.Unit
+    constructors: 0
+
+  TypeParameterScope, index = 12
+    packages: 0
+    classifiers: 1
+      T
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 13
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 14
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 6
+      interface BaseA
+      interface Another
+      class A : BaseA, Another
+      class B
+      class C
+      class D
+    callables: 2
+      context(`<unused var>`@A, `<unused var>`@B, `<unused var>`@C, `<unused var>`@D)
+      fun check()
+      context(a@T)
+      fun <T : Another?> usage(action: context(D) (context(B) C.() -> kotlin.Unit) -> kotlin.Unit)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 15
+
+  DefaultSimpleImportingScope, index = 16
+
+  ExplicitStarImportingScope, index = 17
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 18
+

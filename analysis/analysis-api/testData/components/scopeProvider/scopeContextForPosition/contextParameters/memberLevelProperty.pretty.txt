@@ -1,0 +1,57 @@
+element: val x = 1
+implicit receivers:
+  type: one.B
+  owner symbol: KaFirNamedClassSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 1
+      a: one.A
+    constructors: 0
+
+  TypeScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 4
+      context(a@one.A, `<unused var>`@kotlin.Int)
+      val foo: kotlin.Unit
+        get()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  ExplicitSimpleImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 5
+    packages: 0
+    classifiers: 2
+      class A
+      class B
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 6
+
+  DefaultSimpleImportingScope, index = 7
+
+  ExplicitStarImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 9

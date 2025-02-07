@@ -1,0 +1,164 @@
+element: val x = 1
+implicit receivers:
+  type: kotlin.String
+  owner symbol: KaFirKotlinPropertyKtPropertyBasedSymbol
+
+  type: one.A
+  owner symbol: KaFirContextParameterSymbol
+
+  type: kotlin.Int
+  owner symbol: KaFirContextParameterSymbol
+
+  type: one.B
+  owner symbol: KaFirNamedClassSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 1
+      companion object
+    callables: 8
+      fun compareTo(other: kotlin.String): kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun get(index: kotlin.Int): kotlin.Char
+      fun plus(other: kotlin.Any?): kotlin.String
+      fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence
+      fun toString(): kotlin.String
+      val length: kotlin.Int
+      fun hashCode(): kotlin.Int
+    constructors: 1
+      constructor()
+
+  TypeScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  TypeScope, index = 2
+    packages: 0
+    classifiers: 1
+      companion object
+    callables: 65
+      fun and(other: kotlin.Int): kotlin.Int
+      fun compareTo(other: kotlin.Byte): kotlin.Int
+      fun compareTo(other: kotlin.Short): kotlin.Int
+      fun compareTo(other: kotlin.Int): kotlin.Int
+      fun compareTo(other: kotlin.Long): kotlin.Int
+      fun compareTo(other: kotlin.Float): kotlin.Int
+      fun compareTo(other: kotlin.Double): kotlin.Int
+      fun dec(): kotlin.Int
+      fun div(other: kotlin.Byte): kotlin.Int
+      fun div(other: kotlin.Short): kotlin.Int
+      fun div(other: kotlin.Int): kotlin.Int
+      fun div(other: kotlin.Long): kotlin.Long
+      fun div(other: kotlin.Float): kotlin.Float
+      fun div(other: kotlin.Double): kotlin.Double
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun inc(): kotlin.Int
+      fun inv(): kotlin.Int
+      fun minus(other: kotlin.Byte): kotlin.Int
+      fun minus(other: kotlin.Short): kotlin.Int
+      fun minus(other: kotlin.Int): kotlin.Int
+      fun minus(other: kotlin.Long): kotlin.Long
+      fun minus(other: kotlin.Float): kotlin.Float
+      fun minus(other: kotlin.Double): kotlin.Double
+      fun or(other: kotlin.Int): kotlin.Int
+      fun plus(other: kotlin.Byte): kotlin.Int
+      fun plus(other: kotlin.Short): kotlin.Int
+      fun plus(other: kotlin.Int): kotlin.Int
+      fun plus(other: kotlin.Long): kotlin.Long
+      fun plus(other: kotlin.Float): kotlin.Float
+      fun plus(other: kotlin.Double): kotlin.Double
+      fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange
+      fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange
+      fun rangeTo(other: kotlin.Int): kotlin.ranges.IntRange
+      fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange
+      fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange
+      fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
+      fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange
+      fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange
+      fun rem(other: kotlin.Byte): kotlin.Int
+      fun rem(other: kotlin.Short): kotlin.Int
+      fun rem(other: kotlin.Int): kotlin.Int
+      fun rem(other: kotlin.Long): kotlin.Long
+      fun rem(other: kotlin.Float): kotlin.Float
+      fun rem(other: kotlin.Double): kotlin.Double
+      fun shl(bitCount: kotlin.Int): kotlin.Int
+      fun shr(bitCount: kotlin.Int): kotlin.Int
+      fun times(other: kotlin.Byte): kotlin.Int
+      fun times(other: kotlin.Short): kotlin.Int
+      fun times(other: kotlin.Int): kotlin.Int
+      fun times(other: kotlin.Long): kotlin.Long
+      fun times(other: kotlin.Float): kotlin.Float
+      fun times(other: kotlin.Double): kotlin.Double
+      fun toByte(): kotlin.Byte
+      fun toChar(): kotlin.Char
+      fun toDouble(): kotlin.Double
+      fun toFloat(): kotlin.Float
+      fun toInt(): kotlin.Int
+      fun toLong(): kotlin.Long
+      fun toShort(): kotlin.Short
+      fun toString(): kotlin.String
+      fun unaryMinus(): kotlin.Int
+      fun unaryPlus(): kotlin.Int
+      fun ushr(bitCount: kotlin.Int): kotlin.Int
+      fun xor(other: kotlin.Int): kotlin.Int
+      fun hashCode(): kotlin.Int
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 4
+      context(A@one.A, Int@kotlin.Int)
+      val kotlin.String.foo: ERROR
+        get()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 6
+    packages: 0
+    classifiers: 2
+      class A
+      class B
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 7
+
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 10

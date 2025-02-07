@@ -1,0 +1,78 @@
+element: val d: Double = 1.0
+implicit receivers:
+  type: kotlin.String
+  owner symbol: KaFirContextParameterSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 1
+      companion object
+    callables: 8
+      fun plus(other: kotlin.Any?): kotlin.String
+      fun get(index: kotlin.Int): kotlin.Char
+      fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence
+      fun compareTo(other: kotlin.String): kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun toString(): kotlin.String
+      val length: kotlin.Int
+      fun hashCode(): kotlin.Int
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 1
+      p: kotlin.Int
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 6
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 0
+    callables: 1
+      fun foo()
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 7
+
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 10
+

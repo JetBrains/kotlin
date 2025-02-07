@@ -1,0 +1,184 @@
+element: context(a: A, _: Int)
+val foo: Unit
+    get() {
+        val x = 1
+}
+implicit receivers:
+scopes:
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 1
+    packages: 0
+    classifiers: 1
+      KaNamedClassSymbol:
+        annotations: []
+        classId: one/A
+        classKind: CLASS
+        companionObject: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: A
+        origin: SOURCE
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: PUBLIC
+    callables: 1
+      KaKotlinPropertySymbol:
+        annotations: []
+        backingFieldSymbol: KaBackingFieldSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Private
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isVal: true
+          location: PROPERTY
+          modality: FINAL
+          name: field
+          origin: PROPERTY_BACKING_FIELD
+          owningProperty: KaKotlinPropertySymbol(one/foo)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Unit
+          visibility: PRIVATE
+        callableId: one/foo
+        compilerVisibility: Public
+        contextParameters: [
+          KaContextParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: a
+            origin: SOURCE
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: one/A
+            visibility: PUBLIC
+          KaContextParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <unused var>
+            origin: SOURCE
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Int
+            visibility: PUBLIC
+        ]
+        contextReceivers: [
+          KaContextReceiver:
+            label: a
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: one/A
+          KaContextReceiver:
+            label: <unused var>
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Int
+        ]
+        getter: KaPropertyGetterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          hasBody: true
+          hasStableParameterNames: true
+          isActual: false
+          isDefault: false
+          isExpect: false
+          isExtension: false
+          isInline: false
+          isOverride: false
+          location: PROPERTY
+          modality: FINAL
+          origin: SOURCE
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Unit
+          valueParameters: []
+          visibility: PUBLIC
+        hasBackingField: false
+        hasGetter: true
+        hasSetter: false
+        initializer: null
+        isActual: false
+        isConst: false
+        isDelegatedProperty: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        location: TOP_LEVEL
+        modality: FINAL
+        name: foo
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        setter: null
+        typeParameters: []
+        visibility: PUBLIC
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 5

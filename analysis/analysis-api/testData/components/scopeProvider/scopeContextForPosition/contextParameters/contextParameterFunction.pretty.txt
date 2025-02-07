@@ -1,0 +1,48 @@
+element: c
+implicit receivers:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 2
+      c: kotlin.Boolean
+      p: kotlin.Int
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 4
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 0
+    callables: 1
+      context(c@kotlin.Boolean)
+      fun foo(p: kotlin.Int)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 8

@@ -215,6 +215,274 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContextParameters {
+    @Test
+    @TestMetadata("afterContextReceiverSmartCast.kt")
+    public void testAfterContextReceiverSmartCast() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/afterContextReceiverSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("afterSmartCastFunction.kt")
+    public void testAfterSmartCastFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/afterSmartCastFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("afterSmartCastProperty.kt")
+    public void testAfterSmartCastProperty() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/afterSmartCastProperty.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInContextParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionContextReceiver.kt")
+    public void testAnonymousFunctionContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionContextReceiver2.kt")
+    public void testAnonymousFunctionContextReceiver2() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiver2.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionContextReceiver3.kt")
+    public void testAnonymousFunctionContextReceiver3() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiver3.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionContextReceiverExpression.kt")
+    public void testAnonymousFunctionContextReceiverExpression() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiverExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterAnonymousFunction.kt")
+    public void testContextParameterAnonymousFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/contextParameterAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterFunction.kt")
+    public void testContextParameterFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/contextParameterFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterProperty.kt")
+    public void testContextParameterProperty() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/contextParameterProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiverSmartCast.kt")
+    public void testContextReceiverSmartCast() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/contextReceiverSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("functionContextReceiver.kt")
+    public void testFunctionContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelFunction.kt")
+    public void testMemberLevelFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelFunction2.kt")
+    public void testMemberLevelFunction2() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelFunctionContextReceiver.kt")
+    public void testMemberLevelFunctionContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelFunctionContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelProperty.kt")
+    public void testMemberLevelProperty() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelProperty2.kt")
+    public void testMemberLevelProperty2() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelProperty2.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelPropertyAccessor.kt")
+    public void testMemberLevelPropertyAccessor() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelPropertyAccessor.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelPropertyAccessorContextReceiver.kt")
+    public void testMemberLevelPropertyAccessorContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelPropertyAccessorContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelPropertyContextReceiver.kt")
+    public void testMemberLevelPropertyContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/memberLevelPropertyContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("namedAnonymousFunction.kt")
+    public void testNamedAnonymousFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/namedAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("namedAnonymousFunction2.kt")
+    public void testNamedAnonymousFunction2() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/namedAnonymousFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("namedAnonymousFunction3.kt")
+    public void testNamedAnonymousFunction3() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/namedAnonymousFunction3.kt");
+    }
+
+    @Test
+    @TestMetadata("namedAnonymousFunctionExpression.kt")
+    public void testNamedAnonymousFunctionExpression() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/namedAnonymousFunctionExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("namedFunctionContextParameter.kt")
+    public void testNamedFunctionContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/namedFunctionContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("namedPropertyContextParameter.kt")
+    public void testNamedPropertyContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/namedPropertyContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedContextParameter.kt")
+    public void testNestedContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/nestedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedContextParameterAfter.kt")
+    public void testNestedContextParameterAfter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/nestedContextParameterAfter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyContextReceiver.kt")
+    public void testPropertyContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastFunction.kt")
+    public void testSmartCastFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/smartCastFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastProperty.kt")
+    public void testSmartCastProperty() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/smartCastProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.kt")
+    public void testTopLevelFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/topLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction2.kt")
+    public void testTopLevelFunction2() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/topLevelFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionContextReceiver.kt")
+    public void testTopLevelFunctionContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/topLevelFunctionContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelProperty.kt")
+    public void testTopLevelProperty() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/topLevelProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelProperty2.kt")
+    public void testTopLevelProperty2() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/topLevelProperty2.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelPropertyContextReceiver.kt")
+    public void testTopLevelPropertyContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/topLevelPropertyContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedAnonymousFunction.kt")
+    public void testUnnamedAnonymousFunction() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/unnamedAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedAnonymousFunction2.kt")
+    public void testUnnamedAnonymousFunction2() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/unnamedAnonymousFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedAnonymousFunction3.kt")
+    public void testUnnamedAnonymousFunction3() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/unnamedAnonymousFunction3.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedAnonymousFunctionExpression.kt")
+    public void testUnnamedAnonymousFunctionExpression() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/unnamedAnonymousFunctionExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedFunctionContextParameter.kt")
+    public void testUnnamedFunctionContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/unnamedFunctionContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("unnamedPropertyContextParameter.kt")
+    public void testUnnamedPropertyContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/unnamedPropertyContextParameter.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {

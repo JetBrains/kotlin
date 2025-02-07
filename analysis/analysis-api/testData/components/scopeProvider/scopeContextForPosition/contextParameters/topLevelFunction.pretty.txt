@@ -1,0 +1,43 @@
+element: val x = 1
+implicit receivers:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 2
+      a: one.A
+      p: kotlin.Boolean
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 4
+    packages: 0
+    classifiers: 1
+      class A
+    callables: 1
+      context(a@one.A, `<unused var>`@kotlin.Int)
+      fun foo(p: kotlin.Boolean)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 8
