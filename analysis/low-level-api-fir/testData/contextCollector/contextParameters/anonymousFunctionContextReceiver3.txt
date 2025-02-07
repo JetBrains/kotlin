@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/Int|
+    Element 9
+        Context receivers:
+            FirValueParameterSymbol R|kotlin/String|
+                Type: kotlin.String
+                Label: String
+    Element 10
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionContextReceiver3.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        context([ResolvedTo(BODY_RESOLVE)] R|kotlin/String|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            [ResolvedTo(BODY_RESOLVE)] lval d: R|kotlin/Double| = Double(1.0)
+        }
+
+    }

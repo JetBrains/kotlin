@@ -1,0 +1,46 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/Boolean|
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|kotlin/Any|
+                Type: kotlin.Int
+                Label: Any
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol R|kotlin/Any|
+    Types:
+        kotlin.Int
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] contextReceiverSmartCast.kt
+    context([ResolvedTo(CONTRACTS)] R|kotlin/Int|)
+    public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/Any|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            (this@R|context of /foo| is R|kotlin/Int|) ->  {
+                R|/bar|()
+            }
+        }
+
+        R|/bar|()
+    }
