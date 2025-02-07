@@ -1154,7 +1154,7 @@ class Fir2IrVisitor(
         // To generate a proper assignment, the block may want to save `r` to a separate variable
         val operationReceiverReceiver = statements
             .findIsInstanceAnd<FirProperty> { it.name == SpecialNames.RECEIVER || it.name == SpecialNames.ARRAY }?.initializer
-            ?: (operationReceiver as? FirQualifiedAccessExpression)?.explicitReceiver
+            ?: operationReceiver.explicitReceiver
 
         // If `operationReceiver` is an array access, let's ignore its `<indexN>` arguments and
         // later manually convert them and put into the ir expression
