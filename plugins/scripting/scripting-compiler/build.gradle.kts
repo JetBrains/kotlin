@@ -35,7 +35,9 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
-    testApi(projectTests(":compiler:tests-common")) // TODO: drop this, it's based on JUnit4
+    testApi(projectTests(":compiler:tests-common")) { // TODO: drop this, it's based on JUnit4
+        exclude(group = "com.nordstrom.tools", module = "junit-foundation")
+    }
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
