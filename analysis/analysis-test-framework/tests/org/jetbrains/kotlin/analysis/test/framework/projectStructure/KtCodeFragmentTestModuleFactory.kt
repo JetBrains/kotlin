@@ -6,19 +6,14 @@
 package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.explicitModule
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValue
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
-import org.jetbrains.kotlin.psi.KtBlockCodeFragment
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTypeCodeFragment
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -62,8 +57,7 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
             error("Imports cannot be configured for type code fragments")
         }
 
-        val contextElement = contextModule.files
-            .filterIsInstance<KtFile>()
+        val contextElement = contextModule.ktFiles
             .firstNotNullOfOrNull { findContextElement(it, testServices) }
 
         val codeFragment = when (codeFragmentKind) {

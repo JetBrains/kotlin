@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
-import java.util.Collections
-import java.util.NoSuchElementException
-import kotlin.jvm.Throws
+import java.util.*
 import kotlin.reflect.KClass
 
 internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
@@ -214,7 +212,7 @@ class ExpressionMarkerProvider : TestService {
         qualifier: String = "",
     ): Collection<Pair<T, PsiFile>> {
         return testServices.ktTestModuleStructure.mainModules
-            .flatMap { getBottommostElementsOfTypeAtCarets<T>(it.files, qualifier) }
+            .flatMap { getBottommostElementsOfTypeAtCarets<T>(it.psiFiles, qualifier) }
     }
 
     /**

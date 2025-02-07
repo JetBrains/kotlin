@@ -27,7 +27,7 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
         get() = super.additionalDirectives + listOf(Directives)
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
-        val psiFile = mainFile ?: mainModule.files.first()
+        val psiFile = mainFile ?: mainModule.psiFiles.first()
         val classId = testServices.moduleStructure.allDirectives.singleValue(Directives.CLASS_ID).let(ClassId::fromString)
         val resolveSession = LLFirResolveSessionService.getInstance(psiFile.project).getFirResolveSession(mainModule.ktModule)
         val classDeclaration = findRegularClass(classId, mainModule.ktModule, resolveSession).findPsi(mainModule.ktModule.contentScope) as KtClassOrObject
