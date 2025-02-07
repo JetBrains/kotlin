@@ -79,81 +79,46 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
                 type = annotationClass.defaultType,
                 constructorSymbol = annotationConstructor.symbol
             ).also {
-                it.putValueArgument(
-                    0,
-                    IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType, true)
-                )
-                it.putValueArgument(
-                    1,
-                    IrConstImpl.byte(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.byteType, 1)
-                )
-                it.putValueArgument(
-                    2,
-                    IrConstImpl.char(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.charType, 'c')
-                )
-                it.putValueArgument(
-                    3,
-                    IrConstImpl.double(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.doubleType, 4.2)
-                )
-                it.putValueArgument(
-                    4,
-                    IrConstImpl.float(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.floatType, 2.4f)
-                )
-                it.putValueArgument(
-                    5,
-                    IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, 42)
-                )
-                it.putValueArgument(
-                    6,
-                    IrConstImpl.long(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.longType, 24L)
-                )
-                it.putValueArgument(
-                    7,
-                    IrConstImpl.short(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.shortType, 7)
-                )
-                it.putValueArgument(
-                    8,
-                    IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "OK")
-                )
-                it.putValueArgument(
-                    9,
-                    IrVarargImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        context.irBuiltIns.arrayClass.typeWith(arrayAnnotationClass.defaultType),
-                        arrayAnnotationClass.defaultType,
-                        0.rangeTo(2).map { i ->
-                            IrConstructorCallImpl.fromSymbolOwner(
+                it.arguments[0] = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType, true)
+                it.arguments[1] = IrConstImpl.byte(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.byteType, 1)
+                it.arguments[2] = IrConstImpl.char(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.charType, 'c')
+                it.arguments[3] = IrConstImpl.double(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.doubleType, 4.2)
+                it.arguments[4] = IrConstImpl.float(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.floatType, 2.4f)
+                it.arguments[5] = IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, 42)
+                it.arguments[6] = IrConstImpl.long(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.longType, 24L)
+                it.arguments[7] = IrConstImpl.short(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.shortType, 7)
+                it.arguments[8] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "OK")
+                it.arguments[9] = IrVarargImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    context.irBuiltIns.arrayClass.typeWith(arrayAnnotationClass.defaultType),
+                    arrayAnnotationClass.defaultType,
+                    0.rangeTo(2).map { i ->
+                        IrConstructorCallImpl.fromSymbolOwner(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            arrayAnnotationClass.defaultType,
+                            arrayAnnotationClass.constructors.first()
+                        ).apply {
+                            arguments[0] = IrVarargImpl(
                                 UNDEFINED_OFFSET,
                                 UNDEFINED_OFFSET,
-                                arrayAnnotationClass.defaultType,
-                                arrayAnnotationClass.constructors.first()
-                            ).apply {
-                                putValueArgument(
-                                    0,
-                                    IrVarargImpl(
+                                context.irBuiltIns.arrayClass.typeWith(simpleAnnotationClass.defaultType),
+                                simpleAnnotationClass.defaultType,
+                                0.rangeUntil(i).map { j ->
+                                    IrConstructorCallImpl.fromSymbolOwner(
                                         UNDEFINED_OFFSET,
                                         UNDEFINED_OFFSET,
-                                        context.irBuiltIns.arrayClass.typeWith(simpleAnnotationClass.defaultType),
                                         simpleAnnotationClass.defaultType,
-                                        0.rangeUntil(i).map { j ->
-                                            IrConstructorCallImpl.fromSymbolOwner(
-                                                UNDEFINED_OFFSET,
-                                                UNDEFINED_OFFSET,
-                                                simpleAnnotationClass.defaultType,
-                                                simpleAnnotationClass.constructors.first()
-                                            ).apply {
-                                                putValueArgument(
-                                                    0,
-                                                    IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, i + j)
-                                                )
-                                            }
-                                        }
-                                    )
-                                )
-                            }
+                                        simpleAnnotationClass.constructors.first()
+                                    ).apply {
+                                        arguments[0] =
+                                            IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, i + j)
+                                    }
+                                }
+                            )
                         }
-                    )
+                    }
                 )
             }
             context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(declaration, annotationCall)
