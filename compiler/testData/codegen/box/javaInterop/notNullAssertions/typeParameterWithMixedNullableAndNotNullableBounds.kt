@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM, JVM_IR
-
-// Note: This fails on non-FIR because of KT-45903 (missing not-null assertion on argument).
+// IGNORE_BACKEND_K1: JVM_IR
+// Note: This fails on K1 because of KT-45903 (missing not-null assertion on argument).
 
 // FILE: typeParameterWithMixedNullableAndNotNullableBounds.kt
 fun <T> f(x: T): Int where T : CharSequence?, T : Comparable<T> {
