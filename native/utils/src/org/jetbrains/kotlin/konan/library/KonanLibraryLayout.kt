@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
 import org.jetbrains.kotlin.library.KotlinLibraryLayout
 import org.jetbrains.kotlin.library.MetadataKotlinLibraryLayout
 
+const val KLIB_TARGETS_FOLDER_NAME = "targets"
+
 interface TargetedKotlinLibraryLayout : KotlinLibraryLayout {
     val target: KonanTarget?
         // This is a default implementation. Can't make it an assignment.
         get() = null
     val targetsDir
-        get() = File(componentDir, "targets")
+        get() = File(componentDir, KLIB_TARGETS_FOLDER_NAME)
     val targetDir
         get() = File(targetsDir, target!!.visibleName)
     val includedDir

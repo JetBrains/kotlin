@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.file.File
 
 const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_MODULE_METADATA_FILE_NAME = "module"
+const val KLIB_METADATA_FOLDER_NAME = "linkdata"
 const val KLIB_IR_FOLDER_NAME = "ir"
 
 /**
@@ -42,7 +43,7 @@ interface KotlinLibraryLayout {
 
 interface MetadataKotlinLibraryLayout : KotlinLibraryLayout {
     val metadataDir
-        get() = File(componentDir, "linkdata")
+        get() = File(componentDir, KLIB_METADATA_FOLDER_NAME)
     val moduleHeaderFile
         get() = File(metadataDir, KLIB_MODULE_METADATA_FILE_NAME)
 
@@ -57,25 +58,35 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     val irDir
         get() = File(componentDir, KLIB_IR_FOLDER_NAME)
     val irDeclarations
-        get() = File(irDir, "irDeclarations.knd")
+        get() = File(irDir, IR_DECLARATIONS_FILE_NAME)
     val irTypes
-        get() = File(irDir, "types.knt")
+        get() = File(irDir, IR_TYPES_FILE_NAME)
     val irSignatures
-        get() = File(irDir, "signatures.knt")
+        get() = File(irDir, IR_SIGNATURES_FILE_NAME)
     val irStrings
-        get() = File(irDir, "strings.knt")
+        get() = File(irDir, IR_STRINGS_FILE_NAME)
     val irBodies
-        get() = File(irDir, "bodies.knb")
+        get() = File(irDir, IR_BODIES_FILE_NAME)
     val irFiles
-        get() = File(irDir, "files.knf")
+        get() = File(irDir, IR_FILES_FILE_NAME)
     val irDebugInfo
-        get() = File(irDir, "debugInfo.knd")
+        get() = File(irDir, IR_DEBUG_INFO_FILE_NAME)
 
-    fun irDeclarations(file: File): File = File(file, "irDeclarations.knd")
-    fun irTypes(file: File): File = File(file, "types.knt")
-    fun irSignatures(file: File): File = File(file, "signatures.knt")
-    fun irStrings(file: File): File = File(file, "strings.knt")
-    fun irBodies(file: File): File = File(file, "body.knb")
-    fun irFile(file: File): File = File(file, "file.knf")
-    fun irDebugInfo(file: File): File = File(file, "debugInfo.knd")
+    fun irDeclarations(file: File): File = File(file, IR_DECLARATIONS_FILE_NAME)
+    fun irTypes(file: File): File = File(file, IR_TYPES_FILE_NAME)
+    fun irSignatures(file: File): File = File(file, IR_SIGNATURES_FILE_NAME)
+    fun irStrings(file: File): File = File(file, IR_STRINGS_FILE_NAME)
+    fun irBodies(file: File): File = File(file, IR_BODIES_FILE_NAME)
+    fun irFile(file: File): File = File(file, IR_FILES_FILE_NAME)
+    fun irDebugInfo(file: File): File = File(file, IR_DEBUG_INFO_FILE_NAME)
+
+    companion object {
+        const val IR_DECLARATIONS_FILE_NAME = "irDeclarations.knd"
+        const val IR_TYPES_FILE_NAME = "types.knt"
+        const val IR_SIGNATURES_FILE_NAME = "signatures.knt"
+        const val IR_STRINGS_FILE_NAME = "strings.knt"
+        const val IR_BODIES_FILE_NAME = "bodies.knb"
+        const val IR_FILES_FILE_NAME = "files.knf"
+        const val IR_DEBUG_INFO_FILE_NAME = "debugInfo.knd"
+    }
 }
