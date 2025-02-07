@@ -1,6 +1,5 @@
 // ISSUE: KT-68718 [JVM] Generic function is instantiated with wrong type argument
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 fun <T: UInt> testUInt1(arg: T): Int = arg.toInt()
 

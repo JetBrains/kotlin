@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 private fun interface Listener {
     fun onChanged(): String
 }

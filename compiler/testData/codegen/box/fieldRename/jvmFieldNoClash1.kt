@@ -1,11 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
-// In the old JVM backend, FieldOwnerContext is sensitive to the order of properties which it invents name for. Companion object properties
-// are usually the first, so A.Companion.x here gets the name "x". After that it tries to invent a new name for A.x but fails because
-// @JvmField-annotated properties cannot be renamed, which leads to a JVM declaration clash error.
-// IGNORE_BACKEND: JVM
-
 class A {
     @JvmField
     val x = "outer"

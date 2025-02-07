@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM
-// See KT-38107
-// The JVM backend is missing support for custom parcelers in List<String>
 // WITH_STDLIB
 
 @file:JvmName("TestKt")

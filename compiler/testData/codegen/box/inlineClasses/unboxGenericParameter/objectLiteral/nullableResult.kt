@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 
 fun <T> foo(a: Result<T>?): T? = bar(a, object : IFace<Result<T>, T> {
     override fun call(ic: Result<T>?): T? = ic?.getOrThrow()

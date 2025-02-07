@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
-// IGNORE_BACKEND: JVM
 // FILE: 1.kt
 
 fun interface F {

@@ -2,7 +2,6 @@
 // It's important that this test depends on _mock JDK_, which doesn't have ElementType.TYPE_USE.
 
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 import kotlin.annotation.AnnotationTarget.*

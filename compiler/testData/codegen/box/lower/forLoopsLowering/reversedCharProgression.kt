@@ -1,7 +1,3 @@
-// java.lang.AssertionError: AFTER mandatory stack transformations: incorrect bytecode
-//     at org.jetbrains.kotlin.codegen.optimization.MethodVerifier.transform(MethodVerifier.kt:30)
-// IGNORE_BACKEND: JVM
-
 // WITH_STDLIB
 // FILECHECK_STAGE: CStubs
 import kotlin.test.*

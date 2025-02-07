@@ -2,7 +2,6 @@
 // FIR_IDENTICAL
 // LANGUAGE: +GenericInlineClassParameter
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
-// IGNORE_BACKEND: JVM
 
 inline class ICStr(val value: String)
 inline class ICIStr<T : ICStr>(val value: T)

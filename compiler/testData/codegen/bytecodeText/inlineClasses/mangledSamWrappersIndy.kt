@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +InlineClasses
 // LAMBDAS: INDY
 

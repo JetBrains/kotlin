@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM
-// See KT-38106
-// This feature regressed with the fix for KT-22576
 // WITH_STDLIB
 
 @file:JvmName("TestKt")

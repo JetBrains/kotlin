@@ -1,6 +1,4 @@
 // SAM_CONVERSIONS: CLASS
-// This optimization is only done by the JVM_IR backend.
-// IGNORE_BACKEND: JVM
 // FILE: JFoo.java
 
 public class JFoo {

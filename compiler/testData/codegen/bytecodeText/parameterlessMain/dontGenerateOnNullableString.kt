@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // KT-34338
 
 fun main() {

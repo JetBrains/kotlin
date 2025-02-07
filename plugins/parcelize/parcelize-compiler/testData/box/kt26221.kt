@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-// Fails with a VerifyError in Foo.writeToParcel
 // WITH_STDLIB
 
 @file:JvmName("TestKt")

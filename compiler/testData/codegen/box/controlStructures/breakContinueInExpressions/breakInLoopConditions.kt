@@ -1,6 +1,3 @@
-// See: https://youtrack.jetbrains.com/issue/KT-45319
-// IGNORE_BACKEND: JVM
-
 fun breakInDoWhileCondition(): String {
     var i = 0
     while (true) {

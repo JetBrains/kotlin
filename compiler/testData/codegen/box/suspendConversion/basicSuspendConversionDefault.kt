@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo1(f: suspend () -> String) {}

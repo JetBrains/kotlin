@@ -1,5 +1,3 @@
-// KT-14961
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 fun listOfFactor(number: Int): List<Int> {

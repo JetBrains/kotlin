@@ -1,5 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM, WASM
+// IGNORE_BACKEND: WASM
+
 interface I<T> {
     fun foo(x: T): Any?
 }

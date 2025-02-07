@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // JVM_DEFAULT_MODE: enable
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // JVM_TARGET: 1.8
 
 import kotlin.coroutines.*

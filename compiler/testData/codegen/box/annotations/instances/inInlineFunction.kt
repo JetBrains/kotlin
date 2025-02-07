@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JVM
 // IGNORE_DEXING
-
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
 
