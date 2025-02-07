@@ -438,13 +438,13 @@ class Fir2IrDeclarationStorage(
     fun <T : IrFunction> T.putParametersInScope(function: FirFunction): T {
         val contextParameters = function.contextParametersForFunctionOrContainingProperty()
 
-        for ((firParameter, irParameter) in contextParameters.zip(this.valueParameters.take(contextParameters.size))) {
+        for ((firParameter, irParameter) in contextParameters.zip(this.parameters.filter { it.kind == IrParameterKind.Context })) {
             if (!firParameter.isLegacyContextReceiver()) {
                 localStorage.putParameter(firParameter, irParameter.symbol)
             }
         }
 
-        for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters.drop(contextParameters.size))) {
+        for ((firParameter, irParameter) in function.valueParameters.zip(parameters.filter { it.kind == IrParameterKind.Regular })) {
             localStorage.putParameter(firParameter, irParameter.symbol)
         }
         return this
