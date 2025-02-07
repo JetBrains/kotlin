@@ -1,0 +1,96 @@
+element: context(String) fun(p: Int) {
+        val d: Double = 1.0
+    }
+implicit receivers:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 3
+    packages: 6
+      KaPackageSymbol:
+        fqName: META-INF
+        location: TOP_LEVEL
+        origin: SOURCE
+      KaPackageSymbol:
+        fqName: java
+        location: TOP_LEVEL
+        origin: SOURCE
+      KaPackageSymbol:
+        fqName: javax
+        location: TOP_LEVEL
+        origin: SOURCE
+      KaPackageSymbol:
+        fqName: kotlin
+        location: TOP_LEVEL
+        origin: SOURCE
+      KaPackageSymbol:
+        fqName: org
+        location: TOP_LEVEL
+        origin: SOURCE
+      KaPackageSymbol:
+        fqName: sun
+        location: TOP_LEVEL
+        origin: SOURCE
+    classifiers: 0
+    callables: 1
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: /foo
+        compilerVisibility: Public
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: foo
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 7

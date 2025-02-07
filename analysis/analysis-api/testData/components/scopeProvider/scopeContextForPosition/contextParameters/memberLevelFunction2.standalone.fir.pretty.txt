@@ -1,0 +1,77 @@
+element: val x = 1
+implicit receivers:
+  type: kotlin.String
+  owner symbol: KaFirNamedFunctionSymbol
+
+  type: one.B
+  owner symbol: KaFirNamedClassSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 1
+      companion object
+    callables: 8
+      fun plus(other: kotlin.Any?): kotlin.String
+      fun get(index: kotlin.Int): kotlin.Char
+      fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence
+      fun compareTo(other: kotlin.String): kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun toString(): kotlin.String
+      val length: kotlin.Int
+      fun hashCode(): kotlin.Int
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 2
+      b: one.B
+      p: kotlin.Boolean
+    constructors: 0
+
+  TypeScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 4
+      context(b@one.B, `<unused var>`@kotlin.Int)
+      fun kotlin.String.foo(p: kotlin.Boolean)
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 6
+    packages: 0
+    classifiers: 2
+      class A
+      class B
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 7
+
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 10
+

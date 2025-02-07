@@ -1,0 +1,70 @@
+element: Unit
+implicit receivers:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 1
+      val d: D
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 2
+      a: T
+      action: context(D) (context(B) C.() -> kotlin.Unit) -> kotlin.Unit
+    constructors: 0
+
+  TypeParameterScope, index = 4
+    packages: 0
+    classifiers: 1
+      T
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 6
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 6
+      interface BaseA
+      interface Another
+      class A : BaseA, Another
+      class B
+      class C
+      class D
+    callables: 2
+      context(`<unused var>`@A, `<unused var>`@B, `<unused var>`@C, `<unused var>`@D)
+      fun check()
+      context(a@T)
+      fun <T : Another?> usage(action: context(D) (context(B) C.() -> kotlin.Unit) -> kotlin.Unit)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 7
+
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 10

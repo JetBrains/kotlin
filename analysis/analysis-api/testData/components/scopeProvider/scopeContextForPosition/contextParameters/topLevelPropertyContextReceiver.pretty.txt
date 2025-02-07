@@ -1,0 +1,34 @@
+element: context(a: A, _: Int)
+val foo: Unit
+    get() {
+        val x = 1
+}
+implicit receivers:
+scopes:
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 1
+    packages: 0
+    classifiers: 1
+      class A
+    callables: 1
+      context(a@one.A, `<unused var>`@kotlin.Int)
+      val foo: kotlin.Unit
+        get()
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 5
