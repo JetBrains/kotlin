@@ -2338,6 +2338,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public void testSmartCastedContextParameterFromFunction() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/smartCastedContextParameterFromFunction.kt");
     }
+
+    @Test
+    @TestMetadata("smartCastedContextParameterFromFunction2.kt")
+    public void testSmartCastedContextParameterFromFunction2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/smartCastedContextParameterFromFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastedContextParameterWithImplicitInvoke.kt")
+    public void testSmartCastedContextParameterWithImplicitInvoke() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/contextParameters/smartCastedContextParameterWithImplicitInvoke.kt");
+    }
   }
 
   @Nested

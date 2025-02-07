@@ -1,0 +1,4 @@
+KtNameReferenceExpression(97,100): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) context(`<unused var>`@A)
+    fun foo()
