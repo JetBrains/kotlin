@@ -1,9 +1,4 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // KT-66094: java.lang.InstantiationError: Foo
-// DONT_TARGET_EXACT_BACKEND: JVM
 // WITH_STDLIB
 
 // FILE: 1.kt

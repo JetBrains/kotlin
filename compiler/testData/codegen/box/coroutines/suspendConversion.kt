@@ -1,9 +1,4 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // KT-66095: java.lang.ClassCastException: SuspendConversionKt$box$f$1 cannot be cast to kotlin.jvm.functions.Function1
-// DONT_TARGET_EXACT_BACKEND: JVM
 // WITH_STDLIB
 // WITH_COROUTINES
 

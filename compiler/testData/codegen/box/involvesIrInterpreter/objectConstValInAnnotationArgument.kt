@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 annotation class Key(val value: String)
 
 object Messanger {

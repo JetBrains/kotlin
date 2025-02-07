@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
-
 // MODULE: lib
 // FILE: lib.kt
 

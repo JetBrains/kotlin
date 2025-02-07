@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 // WITH_STDLIB
 fun <T> T.id() = this
 

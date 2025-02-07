@@ -1,10 +1,6 @@
 // LANGUAGE: +KotlinFunInterfaceConstructorReference
-
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
-
-// DONT_TARGET_EXACT_BACKEND: JVM
-//  ^ old JVM BE generates bogus code
 
 // FILE: funInterfaceConstructorThrowsNpe.kt
 
