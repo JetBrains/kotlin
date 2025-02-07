@@ -132,37 +132,14 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
 
         with(TypeConverter(irFunction, firFunction)) {
-            with(firFunction) {
-                replaceReturnTypeRef(irFunction.returnType.toConeType().toFirResolvedTypeRef())
-                val valueParameters = irFunction.valueParameters.map {
-                    buildValueParameter {
-                        moduleData = session.moduleData
-                        origin = GeneratedForMetadata.origin
-                        returnTypeRef = it.type.toConeType().toFirResolvedTypeRef()
-                        name = it.name
-                        symbol = FirValueParameterSymbol(name)
-                        if (it.defaultValue != null) {
-                            defaultValue = buildExpressionStub {
-                                coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
-                            }
-                        }
-                        containingDeclarationSymbol = firFunction.symbol
-                        isCrossinline = it.isCrossinline
-                        isNoinline = it.isNoinline
-                        isVararg = it.isVararg
-                        annotations.addAll(it.convertAnnotations())
-                        resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    }
-                }
-                replaceValueParameters(valueParameters)
+            updateFunctionCommon(firFunction, irFunction)
 
+            with(firFunction) {
                 for ((firParameter, irParameter) in typeParameters.zip(irFunction.typeParameters)) {
                     val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
                     firParameter.replaceBounds(newBounds)
                     firParameter.replaceAnnotations(irParameter.convertAnnotations())
                 }
-
-                replaceAnnotations(irFunction.convertAnnotations())
             }
         }
 
@@ -197,37 +174,67 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
 
         with(TypeConverter(irConstructor, firConstructor)) {
-            with(firConstructor) {
-                replaceReturnTypeRef(irConstructor.returnType.toConeType().toFirResolvedTypeRef())
-                val valueParameters = irConstructor.valueParameters.map {
-                    buildValueParameter {
-                        moduleData = session.moduleData
-                        origin = GeneratedForMetadata.origin
-                        returnTypeRef = it.type.toConeType().toFirResolvedTypeRef()
-                        name = it.name
-                        symbol = FirValueParameterSymbol(name)
-                        if (it.defaultValue != null) {
-                            defaultValue = buildExpressionStub {
-                                coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
-                            }
-                        }
-                        containingDeclarationSymbol = firConstructor.symbol
-                        isCrossinline = it.isCrossinline
-                        isNoinline = it.isNoinline
-                        isVararg = it.isVararg
-                        annotations.addAll(it.convertAnnotations())
-                        resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    }
-                }
-                replaceValueParameters(valueParameters)
-                replaceAnnotations(irConstructor.convertAnnotations())
-                containingClassForStaticMemberAttr = constructedClass.symbol.toLookupTag()
-            }
+            updateFunctionCommon(firConstructor, irConstructor)
+            firConstructor.containingClassForStaticMemberAttr = constructedClass.symbol.toLookupTag()
         }
 
         session.providedDeclarationsForMetadataService.registerDeclaration(firConstructor)
 
         irConstructor.metadata = FirMetadataSource.Function(firConstructor)
+    }
+
+    private fun TypeConverter.updateFunctionCommon(firFunction: FirFunction, irFunction: IrFunction) = with(firFunction) {
+        replaceReturnTypeRef(irFunction.returnType.toConeType().toFirResolvedTypeRef())
+        val contextParameters = mutableListOf<FirValueParameter>()
+        val valueParameters = mutableListOf<FirValueParameter>()
+
+        for (parameter in irFunction.parameters) {
+            when (parameter.kind) {
+                IrParameterKind.DispatchReceiver -> {} // dispatch receiver is handled separately
+                IrParameterKind.ExtensionReceiver -> {
+                    replaceReceiverParameter(buildReceiverParameter {
+                        moduleData = session.moduleData
+                        origin = GeneratedForMetadata.origin
+                        symbol = FirReceiverParameterSymbol()
+                        typeRef = parameter.type.toConeType().toFirResolvedTypeRef()
+                        containingDeclarationSymbol = firFunction.symbol
+                        annotations.addAll(parameter.convertAnnotations())
+                    })
+                }
+                IrParameterKind.Regular, IrParameterKind.Context -> {
+                    val isContext = parameter.kind == IrParameterKind.Context
+                    buildValueParameter {
+                        moduleData = session.moduleData
+                        origin = GeneratedForMetadata.origin
+                        returnTypeRef = parameter.type.toConeType().toFirResolvedTypeRef()
+                        name = parameter.name
+                        symbol = FirValueParameterSymbol(name)
+                        if (parameter.defaultValue != null) {
+                            defaultValue = buildExpressionStub {
+                                coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
+                            }
+                        }
+                        containingDeclarationSymbol = firFunction.symbol
+                        isCrossinline = parameter.isCrossinline
+                        isNoinline = parameter.isNoinline
+                        isVararg = parameter.isVararg
+                        annotations.addAll(parameter.convertAnnotations())
+                        resolvePhase = FirResolvePhase.BODY_RESOLVE
+                        valueParameterKind = if (isContext) FirValueParameterKind.ContextParameter else FirValueParameterKind.Regular
+                    }.also {
+                        if (isContext) {
+                            contextParameters += it
+                        } else {
+                            valueParameters += it
+                        }
+                    }
+                }
+            }
+        }
+
+        replaceValueParameters(valueParameters)
+        replaceContextParameters(contextParameters)
+        replaceAnnotations(irFunction.convertAnnotations())
     }
 
     fun createAdditionalMetadataProvider(): FirAdditionalMetadataProvider {
@@ -418,11 +425,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 .constructClassType()
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
-                for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {
-                    val argName = this@toFirAnnotation.symbol.owner.valueParameters[i].name
-                    this@toFirAnnotation.getValueArgument(i)?.let { argument ->
-                        this.mapping[argName] = argument.toFirExpression()
-                    }
+                for ((i, argument) in this@toFirAnnotation.arguments.withIndex()) {
+                    if (argument == null) continue
+                    val argName = this@toFirAnnotation.symbol.owner.parameters[i].name
+                    this.mapping[argName] = argument.toFirExpression()
                 }
             }
         }

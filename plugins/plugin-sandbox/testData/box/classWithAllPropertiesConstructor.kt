@@ -3,7 +3,6 @@
 // WITH_REFLECT
 // FULL_JDK
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K2: ANY
 
 // MODULE: a
 import org.jetbrains.kotlin.plugin.sandbox.AllPropertiesConstructor

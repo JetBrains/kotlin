@@ -187,12 +187,17 @@ FILE fqName:<root> fileName:/Derived.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hasExtension visibility:public modality:FINAL <> ($this:<root>.Base, <this>:<root>.Base, <receiver>:kotlin.String) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:hasContext visibility:public modality:FINAL <> ($this:<root>.Base, <unused var>:kotlin.String) returnType:kotlin.Unit [fake_override]
       overridden:
-        public final fun hasExtension (<this>: <root>.Base, <receiver>: kotlin.String): kotlin.Unit declared in <root>.Base
+        public final fun hasContext (<unused var>: kotlin.String): kotlin.Unit declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:<root>.Base
-      VALUE_PARAMETER name:<this> index:0 type:<root>.Base
-      VALUE_PARAMETER name:<receiver> index:1 type:kotlin.String
+      contextReceiverParametersCount: 1
+      VALUE_PARAMETER name:<unused var> index:0 type:kotlin.String
+    FUN FAKE_OVERRIDE name:hasExtension visibility:public modality:FINAL <> ($this:<root>.Base, $receiver:kotlin.String) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public final fun hasExtension (): kotlin.Unit declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:<root>.Base
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Base
@@ -201,10 +206,6 @@ FILE fqName:<root> fileName:/Derived.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Base
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:hasExtension visibility:public modality:FINAL <> (<this>:<root>.Derived, <receiver>:kotlin.String) returnType:kotlin.Unit
-      VALUE_PARAMETER name:<this> index:0 type:<root>.Derived
-      VALUE_PARAMETER name:<receiver> index:1 type:kotlin.String
-      BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final a: <root>.A declared in <root>.Base
@@ -253,6 +254,28 @@ FILE fqName:<root> fileName:/main.kt
               s: CONST String type=kotlin.String value="b"
             CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.C' type=<root>.C origin=null
               s: CONST String type=kotlin.String value="c"
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
+        <T>: @[FlexibleNullability] <root>.Derived?
+        <R>: kotlin.Unit
+        receiver: GET_VAR 'val derived: @[FlexibleNullability] <root>.Derived? declared in <root>.box' type=@[FlexibleNullability] <root>.Derived? origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<@[FlexibleNullability] <root>.Derived?, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:@[FlexibleNullability] <root>.Derived?) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:@[FlexibleNullability] <root>.Derived?
+            BLOCK_BODY
+              CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
+                <T>: kotlin.String
+                <R>: kotlin.Unit
+                receiver: CONST String type=kotlin.String value=""
+                block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Unit
+                    $receiver: VALUE_PARAMETER name:$this$with type:kotlin.String
+                    BLOCK_BODY
+                      CALL 'public final fun hasExtension (): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+                        $this: GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=IMPLICIT_ARGUMENT
+                        $receiver: GET_VAR '$this$with: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
+                      CALL 'public final fun hasContext (<unused var>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+                        $this: GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=IMPLICIT_ARGUMENT
+                        <unused var>: GET_VAR '$this$with: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         WHEN type=kotlin.String origin=IF
           BRANCH

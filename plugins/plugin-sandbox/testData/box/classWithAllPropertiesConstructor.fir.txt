@@ -59,8 +59,8 @@ FILE: main.kt
         lval derived: R|Derived!| = R|<local>/constructor|.R|SubstitutionOverride<java/lang/reflect/Constructor.newInstance: R|Derived!|>|(vararg(R|/A.A|(String(a)), R|/B.B|(String(b)), R|/C.C|(String(c))))
         R|kotlin/with|<R|Derived!|, R|kotlin/Unit|>(R|<local>/derived|, <L> = with@fun R|Derived!|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-                this@R|special/anonymous|.R|/Base.hasExtension|()
-                this@R|special/anonymous|.R|/Base.hasContext<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Base.hasContext>#|()
+                (this@R|special/anonymous|, this@R|special/anonymous|).R|/Base.hasExtension|()
+                this@R|special/anonymous|.R|/Base.hasContext|()
             }
             )
         }
