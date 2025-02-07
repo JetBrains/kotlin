@@ -108,7 +108,7 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   @Test
   @TestMetadata("protocols")
   public void testProtocols() {
-    runTest("native/swift/swift-export-standalone/testData/execution/protocols/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/protocols/");
   }
 
   @Test
