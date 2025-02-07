@@ -32,8 +32,8 @@ import java.io.File
 import java.util.*
 
 internal sealed class KlibToolCommand(
-        protected val output: KlibToolOutput,
-        protected val args: KlibToolArguments
+    protected val output: KlibToolOutput,
+    protected val args: KlibToolArguments,
 ) {
     abstract fun execute()
 
@@ -49,8 +49,10 @@ internal sealed class KlibToolCommand(
         if (this != null) {
             val supportedSignatureVersions = library.versions.irSignatureVersions
             if (this !in supportedSignatureVersions) {
-                output.logError("Signature version ${this.number} is not supported in library ${library.libraryFile}." +
-                        " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}")
+                output.logError(
+                    "Signature version ${this.number} is not supported in library ${library.libraryFile}." +
+                                        " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}"
+                )
                 return false
             }
         }
@@ -94,7 +96,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         }.sorted()
 
         val manifestProperties: SortedMap<String, String> = library.manifestProperties.entries
-                .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
+            .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
 
         output.appendLine("Full path: ${library.libraryFile.canonicalPath}")
         output.appendLine("Module name (metadata): ${metadataHeader.moduleName}")
@@ -125,9 +127,9 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
                     for (nativeTargetName in nativeTargets) {
                         val nativeTarget = KonanTarget.predefinedTargets[nativeTargetName] ?: continue
                         val targetedLibrary = createKonanLibrary(
-                                libraryFilePossiblyDenormalized = libraryFile,
-                                component = componentName,
-                                target = nativeTarget,
+                            libraryFilePossiblyDenormalized = libraryFile,
+                            component = componentName,
+                            target = nativeTarget,
                         )
 
                         return targetedLibrary.bitcodePaths.isNotEmpty()
@@ -184,8 +186,8 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
             val abiSignatureVersion = AbiSignatureVersion.resolveByVersionNumber(signatureVersion.number)
             if (!abiSignatureVersion.isSupportedByAbiReader) {
                 output.logError(
-                        "Signature version ${signatureVersion.number} is not supported by the KLIB ABI reader." +
-                                " Supported versions: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                    "Signature version ${signatureVersion.number} is not supported by the KLIB ABI reader." +
+                            " Supported versions: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
                 )
                 return
             }
@@ -193,19 +195,19 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
             abiSignatureVersion
         } ?: run {
             val versionsSupportedByAbiReader: Map<Int, AbiSignatureVersion> = AbiSignatureVersion.allSupportedByAbiReader
-                    .associateBy { it.versionNumber }
+                .associateBy { it.versionNumber }
 
             val abiSignatureVersion = library.versions.irSignatureVersions
-                    .map { it.number }
-                    .sortedDescending()
-                    .firstNotNullOfOrNull { versionsSupportedByAbiReader[it] }
+                .map { it.number }
+                .sortedDescending()
+                .firstNotNullOfOrNull { versionsSupportedByAbiReader[it] }
 
             if (abiSignatureVersion == null) {
                 output.logError(
-                        "There is no signature version that would be both supported in library ${library.libraryFile}" +
-                                " and by the KLIB ABI reader. Supported versions in the library:" +
-                                " ${library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
-                                ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                    "There is no signature version that would be both supported in library ${library.libraryFile}" +
+                            " and by the KLIB ABI reader. Supported versions in the library:" +
+                            " ${library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
+                            ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
                 )
                 return
             }
@@ -214,15 +216,15 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
         }
 
         LibraryAbiRenderer.render(
-                libraryAbi = LibraryAbiReader.readAbiInfo(File(library.libraryFile.absolutePath)),
-                output = output,
-                settings = AbiRenderingSettings(
-                        renderedSignatureVersion = abiSignatureVersion,
-                        renderManifest = false,
-                        renderDeclarations = true,
-                        indentationString = "    ",
+            libraryAbi = LibraryAbiReader.readAbiInfo(File(library.libraryFile.absolutePath)),
+            output = output,
+            settings = AbiRenderingSettings(
+                renderedSignatureVersion = abiSignatureVersion,
+                renderManifest = false,
+                renderDeclarations = true,
+                indentationString = "    ",
 
-                        )
+                )
         )
     }
 }

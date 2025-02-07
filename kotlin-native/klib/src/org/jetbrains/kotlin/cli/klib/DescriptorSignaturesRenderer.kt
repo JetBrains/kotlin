@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class DescriptorSignaturesRenderer(
-        private val output: Appendable,
-        private val individualSignatureRenderer: IdSignatureRenderer
+    private val output: Appendable,
+    private val individualSignatureRenderer: IdSignatureRenderer,
 ) {
     fun render(module: ModuleDescriptor) {
         val collector = SignatureCollector()
@@ -79,7 +79,8 @@ internal class DescriptorSignaturesRenderer(
             val isPrivate = when (descriptor.visibility) {
                 DescriptorVisibilities.PUBLIC,
                 DescriptorVisibilities.PROTECTED,
-                DescriptorVisibilities.INTERNAL -> false
+                DescriptorVisibilities.INTERNAL,
+                    -> false
                 else -> true
             }
 

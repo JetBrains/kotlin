@@ -25,16 +25,16 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as Pro
 
 internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
     data class Signatures(
-            val declaredSignatures: Set<IdSignature>,
-            val importedSignatures: Set<IdSignature>
+        val declaredSignatures: Set<IdSignature>,
+        val importedSignatures: Set<IdSignature>,
     )
 
     private val interner = IrInterningService()
 
     private inner class IrSignatureExtractorFromFile(
-            private val fileIndex: Int,
-            private val allKnownSignatures: MutableSet<IdSignature>,
-            private val ownDeclarationSignatures: OwnDeclarationSignatures
+        private val fileIndex: Int,
+        private val allKnownSignatures: MutableSet<IdSignature>,
+        private val ownDeclarationSignatures: OwnDeclarationSignatures,
     ) {
         private val fileProto = ProtoFile.parseFrom(library.file(fileIndex).codedInputStream, extensionRegistryLite)
         private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library, fileIndex))
@@ -44,9 +44,9 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
             val fileName = if (fileProto.hasFileEntry() && fileProto.fileEntry.hasName()) fileProto.fileEntry.name else "<unknown>"
 
             val fileSignature = IdSignature.FileSignature(
-                    id = Any(), // Just an unique object.
-                    fqName = FqName(packageFQN),
-                    fileName = fileName
+                id = Any(), // Just an unique object.
+                fqName = FqName(packageFQN),
+                fileName = fileName
             )
             IdSignatureDeserializer(fileReader, fileSignature, interner)
         }
@@ -57,7 +57,8 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
         }
 
         private fun collectAllKnownSignatures() {
-            val maxSignatureIndex = IrArrayMemoryReader(library.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
+            val maxSignatureIndex =
+                IrArrayMemoryReader(library.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
             (0..maxSignatureIndex).mapTo(allKnownSignatures, signatureDeserializer::deserializeIdSignature)
         }
 
@@ -120,15 +121,17 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
         }
 
         private fun ProtoDeclarationBase.isPrivate(): Boolean =
-                when (IrFlags.VISIBILITY.get(flags.toInt())) {
-                    ProtoBuf.Visibility.PUBLIC,
-                    ProtoBuf.Visibility.PROTECTED,
-                    ProtoBuf.Visibility.INTERNAL -> false
-                    ProtoBuf.Visibility.PRIVATE,
-                    ProtoBuf.Visibility.PRIVATE_TO_THIS,
-                    ProtoBuf.Visibility.LOCAL,
-                    null -> true
-                }
+            when (IrFlags.VISIBILITY.get(flags.toInt())) {
+                ProtoBuf.Visibility.PUBLIC,
+                ProtoBuf.Visibility.PROTECTED,
+                ProtoBuf.Visibility.INTERNAL,
+                    -> false
+                ProtoBuf.Visibility.PRIVATE,
+                ProtoBuf.Visibility.PRIVATE_TO_THIS,
+                ProtoBuf.Visibility.LOCAL,
+                null,
+                    -> true
+            }
     }
 
     fun extract(): Signatures {
@@ -156,8 +159,8 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
         }
 
         return Signatures(
-                declaredSignatures = ownDeclarationSignatures.entries.mapNotNullTo(hashSetOf()) { (signature, isPublic) -> signature.takeIf { isPublic } },
-                importedSignatures = importedSignatures
+            declaredSignatures = ownDeclarationSignatures.entries.mapNotNullTo(hashSetOf()) { (signature, isPublic) -> signature.takeIf { isPublic } },
+            importedSignatures = importedSignatures
         )
     }
 

@@ -20,43 +20,43 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal class KlibToolIrLinker(
-        output: KlibToolOutput,
-        module: ModuleDescriptor,
-        irBuiltIns: IrBuiltIns,
-        symbolTable: SymbolTable
+    output: KlibToolOutput,
+    module: ModuleDescriptor,
+    irBuiltIns: IrBuiltIns,
+    symbolTable: SymbolTable,
 ) : KotlinIrLinker(module, KlibToolLogger(output), irBuiltIns, symbolTable, exportedDependencies = emptyList()) {
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-            linker = this,
-            symbolTable = symbolTable,
-            mangler = KonanManglerIr,
-            typeSystem = IrTypeSystemContextImpl(builtIns),
-            friendModules = emptyMap(),
-            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
+        linker = this,
+        symbolTable = symbolTable,
+        mangler = KonanManglerIr,
+        typeSystem = IrTypeSystemContextImpl(builtIns),
+        friendModules = emptyMap(),
+        partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
     )
 
     override val returnUnboundSymbolsIfSignatureNotFound get() = true
 
     override fun createModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
-            klib: KotlinLibrary?,
-            strategyResolver: (String) -> DeserializationStrategy
+        moduleDescriptor: ModuleDescriptor,
+        klib: KotlinLibrary?,
+        strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer = KlibToolModuleDeserializer(
-            module = moduleDescriptor,
-            klib = klib ?: error("Expecting kotlin library for $moduleDescriptor"),
-            strategyResolver = strategyResolver
+        module = moduleDescriptor,
+        klib = klib ?: error("Expecting kotlin library for $moduleDescriptor"),
+        strategyResolver = strategyResolver
     )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor) = false
 
     private inner class KlibToolModuleDeserializer(
-            module: ModuleDescriptor,
-            klib: KotlinLibrary,
-            strategyResolver: (String) -> DeserializationStrategy
+        module: ModuleDescriptor,
+        klib: KotlinLibrary,
+        strategyResolver: (String) -> DeserializationStrategy,
     ) : BasicIrModuleDeserializer(
-            this,
-            module,
-            klib,
-            strategyResolver,
-            klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
+        this,
+        module,
+        klib,
+        strategyResolver,
+        klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
     )
 }
