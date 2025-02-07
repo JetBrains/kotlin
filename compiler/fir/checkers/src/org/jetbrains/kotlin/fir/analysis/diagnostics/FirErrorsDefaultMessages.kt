@@ -214,7 +214,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_DECLARATION_OF_ENUM_ENTRY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION
@@ -3012,7 +3012,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Ambiguous access to the 'entries' qualifier is deprecated. In the future, it will be shadowed by enum 'entries' property. Ambiguity can be resolved by renaming conflicting declaration."
         )
         map.put(
-            DEPRECATED_DECLARATION_OF_ENUM_ENTRY,
+            DECLARATION_OF_ENUM_ENTRY_ENTRIES,
             "Conflicting declarations: the enum entry 'entries' and the property 'Enum.entries' (KT-48872)."
         )
 

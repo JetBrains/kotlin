@@ -4718,10 +4718,15 @@ internal class DeprecatedAccessToEntriesAsQualifierImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecatedAccessToEntriesAsQualifier
 
-internal class DeprecatedDeclarationOfEnumEntryImpl(
+internal class DeclarationOfEnumEntryEntriesErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtEnumEntry>(firDiagnostic, token), KaFirDiagnostic.DeprecatedDeclarationOfEnumEntry
+) : KaAbstractFirDiagnostic<KtEnumEntry>(firDiagnostic, token), KaFirDiagnostic.DeclarationOfEnumEntryEntriesError
+
+internal class DeclarationOfEnumEntryEntriesWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtEnumEntry>(firDiagnostic, token), KaFirDiagnostic.DeclarationOfEnumEntryEntriesWarning
 
 internal class IncompatibleClassImpl(
     override val presentableString: String,

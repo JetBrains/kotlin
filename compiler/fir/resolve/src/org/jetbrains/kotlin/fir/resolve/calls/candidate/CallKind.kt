@@ -11,7 +11,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSyntheticProperties,
+        DiscriminateSyntheticAndForbiddenProperties,
         NoTypeArguments,
         InitializeEmptyArgumentMap,
         CreateFreshTypeVariableSubstitutorStage,
@@ -43,7 +43,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
     object Function : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSyntheticProperties,
+        DiscriminateSyntheticAndForbiddenProperties,
         MapArguments,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
@@ -86,7 +86,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
     object CallableReference : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSyntheticProperties,
+        DiscriminateSyntheticAndForbiddenProperties,
         NoTypeArguments,
         InitializeEmptyArgumentMap,
         CreateFreshTypeVariableSubstitutorStage,
@@ -135,7 +135,7 @@ class ResolutionSequenceBuilder(
     fun build(): CallKind {
         val stages = mutableListOf<ResolutionStage>().apply {
             if (checkVisibility) add(CheckVisibility)
-            if (discriminateSynthetics) add(DiscriminateSyntheticProperties)
+            if (discriminateSynthetics) add(DiscriminateSyntheticAndForbiddenProperties)
             if (checkArguments) add(MapArguments) else add(InitializeEmptyArgumentMap)
             if (mapTypeArguments) add(MapTypeArguments) else add(NoTypeArguments)
             if (checkArguments || checkDispatchReceiver || checkExtensionReceiver) add(CreateFreshTypeVariableSubstitutorStage)

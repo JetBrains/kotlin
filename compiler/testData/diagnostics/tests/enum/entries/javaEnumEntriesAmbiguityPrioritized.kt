@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // WITH_STDLIB
 // FIR_DUMP
 

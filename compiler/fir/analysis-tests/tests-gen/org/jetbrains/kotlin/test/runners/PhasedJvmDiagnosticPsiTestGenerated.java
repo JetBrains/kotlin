@@ -12514,6 +12514,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("enumEntriesAmbiguityForbidden.kt")
+        public void testEnumEntriesAmbiguityForbidden() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/enumEntriesAmbiguityForbidden.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntriesAmbiguityPrioritized.kt")
         public void testEnumEntriesAmbiguityPrioritized() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/enumEntriesAmbiguityPrioritized.kt");
@@ -12547,6 +12553,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         @TestMetadata("javaEnumEntriesAmbiguity.kt")
         public void testJavaEnumEntriesAmbiguity() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguity.kt");
+        }
+
+        @Test
+        @TestMetadata("javaEnumEntriesAmbiguityForbidden.kt")
+        public void testJavaEnumEntriesAmbiguityForbidden() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/javaEnumEntriesAmbiguityForbidden.kt");
         }
 
         @Test

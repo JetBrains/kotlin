@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
@@ -745,10 +746,16 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
     }
 }
 
-internal object DiscriminateSyntheticProperties : ResolutionStage() {
+internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        if (candidate.symbol is FirSimpleSyntheticPropertySymbol) {
+        val symbol = candidate.symbol
+        if (symbol is FirSimpleSyntheticPropertySymbol) {
             sink.reportDiagnostic(ResolvedWithSynthetic)
+        }
+        if (symbol is FirEnumEntrySymbol && symbol.name == StandardNames.ENUM_ENTRIES &&
+            context.session.languageVersionSettings.supportsFeature(LanguageFeature.ForbidEnumEntryNamedEntries)
+        ) {
+            sink.reportDiagnostic(ResolvedWithLowPriority)
         }
     }
 }

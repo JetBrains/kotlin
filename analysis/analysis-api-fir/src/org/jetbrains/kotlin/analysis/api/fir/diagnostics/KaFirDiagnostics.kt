@@ -3916,8 +3916,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeprecatedAccessToEntriesAsQualifier::class
     }
 
-    interface DeprecatedDeclarationOfEnumEntry : KaFirDiagnostic<KtEnumEntry> {
-        override val diagnosticClass get() = DeprecatedDeclarationOfEnumEntry::class
+    interface DeclarationOfEnumEntryEntriesError : KaFirDiagnostic<KtEnumEntry> {
+        override val diagnosticClass get() = DeclarationOfEnumEntryEntriesError::class
+    }
+
+    interface DeclarationOfEnumEntryEntriesWarning : KaFirDiagnostic<KtEnumEntry> {
+        override val diagnosticClass get() = DeclarationOfEnumEntryEntriesWarning::class
     }
 
     interface IncompatibleClass : KaFirDiagnostic<PsiElement> {

@@ -5624,8 +5624,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DEPRECATED_DECLARATION_OF_ENUM_ENTRY) { firDiagnostic ->
-        DeprecatedDeclarationOfEnumEntryImpl(
+    add(FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES.errorFactory) { firDiagnostic ->
+        DeclarationOfEnumEntryEntriesErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES.warningFactory) { firDiagnostic ->
+        DeclarationOfEnumEntryEntriesWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

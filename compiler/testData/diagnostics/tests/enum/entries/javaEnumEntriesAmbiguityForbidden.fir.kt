@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries +ForbidEnumEntryNamedEntries
 // WITH_STDLIB
 // FIR_DUMP
 
@@ -32,7 +31,7 @@ fun test(): String {
     val first = JEnumEntry.entries
     val second = JEnumStaticField.entries
 
-    val third = JEnumField::<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE!>entries<!>
+    val third = JEnumField::entries
 
     return "$first$second$third"
 }

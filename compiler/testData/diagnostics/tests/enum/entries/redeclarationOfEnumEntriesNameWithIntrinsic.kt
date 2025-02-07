@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -EnumEntries, -PrioritizedEnumEntries
+// LANGUAGE: -EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // WITH_STDLIB
 
 enum class E {
