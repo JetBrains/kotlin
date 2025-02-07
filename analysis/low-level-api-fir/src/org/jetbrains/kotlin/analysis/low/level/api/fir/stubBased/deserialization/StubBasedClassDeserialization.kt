@@ -267,7 +267,7 @@ internal fun deserializeClassToSymbol(
         replaceDeprecationsProvider(getDeprecationsProvider(session))
 
         setLazyPublishedVisibility(
-            hasPublishedApi = classOrObject.annotationEntries.any { context.annotationDeserializer.getAnnotationClassId(it) == StandardClassIds.Annotations.PublishedApi },
+            hasPublishedApi = classOrObject.annotationEntries.any { StubBasedAnnotationDeserializer.getAnnotationClassId(it) == StandardClassIds.Annotations.PublishedApi },
             parentProperty = null,
             session
         )
