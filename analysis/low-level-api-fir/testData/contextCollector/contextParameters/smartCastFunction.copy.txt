@@ -17,6 +17,9 @@ Tower Data Context:
                 FirValueParameterSymbol c: R|kotlin/Any|
                 FirValueParameterSymbol p: R|kotlin/Boolean|
     Element 7
+        Context parameters:
+            FirValueParameterSymbol c: R|kotlin/Any|
+                Type: kotlin.Int
     Element 8
         Scope: FirLocalScope
     Element 9

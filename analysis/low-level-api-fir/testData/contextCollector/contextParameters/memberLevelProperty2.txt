@@ -18,6 +18,11 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
     Element 8
+        Context parameters:
+            FirValueParameterSymbol b: R|one/B|
+                Type: one.B
+            FirValueParameterSymbol <unused var>: R|kotlin/Int|
+                Type: kotlin.Int
     Element 9
         Scope: FirLocalScope
 

@@ -22,6 +22,11 @@ Tower Data Context:
                 FirValueParameterSymbol b: R|one/B|
                 FirValueParameterSymbol p: R|kotlin/Boolean|
     Element 8
+        Context parameters:
+            FirValueParameterSymbol b: R|one/B|
+                Type: one.B
+            FirValueParameterSymbol <unused var>: R|kotlin/Int|
+                Type: kotlin.Int
     Element 9
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|

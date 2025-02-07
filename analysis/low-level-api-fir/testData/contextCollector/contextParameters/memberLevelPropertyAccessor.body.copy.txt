@@ -18,6 +18,11 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
     Element 8
+        Context parameters:
+            FirValueParameterSymbol a: R|one/A|
+                Type: one.A
+            FirValueParameterSymbol <unused var>: R|kotlin/Int|
+                Type: kotlin.Int
 
 FILE: [ResolvedTo(IMPORTS)] memberLevelPropertyAccessor.kt
     public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {

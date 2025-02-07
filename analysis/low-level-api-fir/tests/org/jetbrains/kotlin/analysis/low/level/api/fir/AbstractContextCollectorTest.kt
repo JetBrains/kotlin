@@ -126,6 +126,17 @@ internal object ElementContextRenderer {
                         }
                     }
 
+                    towerDataElement.contextParameterGroup?.takeIf { it.isNotEmpty() }?.let { contextParameterValues ->
+                        appendBlock("Context parameters:") {
+                            for (contextParameterValue in contextParameterValues) {
+                                appendSymbol(contextParameterValue.boundSymbol).appendLine()
+                                appendBlock {
+                                    append("Type: ").appendType(contextParameterValue.type).appendLine()
+                                }
+                            }
+                        }
+                    }
+
                     towerDataElement.staticScopeOwnerSymbol?.let { staticScopeOwnerSymbol ->
                         append("Static scope owner symbol: ").appendSymbol(staticScopeOwnerSymbol).appendLine()
                     }

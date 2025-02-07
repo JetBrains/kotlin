@@ -21,6 +21,9 @@ Tower Data Context:
                 FirValueParameterSymbol named: R|kotlin/String|
                 FirValueParameterSymbol p: R|kotlin/Int|
     Element 9
+        Context parameters:
+            FirValueParameterSymbol named: R|kotlin/String|
+                Type: kotlin.String
 
 FILE: [ResolvedTo(IMPORTS)] namedAnonymousFunction2.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
