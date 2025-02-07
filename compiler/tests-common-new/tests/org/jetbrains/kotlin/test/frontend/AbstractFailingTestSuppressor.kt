@@ -19,12 +19,7 @@ abstract class AbstractFailingTestSuppressor(testServices: TestServices) : After
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val failFile = testFile().parentFile.resolve("${testFile().nameWithoutExtension}.fail").takeIf { it.exists() }
             ?: return failedAssertions
-        val failReason = failFile.readText().trim()
-        if (hasFailure(failedAssertions) || failReason == INCONSISTENT_DIAGNOSTICS) return emptyList()
+        if (hasFailure(failedAssertions)) return emptyList()
         return failedAssertions + AssertionError("Fail file exists but no exception was thrown. Please remove ${failFile.name}").wrap()
-    }
-
-    companion object {
-        const val INCONSISTENT_DIAGNOSTICS = "INCONSISTENT_DIAGNOSTICS"
     }
 }
