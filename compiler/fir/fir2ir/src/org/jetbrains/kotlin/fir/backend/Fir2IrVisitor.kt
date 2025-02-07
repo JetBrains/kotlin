@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
@@ -530,6 +531,11 @@ class Fir2IrVisitor(
             irVariable.initializer =
                 convertToIrExpression(initializer)
                     .insertImplicitCast(initializer, initializer.resolvedType, variable.returnTypeRef.coneType)
+                    .also {
+                        if (irVariable.name == SpecialNames.WHEN_SUBJECT) {
+                            irVariable.type = it.type
+                        }
+                    }
         }
         annotationGenerator.generate(irVariable, variable)
         return irVariable
