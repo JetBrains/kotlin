@@ -1086,8 +1086,12 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties;
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedErrorGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedErrorGradleProperties;
+}
+
+public class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;)V
 	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
@@ -1116,9 +1120,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedResourcesResolutionStrategy : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedResourcesResolutionStrategy;
-	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedWarningGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedWarningGradleProperties;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DisabledCinteropsCommonizationInHmppProject : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
@@ -1406,11 +1409,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownAppleFrameworkBuildType : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownAppleFrameworkBuildType;
-	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownValueProvidedForResourcesStrategy : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$UnknownValueProvidedForResourcesStrategy;
 	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
@@ -2382,18 +2380,56 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTarget
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy : java/lang/Enum {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy$Companion;
-	public static final field ResourcesConfiguration Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public static final field VariantReselection Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public final fun getPropertyName ()Ljava/lang/String;
-	public final fun resourceArchives (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/gradle/api/file/FileCollection;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
+public class org/jetbrains/kotlin/gradle/plugin/performance/KotlinPerformancePlugin : org/gradle/api/Plugin {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/performance/KotlinPerformancePlugin$Companion;
+	public static final field EXTENSION_NAME Ljava/lang/String;
+	public static final field TASK_GROUP Ljava/lang/String;
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy$Companion {
-	public final fun fromProperty (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/resolve/KotlinTargetResourcesResolutionStrategy;
+public final class org/jetbrains/kotlin/gradle/plugin/performance/KotlinPerformancePlugin$Companion {
+}
+
+public class org/jetbrains/kotlin/gradle/plugin/performance/PerformanceExtension {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public final fun binary (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;)V
+	public final fun binary (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;Ljava/lang/String;)V
+	public static synthetic fun binary$default (Lorg/jetbrains/kotlin/gradle/plugin/performance/PerformanceExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;Ljava/lang/String;ILjava/lang/Object;)V
+	public final fun getBinaryNamesForReport ()Ljava/util/Map;
+	public final fun getIncludeAssociatedTasks ()Z
+	public final fun getMetrics ()Ljava/util/List;
+	public final fun getTrackedBinaries ()Ljava/util/List;
+	public final fun getVersion ()Ljava/lang/String;
+	public final fun setIncludeAssociatedTasks (Z)V
+	public final fun setMetrics (Ljava/util/List;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/performance/TaskTime {
+	public fun <init> (J)V
+	public final fun getDuration ()Ljava/lang/Double;
+	public final fun getStartTime ()J
+	public final fun setDuration (Ljava/lang/Double;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/performance/TaskTimerListener : org/gradle/api/execution/TaskExecutionListener {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/performance/TaskTimerListener$Companion;
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun afterExecute (Lorg/gradle/api/Task;Lorg/gradle/api/tasks/TaskState;)V
+	public fun beforeExecute (Lorg/gradle/api/Task;)V
+	public final fun getTasksTimes ()Ljava/util/concurrent/ConcurrentHashMap;
+	public final fun getTime (Ljava/lang/String;)D
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/performance/TaskTimerListener$Companion {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/performance/TrackableMetric : java/lang/Enum {
+	public static final field CODE_SIZE Lorg/jetbrains/kotlin/gradle/plugin/performance/TrackableMetric;
+	public static final field COMPILE_TIME Lorg/jetbrains/kotlin/gradle/plugin/performance/TrackableMetric;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/performance/TrackableMetric;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/performance/TrackableMetric;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/sources/AbstractKotlinSourceSet : org/jetbrains/kotlin/gradle/plugin/sources/InternalKotlinSourceSet {

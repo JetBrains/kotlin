@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolution
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.utils.prettyName
@@ -1183,31 +1183,6 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object UnknownValueProvidedForResourcesStrategy : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
-        operator fun invoke(value: String) = build {
-            title("Invalid Value Provided for 'kotlin.mpp.resourcesResolutionStrategy'")
-                .description {
-                    "Unknown value $value provided for kotlin.mpp.resourcesResolutionStrategy"
-                }
-                .solution {
-                    "Make sure 'kotlin.mpp.resourcesResolutionStrategy' is set to one of the supported values: " +
-                            "'${KotlinTargetResourcesResolutionStrategy.VariantReselection.propertyName}'"
-                }
-        }
-    }
-
-    object DeprecatedResourcesResolutionStrategy : ToolingDiagnosticFactory(ERROR) {
-        operator fun invoke() = build {
-            title("Deprecated 'kotlin.mpp.resourcesResolutionStrategy'")
-                .description {
-                    "kotlin.mpp.resourcesResolutionStrategy=${KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration.propertyName} is no longer supported"
-                }
-                .solution {
-                    "Remove 'kotlin.mpp.resourcesResolutionStrategy' specification from gradle.properties"
-                }
-        }
-    }
-
     object MissingRuntimeDependencyConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroups.KGP.Misconfiguration) {
         operator fun invoke(targetName: String) = build {
             title("Missing Runtime Dependency Configuration for Wasm Target '$targetName'")
@@ -1279,7 +1254,10 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedGradleProperties : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
+    object DeprecatedWarningGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.WARNING)
+    object DeprecatedErrorGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.ERROR)
+
+    open class DeprecatedGradleProperties(severity: ToolingDiagnostic.Severity) : ToolingDiagnosticFactory(severity, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(usedDeprecatedProperty: String) = build {
             title("Deprecated Gradle Property '$usedDeprecatedProperty' Used")
                 .description {

@@ -179,6 +179,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, CInteropInputChecker)
         register(project, IncorrectCompileOnlyDependenciesChecker)
         register(project, GradleDeprecatedPropertyChecker)
+        register(project, GradleDeprecatedPropertyChecker)
         register(project, OverriddenKotlinNativeHomeChecker)
         register(project, ComposePluginSuggestApplyChecker)
         register(project, NativeVersionChecker)
