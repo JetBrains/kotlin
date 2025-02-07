@@ -369,14 +369,13 @@ class Fir2IrVisitor(
             val origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
             receiver.convertWithOffsets { startOffset, endOffset ->
                 IrFactoryImpl.createValueParameter(
-                    startOffset, endOffset, origin, name, receiver.typeRef.toIrType(c), isAssignable = false,
+                    startOffset, endOffset, origin, IrParameterKind.Context, name, receiver.typeRef.toIrType(c), isAssignable = false,
                     IrValueParameterSymbolImpl(),
                     varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false
                 ).also {
                     it.parent = irSnippet
                     @OptIn(DelicateIrParameterIndexSetter::class)
                     it.indexInParameters = index
-                    it.kind = IrParameterKind.Context
                 }
             }
         }
@@ -812,7 +811,7 @@ class Fir2IrVisitor(
 
             if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
                 val constructorParameter =
-                    constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[contextParameterNumber]
+                    constructorForCurrentlyGeneratedDelegatedConstructor.parameters.filter { it.kind == IrParameterKind.Context }[contextParameterNumber]
                 IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol, origin)
             } else {
                 val contextReceivers =
@@ -894,9 +893,10 @@ class Fir2IrVisitor(
 
         val contextParameterNumber = firCallableSymbol.fir.contextParameters.indexOf(calleeReference.boundSymbol?.fir)
         val receiver = if (contextParameterNumber != -1) {
-            irFunction.valueParameters[contextParameterNumber]
+            // TODO(KT-72994) Remove when context receivers are removed
+            irFunction.parameters.filter { it.kind == IrParameterKind.Context }[contextParameterNumber]
         } else {
-            irFunction.extensionReceiverParameter
+            irFunction.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
         } ?: return null
 
         return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
@@ -1300,8 +1300,8 @@ class Fir2IrVisitor(
                         hasExtensionReceiver = false,
                         origin = IrStatementOrigin.EQEQ,
                     ).apply {
-                        putValueArgument(0, irGetLhsValue())
-                        putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType))
+                        arguments[0] = irGetLhsValue()
+                        arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
                     },
                     convertToIrExpression(elvisExpression.rhs)
                         .insertImplicitCast(elvisExpression, elvisExpression.rhs.resolvedType, elvisExpression.resolvedType)
@@ -1710,7 +1710,7 @@ class Fir2IrVisitor(
                 origin = IrStatementOrigin.EXCLEXCL
             ).apply {
                 typeArguments[0] = checkNotNullCall.argument.resolvedType.toIrType(c).makeNotNull()
-                putValueArgument(0, convertToIrExpression(checkNotNullCall.argument))
+                arguments[0] =convertToIrExpression(checkNotNullCall.argument)
             }
         }
     }
