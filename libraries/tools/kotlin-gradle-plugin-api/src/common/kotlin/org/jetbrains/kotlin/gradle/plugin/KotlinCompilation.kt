@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+private object KT_60584
+
 /**
  * # Kotlin compilation
  * Represents the configuration of a Kotlin Compiler invocation.
