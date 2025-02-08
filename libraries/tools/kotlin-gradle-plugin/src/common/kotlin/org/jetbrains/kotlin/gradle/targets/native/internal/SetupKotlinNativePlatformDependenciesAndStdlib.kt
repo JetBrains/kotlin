@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -87,10 +88,17 @@ internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjec
         .filterIsInstance<DefaultKotlinSourceSet>()
 
     val stdlib = project.files(project.konanDistribution.stdlib)
+    val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
+
     sourceSets.forEach { sourceSet ->
-//        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
-//        val nativeDistributionDependencies = getNativeDistributionDependencies(commonizerTarget)
-//        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies.get())
+        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
+        val konanDistributionProvider = KotlinNativeFromToolchainProvider(
+            project,
+            commonizerTarget.konanTargets,
+            nativeBundleBuildService
+        ).bundleDirectory.map { KonanDistribution(it) }
+        val nativeDistributionDependencies = getNativeDistributionDependencies(konanDistributionProvider, commonizerTarget)
+        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
         sourceSet.addDependencyForLegacyImport(stdlib)
     }
 }

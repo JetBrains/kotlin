@@ -103,6 +103,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                 }
             }
         }
+
         internal fun getNativeDistributionDependencies(
             project: Project,
             commonizerTarget: CommonizerTarget,
