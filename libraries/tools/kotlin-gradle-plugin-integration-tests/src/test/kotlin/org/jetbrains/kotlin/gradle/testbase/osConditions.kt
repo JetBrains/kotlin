@@ -36,7 +36,7 @@ import java.lang.reflect.AnnotatedElement
 @ExtendWith(ExecutionOnOsCondition::class)
 annotation class OsCondition(
     val supportedOn: Array<OS> = [OS.LINUX, OS.MAC, OS.WINDOWS],
-    val enabledOnCI: Array<OS> = [OS.LINUX, OS.WINDOWS],
+    val enabledOnCI: Array<OS> = [OS.LINUX, OS.WINDOWS, OS.MAC],
 )
 
 internal class ExecutionOnOsCondition : ExecutionCondition {
