@@ -7,7 +7,6 @@ package kotlin.wasm.unsafe
 
 import kotlin.wasm.internal.WasmOp
 import kotlin.wasm.internal.implementedAsIntrinsic
-import kotlin.wasm.internal.unsafeGetScratchRawMemory
 import kotlin.contracts.*
 
 /**
@@ -67,7 +66,7 @@ public inline fun <T> withScopedMemoryAllocator(
 @UnsafeWasmMemoryApi
 internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
     val allocator = currentAllocator?.createChild() ?:
-        ScopedMemoryAllocator(unsafeGetScratchRawMemory(), parent = null)
+        ScopedMemoryAllocator(0, parent = null)
     currentAllocator = allocator
     return allocator
 }
@@ -103,7 +102,7 @@ internal class ScopedMemoryAllocator(
         // 8 is a max alignment number currently needed for Wasm component model canonical ABI
         val align = 8
         val result = (availableAddress + align - 1) and (align - 1).inv()
-        check(result > 0 && result % align == 0) { "result must be > 0 and 8-byte aligned" }
+        check(result >= 0 && result % align == 0) { "result must be >= 0 and 8-byte aligned" }
 
         if (Int.MAX_VALUE - availableAddress < size) {
             error("Out of linear memory. All available address space (2gb) is used.")

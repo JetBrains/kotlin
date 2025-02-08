@@ -13,7 +13,7 @@ private fun getConstructor(obj: JsAny): JsAny? =
 
 @Suppress("UNCHECKED_CAST")
 internal actual fun <T : Any> getKClassForObject(obj: Any): KClass<T> {
-    if (obj !is JsExternalBox) return KClassImpl(getTypeInfoTypeDataByPtr(obj.typeInfo))
+    if (obj !is JsExternalBox) return KClassImpl(wasmGetObjectRtti(obj))
     val jsConstructor = getConstructor(obj.ref) ?: error("JavaScript constructor is not defined")
     return KExternalClassImpl(jsConstructor)
 }

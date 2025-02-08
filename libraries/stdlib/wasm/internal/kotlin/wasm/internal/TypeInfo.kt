@@ -7,69 +7,66 @@
 
 package kotlin.wasm.internal
 
-internal const val TYPE_INFO_ELEMENT_SIZE = 4
+internal class TypeInfoData(val typeId: Long, val packageName: String, val typeName: String)
 
-internal const val TYPE_INFO_TYPE_PACKAGE_NAME_LENGTH_OFFSET = 0
-internal const val TYPE_INFO_TYPE_PACKAGE_NAME_ID_OFFSET = TYPE_INFO_TYPE_PACKAGE_NAME_LENGTH_OFFSET + TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_TYPE_PACKAGE_NAME_PRT_OFFSET = TYPE_INFO_TYPE_PACKAGE_NAME_ID_OFFSET + TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_TYPE_SIMPLE_NAME_LENGTH_OFFSET = TYPE_INFO_TYPE_PACKAGE_NAME_PRT_OFFSET + TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_TYPE_SIMPLE_NAME_ID_OFFSET = TYPE_INFO_TYPE_SIMPLE_NAME_LENGTH_OFFSET + TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_TYPE_SIMPLE_NAME_PRT_OFFSET = TYPE_INFO_TYPE_SIMPLE_NAME_ID_OFFSET + TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_SUPER_TYPE_OFFSET = TYPE_INFO_TYPE_SIMPLE_NAME_PRT_OFFSET + TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_ITABLE_SIZE_OFFSET = TYPE_INFO_SUPER_TYPE_OFFSET + TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_ITABLE_OFFSET = TYPE_INFO_ITABLE_SIZE_OFFSET + TYPE_INFO_ELEMENT_SIZE
+@Suppress("UNUSED_PARAMETER")
+@WasmArrayOf(Long::class, isNullable = false, isMutable = false)
+internal class WasmLongImmutableArray(size: Int) {
+    @WasmOp(WasmOp.ARRAY_GET)
+    fun get(index: Int): Long =
+        implementedAsIntrinsic
 
-internal class TypeInfoData(val typeId: Int, val packageName: String, val typeName: String)
-
-internal val TypeInfoData.isInterfaceType
-    get() = typeId < 0
-
-internal fun getTypeInfoTypeDataByPtr(typeInfoPtr: Int): TypeInfoData {
-    val packageName = getPackageName(typeInfoPtr)
-    val simpleName = getSimpleName(typeInfoPtr)
-    return TypeInfoData(typeInfoPtr, packageName, simpleName)
+    @WasmOp(WasmOp.ARRAY_LEN)
+    fun len(): Int =
+        implementedAsIntrinsic
 }
 
-internal fun getSimpleName(typeInfoPtr: Int) = getString(
-    typeInfoPtr,
-    TYPE_INFO_TYPE_SIMPLE_NAME_LENGTH_OFFSET,
-    TYPE_INFO_TYPE_SIMPLE_NAME_ID_OFFSET,
-    TYPE_INFO_TYPE_SIMPLE_NAME_PRT_OFFSET
-)
-
-internal fun getPackageName(typeInfoPtr: Int) = getString(
-    typeInfoPtr,
-    TYPE_INFO_TYPE_PACKAGE_NAME_LENGTH_OFFSET,
-    TYPE_INFO_TYPE_PACKAGE_NAME_ID_OFFSET,
-    TYPE_INFO_TYPE_PACKAGE_NAME_PRT_OFFSET
-)
-
-private fun getString(typeInfoPtr: Int, lengthOffset: Int, idOffset: Int, ptrOffset: Int): String {
-    val length = wasm_i32_load(typeInfoPtr + lengthOffset)
-    val id = wasm_i32_load(typeInfoPtr + idOffset)
-    val ptr = wasm_i32_load(typeInfoPtr + ptrOffset)
-    return stringLiteral(id, ptr, length)
-}
-
-internal fun getSuperTypeId(typeInfoPtr: Int): Int =
-    wasm_i32_load(typeInfoPtr + TYPE_INFO_SUPER_TYPE_OFFSET)
-
-internal fun getInterfaceSlot(obj: Any, interfaceId: Int): Int {
-    val interfaceListSize = wasm_i32_load(obj.typeInfo + TYPE_INFO_ITABLE_SIZE_OFFSET)
-    val interfaceListPtr = obj.typeInfo + TYPE_INFO_ITABLE_OFFSET
-
-    var interfaceSlot = 0
-    var currentPtr = interfaceListPtr
-    while (interfaceSlot < interfaceListSize) {
-        val supportedInterface = wasm_i32_load(currentPtr)
-        if (supportedInterface == interfaceId) {
-            return interfaceSlot
+internal fun wasmArrayAnyIndexOfValue(array: WasmLongImmutableArray, value: Long): Int {
+    val arraySize = array.len()
+    var index = 0
+    while (index < arraySize) {
+        val supportedInterface = array.get(index)
+        if (supportedInterface == value) {
+            return index
         }
-        interfaceSlot++
-        currentPtr += TYPE_INFO_ELEMENT_SIZE
+        index++
     }
     return -1
 }
+
+internal fun isSupportedInterface(obj: Any, interfaceId: Long): Boolean {
+    val interfaceArray = wasmGetRttiSupportedInterfaces(obj) ?: return false
+    return wasmArrayAnyIndexOfValue(interfaceArray, interfaceId) != -1
+}
+
+internal fun getInterfaceVTable(obj: Any, interfaceId: Long): kotlin.wasm.internal.reftypes.anyref =
+    wasmGetInterfaceVTableBodyImpl()
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun wasmGetInterfaceVTableBodyImpl(): kotlin.wasm.internal.reftypes.anyref =
+    implementedAsIntrinsic
+
+internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): String {
+    val typeName = getSimpleName(rtti)
+    val packageName = getPackageName(rtti)
+    return if (packageName.isEmpty()) typeName else "$packageName.$typeName"
+}
+
+internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
+    startAddress = wasmGetRttiIntField(2, rtti),
+    length = wasmGetRttiIntField(3, rtti),
+    poolId = wasmGetRttiIntField(4, rtti),
+)
+
+internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
+    startAddress = wasmGetRttiIntField(5, rtti),
+    length = wasmGetRttiIntField(6, rtti),
+    poolId = wasmGetRttiIntField(7, rtti),
+)
+
+internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
+    wasmGetRttiLongField(8, rtti)
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
@@ -77,5 +74,33 @@ internal fun <T> wasmIsInterface(obj: Any): Boolean =
     implementedAsIntrinsic
 
 @ExcludedFromCodegen
-internal fun <T> wasmTypeId(): Int =
+internal fun <T> wasmTypeId(): Long =
+    implementedAsIntrinsic
+
+@ExcludedFromCodegen
+internal fun <T> wasmGetTypeRtti(): kotlin.wasm.internal.reftypes.structref =
+    implementedAsIntrinsic
+
+@ExcludedFromCodegen
+internal fun wasmGetObjectRtti(obj: Any): kotlin.wasm.internal.reftypes.structref =
+    implementedAsIntrinsic
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun wasmGetRttiSupportedInterfaces(obj: Any): WasmLongImmutableArray? =
+    implementedAsIntrinsic
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun wasmGetRttiIntField(intFieldIndex: Int, obj: kotlin.wasm.internal.reftypes.structref): Int =
+    implementedAsIntrinsic
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun wasmGetRttiLongField(intFieldIndex: Int, obj: kotlin.wasm.internal.reftypes.structref): Long =
+    implementedAsIntrinsic
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun wasmGetRttiSuperClass(rtti: kotlin.wasm.internal.reftypes.structref): kotlin.wasm.internal.reftypes.structref? =
     implementedAsIntrinsic

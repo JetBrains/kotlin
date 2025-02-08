@@ -68,7 +68,8 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
         }
     }
 
-    add(context.wasmSymbols.reflectionSymbols.getInterfaceSlot.owner)
+    add(context.wasmSymbols.reflectionSymbols.isSupportedInterface.owner)
+    add(context.wasmSymbols.reflectionSymbols.getInterfaceVTable.owner)
     add(context.irBuiltIns.throwableClass.owner)
     add(context.findUnitGetInstanceFunction())
 

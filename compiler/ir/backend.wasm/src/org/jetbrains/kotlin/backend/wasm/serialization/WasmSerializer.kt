@@ -171,6 +171,10 @@ class WasmSerializer(outputStream: OutputStream) {
             }
         }
 
+    private fun serializeClassSuperType(classSuperType: Pair<IdSignature, IdSignature>) {
+        serializePair(classSuperType, ::serializeIdSignature, ::serializeIdSignature)
+    }
+
     private fun serializeWasmGlobal(global: WasmGlobal) =
         serializeNamedModuleField(global, listOf(global.isMutable, global.importPair == null)) {
             serializeWasmType(global.type)
@@ -612,16 +616,12 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeReferencableAndDefinable(functionTypes, ::serializeIdSignature, ::serializeWasmFunctionType)
             serializeReferencableAndDefinable(gcTypes, ::serializeIdSignature, ::serializeWasmTypeDeclaration)
             serializeReferencableAndDefinable(vTableGcTypes, ::serializeIdSignature, ::serializeWasmTypeDeclaration)
-            serializeMap(typeInfo, ::serializeIdSignature, ::serializeConstantDataElement)
-            serializeReferencableElements(classIds, ::serializeIdSignature, ::serializeInt)
-            serializeReferencableElements(interfaceIds, ::serializeIdSignature, ::serializeInt)
             serializeReferencableElements(stringLiteralAddress, ::serializeString, ::serializeInt)
             serializeReferencableElements(stringLiteralPoolId, ::serializeString, ::serializeInt)
             serializeReferencableElements(constantArrayDataSegmentId, { serializePair(it, { serializeList(it, ::serializeLong) }, ::serializeWasmType)}, ::serializeInt)
             serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeList(exports, ::serializeWasmExport)
-            serializeNullable(scratchMemAddr) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
             serializeNullable(stringPoolSize) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
             serializeNullable(throwableTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
             serializeNullable(jsExceptionTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
@@ -633,7 +633,24 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
             serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
             serializeNullable(specialITableTypes, ::serializeInterfaceTableTypes)
+            serializeNullable(rttiElements, ::serializeRttiElements)
         }
+
+    private fun serializeRttiElements(rttiElements: RttiElements) {
+        serializeList(rttiElements.globals) { rttiGlobal ->
+            serializeWasmGlobal(rttiGlobal.global)
+            serializeIdSignature(rttiGlobal.classSignature)
+            serializeNullable(rttiGlobal.superClassSignature, ::serializeIdSignature)
+        }
+
+        serializeReferencableElements(
+            rttiElements.globalReferences,
+            ::serializeIdSignature,
+            ::serializeWasmGlobal
+        )
+
+        serializeWasmSymbolReadOnly(rttiElements.rttiType, ::serializeWasmStructDeclaration)
+    }
 
     private fun serializeInterfaceTableTypes(specialITableTypes: SpecialITableTypes) {
         serializeWasmSymbolReadOnly(specialITableTypes.wasmAnyArrayType, ::serializeWasmArrayDeclaration)
@@ -657,12 +674,12 @@ class WasmSerializer(outputStream: OutputStream) {
     }
 
     private fun serializeClassAssociatedObjects(classAssociatedObjects: ClassAssociatedObjects) {
-        serializeIdSignature(classAssociatedObjects.klass)
+        serializeLong(classAssociatedObjects.klass)
         serializeList(classAssociatedObjects.objects, ::serializeAssociatedObject)
     }
 
     private fun serializeAssociatedObject(associatedObject: AssociatedObject) = withFlags(associatedObject.isExternal) {
-        serializeIdSignature(associatedObject.obj)
+        serializeLong(associatedObject.obj)
         serializeIdSignature(associatedObject.getterFunc)
     }
 

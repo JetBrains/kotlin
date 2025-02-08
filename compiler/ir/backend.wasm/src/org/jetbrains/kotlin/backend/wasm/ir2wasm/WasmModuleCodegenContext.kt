@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmFileCodegenContext(
@@ -32,10 +30,6 @@ class WasmFileCodegenContext(
 
     fun referenceConstantArray(resource: Pair<List<Long>, WasmType>): WasmSymbol<Int> =
         wasmFileFragment.constantArrayDataSegmentId.reference(resource)
-
-    fun generateTypeInfo(irClass: IrClassSymbol, typeInfo: ConstantDataElement) {
-        wasmFileFragment.typeInfo[irClass.getReferenceKey()] = typeInfo
-    }
 
     fun addExport(wasmExport: WasmExport<*>) {
         wasmFileFragment.exports += wasmExport
@@ -93,12 +87,8 @@ class WasmFileCodegenContext(
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFileFragment.functionTypes.reference(irFunction.getReferenceKey())
 
-    fun referenceTypeId(irClass: IrClassSymbol): WasmSymbol<Int> =
-        if (irClass.owner.isInterface) {
-            wasmFileFragment.interfaceIds.reference(irClass.getSignature())
-        } else {
-            wasmFileFragment.classIds.reference(irClass.getReferenceKey())
-        }
+    fun referenceTypeId(irClass: IrClassSymbol): Long =
+        cityHash64(irClass.getSignature().toString().encodeToByteArray()).toLong()
 
     fun addJsFun(irFunction: IrFunctionSymbol, importName: WasmSymbol<String>, jsCode: String) {
         wasmFileFragment.jsFuns[irFunction.getReferenceKey()] =
@@ -108,10 +98,6 @@ class WasmFileCodegenContext(
     fun addJsModuleImport(irFunction: IrFunctionSymbol, module: String) {
         wasmFileFragment.jsModuleImports[irFunction.getReferenceKey()] = module
     }
-
-    val scratchMemAddr: WasmSymbol<Int>
-        get() = wasmFileFragment.scratchMemAddr
-            ?: WasmSymbol<Int>().also { wasmFileFragment.scratchMemAddr = it }
 
     val stringPoolSize: WasmSymbol<Int>
         get() = wasmFileFragment.stringPoolSize
@@ -143,9 +129,9 @@ class WasmFileCodegenContext(
 
     fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<AssociatedObjectBySymbols>) {
         val classAssociatedObjects = ClassAssociatedObjects(
-            klass.getReferenceKey(),
+            referenceTypeId(klass),
             associatedObjectsGetters.map { (obj, getter, isExternal) ->
-                AssociatedObject(obj.getReferenceKey(), getter.getReferenceKey(), isExternal)
+                AssociatedObject(referenceTypeId(obj), getter.getReferenceKey(), isExternal)
             }
         )
         wasmFileFragment.classAssociatedObjectsInstanceGetters.add(classAssociatedObjects)
@@ -184,6 +170,27 @@ class WasmFileCodegenContext(
             wasmFileFragment.specialITableTypes = it
         }
     }
+
+    private val rttiElements: RttiElements by lazy {
+        RttiElements().also {
+            wasmFileFragment.rttiElements = it
+        }
+    }
+
+    val rttiType: WasmSymbol<WasmStructDeclaration> get() = rttiElements.rttiType
+
+    fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
+        rttiElements.globals.add(
+            RttiGlobal(
+                global = global,
+                classSignature = irClass.getReferenceKey(),
+                superClassSignature = irSuperClass?.getReferenceKey()
+            )
+        )
+    }
+
+    fun referenceRttiGlobal(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
+        rttiElements.globalReferences.reference(irClass.getReferenceKey())
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {
