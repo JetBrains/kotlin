@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.artifacts.result.DefaultResolvedComponentResult
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.plugins.UnknownPluginException
@@ -21,7 +24,7 @@ import org.junit.jupiter.api.Disabled
 import java.io.File
 import kotlin.test.*
 
-@MppGradlePluginTests
+@NativeGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
 
     @GradleTest
@@ -383,6 +386,40 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 project.plugins.apply("org.jetbrains.kotlin.multiplatform")
             }
             build("help")
+        }
+    }
+
+    @GradleTest
+    fun emitVersion(
+        version: GradleVersion,
+    ) {
+        // Bare template build script should not see KGP
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    macosArm64()
+
+                    val foo = project.provider {
+                        val res = project.configurations
+                            .getByName("kotlinNativeBundleConfiguration")
+                            .incoming.resolutionResult.allComponents.single { it.toString().contains("kotlin-native-prebuilt") } as DefaultResolvedComponentResult
+                        val rep = project.repositories.getByName(res.repositoryName)
+                        val repstr = if (rep is MavenArtifactRepository) {
+                            rep.url.toString()
+                        } else if (rep is IvyArtifactRepository) {
+                            rep.url.toString()
+                        } else {
+                            rep.toString()
+                        }
+                        "__MARKER: $res $repstr"
+                    }
+                    project.tasks.register("_foo") {
+                        error(foo.get())
+                    }
+                }
+            }
+            build("_foo")
         }
     }
 

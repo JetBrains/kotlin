@@ -104,6 +104,15 @@ internal fun getGroovyRepositoryBlock(
     |            }
     |        }
     |        ivy {
+    |            url = "https://download.jetbrains.com/kotlin/native/builds/dev"
+    |            patternLayout {
+    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |            }
+    |            metadataSources {
+    |                artifact()
+    |            }
+    |        }
+    |        ivy {
     |            url = "https://github.com/yarnpkg/yarn/releases/download"
     |            patternLayout {
     |                artifact("v[revision]/[artifact](-v[revision]).[ext]")
@@ -247,6 +256,15 @@ internal fun getKotlinRepositoryBlock(
     |        google()
     |        ivy {
     |            url = uri("https://download.jetbrains.com/kotlin/native/builds/releases")
+    |            patternLayout {
+    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |            }
+    |            metadataSources {
+    |                artifact()
+    |            }
+    |        }
+    |        ivy {
+    |            url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
     |            patternLayout {
     |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
     |            }
