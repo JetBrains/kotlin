@@ -848,16 +848,20 @@ object IrTree : AbstractTreeBuilder() {
         +referencedSymbol("getter", simpleFunctionSymbol)
         +referencedSymbol("setter", simpleFunctionSymbol, nullable = true)
     }
+    val richCallableReference: Element by sealedElement(Expression) {
+        val s = +param("S", IrSymbolTree.rootElement)
 
-    // TODO: extract common part of function/property reference to common supertype - KT-73206
-    val richFunctionReference: Element by element(Expression) {
         parent(expression)
 
-        +referencedSymbol("reflectionTargetSymbol", functionSymbol, nullable = true)
-        +referencedSymbol("overriddenFunctionSymbol", simpleFunctionSymbol, nullable)
+        +referencedSymbol("reflectionTargetSymbol", s, nullable = true)
         +listField("boundValues", expression, nullable = false, mutability = ListField.Mutability.MutableList)
-        +field("invokeFunction", simpleFunction)
         +field("origin", statementOriginType, nullable = true)
+    }
+    val richFunctionReference: Element by element(Expression) {
+        parent(richCallableReference.withArgs("S" to functionSymbol))
+
+        +referencedSymbol("overriddenFunctionSymbol", simpleFunctionSymbol, nullable)
+        +field("invokeFunction", simpleFunction)
         +field("hasUnitConversion", boolean)
         +field("hasSuspendConversion", boolean)
         +field("hasVarargConversion", boolean)
@@ -972,13 +976,10 @@ object IrTree : AbstractTreeBuilder() {
         """.trimIndent()
     }
     val richPropertyReference: Element by element(Expression) {
-        parent(expression)
+        parent(richCallableReference.withArgs("S" to declarationWithAccessorsSymbol))
 
-        +referencedSymbol("reflectionTargetSymbol", declarationWithAccessorsSymbol, nullable = true)
-        +listField("boundValues", expression, nullable = false, mutability = ListField.Mutability.MutableList)
         +field("getterFunction", simpleFunction)
         +field("setterFunction", simpleFunction, nullable = true)
-        +field("origin", statementOriginType, nullable = true)
 
         kDoc = """
             This node is intended to unify different ways of handling property reference-like objects in IR.

@@ -445,12 +445,20 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
         visitCallableReference(expression)
     }
 
+    final override fun visitRichCallableReference(expression: IrRichCallableReference<*>, data: Nothing?) {
+        visitRichCallableReference(expression)
+    }
+
+    open fun visitRichCallableReference(expression: IrRichCallableReference<*>) {
+        visitExpression(expression)
+    }
+
     final override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Nothing?) {
         visitRichFunctionReference(expression)
     }
 
     open fun visitRichFunctionReference(expression: IrRichFunctionReference) {
-        visitExpression(expression)
+        visitRichCallableReference(expression)
     }
 
     final override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: Nothing?) {
@@ -458,7 +466,7 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
     }
 
     open fun visitRichPropertyReference(expression: IrRichPropertyReference) {
-        visitExpression(expression)
+        visitRichCallableReference(expression)
     }
 
     final override fun visitClassReference(expression: IrClassReference, data: Nothing?) {

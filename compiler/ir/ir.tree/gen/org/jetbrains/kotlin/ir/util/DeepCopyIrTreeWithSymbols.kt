@@ -605,9 +605,9 @@ open class DeepCopyIrTreeWithSymbols(
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
             reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(symbolRemapper::getReferencedFunction),
+            origin = expression.origin,
             overriddenFunctionSymbol = symbolRemapper.getReferencedSimpleFunction(expression.overriddenFunctionSymbol),
             invokeFunction = expression.invokeFunction.transform(),
-            origin = expression.origin,
             hasUnitConversion = expression.hasUnitConversion,
             hasSuspendConversion = expression.hasSuspendConversion,
             hasVarargConversion = expression.hasVarargConversion,
@@ -624,9 +624,9 @@ open class DeepCopyIrTreeWithSymbols(
             endOffset = expression.endOffset,
             type = expression.type.remapType(),
             reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(symbolRemapper::getReferencedDeclarationWithAccessors),
+            origin = expression.origin,
             getterFunction = expression.getterFunction.transform(),
             setterFunction = expression.setterFunction?.transform(),
-            origin = expression.origin,
         ).apply {
             expression.boundValues.mapTo(boundValues) { it.transform() }
             processAttributes(expression)

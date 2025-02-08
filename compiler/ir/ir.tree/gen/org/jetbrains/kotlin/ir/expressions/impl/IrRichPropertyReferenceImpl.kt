@@ -25,9 +25,9 @@ class IrRichPropertyReferenceImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol?,
+    override var origin: IrStatementOrigin?,
     override var getterFunction: IrSimpleFunction,
     override var setterFunction: IrSimpleFunction?,
-    override var origin: IrStatementOrigin?,
 ) : IrRichPropertyReference() {
     override var attributeOwnerId: IrElement = this
 

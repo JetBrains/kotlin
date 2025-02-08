@@ -173,11 +173,14 @@ abstract class IrTransformer<in D> : IrVisitor<IrElement, D>(), @Suppress("DEPRE
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D): IrElement =
         visitCallableReference(expression, data)
 
-    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: D): IrExpression =
+    override fun visitRichCallableReference(expression: IrRichCallableReference<*>, data: D): IrExpression =
         visitExpression(expression, data)
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: D): IrExpression =
+        visitRichCallableReference(expression, data)
+
     override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: D): IrExpression =
-        visitExpression(expression, data)
+        visitRichCallableReference(expression, data)
 
     override fun visitClassReference(expression: IrClassReference, data: D): IrExpression =
         visitDeclarationReference(expression, data)

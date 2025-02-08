@@ -33,16 +33,10 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.richPropertyReference]
  */
-abstract class IrRichPropertyReference : IrExpression() {
-    abstract var reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol?
-
-    abstract val boundValues: MutableList<IrExpression>
-
+abstract class IrRichPropertyReference : IrRichCallableReference<IrDeclarationWithAccessorsSymbol>() {
     abstract var getterFunction: IrSimpleFunction
 
     abstract var setterFunction: IrSimpleFunction?
-
-    abstract var origin: IrStatementOrigin?
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitRichPropertyReference(this, data)

@@ -124,16 +124,10 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.richFunctionReference]
  */
-abstract class IrRichFunctionReference : IrExpression() {
-    abstract var reflectionTargetSymbol: IrFunctionSymbol?
-
+abstract class IrRichFunctionReference : IrRichCallableReference<IrFunctionSymbol>() {
     abstract var overriddenFunctionSymbol: IrSimpleFunctionSymbol
 
-    abstract val boundValues: MutableList<IrExpression>
-
     abstract var invokeFunction: IrSimpleFunction
-
-    abstract var origin: IrStatementOrigin?
 
     abstract var hasUnitConversion: Boolean
 

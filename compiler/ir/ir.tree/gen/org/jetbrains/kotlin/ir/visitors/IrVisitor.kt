@@ -157,11 +157,14 @@ abstract class IrVisitor<out R, in D> {
     open fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D): R =
         visitCallableReference(expression, data)
 
-    open fun visitRichFunctionReference(expression: IrRichFunctionReference, data: D): R =
+    open fun visitRichCallableReference(expression: IrRichCallableReference<*>, data: D): R =
         visitExpression(expression, data)
 
+    open fun visitRichFunctionReference(expression: IrRichFunctionReference, data: D): R =
+        visitRichCallableReference(expression, data)
+
     open fun visitRichPropertyReference(expression: IrRichPropertyReference, data: D): R =
-        visitExpression(expression, data)
+        visitRichCallableReference(expression, data)
 
     open fun visitClassReference(expression: IrClassReference, data: D): R =
         visitDeclarationReference(expression, data)
