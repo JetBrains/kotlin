@@ -205,11 +205,11 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         NumberAgnosticComparer comparer = new NumberAgnosticComparer(actualPerfReport);
 
         String expectedText =
-                KotlinTestUtils.tryLoadExpectedFile(expectedPerfLogFile, comparer::generateExpectBasedOnActualNumbers);
+                KotlinTestUtils.tryLoadExpectedFile(expectedPerfLogFile, comparer::generateExpectedTextBasedOnActualNumbers);
         String expectedSanitizedText = KotlinTestUtils.applyDefaultAndCustomSanitizer(expectedText, s -> s);
 
         String sanitizedActualBasedOnExpectPlaceholders =
-                comparer.generatedSanitizedActualBasedOnExpectPlaceholders(expectedSanitizedText);
+                comparer.generatedSanitizedActualTextBasedOnExpectPlaceholders(expectedSanitizedText);
 
         KotlinTestUtils.FileComparisonResult comparisonResult = new KotlinTestUtils.FileComparisonResult(
                 expectedPerfLogFile,
