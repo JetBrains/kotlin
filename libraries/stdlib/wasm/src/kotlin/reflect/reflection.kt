@@ -17,10 +17,6 @@ internal fun <T : Any> getKClass(): KClass<T> =
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     getKClassForObject(e)
 
-@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-internal inline fun <reified T : Any> wasmGetKClass(): KClass<T> =
-    KClassImpl(getTypeInfoTypeDataByPtr(wasmTypeId<T>()))
-
 internal fun createKType(classifier: KClassifier, arguments: Array<KTypeProjection>, isMarkedNullable: Boolean): KType =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
