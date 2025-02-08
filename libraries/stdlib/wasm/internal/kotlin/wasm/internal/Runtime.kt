@@ -21,12 +21,6 @@ internal fun unsafeRawMemoryToWasmCharArray(srcAddr: Int, dstOffset: Int, dstLen
     }
 }
 
-// Returns starting address of unused linear memory.
-@ExcludedFromCodegen
-@PublishedApi
-internal fun unsafeGetScratchRawMemory(): Int =
-    implementedAsIntrinsic
-
 // Assumes there is enough space at the destination, fails with wasm trap otherwise.
 internal fun unsafeWasmCharArrayToRawMemory(src: WasmCharArray, srcOffset: Int, srcLength: Int, dstAddr: Int) {
     var curAddr = dstAddr

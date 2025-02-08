@@ -18,6 +18,7 @@ internal annotation class ExcludedFromCodegen
 internal annotation class WasmArrayOf(
     val type: KClass<*>,
     val isNullable: Boolean,
+    val isMutable: Boolean = true,
 )
 
 // When applied to a function it forces codegen to not generate any code for it.

@@ -360,6 +360,54 @@ class DeclarationGenerator(
         }
     }
 
+    private fun createRtti(metadata: ClassMetadata) {
+        val klass = metadata.klass
+        val symbol = klass.symbol
+        val superType = klass.getSuperClass(irBuiltIns)?.symbol
+
+        val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
+        val qualifier =
+            if (fqnShouldBeEmitted) {
+                (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
+            } else {
+                ""
+            }
+        val simpleName = klass.name.asString()
+        val (packageNameAddress, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
+        val (simpleNameAddress, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
+
+        val location = SourceLocation.NoLocation("Create instance of rtti struct")
+        val initRttiGlobal = buildWasmExpression {
+            interfaceTable(this, metadata, location)
+            if (superType != null) {
+                buildGetGlobal(wasmFileCodegenContext.referenceRttiGlobal(superType), location)
+            } else {
+                buildRefNull(WasmHeapType.Simple.None, location)
+            }
+
+            buildConstI32Symbol(packageNameAddress, location)
+            buildConstI32(qualifier.length, location)
+            buildConstI32Symbol(packageNamePoolId, location)
+
+            buildConstI32Symbol(simpleNameAddress, location)
+            buildConstI32(simpleName.length, location)
+            buildConstI32Symbol(simpleNamePoolId, location)
+
+            buildConstI64(wasmFileCodegenContext.referenceTypeId(symbol), location)
+
+            buildStructNew(wasmFileCodegenContext.rttiType, location)
+        }
+
+        val rttiGlobal = WasmGlobal(
+            name = "${klass.fqNameWhenAvailable}_rtti",
+            type = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.rttiType)),
+            isMutable = false,
+            init = initRttiGlobal
+        )
+
+        wasmFileCodegenContext.defineRttiGlobal(rttiGlobal, symbol, superType)
+    }
+
     private fun createClassITable(metadata: ClassMetadata) {
         val klass = metadata.klass
         if (klass.isAbstractOrSealed) return
@@ -406,7 +454,7 @@ class DeclarationGenerator(
                 WasmStructFieldDeclaration(
                     name = "field",
                     type = wasmModuleTypeTransformer.transformFieldType(wasmArrayAnnotation.type),
-                    isMutable = true
+                    isMutable = wasmArrayAnnotation.isMutable
                 )
             )
 
@@ -429,11 +477,13 @@ class DeclarationGenerator(
 
             createVTable(metadata)
             createClassITable(metadata)
+            createRtti(metadata)
 
             val vtableRefGcType = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.referenceVTableGcType(symbol)))
             val fields = mutableListOf<WasmStructFieldDeclaration>()
             fields.add(WasmStructFieldDeclaration("vtable", vtableRefGcType, false))
             fields.add(WasmStructFieldDeclaration("itable", WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType)), false))
+            fields.add(WasmStructFieldDeclaration("rtti", WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.rttiType)), false))
             declaration.allFields(irBuiltIns).mapTo(fields) {
                 WasmStructFieldDeclaration(
                     name = it.name.toString(),
@@ -450,7 +500,6 @@ class DeclarationGenerator(
                 isFinal = declaration.modality == Modality.FINAL
             )
             wasmFileCodegenContext.defineGcType(symbol, structType)
-            wasmFileCodegenContext.generateTypeInfo(symbol, binaryDataStruct(metadata))
         }
 
         for (member in declaration.declarations) {
@@ -458,60 +507,29 @@ class DeclarationGenerator(
         }
     }
 
-    private fun binaryDataStruct(classMetadata: ClassMetadata): ConstantDataStruct {
-        val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
-
-        val klass = classMetadata.klass
-        val qualifier =
-            if (fqnShouldBeEmitted) {
-                (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
-            } else {
-                ""
-            }
-
-        val simpleName = klass.name.asString()
-
-        val (packageNameAddress, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
-        val (simpleNameAddress, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
-
-        val typeInfo = ConstantDataStruct(
-            elements = listOf(
-                ConstantDataIntField(qualifier.length),
-                ConstantDataIntField(packageNamePoolId),
-                ConstantDataIntField(packageNameAddress),
-                ConstantDataIntField(simpleName.length),
-                ConstantDataIntField(simpleNamePoolId),
-                ConstantDataIntField(simpleNameAddress)
-            )
-        )
-
-        val superClass = klass.getSuperClass(backendContext.irBuiltIns)
-        val superTypeId = superClass?.let {
-            ConstantDataIntField(wasmFileCodegenContext.referenceTypeId(it.symbol))
-        } ?: ConstantDataIntField(-1)
-
-        val typeInfoContent = mutableListOf(typeInfo, superTypeId)
-        if (!klass.isAbstractOrSealed) {
-            typeInfoContent.add(interfaceTable(classMetadata))
-        }
-
-        return ConstantDataStruct(elements = typeInfoContent)
-    }
-
-    private fun interfaceTable(classMetadata: ClassMetadata): ConstantDataStruct {
+    private fun interfaceTable(builder: WasmExpressionBuilder, classMetadata: ClassMetadata, location: SourceLocation) {
         val supportedInterfaces = classMetadata.interfaces
+
+        if (supportedInterfaces.isEmpty()) {
+            builder.buildRefNull(WasmHeapType.Simple.None, location)
+            return
+        }
 
         val specialSlotIFaces = backendContext.specialSlotITableTypes
 
         val (forward, back) = supportedInterfaces.partition { it.symbol !in specialSlotIFaces && !it.symbol.isFunction() }
         val supportedPushedBack = forward + back
 
-        val size = ConstantDataIntField(supportedPushedBack.size)
-        val interfaceIds = ConstantDataIntArray(
-            supportedPushedBack.map { wasmFileCodegenContext.referenceTypeId(it.symbol) },
-        )
+        for (iFace in supportedPushedBack) {
+            builder.buildConstI64(wasmFileCodegenContext.referenceTypeId(iFace.symbol), location)
+        }
 
-        return ConstantDataStruct(elements = listOf(size, interfaceIds))
+        builder.buildInstr(
+            WasmOp.ARRAY_NEW_FIXED,
+            location,
+            WasmImmediate.GcType(wasmFileCodegenContext.referenceGcType(backendContext.wasmSymbols.wasmLongImmutableArray)),
+            WasmImmediate.ConstI32(supportedPushedBack.size)
+        )
     }
 
     override fun visitField(declaration: IrField) {

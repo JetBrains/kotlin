@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.wasm.internal.ExternalInterfaceType
-import kotlin.wasm.internal.getSimpleName
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 
 /**
@@ -47,8 +46,8 @@ public actual open class Throwable internal constructor(
      * followed by the exception message if it is not null.
      */
     public override fun toString(): String {
-        val s = getSimpleName(this.typeInfo)
-        return if (message != null) s + ": " + message.toString() else s
+        val s = this::class.simpleName ?: ""
+        return if (message != null) "$s: $message" else s
     }
 }
 

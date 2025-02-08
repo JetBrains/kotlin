@@ -178,7 +178,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     kclassConstructor = symbols.jsRelatedSymbols.kExternalClassImpl.owner.constructors.first()
                     constructorArgument = getExternalKClassCtorArgument(type, builder)
                 } else {
-                    kclassConstructor = symbols.reflectionSymbols.kClassImpl.owner.constructors.first()
+                    if (type.isInterface()) {
+                        kclassConstructor = symbols.reflectionSymbols.kClassInterfaceImpl.owner.constructors.first()
+                    } else {
+                        kclassConstructor = symbols.reflectionSymbols.kClassImpl.owner.constructors.first()
+                    }
                     constructorArgument = getKClassCtorArgument(type, builder)
                 }
 
@@ -209,15 +213,15 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun getKClassCtorArgument(type: IrType, builder: DeclarationIrBuilder): IrExpression {
         val klass = type.classOrNull?.owner ?: error("Invalid type")
 
-        val typeId = builder.irCall(symbols.wasmTypeId).also {
-            it.typeArguments[0] = type
-        }
-
         if (!klass.isInterface) {
-            return builder.irCall(context.wasmSymbols.reflectionSymbols.getTypeInfoTypeDataByPtr).also {
-                it.arguments[0] = typeId
+            return builder.irCall(symbols.wasmGetTypeRtti).also {
+                it.typeArguments[0] = type
             }
         } else {
+            val typeId = builder.irCall(symbols.wasmTypeId).also {
+                it.typeArguments[0] = type
+            }
+
             val fqName = type.classFqName!!
             val fqnShouldBeEmitted =
                 context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
