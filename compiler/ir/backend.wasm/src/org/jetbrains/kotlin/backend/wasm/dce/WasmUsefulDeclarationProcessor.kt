@@ -78,6 +78,7 @@ internal class WasmUsefulDeclarationProcessor(
                 true
             }
 
+            context.wasmSymbols.wasmGetTypeRtti,
             context.wasmSymbols.wasmTypeId,
             context.wasmSymbols.refCastNull,
             context.wasmSymbols.refTest,

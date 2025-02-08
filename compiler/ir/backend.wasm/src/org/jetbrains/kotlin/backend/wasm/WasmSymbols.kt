@@ -53,9 +53,9 @@ class WasmSymbols(
         override val createContravariantKTypeProjection = getInternalFunction("createContravariantKTypeProjection")
         override val kTypeClass: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KClass"))
 
-        val getTypeInfoTypeDataByPtr: IrSimpleFunctionSymbol = getInternalFunction("getTypeInfoTypeDataByPtr")
         val wasmTypeInfoData: IrClassSymbol = getInternalClass("TypeInfoData")
         val kClassImpl: IrClassSymbol = getInternalClass("KClassImpl")
+        val kClassInterfaceImpl: IrClassSymbol = getInternalClass("KClassInterfaceImpl")
         val getInterfaceSlot = getInternalFunction("getInterfaceSlot")
     }
 
@@ -69,6 +69,7 @@ class WasmSymbols(
     )
 
     internal val tryGetAssociatedObject = getInternalFunction("tryGetAssociatedObject")
+    internal val wasmLongImmutableArray = getInternalClass("WasmLongImmutableArray")
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
@@ -238,6 +239,12 @@ class WasmSymbols(
     val runRootSuites = maybeGetFunction("runRootSuites", kotlinTestPackageFqName)
 
     val wasmTypeId = getInternalFunction("wasmTypeId")
+    val wasmGetTypeRtti = getInternalFunction("wasmGetTypeRtti")
+    val wasmGetRttiSupportedInterfaces = getInternalFunction("wasmGetRttiSupportedInterfaces")
+    val wasmGetRttiIntField = getInternalFunction("wasmGetRttiIntField")
+    val wasmGetRttiLongField = getInternalFunction("wasmGetRttiLongField")
+    val wasmGetRttiSuperClass = getInternalFunction("wasmGetRttiSuperClass")
+    val wasmGetObjectRtti = getInternalFunction("wasmGetObjectRtti")
 
     val wasmIsInterface = getInternalFunction("wasmIsInterface")
 
@@ -247,7 +254,6 @@ class WasmSymbols(
     val nullableFloatIeee754Equals = getInternalFunction("nullableFloatIeee754Equals")
     val nullableDoubleIeee754Equals = getInternalFunction("nullableDoubleIeee754Equals")
 
-    val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
     val returnArgumentIfItIsKotlinAny = getInternalFunction("returnArgumentIfItIsKotlinAny")
 
     val startCoroutineUninterceptedOrReturnIntrinsics =

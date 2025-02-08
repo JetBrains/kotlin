@@ -13,11 +13,6 @@ import kotlin.random.*
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */
 public actual open class Any @WasmPrimitiveConstructor actual constructor() {
-    // Pointer to runtime type info
-    // Initialized by a compiler
-    @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-    internal var typeInfo: Int
-
     /**
      * Indicates whether some other object is "equal to" this one.
      *
@@ -48,13 +43,8 @@ public actual open class Any @WasmPrimitiveConstructor actual constructor() {
     /**
      * Returns a string representation of the object.
      */
-    public actual open fun toString(): String {
-        val typeInfoPtr = this.typeInfo
-        val packageName = getPackageName(typeInfoPtr)
-        val simpleName = getSimpleName(typeInfoPtr)
-        val qualifiedName = if (packageName.isEmpty()) simpleName else "$packageName.$simpleName"
-        return "$qualifiedName@${identityHashCode()}"
-    }
+    public actual open fun toString(): String =
+        "${this::class.qualifiedName}@${identityHashCode()}"
 }
 
 // Don't use outside, otherwise it could break classes reusing `_hashCode` field, like String.

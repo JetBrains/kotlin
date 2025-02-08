@@ -46,7 +46,7 @@ fun IrAnnotationContainer.hasWasmAutoboxedAnnotation(): Boolean =
 fun IrAnnotationContainer.hasWasmPrimitiveConstructorAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.WasmPrimitiveConstructor"))
 
-class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean) {
+class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean, val isMutable: Boolean) {
     val type = klass.defaultType.let { if (isNullable) it.makeNullable() else it }
 }
 
@@ -55,6 +55,7 @@ fun IrAnnotationContainer.getWasmArrayAnnotation(): WasmArrayInfo? =
         WasmArrayInfo(
             (it.arguments[0] as IrClassReference).symbol.owner as IrClass,
             (it.arguments[1] as IrConst).value as Boolean,
+            (it.arguments[2] as? IrConst)?.value as? Boolean ?: true,
         )
     }
 
