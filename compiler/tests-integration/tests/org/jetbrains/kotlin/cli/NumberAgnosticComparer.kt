@@ -164,7 +164,7 @@ class NumberAgnosticComparer(val actualText: String) {
         Real(REAL_MARKER),
     }
 
-    internal enum class Alignment(val value: String) {
+    enum class Alignment(val value: String) {
         None(""),
         Left(LEFT_ALIGNMENT_MARKER),
         Right(RIGHT_ALIGNMENT_MARKER),
