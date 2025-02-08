@@ -101,9 +101,6 @@ fun FirResult.convertToIrAndActualizeForJvm(
     diagnosticsReporter: BaseDiagnosticsCollector,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
 ): Fir2IrActualizedResult {
-    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRTranslationStarted()
-
     val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(configuration, diagnosticsReporter)
 
     return convertToIrAndActualize(
@@ -127,7 +124,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
                 )
             }
         }
-    ).also { performanceManager?.notifyIRTranslationFinished() }
+    )
 }
 
 @LegacyK2CliPipeline
