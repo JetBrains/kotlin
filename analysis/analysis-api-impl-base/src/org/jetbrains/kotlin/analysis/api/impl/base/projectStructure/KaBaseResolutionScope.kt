@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.contains
 
 /**
  * [KaBaseResolutionScope] encapsulates special handling required for
@@ -46,29 +47,30 @@ internal class KaBaseResolutionScope(
     }
 
     override fun contains(element: PsiElement): Boolean {
-        val containingFile = element.containingFile ?: return false
+        return resolutionScope.contains(element) || isFromGeneratedModule(element)
+    }
 
-        containingFile.virtualFile?.let { return contains(it) }
-
+    private fun isFromGeneratedModule(element: PsiElement): Boolean {
         val ktFile = element.containingFile as? KtFile ?: return false
-        if (!ktFile.isDangling) {
-            return false
+        if (ktFile.isDangling) {
+            val module = KaModuleProvider.Companion.getModule(useSiteModule.project, ktFile, useSiteModule)
+            return isFromGeneratedModule(module)
         }
 
-        val module = KaModuleProvider.Companion.getModule(useSiteModule.project, ktFile, useSiteModule)
-        return isFromGeneratedModule(module)
+        val virtualFile = ktFile.virtualFile ?: return false
+        return isFromGeneratedModule(virtualFile)
     }
 
     /**
      * To support files from [org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider]
      * which are not dangling files
      */
-    fun isFromGeneratedModule(virtualFile: VirtualFile): Boolean {
+    private fun isFromGeneratedModule(virtualFile: VirtualFile): Boolean {
         val analysisContextModule = virtualFile.analysisContextModule ?: return false
         return isFromGeneratedModule(analysisContextModule)
     }
 
-    fun isFromGeneratedModule(analysisContextModule: KaModule): Boolean {
+    private fun isFromGeneratedModule(analysisContextModule: KaModule): Boolean {
         return analysisContextModule == useSiteModule || analysisContextModule in useSiteModule.allDirectDependencies()
     }
 
