@@ -162,7 +162,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val environment = createCoreEnvironment(
                 rootDisposable, configuration, messageCollector,
                 moduleChunk.targetDescription()
-            ) ?: return COMPILATION_ERROR
+            ) ?: run {
+                configuration.perfManager?.notifyCompilerInitialized()
+                return COMPILATION_ERROR
+            }
             environment.registerJavacIfNeeded(arguments).let {
                 if (!it) return COMPILATION_ERROR
             }
@@ -249,16 +252,15 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             messageCollector: MessageCollector,
             targetDescription: String
         ): KotlinCoreEnvironment? {
+            val perfManager = configuration.perfManager
+            perfManager?.targetDescription = targetDescription
+
             if (messageCollector.hasErrors()) return null
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val sourceFiles = environment.getSourceFiles()
-            configuration[CLIConfigurationKeys.PERF_MANAGER]?.apply {
-                this.targetDescription = targetDescription
-                addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
-                notifyCompilerInitialized()
-            }
+            perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
 
             return if (messageCollector.hasErrors()) null else environment
         }
