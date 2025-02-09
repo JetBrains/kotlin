@@ -412,7 +412,7 @@ public class DebugSymbolRenderer(
     private fun renderModule(module: KaModule, printer: PrettyPrinter) {
         val apiClass = when (val moduleClass = module::class) {
             in kaModuleApiSubclasses -> moduleClass
-            else -> moduleClass.allSuperclasses.first { it in kaModuleApiSubclasses }
+            else -> kaModuleApiSubclasses.first { it in moduleClass.allSuperclasses }
         }
         printer.append(apiClass.simpleName + " \"" + module.moduleDescription + "\"")
     }
