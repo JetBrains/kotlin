@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.DefaultDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -63,7 +62,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val (configuration, diagnosticsCollector, rootDisposable) = input
         val messageCollector = configuration.messageCollector
 
+        val perfManager = configuration.perfManager
+
         if (!checkNotSupportedPlugins(configuration, messageCollector)) {
+            perfManager?.notifyCompilerInitialized()
             return null
         }
 
@@ -74,7 +76,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             rootDisposable,
             targetDescription,
             diagnosticsCollector
-        ) ?: return null
+        ) ?: run {
+            perfManager?.notifyCompilerInitialized()
+            return null
+        }
 
         FirAnalysisHandlerExtension.analyze(environment.project, configuration)?.let {
             /*
@@ -89,14 +94,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         }
 
-        val performanceManager = configuration.perfManager
-        performanceManager?.apply {
-            this.targetDescription = targetDescription
-            notifyCompilerInitialized()
-        }
-
         val sources = sourcesProvider()
         val allSources = sources.allFiles
+
+        perfManager?.notifyCompilerInitialized()
 
         if (
             allSources.isEmpty() &&
@@ -109,7 +110,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        performanceManager?.notifyAnalysisStarted()
+        perfManager?.notifyAnalysisStarted()
         val sourceScope: AbstractProjectFileSearchScope
         when (configuration.useLightTree) {
             true -> {
@@ -164,7 +165,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         )
 
-        val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
+        val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val outputs = sessionsWithSources.map { (session, sources) ->
             val rawFirFiles = when (configuration.useLightTree) {
                 true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines)
