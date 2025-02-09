@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-
-import org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*
 
 class LocalVarRemapper(private val params: Parameters, private val additionalShift: Int) {
     private val actualParamsSize: Int
@@ -107,14 +106,14 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
                 //TODO add assertion about parameter default value: descriptor is required
                 value.type.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
             } else opcode
-            
+
             mv.visitVarInsn(localOpcode, value.index)
             if (remapInfo.parameterInfo != null && !isStore) {
                 StackValue.coerce(value.type, remapInfo.parameterInfo.type, mv)
             }
         } else {
             assert(remapInfo.parameterInfo != null) { "Non local value should have parameter info" }
-            value!!.put(remapInfo.parameterInfo!!.type, mv)
+            value!!.put(remapInfo.parameterInfo!!.type, null, mv)
         }
     }
 

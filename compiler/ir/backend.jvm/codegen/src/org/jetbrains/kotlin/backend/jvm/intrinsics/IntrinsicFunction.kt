@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -35,11 +33,10 @@ abstract class IntrinsicFunction(
         codegen: ExpressionCodegen,
         data: BlockInfo,
         expression: IrFunctionAccessExpression,
-    ): StackValue {
+    ) {
         loadArguments(codegen, data)
         with(codegen) { expression.markLineNumber(startOffset = true) }
         genInvokeInstruction(v)
-        return StackValue.onStack(signature.returnType)
     }
 
     private fun loadArguments(codegen: ExpressionCodegen, data: BlockInfo) {

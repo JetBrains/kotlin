@@ -214,12 +214,6 @@ class ExpressionCodegen(
         expression.accept(this, data).materializeAt(type, irType)
     }
 
-    // TODO remove
-    fun genToStackValue(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
-        gen(expression, type, irType, data)
-        return StackValue.onStack(type, irType.toIrBasedKotlinType())
-    }
-
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
@@ -779,7 +773,8 @@ class ExpressionCodegen(
         val kotlinType = if (eraseType) realType.upperBound.withNullability(realType.isNullable()) else realType
         StackValue.local(variableIndex, asmType, kotlinType.toIrBasedKotlinType())
     } else {
-        genToStackValue(expression, type, parameterType, data)
+        gen(expression, type, parameterType, data)
+        StackValue.onStack(type, parameterType.toIrBasedKotlinType())
     }
 
     // We do not mangle functions if Result is the only parameter of the function. This means that if a function

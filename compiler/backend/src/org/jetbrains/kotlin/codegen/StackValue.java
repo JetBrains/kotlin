@@ -38,65 +38,21 @@ public abstract class StackValue {
     public final Type type;
     @Nullable
     public final KotlinType kotlinType;
-    private final boolean canHaveSideEffects;
-
-    protected StackValue(@NotNull Type type, boolean canHaveSideEffects) {
-        this(type, null, canHaveSideEffects);
-    }
 
     protected StackValue(@NotNull Type type, @Nullable KotlinType kotlinType) {
-        this(type, kotlinType, true);
-    }
-
-    protected StackValue(@NotNull Type type, @Nullable KotlinType kotlinType, boolean canHaveSideEffects) {
         this.type = type;
         this.kotlinType = kotlinType;
-        this.canHaveSideEffects = canHaveSideEffects;
     }
 
-    public void put(@NotNull InstructionAdapter v) {
-        put(type, null, v, false);
-    }
+    public abstract void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v);
 
-    public void put(@NotNull Type type, @NotNull InstructionAdapter v) {
-        put(type, null, v, false);
-    }
-
-    public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
-        put(type, kotlinType, v, false);
-    }
-
-    public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v, boolean skipReceiver) {
-        if (!skipReceiver) {
-            putReceiver(v, true);
-        }
-        putSelector(type, kotlinType, v);
-    }
-
-    public abstract void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v);
-
-    public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
-    }
-
-    public void store(@NotNull StackValue value, @NotNull InstructionAdapter v) {
-        store(value, v, false);
-    }
-
-    public void store(@NotNull StackValue value, @NotNull InstructionAdapter v, boolean skipReceiver) {
-        if (!skipReceiver) {
-            putReceiver(v, false);
-        }
-        value.put(value.type, value.kotlinType, v);
-        storeSelector(value.type, value.kotlinType, v);
-    }
-
-    protected void storeSelector(@NotNull Type topOfStackType, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+    public void store(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
         throw new UnsupportedOperationException("Cannot store to value " + this);
     }
 
     @NotNull
     public static Local local(int index, @NotNull Type type) {
-        return new Local(index, type);
+        return new Local(index, type, null);
     }
 
     public static Local local(int index, @NotNull Type type, @Nullable KotlinType kotlinType) {
@@ -104,13 +60,8 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static StackValue onStack(@NotNull Type type) {
-        return onStack(type, null);
-    }
-
-    @NotNull
     public static StackValue onStack(@NotNull Type type, @Nullable KotlinType kotlinType) {
-        return type == Type.VOID_TYPE ? none() : new OnStack(type, kotlinType);
+        return type == Type.VOID_TYPE ? None.INSTANCE : new OnStack(type, kotlinType);
     }
 
     @NotNull
@@ -119,37 +70,27 @@ public abstract class StackValue {
     }
 
     public static StackValue createDefaultValue(@NotNull Type type) {
-        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-            return constant(null, type);
+        switch (type.getSort()) {
+            case Type.OBJECT: case Type.ARRAY:
+                return constant(null, type);
+            case Type.BYTE: case Type.SHORT: case Type.INT: case Type.CHAR:
+                return constant(0, type);
+            case Type.BOOLEAN:
+                return constant(false, type);
+            case Type.LONG:
+                return constant(0L, type);
+            case Type.FLOAT:
+                return constant(0.0f, type);
+            case Type.DOUBLE:
+                return constant(0.0, type);
+            default:
+                throw new AssertionError("Unsupported type: " + type);
         }
-        else {
-            return createDefaultPrimitiveValue(type);
-        }
-    }
-
-    private static StackValue createDefaultPrimitiveValue(@NotNull Type type) {
-        assert Type.BOOLEAN <= type.getSort() && type.getSort() <= Type.DOUBLE :
-                "'createDefaultPrimitiveValue' method should be called only for primitive types, but " + type;
-        Object value = 0;
-        if (type.getSort() == Type.BOOLEAN) {
-            value = Boolean.FALSE;
-        }
-        else if (type.getSort() == Type.FLOAT) {
-            value = new Float(0.0);
-        }
-        else if (type.getSort() == Type.DOUBLE) {
-            value = new Double(0.0);
-        }
-        else if (type.getSort() == Type.LONG) {
-            value = new Long(0);
-        }
-
-        return constant(value, type);
     }
 
     @NotNull
     public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, @NotNull StackValue receiver) {
-        return new Field(type, null, owner, name, receiver);
+        return new Field(type, owner, name, receiver);
     }
 
     private static void box(Type type, Type toType, InstructionAdapter v) {
@@ -453,19 +394,15 @@ public abstract class StackValue {
         v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), JvmAbi.INSTANCE_FIELD, UNIT_TYPE.getDescriptor());
     }
 
-    public static StackValue none() {
-        return None.INSTANCE;
-    }
-
     private static class None extends StackValue {
         public static final None INSTANCE = new None();
 
         private None() {
-            super(Type.VOID_TYPE, false);
+            super(Type.VOID_TYPE, null);
         }
 
         @Override
-        public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
             coerceTo(type, kotlinType, v);
         }
     }
@@ -474,7 +411,7 @@ public abstract class StackValue {
         public final int index;
 
         private Local(int index, Type type, KotlinType kotlinType) {
-            super(type, kotlinType, false);
+            super(type, kotlinType);
 
             if (index < 0) {
                 throw new IllegalStateException("local variable index must be non-negative");
@@ -483,18 +420,16 @@ public abstract class StackValue {
             this.index = index;
         }
 
-        private Local(int index, Type type) {
-            this(index, type, null);
-        }
-
         @Override
-        public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
             v.load(index, this.type);
             coerceTo(type, kotlinType, v);
         }
 
         @Override
-        public void storeSelector(@NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v) {
+        public void store(
+                @NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v
+        ) {
             coerceFrom(topOfStackType, topOfStackKotlinType, v);
             v.store(index, this.type);
         }
@@ -506,7 +441,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
             coerceTo(type, kotlinType, v);
         }
     }
@@ -516,12 +451,12 @@ public abstract class StackValue {
         public final Object value;
 
         public Constant(@Nullable Object value, Type type) {
-            super(type, null, false);
+            super(type, null);
             this.value = value;
         }
 
         @Override
-        public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
             if (value instanceof Integer || value instanceof Byte || value instanceof Short) {
                 v.iconst(((Number) value).intValue());
             }
@@ -555,41 +490,30 @@ public abstract class StackValue {
 
         public Field(
                 @NotNull Type type,
-                @Nullable KotlinType kotlinType,
                 @NotNull Type owner,
                 @NotNull String name,
                 @NotNull StackValue receiver
         ) {
-            super(type, kotlinType, receiver.canHaveSideEffects);
+            super(type, null);
             this.owner = owner;
             this.name = name;
             this.receiver = receiver;
         }
 
         @Override
-        public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+            receiver.put(receiver.type, receiver.kotlinType, v);
             v.visitFieldInsn(GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
             coerceTo(type, kotlinType, v);
         }
 
         @Override
-        public void storeSelector(@NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v) {
+        public void store(
+                @NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v
+        ) {
+            receiver.put(receiver.type, receiver.kotlinType, v);
             coerceFrom(topOfStackType, topOfStackKotlinType, v);
             v.visitFieldInsn(PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
-        }
-
-        @Override
-        public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
-            receiver.put(receiver.type, receiver.kotlinType, v);
-        }
-
-        @Override
-        public void store(@NotNull StackValue rightSide, @NotNull InstructionAdapter v, boolean skipReceiver) {
-            if (!skipReceiver) {
-                putReceiver(v, false);
-            }
-            rightSide.put(rightSide.type, rightSide.kotlinType, v);
-            storeSelector(rightSide.type, rightSide.kotlinType, v);
         }
     }
 }

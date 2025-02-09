@@ -214,13 +214,14 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {
         val info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
-        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(info.type, kotlinType))) {
+        val asmType = info.type
+        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, kotlinType))) {
             info.remapValue = stackValue
         } else {
-            stackValue.put(info.type, kotlinType, codegen.visitor)
-            val local = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
-            local.store(StackValue.onStack(info.type), codegen.visitor)
-            info.remapValue = local
+            stackValue.put(asmType, kotlinType, codegen.visitor)
+            val index = codegen.frameMap.enterTemp(asmType)
+            codegen.visitor.store(index, asmType)
+            info.remapValue = StackValue.local(index, asmType)
             info.isSynthetic = true
         }
     }
