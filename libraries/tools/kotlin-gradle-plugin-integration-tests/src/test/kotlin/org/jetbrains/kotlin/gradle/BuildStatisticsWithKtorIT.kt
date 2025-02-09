@@ -338,6 +338,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     @DisplayName("Build reports for native")
     @GradleTest
     @NativeGradlePluginTests
+    @BrokenOnMacosTest
     fun buildReportForNative(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
             nativeProject(

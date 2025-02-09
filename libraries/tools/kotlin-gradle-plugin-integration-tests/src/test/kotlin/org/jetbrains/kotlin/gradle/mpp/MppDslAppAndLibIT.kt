@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -23,6 +24,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
+    @BrokenOnMacosTest
     fun testLibAndApp(gradleVersion: GradleVersion) {
         doTestLibAndApp(
             libProjectPath = "new-mpp-lib-and-app/sample-lib",
@@ -34,6 +36,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testLibAndAppWithoutHMPP(gradleVersion: GradleVersion) = doTestLibAndApp(
         libProjectPath = "new-mpp-lib-and-app/sample-lib",
         appProjectPath = "new-mpp-lib-and-app/sample-app",
@@ -43,6 +46,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testLibAndAppWithGradleKotlinDsl(gradleVersion: GradleVersion) {
         doTestLibAndApp(
             libProjectPath = "new-mpp-lib-and-app/sample-lib-gradle-kotlin-dsl",

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp.smoke
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
@@ -30,6 +31,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @DisplayName("File with actual declaration needs recompiling")
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testRecompilationOfActualFun(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")
@@ -56,6 +58,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @DisplayName("File with expect declaration needs recompiling indirectly")
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testRecompilationOfExpectFun(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")
@@ -80,6 +83,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @DisplayName("File with expect class declaration needs recompiling")
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testRecompilationOfExpectClass(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")

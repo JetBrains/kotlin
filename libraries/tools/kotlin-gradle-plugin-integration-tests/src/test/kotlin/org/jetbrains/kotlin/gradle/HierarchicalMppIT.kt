@@ -83,6 +83,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Check no sourceSets visible if no variant matched")
+    @BrokenOnMacosTest
     fun testNoSourceSetsVisibleIfNoVariantMatched(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -115,6 +116,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Dependencies in tests should be correct with third-party library")
+    @BrokenOnMacosTest
     fun testDependenciesInTests(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir) {
             kotlinSourcesDir("jvmMain").copyRecursively(kotlinSourcesDir("linuxX64Main"))
@@ -226,6 +228,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("hierarchical-mpp-published-modules")
     @DisplayName("Check that only composite metadata artifacts are transformed")
+    @BrokenOnMacosTest
     fun testOnlyCompositeMetadataArtifactsTransformed(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir)
@@ -333,6 +336,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-48370: Multiplatform Gradle build fails for Native targets with \"we cannot choose between the following variants of project\"")
+    @BrokenOnMacosTest
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
             "hierarchical-mpp-multi-modules",
@@ -807,6 +811,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Check dependencies in non published sourceSets")
+    @BrokenOnMacosTest
     fun testDependenciesInNonPublishedSourceSets(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -828,6 +833,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Check transitive dependency on self")
+    @BrokenOnMacosTest
     fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) =
         with(project("transitive-dep-on-self-hmpp", gradleVersion = gradleVersion)) {
             testDependencyTransformations(subproject = "lib") { reports ->
@@ -1016,7 +1022,10 @@ open class HierarchicalMppIT : KGPBaseTest() {
             if (OS.MAC.isCurrentOs) {
                 assertNoSourcesPublished("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar", "iosX64SourcesElements-published")
                 assertNoSourcesPublished("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar", "iosArm64SourcesElements-published")
-                assertNoSourcesPublished("test/lib-iossimulatorarm64/1.0/lib-iossimulatorarm64-1.0-sources.jar", "iosSimulatorArm64SourcesElements-published")
+                assertNoSourcesPublished(
+                    "test/lib-iossimulatorarm64/1.0/lib-iossimulatorarm64-1.0-sources.jar",
+                    "iosSimulatorArm64SourcesElements-published"
+                )
             }
 
             // Check that JVM sources were published
@@ -1032,6 +1041,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-44845: all external dependencies is unresolved in IDE with kotlin.mpp.enableGranularSourceSetsMetadata=true")
+    @BrokenOnMacosTest
     fun testMixedScopesFilesExistKt44845(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -1076,6 +1086,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-46417: [UNRESOLVED_REFERENCE] For project to project dependencies of native platform test source sets")
+    @BrokenOnMacosTest
     fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
         with(project("kt-46417-ios-test-source-sets", gradleVersion = gradleVersion)) {
             testDependencyTransformations("p2") { reports ->

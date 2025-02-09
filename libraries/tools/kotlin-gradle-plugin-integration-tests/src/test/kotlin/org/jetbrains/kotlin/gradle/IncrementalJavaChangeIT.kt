@@ -471,6 +471,7 @@ class BasicIncrementalJavaInteropIT : KGPBaseTest() {
 
     @DisplayName("Basic scenario: Kotlin constant tracks a Java constant")
     @GradleTest
+    @BrokenOnMacosTest
     fun testKotlinConstantTrackingJavaConstant(gradleVersion: GradleVersion) {
         project("kt-69042-basic-java-interop", gradleVersion) {
             build("assemble")

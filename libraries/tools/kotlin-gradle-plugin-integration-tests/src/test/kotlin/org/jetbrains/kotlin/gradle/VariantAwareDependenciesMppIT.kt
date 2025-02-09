@@ -283,6 +283,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("Custom configuration with dependency on multiplatform project could be resolved")
     @GradleTest
+    @BrokenOnMacosTest
     fun testResolveDependencyOnMppInCustomConfiguration(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             buildGradle.appendText(

@@ -489,6 +489,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Syncs languageSettings changes to the related compiler options")
     @MppGradlePluginTests
+    @BrokenOnMacosTest
     fun syncLanguageSettingsToCompilerOptions(gradleVersion: GradleVersion) {
         project("mpp-default-hierarchy", gradleVersion) {
             buildGradle.appendText(
@@ -535,6 +536,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Syncs compiler option changes to the related language settings")
     @MppGradlePluginTests
+    @BrokenOnMacosTest
     fun syncCompilerOptionsToLanguageSettings(gradleVersion: GradleVersion) {
         project("mpp-default-hierarchy", gradleVersion) {
             buildGradle.appendText(

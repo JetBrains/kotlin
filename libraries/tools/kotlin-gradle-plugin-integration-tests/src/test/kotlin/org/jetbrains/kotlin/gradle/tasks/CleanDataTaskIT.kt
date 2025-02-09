@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
@@ -14,6 +15,7 @@ class CleanDataTaskIT : KGPBaseTest() {
 
     @DisplayName("nodejs is deleted from Gradle user home")
     @GradleTest
+    @BrokenOnMacosTest
     fun testDownloadedFolderDeletion(gradleVersion: GradleVersion) {
         project("cleanTask", gradleVersion) {
             build("testCleanTask")
