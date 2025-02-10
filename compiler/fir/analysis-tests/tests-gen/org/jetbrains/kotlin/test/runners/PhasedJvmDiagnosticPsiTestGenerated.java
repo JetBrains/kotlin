@@ -51521,6 +51521,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("contextInLocalFunctionResolution.kt")
+        public void testContextInLocalFunctionResolution() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextInLocalFunctionResolution.kt");
+        }
+
+        @Test
         @TestMetadata("contextOnGetterSetter.kt")
         public void testContextOnGetterSetter() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextOnGetterSetter.kt");

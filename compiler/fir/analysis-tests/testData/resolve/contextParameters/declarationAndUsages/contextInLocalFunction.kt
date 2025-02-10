@@ -4,9 +4,13 @@ annotation class Ann
 
 fun test() {
     context(c: String)
-    fun local() {}
+    fun local() {
+        c
+    }
 
-    context(c: String) fun local2() {}
+    context(c: String) fun local2() {
+        c
+    }
 
     @Ann
     context(c: String)
