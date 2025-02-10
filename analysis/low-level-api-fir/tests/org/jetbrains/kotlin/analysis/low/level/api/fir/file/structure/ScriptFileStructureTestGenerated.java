@@ -42,6 +42,12 @@ public class ScriptFileStructureTestGenerated extends AbstractScriptFileStructur
   }
 
   @Test
+  @TestMetadata("contextParametersScript.kts")
+  public void testContextParametersScript() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/contextParametersScript.kts");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationClassLevelScript.kts")
   public void testDanglingAnnotationClassLevelScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationClassLevelScript.kts");

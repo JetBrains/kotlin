@@ -30,6 +30,12 @@ public class SourceNonLocalDeclarationAnchorTestGenerated extends AbstractSource
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("destructuringDeclarations.kt")
   public void testDestructuringDeclarations() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/destructuringDeclarations.kt");

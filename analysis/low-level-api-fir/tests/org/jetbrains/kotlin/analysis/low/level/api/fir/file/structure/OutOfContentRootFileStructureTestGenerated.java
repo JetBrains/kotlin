@@ -96,6 +96,12 @@ public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfCon
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationClassLevel.kt")
   public void testDanglingAnnotationClassLevel() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationClassLevel.kt");
