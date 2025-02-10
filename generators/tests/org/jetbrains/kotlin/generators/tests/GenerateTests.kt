@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.lombok.AbstractFirPsiDiagnosticTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
-import org.jetbrains.kotlin.plugin.sandbox.AbstractFirLightTreePluginBlackBoxCodegenTest
-import org.jetbrains.kotlin.plugin.sandbox.AbstractFirLoadK2CompiledWithPluginJsKotlinTest
-import org.jetbrains.kotlin.plugin.sandbox.AbstractFirLoadK2CompiledWithPluginJvmKotlinTest
-import org.jetbrains.kotlin.plugin.sandbox.AbstractFirPsiPluginDiagnosticTest
+import org.jetbrains.kotlin.plugin.sandbox.*
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.samWithReceiver.*
@@ -233,6 +230,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirLoadK2CompiledWithPluginJsKotlinTest> {
                 model("firLoadK2Compiled")
+            }
+
+            testClass<AbstractFirMetadataPluginSandboxTest> {
+                model("metadata")
             }
         }
 

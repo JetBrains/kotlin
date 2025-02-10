@@ -1,0 +1,34 @@
+// test/Some.class
+// ------------------------------------------
+@org/jetbrains/kotlin/plugin/sandbox/AddAnnotations
+@org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+public final class test/Some : kotlin/Any {
+
+  // signature: <init>(I)V
+  @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+  public constructor(@org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])]) x: kotlin/Int)
+
+  // signature: foo()V
+  @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+  public final fun foo(): kotlin/Unit
+
+  // field: x:I
+  // getter: getX()I
+  // synthetic method for annotations: getX$annotations()V
+  @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+  @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+  public final val x: kotlin/Int
+    @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+    public final /* non-default */ get
+
+  // nested class: Derived
+}
+// test/Some$Derived.class
+// ------------------------------------------
+@org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+public final class test/Some.Derived : kotlin/Any {
+
+  // signature: <init>()V
+  @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
+  public constructor()
+}
