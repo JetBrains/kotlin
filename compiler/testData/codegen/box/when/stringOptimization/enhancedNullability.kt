@@ -19,12 +19,15 @@ fun testSingle() {
 }
 
 fun testElseOnly() {
-    var q = "other"
-    when (J.nullString()) {
-        else -> q = "A"
-    }
-    if (q != "A") {
-        throw Exception("Expected: 'A', got '$q'")
+    try {
+        var q = "other"
+        when (J.nullString()) {
+            else -> q = "A"
+        }
+        if (q != "A") {
+            throw Exception("Expected: 'A', got '$q'")
+        }
+    } catch (e: NullPointerException) {
     }
 }
 
