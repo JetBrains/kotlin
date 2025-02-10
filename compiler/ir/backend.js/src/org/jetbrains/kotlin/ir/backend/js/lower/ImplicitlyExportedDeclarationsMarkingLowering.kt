@@ -58,7 +58,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     private fun IrFunction.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
         val types = buildSet {
             add(returnType)
-            addAll(valueParameters.map { it.type })
+            addAll(nonDispatchParameters.map { it.type })
             addAll(typeParameters.flatMap { it.superTypes })
         }
 
@@ -103,7 +103,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             }
         } else if (strictImplicitExport) {
             annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor).apply {
-                putValueArgument(0, false.toIrConst(context.irBuiltIns.booleanType))
+                arguments[0] = false.toIrConst(context.irBuiltIns.booleanType)
             }
 
             parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitExportOrUpgraded() }?.markWithJsImplicitExportOrUpgrade()
