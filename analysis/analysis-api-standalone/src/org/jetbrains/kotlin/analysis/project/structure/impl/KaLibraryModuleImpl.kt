@@ -11,7 +11,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -33,8 +32,4 @@ internal class KaLibraryModuleImpl(
 
     @KaPlatformInterface
     override val isSdk: Boolean,
-) : KaLibraryModule, KtModuleWithPlatform, KaModuleBase() {
-    override val transitiveDependsOnDependencies: List<KaModule> by lazy {
-        computeTransitiveDependsOnDependencies(directDependsOnDependencies)
-    }
-}
+) : KaLibraryModule, KtModuleWithPlatform, KaModuleBase()

@@ -12,7 +12,6 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -95,8 +94,6 @@ abstract class KtModuleByCompilerConfiguration(
         testModule.dependsOnDependencies
             .map { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
     }
-
-    override val transitiveDependsOnDependencies: List<KaModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
 
     override val directFriendDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {

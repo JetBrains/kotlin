@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -27,10 +26,6 @@ internal class KaScriptModuleImpl(
     override val file: KtFile,
     override val languageVersionSettings: LanguageVersionSettings
 ) : KaScriptModule, KtModuleWithPlatform, KaModuleBase() {
-    override val transitiveDependsOnDependencies: List<KaModule> by lazy {
-        computeTransitiveDependsOnDependencies(directDependsOnDependencies)
-    }
-
     override val baseContentScope: GlobalSearchScope
         get() = GlobalSearchScope.fileScope(file)
 }
