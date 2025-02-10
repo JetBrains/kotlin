@@ -1705,6 +1705,23 @@ object KotlinToolingDiagnostics {
             }
         }
     }
+
+    internal object KotlinScriptingMisconfiguration : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+    ) {
+        operator fun invoke(
+            taskPath: String,
+            discoveryResultsConfigurationName: String,
+        ) = build {
+            name { "Kotlin scripting misconfiguration" }
+            message {
+                "Scripting configuration for task '${taskPath}' is not found: $discoveryResultsConfigurationName"
+            }
+            solution {
+                "Please create a new Kotlin issue with reproduction project: https://kotl.in/issue"
+            }
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
