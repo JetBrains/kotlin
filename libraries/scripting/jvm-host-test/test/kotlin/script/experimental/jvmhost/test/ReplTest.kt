@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
+import kotlin.test.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
@@ -26,7 +26,7 @@ import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-class ReplTest : TestCase() {
+class ReplTest {
 
     @Test
     fun testDecompiledReflection() {
@@ -318,10 +318,9 @@ class ReplTest : TestCase() {
                 replEvaluator.eval(it, evaluationConfiguration)
             }
         }
-        assertTrue(
-            "Expecting 1 got $res0",
+        assertTrue("Expecting 1 got $res0") {
             res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1
-        )
+        }
 
         var handlerInvoked = false
 
@@ -343,12 +342,11 @@ class ReplTest : TestCase() {
                 replEvaluator.eval(it, evaluationConfiguration)
             }
         }
-        assertTrue(
-            "Expecting 2 got $res1",
+        assertTrue("Expecting 2 got $res1") {
             res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2
-        )
+        }
 
-        assertTrue("Refinement handler on annotation is not invoked", handlerInvoked)
+        assertTrue("Refinement handler on annotation is not invoked") { handlerInvoked }
     }
 
     @Test

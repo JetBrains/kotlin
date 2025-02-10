@@ -7,8 +7,7 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
@@ -60,9 +59,9 @@ class ConfigurationDslTest : TestCase() {
             }
         }
 
-        Assert.assertNull(baseConfig[ScriptCompilationConfiguration.implicitReceivers])
-        Assert.assertNull(baseConfig[ScriptCompilationConfiguration.providedProperties])
-        Assert.assertNull(baseConfig[ScriptCompilationConfiguration.compilerOptions])
+        assertNull(baseConfig[ScriptCompilationConfiguration.implicitReceivers])
+        assertNull(baseConfig[ScriptCompilationConfiguration.providedProperties])
+        assertNull(baseConfig[ScriptCompilationConfiguration.compilerOptions])
 
         val script = "@file:MyTestAnnotation1\nann1+ann12".toScriptSource()
 
@@ -71,15 +70,15 @@ class ConfigurationDslTest : TestCase() {
         }
         val finalConfig = compiledScript.compilationConfiguration
 
-        Assert.assertEquals(
+        assertEquals(
             listOf(KotlinType(Int::class), KotlinType(Float::class)),
             finalConfig[ScriptCompilationConfiguration.implicitReceivers]
         )
-        Assert.assertEquals(
+        assertEquals(
             mapOf("ann1" to KotlinType(String::class), "ann12" to KotlinType(Int::class)),
             finalConfig[ScriptCompilationConfiguration.providedProperties]
         )
-        Assert.assertEquals(
+        assertEquals(
             listOf("-version"),
             finalConfig[ScriptCompilationConfiguration.compilerOptions]
         )
@@ -104,24 +103,24 @@ class ConfigurationDslTest : TestCase() {
             }
         }
 
-        Assert.assertNull(baseEvalConfig[ScriptCompilationConfiguration.implicitReceivers])
-        Assert.assertNull(baseEvalConfig[ScriptCompilationConfiguration.providedProperties])
+        assertNull(baseEvalConfig[ScriptCompilationConfiguration.implicitReceivers])
+        assertNull(baseEvalConfig[ScriptCompilationConfiguration.providedProperties])
 
         val evalRes = runBlocking {
             BasicJvmScriptEvaluator().invoke(compiledScript, baseEvalConfig).valueOrThrow()
         }
         val finalEvalConfig = evalRes.configuration!!
 
-        Assert.assertEquals(
+        assertEquals(
             listOf<Any>(implicitReceiver1, implicitReceiver2),
             finalEvalConfig[ScriptEvaluationConfiguration.implicitReceivers]
         )
-        Assert.assertEquals(
+        assertEquals(
             mapOf("ann1" to propAnn1, "ann12" to propAnn12),
             finalEvalConfig[ScriptEvaluationConfiguration.providedProperties]
         )
 
-        Assert.assertEquals(propAnn1 + propAnn12, (evalRes.returnValue as ResultValue.Value).value)
+        assertEquals(propAnn1 + propAnn12, (evalRes.returnValue as ResultValue.Value).value)
     }
 
     @Test
@@ -136,7 +135,7 @@ class ConfigurationDslTest : TestCase() {
 
         val scriptObj = evalRes.returnValue.scriptInstance!!
 
-        Assert.assertEquals(Any::class.java, scriptObj::class.java.superclass)
+        assertEquals(Any::class.java, scriptObj::class.java.superclass)
     }
 
     @Test
@@ -153,10 +152,10 @@ class ConfigurationDslTest : TestCase() {
             filePathPattern.replaceOnlyDefault("x.*x")
         }
 
-        Assert.assertEquals("1", conf2[ScriptCompilationConfiguration.displayName])
-        Assert.assertEquals(KotlinType(Int::class), conf2[ScriptCompilationConfiguration.baseClass])
-        Assert.assertEquals("ktx", conf2[ScriptCompilationConfiguration.fileExtension])
-        Assert.assertEquals("x.*x", conf2[ScriptCompilationConfiguration.filePathPattern])
+        assertEquals("1", conf2[ScriptCompilationConfiguration.displayName])
+        assertEquals(KotlinType(Int::class), conf2[ScriptCompilationConfiguration.baseClass])
+        assertEquals("ktx", conf2[ScriptCompilationConfiguration.fileExtension])
+        assertEquals("x.*x", conf2[ScriptCompilationConfiguration.filePathPattern])
     }
 }
 
