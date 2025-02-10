@@ -16,6 +16,14 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  */
 @KaImplementationDetail
 public abstract class KaResolutionScope : GlobalSearchScope() {
+    /**
+     * Checks whether a [PsiElement] is contained in the resolution scope,
+     * i.e., the containing file is present in the resolution scope.
+     *
+     * In contrast to [GlobalSearchScope.contains],
+     * this method provides an additional support for [PsiElement]s contained
+     * in dangling files that do not have backing virtual files.
+     */
     public abstract fun contains(element: PsiElement): Boolean
 
     public companion object {
