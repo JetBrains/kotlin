@@ -21,10 +21,6 @@ class CodeAnalysisMeasurement(val milliseconds: Long) : PerformanceMeasurement {
     override fun render(lines: Int): String = formatMeasurement("ANALYZE", milliseconds, lines)
 }
 
-class CodeGenerationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = formatMeasurement("GENERATE", milliseconds, lines)
-}
-
 class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
     override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }

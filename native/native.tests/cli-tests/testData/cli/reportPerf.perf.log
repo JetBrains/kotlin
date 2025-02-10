@@ -1,7 +1,6 @@
 Kotlin to Native Compiler performance report
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
-            GENERATE        $INT>>$ ms            $REAL>>$ loc/s
          IR LOWERING        $INT>>$ ms    Infinity loc/s
          IR LOWERING        $INT>>$ ms    Infinity loc/s
          IR LOWERING        $INT>>$ ms    Infinity loc/s
@@ -13,6 +12,7 @@ Kotlin to Native Compiler performance report
          IR LOWERING        $INT>>$ ms            $REAL>>$ loc/s
        IR GENERATION        $INT>>$ ms            $REAL>>$ loc/s
        IR GENERATION        $INT>>$ ms            $REAL>>$ loc/s
+  BACKEND GENERATION        $INT>>$ ms            $REAL>>$ loc/s
   BACKEND GENERATION        $INT>>$ ms            $REAL>>$ loc/s
 Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
 Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
