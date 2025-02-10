@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal fun SirFunction.constructFunctionBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
-    val fqName = ((origin as? KotlinSource)?.symbol as? KaFunctionSymbol)
+    val fqName = kotlinOriginOrNull<KaFunctionSymbol>()
         ?.callableId?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }
         ?: return emptyList()
@@ -28,7 +28,7 @@ internal fun SirFunction.constructFunctionBridgeRequests(generator: BridgeGenera
 
 internal fun SirVariable.constructFunctionBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
     val fqName = when (val origin = origin) {
-        is KotlinSource -> (origin.symbol as? KaVariableSymbol)
+        is KotlinSource -> kotlinOriginOrNull<KaVariableSymbol>()
             ?.callableId?.asSingleFqName()
             ?.pathSegments()?.map { it.toString() }
         is SirOrigin.ObjectAccessor -> ((origin.`for` as KotlinSource).symbol as KaNamedClassSymbol)
@@ -56,12 +56,12 @@ internal fun SirInit.constructFunctionBridgeRequests(generator: BridgeGenerator)
         return emptyList()
     }
 
-    val constructedClassSymbol = ((this.parent as? SirClass)?.origin as? KotlinSource)?.symbol as? KaClassSymbol
+    val constructedClassSymbol = (this.parent as SirClass).kotlinOriginOrNull<KaClassSymbol>()
     if (constructedClassSymbol?.modality?.isAbstract() != false) {
         return emptyList()
     }
 
-    val fqName = ((origin as? KotlinSource)?.symbol as? KaConstructorSymbol)
+    val fqName = kotlinOriginOrNull<KaConstructorSymbol>()
         ?.containingClassId?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }
         ?: return emptyList()

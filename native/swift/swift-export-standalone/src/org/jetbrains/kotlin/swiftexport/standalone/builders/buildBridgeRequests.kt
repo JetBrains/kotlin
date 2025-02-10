@@ -30,7 +30,7 @@ internal fun buildBridgeRequests(generator: BridgeGenerator, container: SirDecla
     addAll(
         container
             .allClasses()
-            .flatMap { it.constructTypeBindingBridgeRequests(generator) }
+            .flatMap { it.constructTypeBindingBridgeRequests() }
     )
     addAll(
         container

@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.SirClass
-import org.jetbrains.kotlin.sir.bridge.BridgeGenerator
 import org.jetbrains.kotlin.sir.bridge.TypeBindingBridgeRequest
-import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.source.kotlinOriginOrNull
 
-internal fun SirClass.constructTypeBindingBridgeRequests(generator: BridgeGenerator): List<TypeBindingBridgeRequest> {
+internal fun SirClass.constructTypeBindingBridgeRequests(): List<TypeBindingBridgeRequest> {
     // `SirClass` must be generated from Kotlin sources, and be a named class.
-    (origin as? KotlinSource)?.symbol as? KaNamedClassSymbol ?: return emptyList()
+    kotlinOriginOrNull<KaNamedClassSymbol>() ?: return emptyList()
 
     return listOf(TypeBindingBridgeRequest(this))
 }
