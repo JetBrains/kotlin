@@ -91,6 +91,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceExpression
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReducePredicate
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Merge0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeId
@@ -297,6 +300,9 @@ internal inline fun <reified T> String.load(): T {
         "MergeBy1" -> MergeBy1()
         "ReorderColumnsByName" -> ReorderColumnsByName()
         "GroupByCount0" -> GroupByCount0()
+        "GroupByReducePredicate" -> GroupByReducePredicate()
+        "GroupByReduceExpression" -> GroupByReduceExpression()
+        "GroupByReduceInto" -> GroupByReduceInto()
         else -> error("$this")
     } as T
 }

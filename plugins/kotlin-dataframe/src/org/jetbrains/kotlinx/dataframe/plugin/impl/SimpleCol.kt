@@ -125,7 +125,7 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
     }
 }
 
-private fun KotlinTypeFacade.makeNullable(column: SimpleCol): SimpleCol {
+internal fun KotlinTypeFacade.makeNullable(column: SimpleCol): SimpleCol {
     return when (column) {
         is SimpleColumnGroup -> {
             SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })

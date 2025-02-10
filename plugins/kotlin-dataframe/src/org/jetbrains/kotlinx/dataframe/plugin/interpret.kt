@@ -192,7 +192,7 @@ fun <T> KotlinTypeFacade.interpret(
                 assert(expectedReturnType.toString() == GroupBy::class.qualifiedName!!) {
                     "'$name' should be ${GroupBy::class.qualifiedName!!}, but plugin expect $expectedReturnType"
                 }
-
+                // ok for ReducedGroupBy too
                 val resolvedType = it.expression.resolvedType.fullyExpandedType(session)
                 val keys = pluginDataFrameSchema(resolvedType.typeArguments[0])
                 val groups = pluginDataFrameSchema(resolvedType.typeArguments[1])
