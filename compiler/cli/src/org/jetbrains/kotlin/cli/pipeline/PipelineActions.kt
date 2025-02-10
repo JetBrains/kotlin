@@ -50,16 +50,16 @@ object PerformanceNotifications {
     object AnalysisFinished : AbstractNotification(PerformanceManager::notifyAnalysisFinished)
 
     // fir2ir
-    object IrTranslationStarted : AbstractNotification(PerformanceManager::notifyIRTranslationStarted)
-    object IrTranslationFinished : AbstractNotification(PerformanceManager::notifyIRTranslationFinished)
+    object TranslationToIrStarted : AbstractNotification(PerformanceManager::notifyTranslationToIRStarted)
+    object TranslationToIrFinished : AbstractNotification(PerformanceManager::notifyTranslationToIRFinished)
 
     // backend lowerings
     object IrLoweringStarted : AbstractNotification(PerformanceManager::notifyIRLoweringStarted)
     object IrLoweringFinished : AbstractNotification(PerformanceManager::notifyIRLoweringFinished)
 
     // backend codegen
-    object IrGenerationStarted : AbstractNotification(PerformanceManager::notifyIRGenerationStarted)
-    object IrGenerationFinished : AbstractNotification(PerformanceManager::notifyIRGenerationFinished)
+    object BackendStarted : AbstractNotification(PerformanceManager::notifyBackendStarted)
+    object BackendFinished : AbstractNotification(PerformanceManager::notifyBackendFinished)
 
     // whole backend
     object GenerationStarted : AbstractNotification(PerformanceManager::notifyGenerationStarted)

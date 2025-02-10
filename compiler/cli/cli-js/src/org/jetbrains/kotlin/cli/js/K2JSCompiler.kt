@@ -147,7 +147,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyIRTranslationFinished()
+            performanceManager?.notifyTranslationToIRFinished()
             return OK
         }
 

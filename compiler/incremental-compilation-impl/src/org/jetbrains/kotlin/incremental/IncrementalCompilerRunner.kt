@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.BackendMeasurement
 import org.jetbrains.kotlin.util.*
 import java.io.File
 import java.nio.file.Files
@@ -674,10 +675,10 @@ abstract class IncrementalCompilerRunner<
                         }
                     }
                 }
-                is IrTranslationMeasurement -> reportIrMeasurements(
+                is TranslationToIrMeasurement -> reportIrMeasurements(
                     it.milliseconds,
                     it.lines,
-                    GradleBuildTime.IR_TRANSLATION,
+                    GradleBuildTime.TRANSLATION_TO_IR,
                     GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER
                 )
                 is IrLoweringMeasurement -> reportIrMeasurements(
@@ -686,10 +687,10 @@ abstract class IncrementalCompilerRunner<
                     GradleBuildTime.IR_LOWERING,
                     GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER
                 )
-                is IrGenerationMeasurement -> reportIrMeasurements(
+                is BackendMeasurement -> reportIrMeasurements(
                     it.milliseconds,
                     it.lines,
-                    GradleBuildTime.IR_GENERATION,
+                    GradleBuildTime.BACKEND,
                     GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER
                 )
             }

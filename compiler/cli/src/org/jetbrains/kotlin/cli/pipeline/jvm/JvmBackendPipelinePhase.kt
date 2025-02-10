@@ -34,7 +34,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
         PerformanceNotifications.IrLoweringStarted
     ),
     postActions = setOf(
-        PerformanceNotifications.IrGenerationFinished,
+        PerformanceNotifications.BackendFinished,
         PerformanceNotifications.GenerationFinished,
         CheckCompilationErrors.CheckDiagnosticCollector
     )

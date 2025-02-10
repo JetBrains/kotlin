@@ -172,11 +172,11 @@ fun generateCodeFromIr(
     val codegenInput = codegenFactory.invokeLowerings(generationState, backendInput)
 
     performanceManager?.notifyIRLoweringFinished()
-    performanceManager?.notifyIRGenerationStarted()
+    performanceManager?.notifyBackendStarted()
 
     codegenFactory.invokeCodegen(codegenInput)
 
-    performanceManager?.notifyIRGenerationFinished()
+    performanceManager?.notifyBackendFinished()
     performanceManager?.notifyGenerationFinished()
 
     return ModuleCompilerOutput(generationState, builderFactory)

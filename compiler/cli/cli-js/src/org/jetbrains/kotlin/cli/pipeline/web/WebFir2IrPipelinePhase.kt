@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(
     name = "JsFir2IrPipelinePhase",
-    preActions = setOf(PerformanceNotifications.IrTranslationStarted),
-    postActions = setOf(PerformanceNotifications.IrTranslationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
+    postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact? {
         val (analyzedOutput, configuration, diagnosticsReporter, moduleStructure) = input

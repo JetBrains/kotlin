@@ -1,8 +1,8 @@
 Kotlin to JS Compiler performance report
-        ANALYZE        $INT>>$ ms
-       GENERATE        $INT>>$ ms
-  IR GENERATION        $INT>>$ ms
- IR TRANSLATION        $INT>>$ ms
+             ANALYZE        $INT>>$ ms
+             BACKEND        $INT>>$ ms
+            GENERATE        $INT>>$ ms
+   TRANSLATION to IR        $INT>>$ ms
 Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
 Find Java class performed $INT$ times, total time $INT$ ms
 GC time for PS MarkSweep is $INT$ ms, $INT$ collections

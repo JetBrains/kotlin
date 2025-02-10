@@ -208,9 +208,9 @@ class BuildReportsIT : KGPBaseTest() {
                 "Compiler IR translation line number:",
                 "Compiler IR lowering line number:",
                 "Compiler IR generation line number:",
-                "Compiler IR translation:",
+                "Compiler translation to IR:",
                 "Compiler IR lowering:",
-                "Compiler IR generation:",
+                "Compiler backend:",
             )
         }
     }
