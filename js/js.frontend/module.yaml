@@ -66,3 +66,43 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - #org.jetbrains.kotlin.kotlin.js.js.frontend.main
+  - ./../js.serializer
+  - ./../../compiler/frontend
+  - ./../../compiler/util
+  - ./../../core/compiler.common.js
+  - ./../js.parser
+  - ./../js.ast
+  - ./../../compiler/util-io
+  - ./../../core/compiler.common.web
+  - ./../js.config
+  - ./../../compiler/serialization
+  - ./../../compiler/frontend.common-psi
+  - ./../../compiler/psi
+  - ./../../compiler/frontend.common
+  - ./../../compiler/config
+  - ./../../compiler/resolution
+  - ./../../core/deserialization
+  - ./../../core/descriptors
+  - ./../../compiler/container
+  - ./../../libraries/tools/kotlin-annotations-jvm
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../compiler/compiler.version
+  - ./../../core/util.runtime
+  - ./../../core/compiler.common
+  - ./../../core/metadata
+  - ./../../compiler/resolution.common
+  - ./../../core/deserialization.common
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

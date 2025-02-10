@@ -14,3 +14,8 @@ dependencies:
 
 module:
   layout: gradle-jvm
+
+
+test-dependencies:
+  - org.jetbrains:annotations:21.0.0
+  - #org.jetbrains.kotlin.kotlin.analysis.analysis-tools.deprecated-k1-frontend-internals-for-ide-generated.main

@@ -21,3 +21,11 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - #org.jetbrains.kotlin.kotlin.kotlin-noarg-compiler-plugin.common.main
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

@@ -52,3 +52,55 @@ module:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xsam-conversions=class, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xsuppress-version-warnings, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - org.junit.jupiter:junit-jupiter-api:5.10.1
+  - org.jetbrains:annotations:13.0
+  - org.junit.platform:junit-platform-commons:1.10.1
+  - org.opentest4j:opentest4j:1.3.0
+  - org.apiguardian:apiguardian-api:1.1.2
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - org.junit.jupiter:junit-jupiter-engine:5.10.1
+  - org.junit.platform:junit-platform-engine:1.10.1
+  - #org.jetbrains.kotlin.kotlin.kotlin-daemon-client.main
+  - ./../daemon-common
+  - ./../../tests-mutes/mutes-junit5
+  - ./../../cli/cli-common
+  - ./../../../build-common
+  - ./../../config.jvm
+  - ./../../../js/js.config
+  - ./../../../wasm/wasm.config
+  - ./../../plugin-api
+  - ./../../config
+  - ./../../../native/utils
+  - ./../../../core/util.runtime
+  - ./../../../core/compiler.common.jvm
+  - ./../../frontend
+  - ./../../util
+  - ./../../../core/metadata
+  - ./../../../core/compiler.common
+  - ./../../util-klib
+  - ./../../util-io
+  - ./../../frontend.common-psi
+  - ./../../psi
+  - ./../../frontend.common
+  - ./../../../core/deserialization
+  - ./../../resolution
+  - ./../../../core/descriptors
+  - ./../../container
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../compiler.version
+  - ./../../../core/deserialization.common
+  - ./../../resolution.common
+  - ./../../build-tools/kotlin-build-tools-api
+  - ./../../tests-mutes
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xsam-conversions=class, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xsuppress-version-warnings, -Xwhen-guards]

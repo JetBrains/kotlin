@@ -68,3 +68,51 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.annotation:jsr250-api:1.0
+  - org.jetbrains:annotations:13.0
+  - io.vavr:vavr:0.10.4
+  - javax.inject:javax.inject:1
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - #org.jetbrains.kotlin.kotlin.kotlin-noarg-compiler-plugin.backend.main
+  - ./../../../compiler/ir/backend.common
+  - ./../../../compiler/frontend.java
+  - ./../../../core/descriptors
+  - ./../../../compiler/backend-common
+  - ./../../../compiler/frontend
+  - ./../../../compiler/ir/ir.tree
+  - ./../../../compiler/util
+  - ./../../../compiler/ir/ir.interpreter
+  - ./../../../core/descriptors.jvm
+  - ./../../../compiler/config.jvm
+  - ./../../../compiler/resolution.common.jvm
+  - ./../../../compiler/frontend.common.jvm
+  - ./../../../core/compiler.common
+  - ./../../../core/util.runtime
+  - ./../../../libraries/tools/kotlin-annotations-jvm
+  - ./../../../core/deserialization
+  - ./../../../compiler/resolution
+  - ./../../../compiler/frontend.common-psi
+  - ./../../../compiler/psi
+  - ./../../../compiler/frontend.common
+  - ./../../../compiler/config
+  - ./../../../compiler/container
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../../compiler/compiler.version
+  - ./../../../core/compiler.common.jvm
+  - ./../../../core/deserialization.common.jvm
+  - ./../../../compiler/resolution.common
+  - ./../../../core/deserialization.common
+  - ./../../../core/metadata.jvm
+  - ./../../../core/metadata
+  - ./../../../compiler/util-klib
+  - ./../../../compiler/util-io
+  - ./../../../core/compiler.common.js
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

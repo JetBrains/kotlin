@@ -79,3 +79,63 @@ dependencies:
 settings:
   kotlin:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.util.JvmIrInlineExperimental,-opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI, -Xskip-prerelease-check, -Xwhen-guards]
+
+
+test-dependencies:
+  - org.jetbrains.intellij.deps:asm-all:9.0
+  - com.google.guava:guava:33.3.1-jre
+  - io.vavr:vavr:0.10.4
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
+  - javax.inject:javax.inject:1
+  - javax.annotation:jsr250-api:1.0
+  - com.google.guava:failureaccess:1.0.2
+  - com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+  - com.google.code.findbugs:jsr305:3.0.2
+  - org.checkerframework:checker-qual:3.43.0
+  - com.google.errorprone:error_prone_annotations:2.28.0
+  - com.google.j2objc:j2objc-annotations:3.0.0
+  - io.vavr:vavr-match:0.10.4
+  - org.jetbrains:annotations:13.0
+  - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
+  - #org.jetbrains.kotlin.kotlin.compiler.backend.jvm.codegen.main
+  - ./..
+  - ./../../backend.common
+  - ./../../ir.tree
+  - ./../../../backend
+  - ./../../../backend.common.jvm
+  - ./../../../backend-common
+  - ./../../../frontend
+  - ./../../../util
+  - ./../../ir.interpreter
+  - ./../../../../core/deserialization
+  - ./../../../../core/descriptors
+  - ./../../../frontend.common
+  - ./../../../frontend.java
+  - ./../../../serialization
+  - ./../../../../libraries/tools/kotlin-annotations-jvm
+  - ./../../../config.jvm
+  - ./../../../../core/compiler.common.jvm
+  - ./../../../resolution
+  - ./../../../frontend.common-psi
+  - ./../../../psi
+  - ./../../../config
+  - ./../../../container
+  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - ./../../../../core/util.runtime
+  - ./../../../compiler.version
+  - ./../../../../core/deserialization.common
+  - ./../../../../core/metadata
+  - ./../../../../core/compiler.common
+  - ./../../../../core/descriptors.jvm
+  - ./../../../resolution.common.jvm
+  - ./../../../frontend.common.jvm
+  - ./../../../resolution.common
+  - ./../../../../core/deserialization.common.jvm
+  - ./../../../../core/metadata.jvm
+  - ./../../../util-klib
+  - ./../../../../core/compiler.common.js
+  - ./../../../util-io
+
+test-settings:
+  kotlin:
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.ir.util.JvmIrInlineExperimental,org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
