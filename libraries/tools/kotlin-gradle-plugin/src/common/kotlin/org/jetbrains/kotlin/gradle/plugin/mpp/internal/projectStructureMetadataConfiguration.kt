@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinMetadataCompilations
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
+import kotlin.collections.map
 
 internal val ProjectStructureMetadataForKMPSetupAction = KotlinProjectSetupAction {
     project.setupProjectStructureMetadataOutgoingArtifacts()
@@ -56,12 +58,13 @@ internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfigurati
     }
 }
 
-internal fun Project.psmArtifactsForAllDependencies(): List<FileCollection> {
+internal suspend fun Project.psmArtifactsForAllDependencies(): List<FileCollection> {
     if (!kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) return emptyList()
-    return multiplatformExtension.sourceSets.map { sourceSet ->
-        sourceSet.internal.projectStructureMetadataResolvedConfiguration().files
+    return multiplatformExtension.kotlinMetadataCompilations().map { compilation ->
+        compilation.defaultSourceSet.internal.projectStructureMetadataResolvedConfiguration().files
     }
 }
+
 
 private fun setupTransformActionFromJarToPsm(project: Project) {
     project.dependencies.registerTransform(ProjectStructureMetadataTransformAction::class.java) { transform ->
