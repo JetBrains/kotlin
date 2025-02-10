@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
-import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -219,7 +218,7 @@ private fun readRequestFromFile(file: File): FunctionBridgeRequest {
         }
     }
 
-    return FunctionBridgeRequest(callable, bridgeName, fqName, FunctionBridgeKind.FUNCTION)
+    return FunctionBridgeRequest(callable, bridgeName, fqName)
 }
 
 private enum class BridgeRequestKind {

@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.sir.bridge.impl
 
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.mangler.mangledNameOrNull
 import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
+import org.jetbrains.kotlin.sir.providers.source.kotlinOriginOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.*
 
@@ -48,21 +53,22 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add(
                     request.descriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
-                        when (request.kind) {
-                            FunctionBridgeKind.GETTER -> {
+                        when (val kaSymbol = request.callable.kotlinOriginOrNull<KaFunctionSymbol>()) {
+                            is KaPropertyGetterSymbol -> {
                                 val expectedParameters = if (extensionReceiverParameter != null) 1 else 0
                                 require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
                                 buildCall("")
                             }
-                            FunctionBridgeKind.SETTER -> {
+                            is KaPropertySetterSymbol -> {
                                 val expectedParameters = if (extensionReceiverParameter != null) 2 else 1
                                 require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
                                 buildCall(" = ${args.last()}")
                             }
-                            FunctionBridgeKind.FUNCTION -> {
+                            is KaNamedFunctionSymbol -> {
                                 val actualArgs = if (extensionReceiverParameter != null) args.drop(1) else args
                                 buildCall("(${actualArgs.joinToString()})")
                             }
+                            else -> error("Unexpected Kotlin symbol: ${kaSymbol}")
                         }
                     }
                 )

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinPropertyAccessorOrigin
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.source.kotlinOriginOrNull
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -95,18 +96,10 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
         this,
         fqName.forBridge.joinToString("_") + suffix,
         fqName,
-        functionBridgeKind,
     )
     body = generator.generateSirFunctionBody(request)
     return request
 }
-
-private val SirCallable.functionBridgeKind
-    get() = when ((this.origin as? KotlinSource)?.symbol) {
-        is KaPropertyGetterSymbol -> FunctionBridgeKind.GETTER
-        is KaPropertySetterSymbol -> FunctionBridgeKind.SETTER
-        else -> FunctionBridgeKind.FUNCTION
-    }
 
 private val SirType.isSupported: Boolean
     get() = when (this) {
@@ -126,10 +119,10 @@ private val SirCallable.bridgeSuffix: String
     get() = when (this) {
         is SirAccessor -> "_$bridgeSuffix"
         is SirInit -> "_init"
-        else -> when (functionBridgeKind) {
-            FunctionBridgeKind.FUNCTION -> ""
-            FunctionBridgeKind.GETTER -> "_get"
-            FunctionBridgeKind.SETTER -> "_set"
+        else -> when (kotlinOriginOrNull<KaFunctionSymbol>()) {
+            is KaPropertyGetterSymbol -> "_get"
+            is KaPropertySetterSymbol -> "_set"
+            else -> ""
         }
     }
 
