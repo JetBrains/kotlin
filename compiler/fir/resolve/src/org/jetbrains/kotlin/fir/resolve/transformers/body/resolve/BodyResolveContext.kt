@@ -893,7 +893,7 @@ class BodyResolveContext(
     }
 
     fun storeValueParameterIfNeeded(valueParameter: FirValueParameter, session: FirSession) {
-        if (!valueParameter.isLegacyContextReceiver() && (!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR)) {
+        if (!valueParameter.isLegacyContextReceiver() && valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
             storeVariable(valueParameter, session)
         }
     }
