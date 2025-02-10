@@ -374,7 +374,7 @@ abstract class CompileServiceImplBase(
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                     val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
-                    val perfString = compiler.defaultPerformanceManager.renderCompilerPerformance()
+                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport()
                     compilationResults?.also {
                         (it as CompilationResults).add(
                             CompilationResultCategory.BUILD_REPORT_LINES.code,
