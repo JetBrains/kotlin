@@ -32,6 +32,9 @@ public class KaBaseContentScopeProvider : KaContentScopeProvider {
         val scopeMerger = KotlinGlobalSearchScopeMerger.getInstance(module.project)
 
         val mergedEnlargementScope = scopeMerger.union(enlargementScopes)
+        if (shadowedScopes.isEmpty())
+            return mergedEnlargementScope
+
         val mergedShadowedScope = scopeMerger.union(shadowedScopes)
 
         return mergedEnlargementScope.intersectWith(GlobalSearchScope.notScope(mergedShadowedScope))
