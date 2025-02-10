@@ -1016,8 +1016,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         checkOutdatedVersions(languageVersion, apiVersion, collector)
         checkProgressiveMode(languageVersion, collector)
 
-        checkIrSupport(languageVersionSettings, collector)
-
         checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
         return languageVersionSettings
@@ -1093,10 +1091,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
                         "or turning off progressive mode."
             )
         }
-    }
-
-    protected open fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        // backend-specific
     }
 
     private fun checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector: MessageCollector) {
