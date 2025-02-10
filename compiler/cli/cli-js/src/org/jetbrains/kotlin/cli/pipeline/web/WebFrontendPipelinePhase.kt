@@ -47,12 +47,12 @@ import java.nio.file.Paths
 
 object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, WebFrontendPipelineArtifact>(
     name = "JsFrontendPipelinePhase",
-    preActions = setOf(PerformanceNotifications.AnalysisStarted),
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): WebFrontendPipelineArtifact? {
         val configuration = input.configuration
         val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
+        configuration.perfManager?.notifyAnalysisStarted()
         val messageCollector = configuration.messageCollector
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries
