@@ -110,7 +110,9 @@ internal fun IrClass.shouldHaveSerializerCache(serializer: IrClass): Boolean {
     if (hasCustomObjectSerializer(serializer)) return false
 
     return isSerializableObject
-            || isAbstractOrSealedSerializableClass
+            // we can cache serializers for non-final classes only if there is no type parameters,
+            // because this parameters can be used in inheritors
+            || (isAbstractOrSealedSerializableClass && typeParameters.isEmpty())
             || isSerializableEnum()
 }
 

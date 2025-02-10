@@ -613,6 +613,14 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             }
             sealedSerializerId -> {
                 needToCopyAnnotations = true
+
+                typeArgs = listOf(kType)
+                // instantiate serializer only inside sealed class/interface Companion
+                if (serializerClassOriginal == kType.classOrUpperBound()?.owner.classSerializer(pluginContext) && this@BaseIrGenerator !is SerializableCompanionIrGenerator) {
+                    // otherwise call Companion.serializer()
+                    callSerializerFromCompanion(kType, typeArgs, emptyList(), sealedSerializerId)?.let { return it }
+                }
+
                 args = mutableListOf<IrExpression>().apply {
                     add(irString(kType.serialName()))
                     add(classReference(kType.classOrUpperBound()!!))
@@ -635,25 +643,33 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                             wrapIrTypeIntoKSerializerIrType(kType, variance = Variance.OUT_VARIANCE),
                             subSerializers.mapIndexed { i, serializer ->
                                 val type = subclasses[i]
+
+                                val path = if (kType.arguments.isNotEmpty()) findPath(type, kType) else null
+
                                 val expr = serializerInstance(
                                     serializer,
                                     pluginContext,
                                     type,
                                     type.genericIndex,
                                     rootSerializableClass
-                                ) { _, genericType ->
-                                    serializerInstance(
-                                        pluginContext.referenceClass(polymorphicSerializerId),
-                                        pluginContext,
-                                        (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound
-                                    )!!
+                                ) { index, genericType ->
+                                    val indexInParent = path?.let { mapTypeParameterIndex(index, it) }
+
+                                    if (genericGetter != null && indexInParent != null) {
+                                        genericGetter.invoke(indexInParent, genericType)
+                                    } else {
+                                        serializerInstance(
+                                            pluginContext.referenceClass(polymorphicSerializerId),
+                                            pluginContext,
+                                            (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound
+                                        )!!
+                                    }
                                 }!!
                                 wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)
                             }
                         )
                     )
                 }
-                typeArgs = listOf(kType)
             }
             enumSerializerId -> {
                 serializerClass = pluginContext.referenceClass(enumSerializerId)
