@@ -188,7 +188,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return
             }
             try {
-                fragment.performanceManager?.notifyIRGenerationStarted()
+                fragment.performanceManager?.notifyBackendGenerationStarted()
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
@@ -212,7 +212,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } finally {
                 tempFiles.dispose()
-                fragment.performanceManager?.notifyIRGenerationFinished()
+                fragment.performanceManager?.notifyBackendGenerationFinished()
             }
         }
 

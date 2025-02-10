@@ -55,12 +55,12 @@ internal inline fun <T> PerformanceManager?.trackAnalysis(fn: () -> T): T {
     }
 }
 
-internal inline fun <T> PerformanceManager?.trackIRTranslation(fn: () -> T): T {
-    this?.notifyIRTranslationStarted()
+internal inline fun <T> PerformanceManager?.trackIRGeneration(fn: () -> T): T {
+    this?.notifyIRGenerationStarted()
     try {
         return fn()
     } finally {
-        this?.notifyIRTranslationFinished()
+        this?.notifyIRGenerationFinished()
     }
 }
 

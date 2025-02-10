@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.util.CodeGenerationMeasurement
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import org.jetbrains.kotlin.util.GarbageCollectionMeasurement
-import org.jetbrains.kotlin.util.IrTranslationMeasurement
-import org.jetbrains.kotlin.util.IrLoweringMeasurement
 import org.jetbrains.kotlin.util.IrGenerationMeasurement
+import org.jetbrains.kotlin.util.IrLoweringMeasurement
+import org.jetbrains.kotlin.util.BackendGenerationMeasurement
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -346,15 +346,15 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 put("Init", initMeasurement?.milliseconds ?: 0)
                 put("Analysis", analysisMeasurement?.milliseconds ?: 0)
 
-                measurements.firstIsInstanceOrNull<IrTranslationMeasurement>()?.milliseconds?.let { put("Translation", it) }
+                measurements.firstIsInstanceOrNull<IrGenerationMeasurement>()?.milliseconds?.let { put("IrGeneration", it) }
                 measurements.firstIsInstanceOrNull<IrLoweringMeasurement>()?.milliseconds?.let { put("Lowering", it) }
 
                 val generationTime =
-                    measurements.firstIsInstanceOrNull<IrGenerationMeasurement>()?.milliseconds
+                    measurements.firstIsInstanceOrNull<BackendGenerationMeasurement>()?.milliseconds
                         ?: measurements.filterIsInstance<CodeGenerationMeasurement>().firstOrNull()?.milliseconds
 
                 if (generationTime != null) {
-                    put("Generation", generationTime)
+                    put("BackendGeneration", generationTime)
                 }
             }
 

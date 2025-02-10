@@ -41,9 +41,9 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     private var startGCData = mutableMapOf<String, GCData>()
 
-    private var irTranslationStart: Long = 0
-    private var irLoweringStart: Long = 0
     private var irGenerationStart: Long = 0
+    private var irLoweringStart: Long = 0
+    private var backendGenerationStart: Long = 0
 
     var targetDescription: String? = null
     protected var files: Int? = null
@@ -112,13 +112,13 @@ abstract class PerformanceManager(private val presentableName: String) {
         measurements += CodeGenerationMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
-    open fun notifyIRTranslationStarted() {
-        irTranslationStart = currentTime()
+    open fun notifyIRGenerationStarted() {
+        irGenerationStart = currentTime()
     }
 
-    open fun notifyIRTranslationFinished() {
-        val time = deltaTime(irTranslationStart)
-        measurements += IrTranslationMeasurement(
+    open fun notifyIRGenerationFinished() {
+        val time = deltaTime(irGenerationStart)
+        measurements += IrGenerationMeasurement(
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
         )
@@ -136,13 +136,13 @@ abstract class PerformanceManager(private val presentableName: String) {
         )
     }
 
-    open fun notifyIRGenerationStarted() {
-        irGenerationStart = currentTime()
+    open fun notifyBackendGenerationStarted() {
+        backendGenerationStart = currentTime()
     }
 
-    open fun notifyIRGenerationFinished() {
-        val time = deltaTime(irGenerationStart)
-        measurements += IrGenerationMeasurement(
+    open fun notifyBackendGenerationFinished() {
+        val time = deltaTime(backendGenerationStart)
+        measurements += BackendGenerationMeasurement(
             lines,
             TimeUnit.NANOSECONDS.toMillis(time),
         )

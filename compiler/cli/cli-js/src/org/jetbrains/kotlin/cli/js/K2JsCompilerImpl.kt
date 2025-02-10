@@ -104,7 +104,7 @@ class Ir2JsTransformer private constructor(
 
         val mode = TranslationMode.fromFlags(dce, granularity, minimizedMemberNames)
         return transformer
-            .also { performanceManager?.notifyIRGenerationStarted() }
+            .also { performanceManager?.notifyBackendGenerationStarted() }
             .makeJsCodeGenerator(ir.allModules, mode)
     }
 
@@ -112,7 +112,7 @@ class Ir2JsTransformer private constructor(
         return makeJsCodeGenerator()
             .generateJsCode(relativeRequirePath = true, outJsProgram = false)
             .also {
-                performanceManager?.notifyIRGenerationFinished()
+                performanceManager?.notifyBackendGenerationFinished()
                 performanceManager?.notifyGenerationFinished()
             }
     }
@@ -195,13 +195,13 @@ internal class K2JsCompilerImpl(
             arguments.granularity,
             arguments.dtsStrategy
         )
-        performanceManager?.notifyIRTranslationFinished()
+        performanceManager?.notifyIRGenerationFinished()
         return OK
     }
 
     override fun compileNoIC(mainCallArguments: List<String>?, module: ModulesStructure, moduleKind: ModuleKind?): ExitCode {
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyIRTranslationFinished()
+            performanceManager?.notifyIRGenerationFinished()
             return OK
         }
 

@@ -60,7 +60,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
     private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
 
-        val (objCExportedInterface, psiToIrOutput, objCCodeSpec) = performanceManager.trackIRTranslation {
+        val (objCExportedInterface, psiToIrOutput, objCCodeSpec) = performanceManager.trackIRGeneration {
             val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
             if (config.omitFrameworkBinary) {
@@ -85,7 +85,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
 
-        val (psiToIrOutput, cAdapterElements) = performanceManager.trackIRTranslation {
+        val (psiToIrOutput, cAdapterElements) = performanceManager.trackIRGeneration {
             engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
                 if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
                     it.runPhase(BuildCExports, frontendOutput)
@@ -124,7 +124,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
         return if (config.metadataKlib) {
             engine.runFirSerializer(frontendOutput)
         } else {
-            performanceManager.trackIRTranslation {
+            performanceManager.trackIRGeneration {
                 val fir2IrOutput = engine.runFir2Ir(frontendOutput)
 
                 val headerKlibPath = config.headerKlibPath
@@ -150,7 +150,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
         val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return null
-        return performanceManager.trackIRTranslation {
+        return performanceManager.trackIRGeneration {
             val psiToIrOutput = if (config.metadataKlib) {
                 null
             } else {
@@ -176,7 +176,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
 
-        val psiToIrOutput = performanceManager.trackIRTranslation { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
+        val psiToIrOutput = performanceManager.trackIRGeneration { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
 
         performanceManager.trackGeneration {
@@ -215,7 +215,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
         require(config.produce == CompilerOutputKind.TEST_BUNDLE)
 
         val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
-        val psiToIrOutput = performanceManager.trackIRTranslation {
+        val psiToIrOutput = performanceManager.trackIRGeneration {
             engine.runPhase(CreateTestBundlePhase, frontendOutput)
             engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         }

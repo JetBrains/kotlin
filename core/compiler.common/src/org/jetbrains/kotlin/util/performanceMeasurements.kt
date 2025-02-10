@@ -33,16 +33,16 @@ class PerformanceCounterMeasurement(private val counterReport: String) : Perform
     override fun render(): String = counterReport
 }
 
-class IrTranslationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(): String = formatMeasurement("IR TRANSLATION", milliseconds, lines)
+class IrGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("IR GENERATION", milliseconds, lines)
 }
 
 class IrLoweringMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("IR LOWERING", milliseconds, lines)
 }
 
-class IrGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(): String = formatMeasurement("IR GENERATION", milliseconds, lines)
+class BackendGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("BACKEND GENERATION", milliseconds, lines)
 }
 
 sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
@@ -60,7 +60,7 @@ class BinaryClassFromKotlinFileMeasurement(count: Int, milliseconds: Long) : Cou
 }
 
 private fun formatMeasurement(name: String, time: Long, lines: Int?): String =
-    "%15s%8s ms".format(name, time) +
+    "%20s%8s ms".format(name, time) +
             (lines?.let {
                 val lps = it.toDouble() * 1000 / time
                 "%12.3f loc/s".format(lps)

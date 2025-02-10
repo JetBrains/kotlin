@@ -67,7 +67,7 @@ internal class K2WasmCompilerImpl(
             arguments.generateDwarf
         )
 
-        performanceManager?.notifyIRTranslationFinished()
+        performanceManager?.notifyIRGenerationFinished()
 
         return OK
     }
@@ -94,7 +94,7 @@ internal class K2WasmCompilerImpl(
             generateDwarf = arguments.generateDwarf
         )
 
-        performanceManager?.notifyIRTranslationFinished()
+        performanceManager?.notifyIRGenerationFinished()
 
         return OK
     }

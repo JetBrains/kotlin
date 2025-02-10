@@ -53,9 +53,9 @@ import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
 import org.jetbrains.kotlin.util.CodeGenerationMeasurement
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
-import org.jetbrains.kotlin.util.IrTranslationMeasurement
-import org.jetbrains.kotlin.util.IrLoweringMeasurement
 import org.jetbrains.kotlin.util.IrGenerationMeasurement
+import org.jetbrains.kotlin.util.IrLoweringMeasurement
+import org.jetbrains.kotlin.util.BackendGenerationMeasurement
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
@@ -710,10 +710,10 @@ abstract class IncrementalCompilerRunner<
                         }
                     }
                 }
-                is IrTranslationMeasurement -> reportIrMeasurements(
+                is IrGenerationMeasurement -> reportIrMeasurements(
                     it.milliseconds,
                     it.lines,
-                    GradleBuildTime.IR_TRANSLATION,
+                    GradleBuildTime.IR_GENERATION,
                     GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER
                 )
                 is IrLoweringMeasurement -> reportIrMeasurements(
@@ -722,10 +722,10 @@ abstract class IncrementalCompilerRunner<
                     GradleBuildTime.IR_LOWERING,
                     GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER
                 )
-                is IrGenerationMeasurement -> reportIrMeasurements(
+                is BackendGenerationMeasurement -> reportIrMeasurements(
                     it.milliseconds,
                     it.lines,
-                    GradleBuildTime.IR_GENERATION,
+                    GradleBuildTime.BACKEND_GENERATION,
                     GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER
                 )
             }
