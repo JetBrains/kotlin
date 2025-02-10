@@ -95,7 +95,7 @@ fun genericFunWithAnnotations(x: GenericFunWithAnnotation) {
 
     x.foo6(JavaBox(null))
     x.foo6<String>(JavaBox(null))
-    x.foo6<String?>(JavaBox(null))
+    x.foo6<String?>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>JavaBox(null)<!>)
     x.<!CANNOT_INFER_PARAMETER_TYPE!>foo6<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo6<String>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo6<String?>(<!NULL_FOR_NONNULL_TYPE!>null<!>)

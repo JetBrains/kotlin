@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -902,7 +903,8 @@ class FirCallCompletionResultsWriterTransformer(
                 ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
                     argument.typeRef.coneType.fullyExpandedType(
                         session
-                    )
+                    ),
+                    LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
                 )
             )
         )

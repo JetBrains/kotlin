@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 class FirJavaNullabilityWarningUpperBoundsProvider(session: FirSession) : FirPlatformUpperBoundsProvider {
     private val substitutor: EnhancedForWarningConeSubstitutor = EnhancedForWarningConeSubstitutor(
         session.typeContext,
-        useExplicitTypeArgumentIfMadeFlexibleSynthetically = !session.languageVersionSettings.supportsFeature(
-            LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack
-        )
+        useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature = LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
     )
 
     override val diagnostic: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
