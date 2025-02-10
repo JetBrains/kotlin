@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
@@ -420,14 +419,6 @@ class IrDeclarationDeserializer(
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
             }
         }
-
-    private fun deserializeErrorDeclaration(proto: ProtoErrorDeclaration, setParent: Boolean = true): IrErrorDeclaration {
-        if (!settings.allowErrorNodes) throw IrDisallowedErrorNode(IrErrorDeclaration::class.java)
-        val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset).also {
-            if (setParent) it.parent = currentParent
-        }
-    }
 
     private fun deserializeTypeParameters(protos: List<ProtoTypeParameter>, isGlobal: Boolean): List<IrTypeParameter> {
         // NOTE: fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C
@@ -808,7 +799,6 @@ class IrDeclarationDeserializer(
             IR_ENUM_ENTRY -> deserializeIrEnumEntry(proto.irEnumEntry, setParent)
             IR_LOCAL_DELEGATED_PROPERTY -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty, setParent)
             IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias, setParent)
-            IR_ERROR_DECLARATION -> deserializeErrorDeclaration(proto.irErrorDeclaration, setParent)
             DECLARATOR_NOT_SET -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
         }
 

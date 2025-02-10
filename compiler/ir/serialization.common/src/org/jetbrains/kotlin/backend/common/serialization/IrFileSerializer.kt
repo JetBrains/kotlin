@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall as ProtoEnumConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression as ProtoErrorCallExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression as ProtoErrorExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
@@ -1344,12 +1343,6 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrErrorDeclaration(errorDeclaration: IrErrorDeclaration): ProtoErrorDeclaration {
-        val proto = ProtoErrorDeclaration.newBuilder()
-            .setCoordinates(serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
-        return proto.build()
-    }
-
     private fun serializeIrEnumEntry(enumEntry: IrEnumEntry): ProtoEnumEntry {
         val proto = ProtoEnumEntry.newBuilder()
             .setBase(serializeIrDeclarationBase(enumEntry, null))
@@ -1392,8 +1385,6 @@ open class IrFileSerializer(
                 proto.irLocalDelegatedProperty = serializeIrLocalDelegatedProperty(declaration)
             is IrTypeAlias ->
                 proto.irTypeAlias = serializeIrTypeAlias(declaration)
-            is IrErrorDeclaration ->
-                proto.irErrorDeclaration = serializeIrErrorDeclaration(declaration)
             else ->
                 TODO("Declaration serialization not supported yet: $declaration")
         }

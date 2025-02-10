@@ -82,7 +82,7 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
                 IR_VARIABLE -> extractSignatureFromPrivateDeclaration(declarationProto.irVariable.base)
                 IR_VALUE_PARAMETER -> extractSignatureFromPrivateDeclaration(declarationProto.irValueParameter.base)
                 IR_LOCAL_DELEGATED_PROPERTY -> extractSignatureFromPrivateDeclaration(declarationProto.irLocalDelegatedProperty.base)
-                IR_ERROR_DECLARATION, DECLARATOR_NOT_SET, null -> Unit
+                DECLARATOR_NOT_SET, null -> Unit
             }
         }
 

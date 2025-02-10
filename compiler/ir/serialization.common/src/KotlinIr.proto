@@ -596,10 +596,6 @@ message IrTypeAlias {
   repeated IrTypeParameter type_parameter = 3;
 }
 
-message IrErrorDeclaration {
-  required int64 coordinates = 1;
-}
-
 message IrEnumEntry {
   required IrDeclarationBase base = 1;
   required int32 name = 2;
@@ -629,7 +625,9 @@ message IrDeclaration {
     IrValueParameter ir_value_parameter = 10;
     IrLocalDelegatedProperty ir_local_delegated_property = 11;
     IrTypeAlias ir_type_alias = 12;
-    IrErrorDeclaration ir_error_declaration = 13;
+
+    // WARNING: Don't occupy index 13 which was previously used for storing IrErrorDeclaration.
+    // IrErrorDeclaration ir_error_declaration = 13;
   }
 }
 
