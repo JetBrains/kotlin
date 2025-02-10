@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -30,7 +29,4 @@ internal class KaSourceModuleImpl(
 ) : KaSourceModule, KtModuleWithPlatform, KaModuleBase() {
     @KaExperimentalApi
     override val stableModuleName: String? get() = name
-    override val transitiveDependsOnDependencies: List<KaModule> by lazy {
-        computeTransitiveDependsOnDependencies(directDependsOnDependencies)
-    }
 }

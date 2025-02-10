@@ -12,4 +12,8 @@ public abstract class KaModuleBase : KaModule {
     override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)
     }
+
+    override val transitiveDependsOnDependencies: List<KaModule> by lazy {
+        computeTransitiveDependsOnDependencies(directDependsOnDependencies)
+    }
 }
