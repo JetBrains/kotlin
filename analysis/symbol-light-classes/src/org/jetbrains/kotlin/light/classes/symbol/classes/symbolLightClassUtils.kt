@@ -461,6 +461,7 @@ internal fun KaSession.hasTypeForValueClassInSignature(
     }
 
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
+    if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
     if (callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.any { typeForValueClass(it.returnType) }
     }
