@@ -9,6 +9,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.util.jar.JarFile
 import javax.inject.Inject
@@ -57,7 +57,10 @@ abstract class KaptTask @Inject constructor(
     @get:Nested
     abstract val kaptPluginOptions: ListProperty<CompilerPluginConfig>
 
-    @get:Nested
+    @Deprecated(
+        "Use annotationProcessorOptionsProviders instead. Scheduled for removal in Kotlin 2.4.",
+        replaceWith = ReplaceWith("annotationProcessorOptionsProviders")
+    )
     override val annotationProcessorOptionProviders: MutableList<Any> = mutableListOf()
 
     @get:Input

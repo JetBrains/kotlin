@@ -1523,6 +1523,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind : java/lang
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKapt : org/gradle/api/Task, org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain {
 	public abstract fun getAnnotationProcessorOptionProviders ()Ljava/util/List;
+	public abstract fun getAnnotationProcessorOptionsProviders ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getClassesDir ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getCompiledSources ()Lorg/gradle/api/file/ConfigurableFileCollection;
