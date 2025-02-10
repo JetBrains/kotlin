@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -101,9 +101,21 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("ModuleOverride.kt")
+    public void testModuleOverride() {
+      runTest("plugins/power-assert/power-assert-compiler/testData/codegen/annotated/ModuleOverride.kt");
+    }
+
+    @Test
     @TestMetadata("modules.kt")
     public void testModules() {
       runTest("plugins/power-assert/power-assert-compiler/testData/codegen/annotated/modules.kt");
+    }
+
+    @Test
+    @TestMetadata("Override.kt")
+    public void testOverride() {
+      runTest("plugins/power-assert/power-assert-compiler/testData/codegen/annotated/Override.kt");
     }
   }
 

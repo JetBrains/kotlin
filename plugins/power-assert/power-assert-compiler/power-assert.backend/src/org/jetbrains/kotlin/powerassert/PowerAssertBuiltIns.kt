@@ -24,6 +24,8 @@ class PowerAssertBuiltIns(
     private val context: IrPluginContext,
 ) {
     companion object {
+        const val PLUGIN_ID = "org.jetbrains.kotlin.powerassert"
+
         private fun dependencyError(): Nothing {
             error("Power-Assert plugin runtime dependency was not found.")
         }
@@ -55,6 +57,8 @@ class PowerAssertBuiltIns(
         private val callExplanationClassId = ClassId.topLevel(callExplanationFqName)
     }
 
+    val metadata = PowerAssertMetadata(context.languageVersionSettings.languageVersion)
+
     private fun referenceClass(classId: ClassId): IrClassSymbol =
         context.referenceClass(classId) ?: dependencyError()
 
@@ -69,6 +73,7 @@ class PowerAssertBuiltIns(
 
     val explainCallClass = referenceClass(explainCallClassId)
     val explainCallType = explainCallClass.defaultTypeWithoutArguments
+    val explainCallConstructor = explainCallClass.primaryConstructor()
 
     val expressionClass = referenceClass(classId("Expression"))
     val expressionType = expressionClass.defaultTypeWithoutArguments

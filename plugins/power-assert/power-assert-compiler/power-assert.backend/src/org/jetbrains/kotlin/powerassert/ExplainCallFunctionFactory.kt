@@ -5,70 +5,77 @@
 
 package org.jetbrains.kotlin.powerassert
 
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.classFqName
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 
+var IrSimpleFunction.explainedDispatchSymbol: IrSimpleFunctionSymbol? by irAttribute(followAttributeOwner = false)
+
 class ExplainCallFunctionFactory(
-    private val module: IrModuleFragment,
     private val context: IrPluginContext,
     private val builtIns: PowerAssertBuiltIns,
 ) {
-    private var IrSimpleFunction.explainedDispatchFunctionSymbol: IrSimpleFunctionSymbol? by irAttribute(followAttributeOwner = false)
+    private val memorizedClassMetadata = mutableSetOf<IrClass>()
 
     fun find(function: IrSimpleFunction): IrSimpleFunctionSymbol? {
-        function.explainedDispatchFunctionSymbol?.let { return it }
+        // If there is an explained symbol:
+        // 1. Function was transformed to generate an explained overload.
+        // 2. Explained overload was already found and saved for faster lookup.
+        function.explainedDispatchSymbol?.let { return it }
 
-        // TODO this never works because... the generated function has no metadata? need to create an FIR function as well?
-        val callableId = function.callableId.copy(Name.identifier(function.name.identifier + "\$explained"))
-        context.referenceFunctions(callableId).singleOrNull { it.isSyntheticFor(function) }?.let { return it }
-
-        // TODO is this the best way to handle compilation unit checks?
-//        if (function.fileOrNull !in module.files) return null
+        // Metadata indicates the function was transformed but is not in the current compilation unit.
+        // Generate a stub-function so a symbol exists which can be called.
+        val parentClass = function.parent as? IrClass
+        getPowerAssertMetadata(parentClass ?: function) ?: return null
         return generate(function).symbol
     }
 
-    fun generate(function: IrSimpleFunction): IrSimpleFunction {
-        val newFunction = function.deepCopyWithSymbols(function.parent).apply {
+    fun generate(originalFunction: IrSimpleFunction): IrSimpleFunction {
+        originalFunction.explainedDispatchSymbol?.let { return it.owner }
+
+        val explainedFunction = originalFunction.deepCopyWithSymbols(originalFunction.parent)
+        explainedFunction.apply {
             origin = FUNCTION_FOR_EXPLAIN_CALL
-            name = Name.identifier(function.name.identifier + "\$explained")
-            annotations = annotations.filter { !it.isAnnotationWithEqualFqName(builtIns.explainCallType.classFqName!!) } +
-                    createJvmSyntheticAnnotation()
-            addValueParameter {
+            name = Name.identifier("${originalFunction.name.identifier}\$explained")
+            annotations = annotations.filter { !it.isAnnotation(PowerAssertBuiltIns.explainCallFqName) }
+            annotations += createJvmSyntheticAnnotation() // TODO is this needed?
+            val explanationParameter = addValueParameter {
                 name = Name.identifier("\$explanation") // TODO what if there's another property with this name?
                 type = builtIns.callExplanationType
             }
+
+            overriddenSymbols = originalFunction.overriddenSymbols.map { generate(it.owner).symbol }
+
+            // Transform the generated function to use the `$explanation` parameter instead of CallExplain.explanation.
+            transformChildrenVoid(ExplainCallGetExplanationTransformer(builtIns, explanationParameter))
+            // Transform the generated function to propagate the `$explanation` parameter during recursive or super-calls.
+            transformChildrenVoid(ExplainedSelfCallTransformer(originalFunction, explanationParameter))
+
         }
 
-        // Transform the generated function to use the `$explanation` parameter instead of Explain.explanation.
-        val diagramParameter = newFunction.valueParameters.last()
-        newFunction.transformChildrenVoid(DiagramDispatchTransformer(diagramParameter, context))
-        function.explainedDispatchFunctionSymbol = newFunction.symbol
+        // Save the explained function to the original function to make overload lookup easier.
+        originalFunction.explainedDispatchSymbol = explainedFunction.symbol
 
-        // Transform the original function to use `null` instead of Explain.explanation.
-        // This keeps the code from throwing an error when Explain.explanation.
-        // This in turn helps make sure the compiler-plugin is applied to functions which use `@Explain`.
-        // TODO should this be in the transformer and not here?
-        function.transformChildrenVoid(DiagramDispatchTransformer(explanation = null, context))
+        // Write custom metadata to indicate the original function was indeed compiled with the plugin.
+        // This allows callers to be confident the explained function exists, even when calling from a different compilation unit.
+        val parentClass = originalFunction.parent as? IrClass
+        when {
+            parentClass == null -> addPowerAssertMetadata(originalFunction)
+            memorizedClassMetadata.add(parentClass) -> addPowerAssertMetadata(parentClass)
+        }
 
-        return newFunction
+        return explainedFunction
     }
 
     private fun createJvmSyntheticAnnotation(): IrConstructorCallImpl {
@@ -81,36 +88,17 @@ class ExplainCallFunctionFactory(
         )
     }
 
-    private class DiagramDispatchTransformer(
-        private val explanation: IrValueParameter?,
-        private val context: IrPluginContext,
-    ) : IrElementTransformerVoidWithContext() {
-        override fun visitExpression(expression: IrExpression): IrExpression {
-            return when {
-                isExplanation(expression) -> when (explanation) {
-                    null -> IrConstImpl.constNull(expression.startOffset, expression.endOffset, context.irBuiltIns.anyType.makeNullable())
-                    else -> IrGetValueImpl(expression.startOffset, expression.endOffset, explanation.type, explanation.symbol)
-                }
-                else -> super.visitExpression(expression)
-            }
+    private fun <E> addPowerAssertMetadata(declaration: E)
+            where E : IrDeclaration, E : IrMetadataSourceOwner {
+        if (declaration.metadata != null) {
+            context.metadataDeclarationRegistrar
+                .addCustomMetadataExtension(declaration, PowerAssertBuiltIns.PLUGIN_ID, builtIns.metadata.data)
         }
-
-        private fun isExplanation(expression: IrExpression): Boolean =
-            (expression as? IrCall)?.symbol?.owner?.kotlinFqName == PowerAssertGetDiagram
     }
 
-    private fun IrSimpleFunctionSymbol.isSyntheticFor(function: IrSimpleFunction): Boolean {
-        // TODO need to consider type parameters and how they differ.
-
-        val owner = owner
-        if (function.dispatchReceiverParameter?.type != owner.dispatchReceiverParameter?.type) return false
-        if (function.extensionReceiverParameter?.type != owner.extensionReceiverParameter?.type) return false
-
-        if (function.valueParameters.size != owner.valueParameters.size - 1) return false
-        for (index in function.valueParameters.indices) {
-            if (function.valueParameters[index].type != owner.valueParameters[index].type) return false
-        }
-
-        return owner.valueParameters.last().type == builtIns.callExplanationType
+    private fun <E> getPowerAssertMetadata(declaration: E): ByteArray?
+            where E : IrDeclaration, E : IrMetadataSourceOwner {
+        return context.metadataDeclarationRegistrar.getCustomMetadataExtension(declaration, PowerAssertBuiltIns.PLUGIN_ID)
     }
 }
+

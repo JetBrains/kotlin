@@ -1,0 +1,153 @@
+// MODULE: lib
+// FILE: A.kt
+
+abstract class TypeB : TypeA {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @JvmSynthetic
+  override fun describe$explained(value: Any, $explanation: CallExplanation): String? {
+    return { // BLOCK
+      val tmp_0: CallExplanation? = $explanation
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> tmp_0.toDefaultMessage()
+      }
+    }
+  }
+
+  @ExplainCall
+  override fun describe(value: Any): String? {
+    return { // BLOCK
+      val tmp_1: CallExplanation? = null
+      when {
+        EQEQ(arg0 = tmp_1, arg1 = null) -> null
+        else -> tmp_1.toDefaultMessage()
+      }
+    }
+  }
+
+}
+
+abstract class TypeC : TypeB {
+  constructor() /* primary */ {
+    super/*TypeB*/()
+    /* <init>() */
+
+  }
+
+  @JvmSynthetic
+  override fun describe$explained(value: Any, $explanation: CallExplanation): String? {
+    return super<TypeB>.describe$explained(value = value, $explanation = $explanation)
+  }
+
+  override fun describe(value: Any): String? {
+    return super<TypeB>.describe(value = value)
+  }
+
+}
+
+interface TypeA {
+  abstract fun describe(value: Any): String?
+
+}
+
+data object TypeD : TypeC {
+  private constructor() /* primary */ {
+    super/*TypeC*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TypeD -> return false
+    }
+    val tmp_2: TypeD = other as TypeD
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 81291306
+  }
+
+  override fun toString(): String {
+    return "TypeD"
+  }
+
+}
+
+// MODULE: main
+// FILE: B.kt
+
+fun box(): String {
+  return runAllOutput(tests = ["callTypeA".to<String, KFunction0<String>>(that = ::callTypeA), "callTypeB".to<String, KFunction0<String>>(that = ::callTypeB), "callTypeC".to<String, KFunction0<String>>(that = ::callTypeC), "callTypeD".to<String, KFunction0<String>>(that = ::callTypeD)])
+}
+
+fun callTypeA(): String {
+  val type: TypeA = TypeD
+  return { // BLOCK
+    val tmp_0: String? = type.describe(value = EQEQ(arg0 = 1, arg1 = 2))
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> "no description"
+      else -> tmp_0
+    }
+  }
+}
+
+fun callTypeB(): String {
+  val type: TypeB = TypeD
+  return { // BLOCK
+    val tmp_1: String? = { // BLOCK
+      val tmp0_Explain: TypeB = type
+      { // BLOCK
+        val tmp1_Explain: Boolean = EQEQ(arg0 = 1, arg1 = 2)
+        tmp0_Explain.describe$explained(value = tmp1_Explain, $explanation = CallExplanation(offset = 392, source = "           type.describe(1 == 2)", dispatchReceiver = Receiver(startOffset = 11, endOffset = 15, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 25, endOffset = 31, expressions = listOf</* null */>(elements = [EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp1_Explain, lhs = 1, rhs = 2)])))])))
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> "no description"
+      else -> tmp_1
+    }
+  }
+}
+
+fun callTypeC(): String {
+  val type: TypeC = TypeD
+  return { // BLOCK
+    val tmp_2: String? = { // BLOCK
+      val tmp0_Explain: TypeC = type
+      { // BLOCK
+        val tmp1_Explain: Boolean = EQEQ(arg0 = 1, arg1 = 2)
+        tmp0_Explain.describe$explained(value = tmp1_Explain, $explanation = CallExplanation(offset = 502, source = "           type.describe(1 == 2)", dispatchReceiver = Receiver(startOffset = 11, endOffset = 15, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 25, endOffset = 31, expressions = listOf</* null */>(elements = [EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp1_Explain, lhs = 1, rhs = 2)])))])))
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> "no description"
+      else -> tmp_2
+    }
+  }
+}
+
+fun callTypeD(): String {
+  val type: TypeD = TypeD
+  return { // BLOCK
+    val tmp_3: String? = { // BLOCK
+      val tmp0_Explain: TypeD = type
+      { // BLOCK
+        val tmp1_Explain: Boolean = EQEQ(arg0 = 1, arg1 = 2)
+        tmp0_Explain.describe$explained(value = tmp1_Explain, $explanation = CallExplanation(offset = 612, source = "           type.describe(1 == 2)", dispatchReceiver = Receiver(startOffset = 11, endOffset = 15, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 25, endOffset = 31, expressions = listOf</* null */>(elements = [EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp1_Explain, lhs = 1, rhs = 2)])))])))
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_3, arg1 = null) -> "no description"
+      else -> tmp_3
+    }
+  }
+}

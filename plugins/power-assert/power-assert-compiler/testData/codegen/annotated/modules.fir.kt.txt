@@ -34,7 +34,7 @@ fun box(): String {
       val tmp1_Explain: List<String> = tmp0_Explain.reversed<String>()
       val tmp2_Explain: List<String> = emptyList<String>()
       val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
-      describe$explained(value = tmp3_Explain, $explanation = CallExplanation(offset = 110, source = "           describe(reallyLongList.reversed() == emptyList<String>())", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 20, endOffset = 68, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 20, endOffset = 34, displayOffset = 20, value = tmp0_Explain), ValueExpression(startOffset = 20, endOffset = 45, displayOffset = 35, value = tmp1_Explain), ValueExpression(startOffset = 49, endOffset = 68, displayOffset = 49, value = tmp2_Explain), EqualityExpression(startOffset = 20, endOffset = 68, displayOffset = 46, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])))])))
+      describe$explained(value = tmp3_Explain, $explanation = CallExplanation(offset = 111, source = "           describe(reallyLongList.reversed() == emptyList<String>())", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 20, endOffset = 68, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 20, endOffset = 34, displayOffset = 20, value = tmp0_Explain), ValueExpression(startOffset = 20, endOffset = 45, displayOffset = 35, value = tmp1_Explain), ValueExpression(startOffset = 49, endOffset = 68, displayOffset = 49, value = tmp2_Explain), EqualityExpression(startOffset = 20, endOffset = 68, displayOffset = 46, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])))])))
     }
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> "FAIL"
@@ -42,4 +42,3 @@ fun box(): String {
     }
   }
 }
-

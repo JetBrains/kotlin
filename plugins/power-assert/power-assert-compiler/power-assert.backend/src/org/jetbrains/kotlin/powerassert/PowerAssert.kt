@@ -17,7 +17,7 @@ val EXPLAIN_TEMPORARY by IrDeclarationOriginImpl.Synthetic
 val FUNCTION_FOR_EXPLAIN_CALL by IrDeclarationOriginImpl.Synthetic
 val EXPLANATION by IrDeclarationOriginImpl.Synthetic
 
-val PowerAssertGetDiagram = FqName("kotlin.explain.ExplainCall.Companion.<get-explanation>")
+val ExplainCallGetExplanation = FqName("kotlin.explain.ExplainCall.Companion.<get-explanation>")
 
 fun IrValueDeclaration.isExplained(): Boolean {
     val variable = this as? IrVariable ?: return false

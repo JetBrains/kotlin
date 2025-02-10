@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -82,8 +81,8 @@ class PowerAssertCallTransformer(
         val scope = currentScope as PowerAssertScope
         val body = declaration.body
         if (body is IrBlockBody) {
-            for (variable in scope.variables.values.reversed()) {
-                body.statements.add(0, variable)
+            if (scope.variables.values.isNotEmpty()) {
+                body.statements.addAll(0, scope.variables.values)
             }
         }
 
@@ -122,11 +121,17 @@ class PowerAssertCallTransformer(
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
+        // Never transform calls within functions annotated with ExplainCall.
+        // TODO needs a better checks
+        if ((currentFunction?.irElement as? IrSimpleFunction)?.hasAnnotationOrOverridden(builtIns.explainCallClass) == true) {
+            return expression
+        }
+
         val function = expression.symbol.owner
         val fqName = function.kotlinFqName
         return when {
             function.parameters.isEmpty() -> expression
-            function.hasAnnotation(builtIns.explainCallClass) -> buildForAnnotated(expression, function)
+            function.hasAnnotationOrOverridden(builtIns.explainCallClass) -> buildForAnnotated(expression, function)
             fqName in configuration.functions -> buildForOverride(expression, function)
             else -> expression
         }

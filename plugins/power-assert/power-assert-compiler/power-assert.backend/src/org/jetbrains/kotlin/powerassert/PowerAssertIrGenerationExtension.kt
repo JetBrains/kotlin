@@ -29,9 +29,9 @@ class PowerAssertIrGenerationExtension(
 ) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val builtIns = PowerAssertBuiltIns(pluginContext)
-        val factory = ExplainCallFunctionFactory(moduleFragment, pluginContext, builtIns)
+        val factory = ExplainCallFunctionFactory(pluginContext, builtIns)
 
-        val functionTransformer = PowerAssertFunctionTransformer(builtIns, factory)
+        val functionTransformer = ExplainCallFunctionTransformer(builtIns, factory)
         moduleFragment.files.forEach(functionTransformer::lower)
 
         for (file in moduleFragment.files) {

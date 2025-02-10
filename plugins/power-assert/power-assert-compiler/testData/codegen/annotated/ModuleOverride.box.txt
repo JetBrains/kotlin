@@ -1,0 +1,21 @@
+callTypeA: ---
+no description
+---
+callTypeB: ---
+type.describe(1 == 2)
+|               |
+TypeD           Expected <1>, actual <2>.
+
+---
+callTypeC: ---
+type.describe(1 == 2)
+|               |
+TypeD           Expected <1>, actual <2>.
+
+---
+callTypeD: ---
+type.describe(1 == 2)
+|               |
+TypeD           Expected <1>, actual <2>.
+
+---

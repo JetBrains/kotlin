@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: ANY
 // DUMP_KT_IR
 
 // MODULE: lib
