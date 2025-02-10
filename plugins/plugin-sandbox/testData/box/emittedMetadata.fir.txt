@@ -13,7 +13,7 @@ FILE: module_main_emittedMetadata.kt
     }
     public final fun box(): R|kotlin/String| {
         lval x: R|kotlin/Int| = R|/test|(R|/Some.Some|())
-        ^box when (R|<local>/x|) {
+        ^box when (lval <when-subject>: R|kotlin/Int| = R|<local>/x|) {
             ==($subj$, Int(5)) ->  {
                 String(OK)
             }

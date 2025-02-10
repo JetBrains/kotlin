@@ -1,6 +1,6 @@
 FILE: whenGuards.kt
     public? final? fun GuardMustHaveExpression(x: Any): R|kotlin/Unit| {
-        when (x#) {
+        when (lval <when-subject>: <implicit> = x#) {
             ($subj$ is Boolean) && ERROR_EXPR(No expression in guard) ->  {
                 SYNTAX#.not#()
             }
@@ -41,7 +41,7 @@ FILE: whenGuards.kt
 
     }
     public? final? fun GuardNewlines(x: Any): R|kotlin/Unit| {
-        when (x#) {
+        when (lval <when-subject>: <implicit> = x#) {
             ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
                 Unit#
             }
@@ -130,7 +130,7 @@ FILE: whenGuards.kt
 
     }
     public? final? fun IfExpressionNotGuard(x: Any): R|kotlin/Unit| {
-        when (x#) {
+        when (lval <when-subject>: <implicit> = x#) {
             ==($subj$, when () {
                 (x# is Boolean) ->  {
                     Boolean(true)

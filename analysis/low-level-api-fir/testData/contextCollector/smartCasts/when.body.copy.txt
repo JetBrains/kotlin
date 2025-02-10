@@ -17,9 +17,15 @@ Tower Data Context:
                 FirValueParameterSymbol obj: R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval <when-subject>: R|kotlin/Any|
     Element 8
         Scope: FirLocalScope
 Smart Casts:
+    FirPropertySymbol lval <when-subject>: R|kotlin/Any|
+    Types:
+        Bar
+        kotlin.Any
     FirValueParameterSymbol obj: R|kotlin/Any|
     Types:
         Bar
@@ -35,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] when.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
-        when (R|<local>/obj|) {
+        when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|kotlin/Any| = R|<local>/obj|) {
             ($subj$ is R|Foo|) ->  {
                 R|<local>/obj|.R|/Foo.foo|()
             }
