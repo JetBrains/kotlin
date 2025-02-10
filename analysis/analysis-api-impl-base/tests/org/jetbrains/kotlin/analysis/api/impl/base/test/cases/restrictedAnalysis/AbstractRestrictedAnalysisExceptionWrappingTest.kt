@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.restrictedAnalysis
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.project.IndexNotReadyException
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KaRestrictedAnalysisException
-import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -26,10 +20,7 @@ import org.jetbrains.kotlin.test.services.assertions
  * The test data should contain a `THROW` directive with the fully qualified name of the exception or error to throw. This error must have
  * a parameterless or single-parameter `Throwable` constructor.
  */
-abstract class AbstractRestrictedAnalysisExceptionWrappingTest : AbstractAnalysisApiBasedTest() {
-    override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = super.additionalServiceRegistrars + listOf(RestrictedAnalysisTestServiceRegistrar)
-
+abstract class AbstractRestrictedAnalysisExceptionWrappingTest : AbstractRestrictedAnalysisTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.useDirectives(Directives)
@@ -49,7 +40,7 @@ abstract class AbstractRestrictedAnalysisExceptionWrappingTest : AbstractAnalysi
         mainModule: KtTestModule,
         testServices: TestServices,
     ) {
-        switchRestrictedAnalysisMode(mainModule, enabled = true)
+        mainModule.restrictedAnalysisService.enableRestrictedAnalysisMode = true
 
         val shouldBeWrapped = !mainModule.testModule.directives.contains(Directives.EXPECT_UNWRAPPED)
 
@@ -81,7 +72,7 @@ abstract class AbstractRestrictedAnalysisExceptionWrappingTest : AbstractAnalysi
         mainModule: KtTestModule,
         testServices: TestServices,
     ) {
-        switchRestrictedAnalysisMode(mainModule, enabled = false)
+        mainModule.restrictedAnalysisService.enableRestrictedAnalysisMode = false
 
         playCatch(throwableFqName, mainFile) { throwable, caughtThrowable ->
             testServices.assertions.assertEquals(throwable, caughtThrowable) {
@@ -89,10 +80,6 @@ abstract class AbstractRestrictedAnalysisExceptionWrappingTest : AbstractAnalysi
                         " `${caughtThrowable::class.simpleName}` instead."
             }
         }
-    }
-
-    private fun switchRestrictedAnalysisMode(mainModule: KtTestModule, enabled: Boolean) {
-        SwitchableRestrictedAnalysisService.getInstance(mainModule.ktModule.project).enableRestrictedAnalysisMode = enabled
     }
 
     private inline fun playCatch(throwableFqName: String, mainFile: KtFile, action: (Throwable, Throwable) -> Unit) {
@@ -133,28 +120,5 @@ abstract class AbstractRestrictedAnalysisExceptionWrappingTest : AbstractAnalysi
         val EXPECT_UNWRAPPED by directive(
             "Specified when the resulting exception should NOT be wrapped in `KaRestrictedAnalysisException`.",
         )
-    }
-}
-
-private object RestrictedAnalysisTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
-        project.registerService(KotlinRestrictedAnalysisService::class.java, SwitchableRestrictedAnalysisService())
-    }
-}
-
-private class SwitchableRestrictedAnalysisService : KotlinRestrictedAnalysisService {
-    var enableRestrictedAnalysisMode: Boolean = true
-    var allowRestrictedAnalysis: Boolean = true
-
-    override val isAnalysisRestricted: Boolean get() = enableRestrictedAnalysisMode
-    override val isRestrictedAnalysisAllowed: Boolean get() = allowRestrictedAnalysis
-
-    override fun rejectRestrictedAnalysis(): Nothing {
-        throw RuntimeException("Restricted analysis is not allowed.")
-    }
-
-    companion object {
-        fun getInstance(project: Project): SwitchableRestrictedAnalysisService =
-            KotlinRestrictedAnalysisService.getInstance(project) as SwitchableRestrictedAnalysisService
     }
 }
