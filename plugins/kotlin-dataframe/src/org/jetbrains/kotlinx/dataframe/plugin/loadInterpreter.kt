@@ -89,6 +89,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Merge0
@@ -295,6 +296,7 @@ internal inline fun <reified T> String.load(): T {
         "MergeBy0" -> MergeBy0()
         "MergeBy1" -> MergeBy1()
         "ReorderColumnsByName" -> ReorderColumnsByName()
+        "GroupByCount0" -> GroupByCount0()
         else -> error("$this")
     } as T
 }

@@ -227,6 +227,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("groupBy_count.kt")
+  public void testGroupBy_count() {
+    runTest("testData/box/groupBy_count.kt");
+  }
+
+  @Test
   @TestMetadata("groupBy_extractSchema.kt")
   public void testGroupBy_extractSchema() {
     runTest("testData/box/groupBy_extractSchema.kt");
