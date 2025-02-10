@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalS
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 
 class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
@@ -27,7 +26,9 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
     private fun getModuleAndDependenciesContentScopes(module: KaModule): List<GlobalSearchScope> {
         val modules = buildSet {
             add(module)
-            addAll(module.allDirectDependencies())
+            addAll(module.directRegularDependencies)
+            addAll(module.directFriendDependencies)
+            addAll(module.transitiveDependsOnDependencies)
             if (module is KaLibrarySourceModule) {
                 add(module.binaryLibrary)
             }
