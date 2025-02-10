@@ -44,7 +44,7 @@ class IRMeasurement(val lines: Int?, val milliseconds: Long, val kind: Kind) : P
 sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
     abstract val description: String
     override fun render(): String =
-        "$description performed $count times" + (if (milliseconds == 0L) "" else ", total time $milliseconds ms")
+        "$description performed $count times, total time $milliseconds ms"
 }
 
 class FindJavaClassMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
