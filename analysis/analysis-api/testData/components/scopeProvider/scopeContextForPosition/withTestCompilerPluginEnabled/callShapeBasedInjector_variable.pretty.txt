@@ -1,7 +1,10 @@
 element: df.column
-implicit receivers:
-  type: Scope1
-  owner symbol: KaFirLocalVariableSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = Scope1
+    ownerSymbol = KaLocalVariableSymbol:
+      val df: DataFrame<<local>.DataFrameType>
 
 scopes:
   TypeScope, index = 0

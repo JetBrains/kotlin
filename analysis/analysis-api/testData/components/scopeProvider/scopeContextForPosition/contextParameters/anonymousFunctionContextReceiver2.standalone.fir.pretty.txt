@@ -1,7 +1,10 @@
 element: String
-implicit receivers:
-  type: kotlin.String
-  owner symbol: KaFirContextParameterSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = kotlin.String
+    ownerSymbol = KaContextParameterSymbol:
+      String: kotlin.String
 
 scopes:
   TypeScope, index = 0

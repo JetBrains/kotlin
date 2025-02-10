@@ -2,18 +2,24 @@ element: context(A, Int)
 fun foo(p: Boolean) {
     val x = 1
 }
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: one/A
-  owner symbol: KaFirContextParameterSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/A
+    ownerSymbol = KaContextParameterSymbol:
+      A: one.A
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Int
-  owner symbol: KaFirContextParameterSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    ownerSymbol = KaContextParameterSymbol:
+      Int: kotlin.Int
 
 scopes:
   TypeScope, index = 0

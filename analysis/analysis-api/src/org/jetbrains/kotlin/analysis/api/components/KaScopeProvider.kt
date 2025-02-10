@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -273,7 +274,19 @@ public interface KaScopeContext : KaLifetimeOwner {
      *
      * The list is sorted according to the order of scopes in the scope tower (from innermost to outermost).
      */
+    @OptIn(KaExperimentalApi::class)
     public val implicitReceivers: List<KaImplicitReceiver>
+        get() = implicitValues.filterIsInstance<KaImplicitReceiver>()
+
+    /**
+     * The implicit values available at the context position.
+     *
+     * The list is sorted according to the order of scopes in the scope tower (from innermost to outermost).
+     *
+     * @see KaScopeKind.indexInTower
+     */
+    @KaExperimentalApi
+    public val implicitValues: List<KaScopeImplicitValue>
 
     /**
      * The [KaScope]s available at the context position. [KaScopeWithKind] additionally determines the kind of scope at the index in the
@@ -285,23 +298,52 @@ public interface KaScopeContext : KaLifetimeOwner {
 }
 
 /**
- * Represents an implicit receiver available in a particular context.
+ * Represents a value which can be used implicitly inside a particular [KaScopeContext].
  */
-public interface KaImplicitReceiver : KaLifetimeOwner {
+@KaExperimentalApi
+public sealed interface KaScopeImplicitValue : KaLifetimeOwner {
     /**
-     * The symbol of the owner of the implicit receiver.
-     */
-    public val ownerSymbol: KaSymbol
-
-    /**
-     * The implicit receiver type.
+     * The implicit value type.
      */
     public val type: KaType
 
     /**
-     * The index of the scope in the scope tower where the implicit receiver is declared.
+     * The index of the scope in the scope tower where the implicit value is declared.
      */
     public val scopeIndexInTower: Int
+}
+
+/**
+ * Represents an implicit receiver available in a particular [KaScopeContext].
+ */
+@KaExperimentalApi
+public interface KaScopeImplicitReceiverValue : KaScopeImplicitValue {
+    /**
+     * The implicit value owner.
+     */
+    public val ownerSymbol: KaSymbol
+}
+
+/**
+ * Represents an implicit argument available in a particular [KaScopeContext].
+ */
+@KaExperimentalApi
+public interface KaScopeImplicitArgumentValue : KaScopeImplicitValue {
+    /**
+     * The corresponding context parameter symbol which can be used
+     * as an implicit argument.
+     */
+    public val symbol: KaContextParameterSymbol
+}
+
+/**
+ * Represents an implicit receiver available in a particular context.
+ */
+@OptIn(KaExperimentalApi::class)
+public interface KaImplicitReceiver : KaScopeImplicitReceiverValue {
+    override val type: KaType
+    override val ownerSymbol: KaSymbol
+    override val scopeIndexInTower: Int
 }
 
 public sealed interface KaScopeKind {

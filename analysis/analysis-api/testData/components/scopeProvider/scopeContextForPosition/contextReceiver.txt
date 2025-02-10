@@ -1,10 +1,13 @@
 element: e
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: Context
-  owner symbol: KaFirContextParameterSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Context
+    ownerSymbol = KaContextParameterSymbol:
+      Context: Context
 
 scopes:
   LocalScope, index = 0

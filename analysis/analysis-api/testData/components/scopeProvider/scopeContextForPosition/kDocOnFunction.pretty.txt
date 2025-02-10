@@ -1,7 +1,10 @@
 element: param1
-implicit receivers:
-  type: test.Receiver
-  owner symbol: KaFirNamedFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = test.Receiver
+    ownerSymbol = KaNamedFunctionSymbol:
+      test/function(<extension receiver>: test.Receiver, param1: test.Param1, param2: test.Param2): TypeParam
 
 scopes:
   TypeScope, index = 0

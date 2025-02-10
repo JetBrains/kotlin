@@ -1,10 +1,16 @@
 element: e
-implicit receivers:
-  type: Base
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = Base
+    ownerSymbol = KaNamedClassSymbol:
+      /Base
 
-  type: Base.Companion
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = Base.Companion
+    ownerSymbol = KaNamedClassSymbol:
+      /Base.Companion
 
 scopes:
   LocalScope, index = 0
@@ -81,3 +87,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
+

@@ -1,10 +1,13 @@
 element: ::value
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: test/Child
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/Child
+    ownerSymbol = KaNamedClassSymbol:
+      test/Child
 
 scopes:
   LocalScope, index = 0

@@ -1,7 +1,10 @@
 element: bar()
-implicit receivers:
-  type: kotlin.Int
-  owner symbol: KaFirContextParameterSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = kotlin.Int
+    ownerSymbol = KaContextParameterSymbol:
+      Any: kotlin.Any
 
 scopes:
   LocalScope, index = 0
@@ -130,3 +133,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
+

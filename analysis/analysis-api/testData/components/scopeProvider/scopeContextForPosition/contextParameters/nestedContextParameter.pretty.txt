@@ -1,10 +1,16 @@
 element: check()
-implicit receivers:
-  type: C
-  owner symbol: KaFirAnonymousFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = C
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
 
-  type: D
-  owner symbol: KaFirAnonymousFunctionSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 6
+    type = D
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
 
 scopes:
   LocalScope, index = 0

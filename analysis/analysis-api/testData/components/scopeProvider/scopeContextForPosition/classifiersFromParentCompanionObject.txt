@@ -1,16 +1,22 @@
 element: e
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: Child
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Child
+    ownerSymbol = KaNamedClassSymbol:
+      /Child
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: Base.Companion
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 3
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Base.Companion
+    ownerSymbol = KaNamedClassSymbol:
+      /Base.Companion
 
 scopes:
   LocalScope, index = 0

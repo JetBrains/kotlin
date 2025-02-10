@@ -1,7 +1,10 @@
 element: a
-implicit receivers:
-  type: A
-  owner symbol: KaFirNamedFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = A
+    ownerSymbol = KaNamedFunctionSymbol:
+      /test(<extension receiver>: kotlin.Any): kotlin.Int
 
 scopes:
   LocalScope, index = 0

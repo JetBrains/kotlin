@@ -1,10 +1,16 @@
 element: e
-implicit receivers:
-  type: `<anonymous>`
-  owner symbol: KaFirEnumEntryInitializerSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = `<anonymous>`
+    ownerSymbol = KaAnonymousObjectSymbol:
+      <anonymous>
 
-  type: kotlin.Enum.Companion
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 5
+    type = kotlin.Enum.Companion
+    ownerSymbol = KaNamedClassSymbol:
+      kotlin/Enum.Companion
 
 scopes:
   LocalScope, index = 0

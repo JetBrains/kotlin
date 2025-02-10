@@ -1,5 +1,5 @@
 element: _: Int
-implicit receivers:
+implicit values:
 scopes:
   ExplicitSimpleImportingScope, index = 0
     packages: 0
@@ -158,3 +158,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
+

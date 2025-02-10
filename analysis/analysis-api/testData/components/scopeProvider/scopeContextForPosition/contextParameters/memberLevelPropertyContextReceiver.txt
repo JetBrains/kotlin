@@ -1,28 +1,40 @@
 element: val x = 1
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/String
-  owner symbol: KaFirKotlinPropertyKtPropertyBasedSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    ownerSymbol = KaKotlinPropertySymbol:
+      val foo: ERROR CLASS: Cannot infer variable type without initializer . getter . delegate
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: one/A
-  owner symbol: KaFirContextParameterSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/A
+    ownerSymbol = KaContextParameterSymbol:
+      A: one.A
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Int
-  owner symbol: KaFirContextParameterSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    ownerSymbol = KaContextParameterSymbol:
+      Int: kotlin.Int
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: one/B
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/B
+    ownerSymbol = KaNamedClassSymbol:
+      one/B
 
 scopes:
   LocalScope, index = 0
@@ -4756,3 +4768,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
+
