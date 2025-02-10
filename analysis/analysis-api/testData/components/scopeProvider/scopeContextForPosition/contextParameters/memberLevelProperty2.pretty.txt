@@ -1,5 +1,17 @@
 element: val x = 1
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = one.B
+    symbol = KaContextParameterSymbol:
+      b: one.B
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = kotlin.Int
+    symbol = KaContextParameterSymbol:
+      <unused var>: kotlin.Int
+
   KaImplicitReceiver:
     scopeIndexInTower = 3
     type = one.B

@@ -1,5 +1,11 @@
 element: _: String
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 0
+    type = kotlin.String
+    symbol = KaContextParameterSymbol:
+      <unused var>: kotlin.String
+
 scopes:
   LocalScope, index = 1
     packages: 0

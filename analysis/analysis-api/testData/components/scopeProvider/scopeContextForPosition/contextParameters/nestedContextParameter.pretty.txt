@@ -6,11 +6,23 @@ implicit values:
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
 
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 2
+    type = B
+    symbol = KaContextParameterSymbol:
+      <unused var>: B
+
   KaImplicitReceiver:
     scopeIndexInTower = 6
     type = D
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 10
+    type = A & T & kotlin.Any
+    symbol = KaContextParameterSymbol:
+      a: T
 
 scopes:
   LocalScope, index = 0

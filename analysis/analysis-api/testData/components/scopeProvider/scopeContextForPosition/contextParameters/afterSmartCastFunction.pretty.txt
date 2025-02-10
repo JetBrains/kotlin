@@ -1,5 +1,11 @@
 element: bar()
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = kotlin.Any
+    symbol = KaContextParameterSymbol:
+      c: kotlin.Any
+
 scopes:
   LocalScope, index = 0
     packages: 0

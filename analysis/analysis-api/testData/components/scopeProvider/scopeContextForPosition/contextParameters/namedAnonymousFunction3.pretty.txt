@@ -1,5 +1,11 @@
 element: val d: Double = 1.0
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = kotlin.String
+    symbol = KaContextParameterSymbol:
+      named: kotlin.String
+
 scopes:
   LocalScope, index = 0
     packages: 0

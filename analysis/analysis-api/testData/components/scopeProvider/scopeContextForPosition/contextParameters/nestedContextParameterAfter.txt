@@ -1,5 +1,13 @@
 element: Unit
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 2
+    type = KaIntersectionType:
+      annotations: []
+      type: it(BaseA & T & Any)
+    symbol = KaContextParameterSymbol:
+      a: T
+
 scopes:
   LocalScope, index = 0
     packages: 0

@@ -1,5 +1,11 @@
 element: c
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = kotlin.Boolean
+    symbol = KaContextParameterSymbol:
+      c: kotlin.Boolean
+
 scopes:
   LocalScope, index = 0
     packages: 0
