@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
  * the Analysis API user. The user should be aware of the platform's conventions around its restricted analysis mode and develop
  * accordingly.
  *
+ * During restricted analysis, the platform might require accesses of affected data (such as indices) to be wrapped in a specific handler,
+ * see [withRestrictedDataAccess].
+ *
  * In IntelliJ, restricted analysis mode is synonymous with its [dumb mode](https://plugins.jetbrains.com/docs/intellij/indexing-and-psi-stubs.html#dumb-mode),
  * which is typically enabled when files are being re-indexed.
  *
@@ -69,7 +72,25 @@ public interface KotlinRestrictedAnalysisService : KotlinOptionalPlatformCompone
      */
     public fun rejectRestrictedAnalysis(): Nothing
 
+    /**
+     * Runs [action] in a context where the platform allows access to the data affected by restricted analysis mode.
+     *
+     * On the client side, please use [withRestrictedDataAccess] instead.
+     */
+    public fun <R> runWithRestrictedDataAccess(action: () -> R): R
+
     public companion object {
         public fun getInstance(project: Project): KotlinRestrictedAnalysisService? = project.serviceOrNull()
+    }
+}
+
+/**
+ * Runs [action] with [KotlinRestrictedAnalysisService.runWithRestrictedDataAccess] if deemed necessary and applicable.
+ */
+public inline fun <R> KotlinRestrictedAnalysisService?.withRestrictedDataAccess(crossinline action: () -> R): R {
+    return if (this != null && isAnalysisRestricted && isRestrictedAnalysisAllowed) {
+        this.runWithRestrictedDataAccess { action() }
+    } else {
+        action()
     }
 }
