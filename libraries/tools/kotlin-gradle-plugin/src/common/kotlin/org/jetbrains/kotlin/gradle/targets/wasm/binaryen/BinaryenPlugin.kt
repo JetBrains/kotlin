@@ -89,12 +89,12 @@ abstract class BinaryenPlugin internal constructor() :
     companion object {
         const val TASKS_GROUP_NAME: String = "binaryen"
 
-        fun apply(rootProject: Project): BinaryenExtension {
+        internal fun apply(rootProject: Project): BinaryenExtension {
             rootProject.plugins.apply(BinaryenPlugin::class.java)
             return rootProject.extensions.getByName(BinaryenExtension.EXTENSION_NAME) as BinaryenExtension
         }
 
-        val Project.kotlinBinaryenExtension: BinaryenExtension
+        internal val Project.kotlinBinaryenExtension: BinaryenExtension
             get() = extensions.getByName(BinaryenExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
     }
 }
