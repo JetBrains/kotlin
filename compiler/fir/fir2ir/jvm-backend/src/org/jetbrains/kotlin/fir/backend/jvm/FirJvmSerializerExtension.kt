@@ -370,7 +370,7 @@ open class FirJvmSerializerExtension(
 
     private inline fun serializeAnnotations(declaration: FirAnnotationContainer?, addAnnotation: (ProtoBuf.Annotation) -> Unit) {
         if (metadataVersion.isAtLeast(2, 2, 0)) {
-            for (annotation in declaration?.nonSourceAnnotations(session).orEmpty()) {
+            for (annotation in declaration?.allRequiredAnnotations(session, additionalMetadataProvider).orEmpty()) {
                 addAnnotation(annotationSerializer.serializeAnnotation(annotation))
             }
         }
