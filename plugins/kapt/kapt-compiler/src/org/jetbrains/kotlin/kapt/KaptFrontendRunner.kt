@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 @OptIn(LegacyK2CliPipeline::class)
@@ -65,6 +66,8 @@ private fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
     ignoreErrors: Boolean = false,
 ): FirResult? {
     val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+    @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
     performanceManager?.notifyAnalysisStarted()
 
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->

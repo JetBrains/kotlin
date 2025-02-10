@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.toLogger
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -45,6 +46,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
@@ -124,7 +127,7 @@ object KotlinToJVMBytecodeCompiler {
             // Lowerings (per module)
             codegenInputs += runLowerings(
                 project, moduleConfiguration, moduleDescriptor, module, codegenFactory, backendInput, diagnosticsReporter,
-                firJvmBackendClassResolver, reportGenerationStarted = true
+                firJvmBackendClassResolver,
             )
         }
 
@@ -138,7 +141,6 @@ object KotlinToJVMBytecodeCompiler {
                 codegenFactory,
                 diagnosticsReporter,
                 compilerConfiguration,
-                reportGenerationFinished = true,
                 reportDiagnosticsToMessageCollector = true,
             )
         }
@@ -160,7 +162,12 @@ object KotlinToJVMBytecodeCompiler {
         diagnosticsReporter: DiagnosticReporter
     ): BackendInputForMultiModuleChunk? {
         // K1: Frontend
-        val result = repeatAnalysisIfNeeded(analyze(environment), environment)
+        val result = environment.configuration.perfManager.let {
+            it?.notifyCompilerInitialized()
+            it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+                repeatAnalysisIfNeeded(analyze(environment), environment)
+            }
+        }
         if (result == null || !result.shouldGenerateCode) return null
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -244,7 +251,12 @@ object KotlinToJVMBytecodeCompiler {
 
     @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
-        val result = repeatAnalysisIfNeeded(analyze(environment), environment) ?: return null
+        val result = environment.configuration.perfManager.let {
+            it?.notifyCompilerInitialized()
+            it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+                repeatAnalysisIfNeeded(analyze(environment), environment) ?: return null
+            }
+        }
 
         if (!result.shouldGenerateCode) return null
 
@@ -255,7 +267,7 @@ object KotlinToJVMBytecodeCompiler {
         val (codegenFactory, backendInput) = convertToIr(environment, result, diagnosticsReporter)
         val input = runLowerings(
             environment.project, environment.configuration, result.moduleDescriptor, module = null, codegenFactory,
-            backendInput, diagnosticsReporter, reportGenerationStarted = true
+            backendInput, diagnosticsReporter,
         )
         return runCodegen(
             input,
@@ -263,7 +275,6 @@ object KotlinToJVMBytecodeCompiler {
             codegenFactory,
             diagnosticsReporter,
             environment.configuration,
-            reportGenerationFinished = true,
             reportDiagnosticsToMessageCollector = true,
         )
     }
@@ -311,10 +322,6 @@ object KotlinToJVMBytecodeCompiler {
         val collector = environment.messageCollector
         val sourceFiles = environment.getSourceFiles()
 
-        // Can be null for Scripts/REPL
-        val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-        performanceManager?.notifyAnalysisStarted()
-
         val resolvedKlibs = environment.configuration.get(JVMConfigurationKeys.KLIB_PATHS)?.let { klibPaths ->
             jvmResolveLibraries(klibPaths, collector.toLogger())
         }?.getFullList() ?: emptyList()
@@ -343,8 +350,6 @@ object KotlinToJVMBytecodeCompiler {
                 klibList = resolvedKlibs
             )
         }
-
-        performanceManager?.notifyAnalysisFinished()
 
         val analysisResult = analyzerWithCompilerReport.analysisResult
 
@@ -382,7 +387,6 @@ object KotlinToJVMBytecodeCompiler {
         backendInput: JvmIrCodegenFactory.BackendInput,
         diagnosticsReporter: BaseDiagnosticsCollector,
         firJvmBackendClassResolver: FirJvmBackendClassResolver? = null,
-        reportGenerationStarted: Boolean
     ): JvmIrCodegenFactory.CodegenInput {
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
@@ -405,11 +409,9 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        if (reportGenerationStarted) {
-            performanceManager?.notifyIRLoweringStarted()
+        return performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
+            codegenFactory.invokeLowerings(state, backendInput)
         }
-        return codegenFactory.invokeLowerings(state, backendInput)
-            .also { performanceManager?.notifyIRLoweringFinished() }
     }
 
     internal fun runCodegen(
@@ -418,18 +420,14 @@ object KotlinToJVMBytecodeCompiler {
         codegenFactory: JvmIrCodegenFactory,
         diagnosticsReporter: BaseDiagnosticsCollector,
         configuration: CompilerConfiguration,
-        reportGenerationFinished: Boolean,
         reportDiagnosticsToMessageCollector: Boolean,
     ): GenerationState {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
-        performanceManager?.notifyBackendGenerationStarted()
-        codegenFactory.invokeCodegen(codegenInput)
-
-        if (reportGenerationFinished) {
-            performanceManager?.notifyBackendGenerationFinished()
+        performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.BackendGeneration) {
+            codegenFactory.invokeCodegen(codegenInput)
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

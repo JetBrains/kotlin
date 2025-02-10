@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
 class Ir2JsTransformer private constructor(
@@ -194,13 +195,15 @@ internal class K2JsCompilerImpl(
             arguments.granularity,
             arguments.dtsStrategy
         )
-        performanceManager?.notifyIRGenerationFinished()
+        @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+        performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.IrGeneration)`, but it's not always started
         return OK
     }
 
     override fun compileNoIC(mainCallArguments: List<String>?, module: ModulesStructure, moduleKind: ModuleKind?): ExitCode {
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyIRGenerationFinished()
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.IrGeneration)`, but it's not always started
             return OK
         }
 
