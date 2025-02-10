@@ -73,8 +73,7 @@ class RegeneratedLambdaFieldRemapper(
             )
         )?.also { fromParent = true } ?: throw AssertionError("Couldn't find captured this $originalLambdaInternalName for $fieldName")
 
-
-        val result = StackValue.field(
+        val result = StackValue.Field(
             if (field.isSkipped && field.functionalArgument is LambdaInfo)
                 Type.getObjectType(parent!!.parent!!.newLambdaInternalName)
             else

@@ -43,7 +43,7 @@ open class ParameterInfo(
         type,
         skipped,
         index,
-        if (remapValue == -1) null else StackValue.local(remapValue, type),
+        if (remapValue == -1) null else StackValue.Local(remapValue, type, null),
         declarationIndex
     )
 }

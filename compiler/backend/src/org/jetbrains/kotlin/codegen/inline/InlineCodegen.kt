@@ -86,7 +86,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 }
                 for (captured in lambda.capturedVars) {
                     val param = invocationParamBuilder.addCapturedParam(captured, captured.fieldName, false)
-                    param.remapValue = StackValue.local(codegen.frameMap.enterTemp(param.type), param.type)
+                    param.remapValue = StackValue.Local(codegen.frameMap.enterTemp(param.type), param.type, null)
                     param.isSynthetic = true
                 }
             }
@@ -221,7 +221,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             stackValue.put(asmType, kotlinType, codegen.visitor)
             val index = codegen.frameMap.enterTemp(asmType)
             codegen.visitor.store(index, asmType)
-            info.remapValue = StackValue.local(index, asmType)
+            info.remapValue = StackValue.Local(index, asmType, null)
             info.isSynthetic = true
         }
     }

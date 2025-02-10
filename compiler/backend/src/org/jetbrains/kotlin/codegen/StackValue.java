@@ -32,7 +32,7 @@ public abstract class StackValue {
     private static final String NULLABLE_SHORT_TYPE_NAME = "java/lang/Short";
     private static final String NULLABLE_LONG_TYPE_NAME = "java/lang/Long";
 
-    public static final StackValue.Local LOCAL_0 = local(0, OBJECT_TYPE);
+    public static final StackValue.Local LOCAL_0 = new Local(0, OBJECT_TYPE, null);
 
     @NotNull
     public final Type type;
@@ -50,47 +50,23 @@ public abstract class StackValue {
         throw new UnsupportedOperationException("Cannot store to value " + this);
     }
 
-    @NotNull
-    public static Local local(int index, @NotNull Type type) {
-        return new Local(index, type, null);
-    }
-
-    public static Local local(int index, @NotNull Type type, @Nullable KotlinType kotlinType) {
-        return new Local(index, type, kotlinType);
-    }
-
-    @NotNull
-    public static StackValue onStack(@NotNull Type type, @Nullable KotlinType kotlinType) {
-        return type == Type.VOID_TYPE ? None.INSTANCE : new OnStack(type, kotlinType);
-    }
-
-    @NotNull
-    public static StackValue constant(@Nullable Object value, @NotNull Type type) {
-        return new Constant(value, type);
-    }
-
     public static StackValue createDefaultValue(@NotNull Type type) {
         switch (type.getSort()) {
             case Type.OBJECT: case Type.ARRAY:
-                return constant(null, type);
+                return new Constant(null, type);
             case Type.BYTE: case Type.SHORT: case Type.INT: case Type.CHAR:
-                return constant(0, type);
+                return new Constant(0, type);
             case Type.BOOLEAN:
-                return constant(false, type);
+                return new Constant(false, type);
             case Type.LONG:
-                return constant(0L, type);
+                return new Constant(0L, type);
             case Type.FLOAT:
-                return constant(0.0f, type);
+                return new Constant(0.0f, type);
             case Type.DOUBLE:
-                return constant(0.0, type);
+                return new Constant(0.0, type);
             default:
                 throw new AssertionError("Unsupported type: " + type);
         }
-    }
-
-    @NotNull
-    public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, @NotNull StackValue receiver) {
-        return new Field(type, owner, name, receiver);
     }
 
     private static void box(Type type, Type toType, InstructionAdapter v) {
@@ -394,23 +370,10 @@ public abstract class StackValue {
         v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), JvmAbi.INSTANCE_FIELD, UNIT_TYPE.getDescriptor());
     }
 
-    private static class None extends StackValue {
-        public static final None INSTANCE = new None();
-
-        private None() {
-            super(Type.VOID_TYPE, null);
-        }
-
-        @Override
-        public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
-            coerceTo(type, kotlinType, v);
-        }
-    }
-
     public static class Local extends StackValue {
         public final int index;
 
-        private Local(int index, Type type, KotlinType kotlinType) {
+        public Local(int index, Type type, KotlinType kotlinType) {
             super(type, kotlinType);
 
             if (index < 0) {
@@ -438,6 +401,9 @@ public abstract class StackValue {
     public static class OnStack extends StackValue {
         public OnStack(Type type, KotlinType kotlinType) {
             super(type, kotlinType);
+            if (type == Type.VOID_TYPE) {
+                throw new IllegalArgumentException("Cannot create OnStack with void type");
+            }
         }
 
         @Override

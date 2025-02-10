@@ -33,7 +33,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
         for (info in params) {
             val shift = params.getDeclarationSlot(info)
             if (!info.isSkippedOrRemapped) {
-                remapValues[shift] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE)
+                remapValues[shift] = StackValue.Local(realSize, AsmTypes.OBJECT_TYPE, null)
                 realSize += info.type.size
             } else {
                 remapValues[shift] = if (info.isRemapped) info.remapValue else null
@@ -66,7 +66,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             remappedIndex = actualParamsSize - params.argsSizeOnStack + index
         }
 
-        return RemapInfo(null, StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), SHIFT)
+        return RemapInfo(null, StackValue.Local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE, null), SHIFT)
     }
 
     fun remap(index: Int): RemapInfo {

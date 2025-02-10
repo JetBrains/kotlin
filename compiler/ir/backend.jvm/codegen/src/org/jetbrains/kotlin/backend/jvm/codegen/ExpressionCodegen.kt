@@ -771,10 +771,10 @@ class ExpressionCodegen(
         val irValueDeclaration = expression.symbol.owner
         val realType = irValueDeclaration.realType
         val kotlinType = if (eraseType) realType.upperBound.withNullability(realType.isNullable()) else realType
-        StackValue.local(variableIndex, asmType, kotlinType.toIrBasedKotlinType())
+        StackValue.Local(variableIndex, asmType, kotlinType.toIrBasedKotlinType())
     } else {
         gen(expression, type, parameterType, data)
-        StackValue.onStack(type, parameterType.toIrBasedKotlinType())
+        StackValue.OnStack(type, parameterType.toIrBasedKotlinType())
     }
 
     // We do not mangle functions if Result is the only parameter of the function. This means that if a function

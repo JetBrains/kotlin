@@ -384,7 +384,7 @@ class AnonymousObjectTransformer(
             val info = param.fieldEquivalent?.also {
                 // Permit to access this capture through a field within the constructor itself, but remap to local loads.
                 constructorInlineBuilder.addCapturedParam(it, it.newFieldName).remapValue =
-                    if (offset == -1) null else StackValue.local(offset, param.type)
+                    if (offset == -1) null else StackValue.Local(offset, param.type, null)
             } ?: param
             if (!param.isSkipped && info is CapturedParamInfo && !info.isSkipInConstructor) {
                 val desc = info.type.descriptor
@@ -544,7 +544,7 @@ class AnonymousObjectTransformer(
                         recapturedParamInfo.functionalArgument = NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
                     }
                     capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue =
-                        StackValue.field(desc.type, oldObjectType, recapturedParamInfo.newFieldName, StackValue.LOCAL_0)
+                        StackValue.Field(desc.type, oldObjectType, recapturedParamInfo.newFieldName, StackValue.LOCAL_0)
                     allRecapturedParameters.add(desc)
                 }
             }

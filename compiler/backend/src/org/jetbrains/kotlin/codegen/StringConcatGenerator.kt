@@ -56,7 +56,7 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                 }
             }
         } else {
-            StackValue.constant(value, type).put(type, null, mv)
+            StackValue.Constant(value, type).put(type, null, mv)
             invokeAppend(type)
         }
     }

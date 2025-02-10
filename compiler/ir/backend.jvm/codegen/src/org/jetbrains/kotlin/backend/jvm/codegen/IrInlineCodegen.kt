@@ -129,9 +129,9 @@ class IrInlineCodegen(
 
             val onStack = when (kind) {
                 ValueKind.METHOD_HANDLE_IN_DEFAULT ->
-                    StackValue.constant(null, AsmTypes.OBJECT_TYPE)
+                    StackValue.Constant(null, AsmTypes.OBJECT_TYPE)
                 ValueKind.DEFAULT_MASK ->
-                    StackValue.constant((argumentExpression as IrConst).value, Type.INT_TYPE)
+                    StackValue.Constant((argumentExpression as IrConst).value, Type.INT_TYPE)
                 ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER ->
                     StackValue.createDefaultValue(parameterType)
                 else -> {
@@ -145,7 +145,7 @@ class IrInlineCodegen(
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     } else {
                         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
-                        StackValue.onStack(parameterType, irValueParameter.type.toIrBasedKotlinType())
+                        StackValue.OnStack(parameterType, irValueParameter.type.toIrBasedKotlinType())
                     }
                     if (inlineArgumentsInPlace) {
                         codegen.visitor.addInplaceArgumentEndMarker()
