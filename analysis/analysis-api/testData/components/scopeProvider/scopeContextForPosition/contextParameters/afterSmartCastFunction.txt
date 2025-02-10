@@ -1,5 +1,14 @@
 element: bar()
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+    symbol = KaContextParameterSymbol:
+      c: kotlin.Any
+
 scopes:
   LocalScope, index = 0
     packages: 0
@@ -280,3 +289,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
+

@@ -9,6 +9,24 @@ implicit values:
     ownerSymbol = KaNamedFunctionSymbol:
       one/B.foo(<extension receiver>: kotlin.String, <dispatch receiver>: one.B, p: kotlin.Boolean): kotlin.Unit
 
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 2
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/A
+    symbol = KaContextParameterSymbol:
+      a: one.A
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 2
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    symbol = KaContextParameterSymbol:
+      <unused var>: kotlin.Int
+
   KaImplicitReceiver:
     scopeIndexInTower = 4
     type = KaUsualClassType:

@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeImplicitArgumentValue
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
@@ -280,7 +281,7 @@ internal class KaFirScopeProvider(
             val firImportingScopesIndexed = firImportingScopes.asReversed().withIndex()
 
             val ktScopesWithKinds = createScopesWithKind(firImportingScopesIndexed)
-            return KaBaseScopeContext(ktScopesWithKinds, implicitReceivers = emptyList(), token)
+            return KaBaseScopeContext(ktScopesWithKinds, implicitValues = emptyList(), token)
         }
 
     override fun KtFile.scopeContext(position: KtElement): KaScopeContext = withValidityAssertion {
@@ -306,16 +307,29 @@ internal class KaFirScopeProvider(
 
         val firSymbolBuilder = analysisSession.firSymbolBuilder
 
-        val implicitReceivers = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
-            val receivers = listOfNotNull(towerDataElement.implicitReceiver) + towerDataElement.contextReceiverGroup.orEmpty()
+        val implicitValues = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
+            buildList {
+                val receivers = listOfNotNull(towerDataElement.implicitReceiver) + towerDataElement.contextReceiverGroup.orEmpty()
+                for (receiver in receivers) {
+                    val receiverValue = KaBaseScopeImplicitReceiverValue(
+                        backingType = firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
+                        ownerSymbol = firSymbolBuilder.buildSymbol(receiver.referencedMemberSymbol),
+                        scopeIndexInTower = index,
+                    )
 
-            receivers.map { receiver ->
-                val ownerSymbol = receiver.referencedMemberSymbol
-                KaBaseImplicitReceiver(
-                    firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
-                    firSymbolBuilder.buildSymbol(ownerSymbol),
-                    index
-                )
+                    add(receiverValue)
+                }
+
+                val arguments = towerDataElement.contextParameterGroup.orEmpty()
+                for (argument in arguments) {
+                    val argumentValue = KaBaseScopeImplicitArgumentValue(
+                        backingType = firSymbolBuilder.typeBuilder.buildKtType(argument.type),
+                        symbol = firSymbolBuilder.variableBuilder.buildContextParameterSymbol(argument.boundSymbol),
+                        scopeIndexInTower = index,
+                    )
+
+                    add(argumentValue)
+                }
             }
         }
 
@@ -327,7 +341,7 @@ internal class KaFirScopeProvider(
         }
         val ktScopesWithKinds = createScopesWithKind(firScopes)
 
-        return KaBaseScopeContext(ktScopesWithKinds, implicitReceivers, token)
+        return KaBaseScopeContext(ktScopesWithKinds, implicitValues, token)
     }
 
     private fun createScopesWithKind(firScopes: Iterable<IndexedValue<FirScope>>): List<KaScopeWithKind> {

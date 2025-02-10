@@ -3,6 +3,18 @@ fun foo(p: Boolean) {
     val x = 1
 }
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 0
+    type = one.A
+    symbol = KaContextParameterSymbol:
+      a: one.A
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 0
+    type = kotlin.Int
+    symbol = KaContextParameterSymbol:
+      <unused var>: kotlin.Int
+
 scopes:
   LocalScope, index = 1
     packages: 0
