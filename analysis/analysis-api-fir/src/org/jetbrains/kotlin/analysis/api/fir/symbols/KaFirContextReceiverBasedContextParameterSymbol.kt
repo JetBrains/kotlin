@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -32,9 +31,6 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtContextReceiver
-import org.jetbrains.kotlin.psi.KtContextReceiverList
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -45,19 +41,14 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
 ) : KaContextParameterSymbol(), KaFirKtBasedSymbol<KtContextReceiver, FirValueParameterSymbol> {
     init {
         if (backingPsi != null) {
-            val parent = backingPsi.parent
-            requireIsInstance<KtContextReceiverList>(parent)
-            val modifierList = parent.parent
-            requireIsInstance<KtModifierList>(modifierList)
-            val declaration = modifierList.parent
-            requireIsInstance<KtDeclaration>(declaration)
+            requireNotNull(backingPsi.ownerDeclaration)
         }
     }
 
     constructor(contextReceiver: KtContextReceiver, session: KaFirSession) : this(
         backingPsi = contextReceiver,
         lazyFirSymbol = lazy(LazyThreadSafetyMode.PUBLICATION) {
-            val declaration = contextReceiver.parent.parent.parent as KtDeclaration
+            val declaration = contextReceiver.ownerDeclaration!!
             val firSymbol = declaration.resolveToFirSymbol(session.firResolveSession)
             firSymbol.fir
                 .contextParameters

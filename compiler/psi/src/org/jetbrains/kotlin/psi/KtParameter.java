@@ -237,6 +237,26 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return ((KtParameterList) parent).getOwnerFunction();
     }
 
+    /**
+     * @see KtParameterList#getOwnerFunction()
+     * @see KtContextReceiverList#getOwnerDeclaration()
+     *
+     * @return the parameter's owner declaration or null if it is from a functional type
+     */
+    @Nullable
+    public KtDeclaration getOwnerDeclaration() {
+        PsiElement parent = getParent();
+        if (parent instanceof KtParameterList) {
+            return ((KtParameterList) parent).getOwnerFunction();
+        }
+
+        if (parent instanceof KtContextReceiverList) {
+            return ((KtContextReceiverList) parent).getOwnerDeclaration();
+        }
+
+        return null;
+    }
+
     @NotNull
     @Override
     public SearchScope getUseScope() {

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -28,8 +27,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtContextReceiver
 import org.jetbrains.kotlin.psi.KtContextReceiverList
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10PsiContextReceiverBasedContextParameterSymbol(
@@ -37,17 +34,12 @@ internal class KaFe10PsiContextReceiverBasedContextParameterSymbol(
     override val analysisContext: Fe10AnalysisContext,
 ) : KaContextParameterSymbol(), KaFe10PsiSymbol<KtContextReceiver, ReceiverParameterDescriptor> {
     init {
-        val parent = psi.parent
-        requireIsInstance<KtContextReceiverList>(parent)
-        val modifierList = parent.parent
-        requireIsInstance<KtModifierList>(modifierList)
-        val declaration = modifierList.parent
-        requireIsInstance<KtDeclaration>(declaration)
+        requireNotNull(psi.ownerDeclaration)
     }
 
     override val descriptor: ReceiverParameterDescriptor? by cached {
         val list = psi.parent as KtContextReceiverList
-        val declaration = list.parent.parent as KtDeclaration
+        val declaration = list.ownerDeclaration!!
         val bindingContext = analysisContext.analyze(declaration, AnalysisMode.PARTIAL)
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor
         val index = list.contextReceivers().indexOf(psi)

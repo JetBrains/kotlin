@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,4 +23,18 @@ class KtContextReceiverList : KtElementImplStub<KotlinPlaceHolderStub<KtContextR
 
     fun typeReferences(): List<KtTypeReference> = contextReceivers().mapNotNull { it.typeReference() }
 
+    /**
+     * Returns the owner declaration of the context receiver list.
+     * The owner would be null in the case of context parameter on a functional type.
+     * ```kotlin
+     * fun foo(action: context(Int) () -> Unit
+     * ```
+     *
+     * In this case the owner for `context(Int)` will be **null**.
+     */
+    val ownerDeclaration: KtDeclaration?
+        get() {
+            val modifierList = parent as? KtModifierList ?: return null
+            return modifierList.owner as? KtDeclaration
+        }
 }
