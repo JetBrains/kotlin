@@ -1,4 +1,4 @@
-FILE: comparingWithWrongNullability.kt
+FILE: comparingWithWrongNullability.fir.kt
     public final fun foo(): R|kotlin/Unit| {
         Q|java/util/Comparator|.R|java/util/Comparator.comparing*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?) kotlin/String!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Boolean?) kotlin/Boolean!|>(<L> = SAM(comparing@fun <anonymous>(it: R|@EnhancedNullability kotlin/String!|): R|@EnhancedNullability kotlin/Boolean!| <inline=NoInline>  {
             ^ !=(R|<local>/it|, String())
