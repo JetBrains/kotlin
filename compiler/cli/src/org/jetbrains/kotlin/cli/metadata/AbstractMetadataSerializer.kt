@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 abstract class AbstractMetadataSerializer<T>(
@@ -34,9 +35,9 @@ abstract class AbstractMetadataSerializer<T>(
         val analysisResult = analyze() ?: return null
 
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
-        performanceManager.notifyBackendGenerationStarted()
+        performanceManager.notifyPhaseStarted(PhaseMeasurementType.BackendGeneration)
         return serialize(analysisResult, destDir).also {
-            performanceManager.notifyBackendGenerationFinished()
+            performanceManager.notifyPhaseFinished(PhaseMeasurementType.BackendGeneration)
         }
     }
 

@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 @LegacyK2CliPipeline
@@ -153,7 +154,7 @@ fun generateCodeFromIr(
     )
 
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRLoweringStarted()
+    performanceManager?.notifyPhaseStarted(PhaseMeasurementType.IrLowering)
     val backendInput = JvmIrCodegenFactory.BackendInput(
         input.irModuleFragment,
         input.pluginContext.irBuiltIns,
@@ -170,12 +171,12 @@ fun generateCodeFromIr(
     val codegenFactory = JvmIrCodegenFactory(input.configuration)
     val codegenInput = codegenFactory.invokeLowerings(generationState, backendInput)
 
-    performanceManager?.notifyIRLoweringFinished()
-    performanceManager?.notifyBackendGenerationStarted()
+    performanceManager?.notifyPhaseFinished(PhaseMeasurementType.IrLowering)
+    performanceManager?.notifyPhaseStarted(PhaseMeasurementType.BackendGeneration)
 
     codegenFactory.invokeCodegen(codegenInput)
 
-    performanceManager?.notifyBackendGenerationFinished()
+    performanceManager?.notifyPhaseFinished(PhaseMeasurementType.BackendGeneration)
 
     return ModuleCompilerOutput(generationState, builderFactory)
 }
