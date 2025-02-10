@@ -29,11 +29,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 
 object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBinaryPipelineArtifact>(
     name = "JvmBackendPipelineStep",
-    preActions = setOf(
-        PerformanceNotifications.IrLoweringStarted
-    ),
     postActions = setOf(
-        PerformanceNotifications.BackendGenerationFinished,
         CheckCompilationErrors.CheckDiagnosticCollector
     )
 ) {
@@ -89,7 +85,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
 
             codegenInputs += KotlinToJVMBytecodeCompiler.runLowerings(
                 project, configurationForModule, moduleDescriptor, module,
-                codegenFactory, backendInput, diagnosticCollector, classResolver, reportGenerationStarted = false
+                codegenFactory, backendInput, diagnosticCollector, classResolver,
             )
         }
 
@@ -103,7 +99,6 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
                 codegenFactory,
                 diagnosticCollector,
                 input.state.configuration,
-                reportGenerationFinished = false,
                 reportDiagnosticsToMessageCollector = false, // diagnostics will be reported in CheckCompilationErrors.CheckDiagnosticCollector
             )
         }

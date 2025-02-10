@@ -97,6 +97,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
             "Kotlin language version: " + LanguageVersion.LATEST_STABLE,
             "Time metrics:",
             "Jps iteration:",
+            "Compiler initialization time:",
             "Compiler code analysis:",
             "Compiler code generation:"
         )

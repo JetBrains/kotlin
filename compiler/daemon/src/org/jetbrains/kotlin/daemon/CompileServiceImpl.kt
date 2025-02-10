@@ -284,7 +284,7 @@ abstract class CompileServiceImplBase(
         if (lines != null) {
             performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, lines.toLong()))
         }
-        performanceManager.getMeasurementResults().forEach {
+        performanceManager.measurements.forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))

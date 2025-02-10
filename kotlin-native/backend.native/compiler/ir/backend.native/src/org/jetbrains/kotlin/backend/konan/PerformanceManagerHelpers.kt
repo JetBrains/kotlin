@@ -5,46 +5,23 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.util.PerformanceManager
 
 class K2NativeCompilerPerformanceManager : PerformanceManager("Kotlin to Native Compiler") {
-
-    private val children = mutableListOf<ChildCompilerPerformanceManager>()
-
-    /**
-     * Creates a separate performance manager. Use case: create a child, use in a separate thread, collect back the measurements.
-     * Measurements may be collected back by [collectChildMeasurements].
-     *
-     * WARNING: not thread-safe!
-     */
-    internal fun createChild(): PerformanceManager {
-        return ChildCompilerPerformanceManager().also {
-            children += it
+    companion object {
+        fun createAndEnableIfNeeded(mainPerformanceManager: PerformanceManager?): K2NativeCompilerPerformanceManager? {
+            return if (mainPerformanceManager != null) {
+                K2NativeCompilerPerformanceManager().also {
+                    if (mainPerformanceManager.isEnabled) {
+                        it.enableCollectingPerformanceStatistics(mainPerformanceManager.isK2)
+                    }
+                }
+            } else {
+                null
+            }
         }
     }
-
-    /**
-     * Collects the measurements from the "child" performance managers.
-     *
-     * WARNING: not thread-safe!
-     */
-    fun collectChildMeasurements() {
-        children.forEach {
-            addMeasurementResults(it.getMeasurementResults())
-            it.clearMeasurementResults()
-        }
-    }
-
-    private inner class ChildCompilerPerformanceManager : PerformanceManager("Kotlin to Native Compiler per single thread")
 }
-
-var CompilerConfiguration.performanceManager: PerformanceManager?
-    get() = this[CLIConfigurationKeys.PERF_MANAGER]
-    set(v) {
-        this.putIfNotNull(CLIConfigurationKeys.PERF_MANAGER, v)
-    }
 
 internal inline fun <T> PerformanceManager?.trackAnalysis(fn: () -> T): T {
     this?.notifyAnalysisStarted()
@@ -61,23 +38,5 @@ internal inline fun <T> PerformanceManager?.trackIRGeneration(fn: () -> T): T {
         return fn()
     } finally {
         this?.notifyIRGenerationFinished()
-    }
-}
-
-internal inline fun <T> PerformanceManager?.trackIRLowering(fn: () -> T): T {
-    this?.notifyIRLoweringStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyIRLoweringFinished()
-    }
-}
-
-internal inline fun <T> PerformanceManager?.trackBackendGeneration(fn: () -> T): T {
-    this?.notifyBackendGenerationStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyBackendGenerationFinished()
     }
 }

@@ -73,13 +73,11 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
             Triple(objCExportedInterface, psiToIrOutput, objCCodeSpec)
         }
 
-        performanceManager.trackBackendGeneration {
-            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
-                it.objCExportedInterface = objCExportedInterface
-                it.objCExportCodeSpec = objCCodeSpec
-            }
-            engine.runBackend(backendContext, psiToIrOutput.irModule)
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+            it.objCExportedInterface = objCExportedInterface
+            it.objCExportCodeSpec = objCCodeSpec
         }
+        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
     }
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -96,12 +94,10 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
         }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
 
-        performanceManager.trackBackendGeneration {
-            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
-                it.cAdapterExportedElements = cAdapterElements
-            }
-            engine.runBackend(backendContext, psiToIrOutput.irModule)
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+            it.cAdapterExportedElements = cAdapterElements
         }
+        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -179,10 +175,8 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
         val psiToIrOutput = performanceManager.trackIRGeneration { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
 
-        performanceManager.trackBackendGeneration {
-            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-            engine.runBackend(backendContext, psiToIrOutput.irModule)
-        }
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<PhaseContext>, config: KonanConfig, bitcodeFilePath: String) {
@@ -220,10 +214,8 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
             engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        performanceManager.trackBackendGeneration {
-            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-            engine.runBackend(backendContext, psiToIrOutput.irModule)
-        }
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
     }
 
     private fun createBackendContext(

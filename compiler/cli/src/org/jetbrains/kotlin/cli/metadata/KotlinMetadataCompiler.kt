@@ -116,7 +116,6 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         performanceManager.apply {
             targetDescription = "$mode mode for $moduleName module"
             addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
-            notifyCompilerInitialized()
         }
 
         if (environment.getSourceFiles().isEmpty()) {

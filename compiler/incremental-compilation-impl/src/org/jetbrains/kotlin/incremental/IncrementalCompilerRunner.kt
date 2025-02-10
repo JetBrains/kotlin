@@ -692,7 +692,7 @@ abstract class IncrementalCompilerRunner<
         if (lines != null) {
             reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, lines.toLong())
         }
-        defaultPerformanceManager.getMeasurementResults().forEach {
+        defaultPerformanceManager.measurements.forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
                 is CodeAnalysisMeasurement -> {

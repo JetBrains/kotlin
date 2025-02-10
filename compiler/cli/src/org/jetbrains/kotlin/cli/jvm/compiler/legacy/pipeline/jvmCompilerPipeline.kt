@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
 @LegacyK2CliPipeline
@@ -153,6 +154,8 @@ fun generateCodeFromIr(
     )
 
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
+    @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
     performanceManager?.notifyIRLoweringStarted()
     val backendInput = JvmIrCodegenFactory.BackendInput(
         input.irModuleFragment,

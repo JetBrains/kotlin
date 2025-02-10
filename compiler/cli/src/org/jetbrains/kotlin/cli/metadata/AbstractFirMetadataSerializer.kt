@@ -40,14 +40,17 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
 internal abstract class AbstractFirMetadataSerializer(
     configuration: CompilerConfiguration,
-    environment: KotlinCoreEnvironment
+    environment: KotlinCoreEnvironment,
 ) : AbstractMetadataSerializer<List<ModuleCompilerAnalyzedOutput>>(configuration, environment) {
     override fun analyze(): List<ModuleCompilerAnalyzedOutput>? {
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
+        @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+        performanceManager.notifyCurrentPhaseFinishedIfNeeded()
         performanceManager.notifyAnalysisStarted()
 
         val configuration = environment.configuration

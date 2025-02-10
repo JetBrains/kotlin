@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -69,9 +71,8 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     return psiToIrOutput to additionalOutput
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
+internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
-    val rootPerformanceManager = backendContext.configuration.performanceManager
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
 
@@ -103,9 +104,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         fun NativeGenerationState.runEngineForLowerings(block: PhaseEngine<NativeGenerationState>.() -> Unit) {
             try {
                 newEngine(this) { generationStateEngine ->
-                    rootPerformanceManager.trackIRLowering {
-                        generationStateEngine.block()
-                    }
+                    generationStateEngine.block()
                 }
             } catch (t: Throwable) {
                 this.dispose()
@@ -216,24 +215,25 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
         }
 
-        val fragments = backendEngine.splitIntoFragments(irModule)
+        val fragments = backendEngine.splitIntoFragments(irModule, performanceManager)
+        val fragmentsList = fragments.toList()
+        val generationStates = performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
+            fragmentsList.runAllLowerings()
+        }
+
         val threadsCount = context.config.threadsCount
         if (threadsCount == 1) {
-            val fragmentsList = fragments.toList()
-            val generationStates = fragmentsList.runAllLowerings()
             fragmentsList.zip(generationStates).forEach { (fragment, generationState) ->
                 runAfterLowerings(fragment, generationState)
             }
         } else {
-            val fragmentsList = fragments.toList()
             if (fragmentsList.size == 1) {
-                runAfterLowerings(fragmentsList.first(), fragmentsList.runAllLowerings().first())
+                runAfterLowerings(fragmentsList.first(), generationStates.first())
             } else {
                 // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
                 // which need cross-file access all the time and it's not easy to overcome this). So, for now,
                 // we split the pipeline into two parts - everything before lowerings (including them)
                 // which is run sequentially, and everything else which is run in parallel.
-                val generationStates = fragmentsList.runAllLowerings()
                 val executor = Executors.newFixedThreadPool(threadsCount)
                 val thrownFromThread = AtomicReference<Throwable?>(null)
                 val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
@@ -251,7 +251,12 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 thrownFromThread.get()?.let { throw it }
             }
         }
-        (rootPerformanceManager as? K2NativeCompilerPerformanceManager)?.collectChildMeasurements()
+
+        if (performanceManager != null) {
+            fragments.forEach {
+                performanceManager.addMeasurementResults(it.performanceManager)
+            }
+        }
     }
 }
 
@@ -286,9 +291,9 @@ private data class BackendJobFragment(
 
 private fun PhaseEngine<out Context>.splitIntoFragments(
         input: IrModuleFragment,
+        mainPerfManager: PerformanceManager?,
 ): Sequence<BackendJobFragment> {
     val config = context.config
-    val performanceManager = config.configuration.performanceManager as? K2NativeCompilerPerformanceManager
     return if (context.config.producePerFileCache) {
         val files = input.files.toList()
         val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
@@ -319,7 +324,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
-                    performanceManager?.createChild(),
+                    K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyCompilerInitialized() },
             )
         }
     } else {
@@ -335,7 +340,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
                         llvmModuleSpecification,
-                        performanceManager?.createChild(),
+                        K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyCompilerInitialized() },
                 )
         )
     }
