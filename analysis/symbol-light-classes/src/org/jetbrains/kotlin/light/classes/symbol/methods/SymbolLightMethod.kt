@@ -82,7 +82,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     private val _parametersList by lazyPub {
         SymbolLightParameterList(
             parent = this@SymbolLightMethod,
-            callableWithReceiverSymbolPointer = functionSymbolPointer,
+            correspondingCallablePointer = functionSymbolPointer,
         ) { builder ->
             if (this@SymbolLightMethod.containingClass is SymbolLightClassForInterfaceDefaultImpls) {
                 builder.addParameter(SymbolLightParameterForDefaultImplsReceiver(this@SymbolLightMethod))
