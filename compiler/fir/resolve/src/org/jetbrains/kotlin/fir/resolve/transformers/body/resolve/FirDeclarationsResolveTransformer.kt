@@ -93,7 +93,11 @@ open class FirDeclarationsResolveTransformer(
     private fun prepareSignatureForBodyResolve(callableMember: FirCallableDeclaration) {
         callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
         callableMember.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
-        callableMember.transformContextParameters(transformer, ResolutionMode.ContextIndependent)
+
+        callableMember.contextParameters.forEach {
+            it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+        }
+
         if (callableMember is FirFunction) {
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)

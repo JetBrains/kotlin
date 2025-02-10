@@ -5,9 +5,9 @@ FILE: contextInLocalFunctionResolution.kt
             R|<local>/c|
         }
 
-        R|<local>/c|
+        <Unresolved name: c>#
         local final fun local2(): R|kotlin/Unit| {
-            R|<local>/c|
+            <Unresolved name: c>#
         }
 
     }

@@ -8,9 +8,9 @@ fun test() {
         c
     }
 
-    c
+    <!UNRESOLVED_REFERENCE!>c<!>
 
     fun local2() {
-        c
+        <!UNRESOLVED_REFERENCE!>c<!>
     }
 }
