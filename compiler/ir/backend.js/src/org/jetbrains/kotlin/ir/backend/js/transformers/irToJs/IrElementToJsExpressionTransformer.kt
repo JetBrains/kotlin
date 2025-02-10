@@ -179,7 +179,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef =
-            if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.valueParameters.last()).makeRef()
+            if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.parameters.last()).makeRef()
         val arguments = translateCallArguments(expression, context, this)
 
         val constructor = expression.symbol.owner
