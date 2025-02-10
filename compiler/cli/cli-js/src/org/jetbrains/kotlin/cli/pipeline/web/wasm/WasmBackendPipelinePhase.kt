@@ -148,7 +148,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             propertyLazyInitialization = propertyLazyInitialization,
         )
 
-        performanceManager?.notifyIRGenerationStarted()
+        performanceManager?.notifyBackendGenerationStarted()
         val dceDumpNameCache = DceDumpNameCache()
         if (dce) {
             eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
@@ -181,7 +181,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )
 
-        performanceManager?.notifyIRGenerationFinished()
+        performanceManager?.notifyBackendGenerationFinished()
         performanceManager?.notifyGenerationFinished()
 
         writeCompilationResult(
@@ -191,7 +191,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )
 
-        performanceManager?.notifyIRTranslationFinished()
+        performanceManager?.notifyIRGenerationFinished()
 
         return res
     }

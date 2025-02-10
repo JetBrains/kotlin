@@ -52,7 +52,7 @@ fun generateIrForKlibSerialization(
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
 ): Pair<IrModuleFragment, IrPluginContext> {
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRTranslationStarted()
+    performanceManager?.notifyIRGenerationStarted()
 
     val messageCollector = configuration.messageCollector
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
