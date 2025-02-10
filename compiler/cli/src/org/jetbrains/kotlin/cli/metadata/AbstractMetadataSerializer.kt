@@ -34,9 +34,9 @@ abstract class AbstractMetadataSerializer<T>(
         val analysisResult = analyze() ?: return null
 
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
-        performanceManager.notifyGenerationStarted()
+        performanceManager.notifyBackendStarted()
         return serialize(analysisResult, destDir).also {
-            performanceManager.notifyGenerationFinished()
+            performanceManager.notifyBackendFinished()
         }
     }
 

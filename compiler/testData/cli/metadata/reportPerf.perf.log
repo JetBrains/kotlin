@@ -1,6 +1,6 @@
 Kotlin to Metadata compiler performance report
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
-            GENERATE        $INT>>$ ms            $REAL>>$ loc/s
+             BACKEND        $INT>>$ ms            $REAL>>$ loc/s
 Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
 Find Java class performed $INT$ times, total time $INT$ ms
 GC time for PS MarkSweep is $INT$ ms, $INT$ collections

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 
 object MetadataKlibSerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataSerializationArtifact>(
     name = "MetadataKlibSerializerPhase",
-    preActions = setOf(PerformanceNotifications.GenerationStarted),
-    postActions = setOf(PerformanceNotifications.GenerationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = setOf(PerformanceNotifications.BackendStarted),
+    postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact? {
         val (firResult, configuration, _, _) = input
