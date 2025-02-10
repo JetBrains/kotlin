@@ -897,7 +897,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
 
         private final [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|java/lang/Class<*>|.arrayClassName: R|kotlin/String|
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/String| {
-                ^ when (this@R|kotlin/jvm/internal/TypeReference.arrayClassName|) {
+                ^ when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|java/lang/Class<*>| = this@R|kotlin/jvm/internal/TypeReference.arrayClassName|) {
                     ==($subj$, <getClass>(Q|kotlin/BooleanArray|).R|kotlin/jvm/java|<R|kotlin/BooleanArray|>) ->  {
                         String(kotlin.BooleanArray)
                     }
@@ -937,7 +937,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
             }
 
             [ResolvedTo(BODY_RESOLVE)] lval typeString: R|kotlin/String| = (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type| as? R|kotlin/jvm/internal/TypeReference|)?.{ $subj$.R|kotlin/jvm/internal/TypeReference.asString|(Boolean(true)) } ?: this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.type|.<Ambiguity: toString, [kotlin/toString, kotlin/toString]>#()
-            ^asString when (this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|) {
+            ^asString when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|kotlin/reflect/KVariance?| = this@R|kotlin/jvm/internal/TypeReference.asString|.R|kotlin/reflect/KTypeProjection.variance|) {
                 ==($subj$, Q|kotlin/reflect/KVariance|.R|kotlin/reflect/KVariance.INVARIANT|) ->  {
                     R|<local>/typeString|
                 }
