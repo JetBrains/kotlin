@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -277,7 +276,7 @@ object KotlinToJVMBytecodeCompiler {
         val configuration = environment.configuration
         val codegenFactory = JvmIrCodegenFactory(configuration)
         val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
-        performanceManager?.notifyIRTranslationStarted()
+        performanceManager?.notifyIRGenerationStarted()
         val backendInput = codegenFactory.convertToIr(
             environment.project,
             environment.getSourceFiles(),
@@ -289,7 +288,7 @@ object KotlinToJVMBytecodeCompiler {
             ignoreErrors = false,
             skipBodies = false,
         )
-        performanceManager?.notifyIRTranslationFinished()
+        performanceManager?.notifyIRGenerationFinished()
         return Pair(codegenFactory, backendInput)
     }
 
@@ -427,11 +426,11 @@ object KotlinToJVMBytecodeCompiler {
 
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
-        performanceManager?.notifyIRGenerationStarted()
+        performanceManager?.notifyBackendGenerationStarted()
         codegenFactory.invokeCodegen(codegenInput)
 
         if (reportGenerationFinished) {
-            performanceManager?.notifyIRGenerationFinished()
+            performanceManager?.notifyBackendGenerationFinished()
             performanceManager?.notifyGenerationFinished()
         }
 
