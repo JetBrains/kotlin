@@ -76,9 +76,6 @@ private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePacka
     return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
 }
 
-val IrFunctionAccessExpression.valueArguments: List<IrExpression?>
-    get() = List(valueArgumentsCount) { getValueArgument(it) }
-
 val IrClass.isInstantiableEnum: Boolean
     get() = isEnumClass && !isExpect && !isEffectivelyExternal()
 
