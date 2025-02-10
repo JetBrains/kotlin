@@ -490,6 +490,33 @@ sealed class IdSignature {
         }
     }
 
+    data class FakeOverrideSignature(
+        val containerClass: IdSignature,
+        val id: Long,
+        val mask: Long,
+        val description: String?,
+    ) : IdSignature() {
+        override val isPubliclyVisible: Boolean
+            get() = containerClass.isPubliclyVisible
+
+        override val visibleCrossFile: Boolean
+            get() = containerClass.visibleCrossFile
+
+        override val isLocal: Boolean
+            get() = containerClass.visibleCrossFile
+
+        override fun topLevelSignature() =
+            containerClass.topLevelSignature()
+
+        override fun nearestPublicSig() =
+            if (isPubliclyVisible)
+                this
+            else
+                containerClass.nearestPublicSig()
+
+        override fun packageFqName() = containerClass.packageFqName()
+    }
+
     /**
      * [KT-42020](https://youtrack.jetbrains.com/issue/KT-42020)
      *
@@ -556,8 +583,7 @@ sealed class IdSignature {
      * This signature is not navigatable through files.
      *
      * @property id An ordered index of the declaration inside the file.
-     *   **Important**: For fake overrides, this is the hash of the mangle name.
-     *   TODO: Consider using specialized signatures for local fake overrides, KT-72296
+     * In ABI version prior to 2.2.0, for fake overrides this is the hash of the mangle name.
      */
     class FileLocalSignature(val container: IdSignature, val id: Long, val description: String? = null) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = false

@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 
 class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
 
@@ -218,27 +221,76 @@ class FileLocalIdSignatureComputer(
         is IrValueDeclaration -> generateScopeLocalSignature(declaration.name.asString())
         is IrAnonymousInitializer -> generateScopeLocalSignature("ANON INIT")
         is IrLocalDelegatedProperty -> generateScopeLocalSignature(declaration.name.asString())
+        is IrOverridableDeclaration<*> if (declaration.isFakeOverride) -> {
+            val fakeOverriddenInClass = declaration.parent as IrClass
+            val oldFormat = run {
+                val file = fakeOverriddenInClass.getPackageFragment() as? IrFile ?: return@run false
+                val klibOrigin = file.module.descriptor.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin ?: return@run false
+                val version = klibOrigin.library.versions.abiVersion ?: return@run false
+                version.isAtMost(2, 1, 0)
+                        || klibOrigin.library.versions.compilerVersion == "2.2.0-dev-4719"
+            }
 
-        is IrSimpleFunction -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
-            id = if (declaration.isFakeOverride) {
-                declaration.stableIndexForFakeOverride(compatibleMode)
+            if (oldFormat) {
+                // Prior to kotlin 2.2.0, local fake overrides used FileLocalSignature, like other local declarations, but with id
+                // based on the declaration's name, instead of the location in a file.
+                // This was the solution to have a stable signature, that at the same time is predictable by the fake override builder,
+                // which does not know anything about locations in the IR file.
+                // It was changed to use a dedicated FakeOverrideSignature (KT-72296), but we still need to create signatures
+                // in the old format for declarations in the fake override builder, so that they will match with deserialized signatures
+                // at call-site, if the call-site comes from an older KLib.
+                // Fortunately, since this is a local declaration, it and all its call-sites must have been compiled within the same
+                // compilation, and so with the same ABI version.
+                IdSignature.FileLocalSignature(
+                    container = computeContainerIdSignature(declaration, compatibleMode),
+                    id = mangler.run { declaration.signatureMangle(compatibleMode) },
+                )
             } else {
-                ++localIndex
-            },
-            description = declaration.render()
-        )
+                val signatureBuilder = object : IdSignatureBuilder<IrDeclaration, KotlinMangler.IrMangler>() {
+                    override fun renderDeclarationForDescription(declaration: IrDeclaration): String = declaration.render()
+                    override val currentFileSignature: IdSignature.FileSignature? get() = null
+                    override val mangler: KotlinMangler.IrMangler get() = this@FileLocalIdSignatureComputer.mangler
+                    override fun accept(declaration: IrDeclaration) {
+                        when (declaration) {
+                            is IrSimpleFunction -> {
+                                val property = declaration.correspondingPropertySymbol
+                                if (property != null) {
+                                    visitProperty(property.owner)
+                                    setHashIdAndDescriptionFor(declaration, isPropertyAccessor = container == null)
+                                    classFqnSegments.add(declaration.name.asString())
+                                } else {
+                                    setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)
 
-        is IrProperty -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
-            id = if (declaration.isFakeOverride) {
-                declaration.stableIndexForFakeOverride(compatibleMode)
-            } else {
-                ++localIndex
-            },
-            description = declaration.render()
-        )
+                                    // If this is a local function, overwrite `description` with the IR function's rendered form.
+                                    setDescriptionIfLocalDeclaration(declaration)
+                                }
+                            }
+                            is IrProperty -> {
+                                visitProperty(declaration)
+                            }
+                            else -> error("Unexpected declaration: ${declaration.render()}")
+                        }
+                    }
 
+                    private fun visitProperty(declaration: IrProperty) {
+                        setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)
+                    }
+                }
+
+                val realSignature = signatureBuilder.buildSignature(declaration)
+                val commonSignature = when (realSignature) {
+                    is IdSignature.CommonSignature -> realSignature
+                    is IdSignature.AccessorSignature -> realSignature.accessorSignature
+                    else -> error("Unexpected signature type: ${realSignature.javaClass}")
+                }
+                IdSignature.FakeOverrideSignature(
+                    containerClass = signatureByDeclaration(fakeOverriddenInClass, compatibleMode),
+                    commonSignature.id!!,
+                    commonSignature.mask,
+                    commonSignature.description,
+                )
+            }
+        }
         else -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
             id = ++localIndex,
@@ -248,17 +300,6 @@ class FileLocalIdSignatureComputer(
 
     fun generateScopeLocalSignature(description: String): IdSignature =
         IdSignature.ScopeLocalDeclaration(scopeIndex++, description)
-
-    /**
-     * We shall have stable indices for local fake override functions/properties.
-     * This is necessary to be able to match the signature at the fake override call site
-     * with the fake override declaration constructed by the fake override builder component
-     * (which does not know anything about indices in the IR file).
-     *
-     * TODO: Consider using specialized signatures for local fake overrides, KT-72296
-     */
-    private fun IrOverridableDeclaration<*>.stableIndexForFakeOverride(compatibleMode: Boolean): Long =
-        mangler.run { this@stableIndexForFakeOverride.signatureMangle(compatibleMode) }
 
     companion object {
         private const val START_INDEX = 0

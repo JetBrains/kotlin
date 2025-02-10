@@ -284,27 +284,28 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
-        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) { symbol.signature }
-            ?: when (symbol) {
-                is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
-                else -> {
-                    val symbolOwner = symbol.owner
+        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) {
+            symbol.signature ?: symbol.privateSignature?.takeIf { it is IdSignature.FakeOverrideSignature }
+        } ?: when (symbol) {
+            is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
+            else -> {
+                val symbolOwner = symbol.owner
 
-                    // Compute the signature:
-                    when {
-                        symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
-                            symbolOwner,
-                            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
-                            recordInSignatureClashDetector = isDeclared
-                        )
+                // Compute the signature:
+                when {
+                    symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
+                        symbolOwner,
+                        settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                        recordInSignatureClashDetector = isDeclared
+                    )
 
-                        symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
-                            declarationTable.signatureByReturnableBlock(symbolOwner)
+                    symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
+                        declarationTable.signatureByReturnableBlock(symbolOwner)
 
-                        else -> error("Expected symbol owner: ${symbolOwner.render()}")
-                    }
+                    else -> error("Expected symbol owner: ${symbolOwner.render()}")
                 }
             }
+        }
 
         val signatureId = idSignatureSerializer.protoIdSignature(signature)
         val symbolKind = protoSymbolKind(symbol)

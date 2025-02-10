@@ -136,6 +136,19 @@ public final class IdSignature extends
             idSigCase_ = 7;
             break;
           }
+          case 66: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature.Builder subBuilder = null;
+            if (idSigCase_ == 8) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature) idSig_).toBuilder();
+            }
+            idSig_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature) idSig_);
+              idSig_ = subBuilder.buildPartial();
+            }
+            idSigCase_ = 8;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -178,6 +191,7 @@ public final class IdSignature extends
     PRIVATE_SIG(2),
     ACCESSOR_SIG(3),
     SCOPED_LOCAL_SIG(4),
+    FAKE_OVERRIDE_SIG(8),
     COMPOSITE_SIG(5),
     LOCAL_SIG(6),
     FILE_SIG(7),
@@ -192,6 +206,7 @@ public final class IdSignature extends
         case 2: return PRIVATE_SIG;
         case 3: return ACCESSOR_SIG;
         case 4: return SCOPED_LOCAL_SIG;
+        case 8: return FAKE_OVERRIDE_SIG;
         case 5: return COMPOSITE_SIG;
         case 6: return LOCAL_SIG;
         case 7: return FILE_SIG;
@@ -279,6 +294,23 @@ public final class IdSignature extends
     return 0;
   }
 
+  public static final int FAKE_OVERRIDE_SIG_FIELD_NUMBER = 8;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+   */
+  public boolean hasFakeOverrideSig() {
+    return idSigCase_ == 8;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature getFakeOverrideSig() {
+    if (idSigCase_ == 8) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature) idSig_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature.getDefaultInstance();
+  }
+
   public static final int COMPOSITE_SIG_FIELD_NUMBER = 5;
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature composite_sig = 5;</code>
@@ -350,6 +382,12 @@ public final class IdSignature extends
         return false;
       }
     }
+    if (hasFakeOverrideSig()) {
+      if (!getFakeOverrideSig().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     if (hasCompositeSig()) {
       if (!getCompositeSig().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -384,6 +422,9 @@ public final class IdSignature extends
     }
     if (idSigCase_ == 7) {
       output.writeMessage(7, (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idSig_);
+    }
+    if (idSigCase_ == 8) {
+      output.writeMessage(8, (org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature) idSig_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -422,6 +463,10 @@ public final class IdSignature extends
     if (idSigCase_ == 7) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(7, (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idSig_);
+    }
+    if (idSigCase_ == 8) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(8, (org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature) idSig_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -554,6 +599,9 @@ public final class IdSignature extends
       if (idSigCase_ == 4) {
         result.idSig_ = idSig_;
       }
+      if (idSigCase_ == 8) {
+        result.idSig_ = idSig_;
+      }
       if (idSigCase_ == 5) {
         result.idSig_ = idSig_;
       }
@@ -587,6 +635,10 @@ public final class IdSignature extends
           setScopedLocalSig(other.getScopedLocalSig());
           break;
         }
+        case FAKE_OVERRIDE_SIG: {
+          mergeFakeOverrideSig(other.getFakeOverrideSig());
+          break;
+        }
         case COMPOSITE_SIG: {
           mergeCompositeSig(other.getCompositeSig());
           break;
@@ -617,6 +669,12 @@ public final class IdSignature extends
       }
       if (hasAccessorSig()) {
         if (!getAccessorSig().isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasFakeOverrideSig()) {
+        if (!getFakeOverrideSig().isInitialized()) {
           
           return false;
         }
@@ -884,6 +942,70 @@ public final class IdSignature extends
      */
     public Builder clearScopedLocalSig() {
       if (idSigCase_ == 4) {
+        idSigCase_ = 0;
+        idSig_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+     */
+    public boolean hasFakeOverrideSig() {
+      return idSigCase_ == 8;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature getFakeOverrideSig() {
+      if (idSigCase_ == 8) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature) idSig_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+     */
+    public Builder setFakeOverrideSig(org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      idSig_ = value;
+
+      idSigCase_ = 8;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+     */
+    public Builder setFakeOverrideSig(
+        org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature.Builder builderForValue) {
+      idSig_ = builderForValue.build();
+
+      idSigCase_ = 8;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+     */
+    public Builder mergeFakeOverrideSig(org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature value) {
+      if (idSigCase_ == 8 &&
+          idSig_ != org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature.getDefaultInstance()) {
+        idSig_ = org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature) idSig_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        idSig_ = value;
+      }
+
+      idSigCase_ = 8;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FakeOverrideSignature fake_override_sig = 8;</code>
+     */
+    public Builder clearFakeOverrideSig() {
+      if (idSigCase_ == 8) {
         idSigCase_ = 0;
         idSig_ = null;
         
