@@ -68,6 +68,7 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                 isCrossinline = false,
                 isNoinline = false,
                 isHidden = false,
+                kind = IrParameterKind.DispatchReceiver,
             ).also { it.parent = this }
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -136,7 +137,7 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                     }
                     .also {
                         if (function.dispatchReceiverParameter == null) {
-                            function.dispatchReceiverParameter = function.dummyDispatchReceiverParameter
+                            function.parameters = listOf(function.dummyDispatchReceiverParameter) + function.parameters
                         }
                     }
             }
