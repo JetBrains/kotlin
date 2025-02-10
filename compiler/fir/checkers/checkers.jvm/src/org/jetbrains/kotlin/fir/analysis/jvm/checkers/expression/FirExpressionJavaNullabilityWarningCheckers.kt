@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
@@ -19,16 +18,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.java.enhancement.enhancedTypeForWarning
 import org.jetbrains.kotlin.fir.java.enhancement.isEnhancedTypeForWarningDeprecation
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 // TODO reimplement using AdditionalTypeChecker KT-62864
 object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.toResolvedCallableSymbol() ?: return
-        val substitutor = buildSubstitutor(expression, symbol, context.session)
+        val substitutor = expression.createConeSubstitutorFromTypeArguments(symbol, context.session)
 
         // This `if` shouldn't be necessary because we should get a type mismatch for the dispatch receiver iff the type for warning
         // has nullability NULLABLE.
@@ -72,24 +68,6 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
                 )
             }
         }
-    }
-
-    private fun buildSubstitutor(
-        expression: FirQualifiedAccessExpression,
-        symbol: FirCallableSymbol<*>,
-        session: FirSession,
-    ): ConeSubstitutor {
-        if (expression.typeArguments.isEmpty()) return ConeSubstitutor.Empty
-
-        val substitutionMap = buildMap {
-            for ((parameter, argument) in symbol.typeParameterSymbols.zip(expression.typeArguments)) {
-                if (argument is FirTypeProjectionWithVariance) {
-                    put(parameter, argument.typeRef.coneType)
-                }
-            }
-        }
-
-        return substitutorByMap(substitutionMap, session)
     }
 }
 
