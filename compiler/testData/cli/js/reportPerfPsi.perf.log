@@ -1,4 +1,5 @@
 Kotlin to JS Compiler performance report
+                INIT        $INT>>$ ms            $REAL>>$ loc/s
              ANALYZE        $INT>>$ ms
        IR GENERATION        $INT>>$ ms
   BACKEND GENERATION        $INT>>$ ms

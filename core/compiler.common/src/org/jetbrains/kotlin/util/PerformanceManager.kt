@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
@@ -23,8 +24,10 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     private fun currentTime(): Long = System.nanoTime()
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    private val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
+    private var currentPhaseType: PhaseMeasurementType = PhaseMeasurementType.Initialization
+    private var phaseStartNanos: Long? = currentTime()
+
+    private val phaseMeasurements: MutableMap<PhaseMeasurementType, Long> = mutableMapOf()
 
     // Initialize the counter measurements in strict order to get rid of difference in the same report
     private val counterMeasurements: MutableMap<KClass<*>, CounterMeasurement> = mutableMapOf(
@@ -32,38 +35,54 @@ abstract class PerformanceManager(private val presentableName: String) {
         BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
     )
 
+    private var gcMeasurements: MutableList<GarbageCollectionMeasurement> = mutableListOf()
+    private var jitMeasurement: JitCompilationMeasurement? = null
+
+    private val extraMeasurements: MutableList<PerformanceMeasurement> = mutableListOf()
+
     var isEnabled: Boolean = false
         protected set
     private var isK2: Boolean = true
-    private var initStartNanos = currentTime()
-    private var analysisStart: Long = 0
-
     private var startGCData = mutableMapOf<String, GCData>()
-
-    private var irGenerationStart: Long = 0
-    private var irLoweringStart: Long = 0
-    private var backendGenerationStart: Long = 0
 
     var targetDescription: String? = null
     var files: Int? = null
         protected set
     var lines: Int? = null
         protected set
+    private var finalized: Boolean = false
 
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
-    fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + counterMeasurements.values
+    val measurements: List<PerformanceMeasurement> by lazy {
+        finalized = true
+        buildList {
+            for ((phaseType, measurement) in phaseMeasurements) {
+                add(
+                    when (phaseType) {
+                        PhaseMeasurementType.Initialization -> CompilerInitializationMeasurement(measurement)
+                        PhaseMeasurementType.Analysis -> CodeAnalysisMeasurement(lines, measurement)
+                        PhaseMeasurementType.IrGeneration -> IrGenerationMeasurement(lines, measurement)
+                        PhaseMeasurementType.IrLowering -> IrLoweringMeasurement(lines, measurement)
+                        PhaseMeasurementType.BackendGeneration -> BackendGenerationMeasurement(lines, measurement)
+                    }
+                )
+            }
+            add(counterMeasurements.getValue(FindJavaClassMeasurement::class))
+            add(counterMeasurements.getValue(BinaryClassFromKotlinFileMeasurement::class))
+            addAll(gcMeasurements)
+            addIfNotNull(jitMeasurement)
+            addAll(extraMeasurements)
+        }
+    }
 
     fun getLoweringAndBackendTimeMs(): Long = (measurements.filterIsInstance<IrLoweringMeasurement>().sumOf { it.milliseconds }) +
             (measurements.filterIsInstance<BackendGenerationMeasurement>().sumOf { it.milliseconds })
 
-    fun addMeasurementResults(newMeasurements: List<PerformanceMeasurement>) {
-        measurements += newMeasurements
-    }
-
-    fun clearMeasurementResults() {
-        measurements.clear()
+    fun addMeasurementResults(otherPerformanceManager: PerformanceManager) {
+        ensureNotFinalized()
+        extraMeasurements += otherPerformanceManager.extraMeasurements
     }
 
     fun enableCollectingPerformanceStatistics(isK2: Boolean) {
@@ -75,81 +94,84 @@ abstract class PerformanceManager(private val presentableName: String) {
         ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
 
-    private fun deltaTime(start: Long): Long = currentTime() - start
+    open fun addSourcesStats(files: Int, lines: Int) {
+        if (!isEnabled) return
+
+        ensureNotFinalized()
+
+        this.files = this.files?.plus(files) ?: files
+        this.lines = this.lines?.plus(lines) ?: lines
+    }
 
     open fun notifyCompilerInitialized() {
+        notifyPhaseFinished(PhaseMeasurementType.Initialization)
+    }
+
+    open fun notifyAnalysisStarted() {
+        notifyPhaseStarted(PhaseMeasurementType.Analysis)
+    }
+
+    open fun notifyAnalysisFinished() {
+        notifyPhaseFinished(PhaseMeasurementType.Analysis)
+    }
+
+    open fun notifyIRGenerationStarted() {
+        notifyPhaseStarted(PhaseMeasurementType.IrGeneration)
+    }
+
+    open fun notifyIRGenerationFinished() {
+        notifyPhaseFinished(PhaseMeasurementType.IrGeneration)
+    }
+
+    open fun notifyIRLoweringStarted() {
+        notifyPhaseStarted(PhaseMeasurementType.IrLowering)
+    }
+
+    open fun notifyIRLoweringFinished() {
+        notifyPhaseFinished(PhaseMeasurementType.IrLowering)
+    }
+
+    open fun notifyBackendGenerationStarted() {
+        notifyPhaseStarted(PhaseMeasurementType.BackendGeneration)
+    }
+
+    open fun notifyBackendGenerationFinished() {
+        notifyPhaseFinished(PhaseMeasurementType.BackendGeneration)
+    }
+
+    private fun notifyPhaseStarted(newPhaseType: PhaseMeasurementType) {
         if (!isEnabled) return
-        val time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - initStartNanos)
-        measurements += CompilerInitializationMeasurement(time)
+
+        assert(phaseStartNanos == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
+        assert(newPhaseType > currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
+
+        phaseStartNanos = currentTime()
+        currentPhaseType = newPhaseType
+    }
+
+    private fun notifyPhaseFinished(phaseType: PhaseMeasurementType) {
+        if (!isEnabled) return
+
+        ensureNotFinalized()
+
+        assert(phaseType == currentPhaseType) { "The measurement for phase $currentPhaseType must be finished before finishing $phaseType" }
+        assert(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
+
+        phaseMeasurements[phaseType] = phaseStartNanos?.let { TimeUnit.NANOSECONDS.toMillis(currentTime() - it) }
+            ?: error("The measurement for phase $phaseType must have been started before finishing")
+        phaseStartNanos = null
     }
 
     open fun notifyCompilationFinished() {
         if (!isEnabled) return
+
+        ensureNotFinalized()
+
         recordGcTime()
         recordJitCompilationTime()
         if (!isK2) {
             recordPerfCountersMeasurements()
         }
-    }
-
-    open fun addSourcesStats(files: Int, lines: Int) {
-        if (!isEnabled) return
-        this.files = this.files?.plus(files) ?: files
-        this.lines = this.lines?.plus(lines) ?: lines
-    }
-
-    open fun notifyAnalysisStarted() {
-        analysisStart = currentTime()
-    }
-
-    open fun notifyAnalysisFinished() {
-        val time = currentTime() - analysisStart
-        measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
-    }
-
-    open fun notifyIRGenerationStarted() {
-        irGenerationStart = currentTime()
-    }
-
-    open fun notifyIRGenerationFinished() {
-        val time = deltaTime(irGenerationStart)
-        measurements += IrGenerationMeasurement(
-            lines,
-            TimeUnit.NANOSECONDS.toMillis(time),
-        )
-    }
-
-    open fun notifyIRLoweringStarted() {
-        irLoweringStart = currentTime()
-    }
-
-    open fun notifyIRLoweringFinished() {
-        val time = deltaTime(irLoweringStart)
-        measurements += IrLoweringMeasurement(
-            lines,
-            TimeUnit.NANOSECONDS.toMillis(time),
-        )
-    }
-
-    open fun notifyBackendGenerationStarted() {
-        backendGenerationStart = currentTime()
-    }
-
-    open fun notifyBackendGenerationFinished() {
-        val time = deltaTime(backendGenerationStart)
-        measurements += BackendGenerationMeasurement(
-            lines,
-            TimeUnit.NANOSECONDS.toMillis(time),
-        )
-    }
-
-    fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport().toByteArray())
-    }
-
-    fun createPerformanceReport(): String = buildString {
-        append("$presentableName performance report\n")
-        getMeasurementResults().map { it.render() }.sorted().forEach { append("$it\n") }
     }
 
     private fun recordGcTime() {
@@ -159,7 +181,7 @@ abstract class PerformanceManager(private val presentableName: String) {
             val startCounts = startGCData[it.name]
             val startCollectionTime = startCounts?.collectionTime ?: 0
             val startCollectionCount = startCounts?.collectionCount ?: 0
-            measurements += GarbageCollectionMeasurement(
+            gcMeasurements += GarbageCollectionMeasurement(
                 it.name,
                 it.collectionTime - startCollectionTime,
                 it.collectionCount - startCollectionCount
@@ -171,15 +193,17 @@ abstract class PerformanceManager(private val presentableName: String) {
         if (!isEnabled) return
 
         val bean = ManagementFactory.getCompilationMXBean() ?: return
-        measurements += JitCompilationMeasurement(bean.totalCompilationTime)
+        jitMeasurement = JitCompilationMeasurement(bean.totalCompilationTime)
     }
 
     private fun recordPerfCountersMeasurements() {
-        PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
+        PerformanceCounter.report { s -> extraMeasurements += PerformanceCounterMeasurement(s) }
     }
 
     internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
+
+        ensureNotFinalized()
 
         val startTime = currentTime()
         try {
@@ -201,20 +225,25 @@ abstract class PerformanceManager(private val presentableName: String) {
         }
     }
 
+    fun dumpPerformanceReport(destination: File) {
+        destination.writeBytes(createPerformanceReport().toByteArray())
+    }
+
+    fun createPerformanceReport(): String = buildString {
+        append("$presentableName performance report\n")
+        measurements.map { it.render() }.forEach { append("$it\n") }
+    }
+
+    private fun ensureNotFinalized() {
+        assert(!finalized) { "Cannot add performance measurements because it's already finalized" }
+    }
+
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
     }
 
     fun renderCompilerPerformance(): String {
-        val relevantMeasurements = getMeasurementResults().filter {
-            it is CompilerInitializationMeasurement ||
-                    it is CodeAnalysisMeasurement ||
-                    it is PerformanceCounterMeasurement ||
-                    it is FindJavaClassMeasurement ||
-                    it is BinaryClassFromKotlinFileMeasurement
-        }
-
-        return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
+        return "Compiler perf stats:\n" + measurements.joinToString(separator = "\n") { "  ${it.render()}" }
     }
 }
 

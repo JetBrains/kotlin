@@ -53,7 +53,10 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
     override fun executePhase(input: ConfigurationPipelineArtifact): WebFrontendPipelineArtifact? {
         val configuration = input.configuration
         val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-        configuration.perfManager?.notifyAnalysisStarted()
+        configuration.perfManager?.let {
+            it.notifyCompilerInitialized()
+            it.notifyAnalysisStarted()
+        }
         val messageCollector = configuration.messageCollector
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries

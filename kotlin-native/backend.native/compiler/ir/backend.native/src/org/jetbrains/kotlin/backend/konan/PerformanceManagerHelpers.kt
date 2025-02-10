@@ -32,8 +32,7 @@ class K2NativeCompilerPerformanceManager : PerformanceManager("Kotlin to Native 
      */
     fun collectChildMeasurements() {
         children.forEach {
-            addMeasurementResults(it.getMeasurementResults())
-            it.clearMeasurementResults()
+            addMeasurementResults(it)
         }
     }
 

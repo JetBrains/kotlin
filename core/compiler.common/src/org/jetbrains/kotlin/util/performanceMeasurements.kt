@@ -5,28 +5,24 @@
 
 package org.jetbrains.kotlin.util
 
+enum class PhaseMeasurementType {
+    Initialization,
+    Analysis,
+    IrGeneration,
+    IrLowering,
+    BackendGeneration,
+}
+
 interface PerformanceMeasurement {
     fun render(): String
 }
 
-class JitCompilationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(): String = "JIT time is $milliseconds ms"
-}
-
 class CompilerInitializationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(): String = "INIT: Compiler initialized in $milliseconds ms"
+    override fun render(): String = formatMeasurement("INIT", milliseconds, 0)
 }
 
 class CodeAnalysisMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("ANALYZE", milliseconds, lines)
-}
-
-class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
-    override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
-}
-
-class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
-    override fun render(): String = counterReport
 }
 
 class IrGenerationMeasurement(val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
@@ -41,6 +37,14 @@ class BackendGenerationMeasurement(val lines: Int?, val milliseconds: Long) : Pe
     override fun render(): String = formatMeasurement("BACKEND GENERATION", milliseconds, lines)
 }
 
+class JitCompilationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = "JIT time is $milliseconds ms"
+}
+
+class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
+    override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
+}
+
 sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
     abstract val description: String
     override fun render(): String =
@@ -53,6 +57,10 @@ class FindJavaClassMeasurement(count: Int, milliseconds: Long) : CounterMeasurem
 
 class BinaryClassFromKotlinFileMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
     override val description: String = "Binary class from Kotlin file"
+}
+
+class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
+    override fun render(): String = counterReport
 }
 
 private fun formatMeasurement(name: String, time: Long, lines: Int?): String =
