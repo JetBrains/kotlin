@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
-// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN -ForbidTypePreservingFlexibilityWriteInferenceHack
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ForbidTypePreservingFlexibilityWriteInferenceHack
 // ISSUE: KT-67999
 
 // FILE: J.java

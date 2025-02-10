@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -ForbidTypePreservingFlexibilityWriteInferenceHack
 
 import java.util.Comparator;
 

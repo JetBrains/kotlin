@@ -25213,6 +25213,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("typeFromGenericFunWithAnnotationWithoutWrtHack.kt")
+      public void testTypeFromGenericFunWithAnnotationWithoutWrtHack() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericFunWithAnnotationWithoutWrtHack.kt");
+      }
+
+      @Test
       @TestMetadata("typeFromGenericWithAnnotation.kt")
       public void testTypeFromGenericWithAnnotation() {
         runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericWithAnnotation.kt");
@@ -25222,6 +25228,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("typeFromGenericWithAnnotationDnnRepresentation.kt")
       public void testTypeFromGenericWithAnnotationDnnRepresentation() {
         runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericWithAnnotationDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromGenericWithAnnotationWithoutWrtHack.kt")
+      public void testTypeFromGenericWithAnnotationWithoutWrtHack() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericWithAnnotationWithoutWrtHack.kt");
       }
 
       @Test
@@ -25246,6 +25258,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("typeFromJavaGenericFunDnnRepresentation.kt")
       public void testTypeFromJavaGenericFunDnnRepresentation() {
         runTest("compiler/testData/diagnostics/tests/j+k/typeFromJavaGenericFunDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromJavaGenericFunWithoutWrtHack.kt")
+      public void testTypeFromJavaGenericFunWithoutWrtHack() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromJavaGenericFunWithoutWrtHack.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromJavaGenericWithoutWrtHack.kt")
+      public void testTypeFromJavaGenericWithoutWrtHack() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromJavaGenericWithoutWrtHack.kt");
       }
 
       @Test
@@ -25914,9 +25938,21 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("lambdaParameterRemainFlexibleRegularConstructorWithoutWrtHack.kt")
+        public void testLambdaParameterRemainFlexibleRegularConstructorWithoutWrtHack() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleRegularConstructorWithoutWrtHack.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaParameterRemainFlexibleWithDnnRepresentation.kt")
         public void testLambdaParameterRemainFlexibleWithDnnRepresentation() {
           runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleWithDnnRepresentation.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterRemainFlexibleWithoutWrtHack.kt")
+        public void testLambdaParameterRemainFlexibleWithoutWrtHack() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleWithoutWrtHack.kt");
         }
 
         @Test
@@ -33050,6 +33086,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("comparingWithWrongNullabilityDnnRepresentation.kt")
       public void testComparingWithWrongNullabilityDnnRepresentation() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/comparingWithWrongNullabilityDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("comparingWithWrongNullabilityWithoutWrtHack.kt")
+      public void testComparingWithWrongNullabilityWithoutWrtHack() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/comparingWithWrongNullabilityWithoutWrtHack.kt");
       }
 
       @Test
@@ -51466,6 +51508,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("wrongNullability.kt")
       public void testWrongNullability() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/streams/wrongNullability.kt");
+      }
+
+      @Test
+      @TestMetadata("wrongNullabilityWithoutWrtHack.kt")
+      public void testWrongNullabilityWithoutWrtHack() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/streams/wrongNullabilityWithoutWrtHack.kt");
       }
     }
 
