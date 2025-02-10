@@ -765,17 +765,6 @@ If API Level >= 2.2 -- no-op."""
         }
 
     @Argument(
-        value = "-Xuse-old-innerclasses-logic",
-        description = """Use the old logic for the generation of 'InnerClasses' attributes.
-This option is deprecated and will be deleted in future versions."""
-    )
-    var oldInnerClassesLogic = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xvalue-classes",
         description = "Enable experimental value classes."
     )
@@ -899,15 +888,6 @@ This option is deprecated and will be deleted in future versions."""
             result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
         }
         return result
-    }
-
-    override fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (oldInnerClassesLogic) {
-            collector.report(
-                CompilerMessageSeverity.WARNING,
-                "The -Xuse-old-innerclasses-logic option is deprecated and will be deleted in future versions."
-            )
-        }
     }
 
     override fun copyOf(): Freezable = copyK2JVMCompilerArguments(this, K2JVMCompilerArguments())

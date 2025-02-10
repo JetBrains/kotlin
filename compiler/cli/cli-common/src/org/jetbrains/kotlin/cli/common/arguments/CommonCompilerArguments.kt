@@ -1018,7 +1018,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 
         checkIrSupport(languageVersionSettings, collector)
 
-        checkPlatformSpecificSettings(languageVersionSettings, collector)
         checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
         return languageVersionSettings
@@ -1094,9 +1093,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
                         "or turning off progressive mode."
             )
         }
-    }
-
-    protected open fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
     }
 
     protected open fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {

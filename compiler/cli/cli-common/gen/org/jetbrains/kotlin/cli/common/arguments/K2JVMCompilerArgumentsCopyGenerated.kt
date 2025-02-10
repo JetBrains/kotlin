@@ -61,7 +61,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.noStdlib = from.noStdlib
     to.noUnifiedNullChecks = from.noUnifiedNullChecks
     to.nullabilityAnnotations = from.nullabilityAnnotations?.copyOf()
-    to.oldInnerClassesLogic = from.oldInnerClassesLogic
     to.outputBuiltinsMetadata = from.outputBuiltinsMetadata
     to.profileCompilerCommand = from.profileCompilerCommand
     to.samConversions = from.samConversions

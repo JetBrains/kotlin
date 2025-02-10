@@ -4179,12 +4179,6 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
     }
 
     @Test
-    @TestMetadata("kt53804.kt")
-    public void testKt53804() {
-      runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt53804.kt");
-    }
-
-    @Test
     @TestMetadata("kt56104.kt")
     public void testKt56104() {
       runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt56104.kt");
@@ -4200,12 +4194,6 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
     @TestMetadata("nestedClassInAnnotationArgument.kt")
     public void testNestedClassInAnnotationArgument() {
       runTest("compiler/testData/codegen/bytecodeText/innerClasses/nestedClassInAnnotationArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedClassInAnnotationArgumentOldMode.kt")
-    public void testNestedClassInAnnotationArgumentOldMode() {
-      runTest("compiler/testData/codegen/bytecodeText/innerClasses/nestedClassInAnnotationArgumentOldMode.kt");
     }
   }
 
