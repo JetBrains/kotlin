@@ -473,6 +473,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("reducedGroupBy.kt")
+  public void testReducedGroupBy() {
+    runTest("testData/box/reducedGroupBy.kt");
+  }
+
+  @Test
   @TestMetadata("remove.kt")
   public void testRemove() {
     runTest("testData/box/remove.kt");

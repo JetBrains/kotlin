@@ -1,14 +1,12 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
-import org.jetbrains.kotlinx.dataframe.plugin.interpret
-import org.jetbrains.kotlinx.dataframe.plugin.loadInterpreter
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
@@ -23,8 +21,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.add
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
+import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
+import org.jetbrains.kotlinx.dataframe.plugin.interpret
+import org.jetbrains.kotlinx.dataframe.plugin.loadInterpreter
 
 class GroupBy(val keys: PluginDataFrameSchema, val groups: PluginDataFrameSchema)
 
@@ -173,6 +174,7 @@ class GroupByToDataFrame : AbstractSchemaModificationInterpreter() {
 class GroupByAdd : AbstractInterpreter<GroupBy>() {
     val Arguments.receiver: GroupBy by groupBy()
     val Arguments.name: String by arg()
+    val Arguments.infer by ignore()
     val Arguments.type: TypeApproximation by type(name("expression"))
 
     override fun Arguments.interpret(): GroupBy {
