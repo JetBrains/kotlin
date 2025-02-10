@@ -83,4 +83,8 @@
         restartRequired="false"
     />
   </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
+  </extensions>
 </idea-plugin>
