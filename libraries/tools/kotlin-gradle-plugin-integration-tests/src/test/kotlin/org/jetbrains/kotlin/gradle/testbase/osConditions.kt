@@ -37,6 +37,10 @@ import java.lang.reflect.AnnotatedElement
 annotation class OsCondition(
     val supportedOn: Array<OS> = [OS.LINUX, OS.MAC, OS.WINDOWS],
     val enabledOnCI: Array<OS> = [OS.LINUX, OS.WINDOWS],
+    /**
+     * This is used in [KGPBaseTest] to allow overriding the default [enabledOnCI] list when [RUN_ALL_INTEGRATION_TESTS_ON_MACOS] is specified
+     */
+    val allowRunningOnMacosOnCI: Boolean = false,
 )
 
 internal class ExecutionOnOsCondition : ExecutionCondition {
@@ -53,7 +57,9 @@ internal class ExecutionOnOsCondition : ExecutionCondition {
         val annotation = findAnnotation<OsCondition>(context)
 
         val supportedOn = annotation.supportedOn
-        val enabledOnCI = annotation.enabledOnCI
+        val enabledOnCI = annotation.enabledOnCI + if (
+            annotation.allowRunningOnMacosOnCI && System.getProperty(RUN_ALL_INTEGRATION_TESTS_ON_MACOS).toBoolean()
+        ) arrayOf(OS.MAC) else emptyArray()
 
         return if (supportedOn.none { it.isCurrentOs }) {
             logger.info { createDisabledMessage(context.element.get(), "local", supportedOn) }
@@ -71,5 +77,9 @@ internal class ExecutionOnOsCondition : ExecutionCondition {
                 " was disabled in the $environment environment" +
                 " for the current os=${OS.current()}," +
                 " because allowed environments are: ${allowedOS.joinToString(separator = ", ") { it.name }}"
+    }
+
+    companion object {
+        const val RUN_ALL_INTEGRATION_TESTS_ON_MACOS = "runAllIntegrationTestsOnMacos"
     }
 }
