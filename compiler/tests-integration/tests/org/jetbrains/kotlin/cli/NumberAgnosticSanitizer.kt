@@ -110,7 +110,7 @@ class NumberAgnosticSanitizer(val actualText: String) {
                     continue
                 }
 
-                matchFragment as NumberFragment
+                require(matchFragment is NumberFragment)
 
                 // If expect-actual placeholder-number doesn't match, use generated placeholder from actual data
                 // It's especially useful when expect data doesn't exist, but it's convenient to get it with minimal effort.
