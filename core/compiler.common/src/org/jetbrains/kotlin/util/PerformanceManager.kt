@@ -241,10 +241,6 @@ abstract class PerformanceManager(private val presentableName: String) {
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
     }
-
-    fun renderCompilerPerformance(): String {
-        return "Compiler perf stats:\n" + measurements.joinToString(separator = "\n") { "  ${it.render()}" }
-    }
 }
 
 fun <T> PerformanceManager?.tryMeasureTime(measurementClass: KClass<*>, block: () -> T): T {
