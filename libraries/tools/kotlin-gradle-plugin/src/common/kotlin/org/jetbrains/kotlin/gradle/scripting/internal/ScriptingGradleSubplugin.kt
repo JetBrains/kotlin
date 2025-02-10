@@ -23,17 +23,18 @@ import org.gradle.api.tasks.Internal
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.javaSourceSetsIfAvailable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
@@ -59,32 +60,42 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         project.plugins.apply(ScriptingKotlinGradleSubplugin::class.java)
 
         project.afterEvaluate {
-            val javaSourceSets = project.javaSourceSetsIfAvailable
-            if (javaSourceSets?.isEmpty() == false) {
+            project.plugins.withType(AbstractKotlinPluginWrapper::class.java) {
+                project.configureForKotlinJvmPlugin()
+            }
 
-                val configureAction: (KotlinCompile) -> (Unit) = ca@{ task ->
+            project.plugins.withType(AbstractKotlinMultiplatformPluginWrapper::class.java) {
+                project.configureForKotlinMultiplatformPlugin()
+            }
+        }
+    }
 
-                    if (task !is KaptGenerateStubsTask) {
-                        val sourceSetName = task.sourceSetName.orNull ?: return@ca
-                        val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
-                        val discoveryResultConfiguration = project.configurations.findByName(discoveryResultsConfigurationName)
-                        if (discoveryResultConfiguration == null) {
-                            project.logger.warn(
-                                "$SCRIPTING_LOG_PREFIX $project.${task.name} - configuration not found:" +
-                                        " $discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX"
-                            )
-                        } else {
-                            task.scriptDefinitions.from(discoveryResultConfiguration)
-                        }
-                    }
+    private fun Project.configureForKotlinJvmPlugin() {
+        project.tasks.withType(KotlinCompile::class.java).configureEach(::configureScripting)
+    }
+
+    private fun Project.configureForKotlinMultiplatformPlugin() {
+        multiplatformExtension.targets.withType<KotlinJvmTarget>().configureEach { target ->
+            target.compilations.configureEach { jvmCompilation ->
+                jvmCompilation.compileTaskProvider.configure {
+                    configureScripting(it as KotlinCompile)
                 }
+            }
+        }
+    }
 
-                project.tasks.withType(KotlinCompile::class.java).configureEach(configureAction)
+    private fun configureScripting(task: KotlinCompile) {
+        if (task !is KaptGenerateStubsTask) {
+            val sourceSetName = task.sourceSetName.orNull ?: return
+            val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
+            val discoveryResultConfiguration = task.project.configurations.findByName(discoveryResultsConfigurationName)
+            if (discoveryResultConfiguration == null) {
+                task.project.logger.warn(
+                    "$SCRIPTING_LOG_PREFIX ${task.project.path}.${task.name} - configuration not found:" +
+                            " $discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX"
+                )
             } else {
-                // TODO: implement support for discovery in MPP project: use KotlinSourceSet directly and do not rely on java convevtion sourcesets
-                if (project.multiplatformExtensionOrNull == null) {
-                    project.logger.warn("$SCRIPTING_LOG_PREFIX applied to a non-JVM project $project, $MISCONFIGURATION_MESSAGE_SUFFIX")
-                }
+                task.scriptDefinitions.from(discoveryResultConfiguration)
             }
         }
     }
