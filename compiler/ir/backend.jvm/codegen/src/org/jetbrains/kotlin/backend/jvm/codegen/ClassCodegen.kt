@@ -82,22 +82,19 @@ class ClassCodegen private constructor(
     private val config: JvmBackendConfig = context.config
 
     private val innerClasses = mutableSetOf<IrClass>()
-    val typeMapper =
-        if (context.config.oldInnerClassesLogic)
-            context.defaultTypeMapper
-        else object : IrTypeMapper(context) {
-            override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?, materialized: Boolean): Type {
-                var t = type
-                while (t.isArray()) {
-                    t = t.getArrayElementType(context.irBuiltIns)
-                }
-                // Only record inner class info for types that are materialized in the class file.
-                if (materialized) {
-                    t.classOrNull?.owner?.let(::addInnerClassInfo)
-                }
-                return super.mapType(type, mode, sw, materialized)
+    val typeMapper = object : IrTypeMapper(context) {
+        override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?, materialized: Boolean): Type {
+            var t = type
+            while (t.isArray()) {
+                t = t.getArrayElementType(context.irBuiltIns)
             }
+            // Only record inner class info for types that are materialized in the class file.
+            if (materialized) {
+                t.classOrNull?.owner?.let(::addInnerClassInfo)
+            }
+            return super.mapType(type, mode, sw, materialized)
         }
+    }
 
     val methodSignatureMapper = MethodSignatureMapper(context, typeMapper)
 

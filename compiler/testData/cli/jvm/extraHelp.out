@@ -87,8 +87,6 @@ where advanced options include:
                              * ignore
                              * strict
                              * warn (report a warning)
-  -Xuse-old-innerclasses-logic Use the old logic for the generation of 'InnerClasses' attributes.
-                             This option is deprecated and will be deleted in future versions.
   -Xoutput-builtins-metadata Output builtins metadata as .kotlin_builtins files
   -Xprofile=<profilerPath:command:outputDir>
                              Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
