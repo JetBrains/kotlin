@@ -142,12 +142,14 @@ class ClassSnapshotter(
      */
     private fun hashClass(classFile: ClassFileWithContentsProvider): Long {
         return classFileToFullHashMap.getOrPut(classFile) {
-            if (snapshotClass(classFile) !is InaccessibleClassSnapshot) {
+            //TODO that's a stupid optimization because it stackoverflows if the iteration order is unlucky
+            //TODO do I need an optimization?
+            //if (snapshotClass(classFile) !is InaccessibleClassSnapshot) {
                 // currently the heuristic for "oh we might be using a local class" is using its INSTANCE
                 // so we can have a false positive and try to hash the whole implementation of a singleton, which is not ideal
                 // TODO: check what happens if we use an accessible class in the inline fun
-                return@getOrPut 0L
-            }
+            //    return@getOrPut 0L
+            //}
             //TODO do some manual tests and see the diff in the metric
             val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
                 classFile.loadContents()
