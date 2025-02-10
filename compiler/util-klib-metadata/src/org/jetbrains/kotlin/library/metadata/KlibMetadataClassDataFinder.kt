@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
@@ -31,6 +32,6 @@ class KlibMetadataClassDataFinder(
         val foundClass = fragment.getClass_(index) ?: error("Could not find data for serialized class $classId")
 
         /* TODO: binary version supposed to be read from protobuf. */
-        return ClassData(nameResolver, foundClass, KlibMetadataVersion.INSTANCE, containerSource ?: SourceElement.NO_SOURCE)
+        return ClassData(nameResolver, foundClass, KLIB_LEGACY_METADATA_VERSION, containerSource ?: SourceElement.NO_SOURCE)
     }
 }
