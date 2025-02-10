@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
+import kotlin.test.*
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
@@ -33,8 +33,9 @@ import kotlin.script.experimental.jvmhost.JvmScriptCompiler
  * in [ScriptCompilationConfiguration] for saving previous classes in
  * underlying module will be introduced.
  */
-class ImplicitsFromScriptResultTest : TestCase() {
+class ImplicitsFromScriptResultTest {
 
+    @Test
     fun testImplicits() {
         // the implementation of the Compiler Host doesn't work with IR - the inter-script symbol table
         // should be maintained to make it run (see latest REPL compiler implementations for details

@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import org.junit.Test
+import kotlin.test.*
 import kotlin.script.experimental.api.*
 import kotlin.test.assertTrue
 

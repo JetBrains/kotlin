@@ -5,8 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
-import org.junit.Test
+import kotlin.test.*
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -15,7 +14,7 @@ import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.test.ReplTest.Companion.checkEvaluateInRepl
 
-class ResolveDependenciesTest : TestCase() {
+class ResolveDependenciesTest {
 
     private val configurationWithDependenciesFromClassloader = ScriptCompilationConfiguration {
         dependencies(JvmDependencyFromClassLoader { ShouldBeVisibleFromScript::class.java.classLoader })
@@ -99,7 +98,7 @@ class ResolveDependenciesTest : TestCase() {
         """.trimIndent().toScriptSource()
         val classpath = listOf(
             File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-                assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+                assertTrue(it.exists(), "kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}")
             }
         )
         val compilationConfiguration = configurationWithDependenciesFromClassloader.with {

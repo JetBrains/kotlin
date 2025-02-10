@@ -8,8 +8,6 @@
 package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
-import org.junit.Assert
-import org.junit.Test
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
@@ -21,27 +19,29 @@ import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
+import kotlin.test.*
 
-class ClassPathTest : TestCase() {
+class ClassPathTest {
 
     lateinit var tempDir: Path
 
-    override fun setUp() {
+    @BeforeTest
+    fun setUp() {
         tempDir = createTempDirectory(ClassPathTest::class.simpleName!!)
-        super.setUp()
     }
 
-    override fun tearDown() {
-        super.tearDown()
+    @AfterTest
+    fun tearDown() {
         tempDir.toFile().deleteRecursively()
     }
 
     @Test
     fun testExtractFromFat() {
-        val collection = createTempFile(directory = tempDir, "col", ".jar").apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
+        val collection =
+            createTempFile(directory = tempDir, "col", ".jar").apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
         val cl = URLClassLoader(arrayOf(collection.toUri().toURL()), null)
         val cp = classpathFromClassloader(cl, true)
-        Assert.assertTrue(cp != null && cp.isNotEmpty())
+        assertTrue(cp != null && cp.isNotEmpty())
 
         testUnpackedCollection(cp!!, emulatedCollectionFiles)
     }
@@ -57,9 +57,9 @@ class ClassPathTest : TestCase() {
         )
         val cp = cl.classPathFromTypicalResourceUrls().toList().map { it.canonicalFile }
 
-        Assert.assertTrue(cp.contains(jar.toFile().canonicalFile))
+        assertTrue(cp.contains(jar.toFile().canonicalFile))
         for (el in emulatedClasspath) {
-            Assert.assertTrue(cp.contains((root1 / el).toFile().canonicalFile))
+            assertTrue(cp.contains((root1 / el).toFile().canonicalFile))
         }
     }
 
@@ -79,7 +79,7 @@ class ClassPathTest : TestCase() {
             val classpath =
                 scriptCompilationClasspathFromContextOrNull("projX", classLoader = classloader)!!.map { it.toPath().relativeTo(tempDir) }
 
-            Assert.assertEquals(files.dropLast(1).map { it.relativeTo(tempDir) }, classpath)
+            assertEquals(files.dropLast(1).map { it.relativeTo(tempDir) }, classpath)
         } finally {
             tempDir.toFile().deleteRecursively()
         }
@@ -90,8 +90,8 @@ class ClassPathTest : TestCase() {
         val cpFromThis = classpathFromClass(this::class)
         val expectedSuffix = File("classes/kotlin/test").path
         assertTrue(
-            "Path should end with $expectedSuffix, got: $cpFromThis",
-            cpFromThis!!.first().absoluteFile.path.endsWith(expectedSuffix)
+            cpFromThis!!.first().absoluteFile.path.endsWith(expectedSuffix),
+            "Path should end with $expectedSuffix, got: $cpFromThis"
         )
     }
 }
@@ -123,13 +123,13 @@ fun testUnpackedCollection(classpath: List<File>, fileNames: Array<String>) {
 
     fun List<String>.checkFiles(root: File) = forEach {
         val file = File(root, it)
-        Assert.assertTrue(file.exists())
-        Assert.assertEquals(it, file.readText())
+        assertTrue(file.exists())
+        assertEquals(it, file.readText())
     }
 
     val (classes, jars) = fileNames.partition { it.startsWith("classes") }
     val (cpClasses, cpJars) = classpath.partition { it.isDirectory && it.name == "classes" }
-    Assert.assertTrue(cpClasses.size == 1)
+    assertTrue(cpClasses.size == 1)
     classes.checkFiles(cpClasses.first().parentFile)
     jars.checkFiles(cpJars.first().parentFile.parentFile)
 }

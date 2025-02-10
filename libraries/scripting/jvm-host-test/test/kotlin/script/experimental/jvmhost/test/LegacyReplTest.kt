@@ -6,7 +6,7 @@
 package kotlin.script.experimental.jvmhost.test
 
 import com.intellij.openapi.application.ApplicationManager
-import junit.framework.TestCase
+import kotlin.test.*
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import java.io.Closeable
@@ -18,11 +18,12 @@ import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluator
 // Adapted form GenericReplTest
 
 // Artificial split into several testsuites, to speed up parallel testing
-class LegacyReplTest : TestCase() {
+class LegacyReplTest {
+    @Test
     fun testReplBasics() {
         LegacyTestRepl().use { repl ->
             val res1 = repl.replCompiler.compile(repl.state, ReplCodeLine(0, 0, "val x ="))
-            TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCompileResult.Incomplete)
+            assertTrue("Unexpected check results: $res1") { res1 is ReplCompileResult.Incomplete }
 
             assertEvalResult(repl, "val l1 = listOf(1 + 2)\nl1.first()", 3)
 
@@ -32,34 +33,38 @@ class LegacyReplTest : TestCase() {
         }
     }
 
+    @Test
     fun testReplErrors() {
         LegacyTestRepl().use { repl ->
             repl.compileAndEval(repl.nextCodeLine("val x = 10"))
 
             val res = repl.compileAndEval(repl.nextCodeLine("java.util.fish"))
-            TestCase.assertTrue("Expected compile error", res.first is ReplCompileResult.Error)
+            assertTrue(res.first is ReplCompileResult.Error, "Expected compile error")
 
             val result = repl.compileAndEval(repl.nextCodeLine("x"))
-            assertEquals(res.second.toString(), 10, (result.second as? ReplEvalResult.ValueResult)?.value)
+            assertEquals(10, (result.second as ReplEvalResult.ValueResult).value, res.second.toString())
         }
     }
 
+    @Test
     fun testReplSyntaxErrorsChecked() {
         LegacyTestRepl().use { repl ->
             val res = repl.compileAndEval(repl.nextCodeLine("data class Q(val x: Int, val: String)"))
-            TestCase.assertTrue("Expected compile error", res.first is ReplCompileResult.Error)
+            assertTrue(res.first is ReplCompileResult.Error, "Expected compile error")
         }
     }
 
+    @Test
     fun testReplCodeFormat() {
         LegacyTestRepl().use { repl ->
             val codeLine0 = ReplCodeLine(0, 0, "val l1 = 1\r\nl1\r\n")
             val res0 = repl.replCompiler.compile(repl.state, codeLine0)
             val res0c = res0 as? ReplCompileResult.CompiledClasses
-            TestCase.assertNotNull("Unexpected compile result: $res0", res0c)
+            assertNotNull(res0c, "Unexpected compile result: $res0")
         }
     }
 
+    @Test
     fun testRepPackage() {
         LegacyTestRepl().use { repl ->
             assertEvalResult(repl, "package mypackage\n\nval x = 1\nx+2", 3)
@@ -68,6 +73,7 @@ class LegacyReplTest : TestCase() {
         }
     }
 
+    @Test
     fun testReplResultFieldWithFunction() {
         LegacyTestRepl().use { repl ->
             assertEvalResultIs<Function0<Int>>(repl, "{ 1 + 2 }")
@@ -76,6 +82,7 @@ class LegacyReplTest : TestCase() {
         }
     }
 
+    @Test
     fun testReplResultField() {
         LegacyTestRepl().use { repl ->
             assertEvalResult(repl, "5 * 4", 20)
@@ -85,8 +92,9 @@ class LegacyReplTest : TestCase() {
 }
 
 // Artificial split into several testsuites, to speed up parallel testing
-class LegacyReplTestLong1 : TestCase() {
+class LegacyReplTestLong1 {
 
+    @Test
     fun test256Evals() {
         LegacyTestRepl().use { repl ->
             repl.compileAndEval(ReplCodeLine(0, 0, "val x0 = 0"))
@@ -97,14 +105,15 @@ class LegacyReplTestLong1 : TestCase() {
             }
 
             val res = repl.compileAndEval(ReplCodeLine(evals + 1, 0, "x$evals"))
-            assertEquals(res.second.toString(), evals, (res.second as? ReplEvalResult.ValueResult)?.value)
+            assertEquals(evals, (res.second as? ReplEvalResult.ValueResult)?.value, res.second.toString())
         }
     }
 }
 
 // Artificial split into several testsuites, to speed up parallel testing
-class LegacyReplTestLong2 : TestCase() {
+class LegacyReplTestLong2 {
 
+    @Test
     fun testReplSlowdownKt22740() {
         LegacyTestRepl().use { repl ->
             repl.compileAndEval(ReplCodeLine(0, 0, "class Test<T>(val x: T) { fun <R> map(f: (T) -> R): R = f(x) }".trimIndent()))
@@ -159,7 +168,7 @@ private fun assertEvalUnit(repl: LegacyTestRepl, line: String) {
 
     val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
     val unitResult = evalResult as? ReplEvalResult.UnitResult
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", unitResult)
+    assertNotNull(unitResult, "Unexpected eval result: $evalResult")
 }
 
 private fun<R> assertEvalResult(repl: LegacyTestRepl, line: String, expectedResult: R) {
@@ -167,8 +176,8 @@ private fun<R> assertEvalResult(repl: LegacyTestRepl, line: String, expectedResu
 
     val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
     val valueResult = evalResult as? ReplEvalResult.ValueResult
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertEquals(expectedResult, valueResult!!.value)
+    assertNotNull(valueResult, "Unexpected eval result: $evalResult")
+    assertEquals(expectedResult, valueResult.value)
 }
 
 private inline fun<reified R> assertEvalResultIs(repl: LegacyTestRepl, line: String) {
@@ -176,14 +185,14 @@ private inline fun<reified R> assertEvalResultIs(repl: LegacyTestRepl, line: Str
 
     val evalResult = repl.compiledEvaluator.eval(repl.state, compiledClasses!!)
     val valueResult = evalResult as? ReplEvalResult.ValueResult
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.value is R)
+    assertNotNull(valueResult, "Unexpected eval result: $evalResult")
+    assertTrue(valueResult.value is R)
 }
 
 private fun checkCompile(repl: LegacyTestRepl, line: String): ReplCompileResult.CompiledClasses? {
     val codeLine = repl.nextCodeLine(line)
     val compileResult = repl.replCompiler.compile(repl.state, codeLine)
     val compiledClasses = compileResult as? ReplCompileResult.CompiledClasses
-    TestCase.assertNotNull("Unexpected compile result: $compileResult", compiledClasses)
+    assertNotNull(compiledClasses, "Unexpected compile result: $compileResult")
     return compiledClasses
 }

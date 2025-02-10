@@ -6,8 +6,11 @@
 package kotlin.script.experimental.jvmhost.test
 
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.junit.Test
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.EvaluationResult
+import kotlin.script.experimental.api.ResultValue
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.implicitReceivers
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class CapturingTest {
