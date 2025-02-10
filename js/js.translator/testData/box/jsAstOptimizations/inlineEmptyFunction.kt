@@ -13,7 +13,8 @@ fun setOK(): Int {
     return 1
 }
 
-// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.js
+// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.js TARGET_FRONTENDS=ClassicFrontend
+// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.fir.js TARGET_FRONTENDS=FIR
 fun box(): String {
     sep("Simple call")
     inlineFunction(1)

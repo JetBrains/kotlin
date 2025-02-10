@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
+import org.jetbrains.kotlin.test.model.FrontendKind;
 import org.junit.runners.model.MultipleFailureException;
 
 import java.io.File;
@@ -521,11 +522,12 @@ public class DirectiveTestUtils {
             @NotNull JsNode ast,
             @NotNull File sourceFile,
             @NotNull String sourceCode,
-            @NotNull TargetBackend targetBackend
+            @NotNull TargetBackend targetBackend,
+            @NotNull FrontendKind<?> frontendKind
     ) throws Exception {
         List<Throwable> assertionErrors = new ArrayList<>();
         for (DirectiveHandler handler : DIRECTIVE_HANDLERS) {
-            handler.process(ast, sourceFile, sourceCode, targetBackend, assertionErrors);
+            handler.process(ast, sourceFile, sourceCode, targetBackend, frontendKind, assertionErrors);
         }
         MultipleFailureException.assertEmpty(assertionErrors);
     }
@@ -624,6 +626,8 @@ public class DirectiveTestUtils {
 
     private abstract static class DirectiveHandler {
 
+        private final static String TARGET_FRONTENDS = "TARGET_FRONTENDS";
+
         private final static String TARGET_BACKENDS = "TARGET_BACKENDS";
 
         private final static String IGNORED_BACKENDS = "IGNORED_BACKENDS";
@@ -634,6 +638,19 @@ public class DirectiveTestUtils {
             this.directive = "// " + directive + ": ";
         }
 
+        private static boolean containsFrontend(
+                @NotNull FrontendKind<?> frontendKind,
+                @NotNull ArgumentsHelper arguments
+        ) {
+            String frontendsArg = arguments.findNamedArgument(TARGET_FRONTENDS);
+            if (frontendsArg != null) {
+                List<String> frontends = Arrays.asList(frontendsArg.split(";"));
+                String frontendKindName = frontendKind.getClass().getSimpleName();
+                return frontends.contains(frontendKindName);
+            }
+            return true;
+        }
+        
         private static boolean containsBackend(
                 @NotNull TargetBackend targetBackend,
                 @NotNull String backendsParameterName,
@@ -660,13 +677,15 @@ public class DirectiveTestUtils {
                 @NotNull File sourceFile,
                 @NotNull String sourceCode,
                 @NotNull TargetBackend targetBackend,
+                @NotNull FrontendKind<?> frontendKind,
                 List<Throwable> assertionErrors
         ) throws Exception {
             List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
             for (String directiveEntry : directiveEntries) {
                 ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry, sourceFile);
                 if (!containsBackend(targetBackend, TARGET_BACKENDS, arguments, true) ||
-                    containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)) {
+                    containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false) ||
+                    !containsFrontend(frontendKind, arguments)) {
                     continue;
                 }
                 try {
