@@ -26,6 +26,7 @@ dependencies {
 
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(project(":native:analysis-api-based-test-utils"))
 }
 
 sourceSets {
@@ -36,13 +37,7 @@ sourceSets {
     }
 }
 
-val testDataDir = projectDir.resolve("testData")
-
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    inputs.dir(testDataDir)
-    workingDir = rootDir
-    useJUnitPlatform { }
-}
+nativeTest("test", null)
 
 testsJar()
 

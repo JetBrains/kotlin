@@ -71,7 +71,7 @@ class InlineSourceCodeAnalysisExtension : ParameterResolver, AfterEachCallback {
     }
 }
 
-private class InlineSourceCodeAnalysisImpl(private val tempDir: File) : InlineSourceCodeAnalysis {
+class InlineSourceCodeAnalysisImpl(private val tempDir: File) : InlineSourceCodeAnalysis {
     override fun createKtFile(@Language("kotlin") sourceCode: String): KtFile {
         return createStandaloneAnalysisApiSession(tempDir = tempDir, kotlinSources = mapOf("TestSources.kt" to sourceCode))
             .modulesWithFiles.entries.single()
