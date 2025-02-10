@@ -91,6 +91,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMaxOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMinOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceExpression
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReducePredicate
@@ -303,6 +305,8 @@ internal inline fun <reified T> String.load(): T {
         "GroupByReducePredicate" -> GroupByReducePredicate()
         "GroupByReduceExpression" -> GroupByReduceExpression()
         "GroupByReduceInto" -> GroupByReduceInto()
+        "GroupByMaxOf" -> GroupByMaxOf()
+        "GroupByMinOf" -> GroupByMinOf()
         else -> error("$this")
     } as T
 }

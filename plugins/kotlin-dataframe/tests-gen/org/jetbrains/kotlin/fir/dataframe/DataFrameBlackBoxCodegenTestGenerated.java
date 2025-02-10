@@ -239,6 +239,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("groupBy_maxOfMinOf.kt")
+  public void testGroupBy_maxOfMinOf() {
+    runTest("testData/box/groupBy_maxOfMinOf.kt");
+  }
+
+  @Test
   @TestMetadata("groupBy_refine.kt")
   public void testGroupBy_refine() {
     runTest("testData/box/groupBy_refine.kt");
