@@ -7,6 +7,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     public final class Test1 : R|kotlin/Any| {
+        context(c: R|A|)
         public constructor(): R|Test1| {
             super<R|kotlin/Any|>()
         }
@@ -14,6 +15,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     public final object Test2 : R|kotlin/Any| {
+        context(c: R|A|)
         private constructor(): R|Test2| {
             super<R|kotlin/Any|>()
         }
@@ -29,6 +31,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     public final data class Test5 : R|kotlin/Any| {
+        context(c: R|A|)
         public constructor(a: R|kotlin/Int|): R|Test5| {
             super<R|kotlin/Any|>()
         }
@@ -43,6 +46,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     public final data object Test6 : R|kotlin/Any| {
+        context(c: R|A|)
         private constructor(): R|Test6| {
             super<R|kotlin/Any|>()
         }
@@ -50,6 +54,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     public final enum class Test7 : R|kotlin/Enum<Test7>| {
+        context(c: R|A|)
         private constructor(): R|Test7| {
             super<R|kotlin/Enum<Test7>|>()
         }
@@ -67,6 +72,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     @R|kotlin/jvm/JvmInline|() public final value class Test8 : R|kotlin/Any| {
+        context(c: R|A|)
         public constructor(a: R|kotlin/Int|): R|Test8| {
             super<R|kotlin/Any|>()
         }
@@ -77,6 +83,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     public final annotation class Test9 : R|kotlin/Annotation| {
+        context(c: R|A|)
         public constructor(): R|Test9| {
             super<R|kotlin/Any|>()
         }
@@ -84,6 +91,7 @@ FILE: onClassifierDeclaration.kt
     }
     context(c: R|A|)
     public final class Test10<T> : R|kotlin/Any| {
+        context(c: R|A|)
         public constructor<T>(): R|Test10<T>| {
             super<R|kotlin/Any|>()
         }
@@ -96,6 +104,7 @@ FILE: onClassifierDeclaration.kt
 
         context(c: R|A|)
         public final class Nested : R|kotlin/Any| {
+            context(c: R|A|)
             public constructor(): R|Test11.Nested| {
                 super<R|kotlin/Any|>()
             }
@@ -104,6 +113,7 @@ FILE: onClassifierDeclaration.kt
 
         context(c: R|A|)
         public final inner class Inner : R|kotlin/Any| {
+            context(c: R|A|)
             public Test11.constructor(): R|Test11.Inner| {
                 super<R|kotlin/Any|>()
             }
@@ -112,6 +122,7 @@ FILE: onClassifierDeclaration.kt
 
         context(c: R|A|)
         public final object Obj : R|kotlin/Any| {
+            context(c: R|A|)
             private constructor(): R|Test11.Obj| {
                 super<R|kotlin/Any|>()
             }
@@ -120,6 +131,7 @@ FILE: onClassifierDeclaration.kt
 
         context(c: R|A|)
         public final companion object Companion : R|kotlin/Any| {
+            context(c: R|A|)
             private constructor(): R|Test11.Companion| {
                 super<R|kotlin/Any|>()
             }

@@ -18,10 +18,12 @@ FILE: onConstructor.kt
 
     }
     public final class Test2 : R|kotlin/Any| {
+        context(c: R|A|)
         public constructor(): R|Test2| {
             super<R|kotlin/Any|>()
         }
 
+        context(c: R|A|)
         public constructor(a: R|kotlin/String|): R|Test2| {
             super<R|kotlin/Any|>()
         }
@@ -61,6 +63,7 @@ FILE: onConstructor.kt
         }
 
         public final class Nested : R|kotlin/Any| {
+            context(c: R|A|)
             public constructor(s: R|kotlin/String|): R|Test5.Nested| {
                 super<R|kotlin/Any|>()
             }

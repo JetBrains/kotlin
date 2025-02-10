@@ -33,6 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiversClass.kt
     }
     context([ResolvedTo(RAW_FIR)] Foo)
     public final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
+        context([ResolvedTo(RAW_FIR)] Foo)
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }

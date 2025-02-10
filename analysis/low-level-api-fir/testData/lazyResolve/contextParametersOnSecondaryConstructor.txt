@@ -5,6 +5,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
             LAZY_super<R|kotlin/Any|>
         }
 
+        context([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             this<R|Foo|>(<Unresolved name: param>#)
         }
@@ -18,6 +19,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextParametersOnSecondaryConstructor.kt
             super<R|kotlin/Any|>()
         }
 
+        context([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             this<R|Foo|>(<Unresolved name: param>#)
         }

@@ -16,6 +16,7 @@ public final class C : R|kotlin/Any| {
     context(<unused var>: R|test/B|)
     public final fun f(): R|kotlin/Unit|
 
+    context(<unused var>: R|test/A|)
     public constructor(): R|test/C|
 
 }
