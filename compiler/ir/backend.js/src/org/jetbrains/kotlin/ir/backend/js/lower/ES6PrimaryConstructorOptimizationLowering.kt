@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
@@ -79,8 +80,8 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
                 .also { constructor.body = it }
 
             body.transformChildrenVoid(object : ValueRemapper(emptyMap()) {
-                override val map = original.valueParameters.zip(constructor.valueParameters)
-                    .associateTo(newHashMapWithExpectedSize<IrValueSymbol, IrValueSymbol>(original.valueParameters.size)) { it.first.symbol to it.second.symbol }
+                override val map = original.nonDispatchParameters.zip(constructor.nonDispatchParameters)
+                    .associateTo(newHashMapWithExpectedSize<IrValueSymbol, IrValueSymbol>(original.parameters.size - 1)) { it.first.symbol to it.second.symbol }
 
                 override fun visitReturn(expression: IrReturn): IrExpression {
                     return if (expression.returnTargetSymbol == original.symbol) {
@@ -112,8 +113,8 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
 
                                 return if (boxParameter != null && superClass == null) {
                                     super.visitCall(JsIrBuilder.buildCall(context.intrinsics.jsBoxApplySymbol).apply {
-                                        putValueArgument(0, JsIrBuilder.buildGetValue(irClass.thisReceiver!!.symbol))
-                                        putValueArgument(1, JsIrBuilder.buildGetValue(boxParameter.symbol))
+                                        arguments[0] = JsIrBuilder.buildGetValue(irClass.thisReceiver!!.symbol)
+                                        arguments[1] = JsIrBuilder.buildGetValue(boxParameter.symbol)
                                     })
                                 } else {
                                     irEmpty(context)
@@ -126,13 +127,13 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
                                     superClass?.primaryConstructor?.symbol ?: irError("Expect to have external constructor here") {
                                         superClass?.let { withIrEntry("superClass", it) }
                                     }
-                                val parameters = initializer.getValueArgument(CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS) as? IrVararg
+                                val parameters = initializer.arguments[CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS] as? IrVararg
                                     ?: irError("Wrong type of argument was provided") {
                                         withIrEntry("initializer", initializer)
                                     }
 
                                 return JsIrBuilder.buildDelegatingConstructorCall(externalConstructor).apply {
-                                    parameters.elements.forEachIndexed { i, it -> putValueArgument(i, it as IrExpression) }
+                                    arguments.assignFrom(parameters.elements) { it as IrExpression }
                                 }
                             }
                         }
