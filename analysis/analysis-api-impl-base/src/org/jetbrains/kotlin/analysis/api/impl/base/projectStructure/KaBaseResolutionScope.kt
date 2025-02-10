@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
  * it's a responsibility of [org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider]
  * Please, use [Companion.forModule]
  */
-@KaImplementationDetail
 internal class KaBaseResolutionScope(
     private val useSiteModule: KaModule,
     private val resolutionScope: GlobalSearchScope,
@@ -53,8 +51,8 @@ internal class KaBaseResolutionScope(
     private fun isFromGeneratedModule(element: PsiElement): Boolean {
         val ktFile = element.containingFile as? KtFile ?: return false
         if (ktFile.isDangling) {
-            val module = KaModuleProvider.Companion.getModule(useSiteModule.project, ktFile, useSiteModule)
-            return isFromGeneratedModule(module)
+            val module = KaModuleProvider.getModule(useSiteModule.project, ktFile, useSiteModule)
+            return module.isAccessibleFromUseSiteModule()
         }
 
         val virtualFile = ktFile.virtualFile ?: return false
@@ -67,11 +65,11 @@ internal class KaBaseResolutionScope(
      */
     private fun isFromGeneratedModule(virtualFile: VirtualFile): Boolean {
         val analysisContextModule = virtualFile.analysisContextModule ?: return false
-        return isFromGeneratedModule(analysisContextModule)
+        return analysisContextModule.isAccessibleFromUseSiteModule()
     }
 
-    private fun isFromGeneratedModule(analysisContextModule: KaModule): Boolean {
-        return analysisContextModule == useSiteModule || analysisContextModule in useSiteModule.allDirectDependencies()
+    private fun KaModule.isAccessibleFromUseSiteModule(): Boolean {
+        return this == useSiteModule || this in useSiteModule.allDirectDependencies()
     }
 
     override fun toString(): String {
