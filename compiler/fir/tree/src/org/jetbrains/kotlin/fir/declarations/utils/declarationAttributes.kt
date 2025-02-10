@@ -131,6 +131,7 @@ fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstra
     return when (this) {
         is FirRegularClass -> danglingTypeConstraints
         is FirSimpleFunction -> danglingTypeConstraints
+        is FirAnonymousFunction -> danglingTypeConstraints
         is FirProperty -> danglingTypeConstraints
         else -> null
     } ?: emptyList()

@@ -1973,9 +1973,7 @@ class LightTreeRawFirDeclarationBuilder(
                 context.firFunctionTargets.removeLast()
             }.build().also {
                 target.bind(it)
-                if (it is FirSimpleFunction) {
-                    fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
-                }
+                fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
             }
 
             return if (function is FirAnonymousFunction) {

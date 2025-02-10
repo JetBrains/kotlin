@@ -2031,9 +2031,7 @@ open class PsiRawFirBuilder(
                     context.firFunctionTargets.removeLast()
                 }.build().also {
                     bindFunctionTarget(target, it)
-                    if (it is FirSimpleFunction) {
-                        function.fillDanglingConstraintsTo(it)
-                    }
+                    function.fillDanglingConstraintsTo(it)
                 }
 
                 return if (firFunction is FirAnonymousFunction) {
