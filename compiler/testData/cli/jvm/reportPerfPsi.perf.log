@@ -1,6 +1,5 @@
 Kotlin to JVM Compiler performance report
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
-            GENERATE        $INT>>$ ms            $REAL>>$ loc/s
          IR LOWERING        $INT>>$ ms            $REAL>>$ loc/s
        IR GENERATION        $INT>>$ ms            $REAL>>$ loc/s
   BACKEND GENERATION        $INT>>$ ms            $REAL>>$ loc/s

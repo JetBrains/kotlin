@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
-import org.jetbrains.kotlin.util.CodeGenerationMeasurement
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import org.jetbrains.kotlin.util.GarbageCollectionMeasurement
@@ -351,7 +350,6 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
                 val generationTime =
                     measurements.firstIsInstanceOrNull<BackendGenerationMeasurement>()?.milliseconds
-                        ?: measurements.filterIsInstance<CodeGenerationMeasurement>().firstOrNull()?.milliseconds
 
                 if (generationTime != null) {
                     put("BackendGeneration", generationTime)

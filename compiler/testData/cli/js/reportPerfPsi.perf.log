@@ -1,6 +1,5 @@
 Kotlin to JS Compiler performance report
              ANALYZE        $INT>>$ ms
-            GENERATE        $INT>>$ ms
        IR GENERATION        $INT>>$ ms
   BACKEND GENERATION        $INT>>$ ms
 Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
