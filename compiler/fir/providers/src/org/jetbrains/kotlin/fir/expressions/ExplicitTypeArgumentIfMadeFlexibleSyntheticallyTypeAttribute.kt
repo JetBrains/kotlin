@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -17,6 +18,7 @@ import kotlin.reflect.KClass
  */
 data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
     val coneType: ConeKotlinType,
+    val relevantFeature: LanguageFeature,
 ) : ConeAttribute<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute>() {
     // Those methods should not matter too much because it's only assumed to be used for explicit type arguments
     // for which we don't expect to perform complex operations

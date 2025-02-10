@@ -15,6 +15,6 @@ public class J<T> {
 // FILE: main.kt
 fun main() {
     J<String?> { x ->
-        x.length // Should not be unsafe call
+        <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x<!>.length // Should not be unsafe call
     }
 }
