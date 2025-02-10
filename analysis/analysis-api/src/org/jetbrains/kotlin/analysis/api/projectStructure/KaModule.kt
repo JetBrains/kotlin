@@ -79,13 +79,15 @@ public interface KaModule {
      * A base content scope of the module,
      * which is not yet refined by extension and restriction scopes provided by [KotlinContentScopeRefiner].
      *
-     * @see [contentScope]
+     * Note that [baseContentScope] doesn't represent the actual content scope of the current module.
+     * To get a content scope of the module, [contentScope] should be used instead.
      */
     @KaPlatformInterface
     public val baseContentScope: GlobalSearchScope
 
     /**
-     * A [GlobalSearchScope] which determines all the files that are contained in the module.
+     * Represents the content scope of a current module, i.e.,
+     * a [GlobalSearchScope] which determines all the files that are contained in the module.
      * This scope is lazily built from [baseContentScope] using [KotlinContentScopeRefiner] extension points.
      */
     public val contentScope: GlobalSearchScope
