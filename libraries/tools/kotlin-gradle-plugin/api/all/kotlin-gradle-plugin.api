@@ -2577,36 +2577,11 @@ public final class org/jetbrains/kotlin/gradle/targets/js/UtilsKt {
 	public static final fun toHex ([B)Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)V
-	public final fun component1 ()Z
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Z
-	public final fun component4 ()Ljava/lang/String;
-	public final fun component5 ()Ljava/lang/String;
-	public final fun component6 ()Ljava/io/File;
-	public final fun component7 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public final fun component8 ()Z
-	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnv;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnv;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getAllowInsecureProtocol ()Z
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public fun getDir ()Ljava/io/File;
-	public fun getDownload ()Z
-	public fun getDownloadBaseUrl ()Ljava/lang/String;
-	public fun getExecutable ()Ljava/lang/String;
-	public final fun getExecutablePath ()Ljava/io/File;
-	public fun getIvyDependency ()Ljava/lang/String;
-	public fun hashCode ()I
-	public final fun isWindows ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
 	public fun <init> ()V
+	public final fun getBinaryenSetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
 	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
 }
@@ -2614,32 +2589,12 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEn
 public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExec : org/gradle/api/tasks/AbstractExecTask {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExec$Companion;
-	public fun <init> ()V
-	protected fun exec ()V
-	public final fun getBinaryenArgs ()Ljava/util/List;
-	public abstract fun getFs ()Lorg/gradle/api/file/FileSystemOperations;
-	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
-	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getOutputFileName ()Lorg/gradle/api/provider/Property;
-	public final fun getOutputFileProperty ()Lorg/gradle/api/provider/Provider;
-	public final fun setBinaryenArgs (Ljava/util/List;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExec$Companion {
-	public final fun create (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
-	public static synthetic fun create$default (Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
-	public final fun register (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
-	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
-}
-
 public class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec;)V
+	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec;)V
 	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
-	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnv;
+	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
 	public final fun getRootProject ()Lorg/gradle/api/Project;
 	public final fun getSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 }
@@ -2655,26 +2610,12 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenPl
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenPlugin$Companion {
-	public final fun apply (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension;
-	public final fun getKotlinBinaryenExtension (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension;
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRootPlugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenSetupTask : org/jetbrains/kotlin/gradle/targets/js/AbstractSetupTask {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenSetupTask$Companion;
-	public static final field NAME Ljava/lang/String;
-	public fun extract (Ljava/io/File;)V
-	protected fun getArtifactModule ()Ljava/lang/String;
-	protected fun getArtifactName ()Ljava/lang/String;
-	protected fun getArtifactPattern ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenSetupTask$Companion {
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
@@ -3460,9 +3401,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec$Comp
 	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsPlugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsPlugin$Companion;
-	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
@@ -3472,10 +3412,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsPlugin$Co
 	public final fun getKotlinNodeJsEnvSpec (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnvSpec;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
-	public fun <init> (Lorg/gradle/api/Project;Lkotlin/jvm/functions/Function0;Ljava/lang/String;)V
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
@@ -3483,10 +3422,9 @@ public class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension :
 public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension$Companion {
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsRootPlugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsRootPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootPlugin$Companion;
 	public static final field TASKS_GROUP_NAME Ljava/lang/String;
-	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
@@ -3558,8 +3496,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/BaseN
 	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtension : org/jetbrains/kotlin/gradle/internal/ConfigurationPhaseAware, org/jetbrains/kotlin/gradle/targets/js/nodejs/NpmApiExtension {
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension;)V
+public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtension : org/jetbrains/kotlin/gradle/internal/ConfigurationPhaseAware, org/jetbrains/kotlin/gradle/targets/js/nodejs/NpmApiExtension {
 	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
 	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnv;
 	public fun getAdditionalInstallOutput ()Lorg/gradle/api/file/FileCollection;
@@ -3848,10 +3785,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment : o
 	public fun toString ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/js/npm/NpmExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtension {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/NpmExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmExtension$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmExtension$Companion {
@@ -5747,6 +5683,92 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/toolchain/Unzip
 	public fun transform (Lorg/gradle/api/artifacts/transform/TransformOutputs;)V
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
+	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/io/File;
+	public final fun component7 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
+	public final fun component8 ()Z
+	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAllowInsecureProtocol ()Z
+	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
+	public fun getDir ()Ljava/io/File;
+	public fun getDownload ()Z
+	public fun getDownloadBaseUrl ()Ljava/lang/String;
+	public fun getExecutable ()Ljava/lang/String;
+	public final fun getExecutablePath ()Ljava/io/File;
+	public fun getIvyDependency ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isWindows ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec : org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec$Companion;
+	public static final field EXTENSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec : org/gradle/api/tasks/AbstractExecTask {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec$Companion;
+	public fun <init> ()V
+	protected fun exec ()V
+	public final fun getBinaryenArgs ()Ljava/util/List;
+	public abstract fun getFs ()Lorg/gradle/api/file/FileSystemOperations;
+	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getOutputFileName ()Lorg/gradle/api/provider/Property;
+	public final fun getOutputFileProperty ()Lorg/gradle/api/provider/Provider;
+	public final fun setBinaryenArgs (Ljava/util/List;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec$Companion {
+	public final fun create (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public static synthetic fun create$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
+	public final fun register (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension : org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension$Companion;
+	public static final field EXTENSION_NAME Ljava/lang/String;
+	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenPlugin : org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRootPlugin {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenPlugin$Companion;
+	public static final field TASKS_GROUP_NAME Ljava/lang/String;
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenPlugin$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSetupTask : org/jetbrains/kotlin/gradle/targets/js/AbstractSetupTask {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSetupTask$Companion;
+	public static final field NAME Ljava/lang/String;
+	public fun extract (Ljava/io/File;)V
+	protected fun getArtifactModule ()Ljava/lang/String;
+	protected fun getArtifactName ()Ljava/lang/String;
+	protected fun getArtifactPattern ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSetupTask$Companion {
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
 	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)V
 	public final fun component1 ()Z
@@ -5844,9 +5866,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnv
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsPlugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlugin$Companion;
-	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
@@ -5858,9 +5879,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsPlu
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension, org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lkotlin/jvm/functions/Function0;Ljava/lang/String;)V
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
@@ -5871,9 +5891,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRoo
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsRootPlugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootPlugin : org/jetbrains/kotlin/gradle/targets/web/nodejs/CommonNodeJsRootPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootPlugin$Companion;
-	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
@@ -5886,9 +5905,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRoo
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtension {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
@@ -5898,9 +5916,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmExtension
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverPlugin : org/jetbrains/kotlin/gradle/targets/web/npm/CommonNpmResolverPlugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverPlugin : org/jetbrains/kotlin/gradle/targets/web/npm/CommonNpmResolverPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverPlugin$Companion;
-	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
@@ -5909,9 +5926,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverP
 	public final fun apply (Lorg/gradle/api/Project;)V
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin$Companion;
-	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
@@ -5924,7 +5940,6 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin$
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec : org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootEnvSpec {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec$Companion;
-	public fun <init> ()V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
@@ -5933,9 +5948,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnv
 	public final fun getYARN ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension : org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootExtension {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension : org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsRootExtension;Lorg/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootEnvSpec;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
@@ -5954,7 +5968,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsE
 
 public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
 	public field resolver Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinRootNpmResolver;
-	public fun <init> (Lorg/gradle/api/Project;Lkotlin/jvm/functions/Function0;Ljava/lang/String;)V
 	public fun extensionName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getCommand ()Ljava/lang/String;
 	public final fun getDownload ()Z
@@ -6000,7 +6013,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/web/npm/Comm
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
-	public fun <init> ()V
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getIgnoreScripts ()Lorg/gradle/api/provider/Property;
 	public abstract fun getReportNewYarnLock ()Lorg/gradle/api/provider/Property;
@@ -6010,8 +6022,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings, org/jetbrains/kotlin/gradle/targets/js/nodejs/NpmApiExtension {
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension;Lorg/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootEnvSpec;)V
+public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings, org/jetbrains/kotlin/gradle/targets/js/nodejs/NpmApiExtension {
 	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
 	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
 	public fun getAdditionalInstallOutput ()Lorg/gradle/api/file/FileCollection;

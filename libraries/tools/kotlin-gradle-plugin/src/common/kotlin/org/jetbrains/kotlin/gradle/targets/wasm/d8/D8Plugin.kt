@@ -78,7 +78,7 @@ abstract class D8Plugin internal constructor() :
         const val TASKS_GROUP_NAME: String = "d8"
 
         @InternalKotlinGradlePluginApi
-        fun apply(project: Project): D8RootExtension {
+        internal fun apply(project: Project): D8RootExtension {
             project.plugins.apply(D8Plugin::class.java)
             return project.extensions.getByName(D8RootExtension.EXTENSION_NAME) as D8RootExtension
         }
@@ -94,7 +94,7 @@ abstract class D8Plugin internal constructor() :
         }
 
         @InternalKotlinGradlePluginApi
-        val Project.kotlinD8RootExtension: D8RootExtension
+        internal val Project.kotlinD8RootExtension: D8RootExtension
             get() = extensions.getByName(D8RootExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
     }
 }
