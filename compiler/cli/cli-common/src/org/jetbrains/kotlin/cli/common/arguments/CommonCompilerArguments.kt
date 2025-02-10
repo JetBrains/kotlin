@@ -1096,9 +1096,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         }
     }
 
-    protected open fun defaultLanguageVersion(collector: MessageCollector): LanguageVersion =
-        LanguageVersion.LATEST_STABLE
-
     protected open fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
     }
 
@@ -1136,7 +1133,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         }
 
         // If only "-api-version" is specified, language version is assumed to be the latest stable
-        return parseVersion(collector, languageVersion, "language") ?: defaultLanguageVersion(collector)
+        return parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
     }
 
     private fun parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =
