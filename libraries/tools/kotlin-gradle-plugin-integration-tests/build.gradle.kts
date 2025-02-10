@@ -470,6 +470,11 @@ tasks.withType<Test>().configureEach {
         systemProperty("kotlin.gradle.autoDebugIT", autoDebugIT)
     }
 
+    val runAllIntegrationTestsOnMacos = kotlinBuildProperties.getBoolean("runAllIntegrationTestsOnMacos", false)
+    if (runAllIntegrationTestsOnMacos) {
+        systemProperty("runAllIntegrationTestsOnMacos", runAllIntegrationTestsOnMacos)
+    }
+
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {
         systemProperty("installCocoapods", installCocoapods)

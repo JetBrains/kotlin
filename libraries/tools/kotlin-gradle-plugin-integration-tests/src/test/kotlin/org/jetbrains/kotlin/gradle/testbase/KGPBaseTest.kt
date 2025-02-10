@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -35,7 +36,7 @@ import java.nio.file.Paths
 @TagsCountValidator
 @TestDataPath("\$CONTENT_ROOT/resources/testProject")
 @ExtendWith(BrokenMacosTestInterceptor::class)
-@OsCondition
+@OsCondition(allowRunningOnMacosOnCI = true)
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 
