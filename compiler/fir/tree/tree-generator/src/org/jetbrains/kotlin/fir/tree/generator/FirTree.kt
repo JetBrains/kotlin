@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as Typ
 // 3) fields
 object FirTree : AbstractFirTreeBuilder() {
     override val rootElement: Element by element(Other, name = "Element") {
+        hasAcceptChildrenMethod = true
+        hasTransformChildrenMethod = true
+
         +field("source", sourceElementType, nullable = true)
     }
 

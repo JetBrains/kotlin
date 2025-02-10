@@ -10,6 +10,9 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -19,4 +22,12 @@ abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSy
     abstract override val symbol: IrPackageFragmentSymbol
 
     abstract var packageFqName: FqName
+
+    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        declarations.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        declarations.transformInPlace(transformer, data)
+    }
 }

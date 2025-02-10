@@ -34,6 +34,7 @@ fun main(args: Array<String>) {
 
 private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: File) {
     model.inheritFields()
+    model.specifyHasAcceptAndTransformChildrenMethods()
 
     ImplementationConfigurator.configureImplementations(model)
     val implementations = model.elements.flatMap { it.implementations }

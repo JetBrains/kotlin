@@ -54,26 +54,9 @@ class Element(
     override val hasAcceptMethod: Boolean
         get() = customHasAcceptMethod ?: (implementations.isNotEmpty() && parentInVisitor != null)
 
-
     override var hasTransformMethod = false
 
-    override val hasAcceptChildrenMethod: Boolean
-        get() = hasAcceptOrTransformChildrenMethod(Element::walkableChildren)
-
-    override val hasTransformChildrenMethod: Boolean
-        get() = hasAcceptOrTransformChildrenMethod(Element::transformableChildren)
-
-    private fun hasAcceptOrTransformChildrenMethod(walkableOrTransformableChildren: Element.() -> List<Field>): Boolean {
-        if (!ownsChildren) return false
-        if (!isRootElement && walkableOrTransformableChildren().isEmpty()) return false
-        val atLeastOneParentHasAcceptOrTransformChildrenMethod = elementAncestorsAndSelfDepthFirst().any { parent ->
-            parent != this && parent.hasAcceptOrTransformChildrenMethod(walkableOrTransformableChildren) && !parent.isRootElement
-        }
-        return !atLeastOneParentHasAcceptOrTransformChildrenMethod
-    }
-
     var transformByChildren = false
-    var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 
     var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
 }
