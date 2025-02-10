@@ -281,7 +281,7 @@ abstract class CompileServiceImplBase(
         val performanceMetrics = ArrayList<BuildMetricsValue>()
         val performanceManager = compiler.defaultPerformanceManager
         val lines = performanceManager.lines.takeIf { it > 0 }
-        performanceManager.getMeasurementResults().forEach {
+        performanceManager.measurements.forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))

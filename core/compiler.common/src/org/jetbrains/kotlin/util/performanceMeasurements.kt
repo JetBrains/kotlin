@@ -9,36 +9,57 @@ interface PerformanceMeasurement {
     fun render(lines: Int): String
 }
 
-class JitCompilationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
+enum class PhaseMeasurementType {
+    Initialization,
+    Analysis,
+    IrGeneration,
+    IrLowering,
+    BackendGeneration,
+}
+
+sealed class PhasePerformanceMeasurement(val milliseconds: Long) : PerformanceMeasurement {
+    abstract val phase: PhaseMeasurementType
+    abstract val name: String
+    override fun render(lines: Int): String = "%20s%8s ms".format(name, milliseconds) +
+            if (phase != PhaseMeasurementType.Initialization && lines != 0) {
+                val lps = lines.toDouble() * 1000 / milliseconds
+                "%12.3f loc/s".format(lps)
+            } else {
+                ""
+            }
+}
+
+class CompilerInitializationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+    override val phase = PhaseMeasurementType.Initialization
+    override val name: String = "INIT"
+}
+
+class CodeAnalysisMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+    override val phase: PhaseMeasurementType = PhaseMeasurementType.Analysis
+    override val name: String = "ANALYZE"
+}
+
+class IrGenerationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+    override val phase: PhaseMeasurementType = PhaseMeasurementType.IrGeneration
+    override val name: String = "IR GENERATION"
+}
+
+class IrLoweringMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+    override val phase: PhaseMeasurementType = PhaseMeasurementType.IrLowering
+    override val name: String = "IR LOWERING"
+}
+
+class BackendGenerationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+    override val phase: PhaseMeasurementType = PhaseMeasurementType.BackendGeneration
+    override val name: String = "BACKEND GENERATION"
+}
+
+class JitCompilationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
     override fun render(lines: Int): String = "JIT time is $milliseconds ms"
-}
-
-class CompilerInitializationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = "INIT: Compiler initialized in $milliseconds ms"
-}
-
-class CodeAnalysisMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = formatMeasurement("ANALYZE", milliseconds, lines)
 }
 
 class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
     override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
-}
-
-class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
-    override fun render(lines: Int): String = counterReport
-}
-
-class IrGenerationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = formatMeasurement("IR GENERATION", milliseconds, lines)
-}
-
-class IrLoweringMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = formatMeasurement("IR LOWERING", milliseconds, lines)
-}
-
-class BackendGenerationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = formatMeasurement("BACKEND GENERATION", milliseconds, lines)
 }
 
 sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
@@ -55,9 +76,6 @@ class BinaryClassFromKotlinFileMeasurement(count: Int, milliseconds: Long) : Cou
     override val description: String = "Binary class from Kotlin file"
 }
 
-private fun formatMeasurement(name: String, time: Long, lines: Int?): String =
-    "%20s%8s ms".format(name, time) +
-            (lines.takeIf { it != 0 }?.let {
-                val lps = it.toDouble() * 1000 / time
-                "%12.3f loc/s".format(lps)
-            } ?: "")
+class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
+    override fun render(lines: Int): String = counterReport
+}

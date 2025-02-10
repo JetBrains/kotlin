@@ -689,7 +689,7 @@ abstract class IncrementalCompilerRunner<
 
     protected fun reportPerformanceData(defaultPerformanceManager: PerformanceManager) {
         val lines = defaultPerformanceManager.lines.takeIf { it > 0 }
-        defaultPerformanceManager.getMeasurementResults().forEach {
+        defaultPerformanceManager.measurements.forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
                 is CodeAnalysisMeasurement -> {
