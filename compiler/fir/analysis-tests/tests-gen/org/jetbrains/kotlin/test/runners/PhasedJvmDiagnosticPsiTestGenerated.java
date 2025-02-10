@@ -26001,6 +26001,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("anonymousFunctionWithModifiersInStatementPosition.kt")
+      public void testAnonymousFunctionWithModifiersInStatementPosition() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/anonymousFunctionWithModifiersInStatementPosition.kt");
+      }
+
+      @Test
       @TestMetadata("defaultModifier.kt")
       public void testDefaultModifier() {
         runTest("compiler/testData/diagnostics/tests/modifiers/defaultModifier.kt");
@@ -51741,6 +51747,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics")
       @TestDataPath("$PROJECT_ROOT")
       public class Diagnostics {
+        @Test
+        @TestMetadata("anonymousFunctionsWithModifiers.kt")
+        public void testAnonymousFunctionsWithModifiers() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/anonymousFunctionsWithModifiers.kt");
+        }
+
         @Test
         @TestMetadata("contextParameterSyntaxWithReceiversLanguageFeature.kt")
         public void testContextParameterSyntaxWithReceiversLanguageFeature() {

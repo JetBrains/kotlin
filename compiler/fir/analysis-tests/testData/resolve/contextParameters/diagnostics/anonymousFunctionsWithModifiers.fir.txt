@@ -1,0 +1,31 @@
+FILE: anonymousFunctionsWithModifiers.kt
+    public final val t: R|@ContextFunctionTypeParams (kotlin/Function0<kotlin/Unit>) -> kotlin/Unit| = context(a: R|() -> kotlin/Unit|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/runNotInlined|(R|<local>/a|)
+    }
+
+        public get(): R|@ContextFunctionTypeParams (kotlin/Function0<kotlin/Unit>) -> kotlin/Unit|
+    public final fun runNotInlined(a: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final val t2: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit| = context(a: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|
+    public final val t3: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit| = context(a: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|
+    public final val t4: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit| = context(a: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|
+    public final val t5: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit| = context(a: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|
+    public final fun foo(f: R|suspend (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun bar(): R|kotlin/Unit| {
+        R|/foo|(context(s: R|kotlin/String|) suspend fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+    }
