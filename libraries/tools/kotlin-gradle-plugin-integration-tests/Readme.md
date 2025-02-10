@@ -28,7 +28,6 @@ Currently, Kotlin Native from master involves three configurations: `kgpMppTests
 Depending on your development environment, there are a few different ways you can run this.
 * **On Local Environment** In the case of Local Environment builds, you have two options, which you can add in your `local.properties` file:  
   * `kotlin.native.enabled=true` - this property adds building Kotlin Native full bundle step before Integration Tests, then this bundle will be used in the Integration Tests.
-  * `kotlin.native.local.distribution.for.tests.enabled=false` - include this line if you need to disable running Integration Tests with Kotlin/Native from master, even when `kotlin.native.enabled` is set to true.
 * **On TeamCity** In the case of TeamCity builds, no extra setting is necessary. The mentioned configurations depend on the `full bundle`, which stores its artifacts in the `-DkonanDataDirForIntegrationTests` directory.
 Also, you can specify the konan directory for test by providing `-DkonanDataDirForIntegrationTests`, for example:
 ```bash
