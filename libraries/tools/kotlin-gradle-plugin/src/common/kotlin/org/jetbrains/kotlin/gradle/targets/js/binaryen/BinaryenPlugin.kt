@@ -25,10 +25,10 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
     companion object {
         const val TASKS_GROUP_NAME: String = org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin.TASKS_GROUP_NAME
 
-        fun apply(rootProject: Project): org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExtension =
+        internal fun apply(rootProject: Project): org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExtension =
             org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin.apply(rootProject)
 
-        val Project.kotlinBinaryenExtension: org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExtension
+        internal val Project.kotlinBinaryenExtension: org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExtension
             get() = with(org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin.Companion) {
                 this@kotlinBinaryenExtension.kotlinBinaryenExtension
             }
