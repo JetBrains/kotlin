@@ -1,0 +1,25 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            this<R|Foo|>(<Unresolved name: param>#)
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            this<R|Foo|>(<Unresolved name: param>#)
+        }
+
+    }

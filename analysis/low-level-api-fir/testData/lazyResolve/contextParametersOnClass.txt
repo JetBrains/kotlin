@@ -1,0 +1,19 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnClass.kt
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] contextParametersOnClass.kt
+    context([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
