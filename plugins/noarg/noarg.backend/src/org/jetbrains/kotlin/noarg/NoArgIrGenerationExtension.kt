@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -96,6 +97,10 @@ private class NoArgIrTransformer(
         toIrBasedDescriptor().hasSpecialAnnotation(null)
 
     // Returns true if this constructor is callable with no arguments by JVM rules, i.e. will have descriptor `()V`.
-    private fun IrConstructor.isZeroParameterConstructor(): Boolean =
-        valueParameters.all { it.defaultValue != null } && (valueParameters.isEmpty() || isPrimary || hasAnnotation(JVM_OVERLOADS_FQ_NAME))
+    private fun IrConstructor.isZeroParameterConstructor(): Boolean {
+        val valueParameters = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+        return valueParameters.all { it.defaultValue != null } && (valueParameters.isEmpty() || isPrimary || hasAnnotation(
+            JVM_OVERLOADS_FQ_NAME
+        ))
+    }
 }
