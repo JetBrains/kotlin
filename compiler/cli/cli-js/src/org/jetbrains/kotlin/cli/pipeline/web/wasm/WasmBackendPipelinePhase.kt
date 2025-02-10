@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
@@ -146,7 +147,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             propertyLazyInitialization = propertyLazyInitialization,
         )
 
-        performanceManager?.notifyBackendGenerationStarted()
+        performanceManager?.notifyPhaseStarted(PhaseMeasurementType.BackendGeneration)
         val dceDumpNameCache = DceDumpNameCache()
         if (dce) {
             eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
@@ -179,7 +180,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )
 
-        performanceManager?.notifyBackendGenerationFinished()
+        performanceManager?.notifyPhaseFinished(PhaseMeasurementType.BackendGeneration)
 
         writeCompilationResult(
             result = res,
@@ -188,7 +189,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )
 
-        performanceManager?.notifyIRGenerationFinished()
+        performanceManager?.notifyPhaseFinished(PhaseMeasurementType.IrGeneration)
 
         return res
     }

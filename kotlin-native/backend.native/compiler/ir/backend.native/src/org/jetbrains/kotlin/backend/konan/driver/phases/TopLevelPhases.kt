@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -103,7 +104,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         fun NativeGenerationState.runEngineForLowerings(block: PhaseEngine<NativeGenerationState>.() -> Unit) {
             try {
                 newEngine(this) { generationStateEngine ->
-                    rootPerformanceManager.trackIRLowering {
+                    rootPerformanceManager.trackPhase(PhaseMeasurementType.IrLowering) {
                         generationStateEngine.block()
                     }
                 }
@@ -188,7 +189,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return
             }
             try {
-                fragment.performanceManager?.notifyIRGenerationStarted()
+                fragment.performanceManager?.notifyPhaseStarted(PhaseMeasurementType.IrGeneration)
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
@@ -212,7 +213,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } finally {
                 tempFiles.dispose()
-                fragment.performanceManager?.notifyIRGenerationFinished()
+                fragment.performanceManager?.notifyPhaseFinished(PhaseMeasurementType.IrGeneration)
             }
         }
 

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 internal abstract class AbstractFirMetadataSerializer(
@@ -48,7 +49,7 @@ internal abstract class AbstractFirMetadataSerializer(
 ) : AbstractMetadataSerializer<List<ModuleCompilerAnalyzedOutput>>(configuration, environment) {
     override fun analyze(): List<ModuleCompilerAnalyzedOutput>? {
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
-        performanceManager.notifyAnalysisStarted()
+        performanceManager.notifyPhaseStarted(PhaseMeasurementType.Analysis)
 
         val configuration = environment.configuration
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -155,7 +156,7 @@ internal abstract class AbstractFirMetadataSerializer(
         } else {
             outputs
         }.also {
-            performanceManager.notifyAnalysisFinished()
+            performanceManager.notifyPhaseFinished(PhaseMeasurementType.Analysis)
         }
     }
 

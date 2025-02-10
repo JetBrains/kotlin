@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 data class CommonAnalysisResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext)
@@ -34,13 +35,13 @@ internal fun runCommonAnalysisForSerialization(
 
     var analysisResultWithHasErrors: AnalysisResultWithHasErrors
     do {
-        performanceManager.notifyAnalysisStarted()
+        performanceManager.notifyPhaseStarted(PhaseMeasurementType.Analysis)
         analysisResultWithHasErrors = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
         val result = analysisResultWithHasErrors.result
         if (result is AnalysisResult.RetryWithAdditionalRoots) {
             environment.addKotlinSourceRoots(result.additionalKotlinRoots)
         }
-        performanceManager.notifyAnalysisFinished()
+        performanceManager.notifyPhaseFinished(PhaseMeasurementType.Analysis)
     } while (result is AnalysisResult.RetryWithAdditionalRoots)
 
     val analysisResult = analysisResultWithHasErrors.result

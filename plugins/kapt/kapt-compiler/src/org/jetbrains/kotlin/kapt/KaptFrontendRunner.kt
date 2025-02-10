@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 
 @OptIn(LegacyK2CliPipeline::class)
 fun runFrontendForKapt(
@@ -65,7 +66,7 @@ private fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
     ignoreErrors: Boolean = false,
 ): FirResult? {
     val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-    performanceManager?.notifyAnalysisStarted()
+    performanceManager?.notifyPhaseStarted(PhaseMeasurementType.Analysis)
 
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
@@ -99,6 +100,6 @@ private fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
 
-    performanceManager?.notifyAnalysisFinished()
+    performanceManager?.notifyPhaseFinished(PhaseMeasurementType.Analysis)
     return runUnless(!ignoreErrors && (syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors)) { FirResult(outputs) }
 }

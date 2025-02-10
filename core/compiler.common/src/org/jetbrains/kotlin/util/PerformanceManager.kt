@@ -103,43 +103,7 @@ abstract class PerformanceManager(private val presentableName: String) {
         this.lines = this.lines?.plus(lines) ?: lines
     }
 
-    open fun notifyCompilerInitialized() {
-        notifyPhaseFinished(PhaseMeasurementType.Initialization)
-    }
-
-    open fun notifyAnalysisStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.Analysis)
-    }
-
-    open fun notifyAnalysisFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.Analysis)
-    }
-
-    open fun notifyIRGenerationStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.IrGeneration)
-    }
-
-    open fun notifyIRGenerationFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.IrGeneration)
-    }
-
-    open fun notifyIRLoweringStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.IrLowering)
-    }
-
-    open fun notifyIRLoweringFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.IrLowering)
-    }
-
-    open fun notifyBackendGenerationStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.BackendGeneration)
-    }
-
-    open fun notifyBackendGenerationFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.BackendGeneration)
-    }
-
-    private fun notifyPhaseStarted(newPhaseType: PhaseMeasurementType) {
+    fun notifyPhaseStarted(newPhaseType: PhaseMeasurementType) {
         if (!isEnabled) return
 
         assert(phaseStartNanos == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
@@ -149,7 +113,7 @@ abstract class PerformanceManager(private val presentableName: String) {
         currentPhaseType = newPhaseType
     }
 
-    private fun notifyPhaseFinished(phaseType: PhaseMeasurementType) {
+    fun notifyPhaseFinished(phaseType: PhaseMeasurementType) {
         if (!isEnabled) return
 
         ensureNotFinalized()

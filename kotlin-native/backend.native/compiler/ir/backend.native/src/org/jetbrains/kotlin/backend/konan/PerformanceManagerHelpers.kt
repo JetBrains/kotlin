@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 
 class K2NativeCompilerPerformanceManager : PerformanceManager("Kotlin to Native Compiler") {
 
@@ -45,38 +46,11 @@ var CompilerConfiguration.performanceManager: PerformanceManager?
         this.putIfNotNull(CLIConfigurationKeys.PERF_MANAGER, v)
     }
 
-internal inline fun <T> PerformanceManager?.trackAnalysis(fn: () -> T): T {
-    this?.notifyAnalysisStarted()
+internal inline fun <T> PerformanceManager?.trackPhase(phase: PhaseMeasurementType, fn: () -> T): T {
+    this?.notifyPhaseStarted(phase)
     try {
         return fn()
     } finally {
-        this?.notifyAnalysisFinished()
-    }
-}
-
-internal inline fun <T> PerformanceManager?.trackIRGeneration(fn: () -> T): T {
-    this?.notifyIRGenerationStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyIRGenerationFinished()
-    }
-}
-
-internal inline fun <T> PerformanceManager?.trackIRLowering(fn: () -> T): T {
-    this?.notifyIRLoweringStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyIRLoweringFinished()
-    }
-}
-
-internal inline fun <T> PerformanceManager?.trackBackendGeneration(fn: () -> T): T {
-    this?.notifyBackendGenerationStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyBackendGenerationFinished()
+        this?.notifyPhaseFinished(phase)
     }
 }
