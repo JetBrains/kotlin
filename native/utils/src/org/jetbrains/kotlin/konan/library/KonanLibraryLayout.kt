@@ -37,16 +37,8 @@ interface TargetedKotlinLibraryLayout : KotlinLibraryLayout {
 }
 
 interface BitcodeKotlinLibraryLayout : TargetedKotlinLibraryLayout, KotlinLibraryLayout {
-    val kotlinDir
-        get() = File(targetDir, "kotlin")
     val nativeDir
         get() = File(targetDir, "native")
-    // TODO: Experiment with separate bitcode files.
-    // Per package or per class.
-    val mainBitcodeFile
-        get() = File(kotlinDir, "program.kt.bc")
-    val mainBitcodeFileName
-        get() = mainBitcodeFile.path
 }
 
 interface KonanLibraryLayout : MetadataKotlinLibraryLayout, BitcodeKotlinLibraryLayout, IrKotlinLibraryLayout

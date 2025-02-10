@@ -56,6 +56,5 @@ open class ExtractingTargetedLibraryImpl(zipped: TargetedLibraryLayoutImpl) :
 class ExtractingBitcodeLibraryImpl(zipped: BitcodeLibraryLayoutImpl) :
     ExtractingTargetedLibraryImpl(zipped), BitcodeKotlinLibraryLayout {
 
-    override val kotlinDir: File by lazy { zipped.extractDir(zipped.kotlinDir) }
     override val nativeDir: File by lazy { zipped.extractDir(zipped.nativeDir) }
 }
