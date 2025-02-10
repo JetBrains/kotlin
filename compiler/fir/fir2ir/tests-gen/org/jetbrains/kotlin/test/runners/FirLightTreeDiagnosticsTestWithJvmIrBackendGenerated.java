@@ -673,6 +673,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("nullabilityClash.kt")
+      public void testNullabilityClash() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/nullabilityClash.kt");
+      }
+
+      @Test
       @TestMetadata("overridesBuiltinNoMagic.kt")
       public void testOverridesBuiltinNoMagic() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/overridesBuiltinNoMagic.kt");
