@@ -41,6 +41,8 @@ class SwitchableRestrictedAnalysisService : KotlinRestrictedAnalysisService {
 
     class RestrictedAnalysisNotAllowedException : RuntimeException("Restricted analysis is not allowed.")
 
+    override fun <R> runWithRestrictedDataAccess(action: () -> R): R = action()
+
     companion object {
         fun getInstance(project: Project): SwitchableRestrictedAnalysisService =
             KotlinRestrictedAnalysisService.getInstance(project) as SwitchableRestrictedAnalysisService
