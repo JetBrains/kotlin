@@ -83,8 +83,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP),
         )
 
-        configuration.perfManager?.notifyGenerationFinished()
-
         writeCompilationResult(
             result = res,
             dir = outputDir,
@@ -182,7 +180,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         )
 
         performanceManager?.notifyBackendGenerationFinished()
-        performanceManager?.notifyGenerationFinished()
 
         writeCompilationResult(
             result = res,

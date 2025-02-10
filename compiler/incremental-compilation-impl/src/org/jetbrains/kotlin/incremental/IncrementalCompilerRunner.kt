@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
-import org.jetbrains.kotlin.util.CodeGenerationMeasurement
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import org.jetbrains.kotlin.util.IrGenerationMeasurement
@@ -702,14 +701,6 @@ abstract class IncrementalCompilerRunner<
                         reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, lines * 1000 / it.milliseconds)
                     }
                 }
-                is CodeGenerationMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, it.milliseconds)
-                    lines?.apply {
-                        if (it.milliseconds > 0) {
-                            reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
-                        }
-                    }
-                }
                 is IrGenerationMeasurement -> {
                     reporter.addTimeMetricMs(GradleBuildTime.IR_GENERATION, it.milliseconds)
                 }
@@ -719,6 +710,13 @@ abstract class IncrementalCompilerRunner<
                 is BackendGenerationMeasurement -> {
                     reporter.addTimeMetricMs(GradleBuildTime.BACKEND_GENERATION, it.milliseconds)
                 }
+            }
+        }
+        val loweringAndBackendTimeMs = defaultPerformanceManager.getLoweringAndBackendTimeMs()
+        if (loweringAndBackendTimeMs > 0) {
+            reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, loweringAndBackendTimeMs)
+            if (lines != null) {
+                reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, lines * 1000 / loweringAndBackendTimeMs)
             }
         }
     }

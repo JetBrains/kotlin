@@ -134,7 +134,6 @@ fun compileIr(
     generateJsTests(context, allModules.last())
     performanceManager?.notifyIRGenerationFinished()
 
-    performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
     (irFactory.stageController as? WholeWorldStageController)?.let {
         lowerPreservingTags(allModules, context, it)

@@ -113,7 +113,6 @@ class Ir2JsTransformer private constructor(
             .generateJsCode(relativeRequirePath = true, outJsProgram = false)
             .also {
                 performanceManager?.notifyBackendGenerationFinished()
-                performanceManager?.notifyGenerationFinished()
             }
     }
 }
