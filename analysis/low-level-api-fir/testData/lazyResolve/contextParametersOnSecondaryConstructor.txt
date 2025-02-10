@@ -1,3 +1,171 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] contextParametersOnSecondaryConstructor.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(RAW_FIR)] param: Int)
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(RAW_FIR)] param: Int)
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] param: Int)
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final? [ResolvedTo(COMPANION_GENERATION)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(COMPANION_GENERATION)] param: Int)
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(SUPER_TYPES)] param: Int)
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(TYPES)] param: R|kotlin/Int|)
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(STATUS)] param: R|kotlin/Int|)
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|kotlin/Int|)
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|)
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|kotlin/Int|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(CONSTANT_EVALUATION)] param: R|kotlin/Int|)
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/Int|)
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_this<R|Foo|>
+        }
+
+    }
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contextParametersOnSecondaryConstructor.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {

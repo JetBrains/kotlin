@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,7 @@ internal fun declarationCanBeLazilyResolved(element: KtElement?, codeFragmentAwa
     is KtScript -> declarationCanBeLazilyResolved(element.parent as? KtFile, codeFragmentAware)
     is KtFile -> codeFragmentAware || element !is KtCodeFragment
     is KtDestructuringDeclarationEntry -> declarationCanBeLazilyResolved(element.parent as? KtDestructuringDeclaration, codeFragmentAware)
-    is KtParameter -> declarationCanBeLazilyResolved(element.ownerFunction, codeFragmentAware)
+    is KtParameter -> declarationCanBeLazilyResolved(element.ownerDeclaration, codeFragmentAware)
     is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtAnonymousInitializer -> {
         val parentToCheck = when (val parent = element.parent) {
             is KtClassOrObject, is KtFile -> parent

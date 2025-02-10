@@ -1,17 +1,16 @@
-@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
+@R|Anno|(LAZY_EXPRESSION)  kotlin/String
   context -> FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo
   anchor -> [FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextParameter.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    context([ResolvedTo(BODY_RESOLVE)] parameter: R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String|)
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-    }
+    context([ResolvedTo(TYPES)] parameter: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|)
+    public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

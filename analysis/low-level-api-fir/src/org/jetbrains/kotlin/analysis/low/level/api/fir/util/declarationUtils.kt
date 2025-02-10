@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -142,16 +142,26 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         }
 
         is KtParameter -> {
-            val ownerFunction = ownerFunction ?: errorWithFirSpecificEntries(
-                "Containing function should be not null for KtParameter",
+            val ownerDeclaration = ownerDeclaration ?: errorWithFirSpecificEntries(
+                "Containing declaration should be not null for ${KtParameter::class.simpleName}",
                 psi = this,
             )
 
-            val firFunctionDeclaration = ownerFunction.findSourceNonLocalFirDeclarationByProvider(
+            val firDeclaration = ownerDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 firDeclarationProvider,
-            ) as? FirFunction ?: return null
+            ) ?: return null
 
-            firFunctionDeclaration.valueParameters[parameterIndex()]
+            val parameters = if (isContextParameter) {
+                when (firDeclaration) {
+                    is FirRegularClass -> firDeclaration.contextParameters
+                    is FirCallableDeclaration -> firDeclaration.contextParameters
+                    else -> null
+                }
+            } else {
+                (firDeclaration as? FirFunction)?.valueParameters
+            }
+
+            parameters?.get(parameterIndex())
         }
 
         is KtTypeParameter -> {

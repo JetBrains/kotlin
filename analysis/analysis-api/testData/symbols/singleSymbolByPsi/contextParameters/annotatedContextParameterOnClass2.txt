@@ -26,6 +26,6 @@ KaContextParameterSymbol:
     type: @R|Anno|()  kotlin/String
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(annotatedContextParameterOnClass2.kt)
-  getContainingJvmClassName: Foo
+  getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

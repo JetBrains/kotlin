@@ -115,15 +115,27 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
     }
 
     private fun findParameter(param: KtParameter): FirDeclaration {
-        val ownerFunction = param.ownerFunction ?: errorWithFirSpecificEntries("Unsupported compiled parameter", psi = param)
-        val firDeclaration = findNonLocalDeclaration(ownerFunction)
-        val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
-            "No fir function found by ktFunction",
-            psi = ownerFunction,
-            fir = firDeclaration
-        )
-        return firFunction.valueParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
-            ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
+        val ownerDeclaration = param.ownerDeclaration ?: errorWithFirSpecificEntries("Unsupported compiled parameter", psi = param)
+        val firDeclaration = findNonLocalDeclaration(ownerDeclaration)
+        return if (param.isContextParameter) {
+            val firCallable = firDeclaration as? FirCallableDeclaration ?: errorWithFirSpecificEntries(
+                "${FirCallableDeclaration::class.simpleName} expected but ${firDeclaration::class.simpleName} found",
+                psi = ownerDeclaration,
+                fir = firDeclaration,
+            )
+
+            firCallable.contextParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
+                ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firCallable)
+        } else {
+            val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
+                "${FirFunction::class.simpleName} expected but ${firDeclaration::class.simpleName} found",
+                psi = ownerDeclaration,
+                fir = firDeclaration,
+            )
+
+            firFunction.valueParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
+                ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
+        }
     }
 
     private fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {

@@ -23,6 +23,6 @@ KaContextParameterSymbol:
     type: kotlin/collections/List<kotlin/Int>
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextParameterOnClass.kt)
-  getContainingJvmClassName: Foo
+  getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

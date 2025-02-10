@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -183,11 +183,12 @@ internal class KaFirExpressionTypeProvider(
         get() = withValidityAssertion {
             inferReturnTypeByPsi()?.let { return it }
 
-            val firDeclaration = if (this is KtParameter && ownerFunction == null) {
+            val firDeclaration = if (this is KtParameter && ownerDeclaration == null) {
                 getOrBuildFir(firResolveSession)
             } else {
                 resolveToFirSymbol(firResolveSession, FirResolvePhase.TYPES).fir
             }
+
             return when (firDeclaration) {
                 is FirCallableDeclaration -> firDeclaration.symbol.resolvedReturnType.asKtType()
                 is FirFunctionTypeParameter -> firDeclaration.returnTypeRef.coneType.asKtType()
