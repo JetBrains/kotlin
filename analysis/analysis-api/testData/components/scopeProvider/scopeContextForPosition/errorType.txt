@@ -1,9 +1,12 @@
 element: e
-implicit receivers:
-  type: KaErrorType:
-    annotations: []
-    type: ERROR_TYPE
-  owner symbol: KaFirAnonymousFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaErrorType:
+      annotations: []
+      type: ERROR_TYPE
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): ERROR CLASS: Unresolved name: e
 
 scopes:
   LocalScope, index = 0

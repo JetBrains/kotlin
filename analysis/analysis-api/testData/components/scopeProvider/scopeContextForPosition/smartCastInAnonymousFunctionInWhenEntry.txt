@@ -1,10 +1,13 @@
 element: e
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: A
-  owner symbol: KaFirNamedFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: A
+    ownerSymbol = KaNamedFunctionSymbol:
+      /test(<extension receiver>: kotlin.Any): kotlin.Function0<kotlin.Int>
 
 scopes:
   LocalScope, index = 0

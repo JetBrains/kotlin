@@ -1,18 +1,30 @@
 element: get() {
         val x = 1
     }
-implicit receivers:
-  type: kotlin.String
-  owner symbol: KaFirKotlinPropertyKtPropertyBasedSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = kotlin.String
+    ownerSymbol = KaKotlinPropertySymbol:
+      val foo: ERROR CLASS: Cannot infer variable type without initializer . getter . delegate
 
-  type: one.A
-  owner symbol: KaFirContextParameterSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = one.A
+    ownerSymbol = KaContextParameterSymbol:
+      A: one.A
 
-  type: kotlin.Int
-  owner symbol: KaFirContextParameterSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = kotlin.Int
+    ownerSymbol = KaContextParameterSymbol:
+      Int: kotlin.Int
 
-  type: one.B
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 3
+    type = one.B
+    ownerSymbol = KaNamedClassSymbol:
+      one/B
 
 scopes:
   TypeScope, index = 0
@@ -158,3 +170,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
+

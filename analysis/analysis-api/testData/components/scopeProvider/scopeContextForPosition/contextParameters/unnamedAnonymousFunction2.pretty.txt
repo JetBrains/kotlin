@@ -1,5 +1,5 @@
 element: _: String
-implicit receivers:
+implicit values:
 scopes:
   LocalScope, index = 1
     packages: 0
@@ -49,3 +49,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
+

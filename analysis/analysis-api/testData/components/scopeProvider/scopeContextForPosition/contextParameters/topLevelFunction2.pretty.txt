@@ -2,7 +2,7 @@ element: context(a: A, _: Int)
 fun foo(p: Boolean) {
     val x = 1
 }
-implicit receivers:
+implicit values:
 scopes:
   LocalScope, index = 1
     packages: 0
@@ -38,3 +38,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 7
+

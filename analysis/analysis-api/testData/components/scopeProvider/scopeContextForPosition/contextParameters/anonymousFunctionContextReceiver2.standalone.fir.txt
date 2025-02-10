@@ -1,10 +1,13 @@
 element: String
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/String
-  owner symbol: KaFirContextParameterSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    ownerSymbol = KaContextParameterSymbol:
+      String: kotlin.String
 
 scopes:
   TypeScope, index = 0

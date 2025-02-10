@@ -1,12 +1,15 @@
 element: get() {
             val x = 1
     }
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: one/B
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/B
+    ownerSymbol = KaNamedClassSymbol:
+      one/B
 
 scopes:
   LocalScope, index = 1
@@ -387,3 +390,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
+

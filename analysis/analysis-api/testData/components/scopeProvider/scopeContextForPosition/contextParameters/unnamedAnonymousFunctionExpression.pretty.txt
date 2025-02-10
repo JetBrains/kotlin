@@ -1,7 +1,7 @@
 element: context(_: String) fun(p: Int) {
         val d: Double = 1.0
     }
-implicit receivers:
+implicit values:
 scopes:
   LocalScope, index = 0
     packages: 0
@@ -45,3 +45,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 7
+

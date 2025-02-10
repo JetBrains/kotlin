@@ -1,7 +1,10 @@
 element: val x = 1
-implicit receivers:
-  type: one.B
-  owner symbol: KaFirNamedClassSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 3
+    type = one.B
+    ownerSymbol = KaNamedClassSymbol:
+      one/B
 
 scopes:
   LocalScope, index = 0
@@ -55,3 +58,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
+

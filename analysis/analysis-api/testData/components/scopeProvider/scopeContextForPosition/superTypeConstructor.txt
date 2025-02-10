@@ -1,5 +1,5 @@
 element: 10
-implicit receivers:
+implicit values:
 scopes:
   LocalScope, index = 0
     packages: 0

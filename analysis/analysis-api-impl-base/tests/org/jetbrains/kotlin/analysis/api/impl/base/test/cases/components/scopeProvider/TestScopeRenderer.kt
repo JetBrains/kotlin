@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
-import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
+import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
@@ -34,21 +35,39 @@ internal object TestScopeRenderer {
     ) {
         with(analysisSession) {
             with(printer) {
-                appendLine("implicit receivers:")
-
+                appendLine("implicit values:")
                 withIndent {
-                    for (implicitReceiver in scopeContext.implicitReceivers) {
-                        val type = implicitReceiver.type
-                        appendLine("type: ${renderType(type, printPretty)}")
-                        append("owner symbol: ").appendLine(implicitReceiver.ownerSymbol::class.simpleName)
-                        appendLine()
+                    printCollectionIfNotEmpty(scopeContext.implicitValues, separator = "\n\n", postfix = "\n\n") { implicitValue ->
+                        append(renderFrontendIndependentKClassNameOf(implicitValue))
+                        appendLine(':')
+                        withIndent {
+                            appendLine("${KaScopeImplicitValue::scopeIndexInTower.name} = ${implicitValue.scopeIndexInTower}")
+                            appendLine("${KaScopeImplicitValue::type.name} = ${renderType(implicitValue.type, printPretty)}")
+                            when (implicitValue) {
+                                is KaScopeImplicitArgumentValue -> {
+                                    appendSymbol(KaScopeImplicitArgumentValue::symbol.name, printer, implicitValue.symbol)
+                                }
+
+                                is KaScopeImplicitReceiverValue -> {
+                                    appendSymbol(KaScopeImplicitReceiverValue::ownerSymbol.name, printer, implicitValue.ownerSymbol)
+                                }
+                            }
+                        }
                     }
                 }
+
                 appendLine("scopes:")
                 withIndent {
                     renderScopeContext(scopeContext, printer, printPretty, fullyPrintScope)
                 }
             }
+        }
+    }
+
+    private fun KaSession.appendSymbol(propertyName: String, printer: PrettyPrinter, symbol: KaSymbol): Unit = with(printer) {
+        appendLine("$propertyName = ${renderFrontendIndependentKClassNameOf(symbol)}:")
+        withIndent {
+            append(stringRepresentation(symbol))
         }
     }
 

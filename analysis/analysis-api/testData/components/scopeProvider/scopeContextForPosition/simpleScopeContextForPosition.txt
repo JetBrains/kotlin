@@ -1,22 +1,31 @@
 element: e
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: A
-  owner symbol: KaFirAnonymousFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: A
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: B
-  owner symbol: KaFirAnonymousFunctionSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: B
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
 
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: C
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 11
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: C
+    ownerSymbol = KaNamedClassSymbol:
+      /C
 
 scopes:
   LocalScope, index = 0

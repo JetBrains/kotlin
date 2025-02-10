@@ -1,10 +1,13 @@
 element: val d: Double = 1.0
-implicit receivers:
-  type: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/String
-  owner symbol: KaFirContextParameterSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    ownerSymbol = KaContextParameterSymbol:
+      String: kotlin.String
 
 scopes:
   LocalScope, index = 0

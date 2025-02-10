@@ -238,7 +238,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaE
 	public abstract fun isDefinitelyNull (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaImplicitReceiver : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaImplicitReceiver : org/jetbrains/kotlin/analysis/api/components/KaScopeImplicitReceiverValue {
 	public abstract fun getOwnerSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;
 	public abstract fun getScopeIndexInTower ()I
 	public abstract fun getType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
@@ -278,7 +278,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaR
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaScopeContext : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
-	public abstract fun getImplicitReceivers ()Ljava/util/List;
+	public fun getImplicitReceivers ()Ljava/util/List;
 	public abstract fun getScopes ()Ljava/util/List;
 }
 

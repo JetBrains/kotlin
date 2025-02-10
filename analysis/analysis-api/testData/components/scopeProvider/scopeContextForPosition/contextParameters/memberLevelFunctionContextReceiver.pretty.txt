@@ -1,16 +1,28 @@
 element: val x = 1
-implicit receivers:
-  type: kotlin.String
-  owner symbol: KaFirNamedFunctionSymbol
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = kotlin.String
+    ownerSymbol = KaNamedFunctionSymbol:
+      one/B.foo(<extension receiver>: kotlin.String, <dispatch receiver>: one.B, p: kotlin.Boolean): kotlin.Unit
 
-  type: one.A
-  owner symbol: KaFirContextParameterSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = one.A
+    ownerSymbol = KaContextParameterSymbol:
+      A: one.A
 
-  type: kotlin.Int
-  owner symbol: KaFirContextParameterSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = kotlin.Int
+    ownerSymbol = KaContextParameterSymbol:
+      Int: kotlin.Int
 
-  type: one.B
-  owner symbol: KaFirNamedClassSymbol
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = one.B
+    ownerSymbol = KaNamedClassSymbol:
+      one/B
 
 scopes:
   LocalScope, index = 0
@@ -162,3 +174,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
+
