@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -42,8 +44,6 @@ private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
 
 class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
-        const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
-
         fun configureForSourceSet(project: Project, sourceSetName: String) {
             val discoveryConfiguration = project.configurations
                 .maybeCreateDependencyScope(getDiscoveryClasspathConfigurationName(sourceSetName)) {
@@ -90,9 +90,11 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             val discoveryResultsConfigurationName = getDiscoveryResultsConfigurationName(sourceSetName)
             val discoveryResultConfiguration = task.project.configurations.findByName(discoveryResultsConfigurationName)
             if (discoveryResultConfiguration == null) {
-                task.project.logger.warn(
-                    "$SCRIPTING_LOG_PREFIX ${task.project.path}.${task.name} - configuration not found:" +
-                            " $discoveryResultsConfigurationName, $MISCONFIGURATION_MESSAGE_SUFFIX"
+                task.project.reportDiagnostic(
+                    KotlinToolingDiagnostics.KotlinScriptingMisconfiguration(
+                        task.path,
+                        discoveryResultsConfigurationName,
+                    )
                 )
             } else {
                 task.scriptDefinitions.from(discoveryResultConfiguration)
