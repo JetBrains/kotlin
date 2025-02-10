@@ -29,7 +29,6 @@ class BitcodeWriterImpl(
     val bitcodeLayout = libraryLayout
 
     init {
-        bitcodeLayout.kotlinDir.mkdirs()
         bitcodeLayout.nativeDir.mkdirs()
     }
 
