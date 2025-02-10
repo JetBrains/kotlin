@@ -26,7 +26,7 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     
     embeddableTestRuntime(project(":kotlin-scripting-jvm-host"))
-    embeddableTestRuntime(kotlinTest("junit"))
+    allTestsRuntime(kotlinTest("junit"))
     embeddableTestRuntime(projectTests(":compiler:tests-common")) { isTransitive = false }
     embeddableTestRuntime(testSourceSet.output)
 }

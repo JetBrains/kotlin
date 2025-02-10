@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
+import kotlin.test.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.test.compileJavaFiles
@@ -15,8 +15,9 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 
-class FeaturesTest : TestCase() {
+class FeaturesTest {
 
+    @Test
     fun testSamWithReceiver() {
         withTempDir { tempDir ->
             runBlocking {
