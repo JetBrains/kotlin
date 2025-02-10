@@ -32,8 +32,8 @@ FILE: contextualAnonymousFunction.kt
             R|<local>/a|
         }
 
-        R|/runWithA|(context(<unused var>: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            <Unresolved name: a>#
+        R|/runWithA|(context(a: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/a|
         }
         )
     }

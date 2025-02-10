@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 
 annotation class Ann
@@ -13,5 +13,5 @@ val t2 = @Ann context(a: A) fun () { a }
 fun foo() {
     val t = context(a: A) fun () { a }
     val t2 = @Ann context(a: A) fun () { a }
-    runWithA(context(a: String) fun () { <!UNRESOLVED_REFERENCE!>a<!> })
+    runWithA(context(a: String) fun () { a })
 }
