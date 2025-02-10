@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -98,13 +99,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                     ir = function,
-                    parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters)
+                    parameters = function.nonDispatchParameters
                         .filter { it.shouldBeExported() }
-                        .memoryOptimizedMapIndexed { i, it ->
+                        .memoryOptimizedMap {
                             exportParameter(
                                 it,
-                                it.hasDefaultValue
-                                        || realOverrideTarget.valueParameters.getOrNull(i)?.hasDefaultValue == true
+                                it.hasDefaultValue || realOverrideTarget.parameters[it.indexInParameters].hasDefaultValue
                             )
                         }
                 )
@@ -114,9 +114,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
-        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) + constructor.valueParameters
         return ExportedConstructor(
-            parameters = allValueParameters
+            parameters = constructor.nonDispatchParameters
                 .filterNot { it.isBoxParameter }
                 .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue) },
             visibility = constructor.visibility.toExportedVisibility()
@@ -141,8 +140,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportProperty(property: IrProperty): ExportedDeclaration? {
         for (accessor in listOfNotNull(property.getter, property.setter)) {
-            // TODO: Report a frontend error
-            if (accessor.extensionReceiverParameter != null)
+            // Frontend will report an error on an attempt to export an extension property.
+            // Just to be safe, filter out such properties here as well.
+            if (accessor.parameters.any { it.kind == IrParameterKind.ExtensionReceiver })
                 return null
             if (accessor.isFakeOverride && !accessor.isAllowedFakeOverriddenDeclaration(context)) {
                 return null
@@ -698,8 +698,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
 
         // Workaround in case IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER is rewritten.
-        // TODO: Properly fix KT-41613
-        if (nameString.endsWith("\$") && function.valueParameters.any { "\$mask" in it.name.asString() }) {
+        // TODO: Remove this check KT-75095
+        if (nameString.endsWith("\$") && function.parameters.any { "\$mask" in it.name.asString() }) {
             return Exportability.NotNeeded
         }
 
