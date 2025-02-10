@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.ir.util.isExpect
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -47,15 +45,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
         }
     }
-
-    fun generateExport(modules: Iterable<IrModuleFragment>, moduleKind: ModuleKind = ModuleKind.PLAIN): ExportedModule =
-        ExportedModule(
-            context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-            moduleKind,
-            (context.externalPackageFragment.values + modules.flatMap { it.files }).memoryOptimizedFlatMap {
-                generateExport(it)
-            }
-        )
 
     private fun exportDeclaration(declaration: IrDeclaration): ExportedDeclaration? {
         val candidate = getExportCandidate(declaration) ?: return null
@@ -551,9 +540,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     private fun exportTypeArgument(type: IrTypeArgument): ExportedType {
         if (type is IrTypeProjection)
             return exportType(type.type)
-
-        if (type is IrType)
-            return exportType(type)
 
         return ExportedType.ErrorType("UnknownType ${type.render()}")
     }
