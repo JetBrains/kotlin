@@ -54,7 +54,7 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
 
                     if (expression.isSyntheticDelegatingReplacement) {
                         currentFunction?.boxParameter?.let {
-                            putValueArgument(valueArgumentsCount - 1, JsIrBuilder.buildGetValue(it.symbol))
+                            arguments[arguments.lastIndex] = JsIrBuilder.buildGetValue(it.symbol)
                         }
                         if (superQualifierSymbol == null) {
                             dispatchReceiver = JsIrBuilder.buildGetValue(factoryFunction.dispatchReceiverParameter!!.symbol)
