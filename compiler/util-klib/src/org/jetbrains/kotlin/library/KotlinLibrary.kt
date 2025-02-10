@@ -1,9 +1,17 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+
+val KLIB_LEGACY_METADATA_VERSION = MetadataVersion(1, 4, 1)
 
 /**
  * [org.jetbrains.kotlin.library.KotlinAbiVersion]
