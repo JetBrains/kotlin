@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
 
@@ -27,4 +28,13 @@ public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode
 public sealed class KotlinParameterOrigin : SirParameter.Origin {
     public class ValueParameter(public val parameter: KaValueParameterSymbol) : KotlinParameterOrigin()
     public class ReceiverParameter(public val parameter: KaReceiverParameterSymbol) : KotlinParameterOrigin()
+}
+
+/**
+ * Convenience accessor which provides direct access to [KaSymbol].
+ */
+public inline fun <reified T : KaSymbol> SirDeclaration.kotlinOriginOrNull(): T? {
+    val kotlinOrigin = origin as? KotlinSource
+        ?: return null
+    return kotlinOrigin.symbol as? T
 }
