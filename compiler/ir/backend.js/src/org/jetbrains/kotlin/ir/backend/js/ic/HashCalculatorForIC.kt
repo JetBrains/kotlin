@@ -115,7 +115,7 @@ private class HashCalculatorForIC(private val checkForClassStructuralChanges: Bo
             }
         }
         (symbol.owner as? IrFunction)?.let { irFunction ->
-            updateForEach(irFunction.valueParameters) { functionParam ->
+            updateForEach(irFunction.parameters) { functionParam ->
                 // symbol rendering doesn't print default params information
                 // it is important to understand if default params were added or removed
                 update(functionParam.defaultValue?.let { 1 } ?: 0)
