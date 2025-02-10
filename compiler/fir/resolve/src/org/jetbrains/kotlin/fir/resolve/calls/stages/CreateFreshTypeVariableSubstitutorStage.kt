@@ -181,7 +181,10 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     }
 
     private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) {
+        val languageVersionSettings = context.session.languageVersionSettings
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack) ||
+            languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)
+        ) {
             return false
         }
         return symbol.resolvedBounds.any {

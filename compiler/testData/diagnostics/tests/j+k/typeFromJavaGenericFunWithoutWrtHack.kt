@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN -ForbidTypePreservingFlexibilityWriteInferenceHack
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ForbidTypePreservingFlexibilityWriteInferenceHack
 
 // FILE: JavaWithGenericFun.java
 public class JavaWithGenericFun {
@@ -26,42 +26,42 @@ public class JavaBox<T> {
 
 // FILE: Test.kt
 fun geneticFunTest() {
-    takeAny(JavaWithGenericFun.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(JavaBox("")).a)
+    takeAny(JavaWithGenericFun.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(JavaBox("")).a)
     takeAny(JavaWithGenericFun.foo<String>(JavaBox("")).a)
     takeAny(JavaWithGenericFun.foo<String>(JavaBox(null)).a)
     takeAny(JavaWithGenericFun.foo<String?>(JavaBox(null)).a)
     takeAny(JavaWithGenericFun.foo<String?>(JavaBox("")).a)
 
-    takeAny(JavaWithGenericFun.foo2(JavaBox(1)).a)
-    takeAny(JavaWithGenericFun.foo2(JavaBox(null)).a)
-    takeAny(JavaWithGenericFun.foo2<Int>(JavaBox(1)).a)
-    takeAny(JavaWithGenericFun.foo2<Int?>(JavaBox(1)).a)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2(JavaBox(1)).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2(JavaBox(null)).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2<Int>(JavaBox(1)).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2<Int?>(JavaBox(1)).a<!>)
 
     takeString(JavaWithGenericFun.foo3(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo3<String>(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo3<String?>(JavaBox("")).a)
-    takeString(JavaWithGenericFun.foo3(JavaBox(null)).a)
+    takeString(<!TYPE_MISMATCH!>JavaWithGenericFun.foo3(JavaBox(null)).a<!>)
     takeString(JavaWithGenericFun.foo3<String>(JavaBox(null)).a)
     takeString(JavaWithGenericFun.foo3<String?>(JavaBox(null)).a)
 
     takeString(JavaWithGenericFun.foo4(JavaBox(JavaBox(""))).a.a)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(""))).a.a)
     takeString(JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(""))).a.a)
-    takeString(JavaWithGenericFun.foo4(JavaBox(JavaBox(null))).a.a)
+    takeString(<!TYPE_MISMATCH!>JavaWithGenericFun.foo4(JavaBox(JavaBox(null))).a.a<!>)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(null))).a.a)
     takeString(JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(null))).a.a)
 
-    takeAny(JavaWithGenericFun.foo5(JavaBox(JavaBox(""))).a)
-    takeAny(JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(""))).a)
-    takeAny(JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(""))).a)
-    takeAny(JavaWithGenericFun.foo5(JavaBox(JavaBox(null))).a)
-    takeAny(JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(null))).a)
-    takeAny(JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(null))).a)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5(JavaBox(JavaBox(""))).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(""))).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(""))).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5(JavaBox(JavaBox(null))).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(null))).a<!>)
+    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(null))).a<!>)
 
     takeString(JavaWithGenericFun.foo6(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo6<String?>(JavaBox("")).a)
-    takeString(JavaWithGenericFun.foo6(JavaBox(null)).a)
+    takeString(<!TYPE_MISMATCH!>JavaWithGenericFun.foo6(JavaBox(null)).a<!>)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox(null)).a)
     takeString(JavaWithGenericFun.foo6<String?>(JavaBox(null)).a)
 }

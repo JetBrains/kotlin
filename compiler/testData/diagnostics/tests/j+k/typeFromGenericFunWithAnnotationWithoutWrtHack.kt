@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -ForbidTypePreservingFlexibilityWriteInferenceHack
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ForbidTypePreservingFlexibilityWriteInferenceHack
 
 // FILE: GenericFunWithAnnotation.java
 import org.jetbrains.annotations.NotNull;
@@ -59,74 +59,74 @@ public class JavaBox<T> {
 // FILE: Test.kt
 fun genericFunWithAnnotations(x: GenericFunWithAnnotation) {
     x.foo("")
-    x.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     takeString(x.bar())
 
     x.foo2("")
     x.foo2(null)
-    takeString(<!ARGUMENT_TYPE_MISMATCH!>x.<!CANNOT_INFER_PARAMETER_TYPE!>bar2<!>()<!>)
+    takeString(<!TYPE_MISMATCH!>x.bar2()<!>)
 
-    x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo3<!>(null)
+    x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo3<!>(null)
     x.foo3<String>(null)
     x.foo3<String?>(null)
     x.foo3(JavaBox(null))
     x.foo3<String>(JavaBox(null))
     x.foo3<String?>(JavaBox(null))
     x.foo3(JavaBox(""))
-    takeString(x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar3<!>()?.a)
+    takeString(x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar3<!>()?.<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)
 
     x.foo4(JavaBox(null))
     x.foo4<String>(JavaBox(null))
     x.foo4<String?>(JavaBox(null))
-    x.<!CANNOT_INFER_PARAMETER_TYPE!>foo4<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo4<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo4<String>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo4<String?>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo4(JavaBox(""))
-    takeString(x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!>().a)
+    takeString(x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar4<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)
 
-    x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo5<!>(null)
+    x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo5<!>(null)
     x.foo5<String>(null)
     x.foo5<String?>(null)
     x.foo5(JavaBox(null))
     x.foo5(JavaBox(""))
     x.foo5<String>(JavaBox(null))
     x.foo5<String?>(JavaBox(null))
-    takeString(x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar5<!>()?.a)
+    takeString(x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar5<!>()?.<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)
 
-    x.foo6(JavaBox(null))
+    x.foo6(<!TYPE_MISMATCH!>JavaBox(null)<!>)
     x.foo6<String>(JavaBox(null))
     x.foo6<String?>(JavaBox(null))
-    x.<!CANNOT_INFER_PARAMETER_TYPE!>foo6<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo6<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo6<String>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo6<String?>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.foo6(JavaBox(""))
-    takeString(x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar6<!>().a)
+    takeString(x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar6<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)
 
     x.foo7("")
-    x.<!CANNOT_INFER_PARAMETER_TYPE!>foo7<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.foo7(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     takeString(x.bar7())
 
     x.foo8("")
     x.foo8(null)
     takeString(x.bar8())
 
-    x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo9<!>(null)
+    x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo9<!>(null)
     x.foo9<String>(null)
     x.foo9<String?>(null)
     x.foo9(JavaBox(null))
-    x.foo9<String>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
+    x.foo9<String>(<!TYPE_MISMATCH!>JavaBox(null)<!>)
     x.foo9<String?>(JavaBox(null))
     x.foo9(JavaBox(""))
-    takeString(x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar9<!>()?.a)
+    takeString(x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar9<!>()?.<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)
 
-    x.<!CANNOT_INFER_PARAMETER_TYPE!>foo10<!>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
-    x.foo10<String>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
-    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
-    x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo10<!>(null)
+    x.foo10(<!TYPE_MISMATCH!>JavaBox(null)<!>)
+    x.foo10<String>(<!TYPE_MISMATCH, TYPE_MISMATCH!>JavaBox(null)<!>)
+    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(<!TYPE_MISMATCH, TYPE_MISMATCH!>JavaBox(null)<!>)
+    x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo10<!>(null)
     x.foo10<String>(null)
-    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
+    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(null)
     x.foo10(JavaBox(""))
-    takeString(x.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar10<!>().a)
+    takeString(x.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar10<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)
 }
 
 fun takeString(a: String){}
