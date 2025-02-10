@@ -100,7 +100,6 @@ fun compileToLoweredIr(
     }
     performanceManager?.notifyIRGenerationFinished()
 
-    performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
 
     lowerPreservingTags(

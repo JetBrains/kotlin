@@ -153,7 +153,6 @@ fun generateCodeFromIr(
     )
 
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
     val backendInput = JvmIrCodegenFactory.BackendInput(
         input.irModuleFragment,
@@ -177,7 +176,6 @@ fun generateCodeFromIr(
     codegenFactory.invokeCodegen(codegenInput)
 
     performanceManager?.notifyBackendGenerationFinished()
-    performanceManager?.notifyGenerationFinished()
 
     return ModuleCompilerOutput(generationState, builderFactory)
 }

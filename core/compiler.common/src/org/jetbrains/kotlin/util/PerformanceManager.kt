@@ -37,7 +37,6 @@ abstract class PerformanceManager(private val presentableName: String) {
     private var isK2: Boolean = true
     private var initStartNanos = currentTime()
     private var analysisStart: Long = 0
-    private var generationStart: Long = 0
 
     private var startGCData = mutableMapOf<String, GCData>()
 
@@ -46,13 +45,18 @@ abstract class PerformanceManager(private val presentableName: String) {
     private var backendGenerationStart: Long = 0
 
     var targetDescription: String? = null
-    protected var files: Int? = null
-    protected var lines: Int? = null
+    var files: Int? = null
+        protected set
+    var lines: Int? = null
+        protected set
 
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
     fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + counterMeasurements.values
+
+    fun getLoweringAndBackendTimeMs(): Long = (measurements.filterIsInstance<IrLoweringMeasurement>().sumOf { it.milliseconds }) +
+            (measurements.filterIsInstance<BackendGenerationMeasurement>().sumOf { it.milliseconds })
 
     fun addMeasurementResults(newMeasurements: List<PerformanceMeasurement>) {
         measurements += newMeasurements
@@ -101,15 +105,6 @@ abstract class PerformanceManager(private val presentableName: String) {
     open fun notifyAnalysisFinished() {
         val time = currentTime() - analysisStart
         measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
-    }
-
-    open fun notifyGenerationStarted() {
-        generationStart = currentTime()
-    }
-
-    open fun notifyGenerationFinished() {
-        val time = currentTime() - generationStart
-        measurements += CodeGenerationMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyIRGenerationStarted() {
@@ -214,7 +209,6 @@ abstract class PerformanceManager(private val presentableName: String) {
         val relevantMeasurements = getMeasurementResults().filter {
             it is CompilerInitializationMeasurement ||
                     it is CodeAnalysisMeasurement ||
-                    it is CodeGenerationMeasurement ||
                     it is PerformanceCounterMeasurement ||
                     it is FindJavaClassMeasurement ||
                     it is BinaryClassFromKotlinFileMeasurement

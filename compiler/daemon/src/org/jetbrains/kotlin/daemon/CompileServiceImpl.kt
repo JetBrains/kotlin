@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
-import org.jetbrains.kotlin.util.CodeGenerationMeasurement
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import java.io.File
 import java.rmi.NoSuchObjectException
@@ -280,7 +279,9 @@ abstract class CompileServiceImplBase(
 
     protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
         val performanceMetrics = ArrayList<BuildMetricsValue>()
-        compiler.defaultPerformanceManager.getMeasurementResults().forEach {
+        val lines = compiler.defaultPerformanceManager.lines
+        val performanceManager = compiler.defaultPerformanceManager
+        performanceManager.getMeasurementResults().forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))
@@ -299,22 +300,21 @@ abstract class CompileServiceImplBase(
                         }
                     }
                 }
-                is CodeGenerationMeasurement -> {
-                    performanceMetrics.add(
-                        BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
+            }
+        }
+        val loweringAndBackendTimeMs = performanceManager.getLoweringAndBackendTimeMs()
+        performanceMetrics.add(
+            BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, loweringAndBackendTimeMs)
+        )
+        lines?.apply {
+            performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
+            if (loweringAndBackendTimeMs > 0) {
+                performanceMetrics.add(
+                    BuildMetricsValue(
+                        CompilationPerformanceMetrics.CODE_GENERATION_LPS,
+                        this * 1000 / loweringAndBackendTimeMs
                     )
-                    it.lines?.apply {
-                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
-                        if (it.milliseconds > 0) {
-                            performanceMetrics.add(
-                                BuildMetricsValue(
-                                    CompilationPerformanceMetrics.CODE_GENERATION_LPS,
-                                    this * 1000 / it.milliseconds
-                                )
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
         return performanceMetrics
