@@ -385,6 +385,7 @@ enum class LanguageFeature(
     ReportExposedTypeForInternalTypeParameterBounds(KOTLIN_2_3, kind = BUG_FIX), // KTLC-275
     EnableDfaWarningsInK2(KOTLIN_2_3, kind = OTHER), // KT-50965
     AllowEagerSupertypeAccessibilityChecks(KOTLIN_2_3, kind = OTHER), // KT-73611
+    ForbidTypePreservingFlexibilityWriteInferenceHack(KOTLIN_2_3, kind = OTHER), // KT-71718
 
     // End of 2.* language features --------------------------------------------------
 
