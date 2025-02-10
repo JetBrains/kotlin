@@ -40,7 +40,7 @@ import javax.inject.Inject
 abstract class KaptWithoutKotlincTask @Inject constructor(
     objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
-    private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor,
 ) : KaptTask(objectFactory), Kapt {
 
     @get:Input
@@ -80,12 +80,21 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         kaptPluginOptions.toSingleCompilerPluginOptions().subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID]?.forEach {
             result[it.key] = it.value
         }
-        annotationProcessorOptionProviders.forEach { providers ->
-            (providers as List<*>).forEach { provider ->
-                (provider as CommandLineArgumentProvider).asArguments().forEach { argument ->
-                    result[argument.removePrefix("-A")] = ""
-                }
+        fun addArgumentsFromProvider(provider: CommandLineArgumentProvider) {
+            for (argument in provider.asArguments()) {
+                result[argument.removePrefix("-A")] = ""
             }
+        }
+
+        @Suppress("DEPRECATION")
+        val deprecatedProviders = annotationProcessorOptionProviders
+        for (providers in deprecatedProviders) {
+            for (provider in (providers as List<*>)) {
+                addArgumentsFromProvider(provider as CommandLineArgumentProvider)
+            }
+        }
+        for (provider in annotationProcessorOptionsProviders.get()) {
+            addArgumentsFromProvider(provider)
         }
 
         return result

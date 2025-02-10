@@ -13,6 +13,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.util.PatternFilterable
+import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -281,8 +282,18 @@ interface BaseKapt : Task,
      *
      * Accepts a [List] of [org.gradle.process.CommandLineArgumentProvider]s.
      */
-    @get:Nested
+    @get:Internal
+    @Deprecated(
+        "Use annotationProcessorOptionsProviders instead. Scheduled for removal in Kotlin 2.4.",
+        ReplaceWith("annotationProcessorOptionsProviders"),
+    )
     val annotationProcessorOptionProviders: MutableList<Any>
+
+    /**
+     * Represents a list of annotation processor option providers.
+     */
+    @get:Nested
+    val annotationProcessorOptionsProviders: ListProperty<CommandLineArgumentProvider>
 
     /**
      * The directory where the generated related [KaptGenerateStubs] task stub can be found.

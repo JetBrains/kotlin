@@ -317,12 +317,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             task.kaptClasspathConfigurationNames.value(kaptClasspathConfigurations.map { it.name }).disallowChanges()
 
             KaptWithAndroid.androidVariantData(this)?.annotationProcessorOptionProviders?.let {
-                task.annotationProcessorOptionProviders.add(it)
+                task.annotationProcessorOptionsProviders.addAll(it)
             }
 
             val pluginOptions: Provider<CompilerPluginOptions> = getDslKaptApOptions().toCompilerPluginOptions()
 
             task.kaptPluginOptions.add(pluginOptions)
+            task.annotationProcessorOptionsProviders.finalizeValueOnRead()
         }
 
         return project.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
