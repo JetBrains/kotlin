@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,17 +11,19 @@ import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameterList
 
 internal class SymbolLightParameterList(
     private val parent: SymbolLightMethodBase,
-    private val callableWithReceiverSymbolPointer: KaSymbolPointer<KaCallableSymbol>? = null,
+    private val correspondingCallablePointer: KaSymbolPointer<KaCallableSymbol>? = null,
     parameterPopulator: (LightParameterListBuilder) -> Unit = {},
 ) : KtLightElement<KtParameterList, PsiParameterList>,
     // With this, a parent chain is properly built: from SymbolLightParameter through SymbolLightParameterList to SymbolLightMethod
@@ -35,7 +37,13 @@ internal class SymbolLightParameterList(
     private val clsDelegate: PsiParameterList by lazyPub {
         val builder = LightParameterListBuilder(manager, language)
 
-        callableWithReceiverSymbolPointer?.let {
+        correspondingCallablePointer?.withSymbol(parent.ktModule) { callable ->
+            for (parameterSymbol in callable.contextParameters) {
+                builder.addParameter(SymbolLightContextParameter(this, parameterSymbol, parent))
+            }
+        }
+
+        correspondingCallablePointer?.let {
             SymbolLightParameterForReceiver.tryGet(it, parent)?.let { receiver ->
                 builder.addParameter(receiver)
             }
