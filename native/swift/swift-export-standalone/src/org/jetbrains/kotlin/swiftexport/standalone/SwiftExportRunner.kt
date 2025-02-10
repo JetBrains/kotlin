@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.name.FqName
@@ -13,11 +14,9 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.builder.buildModule
-import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
-import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kotlinOriginOrNull
 import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -210,34 +209,36 @@ public fun runSwiftExport(
 }
 
 private fun translateModule(module: InputModule, dependencies: Set<InputModule>): TranslationResult {
-    val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider()
-    val buildResult = createModuleWithScopeProviderFromBinary(module, dependencies)
-        .initializeSirModule(module.config, moduleProvider)
+    val moduleWithScopeProvider = createModuleWithScopeProviderFromBinary(module, dependencies)
+    // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
+    // outside of the session they were created, we create KaSession here.
+    return analyze(moduleWithScopeProvider.useSiteModule) {
+        val buildResult = initializeSirModule(moduleWithScopeProvider, module.config, SirOneToOneModuleProvider())
 
-    // Assume that parts of the KotlinRuntimeSupport module are used.
-    // It might not be the case, but precise tracking seems like an overkill at the moment.
-    buildResult.module.updateImport(SirImport(module.config.runtimeSupportModuleName))
+        // Assume that parts of the KotlinRuntimeSupport module are used.
+        // It might not be the case, but precise tracking seems like an overkill at the moment.
+        buildResult.module.updateImport(SirImport(module.config.runtimeSupportModuleName))
 
-    // KT-68253: bridge generation could be better
-    val bridgeRequests = buildBridgeRequests(module.config.bridgeGenerator, buildResult.module)
-    if (bridgeRequests.isNotEmpty()) {
-        buildResult.module.updateImport(
-            SirImport(
-                moduleName = module.bridgesModuleName,
-                mode = SirImport.Mode.ImplementationOnly
+        // KT-68253: bridge generation could be better
+        val bridgeRequests = buildBridgeRequests(module.config.bridgeGenerator, buildResult.module)
+        if (bridgeRequests.isNotEmpty()) {
+            buildResult.module.updateImport(
+                SirImport(
+                    moduleName = module.bridgesModuleName,
+                    mode = SirImport.Mode.ImplementationOnly
+                )
             )
+        }
+
+        val bridges = generateBridgeSources(module.config.bridgeGenerator, bridgeRequests, true)
+        TranslationResult(
+            packages = buildResult.packages,
+            sirModule = buildResult.module,
+            bridgeSources = bridges,
+            config = module.config,
+            bridgesModuleName = module.bridgesModuleName,
         )
     }
-
-    val bridges = generateBridgeSources(module.config.bridgeGenerator, bridgeRequests, true)
-
-    return TranslationResult(
-        packages = buildResult.packages,
-        sirModule = buildResult.module,
-        bridgeSources = bridges,
-        config = module.config,
-        bridgesModuleName = module.bridgesModuleName,
-    )
 }
 
 internal val InputModule.bridgesModuleName: String

@@ -32,14 +32,15 @@ internal class SwiftModuleBuildResults(
     val packages: Set<FqName>,
 )
 
-internal fun ModuleWithScopeProvider.initializeSirModule(
+internal fun KaSession.initializeSirModule(
+    moduleWithScope: ModuleWithScopeProvider,
     config: SwiftExportConfig,
     moduleProvider: SirModuleProvider,
 ): SwiftModuleBuildResults {
     val moduleForPackageEnums = buildModule { name = config.moduleForPackagesName }
     val sirSession = StandaloneSirSession(
-        useSiteModule = useSiteModule,
-        moduleToTranslate = mainModule,
+        useSiteModule = moduleWithScope.useSiteModule,
+        moduleToTranslate = moduleWithScope.mainModule,
         errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
         unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
         moduleForPackageEnums = moduleForPackageEnums,
@@ -51,29 +52,27 @@ internal fun ModuleWithScopeProvider.initializeSirModule(
     // this lines produce critical side effect
     // This will traverse every top level declaration of a given provider
     // This in turn inits every root declaration that will be consumed down the pipe by swift export
-    traverseTopLevelDeclarationsInScopes(sirSession, scopeProvider)
+    traverseTopLevelDeclarationsInScopes(sirSession, moduleWithScope.scopeProvider)
 
     return with(moduleProvider) {
         SwiftModuleBuildResults(
-            module = mainModule.sirModule(),
+            module = moduleWithScope.mainModule.sirModule(),
             packages = sirSession.enumGenerator.collectedPackages,
         )
     }
 }
 
-private fun traverseTopLevelDeclarationsInScopes(
+private fun KaSession.traverseTopLevelDeclarationsInScopes(
     sirSession: StandaloneSirSession,
     scopeProvider: KaSession.() -> List<KaScope>,
 ) {
     with(sirSession) {
-        analyze(useSiteModule) {
-            scopeProvider().flatMap { scope ->
-                scope.extractDeclarations(useSiteSession)
-            }.forEach { topLevelDeclaration ->
-                val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
-                    ?: error("top level declaration can contain only module or extension to package as a parent")
-                parent.addChild { topLevelDeclaration }
-            }
+        scopeProvider().flatMap { scope ->
+            scope.extractDeclarations(useSiteSession)
+        }.forEach { topLevelDeclaration ->
+            val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
+                ?: error("top level declaration can contain only module or extension to package as a parent")
+            parent.addChild { topLevelDeclaration }
         }
     }
 }
