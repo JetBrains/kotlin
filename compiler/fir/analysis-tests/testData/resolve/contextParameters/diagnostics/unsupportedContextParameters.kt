@@ -108,3 +108,14 @@ fun test(collection : Array<Pair<Int,Int>>) {
 }
 
 class PropertyInConstructor(<!UNSUPPORTED!>context(a: String)<!> val k: Boolean = true)
+
+fun runWithA(block: context(String) () -> Unit) {
+}
+
+fun localFunctionsContextParametersWithoutType() {
+    val t2 = context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>a<!>) fun () { }
+    runWithA(context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>a<!>) fun () { })
+
+    context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>a<!>)
+    fun contextReceiverSyntax() {}
+}
