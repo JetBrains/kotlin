@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -430,7 +429,7 @@ abstract class AbstractAtomicfuTransformer(
                     dispatchReceiver = dispatchReceiver,
                     valueType = valueType,
                     atomicHandlerExtraArg = atomicHandlerExtraArg,
-                    callValueArguments = expression.valueArguments,
+                    callValueArguments = List(expression.valueArgumentsCount) { expression.getValueArgument(it) },
                     functionName = functionName
                 )
                 return super.visitExpression(atomicCall, data)
@@ -443,7 +442,7 @@ abstract class AbstractAtomicfuTransformer(
                     dispatchReceiver = dispatchReceiver,
                     callDispatchReceiver = expression.dispatchReceiver,
                     atomicHandlerExtraArg = atomicHandlerExtraArg,
-                    callValueArguments = expression.valueArguments,
+                    callValueArguments = List(expression.valueArgumentsCount) { expression.getValueArgument(it) },
                     callTypeArguments = expression.typeArguments,
                     originalAtomicExtension = declaration,
                     parentFunction = data
@@ -630,7 +629,7 @@ abstract class AbstractAtomicfuTransformer(
         ): IrExpression?
 
         protected fun AtomicArray.getAtomicArrayElementIndex(propertyGetterCall: IrExpression): IrExpression =
-            requireNotNull((propertyGetterCall as IrCall).valueArguments[0]) {
+            requireNotNull((propertyGetterCall as IrCall).getValueArgument(0)) {
                 "Expected index argument to be passed to the atomic array getter call ${propertyGetterCall.render()}, but found null." + CONSTRAINTS_MESSAGE
             }
 

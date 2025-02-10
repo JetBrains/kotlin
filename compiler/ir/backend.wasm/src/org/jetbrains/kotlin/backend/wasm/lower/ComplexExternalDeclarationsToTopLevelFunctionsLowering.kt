@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCallConstructor
@@ -555,7 +554,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
             val firstOldDefaultArgumentIdx = valueArguments.size - numDefaultParameters
 
             repeat(numDefaultParameters) {
-                val value = if (call.valueArguments[firstOldDefaultArgumentIdx + it] == null) 1 else 0
+                val value = if (valueArguments[firstOldDefaultArgumentIdx + it] == null) 1 else 0
                 newCall.arguments[firstDefaultFlagArgumentIdx + it] =
                     IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
             }
