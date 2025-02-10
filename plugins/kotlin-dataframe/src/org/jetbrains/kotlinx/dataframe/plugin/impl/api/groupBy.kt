@@ -22,6 +22,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximat
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
+import org.jetbrains.kotlinx.dataframe.plugin.impl.makeNullable
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import org.jetbrains.kotlinx.dataframe.plugin.interpret
@@ -181,3 +182,17 @@ class GroupByAdd : AbstractInterpreter<GroupBy>() {
         return GroupBy(receiver.keys, receiver.groups.add(name, type.type, context = this))
     }
 }
+
+abstract class GroupByAggregator(val defaultName: String) : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver by groupBy()
+    val Arguments.name: String? by arg(defaultValue = Present(null))
+    val Arguments.expression by type()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val aggregated = makeNullable(simpleColumnOf(name ?: defaultName, expression.type))
+        return PluginDataFrameSchema(receiver.keys.columns() + aggregated)
+    }
+}
+
+class GroupByMaxOf : GroupByAggregator(defaultName = "max")
+class GroupByMinOf : GroupByAggregator(defaultName = "min")
