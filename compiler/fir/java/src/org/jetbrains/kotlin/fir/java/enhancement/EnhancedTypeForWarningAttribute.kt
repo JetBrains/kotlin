@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
@@ -49,7 +50,7 @@ val ConeKotlinType.isEnhancedTypeForWarningDeprecation: Boolean
 class EnhancedForWarningConeSubstitutor(
     typeContext: ConeTypeContext,
     // TODO: drop me after disabling of ForbidTypePreservingFlexibilityWriteInferenceHack will be no longer supported
-    private val useExplicitTypeArgumentIfMadeFlexibleSynthetically: Boolean = false,
+    private val useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature: LanguageFeature? = null,
 ) : AbstractConeSubstitutor(typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         // We substitute and recombine the bounds of flexible types (using the unsubstituted bounds as fallback) to produce the final type.
@@ -70,9 +71,10 @@ class EnhancedForWarningConeSubstitutor(
 
         // If the top-level type can be enhanced, this will only enhance the top-level type but not its arguments: Foo<Bar!>! -> Foo<Bar!>?
         // Otherwise, it will enhance recursively until the first possible enhancement.
-        val enhancedTopLevel = type.enhancedTypeForWarning ?: runIf(useExplicitTypeArgumentIfMadeFlexibleSynthetically) {
-            type.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType
-        }
+        val enhancedTopLevel = type.enhancedTypeForWarning
+            ?: type.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically
+                ?.takeIf { it.relevantFeature == useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature }
+                ?.coneType
 
         // This will also enhance type arguments if the top-level type was enhanced, otherwise it will continue enhancing recursively.
         return enhancedTopLevel?.let(::substituteOrSelf)

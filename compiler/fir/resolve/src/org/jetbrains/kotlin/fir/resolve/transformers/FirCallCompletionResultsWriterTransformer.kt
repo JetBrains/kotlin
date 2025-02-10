@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -888,7 +889,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     /**
-     * @see org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
+     * @see ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
      * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      */
     private fun ConeKotlinType.storeNonFlexibleCounterpartInAttributeIfNecessary(
@@ -902,7 +903,8 @@ class FirCallCompletionResultsWriterTransformer(
                 ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
                     argument.typeRef.coneType.fullyExpandedType(
                         session
-                    )
+                    ),
+                    LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
                 )
             )
         )

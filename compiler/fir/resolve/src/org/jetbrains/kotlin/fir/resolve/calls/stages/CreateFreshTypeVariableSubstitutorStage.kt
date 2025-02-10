@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
@@ -158,6 +159,20 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 is ConeFlexibleType -> ConeFlexibleType(
                     type.lowerBound.withNullability(nullable = false, session.typeContext),
                     type.upperBound.withNullability(nullable = true, session.typeContext)
+                )
+            }.run {
+                if (session.languageVersionSettings.supportsFeature(LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack)) {
+                    return@run this
+                }
+                if (!type.isMarkedNullable) {
+                    return@run this
+                }
+                withAttributes(
+                    attributes.add(
+                        ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
+                            type, LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack
+                        )
+                    )
                 )
             }
         } else {

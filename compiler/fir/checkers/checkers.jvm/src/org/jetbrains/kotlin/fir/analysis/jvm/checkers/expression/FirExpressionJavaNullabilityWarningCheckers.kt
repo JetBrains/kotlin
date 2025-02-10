@@ -31,7 +31,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         // Unfortunately, we can get situations when that's not true, when the expected type has captured arguments, see KT-66947.
         // As a workaround, we do an explicit check for the nullability.
         if (symbol.dispatchReceiverType != null &&
-            expression.dispatchReceiver?.resolvedType?.enhancedTypeForWarning?.isMarkedNullable == true
+            expression.dispatchReceiver?.resolvedType?.willBeMarkedNullableInFuture() == true
         ) {
             expression.dispatchReceiver?.checkExpressionForEnhancedTypeMismatch(
                 expectedType = symbol.dispatchReceiverType,
@@ -68,6 +68,13 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
                 )
             }
         }
+    }
+
+    private fun ConeKotlinType.willBeMarkedNullableInFuture(): Boolean {
+        return enhancedTypeForWarning?.isMarkedNullable == true ||
+                attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.let {
+                    it.coneType.isMarkedNullable && it.relevantFeature == LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack
+                } == true
     }
 }
 
@@ -144,15 +151,27 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
         actualType.isSubtypeOf(context.session.typeContext, expectedType)
     ) {
         val suffix =
-            if (actualType.isEnhancedTypeForWarningDeprecation || expectedType.isEnhancedTypeForWarningDeprecation) {
-                val versionString = LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced.sinceVersion?.versionString
-                "This will become an error in Kotlin $versionString. See https://youtrack.jetbrains.com/issue/KT-63209"
-            } else {
-                ""
+            when {
+                actualType.isEnhancedTypeForWarningDeprecation || expectedType.isEnhancedTypeForWarningDeprecation -> {
+                    val versionString =
+                        LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced.sinceVersion?.versionString
+                    "This will become an error in Kotlin $versionString. See https://youtrack.jetbrains.com/issue/KT-63209"
+                }
+                actualType.isMadeFlexibleSynthetically() || expectedType.isMadeFlexibleSynthetically() -> {
+                    val versionString =
+                        LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack.sinceVersion?.versionString
+                    "This will become an error in Kotlin $versionString. See https://youtrack.jetbrains.com/issue/KT-71718"
+                }
+                else -> {
+                    ""
+                }
             }
         reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, suffix, context)
     }
 }
+
+private fun ConeKotlinType.isMadeFlexibleSynthetically(): Boolean =
+    attributes.explicitTypeArgumentIfMadeFlexibleSynthetically != null
 
 private fun getEnhancedTypesForComparison(
     actualType: ConeKotlinType?,
@@ -162,7 +181,10 @@ private fun getEnhancedTypesForComparison(
     if (actualType == null || expectedType == null) return null
     if (actualType is ConeErrorType || expectedType is ConeErrorType) return null
 
-    val substitutor = EnhancedForWarningConeSubstitutor(context.session.typeContext)
+    val substitutor = EnhancedForWarningConeSubstitutor(
+        context.session.typeContext,
+        useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature = LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack
+    )
 
     val enhancedActualType = substitutor.substituteOrNull(actualType)
     val enhancedExpectedType = substitutor.substituteOrNull(expectedType)
