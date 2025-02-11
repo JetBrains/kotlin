@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -341,7 +342,8 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                             expression.typeArguments,
                             ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT
                         ).apply {
-                            copyValueArgumentsFrom(expression, constructor)
+                            arguments.assignFrom(expression.arguments)
+                            arguments += null // For box parameter
                         }
                 }
 
