@@ -115,10 +115,6 @@ statistics/KaStatisticsService.kt:Companion:areStatisticsEnabled
 statistics/KaStatisticsService.kt:Companion:getInstance(Project)
 statistics/KotlinOpenTelemetryProvider.kt:Companion:getInstance(Project)
 statistics/KotlinOpenTelemetryProvider.kt:KotlinOpenTelemetryProvider:openTelemetry
-utils/NullableConcurrentCache.kt:@JvmInline value NullableConcurrentCache
-utils/NullableConcurrentCache.kt:@Suppress("UNCHECKED_CAST") nullValueToNull()
-utils/NullableConcurrentCache.kt:NullValue
-utils/NullableConcurrentCache.kt:NullableConcurrentCache:inline getOrPut(K, (K) -> V?)
 utils/SublistMerger.kt:SublistMerger:finish()
 utils/SublistMerger.kt:SublistMerger:inline merge((List<R>) -> A?)
 utils/SublistMerger.kt:SublistMerger:remainingElements

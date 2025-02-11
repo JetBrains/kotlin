@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPutWithNullableValue
+import org.jetbrains.kotlin.analysis.api.platform.caches.nullValueToNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol

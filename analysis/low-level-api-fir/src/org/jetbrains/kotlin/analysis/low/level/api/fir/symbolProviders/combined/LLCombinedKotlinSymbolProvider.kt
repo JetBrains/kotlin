@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.declarations.mergeDeclarationProviders
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageProviders
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
+import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.withStatsCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
