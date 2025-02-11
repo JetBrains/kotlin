@@ -5,10 +5,10 @@
 public class A
     /* TARGET declaration */ private fun privateMethod(): String
     public inline fun publicInlineFunction(): KFunction0<String>
-        local fun privateMethod(<this>: A): String
+        /* LOCAL declaration @0 */ local fun privateMethod(<this>: A): String
             /* ACCESSOR use-site */ access$privateMethod($this = <this>)
     /* ACCESSOR declaration */ public /* static */ fun access$privateMethod($this: A): String
         /* TARGET use-site */ $this.privateMethod()
 public fun box(): String
-    local fun privateMethod(<this>: A): String
+    /* LOCAL declaration @1 */ local fun privateMethod(<this>: A): String
         /* ACCESSOR use-site */ access$privateMethod($this = <this>)

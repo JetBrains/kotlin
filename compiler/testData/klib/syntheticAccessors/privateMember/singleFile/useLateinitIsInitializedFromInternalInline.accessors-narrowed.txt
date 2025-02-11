@@ -21,19 +21,21 @@ public class OK
         /* TARGET use-site */ <this>.#o
         /* TARGET use-site */ <this>.<set-o>(<set-?> = "O")
         /* TARGET use-site */ <this>.#o
-        local class <no name provided>
-            public fun run()
+        /* LOCAL declaration @0 */ local class <no name provided>
+            /* LOCAL declaration @1 */ public fun run()
                 /* TARGET use-site */ <this>.#k
                 /* TARGET use-site */ <this>.#k
+        /* LOCAL use-site @1 */ <anonymous object>.run()
         /* TARGET use-site */ <this>.<get-o>()
     internal inline fun initializeAndReadOK(): String
         /* ACCESSOR use-site */ access$<get-o>$p($this = this)
         /* ACCESSOR use-site */ access$<set-o>($this = this, <set-?> = "O")
         /* ACCESSOR use-site */ access$<get-o>$p($this = this)
-        local class <no name provided>
-            public fun run()
+        /* LOCAL declaration @2 */ local class <no name provided>
+            /* LOCAL declaration @3 */ public fun run()
                 /* ACCESSOR use-site */ access$<get-k>$p($this = this)
                 /* ACCESSOR use-site */ access$<get-k>$p($this = this)
+        /* LOCAL use-site @3 */ <anonymous object>.run()
         /* ACCESSOR use-site */ access$<get-o>($this = this)
     /* ACCESSOR declaration */ internal /* static */ fun access$<get-o>($this: OK): String
         /* TARGET use-site */ $this.<get-o>()
@@ -47,8 +49,9 @@ public fun box(): String
     /* ACCESSOR use-site */ access$<get-o>$p($this = this)
     /* ACCESSOR use-site */ access$<set-o>($this = this, <set-?> = "O")
     /* ACCESSOR use-site */ access$<get-o>$p($this = this)
-    local class <no name provided>
-        public fun run()
+    /* LOCAL declaration @4 */ local class <no name provided>
+        /* LOCAL declaration @5 */ public fun run()
             /* ACCESSOR use-site */ access$<get-k>$p($this = this)
             /* ACCESSOR use-site */ access$<get-k>$p($this = this)
+    /* LOCAL use-site @5 */ <anonymous object>.run()
     /* ACCESSOR use-site */ access$<get-o>($this = this)

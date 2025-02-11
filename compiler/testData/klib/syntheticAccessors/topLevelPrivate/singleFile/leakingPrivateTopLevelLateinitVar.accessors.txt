@@ -7,11 +7,11 @@ private lateinit var o: String?
     /* TARGET declaration */ private fun <set-o>(<set-?>: String)
 public class A
     internal inline fun inlineMethod(): String
-        local fun <anonymous>()
+        /* LOCAL declaration @0 */ local fun <anonymous>()
             /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateTopLevelLateinitVarKt(<set-?> = "O")
         /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt()
 public fun box(): String
-    local fun <anonymous>()
+    /* LOCAL declaration @1 */ local fun <anonymous>()
         /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateTopLevelLateinitVarKt(<set-?> = "O")
     /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt()
 /* ACCESSOR declaration */ public fun access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt(): String

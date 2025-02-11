@@ -3,17 +3,19 @@
 /* FILE package=<root> fileName=usePrivateTopLevelFunInsidePrivateInlineMethodInLocalObject.kt */
 
 internal inline fun internalInlineMethod(crossinline f: Function0<String>): String
-    local class <no name provided>
-        private inline fun impl(): String
+    /* LOCAL declaration @0 */ local class <no name provided>
+        /* LOCAL declaration @1 */ private inline fun impl(): String
             /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
-        public fun run(): String
+        /* LOCAL declaration @2 */ public fun run(): String
             /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
+    /* LOCAL use-site @2 */ <anonymous object>.run()
 /* TARGET declaration */ private fun privateMethod(): String
 public fun box(): String
-    local class <no name provided>
-        private inline fun impl(): String
+    /* LOCAL declaration @3 */ local class <no name provided>
+        /* LOCAL declaration @4 */ private inline fun impl(): String
             /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
-        public fun run(): String
+        /* LOCAL declaration @5 */ public fun run(): String
             /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
+    /* LOCAL use-site @5 */ <anonymous object>.run()
 /* ACCESSOR declaration */ public fun access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt(): String
     /* TARGET use-site */ privateMethod()
