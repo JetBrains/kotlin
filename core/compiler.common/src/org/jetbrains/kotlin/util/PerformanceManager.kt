@@ -13,27 +13,17 @@ import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
 /**
- * Generally, the class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
+ * The class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
  * to get reliable performance measurements.
- * However, [measureTime] written to be thread-safe because there is no absolute guarantee
- * that external measurements are collected in a single thread.
  */
 abstract class PerformanceManager(private val presentableName: String) {
-    // The lock object is located not in a companion object because every module has its own instance of the performance manager
-    private val counterMeasurementsLock = Any()
-
     private fun currentTime(): Long = System.nanoTime()
 
     private var currentPhaseType: PhaseMeasurementType = PhaseMeasurementType.Initialization
     private var phaseStartNanos: Long? = currentTime()
 
     private val phaseMeasurements: MutableMap<PhaseMeasurementType, Long> = mutableMapOf()
-
-    // Initialize the counter measurements in strict order to get rid of difference in the same report
-    private val counterMeasurements: MutableMap<KClass<*>, CounterMeasurement> = mutableMapOf(
-        FindJavaClassMeasurement::class to FindJavaClassMeasurement(0, 0),
-        BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
-    )
+    private val counterMeasurements: MutableMap<PhaseMeasurementType, MutableMap<KClass<*>, CounterMeasurement>> = mutableMapOf()
 
     private var gcMeasurements: MutableList<GarbageCollectionMeasurement> = mutableListOf()
     private var jitMeasurement: JitCompilationMeasurement? = null
@@ -42,6 +32,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     var isEnabled: Boolean = false
         protected set
+    private var threadId: Long = Thread.currentThread().id
     private var isK2: Boolean = true
     private var startGCData = mutableMapOf<String, GCData>()
 
@@ -81,7 +72,7 @@ abstract class PerformanceManager(private val presentableName: String) {
             (measurements.filterIsInstance<BackendGenerationMeasurement>().sumOf { it.milliseconds })
 
     fun addMeasurementResults(otherPerformanceManager: PerformanceManager) {
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
         extraMeasurements += otherPerformanceManager.extraMeasurements
     }
 
@@ -97,7 +88,7 @@ abstract class PerformanceManager(private val presentableName: String) {
     open fun addSourcesStats(files: Int, lines: Int) {
         if (!isEnabled) return
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         this.files = this.files?.plus(files) ?: files
         this.lines = this.lines?.plus(lines) ?: lines
@@ -116,7 +107,7 @@ abstract class PerformanceManager(private val presentableName: String) {
     fun notifyPhaseFinished(phaseType: PhaseMeasurementType) {
         if (!isEnabled) return
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         assert(phaseType == currentPhaseType) { "The measurement for phase $currentPhaseType must be finished before finishing $phaseType" }
         assert(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
@@ -129,7 +120,7 @@ abstract class PerformanceManager(private val presentableName: String) {
     open fun notifyCompilationFinished() {
         if (!isEnabled) return
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         recordGcTime()
         recordJitCompilationTime()
@@ -167,25 +158,32 @@ abstract class PerformanceManager(private val presentableName: String) {
     internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         val startTime = currentTime()
         try {
             return block()
         } finally {
             val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(currentTime() - startTime)
-            synchronized(counterMeasurementsLock) {
-                val currentMeasurement = counterMeasurements[measurementClass]
-                    ?: error("No counter measurement initialized for $measurementClass")
-                val newCount = currentMeasurement.count + 1
-                val newElapsed = currentMeasurement.milliseconds + elapsedMillis
-                val newMeasurement = when (measurementClass) {
-                    FindJavaClassMeasurement::class -> FindJavaClassMeasurement(newCount, newElapsed)
-                    BinaryClassFromKotlinFileMeasurement::class -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
-                    else -> error("The measurement for $measurementClass is not supported")
-                }
-                counterMeasurements[measurementClass] = newMeasurement
+
+            val currentPhaseCounterMeasurements = counterMeasurements.getOrPut(currentPhaseType) {
+                // Initialize the counter measurements in strict order to get rid of difference in the same report
+                mutableMapOf(
+                    FindJavaClassMeasurement::class to FindJavaClassMeasurement(0, 0),
+                    BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
+                )
             }
+
+            val currentMeasurement = currentPhaseCounterMeasurements[measurementClass]
+                ?: error("No counter measurement initialized for $measurementClass")
+            val newCount = currentMeasurement.count + 1
+            val newElapsed = currentMeasurement.milliseconds + elapsedMillis
+            val newMeasurement = when (measurementClass) {
+                FindJavaClassMeasurement::class -> FindJavaClassMeasurement(newCount, newElapsed)
+                BinaryClassFromKotlinFileMeasurement::class -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
+                else -> error("The measurement for $measurementClass is not supported")
+            }
+            currentPhaseCounterMeasurements[measurementClass] = newMeasurement
         }
     }
 
@@ -198,8 +196,9 @@ abstract class PerformanceManager(private val presentableName: String) {
         measurements.map { it.render() }.forEach { append("$it\n") }
     }
 
-    private fun ensureNotFinalized() {
+    private fun ensureNotFinalizedAndSameThread() {
         assert(!finalized) { "Cannot add performance measurements because it's already finalized" }
+        assert(Thread.currentThread().id == threadId) { "All measurements must have been taken in the same thread to have reliable results" }
     }
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
