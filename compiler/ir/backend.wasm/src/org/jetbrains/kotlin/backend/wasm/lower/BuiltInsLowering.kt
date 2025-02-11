@@ -101,7 +101,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
                 // For eqeqSymbol use overridden `Any.equals(Any?)` if there is any.
                 if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable() && !lhsType.isNothing()) {
-                    return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
+                    return irCall(call, lhsType.findEqualsMethod().symbol)
                 }
 
                 val fallbackEqFun = if (call.symbol === irBuiltins.eqeqeqSymbol) symbols.refEq else symbols.nullableEquals
@@ -165,7 +165,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
                 val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
                 val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-                return irCall(call, newSymbol, argumentsAsReceivers = true)
+                return irCall(call, newSymbol)
             }
             context.reflectionSymbols.getKClass -> {
                 val type = call.typeArguments[0]!!
