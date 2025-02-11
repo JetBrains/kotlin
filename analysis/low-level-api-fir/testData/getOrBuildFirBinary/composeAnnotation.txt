@@ -1,0 +1,19 @@
+KT element: KtClass
+KT element text:
+public final class A public constructor() {
+    public final fun foo(action: @androidx.compose.runtime.Composable () -> kotlin.Unit): kotlin.Unit { /* compiled code */ }
+
+    public final fun bar(action: Inv<@androidx.compose.runtime.Composable () -> kotlin.Unit>): @androidx.compose.runtime.Composable () -> kotlin.Unit { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class A : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun bar([ResolvedTo(BODY_RESOLVE)] action: R|Inv<@R|androidx/compose/runtime/Composable|()  kotlin/Function0<kotlin/Unit>>|): R|@R|androidx/compose/runtime/Composable|()  () -> kotlin/Unit|
+
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] action: R|@R|androidx/compose/runtime/Composable|()  () -> kotlin/Unit|): R|kotlin/Unit|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A|
+
+}
