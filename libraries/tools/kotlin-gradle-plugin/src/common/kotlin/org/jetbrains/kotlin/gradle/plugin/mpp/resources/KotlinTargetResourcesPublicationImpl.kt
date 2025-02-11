@@ -169,12 +169,7 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     ) {
         resolveResourcesFromDependenciesTask.configure {
             it.filterResourcesByExtension.set(
-                project.kotlinPropertiesProvider
-                    .mppFilterResourcesByExtension
-                    .map { explicitlyEnabled ->
-                        // Always filter resources configuration because it resolves klibs for dependency graph inheritance
-                        explicitlyEnabled
-                    }
+                project.kotlinPropertiesProvider.mppFilterResourcesByExtension
             )
             it.archivesFromDependencies.from(
                 KotlinTargetResourcesResolution.resourceArchives(compilation)
