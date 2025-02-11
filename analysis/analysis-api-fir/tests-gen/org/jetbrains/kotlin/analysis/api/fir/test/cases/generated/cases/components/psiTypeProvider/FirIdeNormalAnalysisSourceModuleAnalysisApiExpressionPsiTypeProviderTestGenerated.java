@@ -76,6 +76,18 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiExpressionPsiTypeProvide
   }
 
   @Test
+  @TestMetadata("inlineClassWithArguments.kt")
+  public void testInlineClassWithArguments() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/inlineClassWithArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassWithoutArguments.kt")
+  public void testInlineClassWithoutArguments() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/inlineClassWithoutArguments.kt");
+  }
+
+  @Test
   @TestMetadata("KTIJ25461.kt")
   public void testKTIJ25461() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");

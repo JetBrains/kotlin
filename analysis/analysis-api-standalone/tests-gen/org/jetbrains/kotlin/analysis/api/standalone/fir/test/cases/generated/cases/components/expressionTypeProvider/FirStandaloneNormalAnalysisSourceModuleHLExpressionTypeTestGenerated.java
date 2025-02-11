@@ -137,6 +137,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("inlineClassWithoutArguments.kt")
+  public void testInlineClassWithoutArguments() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/inlineClassWithoutArguments.kt");
+  }
+
+  @Test
   @TestMetadata("insideStringTemplate.kt")
   public void testInsideStringTemplate() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/insideStringTemplate.kt");

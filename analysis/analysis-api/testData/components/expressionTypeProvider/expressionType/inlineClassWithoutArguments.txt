@@ -1,0 +1,2 @@
+expression: InlineClass()
+type: InlineClass
