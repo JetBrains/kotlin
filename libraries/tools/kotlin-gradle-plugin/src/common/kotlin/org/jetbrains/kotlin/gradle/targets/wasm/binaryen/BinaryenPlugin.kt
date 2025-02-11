@@ -16,18 +16,19 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-@Suppress("DEPRECATION")
-@OptIn(ExperimentalWasmDsl::class)
-abstract class BinaryenPlugin internal constructor(): org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootPlugin() {
+@ExperimentalWasmDsl
+abstract class BinaryenPlugin internal constructor() :
+    @Suppress("DEPRECATION")
+    org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootPlugin() {
     override fun apply(project: Project) {
-        MultiplePluginDeclarationDetector.Companion.detect(project)
+        MultiplePluginDeclarationDetector.detect(project)
 
         project.plugins.apply(BasePlugin::class.java)
 
         val spec = project.extensions.createBinaryenRootEnvSpec()
 
         val settings = project.extensions.create(
-            BinaryenExtension.Companion.EXTENSION_NAME,
+            BinaryenExtension.EXTENSION_NAME,
             BinaryenExtension::class.java,
             project,
             spec
@@ -46,7 +47,7 @@ abstract class BinaryenPlugin internal constructor(): org.jetbrains.kotlin.gradl
             }
         }
 
-        project.registerTask<CleanDataTask>("binaryen" + CleanDataTask.Companion.NAME_SUFFIX) {
+        project.registerTask<CleanDataTask>("binaryen" + CleanDataTask.NAME_SUFFIX) {
             it.cleanableStoreProvider = project.provider { settings.requireConfigured().cleanableStore }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local binaryen version"
@@ -55,7 +56,7 @@ abstract class BinaryenPlugin internal constructor(): org.jetbrains.kotlin.gradl
 
     private fun ExtensionContainer.createBinaryenRootEnvSpec(): BinaryenEnvSpec {
         return create(
-            BinaryenEnvSpec.Companion.EXTENSION_NAME,
+            BinaryenEnvSpec.EXTENSION_NAME,
             BinaryenEnvSpec::class.java
         )
     }
@@ -80,7 +81,7 @@ abstract class BinaryenPlugin internal constructor(): org.jetbrains.kotlin.gradl
                 .zip(
                     project.providers.systemProperty("os.arch")
                 ) { name, arch ->
-                    BinaryenPlatform.Companion.parseBinaryenPlatform(name.toLowerCaseAsciiOnly(), arch, uname)
+                    BinaryenPlatform.parseBinaryenPlatform(name.toLowerCaseAsciiOnly(), arch, uname)
                 }
         ).disallowChanges()
     }
@@ -90,10 +91,10 @@ abstract class BinaryenPlugin internal constructor(): org.jetbrains.kotlin.gradl
 
         fun apply(rootProject: Project): BinaryenExtension {
             rootProject.plugins.apply(BinaryenPlugin::class.java)
-            return rootProject.extensions.getByName(BinaryenExtension.Companion.EXTENSION_NAME) as BinaryenExtension
+            return rootProject.extensions.getByName(BinaryenExtension.EXTENSION_NAME) as BinaryenExtension
         }
 
         val Project.kotlinBinaryenExtension: BinaryenExtension
-            get() = extensions.getByName(BinaryenExtension.Companion.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
+            get() = extensions.getByName(BinaryenExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
     }
 }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin"
     )
 )
-@OptIn(ExperimentalWasmDsl::class)
+@ExperimentalWasmDsl
 abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply(org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin::class.java)
