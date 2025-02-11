@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.JsRootScope
@@ -29,11 +29,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
     private val jsCodeFqName = JsStandardClassIds.Callables.JsCode.asSingleFqName()
 
     private fun IrCall.isJsFunCall(): Boolean {
-        return if (this.symbol.isBound) {
-            symbol.owner.fqNameWhenAvailable == jsCodeFqName
-        } else {
-            symbol.signature?.asPublic()?.declarationFqName == jsCodeFqName.asString()
-        }
+        return symbol.hasEqualFqName(jsCodeFqName)
     }
 
     override fun check(expression: IrCall, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
