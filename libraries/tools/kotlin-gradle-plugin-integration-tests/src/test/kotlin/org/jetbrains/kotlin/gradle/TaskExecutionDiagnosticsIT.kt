@@ -31,7 +31,6 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             }
 
             kotlinSourcesDir().source("main.kt") {
-                //language=kotlin
                 """
                 |fun main() {}
                 """.trimMargin()
@@ -46,6 +45,41 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
 
         project.buildAndFail("compileKotlin") {
             assertHasDiagnostic(KotlinToolingDiagnostics.IcFirMisconfigurationLV)
+        }
+    }
+
+    @JvmGradlePluginTests
+    @GradleTest
+    fun shouldProduceErrorOnFirIcRunnerAndDisabledClasspathSnapshots(
+        gradleVersion: GradleVersion,
+    ) {
+        val project = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyJvm {
+                    jvmToolchain(17)
+                }
+            }
+
+            kotlinSourcesDir().source("main.kt") {
+                """
+                |fun main() {}
+                """.trimMargin()
+            }
+
+            gradleProperties.appendText(
+                """
+                |kotlin.incremental.jvm.fir=true
+                """.trimMargin()
+            )
+        }
+
+        project.buildAndFail("compileKotlin") {
+            assertHasDiagnostic(KotlinToolingDiagnostics.IcFirMisconfigurationRequireClasspathSnapshots)
         }
     }
 }

@@ -258,6 +258,11 @@ abstract class KotlinCompile @Inject constructor(
                         )
                     )
                 }
+
+                if (!classpathSnapshotProperties.useClasspathSnapshot.get()) {
+                    reportDiagnostic(KotlinToolingDiagnostics.IcFirMisconfigurationRequireClasspathSnapshots(path))
+                }
+
                 args.useFirIC = true
                 args.useFirLT = true
             }
