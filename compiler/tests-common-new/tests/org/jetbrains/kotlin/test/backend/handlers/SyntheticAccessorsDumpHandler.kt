@@ -73,7 +73,6 @@ class SyntheticAccessorsDumpHandler(
             val dumpFileName = buildString {
                 append(testDataFile.nameWithoutExtension)
                 append(".accessors")
-                append("-narrowed")
                 append(".txt")
             }
 
