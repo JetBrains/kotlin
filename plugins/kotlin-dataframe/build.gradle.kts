@@ -41,6 +41,7 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":dataframe-excel"))
+    implementation(project(":dataframe-csv"))
     api(libs.kotlinLogging)
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
 
