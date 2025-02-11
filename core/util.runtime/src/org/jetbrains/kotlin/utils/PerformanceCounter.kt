@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong
 /**
  * This counter is thread-safe for initialization and usage.
  * But it may calculate time and number of runs not precisely.
+ * Used only for K1 (no `@Deprecation` to avoid warnings during build)
  */
 abstract class PerformanceCounter protected constructor(val name: String) {
     companion object {
