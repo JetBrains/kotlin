@@ -74,3 +74,41 @@ public fun __root___OBJECT_WITH_INTERFACE_INHERITANCE_get(): kotlin.native.inter
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___normal__TypesOfArguments__anyU20main_Foeble__")
+public fun __root___normal__TypesOfArguments__anyU20main_Foeble__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as Foeble
+    val _result = normal(__value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___normal_get")
+public fun __root___normal_get(): kotlin.native.internal.NativePtr {
+    val _result = normal
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___normal_set__TypesOfArguments__anyU20main_Foeble__")
+public fun __root___normal_set__TypesOfArguments__anyU20main_Foeble__(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Foeble
+    normal = __newValue
+}
+
+@ExportedBridge("__root___nullable__TypesOfArguments__anyU20main_Foeble_opt___")
+public fun __root___nullable__TypesOfArguments__anyU20main_Foeble_opt___(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as Foeble
+    val _result = nullable(__value)
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___nullable_get")
+public fun __root___nullable_get(): kotlin.native.internal.NativePtr {
+    val _result = nullable
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___nullable_set__TypesOfArguments__anyU20main_Foeble_opt___")
+public fun __root___nullable_set__TypesOfArguments__anyU20main_Foeble_opt___(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Foeble
+    nullable = __newValue
+}
+

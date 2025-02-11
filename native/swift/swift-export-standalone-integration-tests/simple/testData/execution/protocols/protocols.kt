@@ -41,6 +41,8 @@ var property: Foo
         _property = newValue
     }
 
+fun nullableIdentity(value: Foo?): Foo? = value
+var nullableProperty: Foo? = null
 
 // FILE: protocolMembers.kt
 

@@ -41,3 +41,10 @@ interface OUTSIDE_PROTO {
 object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
 
 enum class ENUM_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
+
+// FILE: existentials.kt
+
+fun normal(value: Foeble): Foeble = value
+var normal: Foeble = Bar()
+fun nullable(value: Foeble?): Foeble? = value
+var nullable: Foeble? = null

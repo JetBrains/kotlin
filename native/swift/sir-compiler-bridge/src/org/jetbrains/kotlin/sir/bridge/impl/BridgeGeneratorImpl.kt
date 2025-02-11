@@ -420,6 +420,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
         SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first())) {
             is Bridge.AsObject,
             is Bridge.AsObjCBridged,
+            is Bridge.AsExistential,
                 -> Bridge.AsOptionalWrapper(bridge)
 
             is Bridge.AsOpaqueObject -> {
@@ -822,7 +823,7 @@ private sealed class Bridge(
 
         override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                require(wrappedObject is AsObjCBridged || wrappedObject is AsObject)
+                require(wrappedObject is AsObjCBridged || wrappedObject is AsObject || wrappedObject is AsExistential)
                 return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
                         " ?? ${wrappedObject.inSwiftSources.renderNil()}"
             }

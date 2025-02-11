@@ -8,6 +8,12 @@ func testInterface() throws {
     property = expected
     let propertyResult = property
     try assertSame(actual: propertyResult, expected: expected)
+
+    let nullableFunctionResult = nullableIdentity(value: expected)
+    try assertSame(actual: nullableFunctionResult, expected: expected)
+    nullableProperty = expected
+    let nullablePropertyResult = nullableProperty
+    try assertSame(actual: nullablePropertyResult, expected: expected)
 }
 
 func testInterfaceMembers() throws {
@@ -23,6 +29,7 @@ func testInterfaceMembers() throws {
     try assertSame(actual: propertyResult, expected: expected)
     try assertFalse(propertyResult === instance, "These should not be same")
 }
+
 class ProtocolsTests: TestProvider {
     var tests: [TestCase] = []
 

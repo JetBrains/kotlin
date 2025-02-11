@@ -21,3 +21,15 @@ uintptr_t __root___MyObject_get();
 
 uintptr_t __root___OBJECT_WITH_INTERFACE_INHERITANCE_get();
 
+uintptr_t __root___normal__TypesOfArguments__anyU20main_Foeble__(uintptr_t value);
+
+uintptr_t __root___normal_get();
+
+void __root___normal_set__TypesOfArguments__anyU20main_Foeble__(uintptr_t newValue);
+
+uintptr_t __root___nullable__TypesOfArguments__anyU20main_Foeble_opt___(uintptr_t value);
+
+uintptr_t __root___nullable_get();
+
+void __root___nullable_set__TypesOfArguments__anyU20main_Foeble_opt___(uintptr_t newValue);
+
