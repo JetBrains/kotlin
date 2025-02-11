@@ -127,3 +127,15 @@ fun Path.getSingleFileInDir(relativePath: String? = null): Path {
  */
 val GradleProject.projectPersistentCache: Path
     get() = projectPath.resolve(".kotlin")
+
+/**
+ * Create a new file plus required directories under given [relativeFilePath] and writes
+ * [content] in it.
+ */
+fun Path.source(relativeFilePath: String, content: () -> String) {
+    val sourceFile = resolve(relativeFilePath)
+    sourceFile.parent.createDirectories()
+    sourceFile.writeText(
+        text = content()
+    )
+}

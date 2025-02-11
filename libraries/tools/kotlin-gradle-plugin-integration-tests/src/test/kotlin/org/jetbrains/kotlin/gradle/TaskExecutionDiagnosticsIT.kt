@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
-import kotlin.io.path.createDirectories
-import kotlin.io.path.writeText
 
 @DisplayName("Execution time diagnostics")
 class TaskExecutionDiagnosticsIT : KGPBaseTest() {
@@ -32,14 +30,12 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                 }
             }
 
-            kotlinSourcesDir().resolve("main.kt").also {
-                it.parent.createDirectories()
-            }.writeText(
+            kotlinSourcesDir().source("main.kt") {
                 //language=kotlin
                 """
                 |fun main() {}
                 """.trimMargin()
-            )
+            }
 
             gradleProperties.appendText(
                 """
