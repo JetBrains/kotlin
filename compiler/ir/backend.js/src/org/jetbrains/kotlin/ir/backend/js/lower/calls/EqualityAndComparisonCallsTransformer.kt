@@ -56,7 +56,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             comparator,
             typeArgumentsCount = 0
         ).apply {
-            putValueArgument(0, irCall(call, intrinsics.longCompareToLong, argumentsAsReceivers = true))
+            putValueArgument(0, irCall(call, intrinsics.longCompareToLong))
             putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, 0))
         }
     }
@@ -111,7 +111,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
                 chooseEqualityOperatorForPrimitiveTypes(call)
 
             !lhsJsType.isBuiltin() && !lhs.type.isNullable() && equalsMethod != null ->
-                irCall(call, equalsMethod.symbol, argumentsAsReceivers = true)
+                irCall(call, equalsMethod.symbol)
 
             // For inline class instances we can try to unbox them for the equality comparison
             lhs.isBoxIntrinsic() && rhs.isBoxIntrinsic() ->
@@ -147,7 +147,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `compareTo` method,
             // or has a potential to be primitive type (being fake overridden from `Comparable`)
             function.isMethodOfPrimitiveJSType() || function.isFakeOverriddenFromComparable() ->
-                irCall(call, intrinsics.jsCompareTo, receiversAsArguments = true)
+                irCall(call, intrinsics.jsCompareTo)
 
             // Valid `compareTo` method must be present at this point
             else ->
@@ -164,12 +164,12 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
             // `Any.equals` works as identity operator
             call.isSuperToAny() ->
-                irCall(call, intrinsics.jsEqeqeq, receiversAsArguments = true)
+                irCall(call, intrinsics.jsEqeqeq)
 
             // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `equals` method,
             // or has a potential to be primitive type (being fake overridden from `Any`)
             function.isMethodOfPotentiallyPrimitiveJSType() ->
-                irCall(call, intrinsics.jsEquals, receiversAsArguments = true)
+                irCall(call, intrinsics.jsEquals)
 
             // Valid `equals` method must be present at this point
             else -> call
