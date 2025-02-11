@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirSymbolRendererWithStaticFlag
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
@@ -24,10 +25,12 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
+import java.io.File
 
 class FirDumpHandler(
     testServices: TestServices
@@ -73,7 +76,16 @@ class FirDumpHandler(
         // TODO: change according to multiple testdata files
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
-        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension")
+        val originalExpectedFilePath = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension").path
+
+        @OptIn(TestInfrastructureInternals::class)
+        val expectedFilePath = testServices.testConfiguration
+            .metaTestConfigurators
+            .fold(originalExpectedFilePath) { fileName, configurator ->
+                configurator.transformTestDataPath(fileName)
+            }
+
+        val expectedFile = File(expectedFilePath)
 
         if (dumper.isEmpty()) {
             assertions.assertFileDoesntExist(expectedFile, FirDiagnosticsDirectives.FIR_DUMP)
