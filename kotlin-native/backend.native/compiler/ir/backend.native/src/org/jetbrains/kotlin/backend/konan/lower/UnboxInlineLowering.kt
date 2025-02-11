@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.getUnboxFunction
@@ -20,15 +19,6 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-
-internal class NativePropertyAccessorInlineLowering(context: Context) : PropertyAccessorInlineLowering(context) {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        // Need to keep the bridges' targets to not get them DCE-ed, as they are used during classes layout construction.
-        if ((container as? IrSimpleFunction)?.bridgeTarget != null)
-            return
-        super.lower(irBody, container)
-    }
-}
 
 /**
  * In case the body of <T-unbox> is exactly RETURN(GET_FIELD(IrExpression, backing_field)), it is inlined.
