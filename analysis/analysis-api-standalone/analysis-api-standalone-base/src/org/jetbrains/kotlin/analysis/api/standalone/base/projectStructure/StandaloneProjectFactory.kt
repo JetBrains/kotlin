@@ -13,7 +13,6 @@ import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
@@ -33,6 +32,8 @@ import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
+import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -41,6 +42,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinFakeClsStubsCache
+import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAccessibilityChecker
+import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
@@ -61,7 +64,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.picocontainer.PicoContainer
@@ -219,9 +221,26 @@ object StandaloneProjectFactory {
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
         val jdkRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
 
+        // To implement the platform components required by the Analysis API for its own implementation of `JavaModuleResolver`, we can use
+        // the compiler's `CliJavaModuleResolver`. This is a bit of an indirection (CLI java module resolver -> platform components ->
+        // Analysis API java module resolver), but it's preferable over exposing `JavaModuleResolver` to all platforms. Furthermore, we can
+        // still benefit from the common Analysis API implementation, for example its caching for Java module annotations.
+        //
+        // Note that the registered `JavaModuleResolver` will still be the `KaBaseJavaModuleResolver` registered by the Analysis API engine,
+        // not `CliJavaModuleResolver`.
+        val delegateJavaModuleResolver = CliJavaModuleResolver(
+            javaModuleGraph,
+            emptyList(),
+            javaModuleFinder.systemModules.toList(),
+            project,
+        )
         project.registerService(
-            JavaModuleResolver::class.java,
-            CliJavaModuleResolver(javaModuleGraph, emptyList(), javaModuleFinder.systemModules.toList(), project)
+            KotlinJavaModuleAccessibilityChecker::class.java,
+            KotlinStandaloneJavaModuleAccessibilityChecker(delegateJavaModuleResolver),
+        )
+        project.registerService(
+            KotlinJavaModuleAnnotationsProvider::class.java,
+            KotlinStandaloneJavaModuleAnnotationsProvider(delegateJavaModuleResolver),
         )
 
         val libraryRoots = getAllBinaryRoots(modules, environment)

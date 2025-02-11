@@ -90,8 +90,4 @@ class CliJavaModuleResolver(
 
         return null
     }
-
-    companion object {
-        private const val MODULE_ANNOTATIONS_CACHE_SIZE = 10000
-    }
 }
