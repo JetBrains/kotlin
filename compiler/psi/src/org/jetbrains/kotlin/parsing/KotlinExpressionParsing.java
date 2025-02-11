@@ -315,15 +315,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return;
         }
 
-        // Try to parse anonymous function with context parameters
-        if (at(CONTEXT_KEYWORD)) {
-            if (parseLocalDeclaration(true, false)) {
-                return;
-            } else {
-                at(IDENTIFIER);
-            }
-        }
-
         parseBinaryExpression(Precedence.ASSIGNMENT);
     }
 
@@ -692,6 +683,15 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 parseDoWhile();
                 break;
             case IDENTIFIER_Id:
+                // Try to parse anonymous function with context parameters
+                if (at(CONTEXT_KEYWORD) && lookahead(1) == LPAR) {
+                    if (parseLocalDeclaration(true, false)) {
+                        break;
+                    } else {
+                        at(IDENTIFIER);
+                    }
+                }
+
                 parseSimpleNameExpression();
                 break;
             case LBRACE_Id:
