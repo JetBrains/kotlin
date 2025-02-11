@@ -3,9 +3,6 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.DataRow
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.io.JSON
 import org.jetbrains.kotlinx.dataframe.io.JSON.TypeClashTactic.ARRAY_AND_VALUE_COLUMNS
@@ -17,8 +14,11 @@ import org.jetbrains.kotlinx.dataframe.io.readDelimStr
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 import org.jetbrains.kotlinx.dataframe.io.readJson
 import org.jetbrains.kotlinx.dataframe.io.readJsonStr
+import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.IoSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.deserializeToPluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.toPluginDataFrameSchema
@@ -37,6 +37,7 @@ internal class Read0 : AbstractInterpreter<PluginDataFrameSchema>() {
     }
 }
 
+// TODO migrate to dataframe-csv
 internal class ReadCSV0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.fileOrUrl: String by arg()
     val Arguments.delimiter: Char by arg(defaultValue = Present(','))
@@ -109,6 +110,7 @@ private sealed interface DataSource
 private class UrlOrAbsolutePath(val path: String) : DataSource
 private class ResolutionDirFile(val file: File) : DataSource
 
+// TODO migrate to dataframe-csv
 internal class ReadDelimStr : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.text: String by arg()
     val Arguments.delimiter: Char by arg(defaultValue = Present(','))
@@ -116,7 +118,7 @@ internal class ReadDelimStr : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.readLines: Int? by arg(defaultValue = Present(null))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return DataFrame.readDelimStr(text, delimiter, skipLines = skipLines, readLines = readLines).schema().toPluginDataFrameSchema()
+        return DataFrame.readDelimStr(text, delimiter, skipLines = skipLines.toLong(), readLines = readLines?.toLong()).schema().toPluginDataFrameSchema()
     }
 }
 
