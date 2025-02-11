@@ -361,8 +361,8 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             return CumulativeTime(
                 gcInfo,
                 components,
-                files ?: 0,
-                lines ?: 0
+                files,
+                lines
             )
         }
     }
