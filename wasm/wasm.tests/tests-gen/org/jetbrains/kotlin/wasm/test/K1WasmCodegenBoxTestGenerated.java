@@ -2294,6 +2294,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("kt74377.kt")
+    public void testKt74377() {
+      runTest("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+    }
+
+    @Test
     @TestMetadata("longChainOneBridge.kt")
     public void testLongChainOneBridge() {
       runTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");

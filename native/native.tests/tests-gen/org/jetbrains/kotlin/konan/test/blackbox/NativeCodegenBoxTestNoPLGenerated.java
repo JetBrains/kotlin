@@ -2195,6 +2195,10 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
     public class Bridges {
+      public Bridges() {
+        register("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+      }
+
       @Test
       @TestMetadata("abstractOverrideBridge.kt")
       public void testAbstractOverrideBridge() {
@@ -2408,6 +2412,13 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       @TestMetadata("kt46389_jvmDefault.kt")
       public void testKt46389_jvmDefault() {
         runTest("compiler/testData/codegen/box/bridges/kt46389_jvmDefault.kt");
+      }
+
+      @Test
+      @TestMetadata("kt74377.kt")
+      public void testKt74377() {
+        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+        runTest("compiler/testData/codegen/box/bridges/kt74377.kt");
       }
 
       @Test

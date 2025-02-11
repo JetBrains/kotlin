@@ -2588,6 +2588,10 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
+    private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) {
+      KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM_IR, testDataFilePath);
+    }
+
     @TestMetadata("abstractOverrideBridge.kt")
     public void testAbstractOverrideBridge() {
       runTest("compiler/testData/codegen/box/bridges/abstractOverrideBridge.kt");
@@ -2795,6 +2799,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("kt52929_platformDependent.kt")
     public void testKt52929_platformDependent() {
       runTest("compiler/testData/codegen/box/bridges/kt52929_platformDependent.kt");
+    }
+
+    @TestMetadata("kt74377.kt")
+    public void testKt74377() {
+      runTest("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
     @TestMetadata("longChainOneBridge.kt")
