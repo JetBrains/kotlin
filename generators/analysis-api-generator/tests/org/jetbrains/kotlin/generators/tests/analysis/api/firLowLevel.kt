@@ -479,6 +479,24 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
+    testGroup("analysis/low-level-api-fir/tests", testDataRoot = "plugins/plugin-sandbox/testData") {
+        testClass<AbstractLLSandboxBackBoxTest> {
+            model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+        }
+
+        testClass<AbstractLLReversedSandboxBackBoxTest> {
+            model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+        }
+
+        testClass<AbstractLLSandboxDiagnosticsTest> {
+            model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+        }
+
+        testClass<AbstractLLReversedSandboxDiagnosticsTest> {
+            model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+        }
+    }
+
     testGroup(testsRoot = "analysis/low-level-api-fir/tests", testDataRoot = "analysis/analysis-api/testData") {
         // Session invalidation test data is shared with analysis session invalidation tests.
         testClass<AbstractModuleStateModificationLLFirSessionInvalidationTest> {

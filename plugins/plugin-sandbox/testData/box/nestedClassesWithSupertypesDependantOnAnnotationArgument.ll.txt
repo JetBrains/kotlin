@@ -1,0 +1,19 @@
+FILE: nestedClassesWithSupertypesDependantOnAnnotationArgument.kt
+    public abstract interface A : R|kotlin/Any| {
+        public open fun test(): R|kotlin/String| {
+            ^test String(OK)
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/AddNestedClassesBasedOnArgument|(kClass = <getClass>(Q|A|)) public abstract interface Some : R|kotlin/Any| {
+    }
+    public final fun box(): R|kotlin/String| {
+        lval x: R|<anonymous>| = object : <ERROR TYPE REF: Symbol not found for Some.Generated> {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        ^box R|<local>/x|.<Unresolved name: test>#()
+    }

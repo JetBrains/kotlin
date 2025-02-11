@@ -1,0 +1,16 @@
+FILE: topLevelCallables.ll.kt
+    package foo
+
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|() public final class MySuperClass : R|kotlin/Any| {
+        public constructor(): R|foo/MySuperClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            lval s: <ERROR TYPE REF: Unresolved name: dummyMySuperClass> = <Unresolved name: dummyMySuperClass>#(this@R|foo/MySuperClass|)
+            R|foo/takeString|(R|<local>/s|)
+        }
+
+    }
+    public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }

@@ -1,0 +1,26 @@
+FILE: dependencyWithoutFunctionalKindPlugin.ll.kt
+    public final fun consumeRegularFunction(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun consumeSuspendFunction(block: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun consumeOurInlineableFunction(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun test_1(block: R|() -> kotlin/Unit|, InlineableBlock: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|, suspendBlock: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
+        R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction|(R|<local>/block|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction|(R|<local>/InlineableBlock|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction<Inapplicable(INAPPLICABLE): org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction>#|(R|<local>/suspendBlock|)
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  () -> kotlin/Unit| = R|org/jetbrains/kotlin/plugin/sandbox/produceInlineableFunction|()
+        R|/consumeRegularFunction|(R|<local>/block|)
+        R|/consumeSuspendFunction|(R|<local>/block|)
+        R|/consumeOurInlineableFunction|(R|<local>/block|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction|(R|<local>/block|)
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  () -> kotlin/Unit| = R|org/jetbrains/kotlin/plugin/sandbox/produceBoxedInlineableFunction|().R|SubstitutionOverride<org/jetbrains/kotlin/plugin/sandbox/Box.value: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  () -> kotlin/Unit|>|
+        R|/consumeRegularFunction|(R|<local>/block|)
+        R|/consumeSuspendFunction|(R|<local>/block|)
+        R|/consumeOurInlineableFunction|(R|<local>/block|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction|(R|<local>/block|)
+    }
