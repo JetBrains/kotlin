@@ -1,5 +1,5 @@
 // LL_FIR_DIVERGENCE
-// KT-75132
+// The library session cannot have compiler plugins: KT-75139
 // LL_FIR_DIVERGENCE
 import org.jetbrains.kotlin.plugin.sandbox.*
 
