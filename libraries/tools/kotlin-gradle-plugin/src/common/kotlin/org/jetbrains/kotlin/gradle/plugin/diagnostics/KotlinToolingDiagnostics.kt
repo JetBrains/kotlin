@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
@@ -1543,6 +1544,25 @@ object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "Please create a new Kotlin issue with reproduction project: https://kotl.in/issue"
+                }
+        }
+    }
+
+    object IcFirMisconfigurationLV : ToolingDiagnosticFactory(
+        predefinedSeverity = FATAL,
+        predefinedGroup = DiagnosticGroups.KGP.Misconfiguration
+    ) {
+        operator fun invoke(
+            taskPath: String,
+            languageVersion: KotlinVersion,
+        ) = build {
+            title("FIR based incremental compilation Kotlin version 1.x compatibility")
+                .description {
+                    "FIR based incremental compilation is enabled for '$taskPath'" +
+                            " alongside with '${languageVersion.version}' Kotlin language version."
+                }
+                .solution {
+                    "Please update Kotlin language version in your build scripts at least to 2.0"
                 }
         }
     }

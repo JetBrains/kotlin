@@ -18,6 +18,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
+import org.gradle.internal.configuration.problems.taskPathFrom
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -249,6 +250,14 @@ abstract class KotlinCompile @Inject constructor(
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
 
             if (useFirRunner.get()) {
+                if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
+                    reportDiagnostic(
+                        KotlinToolingDiagnostics.IcFirMisconfigurationLV(
+                            taskPath = path,
+                            languageVersion = compilerOptions.languageVersion.get()
+                        )
+                    )
+                }
                 args.useFirIC = true
                 args.useFirLT = true
             }
