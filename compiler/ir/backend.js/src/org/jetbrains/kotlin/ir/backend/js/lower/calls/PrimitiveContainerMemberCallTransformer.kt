@@ -23,15 +23,15 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
     init {
         symbolToTransformer.run {
             // Arrays
-            add(context.intrinsics.array.sizeProperty, context.intrinsics.jsArrayLength, true)
-            add(context.intrinsics.array.getFunction, context.intrinsics.jsArrayGet, true)
-            add(context.intrinsics.array.setFunction, context.intrinsics.jsArraySet, true)
-            add(context.intrinsics.array.iterator, context.intrinsics.jsArrayIteratorFunction, true)
+            add(context.intrinsics.array.sizeProperty, context.intrinsics.jsArrayLength)
+            add(context.intrinsics.array.getFunction, context.intrinsics.jsArrayGet)
+            add(context.intrinsics.array.setFunction, context.intrinsics.jsArraySet)
+            add(context.intrinsics.array.iterator, context.intrinsics.jsArrayIteratorFunction)
             for ((key, elementType) in context.intrinsics.primitiveArrays) {
-                add(key.sizeProperty, context.intrinsics.jsArrayLength, true)
-                add(key.getFunction, context.intrinsics.jsArrayGet, true)
-                add(key.setFunction, context.intrinsics.jsArraySet, true)
-                add(key.iterator, context.intrinsics.jsPrimitiveArrayIteratorFunctions[elementType]!!, true)
+                add(key.sizeProperty, context.intrinsics.jsArrayLength)
+                add(key.getFunction, context.intrinsics.jsArrayGet)
+                add(key.setFunction, context.intrinsics.jsArraySet)
+                add(key.iterator, context.intrinsics.jsPrimitiveArrayIteratorFunctions[elementType]!!)
 
                 // TODO irCall?
                 add(key.sizeConstructor) { call ->
@@ -47,13 +47,13 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
                 }
             }
 
-            add(context.irBuiltIns.stringClass.hashCodeFunction, intrinsics.jsGetStringHashCode, true)
-            add(context.irBuiltIns.stringClass.lengthProperty, context.intrinsics.jsArrayLength, true)
-            add(context.irBuiltIns.stringClass.getFunction, intrinsics.jsCharCodeAt, true)
-            add(context.irBuiltIns.stringClass.subSequence, context.symbols.subStringFunction, true)
-            add(intrinsics.charSequenceLengthPropertyGetterSymbol, intrinsics.jsCharSequenceLength, true)
-            add(intrinsics.charSequenceGetFunctionSymbol, intrinsics.jsCharSequenceGet, true)
-            add(intrinsics.charSequenceSubSequenceFunctionSymbol, intrinsics.jsCharSequenceSubSequence, true)
+            add(context.irBuiltIns.stringClass.hashCodeFunction, intrinsics.jsGetStringHashCode)
+            add(context.irBuiltIns.stringClass.lengthProperty, context.intrinsics.jsArrayLength)
+            add(context.irBuiltIns.stringClass.getFunction, intrinsics.jsCharCodeAt)
+            add(context.irBuiltIns.stringClass.subSequence, context.symbols.subStringFunction)
+            add(intrinsics.charSequenceLengthPropertyGetterSymbol, intrinsics.jsCharSequenceLength)
+            add(intrinsics.charSequenceGetFunctionSymbol, intrinsics.jsCharSequenceGet)
+            add(intrinsics.charSequenceSubSequenceFunctionSymbol, intrinsics.jsCharSequenceSubSequence)
             add(context.irBuiltIns.dataClassArrayMemberHashCodeSymbol, context.intrinsics.jsHashCode)
             add(context.irBuiltIns.dataClassArrayMemberToStringSymbol, context.intrinsics.jsToString)
         }
