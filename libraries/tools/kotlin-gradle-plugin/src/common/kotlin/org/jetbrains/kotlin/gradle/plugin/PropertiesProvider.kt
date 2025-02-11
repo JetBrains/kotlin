@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_NEXT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE
@@ -68,7 +69,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.ExperimentalTime
 
 internal class PropertiesProvider private constructor(private val project: Project) {
     val buildReportSingleFile: String?
@@ -121,6 +121,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val incrementalJvm: Boolean?
         get() = booleanProperty("kotlin.incremental")
+
+    /**
+     * Enables new experimental "IncrementalFirJvmCompilerRunner" for incremental compilation.
+     */
+    val incrementalJvmFir: Provider<Boolean>
+        get() = booleanProvider(KOTLIN_INCREMENTAL_FIR).orElse(false)
 
     val incrementalJs: Boolean?
         get() = booleanProperty("kotlin.incremental.js")
@@ -725,6 +731,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
+        val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used
