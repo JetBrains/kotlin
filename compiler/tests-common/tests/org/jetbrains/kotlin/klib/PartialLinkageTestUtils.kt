@@ -30,6 +30,7 @@ object PartialLinkageTestUtils {
             dependencies: Dependencies,
             klibFile: File,
             compilerEdition: KlibCompilerEdition,
+            compilerArguments: List<String>,
         )
 
         // Build a binary (executable) file given the main KLIB and the rest of dependencies.
@@ -179,7 +180,8 @@ object PartialLinkageTestUtils {
                         moduleBuildDirs,
                         dependencies,
                         moduleUnderTest.klibFile,
-                        compilerEdition
+                        compilerEdition,
+                        moduleStep.cliArguments,
                     )
                 }
             }

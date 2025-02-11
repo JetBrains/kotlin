@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -61,7 +60,15 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
             dependencies: Dependencies,
             klibFile: File,
             compilerEdition: KlibCompilerEdition,
-        ) = this@AbstractKlibLinkageTest.buildKlib(moduleName, buildDirs.sourceDir, dependencies, klibFile, compilerEdition)
+            compilerArguments: List<String>,
+        ) = this@AbstractKlibLinkageTest.buildKlib(
+            moduleName,
+            buildDirs.sourceDir,
+            dependencies,
+            klibFile,
+            compilerEdition,
+            compilerArguments
+        )
 
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
@@ -99,6 +106,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
         dependencies: Dependencies,
         klibFile: File,
         compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
     )
 
     internal fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) {

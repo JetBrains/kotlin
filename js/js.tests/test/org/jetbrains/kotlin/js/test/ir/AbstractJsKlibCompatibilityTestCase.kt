@@ -35,6 +35,7 @@ abstract class AbstractJsKlibCompatibilityTestCase(compilerType: CompilerType) :
         dependencies: Dependencies,
         klibFile: File,
         compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
     ) {
         val kotlinSourceFilePaths = composeSourceFile(buildDirs)
 
@@ -45,6 +46,7 @@ abstract class AbstractJsKlibCompatibilityTestCase(compilerType: CompilerType) :
                 K2JSCompilerArguments::moduleName.cliArgument, moduleName,
             ),
             dependencies.replaceStdlib(compilerEdition).toCompilerArgs(),
+            compilerArguments,
             kotlinSourceFilePaths,
             compilerEdition = compilerEdition
         )

@@ -269,6 +269,15 @@ open class TestCompilerArgs(
     override fun equals(other: Any?) = (other as? TestCompilerArgs)?.uniqueCompilerArgs == uniqueCompilerArgs &&
             other.uniqueCinteropArgs == uniqueCinteropArgs && other.assertionsMode == assertionsMode
 
+    fun plusCompilerArgs(compilerArgs: List<String>): TestCompilerArgs {
+        return TestCompilerArgs(
+            this.compilerArgs + compilerArgs,
+            cinteropArgs,
+            assertionsMode,
+            objcArc,
+        )
+    }
+
     operator fun plus(otherCompilerArgs: TestCompilerArgs): TestCompilerArgs = TestCompilerArgs(
         this.compilerArgs + otherCompilerArgs.compilerArgs,
         this.cinteropArgs + otherCompilerArgs.cinteropArgs,

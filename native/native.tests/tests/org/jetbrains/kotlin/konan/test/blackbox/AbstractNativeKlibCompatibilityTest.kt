@@ -55,13 +55,11 @@ abstract class AbstractNativeKlibCompatibilityTest : AbstractKlibLinkageTest() {
         dependencies: Dependencies,
         klibFile: File,
         compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
     ) {
         val klibArtifact = KLIB(klibFile)
 
-        val compilerArgs = if (compilerEdition.args.isNotEmpty()) {
-            TestCompilerArgs(COMPILER_ARGS.compilerArgs + compilerEdition.args)
-        } else COMPILER_ARGS
-
+        val compilerArgs = COMPILER_ARGS.plusCompilerArgs(compilerEdition.args).plusCompilerArgs(compilerArguments)
         val testCase = createTestCase(moduleName, moduleSourceDir, compilerArgs)
 
         val compilation = when (compilerEdition) {
