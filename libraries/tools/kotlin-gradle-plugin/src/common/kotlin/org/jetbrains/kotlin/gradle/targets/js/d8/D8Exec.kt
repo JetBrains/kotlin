@@ -7,5 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
+@Deprecated(
+    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec' instead",
+    ReplaceWith("D8Exec", "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec")
+)
 @OptIn(ExperimentalWasmDsl::class)
 typealias D8Exec = org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec

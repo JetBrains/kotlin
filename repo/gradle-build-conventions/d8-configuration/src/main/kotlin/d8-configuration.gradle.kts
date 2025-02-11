@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalWasmDsl::class)
+// TODO: remove this when KT-75086 is completed
 @file:Suppress("DEPRECATION")
 
 import org.jetbrains.kotlin.build.d8.D8Extension
