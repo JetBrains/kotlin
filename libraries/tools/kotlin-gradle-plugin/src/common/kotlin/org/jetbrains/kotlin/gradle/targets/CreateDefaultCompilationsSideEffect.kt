@@ -17,7 +17,7 @@ internal val CreateDefaultCompilationsSideEffect = KotlinTargetSideEffect { targ
         target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
             associateWith(main)
 
-            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
+            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
             if (this is DeprecatedKotlinCompilationToRunnableFiles && this !is KotlinJsIrTarget) {
                 // TODO: fix inconsistency? KT-27272
                 runtimeDependencyFiles += project.files(output.allOutputs)

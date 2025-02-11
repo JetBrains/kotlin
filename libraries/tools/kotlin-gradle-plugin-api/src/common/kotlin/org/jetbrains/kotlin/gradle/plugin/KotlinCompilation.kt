@@ -209,7 +209,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     @Deprecated(
         message = "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("compileTaskProvider"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.WARNING, // TODO: KT-75144 raise after fixing deprecation warnings in serialization
     )
     val compileKotlinTask: KotlinCompileDeprecated<T>
 
@@ -389,7 +389,10 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 /**
  * @suppress
  */
-@Deprecated("Scheduled for removal with Kotlin 2.3.", level = DeprecationLevel.ERROR)
+@Deprecated(
+    "Scheduled for removal with Kotlin 2.3.",
+    level = DeprecationLevel.WARNING, // TODO: KT-75144 raise after fixing deprecation warnings in atomicfu
+)
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     override val runtimeDependencyConfigurationName: String
 
@@ -399,14 +402,14 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : 
 /**
  * @suppress
  */
-@Suppress("Deprecation_ERROR")
+@Suppress("Deprecation")
 typealias DeprecatedKotlinCompilationToRunnableFiles<T> = KotlinCompilationToRunnableFiles<T>
 
 /**
  * @suppress
  */
 @Deprecated("Scheduled for removal with Kotlin 2.3.", level = DeprecationLevel.ERROR)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation_ERROR") // kept for compatibility
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 

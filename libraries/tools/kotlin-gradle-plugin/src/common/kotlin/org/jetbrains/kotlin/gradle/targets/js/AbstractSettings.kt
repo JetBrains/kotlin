@@ -21,7 +21,7 @@ abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env
 
     @Deprecated(
         "This property has been migrated to support the Provider API. Use downloadBaseUrlProperty instead. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.WARNING // TODO: KT-75144 raise after fixing deprecation warnings in coroutines
     )
     var downloadBaseUrl: String?
         get() = downloadBaseUrlProperty.getOrNull()
