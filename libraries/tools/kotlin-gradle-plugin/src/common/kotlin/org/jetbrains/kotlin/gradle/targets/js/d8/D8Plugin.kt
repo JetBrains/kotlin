@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
     "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin' instead",
     ReplaceWith("D8EnvSpec", "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin")
 )
-@OptIn(ExperimentalWasmDsl::class)
 open class D8Plugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply(org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin::class.java)
