@@ -252,7 +252,7 @@ private class CallInlining(
 
         override fun visitCall(expression: IrCall): IrExpression {
             // TODO extract to common utils OR reuse ContractDSLRemoverLowering
-            if (expression.symbol.isBound && expression.symbol.owner.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)) {
+            if (expression.isContractCall()) {
                 return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
             }
 
@@ -426,8 +426,14 @@ private class CallInlining(
         override fun visitElement(element: IrElement) = element.accept(this, null)
     }
 
-    private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
-        return when {
+    private fun IrCall.isContractCall(): Boolean {
+            return symbol.isBound && symbol.owner.annotations.any {
+                it.symbol.isBound && it.symbol.owner.parentAsClass.hasEqualFqName(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)
+            }
+        }
+
+        private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
+            return when {
             !insertAdditionalImplicitCasts -> this
             type.isUnit() -> this.coerceToUnit(context.irBuiltIns)
             else -> this.implicitCastIfNeededTo(type)
