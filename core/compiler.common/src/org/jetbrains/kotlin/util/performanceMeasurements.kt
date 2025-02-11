@@ -76,6 +76,10 @@ class BinaryClassFromKotlinFileMeasurement(count: Int, milliseconds: Long) : Cou
     override val description: String = "Binary class from Kotlin file"
 }
 
+@DeprecatedPerformanceDeclaration
 class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
     override fun render(lines: Int): String = counterReport
 }
+
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING, message = "The declaration is kept to have back compatibility with K1")
+annotation class DeprecatedPerformanceDeclaration
