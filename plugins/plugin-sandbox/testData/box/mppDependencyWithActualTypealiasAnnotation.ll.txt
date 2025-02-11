@@ -43,6 +43,15 @@ FILE: module_main_mppDependencyWithActualTypealiasAnnotation.kt
             super<R|kotlin/Any|>()
         }
 
+        public final fun materialize(): R|foo/CommonBenchmark|
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|foo/CommonBenchmark.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }
     public final fun box(): R|kotlin/String| {
         ^box String(OK)
