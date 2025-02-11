@@ -124,13 +124,17 @@ object KotlinUsages {
 
     private val javaUsagesForKotlinMetadataConsumers = listOf(JAVA_API, JAVA_RUNTIME)
 
+    //TODO: KT-75141 Deprecate & remove
     private class KotlinMetadataCompatibility : AttributeCompatibilityRule<Usage> {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
-            // ensure that a consumer that requests 'kotlin-metadata' can also consumer 'kotlin-api' artifacts or the
-            // 'java-*' ones (these are how Gradle represents a module that is published with no Gradle module metadata).
+            /** Ensure that a consumer that requests 'kotlin-metadata' can also consume
+            'java-*' ones (these are how Gradle represents a module that published with no Gradle module metadata).
+            This is a safety measure to prevent configuration resolution failures.
+            These dependencies will be filtered out in [GranularMetadataTransformation] as [MetadataDependencyResolution.KeepOriginalDependency]
+             */
             if (
                 consumerValue?.name == KOTLIN_METADATA &&
-                (producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
+                producerValue?.name in javaUsagesForKotlinMetadataConsumers
             ) {
                 compatible()
             }
