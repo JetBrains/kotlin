@@ -29,6 +29,7 @@ kotlin {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
+        @Suppress("DEPRECATION")
         languageVersion.set(KotlinVersion.KOTLIN_1_9)
     }
 
