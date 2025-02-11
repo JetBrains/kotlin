@@ -238,7 +238,7 @@ class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int)
     override fun string(index: Int): ByteArray = klib.string(index, fileIndex)
     override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
     override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
-    override fun fileEntry(index: Int): ByteArray? = klib.fileEntry(index, fileIndex)
+    override fun fileEntry(index: Int): ByteArray? = klib.takeIf { klib.hasFileEntriesTable }?.fileEntry(index, fileIndex)
 }
 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
@@ -266,9 +266,11 @@ fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
     }
 
 fun IrLibrary.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
-    if (protoFile.hasFileEntryId())
+    if (protoFile.hasFileEntryId() && hasFileEntriesTable)
         ProtoFileEntry.parseFrom(fileEntry(protoFile.fileEntryId, fileIndex))
     else {
-        require(protoFile.hasFileEntry()) { "Invalid KLib: either fileEntry or fileEntryId must be present" }
+        require(protoFile.hasFileEntry()) {
+            "Invalid KLib: either fileEntry or valid fileEntryId must be present. Valid fileEntryId is a valid index in existing file entries table"
+        }
         protoFile.fileEntry
     }

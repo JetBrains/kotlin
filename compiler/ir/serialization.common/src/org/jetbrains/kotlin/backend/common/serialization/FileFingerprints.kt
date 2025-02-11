@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.readKonanLibraryVersioning
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 import java.nio.ByteBuffer
@@ -68,9 +67,11 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, lib.strings(fileIndex))
             val withBodiesHash = cityHash128WithSeed(withStringsHash, lib.bodies(fileIndex))
             val withDeclarationsHash = cityHash128WithSeed(withBodiesHash, lib.declarations(fileIndex))
-            val fileEntries = lib.fileEntries(fileIndex)
-            val withFileEntriesHash = withDeclarationsHash.applyIf(fileEntries != null) {
-                cityHash128WithSeed(this, fileEntries!!)
+            val withFileEntriesHash = withDeclarationsHash.applyIf(lib.hasFileEntriesTable) {
+                val fileEntries = lib.fileEntries(fileIndex)
+                applyIf(fileEntries != null) {
+                    cityHash128WithSeed(this, fileEntries!!)
+                }
             }
             return FingerprintHash(withFileEntriesHash)
         }

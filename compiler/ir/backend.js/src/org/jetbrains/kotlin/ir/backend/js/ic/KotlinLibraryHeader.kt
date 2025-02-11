@@ -55,7 +55,7 @@ internal class KotlinLoadedLibraryHeader(
                 override fun string(index: Int): ByteArray = library.string(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
-                override fun fileEntry(index: Int): ByteArray? = library.fileEntry(index, it)
+                override fun fileEntry(index: Int): ByteArray? = library.takeIf { library.hasFileEntriesTable }?.fileEntry(index, it)
             }), null, irInterner)
 
             put(sourceFiles[it], deserializer)
