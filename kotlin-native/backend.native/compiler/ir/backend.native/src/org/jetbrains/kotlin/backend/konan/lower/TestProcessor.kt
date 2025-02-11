@@ -123,22 +123,21 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
                 +irCall(registerTestCase).apply {
                     dispatchReceiver = irGet(receiver)
-                    putValueArgument(0, irString(it.functionName))
-                    putValueArgument(1, it.function.toReference(parent))
-                    putValueArgument(2, irBoolean(it.ignored))
+                    arguments[1] = irString(it.functionName)
+                    arguments[2] = it.function.toReference(parent)
+                    arguments[3] = irBoolean(it.ignored)
                 }
             } else {
                 // Call registerFunction(kind: TestFunctionKind, () -> Unit) method.
                 +irCall(registerFunction).apply {
                     dispatchReceiver = irGet(receiver)
                     val testKindEntry = it.kind.runtimeKind
-                    putValueArgument(0, IrGetEnumValueImpl(
+                    arguments[1] = IrGetEnumValueImpl(
                             it.function.startOffset,
                             it.function.endOffset,
                             symbols.testFunctionKind.typeWithArguments(emptyList()),
                             testKindEntry)
-                    )
-                    putValueArgument(1, it.function.toReference(parent))
+                    arguments[2] = it.function.toReference(parent)
                 }
             }
         }
@@ -234,7 +233,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                             isCompanion ->
                                 warn("Annotation $annotation is not allowed for methods of a companion object")
 
-                            constructors.none { it.valueParameters.size == 0 } ->
+                            constructors.none { it.parameters.isEmpty() } ->
                                 warn("Test class has no default constructor: $fqNameForIrSerialization")
 
                             else ->
@@ -269,7 +268,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                         "Test function must return Unit: $fqNameForIrSerialization", irFile, this
                 )
             }
-            if (valueParameters.isNotEmpty()) {
+            if (parameters.any { it.kind != IrParameterKind.DispatchReceiver }) {
                 context.reportCompilationError(
                         "Test function must have no arguments: $fqNameForIrSerialization", irFile, this
                 )
@@ -356,7 +355,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
             parent = owner
 
             val superFunction = baseClassSuite.simpleFunctions()
-                    .single { it.name == getterName && it.valueParameters.isEmpty() }
+                    .single { it.name == getterName && it.hasShape(dispatchReceiver = true) }
 
             parameters += createDispatchReceiverParameterWithClassParent()
             overriddenSymbols += superFunction.symbol
@@ -393,21 +392,22 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
             parent = owner
 
             val superFunction = baseClassSuite.simpleFunctions()
-                    .single { it.name == getterName && it.valueParameters.isEmpty() }
+                    .single { it.name == getterName && it.hasShape(dispatchReceiver = true) }
 
             parameters += createDispatchReceiverParameterWithClassParent()
             overriddenSymbols += superFunction.symbol
 
             body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
-                val constructor = classSymbol.owner.constructors.single { it.valueParameters.isEmpty() }
+                val constructor = classSymbol.owner.constructors.single { it.parameters.isEmpty() }
                 +irReturn(irCall(constructor))
             }
         }
 
     private val baseClassSuiteConstructor = baseClassSuite.constructors.single {
-        it.valueParameters.size == 2
-                && it.valueParameters[0].type.isString()  // name: String
-                && it.valueParameters[1].type.isBoolean() // ignored: Boolean
+        it.hasShape(regularParameters = 2, parameterTypes = listOf(
+                context.irBuiltIns.stringType,   // name: String
+                context.irBuiltIns.booleanType   // ignored: Boolean
+        ))
     }
 
     /**
@@ -440,15 +440,15 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                         simpleFunctions().single { it.name.asString() == name && predicate(it) }
 
                 val registerTestCase = baseClassSuite.getFunction("registerTestCase") {
-                    it.valueParameters.size == 3
-                            && it.valueParameters[0].type.isString()   // name: String
-                            && it.valueParameters[1].type.isFunction() // function: testClassType.() -> Unit
-                            && it.valueParameters[2].type.isBoolean()  // ignored: Boolean
+                    it.parameters.size == 4
+                            && it.parameters[1].type.isString()    // name: String
+                            && it.parameters[2].type.isFunction()  // function: testClassType.() -> Unit
+                            && it.parameters[3].type.isBoolean()   // ignored: Boolean
                 }
                 val registerFunction = baseClassSuite.getFunction("registerFunction") {
-                    it.valueParameters.size == 2
-                            && it.valueParameters[0].type.isTestFunctionKind() // kind: TestFunctionKind
-                            && it.valueParameters[1].type.isFunction()         // function: () -> Unit
+                    it.parameters.size == 3
+                            && it.parameters[1].type.isTestFunctionKind()  // kind: TestFunctionKind
+                            && it.parameters[2].type.isFunction()          // function: () -> Unit
                 }
 
                 val irBuilder = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset)
@@ -457,8 +457,8 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                         typeArguments[0] = testClassType
                         typeArguments[1] = testCompanionType
 
-                        putValueArgument(0, irString(suiteName))
-                        putValueArgument(1, irBoolean(ignored))
+                        arguments[0] = irString(suiteName)
+                        arguments[1] = irBoolean(ignored)
                     }
                     generateFunctionRegistration(
                             testSuite.owner.thisReceiver!!,
@@ -550,21 +550,20 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
 
     private val topLevelSuite = symbols.topLevelSuite.owner
     private val topLevelSuiteConstructor = topLevelSuite.constructors.single {
-        it.valueParameters.size == 1
-                && it.valueParameters[0].type.isString()
+        it.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.stringType))
     }
     private val topLevelSuiteRegisterFunction = topLevelSuite.simpleFunctions().single {
         it.name.asString() == "registerFunction"
-                && it.valueParameters.size == 2
-                && it.valueParameters[0].type.isTestFunctionKind()
-                && it.valueParameters[1].type.isFunction()
+                && it.parameters.size == 3
+                && it.parameters[1].type.isTestFunctionKind()
+                && it.parameters[2].type.isFunction()
     }
     private val topLevelSuiteRegisterTestCase = topLevelSuite.simpleFunctions().single {
         it.name.asString() == "registerTestCase"
-                && it.valueParameters.size == 3
-                && it.valueParameters[0].type.isString()
-                && it.valueParameters[1].type.isFunction()
-                && it.valueParameters[2].type.isBoolean()
+                && it.parameters.size == 4
+                && it.parameters[1].type.isString()
+                && it.parameters[2].type.isFunction()
+                && it.parameters[3].type.isBoolean()
     }
 
     private fun generateTopLevelSuite(irFile: IrFile, topLevelSuiteName: String, functions: Collection<TestFunction>): IrExpression? {
@@ -575,7 +574,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
 
         return irBuilder.irBlock {
             val constructorCall = irCall(topLevelSuiteConstructor).apply {
-                putValueArgument(0, irString(topLevelSuiteName))
+                arguments[0] = irString(topLevelSuiteName)
             }
             val testSuiteVal = irTemporary(constructorCall, "topLevelTestSuite")
             generateFunctionRegistration(
