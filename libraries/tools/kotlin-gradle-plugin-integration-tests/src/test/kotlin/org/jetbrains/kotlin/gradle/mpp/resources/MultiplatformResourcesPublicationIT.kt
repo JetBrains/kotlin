@@ -45,7 +45,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion = null,
             providedJdk = null,
             publicationTask = ":publishJvmPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-jvm/1.0/publication-jvm-1.0.jar",
+            publishedArchive = "repo/test/publication-jvm/1.0/publication-jvm-1.0.jar",
             referenceName = "jvm",
         )
     }
@@ -60,7 +60,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion = null,
             providedJdk = null,
             publicationTask = ":publishLinuxX64PublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "linuxX64",
         )
     }
@@ -75,7 +75,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion = null,
             providedJdk = null,
             publicationTask = ":publishWasmJsPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-wasm-js/1.0/publication-wasm-js-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-wasm-js/1.0/publication-wasm-js-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "wasmJs",
         )
     }
@@ -90,7 +90,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion = null,
             providedJdk = null,
             publicationTask = ":publishWasmWasiPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "wasmWasi",
         )
     }
@@ -105,7 +105,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             androidVersion = null,
             providedJdk = null,
             publicationTask = ":publishJsPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-js/1.0/publication-js-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-js/1.0/publication-js-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "js",
         )
     }
@@ -118,7 +118,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         val project = resourcesProducerProject(gradleVersion)
 
         val publishedArchive = project.projectPath.resolve(
-            "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip"
+            "repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip"
         )
 
         project.build(":publishLinuxX64PublicationToMavenRepository")
@@ -155,7 +155,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         )
 
         project.build(":publishAndroidReleasePublicationToMavenRepository")
-        val publishedAarPath = "build/repo/test/publication-android/1.0/publication-android-1.0.aar"
+        val publishedAarPath = "repo/test/publication-android/1.0/publication-android-1.0.aar"
         val classesInAar = project.projectPath.resolve("classesInAar")
         val classesJar = "classes.jar"
         unzip(

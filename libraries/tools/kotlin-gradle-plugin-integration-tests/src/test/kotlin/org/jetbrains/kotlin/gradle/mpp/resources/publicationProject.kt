@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
@@ -19,6 +20,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import java.io.File
+
+data class MultiplatformResourcesITAndroidConfiguration(
+    val version: String,
+    val pluginId: String,
+) : java.io.Serializable
 
 fun KGPBaseTest.resourcesProducerProject(
     gradleVersion: GradleVersion,
@@ -34,7 +40,7 @@ fun KGPBaseTest.resourcesProducerProject(
     androidVersion?.let { addAgpToBuildScriptCompilationClasspath(it) }
     configureStandardResourcesProducer(
         androidVersion?.let {
-            AndroidConfiguration(
+            MultiplatformResourcesITAndroidConfiguration(
                 it,
                 "com.android.library",
             )
@@ -42,13 +48,8 @@ fun KGPBaseTest.resourcesProducerProject(
     )
 }
 
-data class AndroidConfiguration(
-    val version: String,
-    val pluginId: String,
-) : java.io.Serializable
-
 fun TestProject.configureStandardResourcesProducer(
-    androidConfiguration: AndroidConfiguration?,
+    androidConfiguration: MultiplatformResourcesITAndroidConfiguration?,
     relativeResourcePlacement: Project.() -> Provider<File> = {
         project.provider {
             File("embed/${project.name}")
@@ -65,16 +66,12 @@ fun TestProject.configureStandardResourcesProducer(
         project.version = "1.0"
 
         project.applyMultiplatform {
-            val publication = project.extraProperties.get(
-                KotlinTargetResourcesPublication.EXTENSION_NAME
-            ) as KotlinTargetResourcesPublication
-
             configureStandardResourcesProducerTargets(withAndroid = androidConfiguration != null)
             configureStandardResourcesAndAssetsPublication(relativeResourcePlacement)
         }
 
         publishing.repositories.maven {
-            it.url = project.uri(project.layout.buildDirectory.dir("repo"))
+            it.url = project.uri(project.layout.projectDirectory.dir("repo"))
         }
     }
 }
@@ -82,11 +79,9 @@ fun TestProject.configureStandardResourcesProducer(
 fun GradleProjectBuildScriptInjectionContext.configureStandardResourcesProducerTargets(withAndroid: Boolean) {
     with(kotlinMultiplatform) {
         if (withAndroid) {
-            androidTarget {
+            androidTarget { -> Unit
                 publishAllLibraryVariants()
-                compilations.all {
-                    it.kotlinOptions.jvmTarget = "1.8"
-                }
+                compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
             }
         }
         jvm()
