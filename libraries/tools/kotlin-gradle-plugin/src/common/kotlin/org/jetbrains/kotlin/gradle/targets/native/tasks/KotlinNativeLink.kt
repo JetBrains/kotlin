@@ -72,7 +72,7 @@ constructor(
     UsesBuildFusService
 {
 
-    @Deprecated("Visibility will be lifted to private in the future releases")
+    @Deprecated("Visibility will be lifted to private in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     @get:Internal
     val compilation: KotlinNativeCompilation
         get() = binary.compilation
@@ -82,11 +82,11 @@ constructor(
 
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @get:Internal
     internal val konanTarget = compilation.konanTarget
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @get:Internal
     internal val nativeDependencies = compilation.nativeDependencies
 
@@ -94,7 +94,7 @@ constructor(
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) compilation.compileDependencyFiles.exclude(originalPlatformLibraries())
             else objectFactory.fileCollection()
         }
@@ -115,7 +115,7 @@ constructor(
     @get:Input
     internal val binaryName: String by lazyConvention { binary.name }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated("Use toolOptions to configure the task")
     @get:Internal
     val languageSettings: LanguageSettings = compilation.defaultSourceSet.languageSettings
@@ -188,7 +188,7 @@ constructor(
     @get:Input
     val isStaticFramework: Boolean by lazyConvention { binary.let { it is Framework && it.isStatic } }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @get:Input
     val target: String = compilation.konanTarget.name
 
@@ -326,11 +326,11 @@ constructor(
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @get:Classpath
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private val resolvedConfiguration = LazyResolvedConfiguration(
         project.configurations.getByName(compilation.compileDependencyConfigurationName)
     )

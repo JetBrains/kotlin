@@ -14,9 +14,7 @@ import java.io.Serializable
 enum class KotlinJsCompilerAttribute : Named, Serializable {
     legacy,
     ir,
-
-    @Deprecated("This value is not used in Gradle plugin. You don't need to use it. It will be removed in next major.")
-    both;
+    ;
 
     override fun getName(): String =
         name

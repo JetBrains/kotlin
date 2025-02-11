@@ -75,7 +75,7 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
         ) {
             listOf("app1", "app2").forEach { subProjectName ->
                 subProject(subProjectName).buildGradleKts.modify {
-                    it.replace("plugins.", "rootProject.plugins.")
+                    it.replace("plugins.", "@Suppress(\"DEPRECATION_ERROR\") rootProject.plugins.")
                         .replace("the", "rootProject.the")
                         .replace("NodeJsPlugin", "NodeJsRootPlugin")
                         .replace("NodeJsEnvSpec", "NodeJsRootExtension")

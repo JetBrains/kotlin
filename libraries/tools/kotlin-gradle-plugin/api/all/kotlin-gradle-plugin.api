@@ -2428,7 +2428,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/JsCompilationExecution
 
 public final class org/jetbrains/kotlin/gradle/targets/js/KotlinJsCompilerAttribute : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/KotlinJsCompilerAttribute$Companion;
-	public static final field both Lorg/jetbrains/kotlin/gradle/targets/js/KotlinJsCompilerAttribute;
 	public static final field ir Lorg/jetbrains/kotlin/gradle/targets/js/KotlinJsCompilerAttribute;
 	public static final field legacy Lorg/jetbrains/kotlin/gradle/targets/js/KotlinJsCompilerAttribute;
 	public fun getName ()Ljava/lang/String;

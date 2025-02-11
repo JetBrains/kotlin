@@ -75,7 +75,11 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     val interopProcessingTaskName get() = params.interopProcessingTaskName
 
 
-    @Deprecated("Deprecated. Please, use definitionFile.", ReplaceWith("definitionFile"))
+    @Deprecated(
+        "Deprecated. Please, use definitionFile. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("definitionFile"),
+        level = DeprecationLevel.ERROR
+    )
     val defFileProperty: Property<File> = params.services.objectFactory.property<File>().convention(
         getDefaultCinteropDefinitionFile().takeIf { it.exists() }
     )
@@ -83,7 +87,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     private fun getDefaultCinteropDefinitionFile(): File = params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
 
     val definitionFile: RegularFileProperty = params.services.objectFactory.fileProperty().convention(
-        @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
+        @Suppress("DEPRECATION_ERROR") // deprecated property is used intentionally during deprecation period
         params.services.projectLayout.file(defFileProperty)
     )
 
@@ -91,7 +95,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     var defFile: File
         get() = definitionFile.getFile()
         set(value) {
-            @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
+            @Suppress("DEPRECATION_ERROR") // deprecated property is used intentionally during deprecation period
             defFileProperty.set(value)
         }
 
@@ -120,7 +124,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     // DSL methods.
 
     override fun defFile(file: Any) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         defFileProperty.set(params.services.fileOperations.file(file))
     }
 

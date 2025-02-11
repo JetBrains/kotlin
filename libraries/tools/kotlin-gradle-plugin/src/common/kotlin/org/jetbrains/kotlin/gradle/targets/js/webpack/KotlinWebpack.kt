@@ -137,7 +137,11 @@ constructor(
     )
 
     @get:Internal
-    @Deprecated("Use `outputDirectory` instead", ReplaceWith("outputDirectory"))
+    @Deprecated(
+        "Use `outputDirectory` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("outputDirectory"),
+        level = DeprecationLevel.ERROR
+    )
     var destinationDirectory: File
         get() = outputDirectory.asFile.get()
         set(value) {
@@ -149,7 +153,11 @@ constructor(
     abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
-    @Deprecated("Use `mainOutputFileName` instead", ReplaceWith("mainOutputFileName"))
+    @Deprecated(
+        "Use `mainOutputFileName` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("mainOutputFileName"),
+        level = DeprecationLevel.ERROR
+    )
     var outputFileName: String
         get() = mainOutputFileName.get()
         set(value) {
@@ -160,7 +168,11 @@ constructor(
     abstract val mainOutputFileName: Property<String>
 
     @get:Internal
-    @Deprecated("Use `mainOutputFile` instead", ReplaceWith("mainOutputFile"))
+    @Deprecated(
+        "Use `mainOutputFile` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("mainOutputFile"),
+        level = DeprecationLevel.ERROR
+    )
     open val outputFile: File
         get() = mainOutputFile.get().asFile
 

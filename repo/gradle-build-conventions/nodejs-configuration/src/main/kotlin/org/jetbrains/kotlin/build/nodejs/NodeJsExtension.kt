@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 abstract class NodeJsExtension(
     private val nodeJsRoot: NodeJsRootExtension
 ) {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     fun Test.setupNodeJs() {
         dependsOn(nodeJsRoot.nodeJsSetupTaskProvider)
         val nodeJsExecutablePath = project.provider {

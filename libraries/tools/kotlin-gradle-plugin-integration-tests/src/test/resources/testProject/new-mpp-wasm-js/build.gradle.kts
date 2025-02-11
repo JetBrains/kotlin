@@ -9,13 +9,13 @@ repositories {
 
 kotlin {
     wasmJs {
-        moduleName = "redefined-wasm-module-name"
+        outputModuleName.set("redefined-wasm-module-name")
         <JsEngine> {
         }
         binaries.executable()
     }
     js {
-        moduleName = "redefined-js-module-name"
+        outputModuleName.set("redefined-js-module-name")
         browser {
         }
         binaries.executable()
