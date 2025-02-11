@@ -3275,7 +3275,7 @@ class ComposableFunctionBodyTransformer(
             } else {
                 cacheCall.wrap(
                     before = inputVals.filterNotNull() + listOf(
-                        irStartReplaceGroup(expression, blockScope, irFunctionSourceKey(expression.symbol.owner))
+                        irStartReplaceGroup(expression, blockScope)
                     ),
                     after = listOf(irEndReplaceGroup(scope = blockScope))
                 )

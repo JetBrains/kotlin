@@ -318,6 +318,38 @@ class CompositionTests {
         assertEquals(2, innerCounter)
         assertEquals(2, counter)
     }
+
+    // regression test for KT-74102
+    @Test
+    fun testIntrinsicRememberSourceKeys() = compositionTest {
+        var condition by mutableStateOf(false)
+        compose {
+            if (condition) {
+                currentComposer.startReplaceGroup(42)
+                currentComposer.endReplaceGroup()
+            }
+
+            if (condition) {
+                currentComposer.startReplaceGroup(420)
+                currentComposer.endReplaceGroup()
+            }
+
+            Text("Hello")
+            Text(remember { "key" })
+            Text(remember { "key2" })
+        }
+
+        validate {
+            Text("Hello")
+            Text("key")
+            Text("key2")
+        }
+
+        condition = true
+        advance()
+
+        revalidate()
+    }
 }
 
 @Composable
