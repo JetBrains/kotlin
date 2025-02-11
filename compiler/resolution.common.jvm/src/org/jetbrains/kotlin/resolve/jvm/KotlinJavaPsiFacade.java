@@ -200,7 +200,7 @@ public class KotlinJavaPsiFacade implements Disposable {
         // We hope this method is being called often enough to cancel daemon processes smoothly
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        assert !shouldUseSlowResolve() : "`findClasses` should not be called from dumb mode, as results may be incomplete.";
+        assert !shouldUseSlowResolve() : "`findClasses` doesn't have an implementation for slow resolve mode.";
 
         ClassId classId = request.getClassId();
         String qualifiedName = classId.asSingleFqName().asString();
@@ -280,7 +280,7 @@ public class KotlinJavaPsiFacade implements Disposable {
         return pkg.findClassByShortName(className, scope);
     }
 
-    private boolean shouldUseSlowResolve() {
+    protected boolean shouldUseSlowResolve() {
         DumbService dumbService = DumbService.getInstance(getProject());
         return dumbService.isDumb() && dumbService.isAlternativeResolveEnabled();
     }
