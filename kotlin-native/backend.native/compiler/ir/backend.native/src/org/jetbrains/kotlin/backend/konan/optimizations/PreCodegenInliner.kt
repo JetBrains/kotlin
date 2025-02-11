@@ -106,7 +106,7 @@ internal class PreCodegenInliner(
                             || irFunction.konanLibrary?.isCInteropLibrary() == true
                             || irFunction.originalConstructor?.let { constructor ->
                                 // To support IR pattern recognition in IrToBitcode.kt on IrConstantObject generation.
-                                constructor.valueParameters.isEmpty()
+                                constructor.parameters.isEmpty()
                                         && constructor.constructedClass.superTypes.any {
                                     it.classOrNull == kFunctionImpl || it.classOrNull == kSuspendFunctionImpl
                                 }
