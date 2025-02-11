@@ -21,6 +21,12 @@ uintptr_t __root___MyObject_get();
 
 uintptr_t __root___OBJECT_WITH_INTERFACE_INHERITANCE_get();
 
+NSArray<id> * __root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___(NSArray<id> * value);
+
+NSArray<id> * __root___list_get();
+
+void __root___list_set__TypesOfArguments__Swift_Array_anyU20main_Foeble___(NSArray<id> * newValue);
+
 uintptr_t __root___normal__TypesOfArguments__anyU20main_Foeble__(uintptr_t value);
 
 uintptr_t __root___normal_get();

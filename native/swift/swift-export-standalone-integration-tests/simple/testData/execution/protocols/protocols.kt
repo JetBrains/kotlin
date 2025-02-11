@@ -44,6 +44,12 @@ var property: Foo
 fun nullableIdentity(value: Foo?): Foo? = value
 var nullableProperty: Foo? = null
 
+fun listIdentity(value: List<Foo>): List<Foo> = value
+var listProperty: List<Foo> = emptyList()
+
+fun nullablesListIdentity(value: List<Foo?>): List<Foo?> = value
+var nullablesListProperty: List<Foo?> = emptyList()
+
 // FILE: protocolMembers.kt
 
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)

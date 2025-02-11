@@ -85,6 +85,14 @@ public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, 
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public var list: [any main.Foeble] {
+    get {
+        return __root___list_get() as! Swift.Array<any main.Foeble>
+    }
+    set {
+        return __root___list_set__TypesOfArguments__Swift_Array_anyU20main_Foeble___(newValue)
+    }
+}
 public var normal: any main.Foeble {
     get {
         return KotlinRuntime.KotlinBase(__externalRCRef: __root___normal_get()) as! any main.Foeble
@@ -100,6 +108,11 @@ public var nullable: (any main.Foeble)? {
     set {
         return __root___nullable_set__TypesOfArguments__anyU20main_Foeble_opt___(newValue.map { it in it.__externalRCRef() } ?? 0)
     }
+}
+public func list(
+    value: [any main.Foeble]
+) -> [any main.Foeble] {
+    return __root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___(value) as! Swift.Array<any main.Foeble>
 }
 public func normal(
     value: any main.Foeble

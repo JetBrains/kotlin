@@ -48,3 +48,5 @@ fun normal(value: Foeble): Foeble = value
 var normal: Foeble = Bar()
 fun nullable(value: Foeble?): Foeble? = value
 var nullable: Foeble? = null
+fun list(value: List<Foeble>): List<Foeble> = value
+var list: List<Foeble> = emptyList()
