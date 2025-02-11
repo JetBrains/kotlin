@@ -40,7 +40,7 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
         ) {
             configureStandardResourcesProducer(
-                AndroidConfiguration(
+                MultiplatformResourcesITAndroidConfiguration(
                     androidVersion,
                     "com.android.library",
                 )
@@ -61,7 +61,7 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
             addAgpToBuildScriptCompilationClasspath(androidVersion)
 
             configureStandardResourcesProducer(
-                AndroidConfiguration(
+                MultiplatformResourcesITAndroidConfiguration(
                     androidVersion,
                     "com.android.application",
                 ),
