@@ -212,6 +212,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val mppResourcesPublication: Boolean
         get() = this.booleanProperty(KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION) ?: true
 
+    // This property exists for cases like KT-68095
     val mppFilterResourcesByExtension: Provider<Boolean>
         get() = project.providers
             .provider<Boolean> {
