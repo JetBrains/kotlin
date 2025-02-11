@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.KlibAbiCompatibilityLevel.ABI_LEVEL_2_2
-import org.jetbrains.kotlin.backend.common.serialization.KlibAbiCompatibilityLevel.Companion.FIRST_HAVING_FILE_ENTRIES_TABLE
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.descriptors.*
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedDeclaration
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
@@ -1522,7 +1520,8 @@ open class IrFileSerializer(
         }
 
         val includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
-        if (settings.abiCompatibilityLevel.isAtLeast(FIRST_HAVING_FILE_ENTRIES_TABLE)) {
+        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
+            // KLIBs with ABI version >= 2.2.0 have `fileEntries.knf` file with `file entries` table.
             proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
         } else {
             proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
