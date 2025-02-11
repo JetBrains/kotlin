@@ -14,5 +14,5 @@ internal suspend inline fun internalInline(): String
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    local suspend fun <anonymous>(): String
+    /* LOCAL declaration @0 */ local suspend fun <anonymous>(): String
         /* ACCESSOR use-site */ access$privateSuspendMethod$tAKt()

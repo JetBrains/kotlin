@@ -175,6 +175,7 @@ private class SyntheticAccessorsDumper(
 ) : IrVisitorVoid() {
     private val stack = ArrayList<StackFrame>()
     private val dump = StringBuilder()
+    private val localDeclarations = mutableSetOf<IrSymbol>()
 
     fun getDump(): String? = dump.toString().takeIf(String::isNotBlank)
 
@@ -182,12 +183,16 @@ private class SyntheticAccessorsDumper(
         stack.temporarilyPushing(StackFrame(declaration)) { block() }
 
     private fun dumpCurrentStackIfSymbolIsObserved(symbol: IrSymbol) {
-        if (symbol in accessorSymbols || symbol in accessorTargetSymbols) {
+        if (symbol in accessorSymbols || symbol in accessorTargetSymbols || symbol in localDeclarations) {
             for ((index, stackFrame) in stack.withIndex()) {
                 stackFrame.ifNotYetPrinted { declaration ->
+                    if (declaration.isLocal) {
+                        localDeclarations.add(declaration.symbol)
+                    }
                     val comment = when (declaration.symbol) {
                         in accessorSymbols -> "/* ACCESSOR declaration */ "
                         in accessorTargetSymbols -> "/* TARGET declaration */ "
+                        in localDeclarations -> "/* LOCAL declaration @${localDeclarations.indexOf(declaration.symbol)} */ "
                         else -> ""
                     }
 
@@ -201,6 +206,7 @@ private class SyntheticAccessorsDumper(
         val comment = when (expression.symbol) {
             in accessorSymbols -> "/* ACCESSOR use-site */ "
             in accessorTargetSymbols -> "/* TARGET use-site */ "
+            in localDeclarations -> "/* LOCAL use-site @${localDeclarations.indexOf(expression.symbol)} */ "
             else -> return
         }
 
@@ -249,7 +255,8 @@ private class SyntheticAccessorsDumper(
                     printFakeOverridesStrategy = FakeOverridesStrategy.NONE,
                     bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES,
                     visibilityPrintingStrategy = VisibilityPrintingStrategy.ALWAYS,
-                    printMemberDeclarations = false
+                    printMemberDeclarations = false,
+                    collapseObjectLiteralBlock = true
                 )
             ).substringBefore('{').trimEnd()
 

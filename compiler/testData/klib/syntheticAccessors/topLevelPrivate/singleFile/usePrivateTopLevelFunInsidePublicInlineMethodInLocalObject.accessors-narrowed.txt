@@ -4,15 +4,15 @@
 
 internal inline fun internalInlineMethod(crossinline f: Function0<String>): String
     val tmp0: <no name provided> =
-        local class <no name provided>
-            public inline fun run(): String
+        /* LOCAL declaration @0 */ local class <no name provided>
+            /* LOCAL declaration @1 */ public inline fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
     /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
 /* TARGET declaration */ private fun privateMethod(): String
 public fun box(): String
     val tmp0: <no name provided> =
-        local class <no name provided>
-            public inline fun run(): String
+        /* LOCAL declaration @2 */ local class <no name provided>
+            /* LOCAL declaration @3 */ public inline fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
     /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
 /* ACCESSOR declaration */ internal fun access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt(): String

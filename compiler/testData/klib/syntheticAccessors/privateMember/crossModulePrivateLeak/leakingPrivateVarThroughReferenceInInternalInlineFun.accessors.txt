@@ -7,9 +7,9 @@ public class A
         /* TARGET declaration */ private fun <get-privateVar>(): Int
         /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
     internal inline fun internalInlineFunction(): KMutableProperty0<Int>
-        local fun <get-privateVar>(<this>: A): Int
+        /* LOCAL declaration @0 */ local fun <get-privateVar>(<this>: A): Int
             /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-        local fun <set-privateVar>(<this>: A, p0: Int)
+        /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: Int)
             /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
     /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: A): Int
         /* TARGET use-site */ $this.<get-privateVar>()
@@ -22,15 +22,15 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    local fun <get-privateVar>(<this>: A): Int
+    /* LOCAL declaration @0 */ local fun <get-privateVar>(<this>: A): Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    local fun <set-privateVar>(<this>: A, p0: Int)
+    /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
-    local fun <get-privateVar>(<this>: A): Int
+    /* LOCAL declaration @2 */ local fun <get-privateVar>(<this>: A): Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    local fun <set-privateVar>(<this>: A, p0: Int)
+    /* LOCAL declaration @3 */ local fun <set-privateVar>(<this>: A, p0: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
-    local fun <get-privateVar>(<this>: A): Int
+    /* LOCAL declaration @4 */ local fun <get-privateVar>(<this>: A): Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    local fun <set-privateVar>(<this>: A, p0: Int)
+    /* LOCAL declaration @5 */ local fun <set-privateVar>(<this>: A, p0: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)

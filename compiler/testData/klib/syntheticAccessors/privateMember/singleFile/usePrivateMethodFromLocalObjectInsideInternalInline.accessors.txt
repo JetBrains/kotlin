@@ -5,12 +5,14 @@
 public class A
     /* TARGET declaration */ private fun privateMethod(): String
     internal inline fun internalInlineMethod(): String
-        local class <no name provided>
-            public fun run(): String
+        /* LOCAL declaration @0 */ local class <no name provided>
+            /* LOCAL declaration @1 */ public fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod($this = <this>)
+        /* LOCAL use-site @1 */ <anonymous object>.run()
     /* ACCESSOR declaration */ public /* static */ fun access$privateMethod($this: A): String
         /* TARGET use-site */ $this.privateMethod()
 public fun box(): String
-    local class <no name provided>
-        public fun run(): String
+    /* LOCAL declaration @2 */ local class <no name provided>
+        /* LOCAL declaration @3 */ public fun run(): String
             /* ACCESSOR use-site */ access$privateMethod($this = this)
+    /* LOCAL use-site @3 */ <anonymous object>.run()

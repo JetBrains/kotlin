@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.OBJECT_LITERAL
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.CustomKotlinLikeDumpStrategy.Modifiers
@@ -68,6 +69,7 @@ data class KotlinLikeDumpOptions(
     val stableOrder: Boolean = false,
     val normalizeNames: Boolean = false,
     val printExpectDeclarations: Boolean = true,
+    val collapseObjectLiteralBlock: Boolean = false,
 
     /**
      * Whether to print member declarations (default: true).
@@ -1081,6 +1083,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO special blocks using `origin`
         // TODO inlinedFunctionSymbol for IrReturnableBlock
         // TODO no tests for IrReturnableBlock?
+        if (expression.origin == OBJECT_LITERAL && options.collapseObjectLiteralBlock) {
+            p.printWithNoIndent("<anonymous object>")
+            return
+        }
         val kind = when (expression) {
             is IrReturnableBlock -> "RETURNABLE BLOCK"
             is IrInlinedFunctionBlock -> "INLINED FUNCTION BLOCK"

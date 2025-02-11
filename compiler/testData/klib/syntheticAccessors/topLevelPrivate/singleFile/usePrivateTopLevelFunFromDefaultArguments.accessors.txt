@@ -8,7 +8,7 @@ internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
     oo: String
         /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
     kk: Function0<String>
-        local fun <anonymous>(): String
+        /* LOCAL declaration @0 */ local fun <anonymous>(): String
             /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
 public fun box(): String
     val oo: String =
