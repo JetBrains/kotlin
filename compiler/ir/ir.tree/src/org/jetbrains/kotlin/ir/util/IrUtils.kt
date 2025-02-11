@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.io.StringWriter
 
 /**
@@ -527,6 +528,7 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
 ) {
     val srcFunction = src.symbol.owner
 
+    val newArguments = arguments.toTypedArray()
     var srcArgumentIndex = 0
     var dstArgumentIndex = 0
     while (srcArgumentIndex < src.arguments.size && dstArgumentIndex < arguments.size) {
@@ -551,8 +553,15 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
         if (dstArgumentIndex >= arguments.size) break
         if (srcArgumentIndex >= src.arguments.size) break
 
-        arguments[dstArgumentIndex++] = src.arguments[srcArgumentIndex++]
+        newArguments[dstArgumentIndex++] = src.arguments[srcArgumentIndex++]
     }
+
+    if (newArguments.asList() != src.arguments) {
+        error("!!! copyValueArgumentsFrom diff! (receiversAsArguments:$receiversAsArguments, argumentsAsReceivers:$argumentsAsReceivers)\n" +
+                    "${newArguments.asList()} vs\n${src.arguments}")
+    }
+
+    arguments.assignFrom(src.arguments)
 }
 
 val IrDeclaration.fileOrNull: IrFile?
