@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 
-@Deprecated("The Kotlin/JS legacy target is deprecated and its support completely discontinued", level = DeprecationLevel.WARNING)
+@Deprecated("The Kotlin/JS legacy target is deprecated and its support completely discontinued", level = DeprecationLevel.ERROR)
 abstract class KotlinJsTarget : KotlinTarget, InternalKotlinTarget {
     @Deprecated("Only for compatibility")
     val irTarget = null

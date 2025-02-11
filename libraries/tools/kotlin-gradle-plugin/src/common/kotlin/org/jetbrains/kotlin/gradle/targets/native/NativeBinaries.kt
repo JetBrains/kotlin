@@ -81,18 +81,23 @@ sealed class NativeBinary(
     }
 
     /** Additional arguments passed to the Kotlin/Native compiler. */
-    @Suppress("DEPRECATION")
     var freeCompilerArgs: List<String>
-        get() = linkTask.kotlinOptions.freeCompilerArgs
+        get() = linkTaskProvider.get().toolOptions.freeCompilerArgs.get()
         set(value) {
-            linkTask.kotlinOptions.freeCompilerArgs = value
+            linkTaskProvider.configure {
+                it.toolOptions.freeCompilerArgs.set(value)
+            }
         }
 
     // Link task access.
     val linkTaskName: String
         get() = lowerCamelCaseName("link", name, target.targetName)
 
-    @Deprecated("Use 'linkTaskProvider' instead", ReplaceWith("linkTaskProvider"))
+    @Deprecated(
+        "Use 'linkTaskProvider' instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("linkTaskProvider"),
+        level = DeprecationLevel.ERROR
+    )
     val linkTask: KotlinNativeLink
         get() = linkTaskProvider.get()
 
@@ -189,6 +194,7 @@ class Executable constructor(
     val runTaskProvider: TaskProvider<AbstractExecTask<*>>?
         get() = runTaskName?.let { project.tasks.withType(AbstractExecTask::class.java).named(it) }
 
+    @Deprecated("Use `runTaskProvider` instead. Scheduled for removal in Kotlin 2.4.", ReplaceWith("runTaskProvider"))
     val runTask: AbstractExecTask<*>?
         get() = runTaskProvider?.get()
 }

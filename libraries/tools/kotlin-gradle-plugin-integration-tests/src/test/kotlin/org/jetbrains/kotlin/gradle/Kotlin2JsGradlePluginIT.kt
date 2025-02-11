@@ -956,7 +956,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildGradleKts.appendText(
                 """
                 |
-                |yarn.version = "1.9.3"
+                |the<YarnRootEnvSpec>().version.set("1.9.3")
                 """.trimMargin()
             )
 
@@ -980,10 +980,11 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildGradleKts.appendText(
                 """
                 |
-                |project.rootProject.extensions.findByType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>()?.apply {
-                |    downloadBaseUrl = projectDir.toURI().toString()
-                |    version = "1.22.22"
+                |rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
+                |   the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().version.set("1.22.22")
+                |   the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().downloadBaseUrl.set(projectDir.toURI().toString())
                 |}
+                |
                 """.trimMargin()
             )
 
@@ -1461,12 +1462,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 it + "\n" +
                         """
                         rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().nodeVersion = "unspecified"
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
+                            the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>().version.set("unspecified")
+                            the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>().download.set(false)
                         }
                         rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().version = "unspecified"
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().download = false
+                            the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().version.set("unspecified")
+                            the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().download.set(false)
                         }
                         """
             }
@@ -1623,11 +1624,11 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 it + """
                     
                     rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
-                        rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
+                        the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>().download.set(false)
                     }
 
                     rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
-                        rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().download = false
+                        the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().download.set(false)
                     }
                 """.trimIndent()
             }

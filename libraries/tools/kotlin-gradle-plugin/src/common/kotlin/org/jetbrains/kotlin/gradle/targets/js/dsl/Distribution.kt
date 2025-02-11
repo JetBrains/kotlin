@@ -10,12 +10,20 @@ import org.gradle.api.provider.Property
 import java.io.File
 
 interface Distribution {
-    @Deprecated("Use `distributionName` instead", ReplaceWith("distributionName"))
+    @Deprecated(
+        "Use `distributionName` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("distributionName"),
+        level = DeprecationLevel.ERROR
+    )
     var name: String?
 
     val distributionName: Property<String>
 
-    @Deprecated("Use `outputDirectory` instead", ReplaceWith("outputDirectory"))
+    @Deprecated(
+        "Use `outputDirectory` instead. Scheduled for removal in Kotlin 2.3.",
+        ReplaceWith("outputDirectory"),
+        level = DeprecationLevel.ERROR
+    )
     var directory: File
 
     val outputDirectory: DirectoryProperty

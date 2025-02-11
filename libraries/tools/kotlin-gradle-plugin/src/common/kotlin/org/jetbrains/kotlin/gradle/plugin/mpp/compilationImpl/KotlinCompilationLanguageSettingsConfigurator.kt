@@ -21,7 +21,7 @@ internal object KotlinCompilationLanguageSettingsConfigurator : KotlinCompilatio
         ) return
 
         // Ignoring jsLegacy as it shares a source set with jsIR
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         if (compilation.platformType == KotlinPlatformType.js &&
             compilation.target is org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
         ) return

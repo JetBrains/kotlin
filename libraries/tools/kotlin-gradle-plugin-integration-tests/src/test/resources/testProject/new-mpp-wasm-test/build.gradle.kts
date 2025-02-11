@@ -28,10 +28,10 @@ kotlin {
 }
 
 rootProject.plugins.apply(org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin::class.java)
-rootProject.the<org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension>().apply {
+the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>().apply {
     // Test that we can set the version and it is a String.
     // But use the default version since update this place every time anyway.
-    version = (version as String)
+    version.set(version.get())
 }
 
 tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask>("kotlinStorePackageLock") {

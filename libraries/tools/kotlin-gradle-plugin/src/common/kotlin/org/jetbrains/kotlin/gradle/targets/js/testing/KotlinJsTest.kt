@@ -103,13 +103,13 @@ constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
-    @Deprecated("Use useMocha instead", ReplaceWith("useMocha()"))
+    @Deprecated("Use useMocha instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("useMocha()"), level = DeprecationLevel.ERROR)
     fun useNodeJs() = useMocha()
 
-    @Deprecated("Use useMocha instead", ReplaceWith("useMocha(body)"))
+    @Deprecated("Use useMocha instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("useMocha(body)"), level = DeprecationLevel.ERROR)
     fun useNodeJs(body: KotlinMocha.() -> Unit) = useMocha(body)
 
-    @Deprecated("Use useMocha instead", ReplaceWith("useMocha(fn)"))
+    @Deprecated("Use useMocha instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("useMocha(fn)"), level = DeprecationLevel.ERROR)
     fun useNodeJs(fn: Action<KotlinMocha>) {
         useMocha {
             fn.execute(this)

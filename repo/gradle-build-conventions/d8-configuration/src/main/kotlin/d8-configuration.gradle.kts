@@ -20,6 +20,6 @@ val d8KotlinBuild = extensions.create<D8Extension>(
 with(d8KotlinBuild) {
     d8EnvSpec.version.set(project.v8Version)
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     d8Root.version = project.v8Version
 }
