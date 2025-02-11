@@ -46,6 +46,7 @@ data class BuildOptions(
     val jsOptions: JsOptions? = JsOptions(),
     val buildReport: List<BuildReportType> = emptyList(),
     val usePreciseJavaTracking: Boolean? = null,
+    val useFirJvmRunner: Boolean? = null,
     val languageVersion: String? = null,
     val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
@@ -240,6 +241,10 @@ data class BuildOptions(
 
         if (usePreciseJavaTracking != null) {
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
+        }
+
+        if (useFirJvmRunner != null) {
+            arguments.add("-Pkotlin.incremental.jvm.fir=$useFirJvmRunner")
         }
 
         if (statisticsForceValidation) {

@@ -64,6 +64,8 @@ class IncrementalCompilationOptions(
     /** @See [CompilationResultCategory]] */
     requestedCompilationResults: Array<Int>,
     val usePreciseJavaTracking: Boolean,
+    /** Use new JvmBaseFirRunner */
+    val useJvmFirRunner: Boolean,
     /**
      * Directories that should be cleared when IC decides to rebuild
      */

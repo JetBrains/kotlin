@@ -666,17 +666,30 @@ abstract class CompileServiceImplBase(
             usePreciseJavaTrackingByDefault = incrementalCompilationOptions.usePreciseJavaTracking
         )
 
-        val compiler = IncrementalJvmCompilerRunner(
-            workingDir,
-            reporter,
-            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
-            outputDirs = incrementalCompilationOptions.outputFiles,
-            usePreciseJavaTracking = verifiedPreciseJavaTracking,
-            modulesApiHistory = modulesApiHistory,
-            kotlinSourceFilesExtensions = allKotlinExtensions,
-            classpathChanges = incrementalCompilationOptions.classpathChanges,
-            icFeatures = incrementalCompilationOptions.icFeatures,
-        )
+        val compiler = if (incrementalCompilationOptions.useJvmFirRunner) {
+            IncrementalFirJvmCompilerRunner(
+                workingDir,
+                reporter,
+                buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
+                modulesApiHistory = modulesApiHistory,
+                kotlinSourceFilesExtensions = allKotlinExtensions,
+                outputDirs = incrementalCompilationOptions.outputFiles,
+                classpathChanges = incrementalCompilationOptions.classpathChanges,
+                icFeatures = incrementalCompilationOptions.icFeatures,
+            )
+        } else {
+            IncrementalJvmCompilerRunner(
+                workingDir,
+                reporter,
+                buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
+                outputDirs = incrementalCompilationOptions.outputFiles,
+                usePreciseJavaTracking = verifiedPreciseJavaTracking,
+                modulesApiHistory = modulesApiHistory,
+                kotlinSourceFilesExtensions = allKotlinExtensions,
+                classpathChanges = incrementalCompilationOptions.classpathChanges,
+                icFeatures = incrementalCompilationOptions.icFeatures,
+            )
+        }
         return try {
             compiler.compile(
                 allKotlinFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),

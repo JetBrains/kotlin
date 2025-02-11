@@ -101,7 +101,7 @@ class IncrementalK1JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
 }
 
 @DisplayName("Default incremental compilation with default precise java tracking on K2")
-class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
+open class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
@@ -127,6 +127,14 @@ class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }
+}
+
+@Disabled("KT-72822: Compilation errors for now")
+@DisplayName("Default incremental compilation with default precise java tracking on K2 using Fir Runner")
+class IncrementalK2JavaChangeDefaultWithFirIT : IncrementalK2JavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions
+        .copy(useFirJvmRunner = true)
+        .copyEnsuringK2()
 }
 
 @DisplayName("Default incremental compilation via Build Tools API")

@@ -103,6 +103,9 @@ abstract class KotlinCompile @Inject constructor(
     @get:Input
     abstract override val moduleName: Property<String>
 
+    @get:Input
+    internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
 
@@ -244,6 +247,11 @@ abstract class KotlinCompile @Inject constructor(
             }
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+
+            if (useFirRunner.get()) {
+                args.useFirIC = true
+                args.useFirLT = true
+            }
         }
 
         pluginClasspath { args ->
@@ -319,6 +327,7 @@ abstract class KotlinCompile @Inject constructor(
 
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
+
             IncrementalCompilationEnvironment(
                 changedFiles = getChangedFiles(inputChanges, incrementalProps),
                 classpathChanges = getClasspathChanges(inputChanges),
@@ -329,6 +338,7 @@ abstract class KotlinCompile @Inject constructor(
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings,
                 icFeatures = makeIncrementalCompilationFeatures(),
+                useJvmFirRunner = useFirRunner.get(),
             )
         } else null
 
