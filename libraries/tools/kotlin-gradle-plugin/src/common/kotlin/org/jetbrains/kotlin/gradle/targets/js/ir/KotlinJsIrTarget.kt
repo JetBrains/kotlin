@@ -63,7 +63,7 @@ constructor(
     override var wasmTargetType: KotlinWasmTargetType? = null
         internal set
 
-    @Deprecated("Use outputModuleName with Provider API instead")
+    @Deprecated("Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     override var moduleName: String?
         get() = outputModuleName.get()
         set(value) {
@@ -196,7 +196,10 @@ constructor(
         }
     }
 
-    @Deprecated("Binaryen is enabled by default. This call is redundant.")
+    @Deprecated(
+        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 

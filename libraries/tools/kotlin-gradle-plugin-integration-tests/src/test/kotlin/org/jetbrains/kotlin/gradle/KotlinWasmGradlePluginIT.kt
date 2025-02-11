@@ -125,7 +125,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     fun wasiTargetWithBinaryen(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
             buildGradleKts.modify {
-                it.replace("wasmWasi {", "wasmWasi {\napplyBinaryen()\nbinaries.executable()")
+                it.replace("wasmWasi {", "wasmWasi {\nbinaries.executable()")
             }
 
             build("assemble") {

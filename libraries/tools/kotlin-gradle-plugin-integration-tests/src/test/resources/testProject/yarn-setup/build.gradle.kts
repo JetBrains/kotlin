@@ -1,8 +1,8 @@
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -13,12 +13,15 @@ repositories {
     mavenCentral()
 }
 
-yarn
+kotlin.js {
+    nodejs()
+}
 
 tasks {
+    val yarnSpec = project.the<YarnRootEnvSpec>()
     val yarnFolderRemove by registering {
         doLast {
-            yarn.installationDir.deleteRecursively()
+            yarnSpec.installationDirectory.get().asFile.deleteRecursively()
         }
     }
 
@@ -26,7 +29,7 @@ tasks {
         dependsOn(getByName("kotlinYarnSetup"))
 
         doLast {
-            if (!yarn.installationDir.exists()) {
+            if (!yarnSpec.installationDirectory.get().asFile.exists()) {
                 throw GradleException()
             }
         }
@@ -36,21 +39,9 @@ tasks {
         dependsOn(getByName("kotlinYarnSetup"))
 
         doLast {
-            if (!yarn.installationDir.resolve("yarn-v1.9.3").exists()) {
+            if (!yarnSpec.installationDirectory.get().file("yarn-v1.9.3").asFile.exists()) {
                 throw GradleException()
             }
         }
     }
-}
-
-kotlin.sourceSets {
-    getByName("main") {
-        dependencies {
-            implementation(kotlin("stdlib-js"))
-        }
-    }
-}
-
-kotlin.js {
-    nodejs()
 }

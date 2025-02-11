@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.future
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
-        is ProjectDependency -> @Suppress("DEPRECATION") idOfRootModule(dependency.dependencyProject)
+        is ProjectDependency -> @Suppress("DEPRECATION", "DEPRECATION_ERROR") idOfRootModule(dependency.dependencyProject)
         else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
     }
 
@@ -41,7 +41,11 @@ internal object ModuleIds {
             fromComponentId(thisProject, component.id)
 
     // TODO KT-62911: Replace unsafe idOfRootModule with suspendable version idRootModule
-    @Deprecated("Use suspendable version if possible", replaceWith = ReplaceWith("idOfRootModuleSafe(project)"))
+    @Deprecated(
+        "Use suspendable version if possible. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("idOfRootModuleSafe(project)"),
+        level = DeprecationLevel.ERROR
+    )
     fun idOfRootModule(project: Project): ModuleDependencyIdentifier = project.future { idOfRootModuleSafe(project) }.getOrThrow()
 
     suspend fun idOfRootModuleSafe(project: Project): ModuleDependencyIdentifier =
@@ -58,6 +62,6 @@ internal object ModuleIds {
         ModuleDependencyIdentifier(null, name)
 
     private fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         idOfRootModule(thisProject.project(projectPath))
 }
