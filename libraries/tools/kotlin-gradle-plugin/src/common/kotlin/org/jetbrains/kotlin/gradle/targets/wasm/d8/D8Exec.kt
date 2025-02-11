@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.d8
 
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -29,8 +30,8 @@ abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::
         }
     }
 
-    @Input
-    var d8Args: MutableList<String> = mutableListOf()
+    @get:Input
+    abstract val d8Args: ListProperty<String>
 
     @Optional
     @PathSensitive(PathSensitivity.ABSOLUTE)
@@ -40,7 +41,7 @@ abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::
 
     override fun exec() {
         val newArgs = mutableListOf<String>()
-        newArgs.addAll(d8Args)
+        newArgs.addAll(d8Args.get())
         if (inputFileProperty.isPresent) {
             val inputFile = inputFileProperty.asFile.get()
             workingDir = inputFile.parentFile
