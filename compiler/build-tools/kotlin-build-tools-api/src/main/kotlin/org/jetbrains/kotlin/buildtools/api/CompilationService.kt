@@ -35,6 +35,8 @@ public interface CompilationService {
      */
     public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
 
+    public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity, snapshotInlinedLocalClasses: Boolean): ClasspathEntrySnapshot
+
     /**
      * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.
      * Could be used as an overview to default values of the options (as they are implementation-specific).

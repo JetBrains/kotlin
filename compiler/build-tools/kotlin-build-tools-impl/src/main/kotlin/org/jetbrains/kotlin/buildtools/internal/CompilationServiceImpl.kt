@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.storage.FileLocations
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
@@ -69,6 +72,16 @@ internal object CompilationServiceImpl : CompilationService {
 
     override fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity) =
         ClasspathEntrySnapshotImpl(ClasspathEntrySnapshotter.snapshot(classpathEntry, granularity, DoNothingBuildMetricsReporter))
+
+    override fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity, snapshotInlinedLocalClasses: Boolean) : ClasspathEntrySnapshot {
+        return object : ClasspathEntrySnapshot {
+            override val classSnapshots: Map<String, ClassSnapshot> = emptyMap()
+
+            override fun saveSnapshot(path: File) {
+                println("imagine how cool that would be though")
+            }
+        }
+    }
 
     override fun makeCompilerExecutionStrategyConfiguration() = CompilerExecutionStrategyConfigurationImpl()
 
