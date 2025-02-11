@@ -61,7 +61,7 @@ public class GroupingMessageCollector implements MessageCollector {
 
     @Override
     public boolean hasErrors() {
-        return hasExplicitErrors() || (treatWarningsAsErrors && hasWarnings());
+        return delegate.hasErrors() || hasExplicitErrors() || (treatWarningsAsErrors && hasWarnings());
     }
 
     private boolean hasExplicitErrors() {
