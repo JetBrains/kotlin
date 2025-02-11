@@ -29,6 +29,7 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
         dependencies: Dependencies,
         klibFile: File,
         compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
     ) {
         require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
 
@@ -54,6 +55,7 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
                 // Don't fail on language version warnings.
                 K2JSCompilerArguments::suppressVersionWarnings.cliArgument
             ).takeIf { compilerType.useFir },
+            compilerArguments,
             kotlinSourceFilePaths
         )
     }
