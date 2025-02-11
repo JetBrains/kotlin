@@ -82,6 +82,13 @@ internal object CompilationServiceImpl : CompilationService {
         )
     }
 
+    override fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity
+    ): ClasspathEntrySnapshot {
+        return calculateClasspathSnapshot(classpathEntry, granularity, parseInlinedLocalClasses = false)
+    }
+
     override fun makeCompilerExecutionStrategyConfiguration() = CompilerExecutionStrategyConfigurationImpl()
 
     override fun makeJvmCompilationConfiguration() = JvmCompilationConfigurationImpl()

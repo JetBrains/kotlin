@@ -63,6 +63,6 @@ object ClassNodeSnapshotter {
 
     private fun emptyClass() = ClassNode().also {
         // A name is required
-        it.name = "SomeClass"
+        it.name = "EmptyClassForKotlinSnapshotter"
     }
 }

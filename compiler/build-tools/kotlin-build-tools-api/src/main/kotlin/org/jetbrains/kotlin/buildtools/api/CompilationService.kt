@@ -36,7 +36,15 @@ public interface CompilationService {
     public fun calculateClasspathSnapshot(
         classpathEntry: File,
         granularity: ClassSnapshotGranularity,
-        parseInlinedLocalClasses: Boolean = false
+        parseInlinedLocalClasses: Boolean
+    ): ClasspathEntrySnapshot
+
+    /**
+     * Compatibility-driven version of [calculateClasspathSnapshot]. Please drop it whenever a breaking change of BTA is introduced.
+     */
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity
     ): ClasspathEntrySnapshot
 
     /**
