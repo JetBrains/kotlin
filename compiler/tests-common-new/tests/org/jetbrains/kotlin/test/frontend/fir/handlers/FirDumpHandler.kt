@@ -46,8 +46,11 @@ class FirDumpHandler(
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
             byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
-            if (FirDiagnosticsDirectives.FIR_DUMP !in currentModule.directives) return
-            if (FirDiagnosticsDirectives.SKIP_FIR_DUMP in currentModule.directives) return
+            val isFirDumpEnabled =
+                expectedFile().exists() || FirDiagnosticsDirectives.FIR_DUMP in currentModule.directives
+
+            if (!isFirDumpEnabled) return
+
             val builderForModule = dumper.builderForModule(currentModule)
             val firFiles = info.mainFirFiles
 
@@ -72,7 +75,17 @@ class FirDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (testServices.moduleStructure.allDirectives.shouldSkip()) return
+        val expectedFile = expectedFile()
 
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, FirDiagnosticsDirectives.FIR_DUMP)
+        } else {
+            val actualText = dumper.generateResultingDump()
+            assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
+        }
+    }
+
+    private fun expectedFile(): File {
         // TODO: change according to multiple testdata files
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
@@ -85,14 +98,7 @@ class FirDumpHandler(
                 configurator.transformTestDataPath(fileName)
             }
 
-        val expectedFile = File(expectedFilePath)
-
-        if (dumper.isEmpty()) {
-            assertions.assertFileDoesntExist(expectedFile, FirDiagnosticsDirectives.FIR_DUMP)
-        } else {
-            val actualText = dumper.generateResultingDump()
-            assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
-        }
+        return File(expectedFilePath)
     }
 
     private class FirClassMemberRendererWithGeneratedDeclarations(val session: FirSession) : FirClassMemberRenderer() {

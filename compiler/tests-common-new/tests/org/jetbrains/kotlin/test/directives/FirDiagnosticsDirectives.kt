@@ -35,14 +35,7 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val FIR_DUMP by directive(
         description = """
-            Dumps resulting fir to `testName.fir` file
-        """.trimIndent(),
-        applicability = Global
-    )
-
-    val SKIP_FIR_DUMP by directive(
-        description = """
-            Forces ignoring FIR_DUMP if it's enabled by default
+            Dumps resulting fir to `testName.fir.txt` file
         """.trimIndent(),
         applicability = Global
     )
