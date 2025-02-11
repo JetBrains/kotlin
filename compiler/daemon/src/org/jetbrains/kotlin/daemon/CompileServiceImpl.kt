@@ -280,6 +280,10 @@ abstract class CompileServiceImplBase(
 
     protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
         val performanceMetrics = ArrayList<BuildMetricsValue>()
+        val lines = compiler.defaultPerformanceManager.lines.takeIf { it > 0 }
+        if (lines != null) {
+            performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, lines.toLong()))
+        }
         compiler.defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> {
@@ -287,23 +291,20 @@ abstract class CompileServiceImplBase(
                 }
                 is CodeAnalysisMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds))
-                    it.lines?.apply {
-                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
-                        if (it.milliseconds > 0) {
-                            performanceMetrics.add(
-                                BuildMetricsValue(
-                                    CompilationPerformanceMetrics.ANALYSIS_LPS,
-                                    this * 1000 / it.milliseconds
-                                )
+                    if (lines != null && it.milliseconds > 0) {
+                        performanceMetrics.add(
+                            BuildMetricsValue(
+                                CompilationPerformanceMetrics.ANALYSIS_LPS,
+                                lines * 1000 / it.milliseconds
                             )
-                        }
+                        )
                     }
                 }
                 is CodeGenerationMeasurement -> {
                     performanceMetrics.add(
                         BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
                     )
-                    it.lines?.apply {
+                    lines?.apply {
                         performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
                         if (it.milliseconds > 0) {
                             performanceMetrics.add(
