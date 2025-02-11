@@ -280,6 +280,7 @@ abstract class CompileServiceImplBase(
 
     protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
         val performanceMetrics = ArrayList<BuildMetricsValue>()
+        val lines = compiler.defaultPerformanceManager.lines.takeIf { it > 0 }
         compiler.defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> {
@@ -287,7 +288,7 @@ abstract class CompileServiceImplBase(
                 }
                 is CodeAnalysisMeasurement -> {
                     performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds))
-                    it.lines?.apply {
+                    lines?.apply {
                         performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
                         if (it.milliseconds > 0) {
                             performanceMetrics.add(
@@ -303,7 +304,7 @@ abstract class CompileServiceImplBase(
                     performanceMetrics.add(
                         BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
                     )
-                    it.lines?.apply {
+                    lines?.apply {
                         performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, this.toLong()))
                         if (it.milliseconds > 0) {
                             performanceMetrics.add(
