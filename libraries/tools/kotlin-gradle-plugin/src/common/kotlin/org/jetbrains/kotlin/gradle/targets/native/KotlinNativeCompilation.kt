@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
+import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesFor
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -23,7 +26,7 @@ import javax.inject.Inject
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
 abstract class AbstractKotlinNativeCompilation internal constructor(
     compilation: KotlinCompilationImpl,
-    val konanTarget: KonanTarget
+    val konanTarget: KonanTarget,
 ) : DeprecatedAbstractKotlinCompilation<KotlinCommonOptions>(compilation) {
 
     @Suppress("DEPRECATION")
@@ -50,6 +53,13 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
 
     internal val useGenericPluginArtifact: Boolean
         get() = project.nativeProperties.shouldUseEmbeddableCompilerJar.get()
+
+    internal val nativeDependencies: ConfigurableFileCollection
+        get() = compilation.project.objects.fileCollection()
+            .from(compilation.project.objects.getOriginalPlatformLibrariesFor(project.nativeProperties.actualNativeHomeDirectory.map {
+                KonanDistribution(it)
+            }, konanTarget))
+
 }
 
 open class KotlinNativeCompilation @Inject internal constructor(
@@ -83,7 +93,7 @@ open class KotlinNativeCompilation @Inject internal constructor(
 @Suppress("DEPRECATION")
 open class KotlinSharedNativeCompilation @Inject internal constructor(
     val konanTargets: List<KonanTarget>,
-    compilation: KotlinCompilationImpl
+    compilation: KotlinCompilationImpl,
 ) : AbstractKotlinNativeCompilation(
     compilation,
     konanTargets.find { it.enabledOnCurrentHostForKlibCompilation(compilation.project.kotlinPropertiesProvider) } ?: konanTargets.first()

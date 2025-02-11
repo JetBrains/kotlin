@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -47,7 +50,8 @@ internal abstract class CInteropCommonizerTask
     private val projectLayout: ProjectLayout,
     providerFactory: ProviderFactory,
 ) : AbstractCInteropCommonizerTask(),
-    UsesClassLoadersCachingBuildService {
+    UsesClassLoadersCachingBuildService,
+    UsesKotlinNativeBundleBuildService {
 
     internal class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
@@ -167,7 +171,18 @@ internal abstract class CInteropCommonizerTask
                 }
 
                 CInteropCommonizerDependencies(
-                    target, project.files(externalDependencyFiles, project.getNativeDistributionDependencies(target))
+                    target,
+                    project.files(
+                        externalDependencyFiles,
+                        project.getNativeDistributionDependencies(
+                            KotlinNativeFromToolchainProvider(
+                                project,
+                                target.konanTargets,
+                                kotlinNativeBundleBuildService
+                            ).bundleDirectory.map { KonanDistribution(it) },
+                            target
+                        )
+                    )
                 )
             }
         }

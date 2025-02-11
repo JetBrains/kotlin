@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -346,6 +347,52 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
             build("clean", "assemble", "-Pkotlin.build.report.build_scan.custom_values_limit=0", "--scan", buildOptions = buildOptions) {
                 assertOutputContains("Can't add any more custom values into build scan")
+            }
+        }
+    }
+
+    @DisplayName("with native dependencies downloader")
+    @NativeGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
+        nativeProject(
+            "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.CURRENT,
+                ),
+                konanDataDir = konanDirTemp,
+            )
+        ) {
+            val taskName = ":assemble"
+            // separate fix for provision.ok file is required
+            build(
+                taskName,
+                buildOptions = buildOptions,
+            ) {
+                assertTasksExecuted(taskName)
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+                    assertOutputContains(
+                        "Calculating task graph as no configuration cache is available for tasks: ${taskName}"
+                    )
+                } else {
+                    assertOutputContains(
+                        "Calculating task graph as no cached configuration is available for tasks: ${taskName}"
+                    )
+                }
+
+                assertConfigurationCacheStored()
+            }
+
+            build("clean", buildOptions = buildOptions)
+
+            // Then run a build where tasks states are deserialized to check that they work correctly in this mode
+            build(
+                taskName,
+                buildOptions = buildOptions,
+            ) {
+                assertTasksExecuted(taskName)
+                assertOutputContains("provisioned.ok' has been created.")
             }
         }
     }
