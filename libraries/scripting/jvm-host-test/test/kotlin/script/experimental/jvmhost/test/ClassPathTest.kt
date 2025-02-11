@@ -7,7 +7,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
@@ -19,21 +19,14 @@ import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ClassPathTest {
 
+    @TempDir
     lateinit var tempDir: Path
-
-    @BeforeTest
-    fun setUp() {
-        tempDir = createTempDirectory(ClassPathTest::class.simpleName!!)
-    }
-
-    @AfterTest
-    fun tearDown() {
-        tempDir.toFile().deleteRecursively()
-    }
 
     @Test
     fun testExtractFromFat() {

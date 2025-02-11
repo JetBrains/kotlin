@@ -6,24 +6,30 @@
 package kotlin.script.experimental.jvmhost.test
 
 import com.intellij.openapi.application.ApplicationManager
-import kotlin.test.*
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.script.experimental.jvmhost.repl.JvmReplCompiler
 import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluator
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 // Adapted form GenericReplTest
 
 // Artificial split into several testsuites, to speed up parallel testing
+@ResourceLock(Resources.SYSTEM_OUT)
 class LegacyReplTest {
     @Test
     fun testReplBasics() {
         LegacyTestRepl().use { repl ->
             val res1 = repl.replCompiler.compile(repl.state, ReplCodeLine(0, 0, "val x ="))
-            assertTrue("Unexpected check results: $res1") { res1 is ReplCompileResult.Incomplete }
+            assertTrue(res1 is ReplCompileResult.Incomplete, "Unexpected check results: $res1")
 
             assertEvalResult(repl, "val l1 = listOf(1 + 2)\nl1.first()", 3)
 
@@ -92,6 +98,7 @@ class LegacyReplTest {
 }
 
 // Artificial split into several testsuites, to speed up parallel testing
+@ResourceLock(Resources.SYSTEM_OUT)
 class LegacyReplTestLong1 {
 
     @Test
@@ -111,6 +118,7 @@ class LegacyReplTestLong1 {
 }
 
 // Artificial split into several testsuites, to speed up parallel testing
+@ResourceLock(Resources.SYSTEM_OUT)
 class LegacyReplTestLong2 {
 
     @Test
