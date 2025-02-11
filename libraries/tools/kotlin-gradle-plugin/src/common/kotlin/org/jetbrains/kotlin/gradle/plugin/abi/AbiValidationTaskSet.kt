@@ -69,7 +69,7 @@ internal class AbiValidationTaskSet(project: Project, variantName: String) {
     }
 
     /**
-     * Enables generating of ABI dumps for Kotlin klib targets.
+     * Enables generation of ABI dump files for klib targets.
      */
     fun klibEnabled(isEnabled: Provider<Boolean>) {
         legacyDumpTaskProvider.configure {
