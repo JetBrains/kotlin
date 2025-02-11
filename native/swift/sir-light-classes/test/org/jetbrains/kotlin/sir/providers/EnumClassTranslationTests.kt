@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirVariable
-import org.jetbrains.kotlin.sir.providers.source.kotlinOriginOrNull
+import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
@@ -32,7 +32,7 @@ class EnumClassTranslationTests : SirTranslationTest() {
             assertContains(enumClass.protocols, SirSwiftModule.caseIterable)
             val cases = enumClass.declarations
                 .filterIsInstance<SirVariable>()
-                .filter { it.kotlinOriginOrNull<KaEnumEntrySymbol>() != null }
+                .filter { it.kaSymbolOrNull<KaEnumEntrySymbol>() != null }
             val caseA = cases.find { it.name == "A" }
             val caseB = cases.find { it.name == "B" }
             val caseC = cases.find { it.name == "C" }

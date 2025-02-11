@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.mangler.mangledNameOrNull
 import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
-import org.jetbrains.kotlin.sir.providers.source.kotlinOriginOrNull
+import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.*
 
@@ -53,7 +53,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add(
                     request.descriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
-                        when (val kaSymbol = request.callable.kotlinOriginOrNull<KaFunctionSymbol>()) {
+                        when (val kaSymbol = request.callable.kaSymbolOrNull<KaFunctionSymbol>()) {
                             is KaPropertyGetterSymbol -> {
                                 val expectedParameters = if (extensionReceiverParameter != null) 1 else 0
                                 require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }

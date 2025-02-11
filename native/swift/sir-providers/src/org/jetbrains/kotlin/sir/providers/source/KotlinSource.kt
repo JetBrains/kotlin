@@ -33,7 +33,7 @@ public sealed class KotlinParameterOrigin : SirParameter.Origin {
 /**
  * Convenience accessor which provides direct access to [KaSymbol].
  */
-public inline fun <reified T : KaSymbol> SirDeclaration.kotlinOriginOrNull(): T? {
+public inline fun <reified T : KaSymbol> SirDeclaration.kaSymbolOrNull(): T? {
     val kotlinOrigin = origin as? KotlinSource
         ?: return null
     return kotlinOrigin.symbol as? T

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
-import org.jetbrains.kotlin.sir.providers.source.kotlinOriginOrNull
+import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
@@ -338,7 +338,7 @@ private object StandaloneSirTypeNamer : SirTypeNamer {
     }
 
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
-        it.kotlinOriginOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
+        it.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
     }
 
     private fun kotlinFqName(type: SirNominalType): String {
@@ -374,7 +374,7 @@ private object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
 
-            else -> declaration.kotlinOriginOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
+            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
         }
     }
 }
