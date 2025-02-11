@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.util.BodyPrintingStrategy
+import org.jetbrains.kotlin.ir.util.KotlinLikeDumpOptions
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
@@ -60,15 +63,21 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
         )
         map.put(
             SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
-            "Public-API inline {0} accesses a non Public-API {1}. This could happen as a result of cascaded inlining of the following functions:\n{2}",
+            "Public-API inline {0} accesses a non Public-API {1}. This could happen as a result of cascaded inlining of the following functions:\n{2}\n",
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
             Renderer<List<IrInlinedFunctionBlock>> { inlinedFunctionBlocks ->
                 buildString {
                     inlinedFunctionBlocks.reversed().forEach { inlinedFunctionBlock ->
-                        appendLine(inlinedFunctionBlock.inlinedFunctionSymbol!!.owner.render())
+                        appendLine(
+                            inlinedFunctionBlock.inlinedFunctionSymbol!!.owner.dumpKotlinLike(
+                                KotlinLikeDumpOptions(
+                                    bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES
+                                )
+                            ).trim()
+                        )
                     }
-                }.trim()
+                }
             }
         )
     }
