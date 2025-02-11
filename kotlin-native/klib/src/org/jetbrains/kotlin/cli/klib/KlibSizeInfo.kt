@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.library.KLIB_IR_FOLDER_NAME
 import org.jetbrains.kotlin.library.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KotlinLibrary
+import java.util.LinkedList
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 /**
@@ -42,11 +43,22 @@ internal fun KotlinLibrary.loadSizeInfo(irInfo: KlibIrInfo?): KlibElementWithSiz
 }
 
 private fun KFile.collectTopLevelElements(irInfo: KlibIrInfo?): List<KlibElementWithSize> {
-    val topLevelEntries = entries.let { entries ->
-        entries.singleOrNull()?.let { singleEntry ->
-            // If the single library entry is a "default" directory, skip it and move on.
-            if (singleEntry.name == "default" && singleEntry.isDirectory) singleEntry.entries else entries
-        } ?: entries
+    var defaultEntry: KFile? = null
+    val otherTopLevelEntries = ArrayList<KFile>()
+
+    for (entry in entries) {
+        // Expand the contents of the "default" directory, don't show the directory itself.
+        if (entry.name == "default" && entry.isDirectory) {
+            defaultEntry = entry
+        } else {
+            otherTopLevelEntries += entry
+        }
+    }
+
+    // The contents of the "default" entry go the first, then everything else.
+    val topLevelEntries = buildList<KFile> {
+        this += defaultEntry?.entries?.sortedBy(KFile::name).orEmpty()
+        this += otherTopLevelEntries.sortedBy(KFile::name)
     }
 
     return topLevelEntries.map { topLevelEntry ->
@@ -98,5 +110,5 @@ private fun buildIrElement(entry: KFile, irInfo: KlibIrInfo?): KlibElementWithSi
         nestedElements += KlibElementWithSize("IR bodies (inline functions only)", estimationOfInlineBodiesSizes)
     }
 
-    return KlibElementWithSize("IR", nestedElements)
+    return KlibElementWithSize("IR", nestedElements.sortedBy { it.name })
 }

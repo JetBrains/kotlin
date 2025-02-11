@@ -144,7 +144,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 
         private fun KlibElementWithSize.renderTo(appendable: Appendable, indent: Int = 0) {
             appendable.appendLine("  ".repeat(indent) + name + ": " + prettySize())
-            children.sortedBy { it.name }.forEach { it.renderTo(appendable, indent + 1) }
+            children.forEach { it.renderTo(appendable, indent + 1) }
         }
 
         private fun KlibElementWithSize.prettySize(): String {
