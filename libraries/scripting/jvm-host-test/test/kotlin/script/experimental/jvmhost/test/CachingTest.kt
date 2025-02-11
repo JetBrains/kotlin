@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import java.io.*
 import java.net.URLClassLoader
 import java.security.MessageDigest
@@ -28,6 +30,7 @@ import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.loadScriptFromJar
 import kotlin.test.*
 
+@ResourceLock(Resources.SYSTEM_OUT)
 class CachingTest {
 
     val simpleScript = "val x = 1\nprintln(\"x = \$x\")".toScriptSource()
@@ -103,9 +106,9 @@ class CachingTest {
             // cannot make it work in this form - it requires a dependency on the current test classes, but classes directory seems
             // not work when specified in the manifest
             // TODO: find a way to make it work
-//            val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
+//        val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
 //
-//            assertEquals(scriptWithImportExpectedOutput, scriptOut)
+//        assertEquals(scriptWithImportExpectedOutput, scriptOut)
         }
     }
 

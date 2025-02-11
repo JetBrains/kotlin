@@ -5,10 +5,13 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import kotlin.test.*
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import kotlin.script.experimental.api.*
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
+@ResourceLock(Resources.SYSTEM_OUT)
 class ConstructorArgumentsOrderTest {
 
     @Test

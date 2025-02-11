@@ -7,19 +7,23 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import junit.framework.TestCase
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
+import kotlin.io.deleteRecursively
 import kotlin.io.path.*
 import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.BeforeTest
+import kotlin.test.AfterTest
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ClassPathTest {
 

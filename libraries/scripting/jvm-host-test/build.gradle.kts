@@ -4,18 +4,15 @@ plugins {
     kotlin("jvm")
 }
 
-val allTestsRuntime by configurations.creating
-val testApi by configurations
-testApi.extendsFrom(allTestsRuntime)
-val embeddableTestRuntime by configurations.creating {
-    extendsFrom(allTestsRuntime)
-}
-
 dependencies {
-    allTestsRuntime(libs.junit4)
-    allTestsRuntime(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testApi(libs.junit.platform.launcher)
+    testApi(kotlinTest("junit5"))
+    testApi(intellijCore())
     testApi(project(":kotlin-scripting-jvm-host-unshaded"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 
@@ -24,11 +21,6 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    
-    embeddableTestRuntime(project(":kotlin-scripting-jvm-host"))
-    allTestsRuntime(kotlinTest("junit"))
-    embeddableTestRuntime(projectTests(":compiler:tests-common")) { isTransitive = false }
-    embeddableTestRuntime(testSourceSet.output)
 }
 
 sourceSets {
@@ -40,9 +32,10 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
+    useJUnitPlatform()
 }
 
 // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
@@ -53,9 +46,10 @@ projectTest(parallel = true) {
 //    classpath = embeddableTestRuntime
 //}
 
-projectTest(taskName = "testWithK1", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
+    useJUnitPlatform()
     doFirst {
         systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
     }

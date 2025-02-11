@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import kotlin.test.*
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
@@ -20,6 +19,8 @@ import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleInMemory
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 /**
  * This test shows an ability of using KClasses loaded with classloaders
