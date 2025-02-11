@@ -331,8 +331,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                     return irCall(
                         expression,
-                        getOrCreateStaticMethod(function),
-                        receiversAsArguments = true
+                        getOrCreateStaticMethod(function)
                     )
                 }
 

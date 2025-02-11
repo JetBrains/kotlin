@@ -441,14 +441,10 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
 
 /**
  * Create new call based on given [call] and [newSymbol]
- * [receiversAsArguments]: optionally convert call with dispatch receiver to static call
- * [argumentsAsDispatchers]: optionally convert static call to call with dispatch receiver
  */
 fun irConstructorCall(
     call: IrFunctionAccessExpression,
-    newSymbol: IrConstructorSymbol,
-    receiversAsArguments: Boolean = false,
-    argumentsAsDispatchers: Boolean = false
+    newSymbol: IrConstructorSymbol
 ): IrConstructorCall =
     call.run {
         IrConstructorCallImpl(
@@ -460,27 +456,19 @@ fun irConstructorCall(
             constructorTypeArgumentsCount = 0,
             origin = origin
         ).apply {
-            copyTypeAndValueArgumentsFrom(
-                call,
-                receiversAsArguments,
-                argumentsAsDispatchers
-            )
+            copyTypeAndValueArgumentsFrom(call)
         }
     }
 
 fun irCall(
     call: IrFunctionAccessExpression,
     newFunction: IrSimpleFunction,
-    receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false,
     newSuperQualifierSymbol: IrClassSymbol? = null,
     newReturnType: IrType? = null
 ): IrCall =
     irCall(
         call,
         newFunction.symbol,
-        receiversAsArguments,
-        argumentsAsReceivers,
         newSuperQualifierSymbol,
         newReturnType
     )
@@ -488,8 +476,6 @@ fun irCall(
 fun irCall(
     call: IrFunctionAccessExpression,
     newSymbol: IrSimpleFunctionSymbol,
-    receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false,
     newSuperQualifierSymbol: IrClassSymbol? = null,
     newReturnType: IrType? = null
 ): IrCall =
@@ -503,11 +489,7 @@ fun irCall(
             origin = origin,
             superQualifierSymbol = newSuperQualifierSymbol
         ).apply {
-            copyTypeAndValueArgumentsFrom(
-                call,
-                receiversAsArguments,
-                argumentsAsReceivers
-            )
+            copyTypeAndValueArgumentsFrom(call)
         }
     }
 

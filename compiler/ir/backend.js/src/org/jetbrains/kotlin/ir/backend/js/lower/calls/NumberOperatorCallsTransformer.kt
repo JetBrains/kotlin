@@ -53,9 +53,9 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
         irBuiltIns.booleanType.let {
             // These operators are not short-circuit -- using bitwise operators '&', '|', '^' followed by coercion to boolean
-            add(it, OperatorNames.AND) { call -> toBoolean(irCall(call, intrinsics.jsBitAnd, receiversAsArguments = true)) }
-            add(it, OperatorNames.OR) { call -> toBoolean(irCall(call, intrinsics.jsBitOr, receiversAsArguments = true)) }
-            add(it, OperatorNames.XOR) { call -> toBoolean(irCall(call, intrinsics.jsBitXor, receiversAsArguments = true)) }
+            add(it, OperatorNames.AND) { call -> toBoolean(irCall(call, intrinsics.jsBitAnd)) }
+            add(it, OperatorNames.OR) { call -> toBoolean(irCall(call, intrinsics.jsBitOr)) }
+            add(it, OperatorNames.XOR) { call -> toBoolean(irCall(call, intrinsics.jsBitXor)) }
 
             add(it, OperatorNames.NOT, intrinsics.jsNot)
 
@@ -98,9 +98,9 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         return with(call.symbol.owner.parameters[1].type) {
             when {
                 isByte() || isShort() || isInt() ->
-                    irCall(call, intrinsics.jsNumberRangeToNumber, receiversAsArguments = true)
+                    irCall(call, intrinsics.jsNumberRangeToNumber)
                 isLong() ->
-                    irCall(call, intrinsics.jsNumberRangeToLong, receiversAsArguments = true)
+                    irCall(call, intrinsics.jsNumberRangeToLong)
                 else -> call
             }
         }
@@ -134,7 +134,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                     call.dispatchReceiver!!
                 isFloat() || isDouble() ->
                     // TODO introduce doubleToHashCode?
-                    irCall(call, intrinsics.jsGetNumberHashCode, receiversAsArguments = true)
+                    irCall(call, intrinsics.jsGetNumberHashCode)
                 else -> call
             }
         }
@@ -145,7 +145,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         intrinsic: IrSimpleFunctionSymbol,
         toInt32: Boolean = false
     ): IrExpression {
-        val newCall = irCall(call, intrinsic, receiversAsArguments = true)
+        val newCall = irCall(call, intrinsic)
         if (toInt32)
             return toInt32(newCall)
         return newCall
@@ -205,7 +205,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
     private fun transformUnaryMinus(call: IrFunctionAccessExpression) =
         convertResultToPrimitiveType(
-            irCall(call, intrinsics.jsUnaryMinus, receiversAsArguments = true),
+            irCall(call, intrinsics.jsUnaryMinus),
             call.type
         )
 
