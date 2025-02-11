@@ -56,7 +56,10 @@ interface KotlinJsTargetDsl :
     HasBinaries<KotlinJsBinaryContainer>,
     HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions> {
 
-    @Deprecated("Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
+    @Deprecated(
+        "Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.WARNING // raise after fixing deprecation warnings in coroutines
+    )
     var moduleName: String?
 
     /**

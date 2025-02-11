@@ -62,7 +62,7 @@ interface CompilationExecutionSource<CompilationType : KotlinCompilation<*>> : E
 /**
  * Provides methods to set a [KotlinCompilation] as an [ExecutionSource].
  */
-@Suppress("DEPRECATION_ERROR")
+@Suppress("DEPRECATION")
 interface CompilationExecutionSourceSupport<in T : KotlinCompilationToRunnableFiles<*>> {
 
     /**
