@@ -96,7 +96,7 @@ private class FirCaffeineCache<K : Any, V, CONTEXT>(
     /**
      * [Cache.get] cannot be used here as [createValue] may access the map recursively.
      */
-    override fun getValue(key: K, context: CONTEXT): V = cache.asMap().getOrPutWithNullableValue(key) {
+    override fun getValue(key: K, context: CONTEXT): V = cache.getOrPutWithNullableValue(key) {
         createValue(it, context)
     }
 

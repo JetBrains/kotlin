@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.withStatsCounter
+import org.jetbrains.kotlin.analysis.api.platform.caches.withStatsCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.fir.FirSession

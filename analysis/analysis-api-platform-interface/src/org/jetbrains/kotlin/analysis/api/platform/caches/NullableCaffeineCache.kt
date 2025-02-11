@@ -29,6 +29,13 @@ public value class NullableCaffeineCache<K : Any, V : Any>(
         cache.get(key) { compute(it) ?: NullValue }?.nullValueToNull()
 
     /**
+     * Returns the value for the given [key] if it's contained in the cache, or computes the value with [compute] *outside the cache's
+     * computation lock* and adds it to the cache.
+     */
+    public inline fun getOrPut(key: K, crossinline compute: (K) -> V?): V? =
+        cache.getOrPutWithNullableValue(key) { compute(key) }
+
+    /**
      * Returns the approximate number of entries in the cache.
      */
     public val estimatedSize: @NonNegative Long

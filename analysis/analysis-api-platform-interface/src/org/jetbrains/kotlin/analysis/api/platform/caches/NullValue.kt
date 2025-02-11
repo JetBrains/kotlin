@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.caches
 
+import com.github.benmanes.caffeine.cache.Cache
 import java.util.concurrent.ConcurrentMap
 
 /**
@@ -24,10 +25,16 @@ public inline fun <V> Any.nullValueToNull(): V = when (this) {
 /**
  * Implements [ConcurrentMap.getOrPut] with [NullValue] conversion.
  */
-public inline fun <K, R> ConcurrentMap<K, Any>.getOrPutWithNullableValue(
+public inline fun <K : Any, R> ConcurrentMap<K, Any>.getOrPutWithNullableValue(
     key: K,
     crossinline compute: (K) -> Any?,
 ): R {
     val value = getOrPut(key) { compute(key) ?: NullValue }
     return value.nullValueToNull()
 }
+
+/**
+ * Implements [Cache.getOrPut] with [NullValue] conversion.
+ */
+public inline fun <K : Any, R> Cache<K, Any>.getOrPutWithNullableValue(key: K, crossinline compute: (K) -> Any?): R =
+    asMap().getOrPutWithNullableValue(key) { compute(key) }
