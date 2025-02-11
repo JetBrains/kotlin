@@ -8,3 +8,4 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.name.FqName
 
 val JAVA_LANG_RECORD_FQ_NAME = FqName("java.lang.Record")
+val JAVA_POLYMORPHIC_SIGNATURE_NAME = FqName("java.lang.invoke.MethodHandle.PolymorphicSignature")

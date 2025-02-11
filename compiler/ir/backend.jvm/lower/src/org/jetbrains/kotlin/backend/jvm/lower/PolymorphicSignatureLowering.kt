@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
+import org.jetbrains.kotlin.resolve.jvm.JAVA_POLYMORPHIC_SIGNATURE_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -115,7 +115,7 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
         } else super.visitCall(expression, Data.NO_COERCION)
 
     private fun IrCall.isPolymorphicCall(): Boolean =
-        symbol.owner.hasAnnotation(PolymorphicSignatureCallChecker.polymorphicSignatureFqName)
+        symbol.owner.hasAnnotation(JAVA_POLYMORPHIC_SIGNATURE_NAME)
 
     private fun IrCall.transform(castReturnType: IrType?): IrCall {
         val function = symbol.owner

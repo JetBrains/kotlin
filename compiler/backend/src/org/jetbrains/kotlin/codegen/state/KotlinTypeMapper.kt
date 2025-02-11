@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.load.java.getJvmMethodNameIfSpecial
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
@@ -43,6 +46,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.convertVariance
@@ -348,7 +353,25 @@ class KotlinTypeMapper @JvmOverloads constructor(
     }
 
     private fun getModuleName(descriptor: CallableMemberDescriptor): String {
-        return getJvmModuleNameForDeserializedDescriptor(descriptor) ?: moduleName
+        val parent = getParentOfType(descriptor, ClassOrPackageFragmentDescriptor::class.java, false)
+
+        when {
+            parent is DeserializedClassDescriptor -> {
+                val classProto = parent.classProto
+                val nameResolver = parent.c.nameResolver
+                return classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)
+                    ?.let(nameResolver::getString)
+                    ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+            }
+            descriptor is DeserializedMemberDescriptor -> {
+                val source = descriptor.containerSource
+                if (source is JvmPackagePartSource) {
+                    return source.moduleName
+                }
+            }
+        }
+
+        return moduleName
     }
 
     fun mapAsmMethod(descriptor: FunctionDescriptor): Method {
