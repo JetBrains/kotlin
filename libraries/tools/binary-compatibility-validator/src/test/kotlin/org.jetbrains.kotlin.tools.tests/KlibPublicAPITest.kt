@@ -24,7 +24,7 @@ class KlibPublicAPITest {
             "kotlin-stdlib-js-wasm",
             "../../stdlib/build/libs",
             listOf("kotlin-stdlib-js", "kotlin-stdlib-wasm-js", "kotlin-stdlib-wasm-wasi"),
-            KLibDumpFilters {
+            KlibDumpFilters {
                 ignoredPackages += setOf(
                     "org.w3c",
                     "org.khronos.webgl",
