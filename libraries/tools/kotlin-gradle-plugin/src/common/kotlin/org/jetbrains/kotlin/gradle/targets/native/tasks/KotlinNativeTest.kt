@@ -220,7 +220,7 @@ abstract class KotlinNativeHostTest : KotlinNativeTest() {
  */
 @DisableCachingByDefault
 abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
-    @Deprecated("Use the property 'device' instead")
+    @Deprecated("Use the property 'device' instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     @get:Internal
     var deviceId: String
         get() = device.get()

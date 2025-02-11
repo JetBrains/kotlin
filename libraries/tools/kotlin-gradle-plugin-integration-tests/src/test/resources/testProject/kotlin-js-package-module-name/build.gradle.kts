@@ -9,7 +9,7 @@ repositories {
 
 kotlin {
     js {
-        moduleName = "@foo/bar"
+        outputModuleName.set("@foo/bar")
         browser {
         }
         binaries.executable()

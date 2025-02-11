@@ -312,7 +312,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         interopTask.onlyIf { HostManager.hostIsMac }
 
                         with(interop) {
-                            @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
+                            @Suppress("DEPRECATION_ERROR") // deprecated property is used intentionally during deprecation period
                             defFileProperty.set(defTask.flatMap { it.defFile.asFile })
                             _packageNameProp.set(project.provider { pod.packageName })
                             _extraOptsProp.addAll(project.provider { pod.extraOpts })

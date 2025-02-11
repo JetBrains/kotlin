@@ -170,7 +170,11 @@ internal constructor(
      * A parent directory for the fat framework.
      */
     @get:Internal
-    @Deprecated("please use destinationDirProperty", replaceWith = ReplaceWith("destinationDirProperty"))
+    @Deprecated(
+        "please use destinationDirProperty. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("destinationDirProperty"),
+        level = DeprecationLevel.ERROR
+    )
     var destinationDir: File
         get() = destinationDirProperty.get().asFile
         set(value) = destinationDirProperty.set(value)
@@ -181,7 +185,7 @@ internal constructor(
 
     @get:Internal
     val fatFramework: File
-        get() = destinationDirProperty.file(fatFrameworkName + ".framework").getFile()
+        get() = destinationDirProperty.file("$fatFrameworkName.framework").getFile()
 
     @get:Internal
     internal val frameworkLayout: FrameworkLayout

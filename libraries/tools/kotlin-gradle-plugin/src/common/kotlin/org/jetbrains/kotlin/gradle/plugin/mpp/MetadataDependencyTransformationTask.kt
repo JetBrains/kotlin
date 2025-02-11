@@ -32,7 +32,11 @@ import javax.inject.Inject
 
 /* Keep typealias for source compatibility */
 @Suppress("unused")
-@Deprecated("Task was renamed to MetadataDependencyTransformationTask", replaceWith = ReplaceWith("MetadataDependencyTransformationTask"))
+@Deprecated(
+    "Task was renamed to MetadataDependencyTransformationTask. Scheduled for removal in Kotlin 2.3.",
+    replaceWith = ReplaceWith("MetadataDependencyTransformationTask"),
+    level = DeprecationLevel.ERROR
+)
 typealias TransformKotlinGranularMetadata = MetadataDependencyTransformationTask
 
 internal const val TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA = "transformDependenciesMetadata"

@@ -18,6 +18,6 @@ val binaryenKotlinBuild = extensions.create<BinaryenExtension>(
 with(binaryenKotlinBuild) {
     binaryenEnvSpec.version.set(project.binaryenVersion)
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     binaryenRoot.version = project.binaryenVersion
 }

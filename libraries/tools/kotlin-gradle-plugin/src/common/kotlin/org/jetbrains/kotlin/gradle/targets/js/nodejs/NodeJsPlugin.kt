@@ -31,7 +31,7 @@ open class NodeJsPlugin : Plugin<Project> {
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun Project.createNodeJsEnvSpec(
         nodeJsConstructor: () -> NodeJsRootExtension,
     ): NodeJsEnvSpec {

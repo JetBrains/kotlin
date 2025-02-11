@@ -51,52 +51,60 @@ open class NodeJsRootExtension(
 
     @Deprecated(
         "Use installationDir from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var installationDir: File = gradleHome.resolve("nodejs")
 
     @Deprecated(
         "Use download from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var download = true
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var nodeDownloadBaseUrl by ::downloadBaseUrl
 
     @Deprecated(
         "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var downloadBaseUrl: String? = "https://nodejs.org/dist"
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use version from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var nodeVersion by ::version
 
     @Deprecated(
-        "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+        "Use version from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var version = "22.13.0"
 
     @Deprecated(
         "Use command from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var command = "node"
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use command from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin. This will be removed in 2.2"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR,
     )
     var nodeCommand by ::command
 
@@ -134,14 +142,15 @@ open class NodeJsRootExtension(
 
     @Deprecated(
         "Use nodeJsSetupTaskProvider from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
-                "You can find this extension after applying NodeJsPlugin"
+                "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
     )
     val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
         get() = with(nodeJs()) {
             project.nodeJsSetupTaskProvider
         }
 
-    @Deprecated("Use NodeJsEnvSpec instead. This will be removed in 2.2")
+    @Deprecated("Use NodeJsEnvSpec instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     fun requireConfigured(): NodeJsEnv {
         return nodeJs().env.get()
     }

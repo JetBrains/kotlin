@@ -72,7 +72,11 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
             }
         }
 
-        @Deprecated("Use register instead", ReplaceWith("register(compilation, name, configuration)"))
+        @Deprecated(
+            "Use register instead. Scheduled for removal in Kotlin 2.3.",
+            ReplaceWith("register(compilation, name, configuration)"),
+            level = DeprecationLevel.ERROR
+        )
         fun create(
             compilation: KotlinJsIrCompilation,
             name: String,

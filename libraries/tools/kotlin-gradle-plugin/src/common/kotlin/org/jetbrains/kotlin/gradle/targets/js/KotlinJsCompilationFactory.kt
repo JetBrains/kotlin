@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilationFactory
 
-@Deprecated("The Kotlin/JS legacy target is deprecated and its support completely discontinued")
+@Deprecated("The Kotlin/JS legacy target is deprecated and its support completely discontinued", level = DeprecationLevel.ERROR)
 typealias KotlinJsCompilationFactory = KotlinJsIrCompilationFactory

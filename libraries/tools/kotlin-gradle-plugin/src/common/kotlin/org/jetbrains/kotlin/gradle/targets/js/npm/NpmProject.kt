@@ -25,7 +25,7 @@ import java.io.Serializable
 val KotlinJsIrCompilation.npmProject: NpmProject
     get() = NpmProject(this)
 
-@Deprecated("Use npmProject for KotlinJsIrCompilation")
+@Deprecated("Use npmProject for KotlinJsIrCompilation. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
 val KotlinJsCompilation.npmProject: NpmProject
     get() = NpmProject(this as KotlinJsIrCompilation)
 

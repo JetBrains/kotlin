@@ -50,8 +50,10 @@ kotlin {
             executable("test2") {
                 compilation = compilations["test"]
                 freeCompilerArgs += "-tr"
-                linkTask.kotlinOptions {
-                    freeCompilerArgs += "-Xtime"
+                linkTaskProvider.configure {
+                    toolOptions {
+                        freeCompilerArgs.add("-Xtime")
+                    }
                 }
             }
 
@@ -64,7 +66,7 @@ kotlin {
         }
         // Check that we can access binaries/tasks:
         // Just by name:
-        println("Check link task: ${binaries["releaseShared"].linkTask.name}")
+        println("Check link task: ${binaries["releaseShared"].linkTaskProvider.name}")
         // Using a typed getter:
         println("Check run task: ${binaries.getExecutable("foo", RELEASE).runTask?.name}")
     }

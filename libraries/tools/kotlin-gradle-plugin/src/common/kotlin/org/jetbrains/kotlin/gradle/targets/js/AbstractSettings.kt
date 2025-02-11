@@ -7,7 +7,10 @@ import java.io.File
 
 abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env>() {
 
-    @Deprecated("This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. This will be removed in version 2.2.")
+    @Deprecated(
+        "This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     var download: Boolean
         get() = downloadProperty.get()
         set(value) {
@@ -16,7 +19,10 @@ abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env
 
     internal abstract val downloadProperty: org.gradle.api.provider.Property<Boolean>
 
-    @Deprecated("This property has been migrated to support the Provider API. Use downloadBaseUrlProperty instead. This will be removed in version 2.2.")
+    @Deprecated(
+        "This property has been migrated to support the Provider API. Use downloadBaseUrlProperty instead. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     var downloadBaseUrl: String?
         get() = downloadBaseUrlProperty.getOrNull()
         set(value) {
@@ -25,7 +31,10 @@ abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env
 
     internal abstract val downloadBaseUrlProperty: org.gradle.api.provider.Property<String>
 
-    @Deprecated("This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. This will be removed in version 2.2.")
+    @Deprecated(
+        "This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     var installationDir: File
         get() = installationDirectory.getFile()
         set(value) {
@@ -34,7 +43,10 @@ abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env
 
     internal abstract val installationDirectory: DirectoryProperty
 
-    @Deprecated("This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. This will be removed in version 2.2.")
+    @Deprecated(
+        "This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     var version: String
         get() = versionProperty.get()
         set(value) {
@@ -43,7 +55,10 @@ abstract class AbstractSettings<Env : AbstractEnv> : ConfigurationPhaseAware<Env
 
     internal abstract val versionProperty: org.gradle.api.provider.Property<String>
 
-    @Deprecated("This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. This will be removed in version 2.2.")
+    @Deprecated(
+        "This property has been migrated to support the Provider API. Use corresponding spec (extension with name *Spec) instead. Scheduled for removal in Kotlin 2.3.",
+        level = DeprecationLevel.ERROR
+    )
     var command: String
         get() = commandProperty.get()
         set(value) {
