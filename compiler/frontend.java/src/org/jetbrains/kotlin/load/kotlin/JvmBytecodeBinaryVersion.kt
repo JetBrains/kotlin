@@ -8,13 +8,8 @@ package org.jetbrains.kotlin.load.kotlin
 /**
  * Bytecode version was in the Kotlin metadata ([Metadata.bytecodeVersion]) since 1.0, but it was never used meaningfully in the compiler,
  * outside of one very special case regarding experimental coroutines, which is now obsolete.
- * It is still used for two reasons:
- * 1) We write the latest observed bytecode version, `1.0.3` (see [INSTANCE]), to class files if metadata version is less than 1.5.
- *    The reason is that Kotlin compilers of versions 1.0.0-1.3.72 can still read these class files, and they had a strict check which
- *    results in a compilation error if there's no bytecode version in the `@Metadata` annotation (see KT-45323).
- *    This will not be needed at the moment when the earliest supported language version becomes 1.5, i.e. in Kotlin 1.7.
- * 2) It's stored in persistent incremental compilation caches. We can probably simply remove it and increase the cache version there.
- * Once both these usages are dealt with, this class can be removed.
+ * It is still used only because it's stored in persistent incremental compilation caches. We can probably remove it and increase
+ * the cache version there. Once it's done, this class can be removed.
  */
 class JvmBytecodeBinaryVersion(vararg numbers: Int) {
     val major: Int = numbers.getOrNull(0) ?: -1

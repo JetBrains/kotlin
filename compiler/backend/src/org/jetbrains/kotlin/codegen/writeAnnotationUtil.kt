@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 
@@ -33,9 +32,6 @@ fun writeKotlinMetadata(
 ) {
     val av = cb.newAnnotation(JvmAnnotationNames.METADATA_DESC, true)
     av.visit(JvmAnnotationNames.METADATA_VERSION_FIELD_NAME, config.metadataVersion.toArray())
-    if (!config.metadataVersion.isAtLeast(1, 5, 0)) {
-        av.visit("bv", JvmBytecodeBinaryVersion.INSTANCE.toArray())
-    }
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)
     var flags = extraFlags
     if (config.languageVersionSettings.isPreRelease()) {
