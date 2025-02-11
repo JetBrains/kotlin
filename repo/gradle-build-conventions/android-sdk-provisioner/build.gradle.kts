@@ -26,3 +26,19 @@ kotlin {
 dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
 }
+
+tasks.register("fixCompilerArgs") {
+    mustRunAfter("generatePrecompiledScriptPluginAccessors")
+    doLast {
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+            compilerOptions.freeCompilerArgs.set(
+                compilerOptions.freeCompilerArgs.get().filter { it != "-XXLanguage:-TypeEnhancementImprovementsInStrictMode" }
+            )
+        }
+    }
+}
+
+// Ensure this task runs after `generatePrecompiledScriptPluginAccessors`
+tasks.named("compileKotlin").configure {
+    dependsOn("fixCompilerArgs")
+}

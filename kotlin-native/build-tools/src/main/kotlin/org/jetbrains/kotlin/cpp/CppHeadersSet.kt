@@ -54,7 +54,7 @@ open class CppHeadersSet @Inject constructor(
         protected val rootRelativeToWorkingDir: Provider<String> = root.map { root ->
             workingDir.orNull?.let { workingDir ->
                 root.asFile.toRelativeString(workingDir.asFile)
-            }
+            } as String
         }
 
         @get:Internal("Fully handled by others")
