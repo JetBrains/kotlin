@@ -4,6 +4,8 @@ Kotlin to JVM Compiler performance report
     IR LOWERING        $INT>>$ ms            $REAL>>$ loc/s
   IR GENERATION        $INT>>$ ms            $REAL>>$ loc/s
  IR TRANSLATION        $INT>>$ ms            $REAL>>$ loc/s
+Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
+Find Java class performed $INT$ times, total time $INT$ ms
 GC time for PS MarkSweep is $INT$ ms, $INT$ collections
 GC time for PS Scavenge is $INT$ ms, $INT$ collections
 INIT: Compiler initialized in $INT$ ms

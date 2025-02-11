@@ -157,7 +157,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     fun createPerformanceReport(): String = buildString {
         append("$presentableName performance report\n")
-        measurements.map { it.render() }.sorted().forEach { append("$it\n") }
+        getMeasurementResults().map { it.render() }.sorted().forEach { append("$it\n") }
     }
 
     private fun recordGcTime() {
