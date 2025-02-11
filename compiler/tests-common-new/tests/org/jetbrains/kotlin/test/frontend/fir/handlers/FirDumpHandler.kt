@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
+import java.io.File
 
 class FirDumpHandler(
     testServices: TestServices
@@ -40,11 +41,17 @@ class FirDumpHandler(
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         if (module.directives.shouldSkip()) return
+
+        val expectedFileExists = expectedFile().exists()
+
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
             byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
-            if (FirDiagnosticsDirectives.FIR_DUMP !in currentModule.directives) return
-            if (FirDiagnosticsDirectives.SKIP_FIR_DUMP in currentModule.directives) return
+            val isFirDumpEnabled =
+                expectedFileExists || FirDiagnosticsDirectives.FIR_DUMP in currentModule.directives
+
+            if (!isFirDumpEnabled) return
+
             val builderForModule = dumper.builderForModule(currentModule)
             val firFiles = info.mainFirFiles
 
@@ -69,11 +76,7 @@ class FirDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (testServices.moduleStructure.allDirectives.shouldSkip()) return
-
-        // TODO: change according to multiple testdata files
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
-        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension")
+        val expectedFile = expectedFile()
 
         if (dumper.isEmpty()) {
             assertions.assertFileDoesntExist(expectedFile, FirDiagnosticsDirectives.FIR_DUMP)
@@ -81,6 +84,14 @@ class FirDumpHandler(
             val actualText = dumper.generateResultingDump()
             assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
         }
+    }
+
+    private fun expectedFile(): File {
+        // TODO: change according to multiple testdata files
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
+        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension")
+        return expectedFile
     }
 
     private class FirClassMemberRendererWithGeneratedDeclarations(val session: FirSession) : FirClassMemberRenderer() {

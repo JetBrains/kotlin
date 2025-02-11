@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_VFIR
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.TEST_ALONGSIDE_K1_TESTDATA
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS
@@ -171,9 +170,6 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
     }
 
     forTestsMatching("compiler/fir/analysis-tests/testData/*") {
-        defaultDirectives {
-            +FIR_DUMP
-        }
         useAfterAnalysisCheckers(::FirFailingTestSuppressor)
     }
 
