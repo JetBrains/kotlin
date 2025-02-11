@@ -65,7 +65,7 @@ internal class LLCombinedJavaSymbolProvider private constructor(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        classCache.get(classId) { computeClassLikeSymbolByClassId(it) }
+        classCache.getOrPut(classId) { computeClassLikeSymbolByClassId(it) }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         val javaClasses = javaClassFinder.findClasses(classId).filterNot(JavaClass::hasMetadataAnnotation)

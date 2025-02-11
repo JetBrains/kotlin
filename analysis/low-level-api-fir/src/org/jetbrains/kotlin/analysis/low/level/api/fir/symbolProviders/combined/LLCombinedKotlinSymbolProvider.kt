@@ -68,7 +68,7 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
 
-        return classifierCache.get(classId) { computeClassLikeSymbolByClassId(it) }
+        return classifierCache.getOrPut(classId) { computeClassLikeSymbolByClassId(it) }
     }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
