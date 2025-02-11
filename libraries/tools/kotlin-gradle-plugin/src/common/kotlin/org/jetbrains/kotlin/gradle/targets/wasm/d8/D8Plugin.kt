@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 
-@Suppress("DEPRECATION")
 @ExperimentalWasmDsl
-abstract class D8Plugin internal constructor() : org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin() {
+abstract class D8Plugin internal constructor() :
+    @Suppress("DEPRECATION")
+    org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin() {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
 

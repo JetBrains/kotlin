@@ -5864,9 +5864,8 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Compani
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec : org/gradle/api/tasks/AbstractExecTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion;
 	protected fun exec ()V
-	public final fun getD8Args ()Ljava/util/List;
+	public abstract fun getD8Args ()Lorg/gradle/api/provider/ListProperty;
 	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
-	public final fun setD8Args (Ljava/util/List;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion {
