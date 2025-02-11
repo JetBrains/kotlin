@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -554,6 +557,54 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-74403 test that commonization of unsupported targets should not fail")
+    @OsCondition(supportedOn = [OS.LINUX], enabledOnCI = [OS.LINUX]) // Mac supports all known targets
+    @GradleTest
+    fun testCommonizationOfUnsupportedTargetsShouldNotFail(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
+
+        nativeProject(
+            "buildScriptInjection",
+            gradleVersion,
+            defaultBuildOptions.copy(
+                konanDataDir = konanDataDir,
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    // Use kotlin-native bundle version provided by default in KGP, because it will be pushed in one of the known IT repos for sure
+                    version = null
+                )
+            )
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+
+            val app = project("buildScriptInjection", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        macosX64()
+                        macosArm64()
+                    }
+                }
+            }
+            val lib = project("buildScriptInjection", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        macosX64()
+                        macosArm64()
+                    }
+                }
+            }
+
+            include(app, "app")
+            include(lib, "lib")
+
+            build(
+                ":app:commonizeNativeDistribution",
+                ":lib:commonizeNativeDistribution",
+            ) {
+                assertTasksExecuted(":app:commonizeNativeDistribution")
+                assertTasksExecuted(":lib:commonizeNativeDistribution")
+            }
+        }
+    }
+
 
     private fun `test multiple cinterops with test source sets and compilations`(
         gradleVersion: GradleVersion,
@@ -597,12 +648,30 @@ open class CommonizerIT : KGPBaseTest() {
 
                 getCommonizerDependencies("unixMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
-                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            IOS_X64,
+                            IOS_ARM64,
+                            IOS_SIMULATOR_ARM64,
+                            LINUX_X64,
+                            LINUX_ARM64,
+                            MACOS_X64
+                        )
+                    )
                 }
 
                 getCommonizerDependencies("unixTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
-                    assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            IOS_X64,
+                            IOS_ARM64,
+                            IOS_SIMULATOR_ARM64,
+                            LINUX_X64,
+                            LINUX_ARM64,
+                            MACOS_X64
+                        )
+                    )
                 }
 
                 getCommonizerDependencies("linuxMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
