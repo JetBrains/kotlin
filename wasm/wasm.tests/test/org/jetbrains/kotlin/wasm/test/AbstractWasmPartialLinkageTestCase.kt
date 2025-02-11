@@ -61,8 +61,9 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
             buildDirs: ModuleBuildDirs,
             dependencies: Dependencies,
             klibFile: File,
-            compilerEdition: KlibCompilerEdition
-        ) = this@AbstractWasmPartialLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile)
+            compilerEdition: KlibCompilerEdition,
+            compilerArguments: List<String>
+        ) = this@AbstractWasmPartialLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile, compilerArguments)
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
             this@AbstractWasmPartialLinkageTestCase.buildBinaryAndRun(mainModule, otherDependencies)
@@ -82,7 +83,7 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
     // The entry point to generated test classes.
     fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(WasmTestConfiguration(testPath))
 
-    fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File) {
+    fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File, compilerArguments: List<String>) {
         val kotlinSourceFilePaths = mutableListOf<String>()
 
         buildDirs.sourceDir.walkTopDown().forEach { sourceFile ->
@@ -116,6 +117,7 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
                 // Don't fail on language version warnings.
                 K2JSCompilerArguments::suppressVersionWarnings.cliArgument
             ).takeIf { compilerType.useFir },
+            compilerArguments,
             kotlinSourceFilePaths
         )
     }

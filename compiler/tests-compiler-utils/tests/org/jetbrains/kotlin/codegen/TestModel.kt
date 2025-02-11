@@ -73,7 +73,8 @@ class ModuleInfo(val moduleName: String) {
         val expectedFileStats: Map<String, Set<String>>,
         val expectedDTS: Set<String>,
         val rebuildKlib: Boolean,
-        val compiler: CompilerCase
+        val compiler: CompilerCase,
+        val cliArguments: List<String>,
     )
 
     val steps = hashMapOf</* step ID */ Int, ModuleStep>()
@@ -100,6 +101,7 @@ private const val MODIFICATION_DELETE = "D"
 private const val EXPECTED_DTS_LIST = "expected dts"
 private const val REBUILD_KLIB = "rebuild klib"
 private const val COMPILER = "compiler"
+private const val COMPILER_ARGUMENTS = "arguments"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
@@ -291,6 +293,7 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
         val expectedDTS = mutableSetOf<String>()
         var rebuildKlib = true
         var compiler = ModuleInfo.CompilerCase.DEFAULT
+        val arguments = mutableListOf<String>()
 
         loop { line ->
             if (line.matches(STEP_PATTERN.toRegex()))
@@ -329,6 +332,7 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
                     COMPILER -> getOpArgs().singleOrNull()?.let { ModuleInfo.CompilerCase.valueOf(it) }?.let {
                         compiler = it
                     } ?: error(diagnosticMessage("$op expects values from CompilerCase enum", line))
+                    COMPILER_ARGUMENTS -> arguments += getOpArgs()
                     else -> error(diagnosticMessage("Unknown op $op", line))
                 }
             }
@@ -352,7 +356,8 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
                 expectedFileStats = expectedFileStats,
                 expectedDTS = expectedDTS,
                 rebuildKlib = rebuildKlib,
-                compiler = compiler
+                compiler = compiler,
+                cliArguments = arguments,
             )
         }
     }

@@ -60,7 +60,8 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
             dependencies: Dependencies,
             klibFile: File,
             compilerEdition: KlibCompilerEdition,
-        ) = this@AbstractJsKlibLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile, compilerEdition)
+            compilerArguments: List<String>,
+        ) = this@AbstractJsKlibLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile, compilerEdition, compilerArguments)
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
             this@AbstractJsKlibLinkageTestCase.buildBinaryAndRun(mainModule, otherDependencies)
@@ -97,6 +98,7 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         dependencies: Dependencies,
         klibFile: File,
         compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
     )
 
     protected fun composeSourceFile(buildDirs: ModuleBuildDirs): MutableList<String> {
