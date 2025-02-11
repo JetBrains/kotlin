@@ -320,8 +320,11 @@ class ClassCodegen private constructor(
 
         writeKotlinMetadata(visitor, context.config, kind, isPublicAbi, extraFlags) { av ->
             if (metadata != null) {
-                val containingFile = irClass.file.metadata as? MetadataSource.File
-                    ?: error("Cannot serialize class metadata without containing file: ${irClass.render()}")
+                val containingFile = when (val containingFileMetadata = irClass.file.metadata) {
+                    is MetadataSource.File -> containingFileMetadata
+                    is MetadataSource.CodeFragment -> null
+                    else -> error("Cannot serialize class metadata without containing file: ${irClass.render()}")
+                }
                 metadataSerializer.serialize(metadata, containingFile)?.let { (proto, stringTable) ->
                     DescriptorAsmUtil.writeAnnotationData(av, proto, stringTable)
                 }
