@@ -37,13 +37,14 @@ abstract class AbstractNativePartialLinkageTest : AbstractKlibLinkageTest() {
         moduleSourceDir: File,
         dependencies: Dependencies,
         klibFile: File,
-        compilerEdition: KlibCompilerEdition
+        compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
     ) {
         require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
 
         val klibArtifact = KLIB(klibFile)
 
-        val testCase = createTestCase(moduleName, moduleSourceDir, COMPILER_ARGS)
+        val testCase = createTestCase(moduleName, moduleSourceDir, COMPILER_ARGS.plusCompilerArgs(compilerArguments))
 
         val compilation = LibraryCompilation(
             settings = testRunSettings,
