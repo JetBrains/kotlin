@@ -171,18 +171,6 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(declaration)
         }
 
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =
-        IrErrorDeclarationImpl(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = declaration.origin,
-            factory = declaration.factory,
-        ).apply {
-            with(factory) { declarationCreated() }
-            annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
-            processAttributes(declaration)
-        }
-
     override fun visitField(declaration: IrField): IrField =
         IrFieldImpl(
             startOffset = declaration.startOffset,

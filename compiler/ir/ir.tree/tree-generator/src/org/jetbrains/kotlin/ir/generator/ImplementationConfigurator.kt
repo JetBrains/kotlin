@@ -150,16 +150,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("name", "descriptor.name", withGetter = true)
         }
 
-        impl(errorDeclaration) {
-            implementation.bindOwnedSymbol = false
-            default("symbol") {
-                value = "error(\"Should never be called\")"
-                withGetter = true
-            }
-            isMutable("descriptor")
-            isLateinit("descriptor")
-        }
-
         impl(externalPackageFragment) {
             implementation.putImplementationOptInInConstructor = false
             implementation.constructorParameterOrderOverride = listOf("symbol", "packageFqName")

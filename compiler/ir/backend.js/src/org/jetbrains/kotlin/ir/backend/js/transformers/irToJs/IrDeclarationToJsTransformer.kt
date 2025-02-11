@@ -31,11 +31,6 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
         ).generate()
     }
 
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: JsGenerationContext): JsStatement {
-        // To avoid compiler crash with UnimplementedException just in case I added this visitor to catch uncovered cases
-        return JsSingleLineComment("\$error code: declaration")
-    }
-
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {
         val fieldName = context.getNameForField(declaration)
 

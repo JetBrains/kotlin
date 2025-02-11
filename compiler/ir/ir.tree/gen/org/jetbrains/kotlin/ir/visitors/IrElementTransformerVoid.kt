@@ -86,12 +86,6 @@ abstract class IrElementTransformerVoid : IrTransformer<Nothing?>(), IrElementTr
     final override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): IrStatement =
         visitEnumEntry(declaration)
 
-    open fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrStatement =
-        visitDeclaration(declaration)
-
-    final override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): IrStatement =
-        visitErrorDeclaration(declaration)
-
     open fun visitField(declaration: IrField): IrStatement =
         visitDeclaration(declaration)
 

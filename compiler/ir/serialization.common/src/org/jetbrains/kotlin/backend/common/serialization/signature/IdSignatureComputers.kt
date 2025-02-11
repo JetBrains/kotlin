@@ -68,10 +68,6 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             override fun visitElement(element: IrElement) =
                 error("Unexpected element ${element.render()}")
 
-            override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
-                description = renderDeclarationForDescription(declaration)
-            }
-
             override fun visitPackageFragment(declaration: IrPackageFragment) {
                 packageFqn = declaration.packageFqName
             }

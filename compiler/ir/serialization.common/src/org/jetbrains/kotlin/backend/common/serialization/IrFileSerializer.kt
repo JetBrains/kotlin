@@ -1494,8 +1494,7 @@ open class IrFileSerializer(
             require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${it.render()}" }
 
             // TODO: keep order similar
-            val sigIndex = protoIdSignatureMap[idSig]
-                ?: if (it is IrErrorDeclaration) idSignatureSerializer.protoIdSignature(idSig) else error("Not found ID for $idSig (${it.render()})")
+            val sigIndex = protoIdSignatureMap[idSig] ?: error("Not found ID for $idSig (${it.render()})")
             topLevelDeclarations.add(SerializedDeclaration(sigIndex, idSig.render(), byteArray))
             proto.addDeclarationId(sigIndex)
         }

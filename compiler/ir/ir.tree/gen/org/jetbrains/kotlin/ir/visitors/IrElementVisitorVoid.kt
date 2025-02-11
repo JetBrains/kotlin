@@ -99,14 +99,6 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
         visitDeclaration(declaration)
     }
 
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?) {
-        visitErrorDeclaration(declaration)
-    }
-
-    fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
-        visitDeclaration(declaration)
-    }
-
     override fun visitField(declaration: IrField, data: Nothing?) {
         visitField(declaration)
     }

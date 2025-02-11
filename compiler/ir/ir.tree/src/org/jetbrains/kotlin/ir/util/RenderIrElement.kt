@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.AbstractIrFileEntry
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -631,13 +630,6 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?): String =
         "DYN_MEMBER${expression.renderOffsets(options)} memberName='${expression.memberName}' type=${expression.type.render()}"
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
-        "ERROR_DECL" +
-                "${declaration.renderOffsets(options)} " +
-                "${declaration.descriptor::class.java.simpleName} " +
-                descriptorRendererForErrorDeclarations.renderDescriptor(declaration.descriptor.original)
-
     override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String =
         "ERROR_EXPR${expression.renderOffsets(options)} '${expression.description}' type=${expression.type.render()}"
 
@@ -652,9 +644,6 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?): String =
         "CONSTANT_PRIMITIVE${expression.renderOffsets(options)} type=${expression.type.render()}"
-
-
-    private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }
 
 private fun IrValueParameter.renderValueParameterType(options: DumpIrTreeOptions): String {

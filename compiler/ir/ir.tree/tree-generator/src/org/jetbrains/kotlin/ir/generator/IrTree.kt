@@ -427,11 +427,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("initializerExpression", expressionBody, nullable = true)
         +field("correspondingClass", `class`, nullable = true)
     }
-    val errorDeclaration: Element by element(Declaration) {
-        parent(declarationBase)
-
-        +field("symbol", IrSymbolTree.rootElement, mutable = false)
-    }
     val functionWithLateBinding: Element by declarationWithLateBinding(simpleFunctionSymbol) {
         parent(simpleFunction)
     }

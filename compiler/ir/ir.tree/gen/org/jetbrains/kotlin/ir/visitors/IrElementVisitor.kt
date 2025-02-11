@@ -54,9 +54,6 @@ interface IrElementVisitor<out R, in D> {
     fun visitEnumEntry(declaration: IrEnumEntry, data: D): R =
         visitDeclaration(declaration, data)
 
-    fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D): R =
-        visitDeclaration(declaration, data)
-
     fun visitField(declaration: IrField, data: D): R =
         visitDeclaration(declaration, data)
 

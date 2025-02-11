@@ -1661,11 +1661,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent(expression.memberName)
     }
 
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: IrDeclaration?) = wrap(declaration, data) {
-        // TODO declaration.printlnAnnotations()
-        p.println("/* ErrorDeclaration */")
-    }
-
     override fun visitErrorExpression(expression: IrErrorExpression, data: IrDeclaration?) = wrap(expression, data) {
         // TODO description
         p.printWithNoIndent("error(\"\") /* ErrorExpression */")
