@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializa
 import org.jetbrains.kotlin.konan.test.irText.*
 import org.jetbrains.kotlin.konan.test.dump.*
 import org.jetbrains.kotlin.konan.test.serialization.AbstractFirNativeSerializationTest
+import org.jetbrains.kotlin.konan.test.serialization.AbstractFirNativeSerializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -253,6 +254,10 @@ fun main() {
                 model("boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
             }
             testClass<AbstractFirNativeSerializationTest> {
+                model("box", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
+                model("boxInline", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
+            }
+            testClass<AbstractFirNativeSerializationWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
                 model("boxInline", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
             }
