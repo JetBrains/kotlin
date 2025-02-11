@@ -3,16 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.projectStructure
+package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
-public class KaBaseContentScopeProvider : KaContentScopeProvider {
+class KaBaseContentScopeProvider : KaContentScopeProvider {
+    @OptIn(KaPlatformInterface::class)
     override fun getRefinedContentScope(module: KaModule): GlobalSearchScope {
         val baseContentScope = module.baseContentScope
 
-        val refiners = KotlinContentScopeRefiner.getRefiners(module.project).ifEmpty {
+        val refiners = KotlinContentScopeRefiner.Companion.getRefiners(module.project).ifEmpty {
             return baseContentScope
         }
 
@@ -29,11 +34,12 @@ public class KaBaseContentScopeProvider : KaContentScopeProvider {
             )
         }
 
-        val scopeMerger = KotlinGlobalSearchScopeMerger.getInstance(module.project)
+        val scopeMerger = KotlinGlobalSearchScopeMerger.Companion.getInstance(module.project)
 
         val mergedEnlargementScope = scopeMerger.union(enlargementScopes)
-        if (shadowedScopes.isEmpty())
+        if (shadowedScopes.isEmpty()) {
             return mergedEnlargementScope
+        }
 
         val mergedShadowedScope = scopeMerger.union(shadowedScopes)
 

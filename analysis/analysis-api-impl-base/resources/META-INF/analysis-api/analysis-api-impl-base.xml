@@ -56,7 +56,7 @@
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaBaseContentScopeProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseContentScopeProvider"
     />
 
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
