@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/reportPerfWithError.kt
+-o
+reportPerfWithError
+-Xreport-perf=true

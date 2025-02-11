@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/simple.kt
+-o
+reportPerfPsi
+-Xuse-fir-lt=false
+-Xreport-perf=true
