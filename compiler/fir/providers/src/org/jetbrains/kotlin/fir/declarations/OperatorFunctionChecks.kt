@@ -26,11 +26,16 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 sealed class CheckResult(val isSuccess: Boolean) {
     class IllegalSignature(val error: String) : CheckResult(false)
     object IllegalFunctionName : CheckResult(false)
+    object AnonymousOperatorFunction : CheckResult(false)
     object SuccessCheck : CheckResult(true)
 }
 
 object OperatorFunctionChecks {
-    fun isOperator(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): CheckResult {
+    fun isOperator(function: FirFunction, session: FirSession, scopeSession: ScopeSession?): CheckResult {
+        if (function !is FirSimpleFunction) {
+            return CheckResult.AnonymousOperatorFunction
+        }
+
         val checks = checksByName.getOrElse(function.name) {
             regexChecks.find { it.first.matches(function.name.asString()) }?.second
         } ?: return CheckResult.IllegalFunctionName

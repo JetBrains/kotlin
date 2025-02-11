@@ -20,7 +20,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTypeConstraintsChecker,
             FirReservedUnderscoreDeclarationChecker,
             FirUpperBoundViolatedDeclarationChecker,
-            FirInfixFunctionDeclarationChecker,
             FirExposedVisibilityDeclarationChecker,
             FirCyclicTypeBoundsChecker,
             FirExpectActualDeclarationChecker,
@@ -59,14 +58,15 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirInlineDeclarationChecker,
             FirNonMemberFunctionsChecker,
             FirSuspendLimitationsChecker,
+            FirInfixFunctionDeclarationChecker,
+            FirOperatorModifierChecker,
+            FirTailrecFunctionChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
             FirFunctionNameChecker,
             FirFunctionTypeParametersSyntaxChecker,
-            FirOperatorModifierChecker,
-            FirTailrecFunctionChecker,
             FirMemberFunctionsChecker,
             FirDataObjectContentChecker,
             ContractSyntaxV2FunctionChecker,

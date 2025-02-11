@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
-object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
+    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isTailRec) return
         if (!(declaration.isEffectivelyFinal() || declaration.visibility == Visibilities.Private)) {
             reporter.reportOn(declaration.source, FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR, context)
@@ -94,7 +94,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
         }
     }
 
-    private fun CFGNode<*>.hasMoreFollowingInstructions(tailrecFunction: FirSimpleFunction): Boolean {
+    private fun CFGNode<*>.hasMoreFollowingInstructions(tailrecFunction: FirFunction): Boolean {
         for (next in followingNodes) {
             val edge = edgeTo(next)
             if (!edge.kind.usedInCfa || edge.kind.isDead) continue

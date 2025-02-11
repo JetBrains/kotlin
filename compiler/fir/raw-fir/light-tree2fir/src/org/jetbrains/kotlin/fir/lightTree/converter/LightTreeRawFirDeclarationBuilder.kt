@@ -1901,8 +1901,29 @@ class LightTreeRawFirDeclarationBuilder(
                     label = context.getLastLabel(functionDeclaration)
                     val labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
                     target = FirFunctionTarget(labelName = labelName, isLambda = false)
-                    if (calculatedModifiers.hasSuspend()) {
-                        status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_SUSPEND_FUNCTION_EXPRESSION
+
+                    val isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
+                    val isActual = calculatedModifiers.hasActual()
+                    val isOverride = calculatedModifiers.hasOverride()
+                    val isOperator = calculatedModifiers.hasOperator()
+                    val isInfix = calculatedModifiers.hasInfix()
+                    val isInline = calculatedModifiers.hasInline()
+                    val isTailRec = calculatedModifiers.hasTailrec()
+                    val isExternal = calculatedModifiers.hasExternal()
+                    val isSuspend = calculatedModifiers.hasSuspend()
+
+                    if (isExpect || isActual || isOverride || isOperator || isInfix || isInline || isTailRec || isExternal || isSuspend) {
+                        status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
+                            isExpect = isExpect,
+                            isActual = isActual,
+                            isOverride = isOverride,
+                            isOperator = isOperator,
+                            isInfix = isInfix,
+                            isInline = isInline,
+                            isTailRec = isTailRec,
+                            isExternal = isExternal,
+                            isSuspend = isSuspend,
+                        )
                     }
                 }
             } else {

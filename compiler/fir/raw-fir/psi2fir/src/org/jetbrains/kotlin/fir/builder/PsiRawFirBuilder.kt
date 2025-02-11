@@ -1964,8 +1964,29 @@ open class PsiRawFirBuilder(
                         hasExplicitParameterList = true
                         label = context.getLastLabel(function)
                         labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
-                        if (function.hasModifier(SUSPEND_KEYWORD)) {
-                            status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_SUSPEND_FUNCTION_EXPRESSION
+
+                        val isExpect = function.hasExpectModifier() || context.containerIsExpect
+                        val isActual = function.hasActualModifier()
+                        val isOverride = function.hasModifier(OVERRIDE_KEYWORD)
+                        val isOperator = function.hasModifier(OPERATOR_KEYWORD)
+                        val isInfix = function.hasModifier(INFIX_KEYWORD)
+                        val isInline = function.hasModifier(INLINE_KEYWORD)
+                        val isTailRec = function.hasModifier(TAILREC_KEYWORD)
+                        val isExternal = function.hasModifier(EXTERNAL_KEYWORD)
+                        val isSuspend = function.hasModifier(SUSPEND_KEYWORD)
+
+                        if (isExpect || isActual || isOverride || isOperator || isInfix || isInline || isTailRec || isExternal || isSuspend) {
+                            status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
+                                isExpect = isExpect,
+                                isActual = isActual,
+                                isOverride = isOverride,
+                                isOperator = isOperator,
+                                isInfix = isInfix,
+                                isInline = isInline,
+                                isTailRec = isTailRec,
+                                isExternal = isExternal,
+                                isSuspend = isSuspend,
+                            )
                         }
                     }
                 } else {

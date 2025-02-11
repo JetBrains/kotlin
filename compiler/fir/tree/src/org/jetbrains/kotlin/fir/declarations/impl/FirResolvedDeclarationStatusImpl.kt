@@ -20,15 +20,10 @@ open class FirResolvedDeclarationStatusImpl(
 
     companion object {
         val DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS: FirResolvedDeclarationStatus = FirResolvedDeclarationStatusImpl(
-            Visibilities.Public,
-            Modality.FINAL,
-            EffectiveVisibility.Public
+            visibility = Visibilities.Public,
+            modality = Modality.FINAL,
+            effectiveVisibility = EffectiveVisibility.Public
         )
-        val DEFAULT_STATUS_FOR_SUSPEND_FUNCTION_EXPRESSION: FirResolvedDeclarationStatus = FirResolvedDeclarationStatusImpl(
-            Visibilities.Local,
-            Modality.FINAL,
-            EffectiveVisibility.Public
-        ).apply { isSuspend = true }
         val DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION: FirResolvedDeclarationStatus = FirResolvedDeclarationStatusImpl(
             Visibilities.Public,
             Modality.FINAL,
