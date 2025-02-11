@@ -12,7 +12,10 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.KaBaseKotlinJavaPsiFacade"
+    />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver"
