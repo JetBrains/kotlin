@@ -85,6 +85,6 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
+    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
   </extensions>
 </idea-plugin>

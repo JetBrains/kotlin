@@ -3,16 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.projectStructure
+package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 
 @KaExperimentalApi
-public class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
+class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
-        return KaResolveExtensionProvider.provideExtensionsFor(module).map { it.getShadowedScope() }
+        return KaResolveExtensionProvider.Companion.provideExtensionsFor(module).map { it.getShadowedScope() }
     }
 }
