@@ -17,13 +17,13 @@ message FileEntry {
 message IrFile {
   repeated int32 declaration_id = 1 [packed=true];
   optional FileEntry file_entry = 2; // Required: either `file_entry` or `file_entry_id` is present.
+  optional int32 file_entry_id = 7;  // Required: either `file_entry` or `file_entry_id` is present.
   repeated int32 fq_name = 3 [packed=true];
   repeated IrConstructorCall annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
 
   // WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
   // repeated Actual actual = 6;
-  optional int32 file_entry_id = 7;  // Required: either `file_entry` or `file_entry_id` is present.
 }
 
 /* ------ IdSignature -------------------------------------------- */

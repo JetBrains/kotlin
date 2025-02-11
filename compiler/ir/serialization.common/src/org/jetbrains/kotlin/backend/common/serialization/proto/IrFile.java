@@ -88,9 +88,9 @@ public final class IrFile extends
             break;
           }
           case 24: {
-            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
               fqName_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000004;
+              mutable_bitField0_ |= 0x00000008;
             }
             fqName_.add(input.readInt32());
             break;
@@ -98,9 +98,9 @@ public final class IrFile extends
           case 26: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
-            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008) && input.getBytesUntilLimit() > 0) {
               fqName_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000004;
+              mutable_bitField0_ |= 0x00000008;
             }
             while (input.getBytesUntilLimit() > 0) {
               fqName_.add(input.readInt32());
@@ -109,17 +109,17 @@ public final class IrFile extends
             break;
           }
           case 34: {
-            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
               annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>();
-              mutable_bitField0_ |= 0x00000008;
+              mutable_bitField0_ |= 0x00000010;
             }
             annotation_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.PARSER, extensionRegistry));
             break;
           }
           case 40: {
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
               explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Long>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000020;
             }
             explicitlyExportedToCompiler_.add(input.readInt64());
             break;
@@ -127,9 +127,9 @@ public final class IrFile extends
           case 42: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
-            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
               explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Long>();
-              mutable_bitField0_ |= 0x00000010;
+              mutable_bitField0_ |= 0x00000020;
             }
             while (input.getBytesUntilLimit() > 0) {
               explicitlyExportedToCompiler_.add(input.readInt64());
@@ -153,13 +153,13 @@ public final class IrFile extends
       if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
         declarationId_ = java.util.Collections.unmodifiableList(declarationId_);
       }
-      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
         fqName_ = java.util.Collections.unmodifiableList(fqName_);
       }
-      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
         annotation_ = java.util.Collections.unmodifiableList(annotation_);
       }
-      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
         explicitlyExportedToCompiler_ = java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
       }
       try {
@@ -232,6 +232,29 @@ public final class IrFile extends
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry() {
     return fileEntry_;
+  }
+
+  public static final int FILE_ENTRY_ID_FIELD_NUMBER = 7;
+  private int fileEntryId_;
+  /**
+   * <code>optional int32 file_entry_id = 7;</code>
+   *
+   * <pre>
+   * Required: either `file_entry` or `file_entry_id` is present.
+   * </pre>
+   */
+  public boolean hasFileEntryId() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+  /**
+   * <code>optional int32 file_entry_id = 7;</code>
+   *
+   * <pre>
+   * Required: either `file_entry` or `file_entry_id` is present.
+   * </pre>
+   */
+  public int getFileEntryId() {
+    return fileEntryId_;
   }
 
   public static final int FQ_NAME_FIELD_NUMBER = 3;
@@ -315,38 +338,13 @@ public final class IrFile extends
   }
   private int explicitlyExportedToCompilerMemoizedSerializedSize = -1;
 
-  public static final int FILE_ENTRY_ID_FIELD_NUMBER = 7;
-  private int fileEntryId_;
-  /**
-   * <code>optional int32 file_entry_id = 7;</code>
-   *
-   * <pre>
-   * WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
-   * repeated Actual actual = 6;
-   * </pre>
-   */
-  public boolean hasFileEntryId() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
-  }
-  /**
-   * <code>optional int32 file_entry_id = 7;</code>
-   *
-   * <pre>
-   * WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
-   * repeated Actual actual = 6;
-   * </pre>
-   */
-  public int getFileEntryId() {
-    return fileEntryId_;
-  }
-
   private void initFields() {
     declarationId_ = java.util.Collections.emptyList();
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
+    fileEntryId_ = 0;
     fqName_ = java.util.Collections.emptyList();
     annotation_ = java.util.Collections.emptyList();
     explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
-    fileEntryId_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -564,13 +562,13 @@ public final class IrFile extends
       bitField0_ = (bitField0_ & ~0x00000001);
       fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
-      fqName_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000004);
-      annotation_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000008);
-      explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000010);
       fileEntryId_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      fqName_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000008);
+      annotation_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000010);
+      explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
@@ -604,25 +602,25 @@ public final class IrFile extends
         to_bitField0_ |= 0x00000001;
       }
       result.fileEntry_ = fileEntry_;
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        fqName_ = java.util.Collections.unmodifiableList(fqName_);
-        bitField0_ = (bitField0_ & ~0x00000004);
-      }
-      result.fqName_ = fqName_;
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        annotation_ = java.util.Collections.unmodifiableList(annotation_);
-        bitField0_ = (bitField0_ & ~0x00000008);
-      }
-      result.annotation_ = annotation_;
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        explicitlyExportedToCompiler_ = java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
-        bitField0_ = (bitField0_ & ~0x00000010);
-      }
-      result.explicitlyExportedToCompiler_ = explicitlyExportedToCompiler_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000002;
       }
       result.fileEntryId_ = fileEntryId_;
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        fqName_ = java.util.Collections.unmodifiableList(fqName_);
+        bitField0_ = (bitField0_ & ~0x00000008);
+      }
+      result.fqName_ = fqName_;
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        annotation_ = java.util.Collections.unmodifiableList(annotation_);
+        bitField0_ = (bitField0_ & ~0x00000010);
+      }
+      result.annotation_ = annotation_;
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        explicitlyExportedToCompiler_ = java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
+        bitField0_ = (bitField0_ & ~0x00000020);
+      }
+      result.explicitlyExportedToCompiler_ = explicitlyExportedToCompiler_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -642,10 +640,13 @@ public final class IrFile extends
       if (other.hasFileEntry()) {
         mergeFileEntry(other.getFileEntry());
       }
+      if (other.hasFileEntryId()) {
+        setFileEntryId(other.getFileEntryId());
+      }
       if (!other.fqName_.isEmpty()) {
         if (fqName_.isEmpty()) {
           fqName_ = other.fqName_;
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
         } else {
           ensureFqNameIsMutable();
           fqName_.addAll(other.fqName_);
@@ -655,7 +656,7 @@ public final class IrFile extends
       if (!other.annotation_.isEmpty()) {
         if (annotation_.isEmpty()) {
           annotation_ = other.annotation_;
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000010);
         } else {
           ensureAnnotationIsMutable();
           annotation_.addAll(other.annotation_);
@@ -665,15 +666,12 @@ public final class IrFile extends
       if (!other.explicitlyExportedToCompiler_.isEmpty()) {
         if (explicitlyExportedToCompiler_.isEmpty()) {
           explicitlyExportedToCompiler_ = other.explicitlyExportedToCompiler_;
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
         } else {
           ensureExplicitlyExportedToCompilerIsMutable();
           explicitlyExportedToCompiler_.addAll(other.explicitlyExportedToCompiler_);
         }
         
-      }
-      if (other.hasFileEntryId()) {
-        setFileEntryId(other.getFileEntryId());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -865,11 +863,59 @@ public final class IrFile extends
       return this;
     }
 
+    private int fileEntryId_ ;
+    /**
+     * <code>optional int32 file_entry_id = 7;</code>
+     *
+     * <pre>
+     * Required: either `file_entry` or `file_entry_id` is present.
+     * </pre>
+     */
+    public boolean hasFileEntryId() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 file_entry_id = 7;</code>
+     *
+     * <pre>
+     * Required: either `file_entry` or `file_entry_id` is present.
+     * </pre>
+     */
+    public int getFileEntryId() {
+      return fileEntryId_;
+    }
+    /**
+     * <code>optional int32 file_entry_id = 7;</code>
+     *
+     * <pre>
+     * Required: either `file_entry` or `file_entry_id` is present.
+     * </pre>
+     */
+    public Builder setFileEntryId(int value) {
+      bitField0_ |= 0x00000004;
+      fileEntryId_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 file_entry_id = 7;</code>
+     *
+     * <pre>
+     * Required: either `file_entry` or `file_entry_id` is present.
+     * </pre>
+     */
+    public Builder clearFileEntryId() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      fileEntryId_ = 0;
+      
+      return this;
+    }
+
     private java.util.List<java.lang.Integer> fqName_ = java.util.Collections.emptyList();
     private void ensureFqNameIsMutable() {
-      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
         fqName_ = new java.util.ArrayList<java.lang.Integer>(fqName_);
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
        }
     }
     /**
@@ -926,7 +972,7 @@ public final class IrFile extends
      */
     public Builder clearFqName() {
       fqName_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000008);
       
       return this;
     }
@@ -934,9 +980,9 @@ public final class IrFile extends
     private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_ =
       java.util.Collections.emptyList();
     private void ensureAnnotationIsMutable() {
-      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
         annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>(annotation_);
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000010;
        }
     }
 
@@ -1042,7 +1088,7 @@ public final class IrFile extends
      */
     public Builder clearAnnotation() {
       annotation_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
 
       return this;
     }
@@ -1058,9 +1104,9 @@ public final class IrFile extends
 
     private java.util.List<java.lang.Long> explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
     private void ensureExplicitlyExportedToCompilerIsMutable() {
-      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
         explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Long>(explicitlyExportedToCompiler_);
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
        }
     }
     /**
@@ -1117,59 +1163,7 @@ public final class IrFile extends
      */
     public Builder clearExplicitlyExportedToCompiler() {
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000010);
-      
-      return this;
-    }
-
-    private int fileEntryId_ ;
-    /**
-     * <code>optional int32 file_entry_id = 7;</code>
-     *
-     * <pre>
-     * WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
-     * repeated Actual actual = 6;
-     * </pre>
-     */
-    public boolean hasFileEntryId() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>optional int32 file_entry_id = 7;</code>
-     *
-     * <pre>
-     * WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
-     * repeated Actual actual = 6;
-     * </pre>
-     */
-    public int getFileEntryId() {
-      return fileEntryId_;
-    }
-    /**
-     * <code>optional int32 file_entry_id = 7;</code>
-     *
-     * <pre>
-     * WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
-     * repeated Actual actual = 6;
-     * </pre>
-     */
-    public Builder setFileEntryId(int value) {
-      bitField0_ |= 0x00000020;
-      fileEntryId_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional int32 file_entry_id = 7;</code>
-     *
-     * <pre>
-     * WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
-     * repeated Actual actual = 6;
-     * </pre>
-     */
-    public Builder clearFileEntryId() {
       bitField0_ = (bitField0_ & ~0x00000020);
-      fileEntryId_ = 0;
       
       return this;
     }

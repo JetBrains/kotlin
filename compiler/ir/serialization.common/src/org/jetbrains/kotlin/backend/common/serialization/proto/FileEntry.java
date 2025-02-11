@@ -5,13 +5,6 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 /**
  * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry}
- *
- * <pre>
- * Protobuf 2.x does not generate `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`,
- * so data class `IrFileSerializer.ProtoFileEntryDeduplicationKey` is used to generate them.
- * For correct deduplication, `ProtoFileEntryDeduplicationKey` must have the same fields as `FileEntry` here.
- * TODO: KT-74258: bump Protobuf version to &gt;3.x to have generated `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`
- * </pre>
  */
 public final class FileEntry extends
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
@@ -321,13 +314,6 @@ public final class FileEntry extends
 
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry}
-   *
-   * <pre>
-   * Protobuf 2.x does not generate `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`,
-   * so data class `IrFileSerializer.ProtoFileEntryDeduplicationKey` is used to generate them.
-   * For correct deduplication, `ProtoFileEntryDeduplicationKey` must have the same fields as `FileEntry` here.
-   * TODO: KT-74258: bump Protobuf version to &gt;3.x to have generated `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`
-   * </pre>
    */
   public static final class Builder extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
