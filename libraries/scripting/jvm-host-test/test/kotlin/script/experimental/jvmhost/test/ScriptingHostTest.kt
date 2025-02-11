@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import kotlin.test.*
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -35,7 +36,9 @@ import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.*
 import kotlin.script.templates.standard.SimpleScriptTemplate
+import kotlin.test.*
 
+@ResourceLock(Resources.SYSTEM_OUT)
 class ScriptingHostTest {
 
     @Test

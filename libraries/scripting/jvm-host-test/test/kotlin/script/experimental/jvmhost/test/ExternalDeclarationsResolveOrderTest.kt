@@ -5,8 +5,10 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import kotlin.test.*
 import kotlin.script.experimental.api.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ExternalDeclarationsResolveOrderTest {
 

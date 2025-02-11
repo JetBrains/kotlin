@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.Resources
 import java.io.*
 import java.net.URLClassLoader
 import java.security.MessageDigest
@@ -28,6 +31,7 @@ import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.loadScriptFromJar
 import kotlin.test.*
 
+@ResourceLock(Resources.SYSTEM_OUT)
 class CachingTest {
 
     val simpleScript = "val x = 1\nprintln(\"x = \$x\")".toScriptSource()
@@ -53,77 +57,67 @@ class CachingTest {
 
 
     @Test
-    fun testFileCache() {
-        withTempDir("scriptingTestCache") { cacheDir ->
-            val cache = FileBasedScriptCache(cacheDir)
-            assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
+    fun testFileCache(@TempDir cacheDir: File) {
+        val cache = FileBasedScriptCache(cacheDir)
+        assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
 
-            checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
-        }
+        checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
     }
 
     @Test
-    fun testSimpleImportWithFileCache() {
-        withTempDir("scriptingTestCache") { cacheDir ->
-            val cache = FileBasedScriptCache(cacheDir)
-            assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
+    fun testSimpleImportWithFileCache(@TempDir cacheDir: File) {
+        val cache = FileBasedScriptCache(cacheDir)
+        assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
 
-            checkWithCache(
-                cache, scriptWithImport, scriptWithImportExpectedOutput,
-                compilationConfiguration = { makeSimpleConfigurationWithTestImport() }
-            )
-        }
+        checkWithCache(
+            cache, scriptWithImport, scriptWithImportExpectedOutput,
+            compilationConfiguration = { makeSimpleConfigurationWithTestImport() }
+        )
     }
 
     @Test
-    fun testJarCache() {
-        withTempDir("scriptingTestJarCache") { cacheDir ->
-            val cache = TestCompiledScriptJarsCache(cacheDir)
-            assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+    fun testJarCache(@TempDir cacheDir: File) {
+        val cache = TestCompiledScriptJarsCache(cacheDir)
+        assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
-            checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
+        checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
 
-            val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
+        val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
 
-            assertEquals(simpleScriptExpectedOutput, scriptOut)
-        }
+        assertEquals(simpleScriptExpectedOutput, scriptOut)
     }
 
     @Test
-    fun testSimpleImportWithJarCache() {
-        withTempDir("scriptingTestJarCache") { cacheDir ->
-            val cache = TestCompiledScriptJarsCache(cacheDir)
-            assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+    fun testSimpleImportWithJarCache(@TempDir cacheDir: File) {
+        val cache = TestCompiledScriptJarsCache(cacheDir)
+        assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
-            checkWithCache(
-                cache, scriptWithImport, scriptWithImportExpectedOutput,
-                compilationConfiguration = { makeSimpleConfigurationWithTestImport() }
-            )
+        checkWithCache(
+            cache, scriptWithImport, scriptWithImportExpectedOutput,
+            compilationConfiguration = { makeSimpleConfigurationWithTestImport() }
+        )
 
-            // cannot make it work in this form - it requires a dependency on the current test classes, but classes directory seems
-            // not work when specified in the manifest
-            // TODO: find a way to make it work
-//            val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
+        // cannot make it work in this form - it requires a dependency on the current test classes, but classes directory seems
+        // not work when specified in the manifest
+        // TODO: find a way to make it work
+//        val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
 //
-//            assertEquals(scriptWithImportExpectedOutput, scriptOut)
-        }
+//        assertEquals(scriptWithImportExpectedOutput, scriptOut)
     }
 
     @Test
-    fun testImplicitReceiversWithJarCache() {
-        withTempDir("scriptingTestJarCache") { cacheDir ->
-            val cache = TestCompiledScriptJarsCache(cacheDir)
-            assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+    fun testImplicitReceiversWithJarCache(@TempDir cacheDir: File) {
+        val cache = TestCompiledScriptJarsCache(cacheDir)
+        assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
-            checkWithCache(
-                cache, simpleScript, simpleScriptExpectedOutput, checkDirectEval = false,
-                compilationConfiguration = {
-                    updateClasspath(classpathFromClass<ScriptingHostTest>()) // the class defined here should be in the classpath
-                    implicitReceivers(Implicit::class)
-                }
-            ) {
-                implicitReceivers(Implicit)
+        checkWithCache(
+            cache, simpleScript, simpleScriptExpectedOutput, checkDirectEval = false,
+            compilationConfiguration = {
+                updateClasspath(classpathFromClass<ScriptingHostTest>()) // the class defined here should be in the classpath
+                implicitReceivers(Implicit::class)
             }
+        ) {
+            implicitReceivers(Implicit)
         }
     }
 
@@ -181,47 +175,43 @@ class CachingTest {
     }
 
     @Test
-    fun testLocalDependencyWithExternalLoadAndCache() {
-        withTempDir("scriptingTestDepDir") { depDir ->
-            val standardJars = KotlinJars.kotlinScriptStandardJars
-            val outJar = makeDependenciesJar(depDir, standardJars)
+    fun testLocalDependencyWithExternalLoadAndCache(@TempDir depDir: File, @TempDir cacheDir: File) {
+        val standardJars = KotlinJars.kotlinScriptStandardJars
+        val outJar = makeDependenciesJar(depDir, standardJars)
 
-            withTempDir("scriptingTestJarChacheWithExtLoadedDep") { cacheDir ->
-                val cache = TestCompiledScriptJarsCache(cacheDir)
-                assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+        val cache = TestCompiledScriptJarsCache(cacheDir)
+        assertTrue(cache.baseDir.listFiles()!!.isEmpty())
 
-                val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
-                    jvm {
-                        baseClassLoader(URLClassLoader((standardJars + outJar).map { it.toURI().toURL() }.toTypedArray(), null))
-                        compilationCache(cache)
-                    }
-                }
-                val host = BasicJvmScriptingHost(compiler = JvmScriptCompiler(hostConfiguration), evaluator = BasicJvmScriptEvaluator())
-
-                val scriptCompilationConfiguration = ScriptCompilationConfiguration {
-                    updateClasspath(standardJars + outJar)
-                    this.hostConfiguration.update { hostConfiguration }
-                }
-                val scriptEvaluationConfiguration = ScriptEvaluationConfiguration {
-                    jvm {
-                        loadDependencies(false)
-                    }
-                    this.hostConfiguration.update { hostConfiguration }
-                }
-
-                val script = "Dependency(42).v".toScriptSource()
-
-                // Without the patch that fixes loadDependencies usage in kotlin.script.experimental.jvmhost.KJvmCompiledScriptLazilyLoadedFromClasspath.getClass
-                // AND with hostConfiguration removed from scriptEvaluationConfiguration (essentially creating a misconfigured evaluator)
-                // the first evaluation fails because it cannot find the class for dependency, but the second mistakingly succeed, because dependency is taken from the cache
-                // (see #KT-50902 for details)
-                val res0 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
-                assertEquals(42, (res0 as? ResultValue.Value)?.value)
-
-                val res1 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
-                assertEquals(42, (res1 as? ResultValue.Value)?.value)
+        val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
+            jvm {
+                baseClassLoader(URLClassLoader((standardJars + outJar).map { it.toURI().toURL() }.toTypedArray(), null))
+                compilationCache(cache)
             }
         }
+        val host = BasicJvmScriptingHost(compiler = JvmScriptCompiler(hostConfiguration), evaluator = BasicJvmScriptEvaluator())
+
+        val scriptCompilationConfiguration = ScriptCompilationConfiguration {
+            updateClasspath(standardJars + outJar)
+            this.hostConfiguration.update { hostConfiguration }
+        }
+        val scriptEvaluationConfiguration = ScriptEvaluationConfiguration {
+            jvm {
+                loadDependencies(false)
+            }
+            this.hostConfiguration.update { hostConfiguration }
+        }
+
+        val script = "Dependency(42).v".toScriptSource()
+
+        // Without the patch that fixes loadDependencies usage in kotlin.script.experimental.jvmhost.KJvmCompiledScriptLazilyLoadedFromClasspath.getClass
+        // AND with hostConfiguration removed from scriptEvaluationConfiguration (essentially creating a misconfigured evaluator)
+        // the first evaluation fails because it cannot find the class for dependency, but the second mistakingly succeed, because dependency is taken from the cache
+        // (see #KT-50902 for details)
+        val res0 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
+        assertEquals(42, (res0 as? ResultValue.Value)?.value)
+
+        val res1 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
+        assertEquals(42, (res1 as? ResultValue.Value)?.value)
     }
 
     private fun makeDependenciesJar(depDir: File, standardJars: List<File>): File {
