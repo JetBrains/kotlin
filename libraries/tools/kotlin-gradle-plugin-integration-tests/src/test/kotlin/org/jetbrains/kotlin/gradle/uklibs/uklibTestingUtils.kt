@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -26,6 +27,13 @@ fun Project.applyMultiplatform(
 ) {
     plugins.apply("org.jetbrains.kotlin.multiplatform")
     (extensions.getByName("kotlin") as KotlinMultiplatformExtension).configure()
+}
+
+fun Project.applyJvm(
+    configure: KotlinJvmExtension.() -> Unit
+) {
+    plugins.apply("org.jetbrains.kotlin.jvm")
+    (extensions.getByName("kotlin") as KotlinJvmExtension).configure()
 }
 
 data class PublisherConfiguration(
