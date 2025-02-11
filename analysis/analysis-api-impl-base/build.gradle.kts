@@ -17,6 +17,7 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
+    implementation(libs.caffeine)
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

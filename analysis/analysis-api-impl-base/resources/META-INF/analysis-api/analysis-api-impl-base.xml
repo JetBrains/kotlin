@@ -15,6 +15,11 @@
     <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
     <projectService
+        serviceInterface="org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.KaBaseJavaModuleResolver"
+    />
+
+    <projectService
         serviceInterface="org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory"
     />
