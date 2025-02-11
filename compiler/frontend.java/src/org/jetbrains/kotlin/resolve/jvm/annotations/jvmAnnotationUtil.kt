@@ -14,38 +14,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-
-val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
-
-@JvmField
-val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
-val JVM_RECORD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmRecord")
-
-@JvmField
-val SYNCHRONIZED_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Synchronized")
-
-@JvmField
-val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
-
-@JvmField
-val VOLATILE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Volatile")
-
-@JvmField
-val TRANSIENT_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Transient")
-
-@JvmField
-val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAME)
-
-@JvmField
-val JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSerializableLambda")
-
-fun DeclarationDescriptor.findJvmOverloadsAnnotation(): AnnotationDescriptor? =
-    annotations.findAnnotation(JVM_OVERLOADS_FQ_NAME)
 
 fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? =
     (this as? PropertyDescriptor)?.backingField?.annotations?.findAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME)
@@ -77,11 +50,5 @@ private fun Annotated.findJvmSyntheticAnnotation(): AnnotationDescriptor? =
 
 fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean =
     findJvmSyntheticAnnotation() != null
-
-fun DeclarationDescriptor.findStrictfpAnnotation(): AnnotationDescriptor? =
-    annotations.findAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
-
-fun DeclarationDescriptor.findSynchronizedAnnotation(): AnnotationDescriptor? =
-    annotations.findAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 
 fun ClassDescriptor.isJvmRecord(): Boolean = annotations.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME)
