@@ -204,8 +204,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>
         get() = setOf(
             FirAnonymousFunctionParametersChecker,
+            FirAnonymousFunctionTypeParametersChecker,
             FirInlinedLambdaNonSourceAnnotationsChecker,
-            FirAnonymousFunctionSyntaxChecker,
             FirSuspendAnonymousFunctionChecker,
             FirMissingDependencyClassForLambdaReceiverChecker,
         )
