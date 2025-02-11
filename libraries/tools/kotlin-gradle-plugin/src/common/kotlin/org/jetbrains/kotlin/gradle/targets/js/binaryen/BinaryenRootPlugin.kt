@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin"
     )
 )
-@OptIn(ExperimentalWasmDsl::class)
+@ExperimentalWasmDsl
 open class BinaryenRootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         @Suppress("DEPRECATION")
