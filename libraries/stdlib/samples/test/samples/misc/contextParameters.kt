@@ -9,12 +9,12 @@ import samples.*
 
 class ContextParameters {
 
-    interface Logger { fun log(message: String) }
-
-    class ConsoleLogger : Logger { override fun log(message: String) = println(message) }
-
     @Sample
     fun implicitContextParameter() {
+        interface Logger { fun log(message: String) }
+
+        class ConsoleLogger : Logger { override fun log(message: String) = println(message) }
+
         fun <A> withConsoleLogger(block: context(Logger) () -> A): A =
             context(ConsoleLogger()) { block() }
 
@@ -27,6 +27,10 @@ class ContextParameters {
 
     @Sample
     fun implicitReceiver() {
+        interface Logger { fun log(message: String) }
+
+        class ConsoleLogger : Logger { override fun log(message: String) = println(message) }
+
         fun <A> withConsoleLogger(block: Logger.() -> A): A =
             with(ConsoleLogger()) { block() }
 
