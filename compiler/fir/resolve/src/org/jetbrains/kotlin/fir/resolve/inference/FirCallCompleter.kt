@@ -406,45 +406,7 @@ class FirCallCompleter(
                 else -> lambda.replaceReceiverParameter(null)
             }
 
-            if (contextParameters.isNotEmpty()) {
-                if (lambda.isLambda) {
-                    lambda.replaceContextParameters(
-                        contextParameters.map { contextParameterType ->
-                            buildValueParameter {
-                                resolvePhase = FirResolvePhase.BODY_RESOLVE
-                                source = lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
-                                containingDeclarationSymbol = lambda.symbol
-                                moduleData = session.moduleData
-                                origin = FirDeclarationOrigin.Source
-                                name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                                symbol = FirValueParameterSymbol(name)
-                                returnTypeRef = contextParameterType
-                                    .approximateLambdaInputType(symbol, withPCLASession, candidate)
-                                    .toFirResolvedTypeRef(lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
-                                valueParameterKind =
-                                    if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
-                                        FirValueParameterKind.ContextParameter
-                                    } else {
-                                        FirValueParameterKind.LegacyContextReceiver
-                                    }
-                            }
-                        }
-                    )
-                } else {
-                    check(lambda.contextParameters.size == contextParameters.size)
-                    lambda.contextParameters.forEachIndexed { index, parameter ->
-                        val contextParameterType = contextParameters[index]
-                        parameter.replaceReturnTypeRef(
-                            contextParameterType
-                                .approximateLambdaInputType(parameter.symbol, withPCLASession)
-                                .toFirResolvedTypeRef(
-                                    parameter.returnTypeRef.source
-                                        ?: parameter.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
-                                )
-                        )
-                    }
-                }
-            }
+            lambda.setContextParametersConfiguration(contextParameters, withPCLASession, candidate)
 
             val lookupTracker = session.lookupTracker
             val fileSource = components.file.source
@@ -550,6 +512,52 @@ class FirCallCompleter(
                 }
 
             return ReturnArgumentsAnalysisResult(returnArguments, additionalConstraints)
+        }
+
+        private fun FirAnonymousFunction.setContextParametersConfiguration(
+            givenContextParameterTypes: List<ConeKotlinType>,
+            withPCLASession: Boolean,
+            candidate: Candidate,
+        ) {
+            if (givenContextParameterTypes.isEmpty()) return
+            val originalLambdaSource = source
+            if (isLambda) {
+                replaceContextParameters(
+                    givenContextParameterTypes.map { contextParameterType ->
+                        buildValueParameter {
+                            resolvePhase = FirResolvePhase.BODY_RESOLVE
+                            source = originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+                            containingDeclarationSymbol = this@setContextParametersConfiguration.symbol
+                            moduleData = session.moduleData
+                            origin = FirDeclarationOrigin.Source
+                            name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                            symbol = FirValueParameterSymbol(name)
+                            returnTypeRef = contextParameterType
+                                .approximateLambdaInputType(symbol, withPCLASession, candidate)
+                                .toFirResolvedTypeRef(originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
+                            valueParameterKind =
+                                if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                                    FirValueParameterKind.ContextParameter
+                                } else {
+                                    FirValueParameterKind.LegacyContextReceiver
+                                }
+                        }
+                    }
+                )
+            } else {
+                check(givenContextParameterTypes.size == contextParameters.size)
+                contextParameters.forEachIndexed { index, parameter ->
+                    val contextParameterType = givenContextParameterTypes[index]
+                    parameter.replaceReturnTypeRef(
+                        contextParameterType
+                            .approximateLambdaInputType(parameter.symbol, withPCLASession, candidate)
+                            .toFirResolvedTypeRef(
+                                parameter.returnTypeRef.source
+                                    ?: parameter.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
+                            )
+                    )
+                }
+            }
         }
     }
 
