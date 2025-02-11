@@ -77,14 +77,14 @@ private fun KFile.collectTopLevelElements(irInfo: KlibIrInfo?): List<KlibElement
 
 private val KFile.entries: List<KFile> get() = listFiles
 
-private fun buildElement(name: String, entry: KFile): KlibElementWithSize {
-    val cumulativeSize = when {
-        entry.isFile -> entry.size
-        entry.isDirectory -> entry.entries.sumOf { it.size }
-        else -> 0L
-    }
+private fun KFile.cumulativeSize(): Long = when {
+    isFile -> size
+    isDirectory -> entries.sumOf { it.cumulativeSize() }
+    else -> 0L
+}
 
-    return KlibElementWithSize(name, cumulativeSize)
+private fun buildElement(name: String, entry: KFile): KlibElementWithSize {
+    return KlibElementWithSize(name, entry.cumulativeSize())
 }
 
 private fun buildIrElement(entry: KFile, irInfo: KlibIrInfo?): KlibElementWithSize {
