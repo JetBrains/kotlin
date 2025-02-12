@@ -47,7 +47,7 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
 @Composable
 fun test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(test)*<foo>:Test.kt#2487m")
+  sourceInformation(%composer, "C(test)<foo>:Test.kt#2487m")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

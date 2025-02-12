@@ -1,0 +1,68 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*            
+
+@Composable
+fun LoginInputFields(
+    loginError: Int?,
+) {
+    val text = loginError?.let { stringResource(resource = it) }.orEmpty()
+
+    Checkbox(
+        checked = false,
+        onChecked = {},
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun LoginInputFields(loginError: Int?, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(LoginInputFields)<Checkb...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(loginError)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val text = val tmp0_safe_receiver = loginError
+    when {
+      tmp0_safe_receiver == null -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+        null
+      }
+      else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "*<string...>")
+        val tmp1_group = <block>{
+          val tmp0_group = tmp0_safe_receiver.let { it: Int ->
+            val tmp0_return = stringResource(it, %composer, 0)
+            tmp0_return
+          }
+          tmp0_group
+        }
+        %composer.endReplaceGroup()
+        tmp1_group
+      }
+    }
+    .orEmpty()
+    Checkbox(false, { it: Boolean ->
+    }, %composer, 0b00110110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    LoginInputFields(loginError, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
