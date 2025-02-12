@@ -5,7 +5,7 @@ fun testCharSequence(x: CharSequence): Int {
     var i = 0
 
     i += when (x) { <!USELESS_IS_CHECK!>is Any<!> -> 1 }
-    i += when (x) { <!USELESS_IS_CHECK!>is CharSequence<!> -> 1 }
+    i += when (x) { is CharSequence -> 1 }
     i += <!NO_ELSE_IN_WHEN!>when<!> (x) { is String -> 1 }
 
     i += when (x) { <!USELESS_IS_CHECK!>is Any?<!> -> 1 }
@@ -23,7 +23,7 @@ fun testNullableCharSequence(x: CharSequence?): Int {
     i += <!NO_ELSE_IN_WHEN!>when<!> (x) { is String -> 1 }
 
     i += when (x) { <!USELESS_IS_CHECK!>is Any?<!> -> 1 }
-    i += when (x) { <!USELESS_IS_CHECK!>is CharSequence?<!> -> 1 }
+    i += when (x) { is CharSequence? -> 1 }
     i += <!NO_ELSE_IN_WHEN!>when<!> (x) { is String? -> 1 }
 
     i += when (x) {
