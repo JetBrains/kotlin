@@ -205,6 +205,10 @@ message IrPropertyReference {
   required int64 symbol = 6;
 }
 
+message IrRawFunctionReference {
+  required int64 symbol = 1;
+}
+
 message IrRichFunctionReference {
   repeated IrExpression bound_values = 1;
   optional int64 reflection_target_symbol = 2;
@@ -477,6 +481,7 @@ message IrOperation {
     IrInlinedFunctionBlock inlined_function_block = 37;
     IrRichFunctionReference rich_function_reference = 38;
     IrRichPropertyReference rich_property_reference = 39;
+    IrRawFunctionReference raw_function_reference = 40;
   }
 }
 
