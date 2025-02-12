@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
@@ -56,7 +57,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
 
     val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = config.configuration.languageVersionSettings,
-            metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
+            metadataVersion = config.configuration.klibMetadataVersionOrDefault(),
             project = config.project,
             exportKDoc = context.shouldExportKDoc(),
             skipExpects = !config.metadataKlib,

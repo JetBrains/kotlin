@@ -100,9 +100,6 @@ class GenerateIrRuntime {
         return runtimeConfiguration
     }
 
-    private val CompilerConfiguration.metadataVersion
-        get() = get(CommonConfigurationKeys.METADATA_VERSION) as? MetadataVersion ?: KLIB_LEGACY_METADATA_VERSION
-
     private val environment =
         KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
     private val configuration = buildConfiguration(environment)

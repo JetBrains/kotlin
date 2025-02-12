@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
-import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.*
 
 internal data class KlibWriterInput(
@@ -38,7 +38,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     val shortLibraryName = config.shortModuleName
     val abiVersion = input.customAbiVersion ?: KotlinAbiVersion.CURRENT
     val compilerVersion = KotlinCompilerVersion.getVersion().toString()
-    val metadataVersion = KLIB_LEGACY_METADATA_VERSION
+    val metadataVersion = configuration.klibMetadataVersionOrDefault()
     val versions = KotlinLibraryVersioning(
             abiVersion = abiVersion,
             compilerVersion = compilerVersion,
