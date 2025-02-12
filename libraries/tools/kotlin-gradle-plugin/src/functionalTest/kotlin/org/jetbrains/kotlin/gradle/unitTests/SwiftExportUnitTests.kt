@@ -484,10 +484,8 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export custom compiler options`() {
         val project = swiftExportProject(
-            multiplatform = {
-                iosSimulatorArm64()
-
-                compilerOptions {
+            swiftExport = {
+                configure {
                     freeCompilerArgs.add("-opt-in=some.value")
                 }
             }
