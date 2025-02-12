@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -54,13 +53,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun resolveUserTypeToSymbol(
         typeRef: FirUserTypeRef,
-        scopeClassDeclaration: ScopeClassDeclaration,
+        configuration: TypeResolutionConfiguration,
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier,
         resolveDeprecations: Boolean
     ): TypeResolutionResult {
         session.lookupTracker?.recordUserTypeRefLookup(
-            typeRef, scopeClassDeclaration.scopes.flatMap { it.scopeOwnerLookupNames }, useSiteFile?.source
+            typeRef, configuration.scopes.flatMap { it.scopeOwnerLookupNames }, useSiteFile?.source
         )
 
         val qualifier = typeRef.qualifier
@@ -68,12 +67,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val collector = FirTypeCandidateCollector(
             session,
             useSiteFile,
-            scopeClassDeclaration.containingClassDeclarations,
+            configuration.containingClassDeclarations,
             supertypeSupplier,
             resolveDeprecations
         )
 
-        for (scope in scopeClassDeclaration.scopes) {
+        for (scope in configuration.scopes) {
             if (collector.applicability == CandidateApplicability.RESOLVED) break
             val name = qualifier.first().name
             val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
@@ -350,7 +349,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     override fun resolveType(
         typeRef: FirTypeRef,
-        scopeClassDeclaration: ScopeClassDeclaration,
+        configuration: TypeResolutionConfiguration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
         resolveDeprecations: Boolean,
@@ -361,12 +360,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return when (typeRef) {
             is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
             is FirUserTypeRef -> {
-                val result = resolveUserTypeToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier, resolveDeprecations)
+                val result = resolveUserTypeToSymbol(typeRef, configuration, useSiteFile, supertypeSupplier, resolveDeprecations)
                 val resolvedType = resolveUserType(
                     typeRef,
                     result,
                     areBareTypesAllowed,
-                    scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingClassDeclarations.lastOrNull(),
+                    configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
                 val resolvedTypeSymbol = result.resolvedCandidateOrNull()?.symbol
