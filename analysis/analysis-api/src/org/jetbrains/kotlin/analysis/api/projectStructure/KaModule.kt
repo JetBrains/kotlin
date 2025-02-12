@@ -114,9 +114,10 @@ public interface KaModule {
 /**
  * A [KaModule] representing a set of source declarations.
  *
- * The Analysis API distinguishes between production and test source sets. As such, the `src` and `test` source sets of a "module" are
- * actually different [KaSourceModule]s. To allow a test source module to use the declarations from the production source module, the test
- * source module generally defines a [friend dependency][directFriendDependencies] on the production source module.
+ * A [KaSourceModule] does not necessarily have to correspond directly to an Analysis API platform's concept of a "module." For example, the
+ * IntelliJ implementation distinguishes between production and test source sets. As such, the `src` and `test` source sets of an IntelliJ
+ * module are actually different [KaSourceModule]s. To allow a test source module to use the internal declarations from the production
+ * source module, the test source module defines a [friend dependency][directFriendDependencies] on the production source module.
  */
 public interface KaSourceModule : KaModule {
     /**
