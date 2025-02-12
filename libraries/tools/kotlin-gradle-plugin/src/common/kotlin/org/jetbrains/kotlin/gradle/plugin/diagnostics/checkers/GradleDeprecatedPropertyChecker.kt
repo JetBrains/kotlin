@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 
 internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
+    private class DeprecatedProperty()
+
     private val warningDeprecatedProperties: List<String> = listOf(
         "kotlin.useK2",
         "kotlin.experimental.tryK2",

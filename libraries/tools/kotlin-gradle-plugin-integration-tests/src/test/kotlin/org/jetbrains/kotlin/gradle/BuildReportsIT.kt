@@ -276,8 +276,8 @@ class BuildReportsIT : KGPBaseTest() {
                 "compileKotlin", "-Pkotlin.build.report.dir=${projectPath.resolve("reports").pathString}",
                 "-Pkotlin.internal.single.build.metrics.file=${projectPath.resolve("deprecated_metrics.bin").pathString}"
             ) {
-                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties, "kotlin.internal.single.build.metrics.file")
-                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties, "kotlin.build.report.dir")
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties(null), "kotlin.internal.single.build.metrics.file")
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties(null), "kotlin.build.report.dir")
             }
         }
     }
