@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -294,7 +295,7 @@ private fun KtUltraLightClass.lightMethod(
     val asmFlags = VisibilityUtil.getMethodAsmFlags(
         descriptor,
         support.deprecationResolver,
-        support.jvmDefaultMode,
+        support.languageVersionSettings.jvmDefaultMode,
     )
 
     val accessFlags: Int by lazyPub {
