@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
@@ -16,44 +15,60 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 
 internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
-    private val warningDeprecatedProperties: List<String> = listOf(
-        "kotlin.useK2",
-        "kotlin.experimental.tryK2",
-        "kotlin.incremental.classpath.snapshot.enabled",
-        "kotlin.internal.single.build.metrics.file",
-        "kotlin.build.report.dir",
-        "kotlin.native.ignoreIncorrectDependencies",
-        "kotlin.wasm.stability.nowarn",
-        KotlinJsCompilerType.jsCompilerProperty,
-        "${KotlinJsCompilerType.jsCompilerProperty}.nowarn",
-        "kotlin.mpp.androidGradlePluginCompatibility.nowarn", // Since 2.1.0
+    private class DeprecatedProperty(
+        val propertyName: String,
+        val details: String? = null,
     )
 
-    private val errorDeprecatedProperties: List<String> = listOf(
-        KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY,
+    private val warningDeprecatedProperties: List<DeprecatedProperty> = listOf(
+        DeprecatedProperty("kotlin.useK2"),
+        DeprecatedProperty("kotlin.experimental.tryK2"),
+        DeprecatedProperty("kotlin.incremental.classpath.snapshot.enabled"),
+        DeprecatedProperty("kotlin.internal.single.build.metrics.file"),
+        DeprecatedProperty("kotlin.build.report.dir"),
+        DeprecatedProperty("kotlin.native.ignoreIncorrectDependencies"),
+        DeprecatedProperty("kotlin.wasm.stability.nowarn"),
+        DeprecatedProperty(KotlinJsCompilerType.jsCompilerProperty),
+        DeprecatedProperty("${KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
+        DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
+    )
+
+    private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
+        DeprecatedProperty(
+            KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY,
+            "Resolution strategy for resources shouldn't be specified. See https://youtrack.jetbrains.com/issue/KT-66133 for details.",
+        ),
     )
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
 
-        propertiesBuildService.onlyUsed(project, warningDeprecatedProperties).forEach {
+        warningDeprecatedProperties.filter {
+            propertiesBuildService.isPropertyUsed(project, it.propertyName)
+        }.forEach {
             collector.reportOncePerGradleBuild(
                 project,
-                KotlinToolingDiagnostics.DeprecatedWarningGradleProperties(it),
-                it
+                KotlinToolingDiagnostics.DeprecatedWarningGradleProperties(
+                    it.propertyName,
+                    it.details,
+                ),
+                key = it.propertyName,
             )
         }
 
-        propertiesBuildService.onlyUsed(project, errorDeprecatedProperties).forEach {
+        errorDeprecatedProperties.filter {
+            propertiesBuildService.isPropertyUsed(project, it.propertyName)
+        }.forEach {
             collector.reportOncePerGradleBuild(
                 project,
-                KotlinToolingDiagnostics.DeprecatedErrorGradleProperties(it),
-                it
+                KotlinToolingDiagnostics.DeprecatedErrorGradleProperties(
+                    it.propertyName,
+                    it.details,
+                ),
+                key = it.propertyName,
             )
         }
     }
 
-    private fun PropertiesBuildService.onlyUsed(project: Project, properties: List<String>): List<String> = properties.filter {
-        get(it, project) != null
-    }
+    private fun PropertiesBuildService.isPropertyUsed(project: Project, property: String): Boolean = get(property, project) != null
 }
