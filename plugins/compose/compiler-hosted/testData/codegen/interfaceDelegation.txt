@@ -5,7 +5,6 @@ public final class MainKt$main$my$1 {
     method <init>(): void
     public method bar(): void
     public method foo(): java.lang.String
-    public final inner class com/example/iface/MyInterface$DefaultImpls
 }
 
 public final class MainKt {

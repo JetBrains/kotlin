@@ -86,6 +86,13 @@ public final class CParceler implements Parceler<C> {
  * public abstract interface Parceler<T#0 (* T *)> : kotlin/Any {
  *
  *   // module name: main
+<<<<<<< HEAD
+=======
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * }
  */
 @kotlin.Metadata()
@@ -124,9 +131,12 @@ public final class Test {
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
 @java.lang.annotation.Repeatable(value = TypeParceler.Container.class)
 /**
+<<<<<<< HEAD
  * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
  * @kotlin/annotation/Repeatable
  * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY])
+=======
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * public final annotation class TypeParceler<T#0 (* T *), T#1 (* P *) : Parceler<in T#0>> : kotlin/Annotation {
  *
  *   // signature: <init>()V

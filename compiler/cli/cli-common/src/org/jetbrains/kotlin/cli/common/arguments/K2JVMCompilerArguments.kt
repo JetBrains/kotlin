@@ -151,11 +151,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-default",
         valueDescription = "{enable|no-compatibility|disable}",
-        description = """Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
--jvm-default=disable             Default behavior. Do not generate JVM default methods.
--jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes
-                                 with static methods for compatibility with code compiled in the 'disable' mode.
--jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes."""
+        description = """Emit JVM default methods for interface declarations with bodies. The default is 'enable'.
+-jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes with
+                                 static methods for compatibility with code compiled in the 'disable' mode.
+                                 This is the default behavior since language version 2.2.
+-jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
+-jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1."""
     )
     var jvmDefaultStable: String? = null
         set(value) {
@@ -830,7 +831,9 @@ If API Level >= 2.2 -- no-op."""
         result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
             .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
-        result[JvmAnalysisFlags.jvmDefaultMode] = configureJvmDefaultMode(collector)
+        configureJvmDefaultMode(collector)?.let {
+            result[JvmAnalysisFlags.jvmDefaultMode] = it
+        }
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
@@ -847,29 +850,26 @@ If API Level >= 2.2 -- no-op."""
         return result
     }
 
-    private fun configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode {
-        val mode = when {
-            jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
-                if (it == null) {
-                    collector?.report(
-                        CompilerMessageSeverity.ERROR,
-                        "Unknown -jvm-default mode: $jvmDefaultStable, supported modes: " +
-                                "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
-                    )
-                }
+    private fun configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode? = when {
+        jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
+            if (it == null) {
+                collector?.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Unknown -jvm-default mode: $jvmDefaultStable, supported modes: " +
+                            "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
+                )
             }
-            jvmDefault != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefault).also {
-                if (it == null) {
-                    collector?.report(
-                        CompilerMessageSeverity.ERROR,
-                        "Unknown -Xjvm-default mode: $jvmDefault, supported modes: " +
-                                "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
-                    )
-                }
-            }
-            else -> null
         }
-        return mode ?: JvmDefaultMode.DISABLE
+        jvmDefault != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefault).also {
+            if (it == null) {
+                collector?.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Unknown -Xjvm-default mode: $jvmDefault, supported modes: " +
+                            "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
+                )
+            }
+        }
+        else -> null
     }
 
     override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
@@ -880,13 +880,22 @@ If API Level >= 2.2 -- no-op."""
         if (enhanceTypeParameterTypesToDefNotNull) {
             result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
         }
-        if (configureJvmDefaultMode(null).isEnabled) {
-            result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
-            result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
-        }
         if (valueClasses) {
             result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
         }
+
+        // If a JVM default mode is enabled via `-jvm-default` or `-Xjvm-default`, also forcibly enable a few flags that fix incomplete
+        // error reporting in some cases.
+        // Note that this won't have effect if a JVM default mode is enabled by other means, specifically if:
+        // * language version is 1.9+, and `JvmDefaultEnableByDefault` is either enabled manually or automatically (if LV is 2.2+).
+        //   In this case, both flags will be enabled simply because their `sinceVersion` is <= 1.9.
+        // * language version is 1.8 or earlier, and `JvmDefaultEnableByDefault` is enabled manually. In this case, the flags will not be
+        //   enabled, but that is fine because manually enabling language features is an advanced use case without any guarantees.
+        if (configureJvmDefaultMode(null)?.isEnabled == true) {
+            result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
+            result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
+        }
+
         return result
     }
 

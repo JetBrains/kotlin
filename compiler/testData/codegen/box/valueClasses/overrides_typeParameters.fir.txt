@@ -38,7 +38,6 @@ public final class GenericFakeOverride {
     public synthetic bridge method setP(p0: java.lang.Object): void
     public method setP1(@org.jetbrains.annotations.NotNull p0: XPoint): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
@@ -73,7 +72,6 @@ public final class GenericFakeOverrideMFVC {
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
     public synthetic final method unbox-impl-field2(): java.lang.Object
-    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
@@ -104,7 +102,6 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
     public synthetic final method unbox-impl-field2(): java.lang.Object
-    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -115,7 +112,6 @@ public final class GenericFakeOverrideWithMFVCUpperBound {
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -130,20 +126,24 @@ public interface GenericMFVCHolder {
 @kotlin.Metadata
 public final class GenericMFVCHolderWithImpls$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
-    public static method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
-    public static method setP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
-    public static method setP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public deprecated static @java.lang.Deprecated method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public deprecated static @java.lang.Deprecated method setP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
     public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface GenericMFVCHolderWithImpls {
     // source: 'overrides_typeParameters.kt'
-    public abstract method getP(): java.lang.Object
-    public abstract method getP1(): java.lang.Object
-    public abstract method setP(p0: java.lang.Object): void
-    public abstract method setP1(p0: java.lang.Object): void
+    public synthetic static method access$getP$jd(p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP1$jd(p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$setP$jd(p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public synthetic static method access$setP1$jd(p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public method getP(): java.lang.Object
+    public method getP1(): java.lang.Object
+    public method setP(p0: java.lang.Object): void
+    public method setP1(p0: java.lang.Object): void
     public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -163,28 +163,36 @@ public interface GenericMFVCHolderWithMFVCUpperBound {
 @kotlin.Metadata
 public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
     public synthetic static method getP-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
     public synthetic static method getP-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
-    public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
     public synthetic static method getP1-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
     public synthetic static method getP1-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
-    public static method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
-    public static method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
     // source: 'overrides_typeParameters.kt'
-    public abstract @org.jetbrains.annotations.NotNull method getP(): XPoint
-    public synthetic abstract method getP-x(): java.lang.Object
-    public synthetic abstract method getP-y(): java.lang.Object
-    public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
-    public synthetic abstract method getP1-x(): java.lang.Object
-    public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public synthetic static method access$getP$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public synthetic static method access$getP-x$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$getP-y$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$getP1$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public synthetic static method access$getP1-x$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$getP1-y$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$setP-E-wHi0Q$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public synthetic static method access$setP1-E-wHi0Q$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public @org.jetbrains.annotations.NotNull method getP(): XPoint
+    public synthetic method getP-x(): java.lang.Object
+    public synthetic method getP-y(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getP1(): XPoint
+    public synthetic method getP1-x(): java.lang.Object
+    public synthetic method getP1-y(): java.lang.Object
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -1033,7 +1041,6 @@ public final class ReifiedFakeOverride {
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
@@ -1064,7 +1071,6 @@ public final class ReifiedFakeOverrideMFVC {
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
     public synthetic final method unbox-impl-field2(): java.lang.Object
-    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -1083,44 +1089,54 @@ public interface ReifiedMFVCHolder {
 @kotlin.Metadata
 public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
     public synthetic static method getP-x(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
     public synthetic static method getP-y(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
-    public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
     public synthetic static method getP1-x(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
     public synthetic static method getP1-y(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
-    public static method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
-    public static method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface ReifiedMFVCHolderWithImpls {
     // source: 'overrides_typeParameters.kt'
-    public abstract @org.jetbrains.annotations.NotNull method getP(): XPoint
-    public synthetic abstract method getP-x(): java.lang.Object
-    public synthetic abstract method getP-y(): java.lang.Object
-    public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
-    public synthetic abstract method getP1-x(): java.lang.Object
-    public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public synthetic static method access$getP$jd(p0: ReifiedMFVCHolderWithImpls): XPoint
+    public synthetic static method access$getP-x$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP-y$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP1$jd(p0: ReifiedMFVCHolderWithImpls): XPoint
+    public synthetic static method access$getP1-x$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP1-y$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$setP-E-wHi0Q$jd(p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public synthetic static method access$setP1-E-wHi0Q$jd(p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public @org.jetbrains.annotations.NotNull method getP(): XPoint
+    public synthetic method getP-x(): java.lang.Object
+    public synthetic method getP-y(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getP1(): XPoint
+    public synthetic method getP1-x(): java.lang.Object
+    public synthetic method getP1-y(): java.lang.Object
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class SomeInterface$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static method someFunction1(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public static method someFunction2-bw8FDaY(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method someFunction1(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method someFunction2-bw8FDaY(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
     public final inner class SomeInterface$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface SomeInterface {
     // source: 'overrides_typeParameters.kt'
-    public abstract method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
-    public abstract method someFunction2-bw8FDaY(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
+    public synthetic static method access$someFunction1$jd(p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public synthetic static method access$someFunction2-bw8FDaY$jd(p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
+    public method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
+    public method someFunction2-bw8FDaY(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
     public final inner class SomeInterface$DefaultImpls
 }
 

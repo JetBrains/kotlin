@@ -25,6 +25,13 @@ package modifiers;
  * internal abstract interface modifiers/InternalInterface : kotlin/Any {
  *
  *   // module name: main
+<<<<<<< HEAD
+=======
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * }
  */
 @kotlin.Metadata()
@@ -42,7 +49,10 @@ package modifiers;
  *   public constructor()
  *
  *   // signature: overloads(Ljava/lang/String;I)Ljava/lang/String;
+<<<<<<< HEAD
  *   @kotlin/jvm/JvmOverloads
+=======
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  *   public final fun overloads(a: kotlin/String (* = ... *), n: kotlin/Int (* = ... *)): kotlin/String
  *
  *   // signature: strictFp()V
@@ -144,6 +154,13 @@ package modifiers;
  * private abstract interface modifiers/PrivateInterface : kotlin/Any {
  *
  *   // module name: main
+<<<<<<< HEAD
+=======
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * }
  */
 @kotlin.Metadata()
@@ -220,6 +237,13 @@ public class PublicClassProtectedConstructor {
      * private abstract interface modifiers/PublicClassProtectedConstructor.PrivateInterface : kotlin/Any {
      *
      *   // module name: main
+<<<<<<< HEAD
+=======
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
      * }
      */
     @kotlin.Metadata()
@@ -230,6 +254,13 @@ public class PublicClassProtectedConstructor {
      * protected abstract interface modifiers/PublicClassProtectedConstructor.ProtectedInterface : kotlin/Any {
      *
      *   // module name: main
+<<<<<<< HEAD
+=======
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
      * }
      */
     @kotlin.Metadata()
@@ -245,6 +276,13 @@ package modifiers;
  * public abstract interface modifiers/PublicInterface : kotlin/Any {
  *
  *   // module name: main
+<<<<<<< HEAD
+=======
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * }
  */
 @kotlin.Metadata()

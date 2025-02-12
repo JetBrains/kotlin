@@ -85,6 +85,13 @@ package test;
  *   public abstract fun someMethod(): RootClass
  *
  *   // module name: main
+<<<<<<< HEAD
+=======
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * }
  */
 @kotlin.Metadata()
@@ -107,8 +114,11 @@ package test;
 @ClassRefAnnotation(value = {RootClass.class})
 @RootAnnotation()
 /**
+<<<<<<< HEAD
  * @test/ClassRefAnnotation(value = [RootClass::class])
  * @RootAnnotation
+=======
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * public final class test/PackedWithAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V

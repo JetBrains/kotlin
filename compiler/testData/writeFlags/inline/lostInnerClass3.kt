@@ -17,4 +17,4 @@ interface Introspector {
 
 // TESTED_OBJECT_KIND: innerClass
 // TESTED_OBJECTS: Introspector$test$SchemaRetriever, DefaultImpls
-// FLAGS: ACC_FINAL, ACC_PUBLIC, ACC_STATIC
+// ABSENT: true

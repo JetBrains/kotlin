@@ -57,7 +57,11 @@ public enum Enum1 {
  * public final enum class Enum2 : kotlin/Enum<Enum2> {
  *
  *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;I)V
+<<<<<<< HEAD
  *   private constructor(@Anno1(value = "first") col: kotlin/String, @Anno1(value = "second") col2: kotlin/Int)
+=======
+ *   private constructor(col: kotlin/String, col2: kotlin/Int)
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  *
  *   // signature: color()Ljava/lang/String;
  *   public final fun color(): kotlin/String
@@ -135,6 +139,13 @@ public enum Enum2 {
  *   // nested class: Nested
  *
  *   // module name: main
+<<<<<<< HEAD
+=======
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+>>>>>>> 933439ea2330 (JVM: enable `-jvm-default=enable` by default since 2.2)
  * }
  */
 @kotlin.Metadata()
