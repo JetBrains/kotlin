@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
@@ -11,7 +14,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleAbiVersionDecompiledText
+import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -78,7 +81,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     fun buildDecompiledText(file: KotlinMetadataStubBuilder.FileWithMetadata): DecompiledText {
         return when (file) {
             is KotlinMetadataStubBuilder.FileWithMetadata.Incompatible -> {
-                createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)
+                createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), file.version)
             }
             is KotlinMetadataStubBuilder.FileWithMetadata.Compatible -> {
                 val packageFqName = file.packageFqName
