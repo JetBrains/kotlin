@@ -42,6 +42,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
     fun validateSwiftExportOutput(
         goldenData: File,
         swiftExportOutputs: Set<SwiftExportModule>,
+        validateKotlinBridge: Boolean = true,
     ) {
         val flattenModules = swiftExportOutputs.flatMapToSet { it.dependencies.toSet() + it }
 
@@ -55,11 +56,13 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
                     val expectedCHeader = expectedFiles / it.name / "${it.name}.h"
                     val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
 
-                    listOf(
-                        { KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText()) },
-                        { KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText()) },
-                        { KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText()) }
-                    )
+                    buildList {
+                        add { KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText()) }
+                        add { KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText()) }
+                        if (validateKotlinBridge) {
+                            add { KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText()) }
+                        }
+                    }
                 }
                 is SwiftExportModule.SwiftOnly -> {
                     when (it.kind) {

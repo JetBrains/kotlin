@@ -40,11 +40,15 @@ class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
         validateFullLibraryDump(klibSettings, "kotlinx-serialization-core")
     }
 
-    private fun validateFullLibraryDump(klib: KlibExportSettings, goldenData: String) {
+    private fun validateFullLibraryDump(
+        klib: KlibExportSettings,
+        goldenData: String,
+        validateKotlinBridge: Boolean = false,
+    ) {
         val config = klib.createConfig(tmpdir.toPath().resolve(klib.swiftModuleName))
         val inputModule = klib.createInputModule(config)
         val result = runSwiftExport(setOf(inputModule)).getOrThrow()
-        validateSwiftExportOutput(testDataDir.resolve(goldenData), result)
+        validateSwiftExportOutput(testDataDir.resolve(goldenData), result, validateKotlinBridge)
     }
 
 }
