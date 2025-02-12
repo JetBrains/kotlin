@@ -515,6 +515,7 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
 public fun CharSequence.replaceRange(startIndex: Int, endIndex: Int, replacement: CharSequence): CharSequence {
     if (endIndex < startIndex)
         throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
+    if (endIndex == startIndex) return this
     val sb = StringBuilder()
     sb.appendRange(this, 0, startIndex)
     sb.append(replacement)
