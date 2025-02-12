@@ -143,6 +143,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return enumEntryMatchingLastQualifier?.symbol
     }
 
+    /**
+     * @return ConeErrorType only for completely unresolved symbols or ambiguity or type argument mapping problems
+     * @return regular ConeLookupTagBasedType if resolution is successful or a single erroneous candidate was found
+     *
+     * Thus, the visibility error should be handled further by just looking into TypeResolutionResult again
+     */
     @OptIn(SymbolInternals::class)
     private fun resolveUserType(
         typeRef: FirUserTypeRef,
