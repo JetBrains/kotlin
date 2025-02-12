@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -23,6 +22,7 @@ import java.io.PrintStream
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
+import kotlin.test.*
 
 const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
 
@@ -58,7 +58,7 @@ fun runWithKotlinLauncherScript(
     val executableFileName =
         if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$launcherScriptName.bat" else launcherScriptName
     val launcherFile = File("dist/kotlinc/bin/$executableFileName")
-    Assert.assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
+    assertTrue(launcherFile.exists(), "Launcher script not found, run dist task: ${launcherFile.absolutePath}")
 
     val args = arrayListOf(launcherFile.absolutePath).apply {
         if (classpath.isNotEmpty()) {
@@ -133,21 +133,21 @@ fun runAndCheckResults(
     try {
         if (process.isAlive) {
             process.destroyForcibly()
-            Assert.fail("Process terminated forcibly")
+            fail("Process terminated forcibly")
         }
         stdoutThread.join(300)
-        Assert.assertFalse("stdout thread not finished", stdoutThread.isAlive)
-        Assert.assertNull(stdoutException.value)
+        assertFalse(stdoutThread.isAlive, "stdout thread not finished")
+        assertNull(stdoutException.value)
         stderrThread.join(300)
-        Assert.assertFalse("stderr thread not finished", stderrThread.isAlive)
-        Assert.assertNull(stderrException.value)
+        assertFalse(stderrThread.isAlive, "stderr thread not finished")
+        assertNull(stderrException.value)
 
         fun checkExpectedOutputPatterns(expectedPatterns: List<String>, actualOut: List<String>) {
-            Assert.assertEquals(expectedPatterns.size, actualOut.size)
+            assertEquals(expectedPatterns.size, actualOut.size)
             for ((expectedPattern, actualLine) in expectedPatterns.zip(actualOut)) {
-                Assert.assertTrue(
-                    "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                    Regex(expectedPattern).matches(actualLine)
+                assertTrue(
+                    Regex(expectedPattern).matches(actualLine),
+                    "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\""
                 )
             }
         }
@@ -155,7 +155,7 @@ fun runAndCheckResults(
         if (expectedErrPatterns.isNotEmpty()) {
             checkExpectedOutputPatterns(expectedErrPatterns, processErr)
         }
-        Assert.assertEquals(expectedExitCode, process.exitValue())
+        assertEquals(expectedExitCode, process.exitValue())
 
     } catch (e: Throwable) {
         println("OUT:\n${processOut.joinToString("\n")}")
@@ -197,26 +197,26 @@ fun runWithK2JVMCompiler(
     try {
         val outLines = if (out.isEmpty()) emptyList() else out.lines()
         val errLines by lazy { err.lines() }
-        Assert.assertEquals(
-            "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
-            expectedAllOutPatterns.size, outLines.size
+        assertEquals(
+            expectedAllOutPatterns.size, outLines.size,
+            "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}"
         )
         for ((expectedPattern, actualLine) in expectedAllOutPatterns.zip(outLines)) {
-            Assert.assertTrue(
-                "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                Regex(expectedPattern).matches(actualLine)
+            assertTrue(
+                Regex(expectedPattern).matches(actualLine),
+                "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\""
             )
         }
         if (expectedSomeErrPatterns != null) {
             for (expectedPattern in expectedSomeErrPatterns) {
                 val re = Regex(expectedPattern)
-                Assert.assertTrue(
-                    "Expected pattern \"$expectedPattern\" is not found in the stderr:\n${errLines.joinToString("\n")}",
-                    errLines.any { re.find(it) != null }
+                assertTrue(
+                    errLines.any { re.find(it) != null },
+                    "Expected pattern \"$expectedPattern\" is not found in the stderr:\n${errLines.joinToString("\n")}"
                 )
             }
         }
-        Assert.assertEquals(expectedExitCode, ret.code)
+        assertEquals(expectedExitCode, ret.code)
     } catch (e: Throwable) {
         println("OUT:\n$out")
         println("ERR:\n$err")

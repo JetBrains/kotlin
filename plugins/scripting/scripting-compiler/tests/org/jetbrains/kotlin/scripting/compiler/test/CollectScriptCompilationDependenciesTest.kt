@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -26,40 +25,50 @@ import org.jetbrains.kotlin.test.testFramework.RunAll
 import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertTrue
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/collectDependencies"
 
-class CollectScriptCompilationDependenciesTest : TestCase() {
+class CollectScriptCompilationDependenciesTest {
     private val testRootDisposable: Disposable =
         TestDisposable("${CollectScriptCompilationDependenciesTest::class.simpleName}.testRootDisposable")
 
-    override fun tearDown() {
+    @AfterTest
+    fun tearDown() {
         RunAll(
-            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
-            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { Disposer.dispose(testRootDisposable) }
         )
     }
 
+    @Test
     fun testCascadeImport() {
         runTest("imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"))
     }
 
+    @Test
     fun testImportTwice() {
         runTest("imp_leaf_twice.req1.kts", listOf("leaf.req1.kts"))
     }
 
+    @Test
     fun testImportDiamond() {
         runTest("imp_leaf_and_imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"))
     }
 
+    @Test
     fun testDirectImportCycle() {
         runTest("imp_self.req1.kts", emptyList())
     }
 
+    @Test
     fun testIndirectImportCycle() {
         runTest("imp_cycle_1.req1.kts", listOf("imp_cycle_2.req1.kts"))
     }
 
+    @Test
     fun testImportWithDependenciesAdded() {
         runTest(
             "imp_leaf_with_deps.req1.kts",
@@ -90,13 +99,13 @@ class CollectScriptCompilationDependenciesTest : TestCase() {
         val expectedSources = (expectedDependencies + scriptFile).sorted()
         val actualSources = environment.getSourceFiles().map { it.name }.sorted()
 
-        TestCase.assertEquals(expectedSources, actualSources)
+        assertContentEquals(expectedSources, actualSources)
 
         if (classPath.isNotEmpty()) {
 
             val actualClasspath = environment.configuration.jvmClasspathRoots
 
-            TestCase.assertTrue("expect that $actualClasspath contains $classPath", actualClasspath.containsAll(classPath))
+            assertTrue(actualClasspath.containsAll(classPath), "expect that $actualClasspath contains $classPath")
         }
     }
 }

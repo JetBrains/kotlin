@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.Disposable
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -41,11 +40,14 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
-class ScriptingCompilerPluginTest : TestCase() {
+class ScriptingCompilerPluginTest {
 
     companion object {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
@@ -57,7 +59,7 @@ class ScriptingCompilerPluginTest : TestCase() {
 
     private val kotlinPaths: KotlinPaths by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val paths = PathUtil.kotlinPathsForDistDirectory
-        TestCase.assertTrue("Lib directory doesn't exist. Run 'ant dist'", paths.libPath.absoluteFile.isDirectory)
+        assertTrue(paths.libPath.absoluteFile.isDirectory, "Lib directory doesn't exist. Run 'ant dist'")
         paths
     }
 
@@ -84,6 +86,7 @@ class ScriptingCompilerPluginTest : TestCase() {
         return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
+    @Test
     fun testScriptResolverEnvironmentArgsParsing() {
 
         val longStr = (1..100).joinToString("\\,") { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
@@ -99,12 +102,13 @@ class ScriptingCompilerPluginTest : TestCase() {
 
         val res = configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
 
-        Assert.assertEquals(
+        assertEquals(
             hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
             res
         )
     }
 
+    @Test
     fun testLazyScriptDefinitionDiscovery() {
 
         withTempDir { tmpdir ->
@@ -218,11 +222,12 @@ class ScriptingCompilerPluginTest : TestCase() {
                     if (isK2) "2.0" else "1.9"
                 )
 
-                Assert.assertEquals(ExitCode.OK, exitCode)
+                assertEquals(ExitCode.OK, exitCode)
             }
         }
     }
 
+    @Test
     fun testLazyScriptDefinitionOtherAnnotation() {
 
         withTempDir { tmpdir ->
@@ -278,6 +283,6 @@ fun MessageCollectorImpl.assertHasMessage(msg: String, desiredSeverity: Compiler
 
 fun assertTrue(exp: Boolean, msg: () -> String) {
     if (!exp) {
-        Assert.fail(msg())
+        fail(msg())
     }
 }

@@ -23,8 +23,8 @@ dependencies {
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":core:util.runtime"))
 
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":kotlin-scripting-compiler")) { isTransitive = false }
+    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(projectTests(":kotlin-scripting-compiler"))
 
     testRuntimeOnly(project(":kotlin-scripting-jsr223-unshaded"))
     testRuntimeOnly(project(":kotlin-compiler"))
@@ -46,7 +46,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
     dependsOn(":dist")
     workingDir = rootDir
     val testRuntimeProvider = project.provider { testJsr223Runtime.asPath }

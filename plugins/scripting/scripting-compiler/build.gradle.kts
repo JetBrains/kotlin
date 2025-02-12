@@ -35,8 +35,12 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
-    testApi(projectTests(":compiler:tests-common"))
-    testImplementation(libs.junit4)
+    testApi(projectTests(":compiler:tests-common")) // TODO: drop this, it's based on JUnit4
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testApi(libs.junit.platform.launcher)
+    testApi(kotlinTest("junit5"))
 
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.coroutines.core)
@@ -65,18 +69,20 @@ javadocJar()
 
 testsJar()
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
+    useJUnitPlatform()
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
     doFirst {
         systemProperty("kotlin.test.script.classpath", scriptClasspath)
     }
 }
 
-projectTest(taskName = "testWithK1", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
+    useJUnitPlatform()
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
 
     doFirst {

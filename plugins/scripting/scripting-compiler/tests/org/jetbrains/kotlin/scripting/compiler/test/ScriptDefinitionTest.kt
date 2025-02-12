@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.api.fileNamePattern
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.test.*
 
-class ScriptDefinitionTest : TestCase() {
+class ScriptDefinitionTest {
 
+    @Test
     fun testGradleLikeFileNamePatternMatching() {
 
         fun makeDefinition(pattern: String) =
@@ -34,16 +34,16 @@ class ScriptDefinitionTest : TestCase() {
         val buildScriptDefinition = makeDefinition(".+(?<!(^|\\.)(init|settings))\\.gradle\\.kts")
 
         fun ScriptDefinition.FromConfigurations.assertMatches(path: String) {
-            Assert.assertTrue(
-                "Script definition with filePathPattern '${filePathPattern}' should match '$path'",
-                isScript(FileScriptSource(File(path)))
+            assertTrue(
+                isScript(FileScriptSource(File(path))),
+                "Script definition with filePathPattern '${filePathPattern}' should match '$path'"
             )
         }
 
         fun ScriptDefinition.FromConfigurations.assertNotMatches(path: String) {
-            Assert.assertFalse(
-                "Script definition with filePathPattern '${filePathPattern}' should NOT match '$path'",
-                isScript(FileScriptSource(File(path)))
+            assertFalse(
+                isScript(FileScriptSource(File(path))),
+                "Script definition with filePathPattern '${filePathPattern}' should NOT match '$path'"
             )
         }
 

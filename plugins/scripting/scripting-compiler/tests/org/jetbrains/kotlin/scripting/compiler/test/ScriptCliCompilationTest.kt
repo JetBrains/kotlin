@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.Assert
 import java.io.File
 import java.nio.file.Files
 import kotlin.reflect.KClass
@@ -33,34 +31,38 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.*
+import kotlin.test.*
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
 
-class ScriptCliCompilationTest : TestCase() {
+class ScriptCliCompilationTest {
     private val testRootDisposable: Disposable = TestDisposable("${ScriptCliCompilationTest::class.simpleName}.testRootDisposable")
 
-    override fun tearDown() {
+    @AfterTest
+    fun tearDown() {
         RunAll(
             ThrowableRunnable { Disposer.dispose(testRootDisposable) },
-            ThrowableRunnable { super.tearDown() },
         )
     }
 
+    @Test
     fun testPrerequisites() {
-        Assert.assertTrue(thisClasspath.isNotEmpty())
+        assertTrue(thisClasspath.isNotEmpty())
     }
 
+    @Test
     fun testSimpleScript() {
         val out = checkRun("hello.kts")
-        Assert.assertEquals("Hello from basic script!", out)
+        assertEquals("Hello from basic script!", out)
     }
 
+    @Test
     fun testEmptyScript() {
         val emptyFile = Files.createTempFile("empty",".kts").toFile()
         try {
-            Assert.assertTrue(
-                "Script file is not empty",
-                emptyFile.exists() && emptyFile.isFile && emptyFile.length() == 0L
+            assertTrue(
+                emptyFile.exists() && emptyFile.isFile && emptyFile.length() == 0L,
+                "Script file is not empty"
             )
             checkRun(emptyFile)
         } finally {
@@ -68,14 +70,16 @@ class ScriptCliCompilationTest : TestCase() {
         }
     }
 
+    @Test
     fun testSimpleScriptWithArgs() {
         val out = checkRun("hello_args.kts", listOf("kotlin"))
-        Assert.assertEquals("Hello, kotlin!", out)
+        assertEquals("Hello, kotlin!", out)
     }
 
+    @Test
     fun testScriptWithRequire() {
         val out = checkRun("hello.req1.kts", scriptDef = TestScriptWithRequire::class)
-        Assert.assertEquals("Hello from required!", out)
+        assertEquals("Hello from required!", out)
     }
 
 
@@ -128,8 +132,8 @@ class ScriptCliCompilationTest : TestCase() {
             val resMessage = lazy {
                 "Compilation results:\n" + res.second.toString()
             }
-            Assert.assertEquals(resMessage.value, ExitCode.OK, res.first)
-            Assert.assertFalse(resMessage.value, res.second.hasErrors())
+            assertEquals(ExitCode.OK, res.first, resMessage.value)
+            assertFalse(res.second.hasErrors(), resMessage.value)
         }
 }
 

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -29,6 +28,8 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.jvm
+import kotlin.test.AfterTest
+import kotlin.test.*
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/constructAnnotations"
 
@@ -42,16 +43,17 @@ private annotation class TestAnnotation(vararg val options: String)
 @Retention(AnnotationRetention.SOURCE)
 private annotation class AnnotationWithVarArgAndArray(vararg val options: String, val moreOptions: Array<String>)
 
-class ConstructAnnotationTest : TestCase() {
+class ConstructAnnotationTest {
     private val testRootDisposable: Disposable = TestDisposable("${ConstructAnnotationTest::class.simpleName}.testRootDisposable")
 
-    override fun tearDown() {
+    @AfterTest
+    fun tearDown() {
         RunAll(
             ThrowableRunnable { Disposer.dispose(testRootDisposable) },
-            ThrowableRunnable { super.tearDown() },
         )
     }
 
+    @Test
     fun testAnnotationEmptyVarArg() {
         val annotations = annotations("TestAnnotationEmptyVarArg.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -61,6 +63,7 @@ class ConstructAnnotationTest : TestCase() {
         assert(annotations.first().options.isEmpty())
     }
 
+    @Test
     fun testBasicVarArgTestAnnotation() {
         val annotations = annotations("SimpleTestAnnotation.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -70,6 +73,7 @@ class ConstructAnnotationTest : TestCase() {
         assertEquals(annotations.first().options.toList(), listOf("option"))
     }
 
+    @Test
     fun testAnnotationWithArrayLiteral() {
         val annotations = annotations("TestAnnotationWithArrayLiteral.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -79,6 +83,7 @@ class ConstructAnnotationTest : TestCase() {
         assertEquals(annotations.first().options.toList(), listOf("option"))
     }
 
+    @Test
     fun testAnnotationWithArrayOfFunction() {
         val annotations = annotations("TestAnnotationWithArrayOfFunction.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -88,6 +93,7 @@ class ConstructAnnotationTest : TestCase() {
         assertEquals(annotations.first().options.toList(), listOf("option"))
     }
 
+    @Test
     fun testAnnotationWithEmptyArrayFunction() {
         val annotations = annotations("TestAnnotationWithEmptyArrayFunction.kts", TestAnnotation::class)
             .valueOrThrow()
@@ -97,6 +103,7 @@ class ConstructAnnotationTest : TestCase() {
         assert(annotations.first().options.isEmpty())
     }
 
+    @Test
     fun testArrayAfterVarArgInAnnotation() {
         val annotations = annotations("TestAnnotationWithVarArgAndArray.kts", AnnotationWithVarArgAndArray::class)
             .valueOrThrow()

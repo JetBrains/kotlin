@@ -1,4 +1,3 @@
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
@@ -9,6 +8,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.renderError
+import kotlin.test.*
 
 /*
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -16,8 +16,9 @@ import kotlin.script.experimental.jvm.util.renderError
  */
 
 
-class ScriptEvaluationTest : TestCase() {
+class ScriptEvaluationTest {
 
+    @Test
     fun testExceptionWithCause() {
         checkEvaluateAsError(
             """
@@ -37,6 +38,7 @@ class ScriptEvaluationTest : TestCase() {
     }
 
     // KT-19423
+    @Test
     fun testClassCapturingScriptInstance() {
         val res = checkEvaluate(
             """
@@ -51,6 +53,7 @@ class ScriptEvaluationTest : TestCase() {
         assertEquals("abc", (res.returnValue as ResultValue.Value).value)
     }
 
+    @Test
     fun testObjectCapturingScriptInstance() {
         val res = checkCompile(
             """

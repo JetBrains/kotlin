@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
-import org.junit.Assert
 import java.io.File
 import java.nio.file.Files
 import kotlin.script.experimental.annotations.KotlinScript
@@ -32,20 +30,24 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.filterByAnnotationType
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci"
 
-class CompileTimeFibonacciTest : TestCase() {
+class CompileTimeFibonacciTest {
     private val testRootDisposable: Disposable = TestDisposable("${CompileTimeFibonacciTest::class.simpleName}.testRootDisposable")
 
-    override fun tearDown() {
+    @AfterTest
+    fun tearDown() {
         RunAll(
             ThrowableRunnable { Disposer.dispose(testRootDisposable) },
-            ThrowableRunnable { super.tearDown() },
         )
     }
 
+    @Test
     fun testFibonacciWithSupportedNumbersImplementsTheCorrectConstants() {
         val outputLines = runScript("supported.fib.kts")
             .valueOr { failure ->
@@ -55,15 +57,16 @@ class CompileTimeFibonacciTest : TestCase() {
             .lines()
             .filter { it.isNotBlank() }
 
-        Assert.assertEquals(4, outputLines.count())
-        Assert.assertEquals("fib(1)=1", outputLines[0])
-        Assert.assertEquals("fib(2)=1", outputLines[1])
-        Assert.assertEquals("fib(3)=2", outputLines[2])
-        Assert.assertEquals("fib(4)=3", outputLines[3])
+        assertEquals(4, outputLines.count())
+        assertEquals("fib(1)=1", outputLines[0])
+        assertEquals("fib(2)=1", outputLines[1])
+        assertEquals("fib(3)=2", outputLines[2])
+        assertEquals("fib(4)=3", outputLines[3])
     }
 
     // This tests if the annotations delivered with the correct location
     // and that scripts can return error messages at the location of the annotation
+    @Test
     fun testFibonacciWithUnsupportedNumbersEmitsErrorAtLocation() {
         when (val result = runScript("unsupported.fib.kts")) {
             is ResultWithDiagnostics.Success ->
@@ -76,13 +79,13 @@ class CompileTimeFibonacciTest : TestCase() {
                 val expectedErrorMessage = """
                     ($expectedFile:3:1) Fibonacci of non-positive numbers like 0 are not supported
                 """.trimIndent()
-                Assert.assertEquals(expectedErrorMessage, error.message)
+                assertEquals(expectedErrorMessage, error.message)
                 // TODO: the location is not in the diagnostics because the `MessageCollector` defined in KotlinTestUtils,
                 //  throws the reports as `AssertionException`s. Evaluate using a different compiler configuration.
-//                Assert.assertEquals(3, error.location?.start?.line)
-//                Assert.assertEquals(1, error.location?.start?.col)
-//                Assert.assertEquals(3, error.location?.end?.line)
-//                Assert.assertEquals(14, error.location?.end?.col)
+//                assertEquals(3, error.location?.start?.line)
+//                assertEquals(1, error.location?.start?.col)
+//                assertEquals(3, error.location?.end?.line)
+//                assertEquals(14, error.location?.end?.col)
             }
         }
     }
