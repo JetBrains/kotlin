@@ -1453,7 +1453,7 @@ class Fir2IrVisitor(
         val subjectVariable = whenExpression.subjectVariable
         val subjectExpression = whenExpression.subjectVariable?.initializer
         return when {
-            subjectVariable != null -> subjectVariable.accept(this, null) as IrVariable
+            subjectVariable != null && !subjectVariable.isImplicitWhenSubjectVariable -> subjectVariable.accept(this, null) as IrVariable
             subjectExpression != null ->
                 conversionScope.scope().createTemporaryVariable(convertToIrExpression(subjectExpression), "subject")
             else -> null
