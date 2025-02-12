@@ -1,4 +1,4 @@
-Kotlin to Metadata compiler performance report
+Kotlin to Metadata Compiler performance report
                 INIT        $INT>>$ ms
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
   BACKEND GENERATION        $INT>>$ ms            $REAL>>$ loc/s

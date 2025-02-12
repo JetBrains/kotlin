@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.profiling
 
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 import java.io.FileOutputStream
@@ -15,7 +16,7 @@ class ProfilingCompilerPerformanceManager(
     profilerPath: String,
     val command: String,
     val outputDir: File
-) : PerformanceManager("Profiling") {
+) : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Profiling") {
     private val profiler = AsyncProfilerHelper.getInstance(profilerPath)
 
     private val runDate = Date()
