@@ -493,13 +493,9 @@ fun irCall(
         }
     }
 
-fun IrMemberAccessExpression<IrFunctionSymbol>.copyTypeAndValueArgumentsFrom(
-    src: IrMemberAccessExpression<IrFunctionSymbol>,
-    receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
-) {
+fun IrMemberAccessExpression<IrFunctionSymbol>.copyTypeAndValueArgumentsFrom(src: IrMemberAccessExpression<IrFunctionSymbol>) {
     copyTypeArgumentsFrom(src)
-    copyValueArgumentsFrom(src, symbol.owner, receiversAsArguments, argumentsAsReceivers)
+    copyValueArgumentsFrom(src, symbol.owner)
 }
 
 fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
