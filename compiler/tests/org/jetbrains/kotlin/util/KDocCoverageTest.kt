@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.util
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.lang.jvm.JvmModifier
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.psi.*
 import com.intellij.psi.util.childrenOfType
-import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -18,6 +21,8 @@ import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 /**
@@ -36,11 +41,20 @@ import java.io.File
  * If the lack of documentation for some declaration is intentional,
  * the developer has to manually add this declaration to the master file.
  */
-abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
+abstract class KDocCoverageTest : KtUsefulTestCase() {
     protected fun doTest() {
+        val environment = KotlinCoreEnvironment.createForParallelTests(
+            testRootDisposable,
+            CompilerConfiguration(),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
+        val psiManager = PsiManager.getInstance(environment.project)
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+        val homeDir = KtTestUtil.getHomeDirectory()
+
         sourceDirectories.forEach { (sourceCodeDirectoryPath, outputFilePath) ->
             val actualText = buildList {
-                val path = testDataPath + sourceCodeDirectoryPath
+                val path = homeDir + sourceCodeDirectoryPath
                 val root = File(path)
 
                 for (file in root.walkTopDown()) {
@@ -50,18 +64,28 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
                     val relativePath = file.relativeTo(root).invariantSeparatorsPath
 
                     try {
-                        val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-                        val file = getPsiFile(text, file.path)
-                        if (file.packageFqName in ignoredPackages)
-                            continue
-                        addAll(getUndocumentedDeclarationsByFile(file, relativePath))
+                        val psiFile = createPsiFile(file.path, psiManager, fileSystem) ?: continue
+                        when (psiFile) {
+                            is KtFile if psiFile.packageFqName !in ignoredPackages -> addAll(
+                                getUndocumentedDeclarationsByFile(
+                                    psiFile,
+                                    relativePath
+                                )
+                            )
+                            is PsiJavaFile if psiFile.packageName !in ignoredPackages.map { it.toString() } -> addAll(
+                                getUndocumentedDeclarationsByFile(
+                                    psiFile,
+                                    relativePath
+                                )
+                            )
+                        }
                     } catch (e: Exception) {
                         throw IllegalStateException(relativePath, e)
                     }
                 }
             }.sorted().joinToString("\n")
 
-            val expectedFile = File(testDataPath + outputFilePath)
+            val expectedFile = File(homeDir + outputFilePath)
             KotlinTestUtils.assertEqualsToFile(
                 "Some newer public declarations from `$sourceCodeDirectoryPath` are undocumented. Please, consider either documenting them or adding them to `$outputFilePath`",
                 expectedFile,
@@ -77,6 +101,12 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
                 "$relativePathFromRoot:${it.containingClassOrObject?.name?.plus(":") ?: ""}${it.getSignature()}"
             }
 
+    private fun getUndocumentedDeclarationsByFile(file: PsiJavaFile, relativePathFromRoot: String): List<String> =
+        file.collectPublicDeclarations()
+            .filter { it.shouldBeRendered() }
+            .map {
+                "$relativePathFromRoot:${(it as? PsiMember)?.containingClass?.name?.plus(":") ?: ""}${it.getSignature()}"
+            }
 
     private fun KtDeclaration.getSignature(): String {
         val modifierList =
@@ -92,7 +122,7 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
             this.childrenOfType<KtParameterList>().singleOrNull()
                 ?.allChildren
                 ?.filterIsInstance<KtParameter>()?.joinToString(", ") {
-                    it.typeReference?.text ?: ""
+                    it.typeReference?.typeElement?.text ?: ""
                 }?.let {
                     "($it)"
                 } ?: ""
@@ -100,9 +130,31 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
         return "$modifierList$name$parameterList"
     }
 
+    private fun PsiElement.getSignature(): String {
+        val modifierList =
+            this.childrenOfType<PsiModifierList>()
+                .singleOrNull()
+                ?.allChildren
+                ?.filter { it !is PsiWhiteSpace && it.text !in nonRenderedModifiers }
+                ?.joinToString(" ") { it.text }.orEmpty().let {
+                    if (it.isNotEmpty()) "$it " else ""
+                }
+
+        val parameterList =
+            this.childrenOfType<PsiParameterList>().singleOrNull()
+                ?.allChildren
+                ?.filterIsInstance<PsiParameter>()?.joinToString(", ") {
+                    it.type.presentableText
+                }?.let {
+                    "($it)"
+                } ?: ""
+
+        return "$modifierList${(this as? PsiNamedElement)?.name ?: ""}$parameterList"
+    }
+
     private fun KtFile.collectPublicDeclarations(): List<KtDeclaration> = buildList {
-        this@collectPublicDeclarations.declarations.forEach {
-            this.collectPublicNestedDeclarations(it)
+        this@collectPublicDeclarations.declarations.forEach { ktDeclaration ->
+            this.collectPublicNestedDeclarations(ktDeclaration)
         }
     }
 
@@ -111,6 +163,23 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
 
         add(declaration)
         (declaration as? KtDeclarationContainer)?.declarations?.forEach { collectPublicNestedDeclarations(it) }
+    }
+
+
+    private fun PsiJavaFile.collectPublicDeclarations(): List<PsiElement> = buildList {
+        this@collectPublicDeclarations.classes.forEach { psiClass ->
+            this.collectPublicNestedDeclarations(psiClass)
+        }
+    }
+
+    private fun MutableList<PsiElement>.collectPublicNestedDeclarations(javaClass: PsiClass) {
+        if (!javaClass.hasModifier(JvmModifier.PUBLIC)) return
+
+        add(javaClass)
+        addAll(javaClass.fields.filter { it.hasModifier(JvmModifier.PUBLIC) })
+        addAll(javaClass.methods.filter { it.hasModifier(JvmModifier.PUBLIC) })
+
+        javaClass.innerClasses.forEach { collectPublicNestedDeclarations(it) }
     }
 
     private fun KtDeclaration.shouldBeRendered(): Boolean =
@@ -122,9 +191,13 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
             else -> this.docComment == null
         }
 
-    private fun getPsiFile(text: String, path: String): KtFile {
-        return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(path)), text) as KtFile
-    }
+    private fun PsiElement.shouldBeRendered(): Boolean =
+        when (this) {
+            is PsiModifierListOwner if this.annotations.any { it.text == "@Override" } -> false
+            is PsiField if this.name in ignoredPropertyNames -> false
+            is PsiMethod if this.name in ignoredFunctionNames -> false
+            else -> (this as? PsiDocCommentOwner)?.docComment == null
+        }
 
     abstract val sourceDirectories: List<SourceDirectoryWithOutput>
 
@@ -142,4 +215,10 @@ abstract class KDocCoverageTest : AbstractRawFirBuilderTestCase() {
         val sourceCodeDirectoryPath: String,
         val outputFilePath: String,
     )
+
+    private fun createPsiFile(fileName: String, psiManager: PsiManager, fileSystem: VirtualFileSystem): PsiFile? {
+        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
+        val psiFile = psiManager.findFile(file)
+        return psiFile
+    }
 }
