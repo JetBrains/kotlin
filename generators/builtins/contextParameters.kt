@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceG
 import java.io.PrintWriter
 
 class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getMultifileClassName(): String = "ContextParametersKt"
+
     override fun generateBody() {
         generateSingleFunction(listOf("context"), listOf("T"), "R")
         for (i in 2..MAX_PARAM_COUNT) {
