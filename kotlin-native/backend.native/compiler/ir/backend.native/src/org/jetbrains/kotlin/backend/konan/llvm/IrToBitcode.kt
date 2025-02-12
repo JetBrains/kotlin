@@ -781,7 +781,7 @@ internal class CodeGeneratorVisitor(
         if (declaration.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER) {
             require(scopeState.globalInitFunction == null) { "There can only be at most one global file initializer" }
             require(declaration.body == null) { "The body of file initializer should be null" }
-            require(declaration.valueParameters.isEmpty()) { "File initializer must be parameterless" }
+            require(declaration.parameters.isEmpty()) { "File initializer must be parameterless" }
             require(declaration.returnsUnit()) { "File initializer must return Unit" }
             scopeState.globalInitFunction = declaration
             scopeState.globalInitState = getGlobalInitStateFor(declaration.parent as IrDeclarationContainer)
@@ -790,7 +790,7 @@ internal class CodeGeneratorVisitor(
                 || declaration.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER) {
             require(scopeState.threadLocalInitFunction == null) { "There can only be at most one thread local file initializer" }
             require(declaration.body == null) { "The body of file initializer should be null" }
-            require(declaration.valueParameters.isEmpty()) { "File initializer must be parameterless" }
+            require(declaration.parameters.isEmpty()) { "File initializer must be parameterless" }
             require(declaration.returnsUnit()) { "File initializer must return Unit" }
             scopeState.threadLocalInitFunction = declaration
             scopeState.threadLocalInitState = getThreadLocalInitStateFor(declaration.parent as IrDeclarationContainer)
@@ -1884,7 +1884,7 @@ internal class CodeGeneratorVisitor(
                 } else {
                     val fields = context.getLayoutBuilder(constructedClass).getFields(llvm)
                     val constructor = value.constructor.owner
-                    val valueParameters = constructor.valueParameters.associateBy { it.name.toString() }
+                    val parameters = constructor.parameters.associateBy { it.name.toString() }
                     // support of initilaization of object in following case:
                     // open class Base(val field: ...)
                     // Child(val otherField: ...) : Base(constantValue)
@@ -1900,12 +1900,12 @@ internal class CodeGeneratorVisitor(
                     fields.map { field ->
                         val init = if (field.isConst) {
                             field.irField!!.initializer?.expression.also {
-                                require(field.name !in valueParameters) {
+                                require(field.name !in parameters) {
                                     "Constant field ${field.name} of class ${constructedClass.name} shouldn't be a constructor parameter"
                                 }
                             }
                         } else {
-                            val index = valueParameters[field.name]?.indexInOldValueParameters
+                            val index = parameters[field.name]?.indexInParameters
                             if (index != null)
                                 value.valueArguments[index]
                             else
@@ -2509,7 +2509,7 @@ internal class CodeGeneratorVisitor(
                     val isFloatingPoint = args[0].type.isFloatingPoint()
                     // LLVM does not distinguish between signed/unsigned integers, so we must check
                     // the parameter type.
-                    val shouldUseUnsignedComparison = function.valueParameters[0].type.isChar()
+                    val shouldUseUnsignedComparison = function.parameters[0].type.isChar()
                     when {
                         functionSymbol.isComparisonFunction(ib.greaterFunByOperandType) -> {
                             when {

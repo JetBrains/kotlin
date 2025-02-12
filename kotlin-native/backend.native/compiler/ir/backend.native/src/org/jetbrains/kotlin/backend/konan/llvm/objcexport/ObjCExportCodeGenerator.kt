@@ -991,7 +991,7 @@ private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, s
                 emptyList()
             }
 
-    val throwsVararg = throwsAnnotation.getValueArgument(0)
+    val throwsVararg = throwsAnnotation.arguments[0]
             ?: return emptyList()
 
     if (throwsVararg !is IrVararg) error(method.fileOrNull, throwsVararg, "unexpected vararg")
