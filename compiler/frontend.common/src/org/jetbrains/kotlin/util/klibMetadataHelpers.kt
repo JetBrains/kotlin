@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.metadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.util.*
 
-private val KLIB_LEGACY_METADATA_VERSION = MetadataVersion(1, 4, 1)
+val KLIB_LEGACY_METADATA_VERSION = MetadataVersion(1, 4, 1)
 
 private val LANGUAGE_TO_KLIB_METADATA_VERSION = EnumMap<LanguageVersion, MetadataVersion>(LanguageVersion::class.java).apply {
     LanguageVersion.entries.forEach { this[it] = KLIB_LEGACY_METADATA_VERSION }
@@ -25,7 +25,7 @@ private val LANGUAGE_TO_KLIB_METADATA_VERSION = EnumMap<LanguageVersion, Metadat
     }
 }
 
-private fun LanguageVersion.toKlibMetadataVersion(): MetadataVersion = LANGUAGE_TO_KLIB_METADATA_VERSION.getValue(this)
+fun LanguageVersion.toKlibMetadataVersion(): MetadataVersion = LANGUAGE_TO_KLIB_METADATA_VERSION.getValue(this)
 
 fun CompilerConfiguration.klibMetadataVersionOrDefault(
     languageVersion: LanguageVersion = languageVersionSettings.languageVersion

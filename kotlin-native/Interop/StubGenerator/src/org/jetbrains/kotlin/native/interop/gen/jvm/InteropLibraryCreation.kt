@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.library.impl.KonanLibraryWriterImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.util.KLIB_LEGACY_METADATA_VERSION
 import java.util.*
 
 fun createInteropLibrary(
@@ -31,6 +32,7 @@ fun createInteropLibrary(
     val version = KotlinLibraryVersioning(
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = KotlinCompilerVersion.VERSION,
+            // TODO KT-74417 Consider using `MetadataVersion.INSTANCE` in version 2.3 here
             metadataVersion = KLIB_LEGACY_METADATA_VERSION,
     )
     val libFile = File(outputPath)
