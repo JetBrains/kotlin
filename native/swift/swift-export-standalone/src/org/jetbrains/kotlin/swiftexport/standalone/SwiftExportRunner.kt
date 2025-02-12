@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.createModuleWithScop
 import org.jetbrains.kotlin.swiftexport.standalone.builders.initializeSirModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
 import org.jetbrains.kotlin.swiftexport.standalone.utils.logConfigIssues
 import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
@@ -162,8 +164,10 @@ private fun translateModule(module: InputModule, dependencies: Set<InputModule>,
         // It might not be the case, but precise tracking seems like an overkill at the moment.
         buildResult.module.updateImport(SirImport(config.runtimeSupportModuleName))
 
+        val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
+
         // KT-68253: bridge generation could be better
-        val bridgeRequests = buildBridgeRequests(config.bridgeGenerator, buildResult.module)
+        val bridgeRequests = buildBridgeRequests(bridgeGenerator, buildResult.module)
         if (bridgeRequests.isNotEmpty()) {
             buildResult.module.updateImport(
                 SirImport(
@@ -173,7 +177,7 @@ private fun translateModule(module: InputModule, dependencies: Set<InputModule>,
             )
         }
 
-        val bridges = generateBridgeSources(config.bridgeGenerator, bridgeRequests, true)
+        val bridges = generateBridgeSources(bridgeGenerator, bridgeRequests, true)
         TranslationResult(
             packages = buildResult.packages,
             sirModule = buildResult.module,

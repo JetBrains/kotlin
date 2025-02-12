@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.swiftexport.standalone.config
 
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.swiftexport.standalone.ErrorTypeStrategy
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.createDummyLogger
-import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Path
 
@@ -24,6 +22,4 @@ public data class SwiftExportConfig(
     val moduleForPackagesName: String = "ExportedKotlinPackages",
     val runtimeSupportModuleName: String = "KotlinRuntimeSupport",
     val logger: SwiftExportLogger = createDummyLogger(),
-) {
-    internal val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
-}
+)
