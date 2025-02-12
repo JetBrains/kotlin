@@ -1257,16 +1257,20 @@ object KotlinToolingDiagnostics {
     object DeprecatedWarningGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.WARNING)
     object DeprecatedErrorGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.ERROR)
 
-    open class DeprecatedGradleProperties(severity: ToolingDiagnostic.Severity) : ToolingDiagnosticFactory(severity, DiagnosticGroups.KGP.Deprecation) {
-        operator fun invoke(usedDeprecatedProperty: String) = build {
-            title("Deprecated Gradle Property '$usedDeprecatedProperty' Used")
-                .description {
-                    "The `$usedDeprecatedProperty` deprecated property is used in your build."
-                }
-                .solution {
-                    "Please, stop using it as it is unsupported and may apply no effect to your build."
-                }
-        }
+    open class DeprecatedGradleProperties(
+        severity: ToolingDiagnostic.Severity,
+    ) : ToolingDiagnosticFactory(severity, DiagnosticGroups.KGP.Deprecation) {
+        operator fun invoke(
+            usedDeprecatedProperty: String,
+            details: String?,
+        ) = buildDiagnostic(
+            title = "Deprecated Gradle Property '$usedDeprecatedProperty' Used",
+            description = "The `$usedDeprecatedProperty` deprecated property is used in your build.",
+            solutions = listOfNotNull(
+                "Please, stop using it as it is unsupported.",
+                details,
+            )
+        )
     }
 
     object RedundantDependsOnEdgesFound : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Misconfiguration) {

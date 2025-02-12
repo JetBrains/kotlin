@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -41,16 +42,17 @@ class RegisterMultiplatformResourcesPublicationExtensionActionTests {
 
     @Test
     fun `test mppResourcesResolution strategy - produces diagnostic`() {
-        buildProjectWithMPP(
+        val project = buildProjectWithMPP(
             preApplyCode = {
                 propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY, "foo")
             }
         ) {
             kotlin { jvm() }
             enableMppResourcesPublication(true)
-        }.evaluate().assertContainsDiagnostic(
-            KotlinToolingDiagnostics.DeprecatedErrorGradleProperties
-        )
+        }.evaluate()
+        project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project).filter {
+            it.id == KotlinToolingDiagnostics.DeprecatedErrorGradleProperties.id
+        }.single { it.identifier.displayName.contains(PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY) }
     }
 
 }
