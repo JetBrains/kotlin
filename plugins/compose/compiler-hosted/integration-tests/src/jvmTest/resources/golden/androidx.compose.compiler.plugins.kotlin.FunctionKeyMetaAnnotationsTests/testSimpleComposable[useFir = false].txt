@@ -11,11 +11,11 @@ fun Example() {}
 // ------------------------------------------
 
 TestKt {
-    Example [key=1292064820, startOffset=58, endOffset=74]
+    Example (Landroidx/compose/runtime/Composer;I)V [key=1292064820, startOffset=58, endOffset=74]
 }
 
 TestKt$Example$1 {
-    <init> null
-    invoke null
-    invoke null
+    <init> (I)V null
+    invoke (Landroidx/compose/runtime/Composer;I)V null
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }
