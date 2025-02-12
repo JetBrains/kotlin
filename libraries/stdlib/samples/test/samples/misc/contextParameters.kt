@@ -11,9 +11,8 @@ class ContextParameters {
 
     @Sample
     fun implicitContextParameter() {
-        interface Logger { fun log(message: String) }
-
-        class ConsoleLogger : Logger { override fun log(message: String) = println(message) }
+        abstract class Logger { abstract fun log(message: String) }
+        class ConsoleLogger : Logger() { override fun log(message: String) = println(message) }
 
         fun <A> withConsoleLogger(block: context(Logger) () -> A): A =
             context(ConsoleLogger()) { block() }
@@ -27,9 +26,8 @@ class ContextParameters {
 
     @Sample
     fun implicitReceiver() {
-        interface Logger { fun log(message: String) }
-
-        class ConsoleLogger : Logger { override fun log(message: String) = println(message) }
+        abstract class Logger { abstract fun log(message: String) }
+        class ConsoleLogger : Logger() { override fun log(message: String) = println(message) }
 
         fun <A> withConsoleLogger(block: Logger.() -> A): A =
             with(ConsoleLogger()) { block() }
