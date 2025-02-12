@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver() {
 
     override fun resolveSymbolWithPrefix(
-        parts: List<FirQualifierPart>, prefix: ClassId
+        prefix: ClassId, remainingParts: List<FirQualifierPart>
     ): FirClassifierSymbol<*>? {
 
         val symbolProvider = session.symbolProvider
 
         val fqName = ClassId(
             prefix.packageFqName,
-            parts.drop(1).fold(prefix.relativeClassName) { result, suffix -> result.child(suffix.name) },
+            remainingParts.fold(prefix.relativeClassName) { result, suffix -> result.child(suffix.name) },
             isLocal = false
         )
         return symbolProvider.getClassLikeSymbolByClassId(fqName)
