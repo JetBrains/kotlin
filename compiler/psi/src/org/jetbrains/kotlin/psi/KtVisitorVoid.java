@@ -633,6 +633,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
+    public final Void visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList, Void data) {
+        visitContextReceiverList(contextReceiverList);
+        return null;
+    }
+
+    @Override
     public final Void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call, Void data) {
         visitConstructorDelegationCall(call);
         return null;
