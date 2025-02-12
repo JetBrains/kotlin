@@ -436,8 +436,7 @@ private fun IrPluginContext.runMandatoryIrValidation(
     fir2IrConfiguration: Fir2IrConfiguration,
 ) {
     if (!fir2IrConfiguration.validateIrAfterPlugins) return
-    // TODO(KT-71138): Replace with IrVerificationMode.ERROR in Kotlin 2.2
-    validateIr(fir2IrConfiguration.messageCollector, IrVerificationMode.WARNING) {
+    validateIr(fir2IrConfiguration.messageCollector, IrVerificationMode.ERROR) {
         customMessagePrefix = if (extension == null) {
             "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
         } else {
