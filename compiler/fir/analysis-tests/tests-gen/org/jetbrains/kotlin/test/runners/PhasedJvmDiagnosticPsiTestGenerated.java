@@ -31449,6 +31449,42 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("overrideWithFlexibleBaseBox.kt")
+      public void testOverrideWithFlexibleBaseBox() {
+        runTest("compiler/testData/diagnostics/tests/override/overrideWithFlexibleBaseBox.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithFlexibleBaseBox2.kt")
+      public void testOverrideWithFlexibleBaseBox2() {
+        runTest("compiler/testData/diagnostics/tests/override/overrideWithFlexibleBaseBox2.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithFlexibleBaseReceiver.kt")
+      public void testOverrideWithFlexibleBaseReceiver() {
+        runTest("compiler/testData/diagnostics/tests/override/overrideWithFlexibleBaseReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithFlexibleBaseReceiver2.kt")
+      public void testOverrideWithFlexibleBaseReceiver2() {
+        runTest("compiler/testData/diagnostics/tests/override/overrideWithFlexibleBaseReceiver2.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithFlexibleBaseReceiver3.kt")
+      public void testOverrideWithFlexibleBaseReceiver3() {
+        runTest("compiler/testData/diagnostics/tests/override/overrideWithFlexibleBaseReceiver3.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithFlexibleBaseReceiver4.kt")
+      public void testOverrideWithFlexibleBaseReceiver4() {
+        runTest("compiler/testData/diagnostics/tests/override/overrideWithFlexibleBaseReceiver4.kt");
+      }
+
+      @Test
       @TestMetadata("overridesWithFlexibleBase.kt")
       public void testOverridesWithFlexibleBase() {
         runTest("compiler/testData/diagnostics/tests/override/overridesWithFlexibleBase.kt");
