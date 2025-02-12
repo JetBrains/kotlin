@@ -42,6 +42,9 @@ tasks.withType(AbstractKotlinCompile::class.java).configureEach {
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
+val applePrivacyManifestPluginClasses = configurations.detachedConfiguration(
+    dependencies.create(dependencies.project(":kotlin-privacy-manifests-plugin"))
+).also { it.isTransitive = false }
 
 dependencies {
     testImplementation(project(":kotlin-gradle-plugin")) {
@@ -110,6 +113,10 @@ dependencies {
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))
     testRuntimeOnly(project(":kotlin-gradle-plugin-test-utils-embeddable")) { isTransitive = false }
+
+    applePrivacyManifestPluginClasses.dependencies.all {
+        testCompileOnly(this) { (this as ModuleDependency).isTransitive = false }
+    }
 
     // AGP classes for buildScriptInjection's
     testImplementation(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
@@ -463,6 +470,18 @@ tasks.withType<Test>().configureEach {
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
     systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
+
+    val applePrivacyManifestPluginClasspath = provider {
+        applePrivacyManifestPluginClasses.files.joinToString(":")
+    }
+    doFirst {
+        systemProperty(
+            "applePrivacyManifestPluginClasspath",
+            applePrivacyManifestPluginClasspath.get(),
+        )
+    }
+
+    // FIXME: Do a detached configuration for apple privacy manifest plugin
 
     // Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE
     val autoDebugIT = kotlinBuildProperties.getBoolean("kotlin.gradle.autoDebugIT", true)
