@@ -21,6 +21,7 @@ import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.File
 import java.io.ObjectInputStream
@@ -234,10 +235,12 @@ class InjectionLoader {
     }
 
     @Suppress("unused")
-    fun invokeBuildScriptPluginsInjection(buildscript: ScriptHandler, serializedInjectionPath: File) {
+    fun invokeBuildScriptPluginsInjection(project: Project, serializedInjectionPath: File) {
         serializedInjectionPath.inputStream().use {
             @Suppress("UNCHECKED_CAST")
-            (ObjectInputStream(it).readObject() as GradleBuildScriptInjection<ScriptHandler>).inject(buildscript)
+            (ObjectInputStream(it).readObject() as GradleBuildScriptInjection<Pair<ScriptHandler, Project>>).inject(
+                Pair(project.buildscript, project)
+            )
         }
     }
 
@@ -260,6 +263,7 @@ class GradleProjectBuildScriptInjectionContext(
     val java get() = project.extensions.getByName("java") as JavaPluginExtension
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
+    val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidBase get() = project.extensions.getByName("android") as CommonExtension<*,*,*,*>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
@@ -274,6 +278,7 @@ class GradleSettingsBuildScriptInjectionContext(
 @BuildGradleKtsInjectionScope
 class GradleBuildScriptBuildscriptInjectionContext(
     val buildscript: ScriptHandler,
+    val project: Project,
 )
 
 typealias BuildAction = TestProject.(buildArguments: Array<String>, buildOptions: BuildOptions) -> Unit
@@ -540,24 +545,24 @@ fun GradleProject.buildScriptBuildscriptBlockInjection(
         buildGradle,
         buildGradleKts,
     )
-    val buildscriptBlockInjection = serializeInjection<GradleBuildScriptBuildscriptInjectionContext, ScriptHandler>(
-        instantiateInjectionContext = { GradleBuildScriptBuildscriptInjectionContext(it) },
+    val buildscriptBlockInjection = serializeInjection<GradleBuildScriptBuildscriptInjectionContext, Pair<ScriptHandler, Project>>(
+        instantiateInjectionContext = { GradleBuildScriptBuildscriptInjectionContext(it.first, it.second) },
         code = code,
     )
     when {
         buildGradle.exists() -> buildGradle.prependToOrCreateBuildscriptBlock(
             scriptIsolatedInjectionLoadGroovy(
                 "invokeBuildScriptPluginsInjection",
-                "buildscript",
-                ScriptHandler::class.java.name,
+                "project",
+                Project::class.java.name,
                 buildscriptBlockInjection,
             )
         )
         buildGradleKts.exists() -> buildGradleKts.prependToOrCreateBuildscriptBlock(
             scriptIsolatedInjectionLoad(
                 "invokeBuildScriptPluginsInjection",
-                "buildscript",
-                ScriptHandler::class.java.name,
+                "project",
+                Project::class.java.name,
                 buildscriptBlockInjection,
             )
         )
