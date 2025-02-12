@@ -1787,6 +1787,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("anonymousFunctionContextWithoutType.kt")
+        public void testAnonymousFunctionContextWithoutType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/anonymousFunctionContextWithoutType.kt");
+        }
+
+        @Test
         @TestMetadata("anonymousFunctionWithWrongShape.kt")
         public void testAnonymousFunctionWithWrongShape() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/anonymousFunctionWithWrongShape.kt");

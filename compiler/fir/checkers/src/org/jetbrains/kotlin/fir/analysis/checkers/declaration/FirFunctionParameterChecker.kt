@@ -51,18 +51,26 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private fun checkParameterTypes(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (function is FirAnonymousFunction) return
         for (valueParameter in function.valueParameters) {
-            val returnTypeRef = valueParameter.returnTypeRef
-            if (returnTypeRef !is FirErrorTypeRef) continue
-            // type problems on real source are already reported by ConeDiagnostic.toFirDiagnostics
-            if (returnTypeRef.source?.kind == KtRealSourceElementKind) continue
+            checkParameterType(valueParameter, reporter, context)
+        }
+        for (valueParameter in function.contextParameters) {
+            checkParameterType(valueParameter, reporter, context)
+        }
+    }
 
-            val diagnostic = returnTypeRef.diagnostic
-            if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
-                reporter.reportOn(
-                    valueParameter.source, FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE,
-                    context
-                )
-            }
+    private fun checkParameterType(
+        valueParameter: FirValueParameter,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        val returnTypeRef = valueParameter.returnTypeRef
+        if (returnTypeRef !is FirErrorTypeRef) return
+        // type problems on real source are already reported by ConeDiagnostic.toFirDiagnostics
+        if (returnTypeRef.source?.kind == KtRealSourceElementKind) return
+
+        val diagnostic = returnTypeRef.diagnostic
+        if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
+            reporter.reportOn(valueParameter.source, FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE, context)
         }
     }
 
