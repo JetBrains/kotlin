@@ -163,7 +163,7 @@ internal object KotlinTaskExecutionMetrics : FusMetrics {
 
         val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
 
-        val linesOfCode = metricsMap[GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER]
+        val linesOfCode = metricsMap[GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER]
         if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
             metricsConsumer.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
             metricsConsumer.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
