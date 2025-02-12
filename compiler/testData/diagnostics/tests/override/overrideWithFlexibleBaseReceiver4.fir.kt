@@ -13,8 +13,8 @@ public interface Foo<T> extends Base<T> {
 
 // FILE: main.kt
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!><E> : Foo<E> {
-    <!NOTHING_TO_OVERRIDE!>override<!> val E.prop1: String?
+class FooImpl<E> : Foo<E> {
+    override val E.prop1: String?
         get() = ""
 }
 
