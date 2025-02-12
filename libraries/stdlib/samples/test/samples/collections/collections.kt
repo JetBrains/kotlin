@@ -108,8 +108,8 @@ class Collections {
         fun collectionContains() {
             val collection: Collection<Int> = listOf(1, 2, 3)
 
-            assertTrue(collection.contains(1))
-            assertFalse(collection.contains(4))
+            assertTrue(1 in collection)
+            assertFalse(4 in collection)
 
             // Ref does not override equals, so instances compared by reference
             class Ref<T>(val value: T)
@@ -117,9 +117,9 @@ class Collections {
             val r0 = Ref(42)
             val refCollection: Collection<Ref<Int>> = listOf(r0)
 
-            assertTrue(refCollection.contains(r0))
+            assertTrue(r0 in refCollection)
             // Ref(42) is a new instance
-            assertFalse(refCollection.contains(Ref(42)))
+            assertFalse(Ref(42) in refCollection)
         }
 
         @Sample

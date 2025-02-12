@@ -7,7 +7,7 @@ package kotlin.collections
 
 /**
  * A generic unordered collection of unique elements. The interface allows checking if an element is contained by it
- * and iterating over all elements. Complex operations are build upon this functionality
+ * and iterating over all elements. Complex operations are built upon this functionality
  * and provided in form of [kotlin.collections] extension functions.
  *
  * It is implementation-specific how [Set] defines element's uniqueness. If not stated otherwise, [Set] implementations are usually
@@ -19,7 +19,7 @@ package kotlin.collections
  * read/write access is supported through the [MutableSet] interface.
  *
  * Unlike [List], [Set] does not guarantee any particular order for iteration. However, particular implementations
- * are free to have fixed iteration order, like "smaller", in some sense, elements are visited prior "larger". In this case,
+ * are free to have fixed iteration order, like "smaller", in some sense, elements are visited prior to "larger". In this case,
  * it is recommended to explicitly document ordering guarantees for the [Set] implementation.
  *
  * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
@@ -30,7 +30,7 @@ package kotlin.collections
  * - [Set.hashCode] should be computed as a sum of elements' hash codes using the following algorithm:
  *   ```kotlin
  *   var hashCode: Int = 0
- *   for (element in this) hashCode += element?.hashCode() ?: 0
+ *   for (element in this) hashCode += element.hashCode()
  *   ```
  *
  * @param E the type of elements contained in the set. The set is covariant in its element type.

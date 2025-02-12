@@ -8,10 +8,9 @@ package kotlin.collections
 /**
  * A collection that holds pairs of objects (keys and values) and supports retrieving the value corresponding to each key,
  * checking if a collection holds a particular key or a value. Maps also allow iterating over keys, values or key-value pairs (entries).
- * Complex operations are build upon this functionality and provided in form of [kotlin.collections] extension functions.
+ * Complex operations are built upon this functionality and provided in form of [kotlin.collections] extension functions.
  *
- * Map keys are unique; the map holds only one value for each key. In contrast, values may be duplicated; there might be several
- * unique keys associated with the same value.
+ * Map keys are unique; the map holds only one value for each key. In contrast, the same value can be associated with several unique keys.
  *
  * It is implementation-specific how [Map] defines key's uniqueness. If not stated otherwise, [Map] implementations are usually
  * distinguishing elements using [Any.equals]. However, it is not the only way to distinguish elements, and some implementations may use
@@ -30,7 +29,7 @@ package kotlin.collections
  *   hash codes corresponding to a key and a value:
  *   ```kotlin
  *   var hashCode: Int = 0
- *   for ((k, v) in entries) hashCode += (k?.hashCode() ?: 0) ^ (v?.hashCode() ?: 0)
+ *   for ((k, v) in entries) hashCode += k.hashCode() ^ v.hashCode()
  *   ```
  *
  * Functions in this interface support only read-only access to the map; read-write access is supported through
@@ -77,7 +76,8 @@ public actual interface Map<K, out V> {
     /**
      * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
      *
-     * Note that for maps supporting `null` values, `null` value associated with the [key] is indistinguishable from the missing [key],
+     * Note that for maps supporting `null` values,
+     * the returned `null` value associated with the [key] is indistinguishable from the missing [key],
      * so [containsKey] should be used to check if the map actually contains the [key].
      *
      * @sample samples.collections.Maps.CoreApi.get
@@ -129,14 +129,13 @@ public actual interface Map<K, out V> {
  * A collection that holds pairs of objects (keys and values) and supports retrieving
  * the value corresponding to each key, as well as adding new, removing or updating existing pairs.
  *
- * Map keys are unique; the map holds only one value for each key. In contrast, values may be duplicated; there might be several
- * unique keys associated with the same value.
+ * Map keys are unique; the map holds only one value for each key. In contrast, the same value can be associated with several unique keys.
  *
  * If a particular use case does not require map's modification, a read-only counterpart, [Map] could be used instead.
  *
  * [MutableMap] extends [Map] contact with functions allowing to add, remove and update mapping between keys and values.
  *
- * Unlike [Map], iterators returned by [keys], [values] and [entries] are all mutable and let updating the map during the iteration.
+ * Unlike [Map], [keys], [values] and [entries] collections are all mutable, and changes in them update the map.
  *
  * Until stated otherwise, [MutableMap] implementations are not thread-safe and their modification without
  * explicit synchronization may result in data corruption, loss, and runtime errors.

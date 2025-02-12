@@ -33,7 +33,7 @@ public actual interface MutableIterable<out T> : Iterable<T> {
 
 /**
  * A generic collection of elements. The interface allows iterating over contained elements
- * and checking whether something is contained within the collection. Complex operations are build upon this
+ * and checking whether something is contained within the collection. Complex operations are built upon this
  * functionality and provided in form of [kotlin.collections] extension functions.
  *
  * Functions in this interface support only read-only access to the collection;
@@ -101,7 +101,7 @@ public actual interface Collection<out E> : Iterable<E> {
 
 /**
  * A generic collection of elements that supports iterating, adding and removing elements, as well as checking if the
- * collection contains some elements. Complex operations are build upon this
+ * collection contains some elements. Complex operations are built upon this
  * functionality and provided in form of [kotlin.collections] extension functions.
  *
  * If a particular use case does not require collection's modification,
@@ -190,7 +190,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
 /**
  * A generic ordered collection of elements. The interface allows iterating over contained elements,
  * accessing elements by index, checking if a list contains some elements, and searching indices for particular values.
- * Complex operations are build upon this functionality and provided in form of [kotlin.collections] extension functions.
+ * Complex operations are built upon this functionality and provided in form of [kotlin.collections] extension functions.
  *
  * Functions in this interface support only read-only access to the list;
  * read/write access is supported through the [MutableList] interface.
@@ -413,7 +413,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
 
 /**
  * A generic unordered collection of unique elements. The interface allows checking if an element is contained by it
- * and iterating over all elements. Complex operations are build upon this functionality
+ * and iterating over all elements. Complex operations are built upon this functionality
  * and provided in form of [kotlin.collections] extension functions.
  *
  * It is implementation-specific how [Set] defines element's uniqueness. If not stated otherwise, [Set] implementations are usually
@@ -501,7 +501,7 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
 /**
  * A collection that holds pairs of objects (keys and values) and supports retrieving the value corresponding to each key,
  * checking if a collection holds a particular key or a value. Maps also allow iterating over keys, values or key-value pairs (entries).
- * Complex operations are build upon this functionality and provided in form of [kotlin.collections] extension functions.
+ * Complex operations are built upon this functionality and provided in form of [kotlin.collections] extension functions.
  *
  * Map keys are unique; the map holds only one value for each key. In contrast, values may be duplicated; there might be several
  * unique keys associated with the same value.

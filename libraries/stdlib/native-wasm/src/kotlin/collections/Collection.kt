@@ -7,7 +7,7 @@ package kotlin.collections
 
 /**
  * A generic collection of elements. The interface allows iterating over contained elements
- * and checking whether something is contained within the collection. Complex operations are build upon this
+ * and checking whether something is contained within the collection. Complex operations are built upon this
  * functionality and provided in form of [kotlin.collections] extension functions.
  *
  * Functions in this interface support only read-only access to the collection;
@@ -73,7 +73,7 @@ public actual interface Collection<out E> : Iterable<E> {
 
 /**
  * A generic collection of elements that supports iterating, adding and removing elements, as well as checking if the
- * collection contains some elements. Complex operations are build upon this
+ * collection contains some elements. Complex operations are built upon this
  * functionality and provided in form of [kotlin.collections] extension functions.
  *
  * If a particular use case does not require collection's modification,

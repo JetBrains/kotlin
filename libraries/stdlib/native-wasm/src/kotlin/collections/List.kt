@@ -8,7 +8,7 @@ package kotlin.collections
 /**
  * A generic ordered collection of elements. The interface allows iterating over contained elements,
  * accessing elements by index, checking if a list contains some elements, and searching indices for particular values.
- * Complex operations are build upon this functionality and provided in form of [kotlin.collections] extension functions.
+ * Complex operations are built upon this functionality and provided in form of [kotlin.collections] extension functions.
  *
  * Functions in this interface support only read-only access to the list;
  * read/write access is supported through the [MutableList] interface.
@@ -29,7 +29,7 @@ package kotlin.collections
  * - [List.hashCode] should be computed as a combination of elements' hash codes using the following algorithm:
  *   ```kotlin
  *   var hashCode: Int = 1
- *   for (element in this) hashCode = hashCode * 31 + element?.hashCode() ?: 0
+ *   for (element in this) hashCode = hashCode * 31 + element.hashCode()
  *   ```
  *
  * @param E the type of elements contained in the list. The list is covariant in its element type.
@@ -91,7 +91,8 @@ public actual interface List<out E> : Collection<E> {
     // View
     /**
      * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
-     * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list.
+     * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list,
+     * and vice versa.
      *
      * Structural changes in the base list make the behavior of the view unspecified.
      *
@@ -113,7 +114,7 @@ public actual interface List<out E> : Collection<E> {
  * [MutableList] extends [List] contract with functions allowing to add, replace and remove elements.
  *
  * Unlike [List], iterators returned by [iterator] and [listIterator] allow modifying the list during iteration.
- * A view returned by [subList] is also allows modifications of the underlying list.
+ * A view returned by [subList] also allows modifications of the underlying list.
  *
  * Until stated otherwise, [MutableList] implementations are not thread-safe and their modification without
  * explicit synchronization may result in data corruption, loss, and runtime errors.
@@ -150,7 +151,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * The elements are inserted in the order they appear in the [elements] collection.
      *
-     * All elements that initially were stored at indices `index .. index + size - 1` are shifted `elements.size` positions right.
+     * All elements that initially were stored at indices `index .. index + size - 1` are shifted `elements.size` positions to the end.
      *
      * If [index] is equal to [size], [elements] will be appended to the list.
      *

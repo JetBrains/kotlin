@@ -41,7 +41,7 @@ public actual interface MutableIterable<out T> : Iterable<T> {
 
 /**
  * A generic collection of elements. The interface allows iterating over contained elements
- * and checking whether something is contained within the collection. Complex operations are build upon this
+ * and checking whether something is contained within the collection. Complex operations are built upon this
  * functionality and provided in form of [kotlin.collections] extension functions.
  *
  * Functions in this interface support only read-only access to the collection;
@@ -107,7 +107,7 @@ public actual interface Collection<out E> : Iterable<E> {
 
 /**
  * A generic collection of elements that supports iterating, adding and removing elements, as well as checking if the
- * collection contains some elements. Complex operations are build upon this
+ * collection contains some elements. Complex operations are built upon this
  * functionality and provided in form of [kotlin.collections] extension functions.
  *
  * If a particular use case does not require collection's modification,
@@ -194,7 +194,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
 /**
  * A generic ordered collection of elements. The interface allows iterating over contained elements,
  * accessing elements by index, checking if a list contains some elements, and searching indices for particular values.
- * Complex operations are build upon this functionality and provided in form of [kotlin.collections] extension functions.
+ * Complex operations are built upon this functionality and provided in form of [kotlin.collections] extension functions.
  *
  * Functions in this interface support only read-only access to the list;
  * read/write access is supported through the [MutableList] interface.
@@ -215,7 +215,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  * - [List.hashCode] should be computed as a combination of elements' hash codes using the following algorithm:
  *   ```kotlin
  *   var hashCode: Int = 1
- *   for (element in this) hashCode = hashCode * 31 + element?.hashCode() ?: 0
+ *   for (element in this) hashCode = hashCode * 31 + element.hashCode()
  *   ```
  *
  * @param E the type of elements contained in the list. The list is covariant in its element type.
@@ -281,7 +281,8 @@ public actual interface List<out E> : Collection<E> {
     // View
     /**
      * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
-     * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list.
+     * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list,
+     * and vice versa
      *
      * Structural changes in the base list make the behavior of the view unspecified.
      *
@@ -312,7 +313,7 @@ public actual interface List<out E> : Collection<E> {
  * [MutableList] extends [List] contract with functions allowing to add, replace and remove elements.
  *
  * Unlike [List], iterators returned by [iterator] and [listIterator] allow modifying the list during iteration.
- * A view returned by [subList] is also allows modifications of the underlying list.
+ * A view returned by [subList] also allows modifications of the underlying list.
  *
  * Until stated otherwise, [MutableList] implementations are not thread-safe and their modification without
  * explicit synchronization may result in data corruption, loss, and runtime errors.
@@ -349,7 +350,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * The elements are inserted in the order they appear in the [elements] collection.
      *
-     * All elements that initially were stored at indices `index .. index + size - 1` are shifted `elements.size` positions right.
+     * All elements that initially were stored at indices `index .. index + size - 1` are shifted `elements.size` positions to the end.
      *
      * If [index] is equal to [size], [elements] will be appended to the list.
      *
@@ -413,7 +414,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     // View
     /**
      * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
-     * The returned list is backed by this list, so changes in the returned list are reflected in this list, and vice-versa.
+     * The returned list is backed by this list, so changes in the returned list are reflected in this list, and vice versa.
      *
      * Structural changes in the base list make the behavior of the view unspecified.
      *
@@ -436,7 +437,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
 
 /**
  * A generic unordered collection of unique elements. The interface allows checking if an element is contained by it
- * and iterating over all elements. Complex operations are build upon this functionality
+ * and iterating over all elements. Complex operations are built upon this functionality
  * and provided in form of [kotlin.collections] extension functions.
  *
  * It is implementation-specific how [Set] defines element's uniqueness. If not stated otherwise, [Set] implementations are usually
@@ -448,7 +449,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
  * read/write access is supported through the [MutableSet] interface.
  *
  * Unlike [List], [Set] does not guarantee any particular order for iteration. However, particular implementations
- * are free to have fixed iteration order, like "smaller", in some sense, elements are visited prior "larger". In this case,
+ * are free to have fixed iteration order, like "smaller", in some sense, elements are visited prior to "larger". In this case,
  * it is recommended to explicitly document ordering guarantees for the [Set] implementation.
  *
  * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
@@ -459,7 +460,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
  * - [Set.hashCode] should be computed as a sum of elements' hash codes using the following algorithm:
  *   ```kotlin
  *   var hashCode: Int = 0
- *   for (element in this) hashCode += element?.hashCode() ?: 0
+ *   for (element in this) hashCode += element.hashCode()
  *   ```
  *
  * @param E the type of elements contained in the set. The set is covariant in its element type.
@@ -544,10 +545,9 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
 /**
  * A collection that holds pairs of objects (keys and values) and supports retrieving the value corresponding to each key,
  * checking if a collection holds a particular key or a value. Maps also allow iterating over keys, values or key-value pairs (entries).
- * Complex operations are build upon this functionality and provided in form of [kotlin.collections] extension functions.
+ * Complex operations are built upon this functionality and provided in form of [kotlin.collections] extension functions.
  *
- * Map keys are unique; the map holds only one value for each key. In contrast, values may be duplicated; there might be several
- * unique keys associated with the same value.
+ * Map keys are unique; the map holds only one value for each key. In contrast, the same value can be associated with several unique keys.
  *
  * It is implementation-specific how [Map] defines key's uniqueness. If not stated otherwise, [Map] implementations are usually
  * distinguishing elements using [Any.equals]. However, it is not the only way to distinguish elements, and some implementations may use
@@ -566,7 +566,7 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *   hash codes corresponding to a key and a value:
  *   ```kotlin
  *   var hashCode: Int = 0
- *   for ((k, v) in entries) hashCode += (k?.hashCode() ?: 0) ^ (v?.hashCode() ?: 0)
+ *   for ((k, v) in entries) hashCode += k.hashCode() ^ v.hashCode()
  *   ```
  *
  * Functions in this interface support only read-only access to the map; read-write access is supported through
@@ -613,7 +613,8 @@ public actual interface Map<K, out V> {
     /**
      * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
      *
-     * Note that for maps supporting `null` values, `null` value associated with the [key] is indistinguishable from the missing [key],
+     * Note that for maps supporting `null` values,
+     * the returned `null` value associated with the [key] is indistinguishable from the missing [key],
      * so [containsKey] should be used to check if the map actually contains the [key].
      *
      * @sample samples.collections.Maps.CoreApi.get
@@ -674,14 +675,13 @@ public actual interface Map<K, out V> {
  * A collection that holds pairs of objects (keys and values) and supports retrieving
  * the value corresponding to each key, as well as adding new, removing or updating existing pairs.
  *
- * Map keys are unique; the map holds only one value for each key. In contrast, values may be duplicated; there might be several
- * unique keys associated with the same value.
+ * Map keys are unique; the map holds only one value for each key. In contrast, the same value can be associated with several unique keys.
  *
  * If a particular use case does not require map's modification, a read-only counterpart, [Map] could be used instead.
  *
  * [MutableMap] extends [Map] contact with functions allowing to add, remove and update mapping between keys and values.
  *
- * Unlike [Map], iterators returned by [keys], [values] and [entries] are all mutable and let updating the map during the iteration.
+ * Unlike [Map], [keys], [values] and [entries] collections are all mutable, and changes in them update the map.
  *
  * Until stated otherwise, [MutableMap] implementations are not thread-safe and their modification without
  * explicit synchronization may result in data corruption, loss, and runtime errors.
