@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 
@@ -37,7 +38,7 @@ object BuiltInsSerializer {
     ) {
         val rootDisposable = Disposer.newDisposable("Disposable for ${K1BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
         val messageCollector = createMessageCollector()
-        val performanceManager = object : PerformanceManager(presentableName = "test") {}
+        val performanceManager = object : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "test") {}
         try {
             val configuration = CompilerConfiguration().apply {
                 this.messageCollector = messageCollector

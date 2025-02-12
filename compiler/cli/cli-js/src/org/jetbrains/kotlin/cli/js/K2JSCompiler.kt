@@ -38,8 +38,9 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
@@ -50,9 +51,8 @@ import java.io.File
 
 
 class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
-    class K2JSCompilerPerformanceManager : PerformanceManager("Kotlin to JS Compiler")
-
-    override val defaultPerformanceManager: PerformanceManager = K2JSCompilerPerformanceManager()
+    override val platform: TargetPlatform
+        get() = JsPlatforms.defaultJsPlatform
 
     override fun createArguments(): K2JSCompilerArguments {
         return K2JSCompilerArguments()

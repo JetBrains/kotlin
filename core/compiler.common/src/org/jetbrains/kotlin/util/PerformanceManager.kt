@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.lang.management.GarbageCollectorMXBean
@@ -19,7 +20,7 @@ import kotlin.reflect.KClass
  * However, [measureTime] written to be thread-safe because there is no absolute guarantee
  * that external measurements are collected in a single thread.
  */
-abstract class PerformanceManager(private val presentableName: String) {
+abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presentableName: String) {
     // The lock object is located not in a companion object because every module has its own instance of the performance manager
     private val counterMeasurementsLock = Any()
 
@@ -279,6 +280,25 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
+    }
+}
+
+class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: String) : PerformanceManager(targetPlatform, presentableName) {
+    companion object {
+        /**
+         * Useful for measuring time when a pipeline is split on multiple parallel steps (in multithread mode or not)
+         */
+        fun createAndEnableChildIfNeeded(mainPerformanceManager: PerformanceManager?): PerformanceManagerImpl? {
+            return if (mainPerformanceManager != null) {
+                PerformanceManagerImpl(mainPerformanceManager.targetPlatform, mainPerformanceManager.presentableName + " (Child)").also {
+                    if (mainPerformanceManager.isEnabled) {
+                        it.enableCollectingPerformanceStatistics(mainPerformanceManager.isK2)
+                    }
+                }
+            } else {
+                null
+            }
+        }
     }
 }
 

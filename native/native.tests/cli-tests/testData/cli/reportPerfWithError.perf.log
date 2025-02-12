@@ -1,4 +1,4 @@
-Kotlin to Native Compiler performance report
+Kotlin to Native compiler performance report
                 INIT        $INT>>$ ms
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
 Find Java class performed $INT$ times, total time $INT$ ms
