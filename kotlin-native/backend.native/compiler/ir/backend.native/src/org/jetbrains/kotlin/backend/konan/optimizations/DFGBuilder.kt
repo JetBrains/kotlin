@@ -249,17 +249,17 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                             executeImplProducerInvoke.returnType,
                             executeImplProducerInvoke.symbol,
                             STATEMENT_ORIGIN_PRODUCER_INVOCATION)
-                    producerInvocation.dispatchReceiver = expression.getValueArgument(2)
+                    producerInvocation.dispatchReceiver = expression.arguments[2]
 
                     expressions += producerInvocation to currentLoop
 
-                    val jobFunctionReference = expression.getValueArgument(3) as? IrRawFunctionReference
+                    val jobFunctionReference = expression.arguments[3] as? IrRawFunctionReference
                             ?: error("A function reference expected")
                     val jobInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             jobFunctionReference.symbol.owner.returnType,
                             jobFunctionReference.symbol as IrSimpleFunctionSymbol,
                             STATEMENT_ORIGIN_JOB_INVOCATION)
-                    jobInvocation.putValueArgument(0, producerInvocation)
+                    jobInvocation.arguments[0] = producerInvocation
 
                     expressions += jobInvocation to currentLoop
                 }
@@ -268,20 +268,22 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                 val intrinsicType = tryGetIntrinsicType(expression)
                 if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE) {
+                    val index = if (expression.dispatchReceiver == null) 1 else 2
                     expressions += IrSetFieldImpl(
                             expression.startOffset, expression.endOffset,
                             expression.symbol.owner.volatileField!!.symbol,
                             expression.dispatchReceiver,
-                            expression.getValueArgument(1)!!,
+                            expression.arguments[index]!!,
                             context.irBuiltIns.unitType
                     ) to currentLoop
                 }
                 if (intrinsicType == IntrinsicType.GET_AND_SET) {
+                    val index = if (expression.dispatchReceiver == null) 0 else 1
                     expressions += IrSetFieldImpl(
                             expression.startOffset, expression.endOffset,
                             expression.symbol.owner.volatileField!!.symbol,
                             expression.dispatchReceiver,
-                            expression.getValueArgument(0)!!,
+                            expression.arguments[index]!!,
                             context.irBuiltIns.unitType
                     ) to currentLoop
                 }
@@ -295,7 +297,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         objCObjectRawValueGetter.owner.returnType,
                         objCObjectRawValueGetter,
                 ).apply {
-                    extensionReceiver = expression.argument
+                    arguments[0] = expression.argument
                 }
                 expressions += objcObjGetter to currentLoop
             }
@@ -382,8 +384,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                     }
                     val constInt = IrConstImpl.int(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.intType, index)
                     expressions += constInt to currentLoop
-                    putValueArgument(0, constInt)
-                    putValueArgument(1, value)
+                    arguments[1] = constInt
+                    arguments[2] = value
                 }
                 expressions += call to currentLoop
             }
@@ -620,7 +622,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                     DataFlowIR.Node.ArrayRead(
                                             symbolTable.mapFunction(actualCallee),
                                             array = expressionToEdge(value.dispatchReceiver!!),
-                                            index = expressionToEdge(value.getValueArgument(0)!!),
+                                            index = expressionToEdge(value.arguments[1]!!),
                                             type = mapReturnType(value.type, context.irBuiltIns.anyType),
                                             irCallSite = value)
                                 }
@@ -630,9 +632,9 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                     DataFlowIR.Node.ArrayWrite(
                                             symbolTable.mapFunction(actualCallee),
                                             array = expressionToEdge(value.dispatchReceiver!!),
-                                            index = expressionToEdge(value.getValueArgument(0)!!),
-                                            value = expressionToEdge(value.getValueArgument(1)!!),
-                                            type = mapReturnType(value.getValueArgument(1)!!.type, context.irBuiltIns.anyType))
+                                            index = expressionToEdge(value.arguments[1]!!),
+                                            value = expressionToEdge(value.arguments[2]!!),
+                                            type = mapReturnType(value.arguments[2]!!.type, context.irBuiltIns.anyType))
                                 }
 
                                 createUninitializedInstanceSymbol ->
@@ -643,14 +645,14 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                 createUninitializedArraySymbol ->
                                     DataFlowIR.Node.AllocArray(symbolTable.mapClassReferenceType(
                                             value.typeArguments[0]!!.getClass()!!
-                                    ), size = expressionToEdge(value.getValueArgument(0)!!), value)
+                                    ), size = expressionToEdge(value.arguments[0]!!), value)
 
                                 createEmptyStringSymbol ->
                                     // Technically, this allocates an array. However, this is an empty string, so let's treat it
                                     // like a fixed-size object.
                                     DataFlowIR.Node.AllocInstance(symbolTable.mapType(createEmptyStringSymbol.owner.returnType), value)
 
-                                reinterpret -> getNode(value.extensionReceiver!!).value
+                                reinterpret -> getNode(value.arguments[0]!!).value
 
                                 initInstanceSymbol -> error("Should've been lowered: ${value.render()}")
 
