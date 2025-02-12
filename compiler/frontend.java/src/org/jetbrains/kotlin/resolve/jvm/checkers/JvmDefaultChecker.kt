@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmDefaultMode.ENABLE
+import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
@@ -32,7 +32,7 @@ class JvmDefaultChecker(project: Project) : DeclarationChecker {
     private val ideService = LanguageVersionSettingsProvider.getInstance(project)
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+        val jvmDefaultMode = context.languageVersionSettings.jvmDefaultMode
 
         if (checkJvmCompatibilityAnnotations(descriptor, declaration, context, jvmDefaultMode)) return
 
@@ -146,6 +146,6 @@ internal fun CallableMemberDescriptor.isCompiledToJvmDefaultWithProperMode(
 ): Boolean {
     val jvmDefault =
         if (this is DeserializedDescriptor) compilationDefaultMode/*doesn't matter*/ else ideService?.getModuleLanguageVersionSettings(module)
-            ?.getFlag(JvmAnalysisFlags.jvmDefaultMode) ?: compilationDefaultMode
+            ?.jvmDefaultMode ?: compilationDefaultMode
     return isCompiledToJvmDefault(jvmDefault)
 }

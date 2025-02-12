@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -53,7 +53,7 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget, project: Proje
         val realDescriptor = unwrapFakeOverride(descriptor)
         val realDescriptorOwner = realDescriptor.containingDeclaration as? ClassDescriptor ?: return
 
-        val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+        val jvmDefaultMode = context.languageVersionSettings.jvmDefaultMode
         if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor ||
                     realDescriptor.isCompiledToJvmDefaultWithProperMode(ideService, jvmDefaultMode))
         ) {

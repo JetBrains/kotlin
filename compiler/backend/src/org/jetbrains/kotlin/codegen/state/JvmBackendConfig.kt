@@ -80,7 +80,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val shouldInlineConstVals: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
-    val jvmDefaultMode: JvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+    val jvmDefaultMode: JvmDefaultMode = languageVersionSettings.jvmDefaultMode
 
     val disableOptimization: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_OPTIMIZATION)
 
