@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.PreKotlin220Wrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
@@ -92,7 +94,16 @@ public interface CompilationService {
     @ExperimentalBuildToolsApi
     public companion object {
         @JvmStatic
-        public fun loadImplementation(classLoader: ClassLoader): CompilationService =
-            loadImplementation(CompilationService::class, classLoader)
+        public fun loadImplementation(classLoader: ClassLoader): CompilationService  {
+            val baseImplementation = loadImplementation(CompilationService::class, classLoader)
+            val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
+
+            return when {
+                kotlinCompilerVersion <= KotlinCompilerVersion(2, 1, 255, null) -> {
+                    PreKotlin220Wrapper(baseImplementation)
+                }
+                else -> baseImplementation
+            }
+        }
     }
 }
