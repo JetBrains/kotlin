@@ -105,9 +105,9 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
             output.appendLine("  $packageFQN")
         }
         output.appendLine("Has IR: ${library.hasIr}")
-        output.appendLine("Has FileEntries table: ${library.hasFileEntriesTable}")
         val irInfo = KlibIrInfoLoader(library).loadIrInfo()
         irInfo?.meaningfulInlineFunctionNumber?.let { output.appendLine("  Non-local inline functions: $it") }
+        output.appendLine("Has FileEntries table: ${library.hasFileEntriesTable}")
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
         output.appendLine("Manifest properties:")
         manifestProperties.entries.forEach { (key, value) ->
