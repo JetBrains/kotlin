@@ -151,20 +151,21 @@ private class BackendChecker(
     }
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor) =
-            this.valueParameters.size == other.valueParameters.size &&
-                    this.valueParameters.all {
-                        val otherParameter = other.valueParameters[it.indexInOldValueParameters]
-                        it.name == otherParameter.name && it.type == otherParameter.type
+            this.parameters.size == other.parameters.size &&
+                    this.parameters.zip(other.parameters).all { (l, r) ->
+                        l.name == r.name && l.type == r.type
                     }
 
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
         val action = "@${objCActionClassId.asFqNameString()}"
 
-        function.extensionReceiverParameter?.let {
+        function.parameters.filter { it.kind == IrParameterKind.ExtensionReceiver }.forEach {
             reportError(it, "$action method must not have extension receiver")
         }
 
-        function.valueParameters.forEach {
+        // TODO probably forbid context parameters as well?
+
+        function.parameters.filter { it.kind == IrParameterKind.Regular }.forEach {
             val kotlinType = it.type
             if (!kotlinType.isObjCObjectType())
                 reportError(it, "Unexpected $action method parameter type: ${it.type.classFqName}\n" +
@@ -187,9 +188,11 @@ private class BackendChecker(
         if (!property.isVar)
             reportError(property, "$outlet property must be var")
 
-        property.getter?.extensionReceiverParameter?.let {
+        property.getter?.parameters?.filter { it.kind == IrParameterKind.ExtensionReceiver }?.forEach {
             reportError(it, "$outlet must not have extension receiver")
         }
+
+        // TODO context parameters?
 
         val type = property.descriptor.type
         if (!type.isObjCObjectType())

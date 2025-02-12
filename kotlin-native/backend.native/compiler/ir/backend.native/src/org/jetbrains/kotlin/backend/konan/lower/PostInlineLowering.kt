@@ -69,10 +69,9 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                         is IrVararg -> data.irConstantArray(type, elements.map { e -> e.convertToConst() })
                         else -> shouldNotBeCalled()
                     }
-                    val arguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it)!! }
-                    if (arguments.all { it.isConvertibleToConst() }) {
+                    if (expression.arguments.all { it!!.isConvertibleToConst() }) {
                         return data.at(expression).irConstantObject(expression.symbol,
-                                arguments.map { it.convertToConst() },
+                                expression.arguments.map { it!!.convertToConst() },
                                 expression.typeArguments.map { it!! }
                         )
                     }
@@ -86,10 +85,10 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 return data.at(expression).run {
                     irCallWithSubstitutedType(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
                         val typeInfo = irCall(symbols.getObjectTypeInfo).apply {
-                            putValueArgument(0, expression.argument)
+                            arguments[0] = expression.argument
                         }
 
-                        putValueArgument(0, typeInfo)
+                        arguments[0] = typeInfo
                     }
                 }
             }
@@ -103,7 +102,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 if (expression.symbol == symbols.immutableBlobOf) {
                     // Convert arguments of the binary blob to special IrConst structure, so that
                     // vararg lowering will not affect it.
-                    val args = expression.getValueArgument(0) as? IrVararg
+                    val args = expression.arguments[0] as? IrVararg
                             ?: error("varargs shall not be lowered yet")
                     val builder = StringBuilder()
                     args.elements.forEach {
@@ -118,7 +117,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                         builder.append(value.toInt().toChar())
                     }
                     return data.irCall(context.ir.symbols.immutableBlobOfImpl).apply {
-                        putValueArgument(0, data.irString(builder.toString()))
+                        arguments[0] = data.irString(builder.toString())
                     }
                 }
 
