@@ -391,7 +391,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Dukat integration is in redesigning process. Now it does not work. Scheduled for removal in Kotlin 2.3",
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
     fun npm(
@@ -428,7 +428,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Dukat integration is in redesigning process. Now it does not work. Scheduled for removal in Kotlin 2.3",
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
     fun npm(
@@ -466,7 +466,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Dukat integration is in redesigning process. Now it does not work. Scheduled for removal in Kotlin 2.3",
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
     fun npm(
@@ -566,7 +566,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Dukat integration is in redesigning process. Now it does not work. Scheduled for removal in Kotlin 2.3",
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
     fun optionalNpm(
@@ -604,7 +604,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Dukat integration is in redesigning process. Now it does not work. Scheduled for removal in Kotlin 2.3",
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
     fun optionalNpm(
@@ -643,7 +643,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Dukat integration is in redesigning process. Now it does not work. Scheduled for removal in Kotlin 2.3",
+        "Dukat integration is being reevaluated. It currently does not work. See KT-54395. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
     )
     fun optionalNpm(

@@ -342,7 +342,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
      */
     @Deprecated(
         "Use 'associatedCompilations' instead",
-        ReplaceWith("associatedCompilations.toList().  Scheduled for removal in Kotlin 2.3."),
+        ReplaceWith("associatedCompilations.toList(). Scheduled for removal in Kotlin 2.3."),
         level = DeprecationLevel.ERROR
     )
     val associateWith: List<KotlinCompilation<*>> get() = associatedCompilations.toList()

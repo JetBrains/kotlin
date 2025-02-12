@@ -154,7 +154,7 @@ interface KotlinHierarchyBuilder {
      * @suppress
      */
     @Deprecated(
-        "Use plain 'withoutCompilations(!predicate) instead'",
+        "Use plain 'withoutCompilations(!predicate) instead'. Scheduled for removal in Kotlin 2.3.",
         ReplaceWith("withoutCompilations { !predicate(it) }"),
         level = DeprecationLevel.ERROR
     )
