@@ -11,6 +11,6 @@ fun Example() {}
 // ------------------------------------------
 
 TestKt {
-    Example [key=1292064820, startOffset=45, endOffset=74]
-    Example$lambda$0 null
+    Example (Landroidx/compose/runtime/Composer;I)V [key=1292064820, startOffset=45, endOffset=74]
+    Example$lambda$0 (ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
 }

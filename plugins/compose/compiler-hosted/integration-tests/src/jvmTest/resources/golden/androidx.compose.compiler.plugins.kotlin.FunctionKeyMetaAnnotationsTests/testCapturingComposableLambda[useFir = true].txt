@@ -23,17 +23,17 @@ fun Foo() {
 // ------------------------------------------
 
 TestKt {
-    Wrapper [key=-283819720, startOffset=35, endOffset=105]
-    Foo [key=-607362160, startOffset=107, endOffset=226]
-    Wrapper$lambda$0 null
-    Foo$lambda$2 null
-    Foo$lambda$3 null
-    Foo$lambda$4 null
-    access$Foo$lambda$2 null
+    Wrapper (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V [key=-283819720, startOffset=35, endOffset=105]
+    Foo (Landroidx/compose/runtime/Composer;I)V [key=-607362160, startOffset=107, endOffset=226]
+    Wrapper$lambda$0 (Lkotlin/jvm/functions/Function2;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
+    Foo$lambda$2 (Landroidx/compose/runtime/MutableState;)I null
+    Foo$lambda$3 (Landroidx/compose/runtime/MutableState;I)V null
+    Foo$lambda$4 (ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
+    access$Foo$lambda$2 (Landroidx/compose/runtime/MutableState;)I null
 }
 
 TestKt$Foo$1 {
-    <init> null
-    invoke [key=-1912932616, startOffset=191, endOffset=224]
-    invoke null
+    <init> (Landroidx/compose/runtime/MutableState;)V null
+    invoke (Landroidx/compose/runtime/Composer;I)V [key=-1912932616, startOffset=191, endOffset=224]
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }
