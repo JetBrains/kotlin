@@ -25,6 +25,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     // The lock object is located not in a companion object because every module has its own instance of the performance manager
     private val counterMeasurementsLock = Any()
 
+    private lateinit var thread: Thread
+
+    init {
+        initializeCurrentThread()
+    }
+
     private fun currentTime(): Long = System.nanoTime()
 
     private var currentPhaseType: PhaseType = PhaseType.Initialization
@@ -62,6 +68,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
 
+    fun initializeCurrentThread() {
+        thread = Thread.currentThread()
+    }
+
     fun getLoweringAndBackendTimeMs(): Long = (measurements.filterIsInstance<IrLoweringMeasurement>().sumOf { it.milliseconds }) +
             (measurements.filterIsInstance<BackendMeasurement>().sumOf { it.milliseconds })
 
@@ -88,7 +98,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun addMeasurementResults(otherPerformanceManager: PerformanceManager?) {
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         if (otherPerformanceManager == null) return
 
@@ -142,7 +152,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     open fun addSourcesStats(files: Int, lines: Int) {
         if (!isEnabled) return
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         this.files = this.files + files
         this.lines = this.lines + lines
@@ -172,7 +182,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`
         // but take some measurements from this manager (old behavior is preserved).
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         assert(phaseStartNanos != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
         finishPhase(phaseType)
@@ -181,7 +191,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     open fun notifyCompilationFinished() {
         if (!isEnabled) return
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
         isFinalized = true
 
         // Ideally, all phases should be finished explicitly by using `notifyPhaseFinished` call.
@@ -244,7 +254,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
         if (!isEnabled) block()
 
-        ensureNotFinalized()
+        ensureNotFinalizedAndSameThread()
 
         val startTime = currentTime()
         try {
@@ -275,8 +285,9 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         measurements.map { it.render(lines) }.forEach { append("$it\n") }
     }
 
-    private fun ensureNotFinalized() {
+    private fun ensureNotFinalizedAndSameThread() {
         assert(!isFinalized) { "Cannot add performance measurements because it's already finalized" }
+        assert(Thread.currentThread() == thread) { "PerformanceManager functions can be run only from the same thread" }
     }
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {

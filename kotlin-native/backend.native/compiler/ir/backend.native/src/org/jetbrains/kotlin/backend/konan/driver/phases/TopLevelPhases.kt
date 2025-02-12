@@ -241,6 +241,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
                     Callable {
                         try {
+                            // Currently, it's not possible to initialize the correct thread on `PerformanceManager` creation
+                            // because new threads are spawned here when `fragment` with its `PerformanceManager` is already initialized.
+                            fragment.performanceManager?.initializeCurrentThread()
                             runAfterLowerings(fragment, generationState)
                         } catch (t: Throwable) {
                             thrownFromThread.set(t)
