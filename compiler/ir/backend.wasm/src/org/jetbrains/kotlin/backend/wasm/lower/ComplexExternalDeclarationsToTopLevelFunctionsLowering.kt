@@ -544,28 +544,26 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
             val oldFun = call.symbol.owner.realOverrideTarget
             val newFun: IrSimpleFunction = nestedExternalToNewTopLevelFunctions[oldFun] ?: return call
 
-            val newCall = irCall(call, newFun, receiversAsArguments = true)
+            val newCall = IrCallImpl(call.startOffset, call.endOffset, newFun.returnType, newFun.symbol)
+
+            // Copy arguments or fill with default
+            for (parameter in oldFun.parameters) {
+                val arg = call.arguments[parameter.indexInParameters]
+                newCall.arguments[parameter.indexInParameters] = if (
+                    arg == null &&
+                    !parameter.isVararg // Handled with WasmVarargExpressionLowering
+                ) IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type)
+                else arg
+            }
 
             // Add default arguments flags if needed
             val numDefaultParameters = numDefaultParametersForExternalFunction(oldFun)
+            val firstOldDefaultArgumentIdx = oldFun.parameters.size - numDefaultParameters
             val firstDefaultFlagArgumentIdx = newFun.parameters.size - numDefaultParameters
-
-            val valueArguments = call.arguments
-                .filterIndexed { index, _ -> call.symbol.owner.parameters[index].kind == IrParameterKind.Regular }
-            val firstOldDefaultArgumentIdx = valueArguments.size - numDefaultParameters
-
-            repeat(numDefaultParameters) {
-                val value = if (call.valueArguments[firstOldDefaultArgumentIdx + it] == null) 1 else 0
-                newCall.arguments[firstDefaultFlagArgumentIdx + it] =
+            for (i in 0..<numDefaultParameters) {
+                val value = if (call.arguments[i + firstOldDefaultArgumentIdx] == null) 1 else 0
+                newCall.arguments[firstDefaultFlagArgumentIdx + i] =
                     IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
-            }
-
-            // Add default argument values if needed
-            for (i in 0 until newFun.parameters.size) {
-                val parameter = newFun.parameters[i]
-                if (parameter.isVararg) continue // Handled with WasmVarargExpressionLowering
-                if (newCall.arguments[i] != null) continue
-                newCall.arguments[i] = IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type)
             }
 
             return newCall
