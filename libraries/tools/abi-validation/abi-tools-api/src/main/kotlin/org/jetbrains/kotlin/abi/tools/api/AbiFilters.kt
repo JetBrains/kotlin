@@ -13,7 +13,7 @@ package org.jetbrains.kotlin.abi.tools.api
  *
  * In order for a declaration (class, field, property or function) to get into the dump, it must pass the inclusion **and** exclusion filters.
  *
- * Declaration passes the exclusion filter if it does not match any of class name (see [excludedClasses]) or annotation  (see [excludedAnnotatedWith]) filter rule.
+ * A declaration passes the exclusion filters if it does not match any class names (see [excludedClasses]) or annotation  (see [excludedAnnotatedWith]) filter rules.
  *
  * A declaration passes the inclusion filters if there is no inclusion rules, or it matches any inclusion rule, or at least one of its members (actual for class declaration) matches any inclusion rule.
  *
