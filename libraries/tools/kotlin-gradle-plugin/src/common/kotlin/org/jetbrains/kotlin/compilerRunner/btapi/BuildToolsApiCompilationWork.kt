@@ -91,6 +91,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     .keepIncrementalCompilationCachesInMemory(icEnv.icFeatures.keepIncrementalCompilationCachesInMemory)
                     .useOutputDirs(workArguments.outputFiles)
                     .forceNonIncrementalMode(classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun)
+                    .useFirRunner(icEnv.useJvmFirRunner)
+
                 val classpathSnapshotsParameters = ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
                     classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles,
                     classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
+import org.jetbrains.kotlin.incremental.IncrementalFirJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
@@ -158,17 +159,30 @@ internal object CompilationServiceImpl : CompilationService {
                 )
                 val verifiedPreciseJavaTracking = parsedArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = options.preciseJavaTrackingEnabled)
 
-                val incrementalCompiler = IncrementalJvmCompilerRunner(
-                    aggregatedIcConfiguration.workingDir,
-                    buildReporter,
-                    buildHistoryFile = null,
-                    modulesApiHistory = EmptyModulesApiHistory,
-                    usePreciseJavaTracking = verifiedPreciseJavaTracking,
-                    outputDirs = options.outputDirs,
-                    kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                    classpathChanges = classpathChanges,
-                    icFeatures = options.extractIncrementalCompilationFeatures(),
-                )
+                val incrementalCompiler = if (options.isUsingFirRunner) {
+                    IncrementalFirJvmCompilerRunner(
+                        aggregatedIcConfiguration.workingDir,
+                        buildReporter,
+                        buildHistoryFile = null,
+                        modulesApiHistory = EmptyModulesApiHistory,
+                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                        outputDirs = options.outputDirs,
+                        classpathChanges = classpathChanges,
+                        icFeatures = options.extractIncrementalCompilationFeatures(),
+                    )
+                } else {
+                    IncrementalJvmCompilerRunner(
+                        aggregatedIcConfiguration.workingDir,
+                        buildReporter,
+                        buildHistoryFile = null,
+                        modulesApiHistory = EmptyModulesApiHistory,
+                        usePreciseJavaTracking = verifiedPreciseJavaTracking,
+                        outputDirs = options.outputDirs,
+                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                        classpathChanges = classpathChanges,
+                        icFeatures = options.extractIncrementalCompilationFeatures(),
+                    )
+                }
                 val rootProjectDir = options.rootProjectDir
                 val buildDir = options.buildDir
                 parsedArguments.incrementalCompilation = true

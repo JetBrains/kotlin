@@ -115,9 +115,12 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/Classpat
 	public static synthetic fun assureNoClasspathSnapshotsChanges$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun forceNonIncrementalMode (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun getAssuredNoClasspathSnapshotsChanges ()Z
+	public abstract fun isUsingFirRunner ()Z
 	public abstract fun keepIncrementalCompilationCachesInMemory (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun setBuildDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun setRootProjectDir (Ljava/io/File;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
+	public abstract fun useFirRunner (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
+	public static synthetic fun useFirRunner$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun useOutputDirs (Ljava/util/Collection;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseCompilationResultsBackup (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
 	public abstract fun usePreciseJavaTracking (Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration;
