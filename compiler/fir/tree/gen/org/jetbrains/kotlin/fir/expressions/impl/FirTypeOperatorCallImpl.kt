@@ -72,6 +72,10 @@ internal class FirTypeOperatorCallImpl(
         argumentList = newArgumentList
     }
 
+    override fun replaceConversionTypeRef(newConversionTypeRef: FirTypeRef) {
+        conversionTypeRef = newConversionTypeRef
+    }
+
     override fun replaceArgFromStubType(newArgFromStubType: Boolean) {
         argFromStubType = newArgFromStubType
     }

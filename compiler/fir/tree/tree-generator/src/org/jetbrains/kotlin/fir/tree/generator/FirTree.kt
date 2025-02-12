@@ -345,7 +345,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(call)
 
         +field("operation", operationType)
-        +field("conversionTypeRef", typeRef, withTransform = true)
+        +field("conversionTypeRef", typeRef, withTransform = true, withReplace = true)
         +field("argFromStubType", boolean, withReplace = true)
     }
 

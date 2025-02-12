@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
@@ -37,7 +33,7 @@ class FirTypeCandidateCollector(
 
     fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor? = null) {
         var symbolApplicability = CandidateApplicability.RESOLVED
-        var diagnostic: ConeDiagnostic? = null
+        var diagnostic: ConeVisibilityError? = null
 
         if (!symbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
             val fromCodeFragment = containingDeclarations.getOrNull(1) is FirCodeFragment
@@ -133,6 +129,7 @@ class FirTypeCandidateCollector(
     class TypeCandidate(
         override val symbol: FirBasedSymbol<*>,
         val substitutor: ConeSubstitutor?,
+        // Currently, it's only ConeVisibilityError
         val diagnostic: ConeDiagnostic?,
         override val applicability: CandidateApplicability,
     ) : AbstractCandidate() {
