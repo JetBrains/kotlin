@@ -369,7 +369,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
-                val resolvedTypeSymbol = resolvedType.toSymbol(session)
+                val resolvedTypeSymbol = result.resolvedCandidateOrNull()?.symbol
                 // We can expand typealiases from dependencies right away, as it won't depend on us back,
                 // so there will be no problems with recursion.
                 // In the ideal world, this should also work with some source dependencies as the only case
@@ -384,7 +384,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                     else -> resolvedType
                 }
-                FirTypeResolutionResult(resolvedExpandedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
+                FirTypeResolutionResult(resolvedExpandedType, result.resolvedCandidateOrNull()?.diagnostic)
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {
@@ -408,4 +408,3 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 }
-
