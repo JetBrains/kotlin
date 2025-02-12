@@ -10,8 +10,8 @@ KaNamedFunctionSymbol:
   contractEffects: [
     KaContractCallsInPlaceContractEffectDeclaration:
       valueParameterReference:
-        KaContractParameterValue:
-          parameterSymbol:
+        KaContractExplicitParameterValue:
+          symbol:
             KaValueParameterSymbol:
               annotations: []
               callableId: null

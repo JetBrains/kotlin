@@ -1,29 +1,26 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.contracts
 
-import org.jetbrains.kotlin.analysis.api.contracts.description.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue.KaContractConstantType
-import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression
+import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanConstantExpression
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractCallsInPlaceContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConditionalContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConstantValue
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractParameterValue
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractExplicitParameterValue
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsNotNullEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSpecificValueEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSuccessfullyEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractBinaryLogicExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractBooleanConstantExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractBooleanValueParameterExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractIsInstancePredicateExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractIsNullPredicateExpression
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractLogicalNotExpression
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
@@ -107,12 +104,14 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
         }
 
     override fun visitVariableReference(variableReference: VariableReference, data: Unit): Any =
-        visitVariableReference(variableReference, ::KaBaseContractParameterValue)
+        visitVariableReference(variableReference, ::KaBaseContractExplicitParameterValue)
 
     override fun visitBooleanVariableReference(
         booleanVariableReference: BooleanVariableReference,
         data: Unit
-    ): Any = visitVariableReference(booleanVariableReference, ::KaBaseContractBooleanValueParameterExpression)
+    ): Any = visitVariableReference(booleanVariableReference) {
+        KaBaseContractBooleanValueParameterExpression(KaBaseContractExplicitParameterValue(it))
+    }
 
     private fun <T> visitVariableReference(
         variableReference: VariableReference,

@@ -98,7 +98,6 @@ contracts/description/contractValues.kt:KaContractConstantType:NULL
 contracts/description/contractValues.kt:KaContractConstantType:TRUE
 contracts/description/contractValues.kt:KaContractConstantValue:@KaExperimentalApi enum KaContractConstantType
 contracts/description/contractValues.kt:KaContractConstantValue:constantType
-contracts/description/contractValues.kt:KaContractParameterValue:parameterSymbol
 diagnostics/KaDiagnostic.kt:KaDiagnostic:diagnosticClass
 diagnostics/KaDiagnostic.kt:KaSeverity:ERROR
 diagnostics/KaDiagnostic.kt:KaSeverity:INFO
