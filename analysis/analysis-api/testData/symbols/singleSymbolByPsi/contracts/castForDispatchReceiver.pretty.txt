@@ -1,0 +1,2 @@
+@kotlin.OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+fun isFailure(): kotlin.Boolean
