@@ -33,20 +33,20 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun resolveSymbol(
         symbol: FirBasedSymbol<*>,
-        qualifier: List<FirQualifierPart>,
+        remainingQualifier: List<FirQualifierPart>,
         qualifierResolver: FirQualifierResolver,
     ): FirBasedSymbol<*>? {
         return when (symbol) {
             is FirClassLikeSymbol<*> -> {
-                if (qualifier.size == 1) {
+                if (remainingQualifier.isEmpty()) {
                     symbol
                 } else {
-                    resolveLocalClassChain(symbol, qualifier)
-                        ?: qualifierResolver.resolveSymbolWithPrefix(qualifier, symbol.classId)
-                        ?: qualifierResolver.resolveEnumEntrySymbol(qualifier, symbol.classId)
+                    resolveLocalClassChain(symbol, remainingQualifier)
+                        ?: qualifierResolver.resolveSymbolWithPrefix(symbol.classId, remainingQualifier)
+                        ?: qualifierResolver.resolveEnumEntrySymbol(symbol.classId, remainingQualifier)
                 }
             }
-            is FirTypeParameterSymbol -> symbol.takeIf { qualifier.size == 1 }
+            is FirTypeParameterSymbol -> symbol.takeIf { remainingQualifier.isEmpty() }
             else -> error("!")
         }
     }
@@ -71,11 +71,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             resolveDeprecations
         )
 
+
+
         for (scope in configuration.scopes) {
             if (collector.applicability == CandidateApplicability.RESOLVED) break
             val name = qualifier.first().name
             val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
-                val resolvedSymbol = resolveSymbol(symbol, qualifier, qualifierResolver)
+                val resolvedSymbol = resolveSymbol(symbol, qualifier.subList(1, qualifier.size), qualifierResolver)
 
                 if (resolvedSymbol != null) {
                     collector.processCandidate(resolvedSymbol, substitutorFromScope)
@@ -102,17 +104,17 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return collector.getResult()
     }
 
-    private fun resolveLocalClassChain(symbol: FirClassLikeSymbol<*>, qualifier: List<FirQualifierPart>): FirRegularClassSymbol? {
+    private fun resolveLocalClassChain(symbol: FirClassLikeSymbol<*>, remainingQualifier: List<FirQualifierPart>): FirRegularClassSymbol? {
         if (symbol !is FirRegularClassSymbol || !symbol.isLocal) {
             return null
         }
 
         fun resolveLocalClassChain(classSymbol: FirRegularClassSymbol, qualifierIndex: Int): FirRegularClassSymbol? {
-            if (qualifierIndex == qualifier.size) {
+            if (qualifierIndex == remainingQualifier.size) {
                 return classSymbol
             }
 
-            val qualifierName = qualifier[qualifierIndex].name
+            val qualifierName = remainingQualifier[qualifierIndex].name
             for (declarationSymbol in classSymbol.declarationSymbols) {
                 if (declarationSymbol is FirRegularClassSymbol) {
                     if (declarationSymbol.toLookupTag().name == qualifierName) {
@@ -124,20 +126,20 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             return null
         }
 
-        return resolveLocalClassChain(symbol, 1)
+        return resolveLocalClassChain(symbol, 0)
     }
 
     @OptIn(SymbolInternals::class)
     private fun FirQualifierResolver.resolveEnumEntrySymbol(
-        qualifier: List<FirQualifierPart>,
         classId: ClassId,
+        remainingQualifier: List<FirQualifierPart>,
     ): FirVariableSymbol<FirEnumEntry>? {
         // Assuming the current qualifier refers to an enum entry, we drop the last part so we get a reference to the enum class.
-        val enumClassSymbol = resolveSymbolWithPrefix(qualifier.dropLast(1), classId) ?: return null
+        val enumClassSymbol = resolveSymbolWithPrefix(classId, remainingQualifier.dropLast(1)) ?: return null
         val enumClassFir = enumClassSymbol.fir as? FirRegularClass ?: return null
         if (!enumClassFir.isEnumClass) return null
         val enumEntryMatchingLastQualifier = enumClassFir.declarations
-            .firstOrNull { it is FirEnumEntry && it.name == qualifier.last().name } as? FirEnumEntry
+            .firstOrNull { it is FirEnumEntry && it.name == remainingQualifier.last().name } as? FirEnumEntry
         return enumEntryMatchingLastQualifier?.symbol
     }
 
