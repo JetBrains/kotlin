@@ -636,6 +636,8 @@ class Strings {
 
         assertFalse("abc" == "abcd")
         assertFalse("abc" == "Abc")
+        // If a character's case doesn't matter, strings could be compared in a case-insensitive manner
+        assertTrue("abc".equals("Abc", ignoreCase = true))
 
         val builder = StringBuilder("abc")
         assertPrints(builder, "abc")
