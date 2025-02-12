@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -330,7 +331,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     }
 
 
-    private inner class CompilerPerformanceManager : PerformanceManager("Modularized test performance manager") {
+    private inner class CompilerPerformanceManager : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Modularized test performance manager") {
 
         fun reportCumulativeTime(): CumulativeTime {
             val gcInfo = measurements.filterIsInstance<GarbageCollectionMeasurement>()

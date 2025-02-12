@@ -33,12 +33,17 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
+    override val platform: TargetPlatform
+        get() = JvmPlatforms.defaultJvmPlatform
+
     override fun shouldRunK2(
         messageCollector: MessageCollector,
         arguments: K2JVMCompilerArguments,
@@ -229,8 +234,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
 
-    class K2JVMCompilerPerformanceManager : PerformanceManager("Kotlin to JVM Compiler")
-
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -270,8 +273,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return ProfilingCompilerPerformanceManager.create(argument)
         }
     }
-
-    override val defaultPerformanceManager: K2JVMCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
 
     override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): PerformanceManager {
         return createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager
